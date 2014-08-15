@@ -369,6 +369,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case NATINSURANCE:
             case DEEMEDBENEFIT:
             case TAXRELIEF:
+            case TAXABLEGAIN:
             case CAPITALGAIN:
             case TAXFREEGAIN:
             case INCOMETOTALS:

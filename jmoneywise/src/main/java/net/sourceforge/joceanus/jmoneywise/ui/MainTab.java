@@ -321,7 +321,36 @@ public class MainTab
     @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
-        return theRegister.hasUpdates() || theSpotView.hasUpdates() || theMaint.hasUpdates();
+        boolean hasUpdates = theRegister.hasUpdates();
+        if (!hasUpdates) {
+            hasUpdates = theStatement.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theSpotView.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theMaint.hasUpdates();
+        }
+        return hasUpdates;
+    }
+
+    /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public final boolean hasSession() {
+        /* Determine whether we have edit session updates */
+        boolean hasSession = theRegister.hasSession();
+        if (!hasSession) {
+            hasSession = theStatement.hasSession();
+        }
+        if (!hasSession) {
+            hasSession = theSpotView.hasSession();
+        }
+        if (!hasSession) {
+            hasSession = theMaint.hasSession();
+        }
+        return hasSession;
     }
 
     @Override
@@ -459,8 +488,8 @@ public class MainTab
         /* Sort out underlying visibility */
         super.setVisibility();
 
-        /* Determine whether we have any updates */
-        boolean hasUpdates = hasUpdates();
+        /* Determine whether we have any session focus */
+        boolean hasSession = hasSession();
 
         /* Note whether we have a worker thread */
         boolean hasWorker = hasWorker();
@@ -473,7 +502,7 @@ public class MainTab
 
         /* Access the Register panel and determine its status */
         int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        boolean showTab = !hasWorker && (!hasUpdates || theRegister.hasUpdates());
+        boolean showTab = !hasWorker && (!hasSession || theRegister.hasSession());
 
         /* Enable/Disable the register tab */
         if (iIndex != -1) {
@@ -482,7 +511,7 @@ public class MainTab
 
         /* Access the Statement panel */
         iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
-        showTab = !hasWorker && !hasUpdates;
+        showTab = !hasWorker && (!hasSession || theStatement.hasSession());
 
         /* Enable/Disable the statement tab */
         if (iIndex != -1) {
@@ -491,7 +520,7 @@ public class MainTab
 
         /* Access the Report panel */
         iIndex = theTabs.indexOfTab(TITLE_REPORT);
-        showTab = !hasWorker && !hasUpdates;
+        showTab = !hasWorker && !hasSession;
 
         /* Enable/Disable the reports tab */
         if (iIndex != -1) {
@@ -500,7 +529,7 @@ public class MainTab
 
         /* Access the SpotView panel and determine its status */
         iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
-        showTab = !hasWorker && (!hasUpdates || theSpotView.hasUpdates());
+        showTab = !hasWorker && (!hasSession || theSpotView.hasSession());
 
         /* Enable/Disable the spotView tab */
         if (iIndex != -1) {
@@ -509,7 +538,7 @@ public class MainTab
 
         /* Access the Maintenance panel */
         iIndex = theTabs.indexOfTab(TITLE_MAINT);
-        showTab = !hasWorker && (!hasUpdates || theMaint.hasUpdates());
+        showTab = !hasWorker && (!hasSession || theMaint.hasSession());
 
         /* Enable/Disable the maintenance tab */
         if (iIndex != -1) {
@@ -520,7 +549,7 @@ public class MainTab
         theTabs.setEnabled(!hasWorker);
 
         /* If we have updates disable the load backup/database option */
-        theLoadSheet.setEnabled(!hasUpdates);
+        theLoadSheet.setEnabled(!hasSession);
     }
 
     /**

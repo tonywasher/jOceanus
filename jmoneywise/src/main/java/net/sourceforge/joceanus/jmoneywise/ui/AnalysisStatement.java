@@ -284,7 +284,7 @@ public class AnalysisStatement
         theView.addChangeListener(myListener);
         theSelect.addChangeListener(myListener);
         theSaveButtons.addActionListener(myListener);
-        theUpdateSet.addActionListener(myListener);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Hide the save buttons initially */
         theSaveButtons.setVisible(false);
@@ -509,6 +509,12 @@ public class AnalysisStatement
                 refreshData();
             }
 
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
+            }
+
             /* If this is the Selection */
             if (theSelect.equals(o)) {
                 /* Set the filter */
@@ -538,11 +544,6 @@ public class AnalysisStatement
 
                 /* Notify listeners of changes */
                 notifyChanges();
-
-                /* If we are performing a rewind */
-            } else if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
             }
         }
     }

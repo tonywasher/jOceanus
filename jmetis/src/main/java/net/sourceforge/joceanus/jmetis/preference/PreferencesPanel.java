@@ -304,6 +304,14 @@ public class PreferencesPanel
     }
 
     /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        return hasUpdates();
+    }
+
+    /**
      * Save Updates.
      */
     public void saveUpdates() {

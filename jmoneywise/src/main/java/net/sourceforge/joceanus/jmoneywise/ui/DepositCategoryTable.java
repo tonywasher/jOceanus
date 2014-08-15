@@ -353,6 +353,11 @@ public class DepositCategoryTable
     }
 
     @Override
+    public boolean hasSession() {
+        return hasUpdates() || isItemEditing();
+    }
+
+    @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
     }

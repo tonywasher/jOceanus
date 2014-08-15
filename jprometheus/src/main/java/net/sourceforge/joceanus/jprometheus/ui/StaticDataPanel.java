@@ -332,6 +332,15 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     }
 
     /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        /* Return to caller */
+        return hasUpdates();
+    }
+
+    /**
      * Has this set of tables got errors?
      * @return true/false
      */

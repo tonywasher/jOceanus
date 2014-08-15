@@ -310,7 +310,7 @@ public class Register
         theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theError.addChangeListener(myListener);
         theSaveButtons.addActionListener(myListener);
-        theUpdateSet.addActionListener(myListener);
+        theUpdateSet.addChangeListener(myListener);
         theView.addChangeListener(myListener);
 
         /* Create the panel */
@@ -467,6 +467,11 @@ public class Register
             } else if (theView.equals(o)) {
                 /* Refresh Data */
                 refreshData();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
 
@@ -510,11 +515,6 @@ public class Register
 
                 /* Notify listeners of changes */
                 notifyChanges();
-
-                /* If we are performing a rewind */
-            } else if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
             }
         }
     }

@@ -159,6 +159,14 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     }
 
     /**
+     * Does the table have the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        return hasUpdates();
+    }
+
+    /**
      * Does the table have errors?
      * @return true/false
      */

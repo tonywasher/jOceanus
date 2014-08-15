@@ -427,7 +427,7 @@ public final class JDataHTML {
             }
 
             /* Skip value if required */
-            if (myValue.equals(JDataFieldValue.SKIP)) {
+            if (JDataFieldValue.SKIP.equals(myValue)) {
                 continue;
             }
 

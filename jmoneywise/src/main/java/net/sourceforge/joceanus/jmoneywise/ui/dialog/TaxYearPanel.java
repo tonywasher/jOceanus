@@ -23,8 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.Iterator;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -40,7 +44,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -104,7 +107,7 @@ public class TaxYearPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theYear = new JTextField(Deposit.NAMELEN);
+        theYear = new JTextField();
 
         /* Create the buttons */
         theRegimeButton = new JScrollButton<TaxRegime>();
@@ -112,16 +115,14 @@ public class TaxYearPanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the allowances panel */
-        myPanel = buildAllowPanel();
+        JPanel myPanel = buildAllowPanel();
         myTabs.add("Allowances", myPanel);
 
         /* Build the detail panel */
@@ -144,6 +145,15 @@ public class TaxYearPanel
         myPanel = buildCapRatesPanel();
         myTabs.add("CapitalRates", myPanel);
 
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
+
         /* Create the listener */
         new TaxYearListener();
     }
@@ -162,6 +172,7 @@ public class TaxYearPanel
         /* restrict the field */
         theYear.setMaximumSize(myDims);
         theYear.setEditable(false);
+        theYear.setBorder(BorderFactory.createEmptyBorder());
         theRegimeButton.setPreferredSize(myDims);
 
         /* Adjust FieldSet */
@@ -178,8 +189,14 @@ public class TaxYearPanel
         theFieldSet.addFieldToPanel(TaxYear.FIELD_REGIME, myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Create a panel to contain this panel */
+        JEnablePanel myXtraPanel = new JEnablePanel();
+        myXtraPanel.setLayout(new BoxLayout(myXtraPanel, BoxLayout.Y_AXIS));
+        myXtraPanel.add(myPanel);
+        myXtraPanel.add(Box.createVerticalGlue());
+
         /* Return the new panel */
-        return myPanel;
+        return myXtraPanel;
     }
 
     /**
@@ -426,6 +443,9 @@ public class TaxYearPanel
             TaxYearList myYears = findDataList(MoneyWiseDataType.TAXYEAR, TaxYearList.class);
             setItem(myYears.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
@@ -527,6 +547,13 @@ public class TaxYearPanel
                     break;
             }
         }
+    }
+
+    @Override
+    protected void buildGoToMenu() {
+        TaxYear myItem = getItem();
+        TaxRegime myRegime = myItem.getTaxRegime();
+        buildGoToEvent(myRegime);
     }
 
     /**

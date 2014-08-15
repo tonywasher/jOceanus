@@ -645,7 +645,10 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
             /* The name must be unique */
             if (myList.countInstances(myName) > 1) {
-                addError(ERROR_DUPLICATE, FIELD_NAME);
+                String mySubName = getSubCategory();
+                addError(ERROR_DUPLICATE, (mySubName == null)
+                                                             ? FIELD_NAME
+                                                             : FIELD_SUBCAT);
             }
         }
 

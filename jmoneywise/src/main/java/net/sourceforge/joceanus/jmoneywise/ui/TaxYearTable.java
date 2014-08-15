@@ -23,14 +23,14 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractButton;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -39,64 +39,67 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
-import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionTagPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.TaxYearPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
- * TransactionTag Table.
+ * TaxYear Table.
  */
-public class TransactionTagTable
-        extends JDataTable<TransactionTag, MoneyWiseDataType> {
+public class TaxYearTable
+        extends JDataTable<TaxYear, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = -3505466850582535851L;
+    private static final long serialVersionUID = -9063059159264496070L;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionTagTable.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYearTable.class.getName());
 
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = TransactionTag.FIELD_NAME.getName();
+    private static final String TITLE_NAME = TaxYear.FIELD_TAXYEAR.getName();
 
     /**
-     * Description Column Title.
+     * TaxRegime Column Title.
      */
-    private static final String TITLE_DESC = TransactionTag.FIELD_DESC.getName();
+    private static final String TITLE_REGIME = TaxYear.FIELD_REGIME.getName();
 
     /**
      * Active Column Title.
      */
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
-
-    /**
-     * Text for New Button.
-     */
-    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
 
     /**
      * The data view.
@@ -116,7 +119,12 @@ public class TransactionTagTable
     /**
      * The data entry.
      */
-    private final transient UpdateEntry<TransactionTag, MoneyWiseDataType> theTransactionTagEntry;
+    private final transient UpdateEntry<TaxYear, MoneyWiseDataType> theTaxYearEntry;
+
+    /**
+     * TaxYearInfo Update Entry.
+     */
+    private final transient UpdateEntry<TaxYearInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * The error panel.
@@ -124,14 +132,24 @@ public class TransactionTagTable
     private final ErrorPanel theError;
 
     /**
+     * Save Buttons.
+     */
+    private final SaveButtons theSaveButtons;
+
+    /**
+     * The data entry.
+     */
+    private final transient JDataEntry theDataEntry;
+
+    /**
      * The Table Model.
      */
-    private final TransactionTagTableModel theModel;
+    private final TaxYearTableModel theModel;
 
     /**
      * The Column Model.
      */
-    private final TransactionTagColumnModel theColumns;
+    private final TaxYearColumnModel theColumns;
 
     /**
      * The panel.
@@ -139,24 +157,19 @@ public class TransactionTagTable
     private final JEnablePanel thePanel;
 
     /**
-     * The filter panel.
+     * The TaxYear dialog.
      */
-    private final JPanel theFilterPanel;
+    private final TaxYearPanel theActiveYear;
 
     /**
-     * The new button.
+     * TaxYears.
      */
-    private final JButton theNewButton;
+    private transient TaxYearList theTaxYears = null;
 
     /**
-     * The TransactionTag dialog.
+     * TaxRegimes.
      */
-    private final TransactionTagPanel theActiveTag;
-
-    /**
-     * TransactionTags.
-     */
-    private transient TransactionTagList theTransactionTags = null;
+    private transient TaxRegimeList theRegimes = null;
 
     /**
      * Obtain the panel.
@@ -167,47 +180,48 @@ public class TransactionTagTable
     }
 
     /**
-     * Obtain the filter panel.
-     * @return the filter panel
-     */
-    protected JPanel getFilterPanel() {
-        return theFilterPanel;
-    }
-
-    /**
      * Are we in the middle of an item edit?
      * @return true/false
      */
     protected boolean isItemEditing() {
-        return theActiveTag.isEditing();
+        return theActiveYear.isEditing();
     }
 
     /**
      * Constructor.
      * @param pView the data view
-     * @param pUpdateSet the update set
-     * @param pError the error panel
      */
-    public TransactionTagTable(final View pView,
-                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final ErrorPanel pError) {
-        /* Record the passed details */
+    public TaxYearTable(final View pView) {
+        /* Record the view */
         theView = pView;
-        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
-        /* Build the Update set and entries */
-        theUpdateSet = pUpdateSet;
-        theTransactionTagEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSTAG);
+        /* Build the Update set and Entry */
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theTaxYearEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEAR);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEARINFO);
         setUpdateSet(theUpdateSet);
 
+        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
+        JDataManager myDataMgr = theView.getDataMgr();
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new JDataEntry(TaxYear.class.getSimpleName() + "2");
+        theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(theUpdateSet);
+
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(myDataMgr, theDataEntry);
+
+        /* Create the save buttons */
+        theSaveButtons = new SaveButtons(theUpdateSet);
+
         /* Create the table model */
-        theModel = new TransactionTagTableModel(this);
+        theModel = new TaxYearTableModel(this);
         setModel(theModel);
 
         /* Create the data column model and declare it */
-        theColumns = new TransactionTagColumnModel(this);
+        theColumns = new TaxYearColumnModel(this);
         setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -220,55 +234,52 @@ public class TransactionTagTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(theError);
         thePanel.add(getScrollPane());
 
-        /* Create a Tag panel */
-        theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveTag);
+        /* Create a TaxYear panel */
+        theActiveYear = new TaxYearPanel(theFieldMgr, theUpdateSet, theError);
+        thePanel.add(theActiveYear);
+        thePanel.add(theSaveButtons);
 
-        /* Create new button */
-        theNewButton = new JButton(NLS_NEW);
-        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
-
-        /* Create a dummy filter panel */
-        theFilterPanel = new JPanel();
-        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton);
-        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
 
         /* Create listener */
-        new TransactionTagListener();
+        new TaxYearListener();
     }
 
     /**
      * Determine Focus.
-     * @param pEntry the master data entry
      */
-    protected void determineFocus(final JDataEntry pEntry) {
+    protected void determineFocus() {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        pEntry.setFocus(theTransactionTagEntry.getName());
+        theDataEntry.setFocus();
     }
 
     /**
      * Refresh data.
      */
-    protected void refreshData() {
-        /* Get the Events edit list */
+    public void refreshData() {
+        /* Access the various lists */
         MoneyWiseData myData = theView.getData();
-        TransactionTagList myTransactionTags = myData.getTransactionTags();
-        theTransactionTags = myTransactionTags.deriveEditList();
-        theTransactionTagEntry.setDataList(theTransactionTags);
+        theRegimes = myData.getTaxRegimes();
+
+        /* Get the TaxYears edit list */
+        TaxYearList myTaxYears = myData.getTaxYears();
+        theTaxYears = myTaxYears.deriveEditList();
+        theTaxYearEntry.setDataList(theTaxYears);
+        TaxInfoList myInfo = theTaxYears.getTaxInfo();
+        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
-        theActiveTag.refreshData();
+        theActiveYear.refreshData();
 
         /* Notify of the change */
-        setList(theTransactionTags);
+        setList(theTaxYears);
         fireStateChanged();
     }
 
@@ -298,16 +309,17 @@ public class TransactionTagTable
         super.cancelEditing();
 
         /* Stop editing any item */
-        theActiveTag.setEditable(false);
+        theActiveYear.setEditable(false);
     }
 
     /**
-     * Select tag.
-     * @param pTag the tag to select
+     * Select deposit.
+     * @param pTaxYear the taxYear to select
      */
-    protected void selectTag(final TransactionTag pTag) {
+    protected void selectTaxYear(final TaxYear pTaxYear) {
         /* Find the item in the list */
-        int myIndex = theTransactionTags.indexOf(pTag);
+        int myIndex = theTaxYears.indexOf(pTaxYear);
+        myIndex = convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
@@ -317,27 +329,43 @@ public class TransactionTagTable
     @Override
     protected void notifyChanges() {
         /* Adjust enable of the table */
-        setEnabled(!theActiveTag.isEditing());
+        setEnabled(!theActiveYear.isEditing());
+
+        /* set Visibility */
+        setVisibility();
 
         /* Pass call on */
         super.notifyChanges();
     }
 
     /**
+     * Set Visibility.
+     */
+    protected void setVisibility() {
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+        boolean isItemEditing = isItemEditing();
+
+        /* Update the save buttons */
+        theSaveButtons.setEnabled(true);
+        theSaveButtons.setVisible(hasUpdates && !isItemEditing);
+    }
+
+    /**
      * JTable Data Model.
      */
-    private final class TransactionTagTableModel
-            extends JDataTableModel<TransactionTag, MoneyWiseDataType> {
+    private final class TaxYearTableModel
+            extends JDataTableModel<TaxYear, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = -7851544627310851259L;
+        private static final long serialVersionUID = 4053776178814946474L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private TransactionTagTableModel(final TransactionTagTable pTable) {
+        private TaxYearTableModel(final TaxYearTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -351,38 +379,38 @@ public class TransactionTagTable
 
         @Override
         public int getRowCount() {
-            return (theTransactionTags == null)
-                                               ? 0
-                                               : theTransactionTags.size();
+            return (theTaxYears == null)
+                                        ? 0
+                                        : theTaxYears.size();
         }
 
         @Override
-        public JDataField getFieldForCell(final TransactionTag pItem,
+        public JDataField getFieldForCell(final TaxYear pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final TransactionTag pItem,
+        public boolean isCellEditable(final TaxYear pItem,
                                       final int pColIndex) {
             return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
-        public TransactionTag getItemAtIndex(final int pRowIndex) {
+        public TaxYear getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return theTransactionTags.get(pRowIndex);
+            return theTaxYears.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final TransactionTag pItem,
+        public Object getItemValue(final TaxYear pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
-        public void setItemValue(final TransactionTag pItem,
+        public void setItemValue(final TaxYear pItem,
                                  final int pColIndex,
                                  final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
@@ -396,31 +424,33 @@ public class TransactionTagTable
         }
 
         @Override
-        public boolean includeRow(final TransactionTag pRow) {
+        public boolean includeRow(final TaxYear pRow) {
             /* Ignore deleted rows */
             if (pRow.isDeleted()) {
                 return false;
             }
 
             /* Handle filter */
-            return true;
+            return showAll() || !pRow.isDisabled();
         }
     }
 
     /**
      * Listener class.
      */
-    private final class TransactionTagListener
+    private final class TaxYearListener
             implements ActionListener, ChangeListener, ListSelectionListener {
         /**
          * Constructor.
          */
-        private TransactionTagListener() {
+        private TaxYearListener() {
             /* Listen to correct events */
             theUpdateSet.addChangeListener(this);
-            theNewButton.addActionListener(this);
-            theActiveTag.addChangeListener(this);
-            theActiveTag.addActionListener(this);
+            theView.addChangeListener(this);
+            theSaveButtons.addActionListener(this);
+            theError.addChangeListener(this);
+            theActiveYear.addChangeListener(this);
+            theActiveYear.addActionListener(this);
 
             /* Add selection listener */
             getSelectionModel().addListSelectionListener(this);
@@ -431,10 +461,22 @@ public class TransactionTagTable
             /* Access source */
             Object o = pEvent.getSource();
 
+            /* If this is the error panel */
+            if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Lock scroll area */
+                getScrollPane().setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButtons.setEnabled(!isError);
+            }
+
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Only action if we are not editing */
-                if (!theActiveTag.isEditing()) {
+                if (!theActiveYear.isEditing()) {
                     /* Refresh the model */
                     theModel.fireNewDataEvents();
                 }
@@ -443,28 +485,22 @@ public class TransactionTagTable
                 notifyChanges();
             }
 
+            /* If this is the data view */
+            if (theView.equals(o)) {
+                /* Refresh Data */
+                refreshData();
+            }
+
             /* If we are noting change of edit state */
-            if (theActiveTag.equals(o)) {
-                /* If the tag is now deleted */
-                if (theActiveTag.isItemDeleted()) {
+            if (theActiveYear.equals(o)) {
+                /* If the account is now deleted */
+                if (theActiveYear.isItemDeleted()) {
                     /* Refresh the model */
                     theModel.fireNewDataEvents();
                 }
 
                 /* Note changes */
                 notifyChanges();
-            }
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* Handle actions */
-            if ((theActiveTag.equals(o))
-                && (pEvent instanceof ActionDetailEvent)) {
-                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
 
@@ -478,13 +514,36 @@ public class TransactionTagTable
                     /* Loop through the indices */
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
-                    TransactionTag myTag = theTransactionTags.get(iIndex);
-                    theActiveTag.setItem(myTag);
+                    TaxYear myYear = theTaxYears.get(iIndex);
+                    theActiveYear.setItem(myYear);
                 } else {
-                    theActiveTag.setEditable(false);
-                    theActiveTag.setItem(null);
+                    theActiveYear.setEditable(false);
+                    theActiveYear.setItem(null);
                     notifyChanges();
                 }
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent pEvent) {
+            Object o = pEvent.getSource();
+
+            /* If this event relates to the save buttons */
+            if (theSaveButtons.equals(o)) {
+                /* Cancel any editing */
+                cancelEditing();
+
+                /* Perform the command */
+                theUpdateSet.processCommand(pEvent.getActionCommand(), theError);
+
+                /* Notify listeners of changes */
+                notifyChanges();
+            }
+
+            /* Handle actions */
+            if ((theActiveYear.equals(o))
+                && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
     }
@@ -492,22 +551,22 @@ public class TransactionTagTable
     /**
      * Column Model class.
      */
-    private final class TransactionTagColumnModel
+    private final class TaxYearColumnModel
             extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -2621702912812861337L;
+        private static final long serialVersionUID = -6629043017566713861L;
 
         /**
-         * Name column id.
+         * TaxYear column id.
          */
-        private static final int COLUMN_NAME = 0;
+        private static final int COLUMN_YEAR = 0;
 
         /**
-         * Description column id.
+         * Regime column id.
          */
-        private static final int COLUMN_DESC = 1;
+        private static final int COLUMN_REGIME = 1;
 
         /**
          * Active column id.
@@ -515,14 +574,9 @@ public class TransactionTagTable
         private static final int COLUMN_ACTIVE = 2;
 
         /**
-         * Icon Renderer.
+         * Status Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theIconRenderer;
-
-        /**
-         * Icon editor.
-         */
-        private final IconButtonCellEditor<Boolean> theIconEditor;
+        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
 
         /**
          * String Renderer.
@@ -530,31 +584,40 @@ public class TransactionTagTable
         private final StringCellRenderer theStringRenderer;
 
         /**
-         * String Editor.
+         * Status Icon editor.
          */
-        private final StringCellEditor theStringEditor;
+        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
+
+        /**
+         * Regime ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<TaxRegime> theRegimeEditor;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private TransactionTagColumnModel(final TransactionTagTable pTable) {
+        private TaxYearColumnModel(final TaxYearTable pTable) {
             /* call constructor */
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theRegimeEditor = theFieldMgr.allocateScrollButtonCellEditor(TaxRegime.class);
+            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
-            /* Configure the iconButton */
-            MoneyWiseIcons.buildStatusButton(theIconEditor.getState());
+            /* Configure the iconButtons */
+            MoneyWiseIcons.buildStatusButton(theStatusIconEditor.getState());
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+            declareColumn(new JDataTableColumn(COLUMN_YEAR, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_REGIME, WIDTH_NAME, theStringRenderer, theRegimeEditor));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
+
+            /* Add listeners */
+            ScrollEditorListener myListener = new ScrollEditorListener();
+            theRegimeEditor.addChangeListener(myListener);
         }
 
         /**
@@ -564,10 +627,10 @@ public class TransactionTagTable
          */
         private String getColumnName(final int pColIndex) {
             switch (pColIndex) {
-                case COLUMN_NAME:
+                case COLUMN_YEAR:
                     return TITLE_NAME;
-                case COLUMN_DESC:
-                    return TITLE_DESC;
+                case COLUMN_REGIME:
+                    return TITLE_REGIME;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 default:
@@ -576,21 +639,21 @@ public class TransactionTagTable
         }
 
         /**
-         * Obtain the value for the TransactionTag column.
-         * @param pTransactionTag TransactionTag
+         * Obtain the value for the taxYear column.
+         * @param pYear taxYear
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final TransactionTag pTransactionTag,
+        protected Object getItemValue(final TaxYear pYear,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
-                case COLUMN_NAME:
-                    return pTransactionTag.getName();
-                case COLUMN_DESC:
-                    return pTransactionTag.getDesc();
+                case COLUMN_YEAR:
+                    return Integer.toString(pYear.getTaxYear().getYear());
+                case COLUMN_REGIME:
+                    return pYear.getTaxRegime();
                 case COLUMN_ACTIVE:
-                    return pTransactionTag.isActive();
+                    return pYear.isActive();
                 default:
                     return null;
             }
@@ -603,16 +666,13 @@ public class TransactionTagTable
          * @param pValue the value to set
          * @throws JOceanusException on error
          */
-        private void setItemValue(final TransactionTag pItem,
+        private void setItemValue(final TaxYear pItem,
                                   final int pColIndex,
                                   final Object pValue) throws JOceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
-                case COLUMN_NAME:
-                    pItem.setName((String) pValue);
-                    break;
-                case COLUMN_DESC:
-                    pItem.setDescription((String) pValue);
+                case COLUMN_REGIME:
+                    pItem.setTaxRegime((TaxRegime) pValue);
                     break;
                 case COLUMN_ACTIVE:
                     deleteRow(pItem);
@@ -628,11 +688,12 @@ public class TransactionTagTable
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final TransactionTag pItem,
+        private boolean isCellEditable(final TaxYear pItem,
                                        final int pColIndex) {
             switch (pColIndex) {
-                case COLUMN_NAME:
-                case COLUMN_DESC:
+                case COLUMN_YEAR:
+                    return false;
+                case COLUMN_REGIME:
                     return true;
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
@@ -649,14 +710,68 @@ public class TransactionTagTable
         protected JDataField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
-                case COLUMN_NAME:
-                    return TransactionTag.FIELD_NAME;
-                case COLUMN_DESC:
-                    return TransactionTag.FIELD_DESC;
+                case COLUMN_YEAR:
+                    return TaxYear.FIELD_TAXYEAR;
+                case COLUMN_REGIME:
+                    return TaxYear.FIELD_REGIME;
                 case COLUMN_ACTIVE:
-                    return TransactionTag.FIELD_TOUCH;
+                    return TaxYear.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * ScrollEditorListener.
+         */
+        private class ScrollEditorListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                Object o = pEvent.getSource();
+
+                if (theRegimeEditor.equals(o)) {
+                    buildRegimeMenu();
+                }
+            }
+
+            /**
+             * Build the popUpMenu for regimes.
+             */
+            private void buildRegimeMenu() {
+                /* Access details */
+                JScrollMenuBuilder<TaxRegime> myBuilder = theRegimeEditor.getMenuBuilder();
+                Point myCell = theRegimeEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                TaxYear myYear = theTaxYears.get(myCell.y);
+                TaxRegime myCurr = myYear.getTaxRegime();
+                JMenuItem myActive = null;
+
+                /* Loop through the Regimes */
+                Iterator<TaxRegime> myIterator = theRegimes.iterator();
+                while (myIterator.hasNext()) {
+                    TaxRegime myRegime = myIterator.next();
+
+                    /* Ignore deleted or disabled */
+                    boolean bIgnore = myRegime.isDeleted() || !myRegime.getEnabled();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the regime */
+                    JMenuItem myItem = myBuilder.addItem(myRegime);
+
+                    /* If this is the active regime */
+                    if (myRegime.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
             }
         }
     }

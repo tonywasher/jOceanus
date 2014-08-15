@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,6 +72,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -220,15 +223,11 @@ public class CashTable
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
-        /* Create listener */
-        CashListener myListener = new CashListener();
-
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theCashEntry = theUpdateSet.registerType(MoneyWiseDataType.CASH);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.CASHINFO);
         setUpdateSet(theUpdateSet);
-        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new CashTableModel(this);
@@ -253,10 +252,9 @@ public class CashTable
         /* Create an account panel */
         theActiveAccount = new CashPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.addChangeListener(myListener);
 
-        /* Add selection listener */
-        getSelectionModel().addListSelectionListener(myListener);
+        /* Create listener */
+        new CashListener();
     }
 
     /**
@@ -309,6 +307,11 @@ public class CashTable
     @Override
     public boolean hasUpdates() {
         return theUpdateSet.hasUpdates();
+    }
+
+    @Override
+    public boolean hasSession() {
+        return hasUpdates() || isItemEditing();
     }
 
     @Override
@@ -436,7 +439,19 @@ public class CashTable
      * Listener class.
      */
     private final class CashListener
-            implements ChangeListener, ListSelectionListener {
+            implements ActionListener, ChangeListener, ListSelectionListener {
+        /**
+         * Constructor.
+         */
+        private CashListener() {
+            /* Listen to correct events */
+            theUpdateSet.addChangeListener(this);
+            theActiveAccount.addChangeListener(this);
+            theActiveAccount.addActionListener(this);
+
+            /* Add selection listener */
+            getSelectionModel().addListSelectionListener(this);
+        }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -465,6 +480,18 @@ public class CashTable
 
                 /* Note changes */
                 notifyChanges();
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* Handle actions */
+            if ((theActiveAccount.equals(o))
+                && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
 

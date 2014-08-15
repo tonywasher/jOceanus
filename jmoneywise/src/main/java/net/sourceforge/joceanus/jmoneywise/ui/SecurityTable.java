@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
@@ -69,6 +71,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -233,16 +236,12 @@ public class SecurityTable
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
-        /* Create listener */
-        SecurityListener myListener = new SecurityListener();
-
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theSecurityEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITY);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYINFO);
         thePriceEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYPRICE);
         setUpdateSet(theUpdateSet);
-        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new SecurityTableModel(this);
@@ -267,10 +266,9 @@ public class SecurityTable
         /* Create an account panel */
         theActiveAccount = new SecurityPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.addChangeListener(myListener);
 
-        /* Add selection listener */
-        getSelectionModel().addListSelectionListener(myListener);
+        /* Create listener */
+        new SecurityListener();
     }
 
     /**
@@ -331,6 +329,11 @@ public class SecurityTable
     @Override
     public boolean hasUpdates() {
         return theUpdateSet.hasUpdates();
+    }
+
+    @Override
+    public boolean hasSession() {
+        return hasUpdates() || isItemEditing();
     }
 
     @Override
@@ -458,7 +461,19 @@ public class SecurityTable
      * Listener class.
      */
     private final class SecurityListener
-            implements ChangeListener, ListSelectionListener {
+            implements ActionListener, ChangeListener, ListSelectionListener {
+        /**
+         * Constructor.
+         */
+        private SecurityListener() {
+            /* Listen to correct events */
+            theUpdateSet.addChangeListener(this);
+            theActiveAccount.addChangeListener(this);
+            theActiveAccount.addActionListener(this);
+
+            /* Add selection listener */
+            getSelectionModel().addListSelectionListener(this);
+        }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -487,6 +502,18 @@ public class SecurityTable
 
                 /* Note changes */
                 notifyChanges();
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* Handle actions */
+            if ((theActiveAccount.equals(o))
+                && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
 

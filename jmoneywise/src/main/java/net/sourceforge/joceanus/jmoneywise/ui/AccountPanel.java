@@ -389,6 +389,33 @@ public class AccountPanel
     }
 
     /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        /* Determine whether we have session focus */
+        boolean hasSession = theDepositTable.hasSession();
+        if (!hasSession) {
+            hasSession = theCashTable.hasUpdates();
+        }
+        if (!hasSession) {
+            hasSession = theLoanTable.hasUpdates();
+        }
+        if (!hasSession) {
+            hasSession = thePortfolioTable.hasUpdates();
+        }
+        if (!hasSession) {
+            hasSession = theSecurityTable.hasUpdates();
+        }
+        if (!hasSession) {
+            hasSession = thePayeeTable.hasSession();
+        }
+
+        /* Return to caller */
+        return hasSession;
+    }
+
+    /**
      * Does this panel have errors?
      * @return true/false
      */

@@ -862,6 +862,40 @@ public class TaxYear
         }
 
         /**
+         * Derive Edit list.
+         * @return the edit list
+         */
+        public TaxYearList deriveEditList() {
+            /* Build an empty List */
+            TaxYearList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = getTaxInfoTypes();
+
+            /* Create info List */
+            TaxInfoList myTaxInfo = getTaxInfo();
+            myList.theInfoList = myTaxInfo.getEmptyList(ListStyle.EDIT);
+
+            /* Loop through the taxYears */
+            Iterator<TaxYear> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                TaxYear myCurr = myIterator.next();
+
+                /* Ignore deleted years */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Build the new linked taxYear and add it to the list */
+                TaxYear myYear = new TaxYear(myList, myCurr);
+                myList.append(myYear);
+            }
+
+            /* Return the list */
+            return myList;
+        }
+
+        /**
          * Construct an edit extract for a TaxYear.
          * @param pTaxYear the tax year
          * @return the edit Extract

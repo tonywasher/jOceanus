@@ -360,6 +360,30 @@ public class CategoryPanel
     }
 
     /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        /* Determine whether we have session focus */
+        boolean hasSession = theDepositTable.hasSession();
+        if (!hasSession) {
+            hasSession = theCashTable.hasSession();
+        }
+        if (!hasSession) {
+            hasSession = theLoanTable.hasSession();
+        }
+        if (!hasSession) {
+            hasSession = theEventTable.hasSession();
+        }
+        if (!hasSession) {
+            hasSession = theTagTable.hasSession();
+        }
+
+        /* Return to caller */
+        return hasSession;
+    }
+
+    /**
      * Does this panel have errors?
      * @return true/false
      */

@@ -163,7 +163,7 @@ public class TransactionCategoryPanel
         TransactionCategory myCategory = getItem();
         TransactionCategoryType myType = myCategory.getCategoryType();
         CategoryType myCurrType = CategoryType.determineType(myType);
-        boolean showParent = myCurrType.equals(CategoryType.SUBTOTAL);
+        boolean showParent = myCurrType.hasSubCatName();
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myCategory.getDesc() != null;
@@ -174,7 +174,7 @@ public class TransactionCategoryPanel
         theFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
-        boolean canEdit = isEditable && !myCategory.isActive();
+        boolean canEdit = isEditable && !myCategory.isActive() && !myCurrType.isChangeable();
         theFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
@@ -410,7 +410,7 @@ public class TransactionCategoryPanel
 
             /* Handle Singular */
             if (myClass.isSingular()) {
-                return SUBTOTAL;
+                return SINGULAR;
             }
 
             /* Handle Income */
@@ -438,6 +438,20 @@ public class TransactionCategoryPanel
                 case TOTALS:
                 case XFER:
                 case SINGULAR:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        /**
+         * Is this type changeable?
+         * @return true/false
+         */
+        public boolean hasSubCatName() {
+            switch (this) {
+                case TOTALS:
+                case SUBTOTAL:
                     return false;
                 default:
                     return true;

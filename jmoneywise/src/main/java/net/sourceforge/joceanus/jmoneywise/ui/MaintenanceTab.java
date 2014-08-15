@@ -125,7 +125,7 @@ public class MaintenanceTab
     /**
      * The TaxYear Panel.
      */
-    private final MaintTaxYear theTaxYearTab;
+    private final TaxYearTable theTaxYearTab;
 
     /**
      * The Account Panel.
@@ -200,8 +200,8 @@ public class MaintenanceTab
         theCategoryTab.addActionListener(myListener);
 
         /* Create the TaxYears Tab */
-        theTaxYearTab = new MaintTaxYear(theView);
-        theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab);
+        theTaxYearTab = new TaxYearTable(theView);
+        theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
         theTaxYearTab.addChangeListener(myListener);
         theTaxYearTab.addActionListener(myListener);
 
@@ -300,6 +300,30 @@ public class MaintenanceTab
     }
 
     /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        /* Determine whether we have focus */
+        boolean hasUpdates = theAccountTab.hasSession();
+        if (!hasUpdates) {
+            hasUpdates = theCategoryTab.hasSession();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theTaxYearTab.hasSession();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theStatic.hasSession();
+        }
+        if (!hasUpdates) {
+            hasUpdates = thePreferences.hasSession();
+        }
+
+        /* Return to caller */
+        return hasUpdates;
+    }
+
+    /**
      * Select maintenance.
      * @param pEvent the action request
      */
@@ -378,15 +402,15 @@ public class MaintenanceTab
      * Set visibility.
      */
     protected void setVisibility() {
-        /* Determine whether we have any updates */
-        boolean hasUpdates = hasUpdates();
+        /* Determine whether we have any locked session */
+        boolean hasSession = hasSession();
 
         /* Access the Account index */
         int iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
 
         /* Enable/Disable the Account tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theAccountTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasSession || theAccountTab.hasSession());
         }
 
         /* Access the Category index */
@@ -394,7 +418,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the Category tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theCategoryTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasSession || theCategoryTab.hasSession());
         }
 
         /* Access the TaxYear index */
@@ -402,7 +426,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the TaxYear tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theTaxYearTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasSession || theTaxYearTab.hasSession());
         }
 
         /* Access the Static panel */
@@ -410,7 +434,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the static tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theStatic.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasSession || theStatic.hasSession());
         }
 
         /* Access the Properties panel */
@@ -418,7 +442,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the Properties tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || thePreferences.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasSession || thePreferences.hasSession());
         }
 
         /* Update the top level tabs */
