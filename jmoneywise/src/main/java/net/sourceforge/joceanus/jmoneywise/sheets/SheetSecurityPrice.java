@@ -173,7 +173,7 @@ public class SheetSecurityPrice
 
             /* Loop through the rows of the table */
             DataRow myActRow = myView.getRowByIndex(0);
-            for (int i = 1; i < myRows; i++) {
+            for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
                 DataRow myRow = myView.getRowByIndex(i);
 
@@ -183,8 +183,8 @@ public class SheetSecurityPrice
 
                 /* If the price is too late */
                 if (pLastEvent.compareTo(myDate) < 0) {
-                    /* Break the loop */
-                    break;
+                    /* Skip the row */
+                    continue;
                 }
 
                 /* Loop through the columns of the table */

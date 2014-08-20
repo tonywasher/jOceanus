@@ -41,17 +41,22 @@ public abstract class PrometheusIcons {
     /**
      * The active icon.
      */
-    private static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(JDataTable.class.getResource("Active.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("Active.png")), ICON_XTRA_SIZE);
 
     /**
      * The delete icon.
      */
-    private static final Icon ICON_DELETE = resizeImage(new ImageIcon(JDataTable.class.getResource("RedDelete.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_DELETE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("RedDelete.png")), ICON_XTRA_SIZE);
 
     /**
      * The disabled icon.
      */
-    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(StaticDataTable.class.getResource("Disabled.png")));
+    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("Disabled.png")));
+
+    /**
+     * The new icon.
+     */
+    private static final Icon ICON_NEW = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("GreenJellyPlus.png")));
 
     /**
      * Resize an icon to the row height.
@@ -81,11 +86,13 @@ public abstract class PrometheusIcons {
      * Build status button state.
      * @param pState the button state
      */
-    public static void buildStatusButton(final DefaultIconButtonState<Boolean> pState) {
+    public static void buildStatusButton(final DefaultIconButtonState<ActionType> pState) {
         /* Configure the status iconButton */
-        pState.setIconForValue(Boolean.FALSE, ICON_DELETE);
-        pState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
-        pState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+        pState.setIconForValue(ActionType.DELETE, ICON_DELETE);
+        pState.setIconForValue(ActionType.ACTIVE, ICON_ACTIVE);
+        pState.setIconForValue(ActionType.INSERT, ICON_NEW);
+        pState.setNewValueForValue(ActionType.DELETE, ActionType.DO);
+        pState.setNewValueForValue(ActionType.INSERT, ActionType.DO);
     }
 
     /**
@@ -108,5 +115,30 @@ public abstract class PrometheusIcons {
         pState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
         pState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Action types.
+     */
+    public enum ActionType {
+        /**
+         * None.
+         */
+        DO,
+
+        /**
+         * None.
+         */
+        ACTIVE,
+
+        /**
+         * Delete.
+         */
+        DELETE,
+
+        /**
+         * Insert.
+         */
+        INSERT;
     }
 }

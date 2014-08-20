@@ -942,7 +942,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             return updateSecurity(pTask);
         } else {
             /* Make sure that password changes are OK */
-            getControlKey().ensurePasswordHash();
+            ControlKey myKey = getControlKey();
+            if (myKey != null) {
+                myKey.ensurePasswordHash();
+            }
         }
 
         /* Return success */

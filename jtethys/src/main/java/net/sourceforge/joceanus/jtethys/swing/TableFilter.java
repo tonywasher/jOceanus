@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jtethys.swing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
@@ -705,7 +705,7 @@ public class TableFilter<T extends Comparable<? super T>>
      * by subsequent changes.
      * @return the iterator
      */
-    public Iterator<T> modelIterator() {
+    public ListIterator<T> modelIterator() {
         /* Allocate iterator */
         return new TableIterator(theModelToView);
     }
@@ -715,9 +715,20 @@ public class TableFilter<T extends Comparable<? super T>>
      * by subsequent changes.
      * @return the iterator
      */
-    public Iterator<T> viewIterator() {
+    public ListIterator<T> viewIterator() {
         /* Allocate iterator */
         return new TableIterator(theViewToModel);
+    }
+
+    /**
+     * Obtain an iterator over View rows, and set it to the end of the list.
+     * @return the iterator
+     */
+    public ListIterator<T> viewEndIterator() {
+        /* Allocate iterator */
+        TableIterator myIterator = new TableIterator(theViewToModel);
+        myIterator.setToEnd();
+        return myIterator;
     }
 
     /**
@@ -725,7 +736,7 @@ public class TableFilter<T extends Comparable<? super T>>
      * changes.
      */
     private final class TableIterator
-            implements Iterator<T> {
+            implements ListIterator<T> {
         /**
          * List to iterate over.
          */
@@ -737,9 +748,14 @@ public class TableFilter<T extends Comparable<? super T>>
         private int theSize;
 
         /**
-         * Next index.
+         * index before.
          */
-        private int theIndex;
+        private int theBeforeIndex;
+
+        /**
+         * index after.
+         */
+        private int theAfterIndex;
 
         /**
          * Constructor.
@@ -747,15 +763,29 @@ public class TableFilter<T extends Comparable<? super T>>
          */
         private TableIterator(final RowEntry<T>[] pArray) {
             /* Store the array */
-            theArray = pArray;
-            theSize = theArray.length;
-            theIndex = 0;
+            theSize = pArray.length;
+            theArray = Arrays.copyOf(pArray, theSize);
+            theBeforeIndex = -1;
+            theAfterIndex = 0;
+        }
+
+        /**
+         * Set to end.
+         */
+        private void setToEnd() {
+            theBeforeIndex = theSize - 1;
+            theAfterIndex = theSize;
         }
 
         @Override
         public boolean hasNext() {
             /* Determine whether we have further elements */
-            return theSize > theIndex;
+            return theSize > theAfterIndex;
+        }
+
+        @Override
+        public int nextIndex() {
+            return theAfterIndex;
         }
 
         @Override
@@ -766,7 +796,38 @@ public class TableFilter<T extends Comparable<? super T>>
             }
 
             /* Return the element */
-            return theArray[theIndex++].theRow;
+            theBeforeIndex++;
+            return theArray[theAfterIndex++].theRow;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            /* Determine whether we have further elements */
+            return theBeforeIndex >= 0;
+        }
+
+        @Override
+        public int previousIndex() {
+            return theBeforeIndex;
+        }
+
+        @Override
+        public T previous() {
+            /* Check correctness */
+            if (!hasPrevious()) {
+                throw new NoSuchElementException();
+            }
+
+            /* Return the element */
+            theAfterIndex--;
+            return theArray[theBeforeIndex--].theRow;
+        }
+
+        @Override
+        public void forEachRemaining(final Consumer<? super T> pAction) {
+            while (hasNext()) {
+                pAction.accept(next());
+            }
         }
 
         @Override
@@ -775,10 +836,13 @@ public class TableFilter<T extends Comparable<? super T>>
         }
 
         @Override
-        public void forEachRemaining(final Consumer<? super T> pAction) {
-            while (hasNext()) {
-                pAction.accept(next());
-            }
+        public void add(final T pItem) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void set(final T pItem) {
+            throw new UnsupportedOperationException();
         }
     }
 }

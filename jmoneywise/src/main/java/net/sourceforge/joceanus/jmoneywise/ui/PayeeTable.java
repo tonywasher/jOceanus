@@ -64,6 +64,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -547,7 +548,7 @@ public class PayeeTable
         /**
          * Status Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
 
         /**
          * Date Renderer.
@@ -572,7 +573,7 @@ public class PayeeTable
         /**
          * Status Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
+        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
          * PayeeType ScrollButton Menu Editor.
@@ -594,7 +595,7 @@ public class PayeeTable
 
             /* Create the relevant formatters */
             theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PayeeType.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
@@ -678,7 +679,9 @@ public class PayeeTable
                 case COLUMN_CLOSED:
                     return pPayee.isClosed();
                 case COLUMN_ACTIVE:
-                    return pPayee.isActive();
+                    return pPayee.isActive()
+                                            ? ActionType.ACTIVE
+                                            : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pPayee.getLatest();
                     return (myTran == null)
@@ -714,7 +717,7 @@ public class PayeeTable
                     pItem.setClosed((Boolean) pValue);
                     break;
                 case COLUMN_ACTIVE:
-                    deleteRow(pItem);
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;

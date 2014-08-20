@@ -224,14 +224,6 @@ public class SecurityPrice
      * Set the security.
      * @param pValue the security
      */
-    protected void setSecurity(final Security pValue) {
-        setValueSecurity(pValue);
-    }
-
-    /**
-     * Set the security.
-     * @param pValue the security
-     */
     private void setValueSecurity(final Security pValue) {
         getValueSet().setValue(FIELD_SECURITY, pValue);
     }
@@ -319,13 +311,10 @@ public class SecurityPrice
     /**
      * Edit Constructor.
      * @param pList the list
-     * @param pSecurity the security
      */
-    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
-                            final Security pSecurity) {
+    public SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList) {
         super(pList, 0);
         setNextDataKeySet();
-        setValueSecurity(pSecurity);
     }
 
     /**
@@ -391,10 +380,18 @@ public class SecurityPrice
             return -1;
         }
 
+        /* If header settings differ */
+        if (isHeader() != pThat.isHeader()) {
+            return isHeader()
+                             ? -1
+                             : 1;
+        }
+
         /* Compare the dates */
         int iDiff = Difference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
-            return iDiff;
+            /* Sort in reverse date order !! */
+            return -iDiff;
         }
 
         /* Compare the securities */
@@ -468,6 +465,14 @@ public class SecurityPrice
         if (!hasErrors()) {
             setValidEdit();
         }
+    }
+
+    /**
+     * Set the security.
+     * @param pValue the security
+     */
+    public void setSecurity(final Security pValue) {
+        setValueSecurity(pValue);
     }
 
     /**
@@ -675,10 +680,8 @@ public class SecurityPrice
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 SecurityPrice myCurr = myIterator.next();
-                if (!pDate.equals(myCurr.getDate())) {
-                    continue;
-                }
-                if (pSecurity.equals(myCurr.getSecurity())) {
+                if (pDate.equals(myCurr.getDate())
+                    && pSecurity.equals(myCurr.getSecurity())) {
                     iCount++;
                 }
             }
@@ -695,11 +698,8 @@ public class SecurityPrice
          */
         public SecurityPrice getLatestPrice(final AssetBase<?> pSecurity,
                                             final JDateDay pDate) {
-            /* Access the list iterator */
-            Iterator<SecurityPrice> myIterator = iterator();
-            SecurityPrice myPrice = null;
-
             /* Loop through the Prices */
+            Iterator<SecurityPrice> myIterator = iterator();
             while (myIterator.hasNext()) {
                 SecurityPrice myCurr = myIterator.next();
 
@@ -708,17 +708,14 @@ public class SecurityPrice
                     continue;
                 }
 
-                /* break loop if we have passed the date */
-                if (myCurr.getDate().compareTo(pDate) > 0) {
-                    break;
+                /* Return price if we have reached the date */
+                if (pDate.compareTo(myCurr.getDate()) >= 0) {
+                    return myCurr;
                 }
-
-                /* Record the best case so far */
-                myPrice = myCurr;
             }
 
-            /* Return the price */
-            return myPrice;
+            /* Return null */
+            return null;
         }
 
         /**
@@ -751,9 +748,10 @@ public class SecurityPrice
                         /* else if we have a new price with no underlying */
                     } else if (myPoint != null) {
                         /* Create the new Price */
-                        myPrice = new SecurityPrice(this, mySpot.getSecurity());
+                        myPrice = new SecurityPrice(this);
 
                         /* Set the date and price */
+                        myPrice.setSecurity(mySpot.getSecurity());
                         myPrice.setDate(new JDateDay(myDate));
                         myPrice.setValuePrice(myPoint);
 

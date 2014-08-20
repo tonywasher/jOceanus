@@ -544,25 +544,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     }
 
     /**
-     * Delete the selected items.
-     * @param pRow the row to delete
-     */
-    protected void deleteRow(final T pRow) {
-        /* Access the row # and adjust for header */
-        int myRowNo = pRow.indexOf();
-
-        /* Mark the row as deleted */
-        pRow.setDeleted(true);
-
-        /* Notify of the update of the row */
-        theModel.fireUpdateRowEvents(myRowNo);
-
-        /* Increment version */
-        incrementVersion();
-        notifyChanges();
-    }
-
-    /**
      * Delete the row.
      */
     protected void deleteRows() {

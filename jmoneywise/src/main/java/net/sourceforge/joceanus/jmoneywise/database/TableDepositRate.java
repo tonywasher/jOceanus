@@ -69,7 +69,7 @@ public class TableDepositRate
         ColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */
-        myDateCol.setSortOrder(SortOrder.ASCENDING);
+        myDateCol.setSortOrder(SortOrder.DESCENDING);
         myActCol.setSortOrder(SortOrder.ASCENDING);
     }
 

@@ -57,6 +57,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -517,12 +518,12 @@ public class TransactionTagTable
         /**
          * Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theIconRenderer;
 
         /**
          * Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theIconEditor;
+        private final IconButtonCellEditor<ActionType> theIconEditor;
 
         /**
          * String Renderer.
@@ -543,7 +544,7 @@ public class TransactionTagTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
@@ -590,7 +591,9 @@ public class TransactionTagTable
                 case COLUMN_DESC:
                     return pTransactionTag.getDesc();
                 case COLUMN_ACTIVE:
-                    return pTransactionTag.isActive();
+                    return pTransactionTag.isActive()
+                                                     ? ActionType.ACTIVE
+                                                     : ActionType.DELETE;
                 default:
                     return null;
             }
@@ -615,7 +618,7 @@ public class TransactionTagTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_ACTIVE:
-                    deleteRow(pItem);
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;

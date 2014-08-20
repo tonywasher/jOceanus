@@ -196,7 +196,8 @@ public class ViewSecurityPrice
      * @param pList the list
      */
     private ViewSecurityPrice(final ViewSecurityPriceList pList) {
-        super(pList, pList.getSecurity());
+        super(pList);
+        setSecurity(pList.getSecurity());
 
         /* Determine whether the account has dilutions */
         hasDilutions = ((ViewSecurityPriceList) getList()).hasDilutions;

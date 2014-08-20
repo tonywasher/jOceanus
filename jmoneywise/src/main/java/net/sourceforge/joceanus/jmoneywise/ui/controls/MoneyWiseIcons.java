@@ -107,11 +107,6 @@ public final class MoneyWiseIcons
     private static final Icon ICON_GOTO = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyGoTo.png")), ICON_XTRA_SIZE);
 
     /**
-     * The new icon.
-     */
-    private static final Icon ICON_NEW = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("GreenJellyPlus.png")));
-
-    /**
      * Private constructor to prevent instantiation.
      */
     private MoneyWiseIcons() {

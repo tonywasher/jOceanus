@@ -593,7 +593,7 @@ public class SpotSecurityPrices
          */
         private SpotSecurityPrice(final SpotSecurityList pList,
                                   final Security pSecurity) {
-            super(pList, pSecurity);
+            super(pList);
 
             /* Store base values */
             setDate(pList.theDate);

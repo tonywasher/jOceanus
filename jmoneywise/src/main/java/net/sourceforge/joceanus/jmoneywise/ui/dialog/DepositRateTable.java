@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.Dimension;
+import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -35,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
@@ -45,6 +47,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -77,9 +80,9 @@ public class DepositRateTable
     private static final String TITLE_ENDDATE = DepositRate.FIELD_ENDDATE.getName();
 
     /**
-     * Delete Column Title.
+     * Action Column Title.
      */
-    private static final String TITLE_DELETE = "Delete";
+    private static final String TITLE_ACTION = "Action";
 
     /**
      * The field manager.
@@ -110,6 +113,11 @@ public class DepositRateTable
      * The Column Model.
      */
     private final DepositRateColumnModel theColumns;
+
+    /**
+     * Rate Header.
+     */
+    private transient DepositRate theHeader;
 
     /**
      * Deposit.
@@ -184,6 +192,7 @@ public class DepositRateTable
     protected void refreshData() {
         /* Access the rates list */
         theRates = theUpdateSet.findDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
+        theHeader = new RateHeader(theRates);
         setList(theRates);
         fireStateChanged();
     }
@@ -206,6 +215,7 @@ public class DepositRateTable
     protected void setEditable(final boolean pEditable) {
         /* Store the value */
         isEditable = pEditable;
+        theModel.adjustHeader();
         theColumns.setColumns();
     }
 
@@ -246,7 +256,7 @@ public class DepositRateTable
         public int getRowCount() {
             return (theRates == null)
                                      ? 0
-                                     : theRates.size();
+                                     : 1 + theRates.size();
         }
 
         @Override
@@ -264,14 +274,18 @@ public class DepositRateTable
         @Override
         public DepositRate getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return theRates.get(pRowIndex);
+            return pRowIndex == 0
+                                 ? theHeader
+                                 : theRates.get(pRowIndex - 1);
         }
 
         @Override
         public Object getItemValue(final DepositRate pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return theColumns.getItemValue(pItem, pColIndex);
+            return pItem.isHeader()
+                                   ? theColumns.getHeaderValue(pColIndex)
+                                   : theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -296,7 +310,69 @@ public class DepositRateTable
             }
 
             /* Handle filter */
-            return theDeposit.equals(pRow.getDeposit());
+            return pRow.isHeader()
+                                  ? isEditable
+                                  : theDeposit.equals(pRow.getDeposit());
+        }
+
+        /**
+         * Adjust header.
+         */
+        private void adjustHeader() {
+            fireUpdateRowEvents(0);
+        }
+
+        /**
+         * New item.
+         */
+        private void addNewItem() {
+            /* Create the new rate */
+            DepositRate myRate = new DepositRate(theRates);
+
+            /* Protect against Exceptions */
+            try {
+                /* Set the item value */
+                myRate.setDeposit(theDeposit);
+                myRate.setRate(JRate.getWholePercentage(0));
+
+                /* Handle Exceptions */
+            } catch (JOceanusException e) {
+                /* Build the error */
+                JOceanusException myError = new JMoneyWiseDataException("Failed to create new rate", e);
+
+                /* Show the error */
+                setError(myError);
+                return;
+            }
+
+            /* Obtain latest element */
+            Iterator<DepositRate> myIterator = theModel.viewIterator();
+            myIterator.next();
+            DepositRate myLatest = myIterator.hasNext()
+                                                       ? myIterator.next()
+                                                       : null;
+
+            /* If we have a latest element with no date */
+            if (myLatest != null
+                && myLatest.getEndDate() == null) {
+                /* Update date to todays date. */
+                myLatest.pushHistory();
+                myLatest.setNewVersion();
+                myLatest.setEndDate(new JDateDay());
+            }
+
+            /* Add the new item */
+            myRate.setNewVersion();
+            theRates.append(myRate);
+
+            /* Validate the new item and notify of the changes */
+            myRate.validate();
+            theModel.fireNewDataEvents();
+
+            /* Shift display to line */
+            selectRowWithScroll(1);
+            incrementVersion();
+            notifyChanges();
         }
     }
 
@@ -326,9 +402,9 @@ public class DepositRateTable
         private static final int COLUMN_ENDDATE = 2;
 
         /**
-         * Delete column id.
+         * Action column id.
          */
-        private static final int COLUMN_DELETE = 3;
+        private static final int COLUMN_ACTION = 3;
 
         /**
          * Date Renderer.
@@ -341,9 +417,9 @@ public class DepositRateTable
         private final DecimalCellRenderer theDecimalRenderer;
 
         /**
-         * Delete Icon Renderer.
+         * Action Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theDeleteIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
 
         /**
          * Rate editor.
@@ -356,14 +432,14 @@ public class DepositRateTable
         private final CalendarCellEditor theDateEditor;
 
         /**
-         * Delete Icon editor.
+         * Action Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theDeleteIconEditor;
+        private final IconButtonCellEditor<ActionType> theActionIconEditor;
 
         /**
-         * Delete column.
+         * Action column.
          */
-        private final JDataTableColumn theDeleteColumn;
+        private final JDataTableColumn theActionColumn;
 
         /**
          * Constructor.
@@ -376,20 +452,20 @@ public class DepositRateTable
             /* Create the relevant formatters */
             theRateEditor = theFieldMgr.allocateRateCellEditor();
             theDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            theDeleteIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            theDeleteIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theDeleteIconEditor);
+            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildDeleteButton(theDeleteIconEditor.getState());
+            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_RATE, WIDTH_RATE, theDecimalRenderer, theRateEditor));
             declareColumn(new JDataTableColumn(COLUMN_BONUS, WIDTH_RATE, theDecimalRenderer, theRateEditor));
             declareColumn(new JDataTableColumn(COLUMN_ENDDATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            theDeleteColumn = new JDataTableColumn(COLUMN_DELETE, WIDTH_ICON, theDeleteIconRenderer, theDeleteIconEditor);
-            declareColumn(theDeleteColumn);
+            theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor);
+            declareColumn(theActionColumn);
 
             /* Initialise the columns */
             setColumns();
@@ -401,9 +477,9 @@ public class DepositRateTable
         private void setColumns() {
             /* Switch on mode */
             if (isEditable) {
-                revealColumn(theDeleteColumn);
+                revealColumn(theActionColumn);
             } else {
-                hideColumn(theDeleteColumn);
+                hideColumn(theActionColumn);
             }
         }
 
@@ -420,8 +496,23 @@ public class DepositRateTable
                     return TITLE_BONUS;
                 case COLUMN_ENDDATE:
                     return TITLE_ENDDATE;
-                case COLUMN_DELETE:
-                    return TITLE_DELETE;
+                case COLUMN_ACTION:
+                    return TITLE_ACTION;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the header value for the column.
+         * @param pColIndex column index
+         * @return the value
+         */
+        private Object getHeaderValue(final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_ACTION:
+                    return ActionType.INSERT;
                 default:
                     return null;
             }
@@ -443,8 +534,8 @@ public class DepositRateTable
                     return pItem.getBonus();
                 case COLUMN_ENDDATE:
                     return pItem.getEndDate();
-                case COLUMN_DELETE:
-                    return Boolean.TRUE;
+                case COLUMN_ACTION:
+                    return ActionType.DELETE;
                 default:
                     return null;
             }
@@ -471,8 +562,12 @@ public class DepositRateTable
                 case COLUMN_ENDDATE:
                     pItem.setEndDate((JDateDay) pValue);
                     break;
-                case COLUMN_DELETE:
-                    deleteRow(pItem);
+                case COLUMN_ACTION:
+                    if (pItem.isHeader()) {
+                        theModel.addNewItem();
+                    } else {
+                        pItem.setDeleted(true);
+                    }
                     break;
                 default:
                     break;
@@ -492,8 +587,8 @@ public class DepositRateTable
                 case COLUMN_BONUS:
                 case COLUMN_ENDDATE:
                     return isEditable;
-                case COLUMN_DELETE:
-                    return isEditable && theModel.getViewRowCount() > 1;
+                case COLUMN_ACTION:
+                    return isEditable;
                 default:
                     return false;
             }
@@ -516,6 +611,21 @@ public class DepositRateTable
                 default:
                     return null;
             }
+        }
+    }
+
+    /**
+     * Rate Header class.
+     */
+    private static class RateHeader
+            extends DepositRate {
+        /**
+         * Constructor.
+         * @param pList the DepositRate list
+         */
+        protected RateHeader(final DepositRateList pList) {
+            super(pList);
+            setHeader(true);
         }
     }
 }

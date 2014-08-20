@@ -308,7 +308,7 @@ public class TransactionCategoryPanel
             /* Record active item */
             TransactionCategory myCategory = getItem();
             TransactionCategory myCurr = myCategory.getParentCategory();
-            Boolean isExpense = myCategory.getCategoryTypeClass().isExpense();
+            boolean isExpense = myCategory.getCategoryTypeClass().isExpense();
             JMenuItem myActive = null;
 
             /* Loop through the TransactionCategories */

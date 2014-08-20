@@ -73,6 +73,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -602,7 +603,7 @@ public class DepositTable
         /**
          * Status Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
 
         /**
          * Date Renderer.
@@ -627,7 +628,7 @@ public class DepositTable
         /**
          * Status Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
+        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
          * Category ScrollButton Menu Editor.
@@ -659,7 +660,7 @@ public class DepositTable
 
             /* Create the relevant formatters */
             theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(DepositCategory.class);
             theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
@@ -757,7 +758,9 @@ public class DepositTable
                 case COLUMN_CLOSED:
                     return pDeposit.isClosed();
                 case COLUMN_ACTIVE:
-                    return pDeposit.isActive();
+                    return pDeposit.isActive()
+                                              ? ActionType.ACTIVE
+                                              : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pDeposit.getLatest();
                     return (myTran == null)
@@ -799,7 +802,7 @@ public class DepositTable
                     pItem.setClosed((Boolean) pValue);
                     break;
                 case COLUMN_ACTIVE:
-                    deleteRow(pItem);
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;

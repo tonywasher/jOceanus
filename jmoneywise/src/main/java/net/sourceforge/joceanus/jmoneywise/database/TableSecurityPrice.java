@@ -68,7 +68,7 @@ public class TableSecurityPrice
         myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, EncryptedData.PRICELEN);
 
         /* Declare Sort Columns */
-        myDateCol.setSortOrder(SortOrder.ASCENDING);
+        myDateCol.setSortOrder(SortOrder.DESCENDING);
         myActCol.setSortOrder(SortOrder.ASCENDING);
     }
 

@@ -446,7 +446,9 @@ public class AnalysisStatement
         @Override
         public boolean isCellEditable(final Transaction pItem,
                                       final int pColIndex) {
-            return theColumns.isCellEditable(pItem, pColIndex);
+            return pItem.isHeader()
+                                   ? false
+                                   : theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override

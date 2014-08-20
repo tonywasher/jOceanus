@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -289,14 +290,6 @@ public class DepositRate
     }
 
     /**
-     * Set the deposit.
-     * @param pValue the deposit
-     */
-    protected void setDeposit(final Deposit pValue) {
-        setValueDeposit(pValue);
-    }
-
-    /**
      * Set the account.
      * @param pValue the account
      */
@@ -510,10 +503,18 @@ public class DepositRate
             return -1;
         }
 
+        /* If header settings differ */
+        if (isHeader() != pThat.isHeader()) {
+            return isHeader()
+                             ? -1
+                             : 1;
+        }
+
         /* If the date differs */
         int iDiff = Difference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
-            return iDiff;
+            /* Sort in reverse date order !! */
+            return -iDiff;
         }
 
         /* Compare the deposits */
@@ -553,42 +554,22 @@ public class DepositRate
     @Override
     public void validate() {
         DepositRateList myList = getList();
-        MoneyWiseData mySet = getDataSet();
         JDateDay myDate = getEndDate();
         JRate myRate = getRate();
         JRate myBonus = getBonus();
 
-        /* Access the next element (if any) */
-        DepositRate myNext = myList.peekNext(this);
-
-        /* Determine whether this is the last entry for the account */
-        boolean isLast = (myNext == null) || !Difference.isEqual(myNext.getDeposit(), getDeposit());
-
-        /* If the date is null then we must be the last element for the account */
-        if (myDate == null) {
-            /* Can only have null date on last entry for account */
-            if (!isLast) {
-                addError(ERROR_NULLDATE, FIELD_ENDDATE);
-            }
-
-            /* If we have a date */
-        } else {
-            /* The date must be unique for this deposit */
-            if (myList.countInstances(myDate, getDeposit()) > 1) {
-                addError(ERROR_DUPLICATE, FIELD_ENDDATE);
-            }
-
-            /* The date must be in-range (unless it is the last one) */
-            if ((!isLast) && (mySet.getDateRange().compareTo(myDate) != 0)) {
-                addError(ERROR_RANGE, FIELD_ENDDATE);
-            }
+        /* Count instances of this date for the account */
+        int myCount = myList.countInstances(myDate, getDeposit());
+        if (myCount > 1) {
+            /* Each date must be unique for deposit (even null) */
+            addError(myDate == null
+                                   ? ERROR_NULLDATE
+                                   : ERROR_DUPLICATE, FIELD_ENDDATE);
         }
 
         /* The Rate must be non-zero and greater than zero */
         if (myRate == null) {
             addError(ERROR_MISSING, FIELD_RATE);
-        } else if (myRate.isZero()) {
-            addError(ERROR_ZERO, FIELD_RATE);
         } else if (!myRate.isPositive()) {
             addError(ERROR_NEGATIVE, FIELD_RATE);
         }
@@ -606,6 +587,14 @@ public class DepositRate
         if (!hasErrors()) {
             setValidEdit();
         }
+    }
+
+    /**
+     * Set the deposit.
+     * @param pValue the deposit
+     */
+    public void setDeposit(final Deposit pValue) {
+        setValueDeposit(pValue);
     }
 
     /**
@@ -783,18 +772,17 @@ public class DepositRate
          * Count the instances of a date.
          * @param pDate the date
          * @param pDeposit the deposit
-         * @return The Item if present (or null)
+         * @return the instance count
          */
         protected int countInstances(final JDateDay pDate,
                                      final Deposit pDeposit) {
-            /* Access the list iterator */
-            Iterator<DepositRate> myIterator = iterator();
-            int iCount = 0;
-
             /* Loop through the items to find the entry */
+            int iCount = 0;
+            Iterator<DepositRate> myIterator = iterator();
             while (myIterator.hasNext()) {
                 DepositRate myCurr = myIterator.next();
-                if ((pDate.equals(myCurr.getEndDate())) && (pDeposit.equals(myCurr.getDeposit()))) {
+                if (Difference.isEqual(pDate, myCurr.getEndDate())
+                    && pDeposit.equals(myCurr.getDeposit())) {
                     iCount++;
                 }
             }
@@ -811,12 +799,10 @@ public class DepositRate
          */
         public DepositRate getLatestRate(final Deposit pDeposit,
                                          final JDateDay pDate) {
-            /* Access the list iterator */
-            Iterator<DepositRate> myIterator = listIterator();
-
             /* Loop through the Rates */
-            while (myIterator.hasNext()) {
-                DepositRate myCurr = myIterator.next();
+            ListIterator<DepositRate> myIterator = listIterator();
+            while (myIterator.hasPrevious()) {
+                DepositRate myCurr = myIterator.previous();
                 /* Skip records that do not belong to this deposit */
                 if (!Difference.isEqual(myCurr.getDeposit(), pDeposit)) {
                     continue;

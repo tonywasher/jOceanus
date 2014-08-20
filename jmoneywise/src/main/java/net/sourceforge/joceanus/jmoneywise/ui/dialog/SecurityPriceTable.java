@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
@@ -45,6 +46,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -72,9 +74,9 @@ public class SecurityPriceTable
     private static final String TITLE_PRICE = SecurityPrice.FIELD_PRICE.getName();
 
     /**
-     * Delete Column Title.
+     * Action Column Title.
      */
-    private static final String TITLE_DELETE = "Delete";
+    private static final String TITLE_ACTION = "Action";
 
     /**
      * The field manager.
@@ -105,6 +107,11 @@ public class SecurityPriceTable
      * The Column Model.
      */
     private final SecurityPriceColumnModel theColumns;
+
+    /**
+     * Price Header.
+     */
+    private transient SecurityPrice theHeader;
 
     /**
      * Security.
@@ -151,7 +158,6 @@ public class SecurityPriceTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         setUpdateSet(theUpdateSet);
-        // theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new SecurityPriceTableModel(this);
@@ -180,6 +186,7 @@ public class SecurityPriceTable
     protected void refreshData() {
         /* Access the prices list */
         thePrices = theUpdateSet.findDataList(MoneyWiseDataType.SECURITYPRICE, SecurityPriceList.class);
+        theHeader = new PriceHeader(thePrices);
         setList(thePrices);
         fireStateChanged();
     }
@@ -202,6 +209,7 @@ public class SecurityPriceTable
     protected void setEditable(final boolean pEditable) {
         /* Store the value */
         isEditable = pEditable;
+        theModel.adjustHeader();
         theColumns.setColumns();
     }
 
@@ -242,7 +250,7 @@ public class SecurityPriceTable
         public int getRowCount() {
             return (thePrices == null)
                                       ? 0
-                                      : thePrices.size();
+                                      : 1 + thePrices.size();
         }
 
         @Override
@@ -260,14 +268,18 @@ public class SecurityPriceTable
         @Override
         public SecurityPrice getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return thePrices.get(pRowIndex);
+            return pRowIndex == 0
+                                 ? theHeader
+                                 : thePrices.get(pRowIndex - 1);
         }
 
         @Override
         public Object getItemValue(final SecurityPrice pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return theColumns.getItemValue(pItem, pColIndex);
+            return pItem.isHeader()
+                                   ? theColumns.getHeaderValue(pColIndex)
+                                   : theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -292,7 +304,54 @@ public class SecurityPriceTable
             }
 
             /* Handle filter */
-            return theSecurity.equals(pRow.getSecurity());
+            return pRow.isHeader()
+                                  ? isEditable
+                                  : theSecurity.equals(pRow.getSecurity());
+        }
+
+        /**
+         * Adjust header.
+         */
+        private void adjustHeader() {
+            fireUpdateRowEvents(0);
+        }
+
+        /**
+         * New item.
+         */
+        private void addNewItem() {
+            /* Create the new price */
+            SecurityPrice myPrice = new SecurityPrice(thePrices);
+
+            /* Protect against Exceptions */
+            try {
+                /* Set the item value */
+                myPrice.setSecurity(theSecurity);
+                myPrice.setDate(new JDateDay());
+                myPrice.setPrice(JPrice.getWholeUnits(1, theSecurity.getSecurityCurrency().getCurrency()));
+
+                /* Handle Exceptions */
+            } catch (JOceanusException e) {
+                /* Build the error */
+                JOceanusException myError = new JMoneyWiseDataException("Failed to create new price", e);
+
+                /* Show the error */
+                setError(myError);
+                return;
+            }
+
+            /* Add the new item */
+            myPrice.setNewVersion();
+            thePrices.append(myPrice);
+
+            /* Validate the new item and notify of the changes */
+            myPrice.validate();
+            theModel.fireNewDataEvents();
+
+            /* Shift display to line */
+            selectRowWithScroll(1);
+            incrementVersion();
+            notifyChanges();
         }
     }
 
@@ -317,9 +376,9 @@ public class SecurityPriceTable
         private static final int COLUMN_PRICE = 1;
 
         /**
-         * Delete column id.
+         * Action column id.
          */
-        private static final int COLUMN_DELETE = 2;
+        private static final int COLUMN_ACTION = 2;
 
         /**
          * Date Renderer.
@@ -332,9 +391,9 @@ public class SecurityPriceTable
         private final DecimalCellRenderer theDecimalRenderer;
 
         /**
-         * Delete Icon Renderer.
+         * Action Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theDeleteIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
 
         /**
          * Price editor.
@@ -347,14 +406,14 @@ public class SecurityPriceTable
         private final CalendarCellEditor theDateEditor;
 
         /**
-         * Delete Icon editor.
+         * Action Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theDeleteIconEditor;
+        private final IconButtonCellEditor<ActionType> theActionIconEditor;
 
         /**
-         * Delete column.
+         * Action column.
          */
-        private final JDataTableColumn theDeleteColumn;
+        private final JDataTableColumn theActionColumn;
 
         /**
          * Constructor.
@@ -367,19 +426,19 @@ public class SecurityPriceTable
             /* Create the relevant formatters */
             thePriceEditor = theFieldMgr.allocatePriceCellEditor();
             theDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            theDeleteIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            theDeleteIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theDeleteIconEditor);
+            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildDeleteButton(theDeleteIconEditor.getState());
+            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
-            theDeleteColumn = new JDataTableColumn(COLUMN_DELETE, WIDTH_ICON, theDeleteIconRenderer, theDeleteIconEditor);
-            declareColumn(theDeleteColumn);
+            theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor);
+            declareColumn(theActionColumn);
 
             /* Initialise the columns */
             setColumns();
@@ -391,9 +450,9 @@ public class SecurityPriceTable
         private void setColumns() {
             /* Switch on mode */
             if (isEditable) {
-                revealColumn(theDeleteColumn);
+                revealColumn(theActionColumn);
             } else {
-                hideColumn(theDeleteColumn);
+                hideColumn(theActionColumn);
             }
         }
 
@@ -408,8 +467,23 @@ public class SecurityPriceTable
                     return TITLE_DATE;
                 case COLUMN_PRICE:
                     return TITLE_PRICE;
-                case COLUMN_DELETE:
-                    return TITLE_DELETE;
+                case COLUMN_ACTION:
+                    return TITLE_ACTION;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the header value for the column.
+         * @param pColIndex column index
+         * @return the value
+         */
+        private Object getHeaderValue(final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_ACTION:
+                    return ActionType.INSERT;
                 default:
                     return null;
             }
@@ -429,8 +503,10 @@ public class SecurityPriceTable
                     return pItem.getDate();
                 case COLUMN_PRICE:
                     return pItem.getPrice();
-                case COLUMN_DELETE:
-                    return theModel.getViewRowCount() > 1;
+                case COLUMN_ACTION:
+                    return theModel.getViewRowCount() > 1
+                                                         ? ActionType.DELETE
+                                                         : ActionType.DO;
                 default:
                     return null;
             }
@@ -454,8 +530,12 @@ public class SecurityPriceTable
                 case COLUMN_PRICE:
                     pItem.setPrice((JPrice) pValue);
                     break;
-                case COLUMN_DELETE:
-                    deleteRow(pItem);
+                case COLUMN_ACTION:
+                    if (pItem.isHeader()) {
+                        theModel.addNewItem();
+                    } else {
+                        pItem.setDeleted(true);
+                    }
                     break;
                 default:
                     break;
@@ -474,7 +554,7 @@ public class SecurityPriceTable
                 case COLUMN_DATE:
                 case COLUMN_PRICE:
                     return isEditable;
-                case COLUMN_DELETE:
+                case COLUMN_ACTION:
                     return isEditable && theModel.getViewRowCount() > 1;
                 default:
                     return false;
@@ -496,6 +576,21 @@ public class SecurityPriceTable
                 default:
                     return null;
             }
+        }
+    }
+
+    /**
+     * Price Header class.
+     */
+    private static class PriceHeader
+            extends SecurityPrice {
+        /**
+         * Constructor.
+         * @param pList the SecurityPrice list
+         */
+        protected PriceHeader(final SecurityPriceList pList) {
+            super(pList);
+            setHeader(true);
         }
     }
 }

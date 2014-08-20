@@ -62,6 +62,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -576,7 +577,7 @@ public class TaxYearTable
         /**
          * Status Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
 
         /**
          * String Renderer.
@@ -586,7 +587,7 @@ public class TaxYearTable
         /**
          * Status Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
+        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
          * Regime ScrollButton Menu Editor.
@@ -602,7 +603,7 @@ public class TaxYearTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theRegimeEditor = theFieldMgr.allocateScrollButtonCellEditor(TaxRegime.class);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
@@ -653,7 +654,9 @@ public class TaxYearTable
                 case COLUMN_REGIME:
                     return pYear.getTaxRegime();
                 case COLUMN_ACTIVE:
-                    return pYear.isActive();
+                    return pYear.isActive()
+                                           ? ActionType.ACTIVE
+                                           : ActionType.DELETE;
                 default:
                     return null;
             }
@@ -675,7 +678,7 @@ public class TaxYearTable
                     pItem.setTaxRegime((TaxRegime) pValue);
                     break;
                 case COLUMN_ACTIVE:
-                    deleteRow(pItem);
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;

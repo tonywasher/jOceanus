@@ -23,7 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -117,9 +119,6 @@ public class AnalysisMaps {
             /* Access as security */
             Security mySecurity = Security.class.cast(pSecurity);
 
-            /* Initialise price */
-            JPrice myPrice = new JPrice();
-
             /* Access list for security */
             SecurityPrices myList = get(mySecurity.getId());
             if (myList != null) {
@@ -128,18 +127,16 @@ public class AnalysisMaps {
                 while (myIterator.hasNext()) {
                     SecurityPrice myCurr = myIterator.next();
 
-                    /* Break if this is later than the date */
-                    if (pDate.compareTo(myCurr.getDate()) > 0) {
-                        break;
+                    /* Return this price if this is earlier or equal to the the date */
+                    if (pDate.compareTo(myCurr.getDate()) <= 0) {
+                        return myCurr.getPrice();
                     }
-
-                    /* Record as best price */
-                    myPrice = myCurr.getPrice();
                 }
             }
 
             /* return price */
-            return myPrice;
+            Currency myCurrency = mySecurity.getSecurityCurrency().getCurrency();
+            return new JPrice(myCurrency);
         }
 
         /**
@@ -151,8 +148,9 @@ public class AnalysisMaps {
         public JPrice[] getPricesForRange(final Security pSecurity,
                                           final JDateDayRange pRange) {
             /* Set price */
-            JPrice myFirst = new JPrice();
-            JPrice myLatest = new JPrice();
+            Currency myCurrency = pSecurity.getSecurityCurrency().getCurrency();
+            JPrice myFirst = new JPrice(myCurrency);
+            JPrice myLatest = null;
 
             /* Access list for security */
             SecurityPrices myList = get(pSecurity.getId());
@@ -165,19 +163,29 @@ public class AnalysisMaps {
                     /* Check for the range of the date */
                     int iComp = pRange.compareTo(myCurr.getDate());
 
-                    /* Break if this is later than the date */
+                    /* If this is later than the range just ignore */
                     if (iComp < 0) {
-                        break;
+                        continue;
                     }
 
                     /* Record as best price */
-                    myLatest = myCurr.getPrice();
+                    myFirst = myCurr.getPrice();
 
-                    /* Record early date if required */
+                    /* Record latest price */
+                    if (myLatest == null) {
+                        myLatest = myFirst;
+                    }
+
+                    /* If this is earlier than the range then we are finished */
                     if (iComp > 0) {
-                        myFirst = myLatest;
+                        continue;
                     }
                 }
+            }
+
+            /* Record latest price */
+            if (myLatest == null) {
+                myLatest = myFirst;
             }
 
             /* Return the prices */
@@ -315,9 +323,9 @@ public class AnalysisMaps {
             DepositRates myList = get(pDeposit.getId());
             if (myList != null) {
                 /* Loop through the rates */
-                Iterator<DepositRate> myIterator = myList.iterator();
-                while (myIterator.hasNext()) {
-                    DepositRate myCurr = myIterator.next();
+                ListIterator<DepositRate> myIterator = myList.listIterator(myList.size());
+                while (myIterator.hasPrevious()) {
+                    DepositRate myCurr = myIterator.previous();
 
                     /* Access the date */
                     JDateDay myDate = myCurr.getDate();

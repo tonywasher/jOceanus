@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui;
 
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.ResourceBundle;
 
 import javax.swing.event.TableModelEvent;
@@ -346,6 +348,36 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
         } else {
             pData.setDefaults();
         }
+    }
+
+    /**
+     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
+     * by subsequent changes.
+     * @return the iterator
+     */
+    public Iterator<T> modelIterator() {
+        /* Allocate iterator */
+        return theFilter.modelIterator();
+    }
+
+    /**
+     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
+     * by subsequent changes.
+     * @return the iterator
+     */
+    public Iterator<T> viewIterator() {
+        /* Allocate iterator */
+        return theFilter.viewIterator();
+    }
+
+    /**
+     * Obtain an iterator over View rows starting at the end of the list. Note that this iterator is for a self-contained snapshot of the table mapping. It will
+     * not be affected or invalidated by subsequent changes.
+     * @return the iterator
+     */
+    public ListIterator<T> viewEndIterator() {
+        /* Allocate iterator */
+        return theFilter.viewEndIterator();
     }
 
     /**

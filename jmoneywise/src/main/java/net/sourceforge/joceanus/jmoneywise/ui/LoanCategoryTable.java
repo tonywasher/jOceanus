@@ -68,6 +68,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -708,12 +709,12 @@ public class LoanCategoryTable
         /**
          * Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theIconRenderer;
 
         /**
          * Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theIconEditor;
+        private final IconButtonCellEditor<ActionType> theIconEditor;
 
         /**
          * String Renderer.
@@ -749,7 +750,7 @@ public class LoanCategoryTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategoryType.class);
             theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
@@ -829,7 +830,9 @@ public class LoanCategoryTable
                 case COLUMN_DESC:
                     return pCategory.getDesc();
                 case COLUMN_ACTIVE:
-                    return pCategory.isActive();
+                    return pCategory.isActive()
+                                               ? ActionType.ACTIVE
+                                               : ActionType.DELETE;
                 default:
                     return null;
             }
@@ -857,7 +860,7 @@ public class LoanCategoryTable
                     pItem.setCategoryType((LoanCategoryType) pValue);
                     break;
                 case COLUMN_ACTIVE:
-                    deleteRow(pItem);
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;

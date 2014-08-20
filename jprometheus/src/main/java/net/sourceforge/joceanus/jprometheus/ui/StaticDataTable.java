@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -535,7 +536,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         /**
          * Icon Status Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
+        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
 
         /**
          * Icon Enabled Renderer.
@@ -545,7 +546,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         /**
          * Icon editor.
          */
-        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
+        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
          * Icon editor.
@@ -567,7 +568,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
             /* Create the relevant renderers/editors */
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
             theEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theEnabledIconEditor);
@@ -641,7 +642,9 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                 case COLUMN_ENABLED:
                     return pItem.getEnabled();
                 case COLUMN_ACTIVE:
-                    return pItem.isActive();
+                    return pItem.isActive()
+                                           ? ActionType.ACTIVE
+                                           : ActionType.DELETE;
                 default:
                     return null;
             }
@@ -669,7 +672,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                     pItem.setEnabled((Boolean) pValue);
                     break;
                 case COLUMN_ACTIVE:
-                    deleteRow(pItem);
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;

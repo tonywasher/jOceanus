@@ -65,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * Cell editors.
  * @author Tony Washer
  */
-public class JFieldCellEditor {
+public final class JFieldCellEditor {
     /**
      * private constructor.
      */

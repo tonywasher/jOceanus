@@ -36,6 +36,34 @@ public class JPrice
     protected static final int XTRA_DECIMALS = 2;
 
     /**
+     * Factory method for generating whole monetary units for a currency (e.g. £1)
+     * @param pUnits the number of whole monetary units
+     * @param pCurrency the currency
+     * @return the allocated price
+     */
+    public static JPrice getWholeUnits(final long pUnits,
+                                       final Currency pCurrency) {
+        /* Allocate the money */
+        JPrice myResult = new JPrice(pCurrency);
+        int myScale = myResult.scale();
+        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
+        return myResult;
+    }
+
+    /**
+     * Factory method for generating whole monetary units (e.g. £1)
+     * @param pUnits the number of whole monetary units
+     * @return the allocated price
+     */
+    public static JPrice getWholeUnits(final long pUnits) {
+        /* Allocate the price */
+        JPrice myResult = new JPrice();
+        int myScale = myResult.scale();
+        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
+        return myResult;
+    }
+
+    /**
      * Constructor for price of value zero in the default currency.
      */
     public JPrice() {
