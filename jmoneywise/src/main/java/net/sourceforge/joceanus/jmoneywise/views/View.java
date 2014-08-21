@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -67,9 +67,9 @@ public class View
     private TransactionAnalyser theAnalyser = null;
 
     /**
-     * The dilution event list.
+     * The dilution event map.
      */
-    private DilutionEventList theDilutions = null;
+    private DilutionEventMap theDilutions = null;
 
     /**
      * Obtain the date range.
@@ -96,10 +96,10 @@ public class View
     }
 
     /**
-     * Obtain the dilution list.
-     * @return the dilution list.
+     * Obtain the dilution map.
+     * @return the dilution map.
      */
-    public DilutionEventList getDilutions() {
+    public DilutionEventMap getDilutions() {
         return theDilutions;
     }
 

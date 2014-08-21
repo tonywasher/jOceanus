@@ -30,13 +30,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
@@ -85,15 +86,18 @@ public class ViewSecurityPrice
     public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDilutedPrice"));
 
     /**
-     * Is the account subject to dilutions?
+     * Dilution state.
      */
-    private final boolean hasDilutions;
+    private DilutionState theDilutionState = DilutionState.UNKNOWN;
 
     /**
      * Obtain dilution.
      * @return the dilution
      */
     public JDilution getDilution() {
+        if (theDilutionState.equals(DilutionState.UNKNOWN)) {
+            calculateDiluted();
+        }
         return getDilution(getValueSet());
     }
 
@@ -102,6 +106,9 @@ public class ViewSecurityPrice
      * @return the diluted price
      */
     public JDilutedPrice getDilutedPrice() {
+        if (theDilutionState.equals(DilutionState.UNKNOWN)) {
+            calculateDiluted();
+        }
         return getDilutedPrice(getValueSet());
     }
 
@@ -148,6 +155,11 @@ public class ViewSecurityPrice
      * Calculate Diluted values.
      */
     protected final void calculateDiluted() {
+        /* Ignore if undiluted */
+        if (theDilutionState.equals(DilutionState.UNDILUTED)) {
+            calculateDiluted();
+        }
+
         /* Access the list for the item */
         ViewSecurityPriceList myList = (ViewSecurityPriceList) getList();
 
@@ -155,23 +167,38 @@ public class ViewSecurityPrice
         setValueDilution(null);
         setValueDilutedPrice(null);
 
-        /* Access Price and date */
+        /* Access Price details */
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
         Security mySecurity = getSecurity();
 
-        /* If we have can look at dilutions */
-        if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
-            /* Determine the dilution factor for the date */
-            JDilution myDilution = myList.getDilutions().getDilutionFactor(mySecurity, myDate);
-
-            /* If we have a dilution factor */
-            if (myDilution != null) {
-                /* Store dilution details */
-                setValueDilution(myDilution);
-                setValueDilutedPrice(myPrice.getDilutedPrice(myDilution));
-            }
+        /* Ignore if we have no details */
+        if ((myDate == null) || (myPrice == null)) {
+            return;
         }
+
+        /* Obtain dilutions */
+        DilutionEventMap myDilutions = myList.getDilutions();
+
+        /* If we are unsure about dilutions check for them */
+        if (theDilutionState.equals(DilutionState.UNKNOWN) &&
+            !myDilutions.hasDilution(mySecurity)) {
+            theDilutionState = DilutionState.UNDILUTED;
+            return;
+        }
+
+        /* Determine the dilution factor for the date */
+        JDilution myDilution = myDilutions.getDilutionFactor(mySecurity, myDate);
+
+        /* If we have a dilution factor */
+        if (myDilution != null) {
+            /* Store dilution details */
+            setValueDilution(myDilution);
+            setValueDilutedPrice(myPrice.getDilutedPrice(myDilution));
+        }
+
+        /* Note dilution state */
+        theDilutionState = DilutionState.DILUTED;
     }
 
     /**
@@ -183,24 +210,14 @@ public class ViewSecurityPrice
                                 final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
-
-        /* Determine whether the account has dilutions */
-        hasDilutions = ((ViewSecurityPriceList) getList()).hasDilutions;
-
-        /* Calculate diluted values */
-        calculateDiluted();
     }
 
     /**
      * Standard constructor for a newly inserted price.
      * @param pList the list
      */
-    private ViewSecurityPrice(final ViewSecurityPriceList pList) {
+    public ViewSecurityPrice(final ViewSecurityPriceList pList) {
         super(pList);
-        setSecurity(pList.getSecurity());
-
-        /* Determine whether the account has dilutions */
-        hasDilutions = ((ViewSecurityPriceList) getList()).hasDilutions;
     }
 
     @Override
@@ -220,7 +237,7 @@ public class ViewSecurityPrice
      * Price List.
      */
     public static class ViewSecurityPriceList
-            extends EncryptedList<ViewSecurityPrice, MoneyWiseDataType> {
+            extends SecurityPriceBaseList<ViewSecurityPrice> {
         /**
          * Report fields.
          */
@@ -247,20 +264,12 @@ public class ViewSecurityPrice
         }
 
         /**
-         * The Security field id.
-         */
-        public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
-
-        /**
          * The Dilutions field id.
          */
         public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDilutions"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SECURITY.equals(pField)) {
-                return theSecurity;
-            }
             if (FIELD_DILUTIONS.equals(pField)) {
                 return (theDilutions.isEmpty())
                                                ? JDataFieldValue.SKIP
@@ -275,57 +284,26 @@ public class ViewSecurityPrice
         }
 
         /**
-         * The security.
-         */
-        private final Security theSecurity;
-
-        /**
          * Dilutions list.
          */
-        private final DilutionEventList theDilutions;
-
-        /**
-         * Does the account have dilutions?
-         */
-        private boolean hasDilutions = false;
-
-        /**
-         * Obtain security.
-         * @return the security
-         */
-        private Security getSecurity() {
-            return theSecurity;
-        }
+        private final DilutionEventMap theDilutions;
 
         /**
          * Obtain dilutions.
          * @return the dilutions
          */
-        private DilutionEventList getDilutions() {
+        private DilutionEventMap getDilutions() {
             return theDilutions;
-        }
-
-        /**
-         * Do we have dilutions?
-         * @return true/false
-         */
-        public boolean hasDilutions() {
-            return hasDilutions;
         }
 
         /**
          * Construct an edit extract of a Price list.
          * @param pView The master view
-         * @param pSecurity The security to extract prices for
          */
-        public ViewSecurityPriceList(final View pView,
-                                     final Security pSecurity) {
+        public ViewSecurityPriceList(final View pView) {
             /* Declare the data and set the style */
-            super(ViewSecurityPrice.class, pView.getData(), MoneyWiseDataType.SECURITYPRICE);
+            super(pView.getData(), ViewSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
-
-            /* Skip to alias if required */
-            theSecurity = pSecurity;
 
             /* Access the base prices */
             SecurityPriceList myPrices = getDataSet().getSecurityPrices();
@@ -333,32 +311,16 @@ public class ViewSecurityPrice
 
             /* Store dilution list and record whether we have dilutions */
             theDilutions = pView.getDilutions();
-            hasDilutions = theDilutions.hasDilution(theSecurity);
-
-            /* Access the list iterator */
-            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
 
             /* Loop through the list */
+            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
             while (myIterator.hasNext()) {
                 SecurityPrice myCurr = myIterator.next();
-                /* Check the account */
-                int myResult = theSecurity.compareTo(myCurr.getSecurity());
-
-                /* Skip different accounts */
-                if (myResult != 0) {
-                    continue;
-                }
 
                 /* Copy the item */
                 ViewSecurityPrice myItem = new ViewSecurityPrice(this, myCurr);
                 add(myItem);
             }
-        }
-
-        /* Is this list locked */
-        @Override
-        public boolean isLocked() {
-            return (theSecurity != null) && (theSecurity.isLocked());
         }
 
         @Override
@@ -373,7 +335,7 @@ public class ViewSecurityPrice
         @Override
         public ViewSecurityPrice addNewItem() {
             ViewSecurityPrice myPrice = new ViewSecurityPrice(this);
-            myPrice.setSecurity(theSecurity);
+            // myPrice.setSecurity(theSecurity);
             add(myPrice);
             return myPrice;
         }
@@ -382,5 +344,39 @@ public class ViewSecurityPrice
         public ViewSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
         }
+
+        /**
+         * Resolve update set links.
+         * @param pUpdateSet the updateSet
+         * @throws JOceanusException on error
+         */
+        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+            /* Loop through the items */
+            Iterator<ViewSecurityPrice> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                ViewSecurityPrice myCurr = myIterator.next();
+                myCurr.resolveUpdateSetLinks(pUpdateSet);
+            }
+        }
+    }
+
+    /**
+     * Dilution state.
+     */
+    private enum DilutionState {
+        /**
+         * Unknown.
+         */
+        UNKNOWN,
+
+        /**
+         * Diluted.
+         */
+        DILUTED,
+
+        /**
+         * Undiluted.
+         */
+        UNDILUTED;
     }
 }

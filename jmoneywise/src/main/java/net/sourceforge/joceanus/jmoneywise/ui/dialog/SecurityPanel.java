@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -120,11 +121,13 @@ public class SecurityPanel
 
     /**
      * Constructor.
+     * @param pView the data view
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public SecurityPanel(final JFieldManager pFieldMgr,
+    public SecurityPanel(final View pView,
+                         final JFieldManager pFieldMgr,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final ErrorPanel pError) {
         /* Initialise the panel */
@@ -157,7 +160,7 @@ public class SecurityPanel
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Create the SecurityPrices table */
-        thePrices = new SecurityPriceTable(pFieldMgr, getUpdateSet(), pError);
+        thePrices = new SecurityPriceTable(pView, pFieldMgr, getUpdateSet(), pError);
         myTabs.add("Prices", thePrices.getPanel());
 
         /* Layout the main panel */
@@ -284,8 +287,8 @@ public class SecurityPanel
 
         /* Security type and currency cannot be changed if the item is active */
         boolean bIsActive = mySecurity.isActive();
-        theFieldSet.setEditable(Security.FIELD_SECTYPE, !bIsActive);
-        theFieldSet.setEditable(Security.FIELD_CURRENCY, !bIsActive);
+        theFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
+        theFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
     }
 
     @Override

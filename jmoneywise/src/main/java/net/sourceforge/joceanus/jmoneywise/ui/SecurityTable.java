@@ -54,8 +54,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
@@ -63,6 +61,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTyp
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
@@ -159,7 +159,7 @@ public class SecurityTable
     /**
      * SecurityPrice Update Entry.
      */
-    private final transient UpdateEntry<SecurityPrice, MoneyWiseDataType> thePriceEntry;
+    private final transient UpdateEntry<ViewSecurityPrice, MoneyWiseDataType> thePriceEntry;
 
     /**
      * The error panel.
@@ -194,7 +194,7 @@ public class SecurityTable
     /**
      * SecurityPrices.
      */
-    private transient SecurityPriceList thePrices = null;
+    private transient ViewSecurityPriceList thePrices = null;
 
     /**
      * Security types.
@@ -265,7 +265,7 @@ public class SecurityTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new SecurityPanel(theFieldMgr, theUpdateSet, theError);
+        theActiveAccount = new SecurityPanel(theView, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
 
         /* Create listener */
@@ -303,8 +303,7 @@ public class SecurityTable
         theInfoEntry.setDataList(myInfo);
 
         /* Get the Security prices list */
-        SecurityPriceList myPrices = myData.getSecurityPrices();
-        thePrices = myPrices.deriveEditList();
+        thePrices = new ViewSecurityPriceList(theView);
         thePrices.resolveUpdateSetLinks(theUpdateSet);
         thePriceEntry.setDataList(thePrices);
 

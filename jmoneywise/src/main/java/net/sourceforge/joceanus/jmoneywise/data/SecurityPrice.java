@@ -419,7 +419,7 @@ public class SecurityPrice
      * @param pUpdateSet the update Set
      * @throws JOceanusException on error
      */
-    private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
         SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         resolveDataLink(FIELD_SECURITY, mySecurities);
@@ -432,7 +432,7 @@ public class SecurityPrice
     public void validate() {
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
-        SecurityPriceList myList = (SecurityPriceList) getList();
+        SecurityPriceBaseList<SecurityPrice> myList = (SecurityPriceBaseList<SecurityPrice>) getList();
         MoneyWiseData mySet = getDataSet();
 
         /* The date must be non-null */
@@ -567,9 +567,61 @@ public class SecurityPrice
 
     /**
      * Price List.
+     * @param <T> the data type
+     */
+    public abstract static class SecurityPriceBaseList<T extends SecurityPrice>
+            extends EncryptedList<T, MoneyWiseDataType> {
+        /**
+         * Construct an empty CORE Price list.
+         * @param pData the DataSet for the list
+         * @param pClass the class of the item
+         * @param pItemType the item type
+         */
+        protected SecurityPriceBaseList(final MoneyWiseData pData,
+                                        final Class<T> pClass,
+                                        final MoneyWiseDataType pItemType) {
+            /* Call super-constructor */
+            super(pClass, pData, pItemType, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected SecurityPriceBaseList(final SecurityPriceBaseList<T> pSource) {
+            /* Call super-constructor */
+            super(pSource);
+        }
+
+        /**
+         * Count the instances of a date.
+         * @param pDate the date
+         * @param pSecurity the security
+         * @return The Item if present (or null)
+         */
+        public int countInstances(final JDateDay pDate,
+                                  final Security pSecurity) {
+            /* Loop through the items to find the entry */
+            int iCount = 0;
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+                if (pDate.equals(myCurr.getDate())
+                    && pSecurity.equals(myCurr.getSecurity())) {
+                    iCount++;
+                }
+            }
+
+            /* return to caller */
+            return iCount;
+        }
+    }
+
+    /**
+     * Price List.
      */
     public static class SecurityPriceList
-            extends EncryptedList<SecurityPrice, MoneyWiseDataType> {
+            extends SecurityPriceBaseList<SecurityPrice> {
         /**
          * Local Report fields.
          */
@@ -600,7 +652,7 @@ public class SecurityPrice
          * @param pData the DataSet for the list
          */
         protected SecurityPriceList(final MoneyWiseData pData) {
-            super(SecurityPrice.class, pData, MoneyWiseDataType.SECURITYPRICE);
+            super(pData, SecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
         }
 
         /**
@@ -615,28 +667,6 @@ public class SecurityPrice
         protected SecurityPriceList getEmptyList(final ListStyle pStyle) {
             SecurityPriceList myList = new SecurityPriceList(this);
             myList.setStyle(pStyle);
-            return myList;
-        }
-
-        /**
-         * Construct an edit extract of a Rate list.
-         * @return the edit list
-         */
-        public SecurityPriceList deriveEditList() {
-            /* Build an empty List */
-            SecurityPriceList myList = getEmptyList(ListStyle.EDIT);
-
-            /* Loop through the list */
-            Iterator<SecurityPrice> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                SecurityPrice myCurr = myIterator.next();
-
-                /* Copy the item */
-                SecurityPrice myItem = new SecurityPrice(myList, myCurr);
-                myList.append(myItem);
-            }
-
-            /* Return the List */
             return myList;
         }
 
@@ -663,31 +693,6 @@ public class SecurityPrice
         @Override
         public SecurityPrice addNewItem() {
             throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Count the instances of a date.
-         * @param pDate the date
-         * @param pSecurity the security
-         * @return The Item if present (or null)
-         */
-        public int countInstances(final JDateDay pDate,
-                                  final Security pSecurity) {
-            /* Access the list iterator */
-            Iterator<SecurityPrice> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                SecurityPrice myCurr = myIterator.next();
-                if (pDate.equals(myCurr.getDate())
-                    && pSecurity.equals(myCurr.getSecurity())) {
-                    iCount++;
-                }
-            }
-
-            /* return to caller */
-            return iCount;
         }
 
         /**
@@ -763,20 +768,6 @@ public class SecurityPrice
                     /* Clear history and set as a clean item */
                     mySpot.clearHistory();
                 }
-            }
-        }
-
-        /**
-         * Resolve update set links.
-         * @param pUpdateSet the updateSet
-         * @throws JOceanusException on error
-         */
-        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-            /* Loop through the items */
-            Iterator<SecurityPrice> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                SecurityPrice myCurr = myIterator.next();
-                myCurr.resolveUpdateSetLinks(pUpdateSet);
             }
         }
 

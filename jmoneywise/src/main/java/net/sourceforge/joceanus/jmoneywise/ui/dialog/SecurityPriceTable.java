@@ -37,10 +37,13 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
@@ -57,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * Panel to display a list of SecurityPrices associated with a Security.
  */
 public class SecurityPriceTable
-        extends JDataTable<SecurityPrice, MoneyWiseDataType> {
+        extends JDataTable<ViewSecurityPrice, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -74,9 +77,24 @@ public class SecurityPriceTable
     private static final String TITLE_PRICE = SecurityPrice.FIELD_PRICE.getName();
 
     /**
+     * Dilution Column Title.
+     */
+    private static final String TITLE_DILUTION = ViewSecurityPrice.FIELD_DILUTION.getName();
+
+    /**
+     * DilutedPrice Column Title.
+     */
+    private static final String TITLE_DILUTEDPRICE = ViewSecurityPrice.FIELD_DILUTEDPRICE.getName();
+
+    /**
      * Action Column Title.
      */
     private static final String TITLE_ACTION = "Action";
+
+    /**
+     * The data view.
+     */
+    private final transient View theView;
 
     /**
      * The field manager.
@@ -111,7 +129,7 @@ public class SecurityPriceTable
     /**
      * Price Header.
      */
-    private transient SecurityPrice theHeader;
+    private transient ViewSecurityPrice theHeader;
 
     /**
      * Security.
@@ -121,7 +139,12 @@ public class SecurityPriceTable
     /**
      * SecurityPrices.
      */
-    private transient SecurityPriceList thePrices = null;
+    private transient ViewSecurityPriceList thePrices = null;
+
+    /**
+     * Dilutions.
+     */
+    private transient DilutionEventMap theDilutions = null;
 
     /**
      * Editable flag.
@@ -143,14 +166,17 @@ public class SecurityPriceTable
 
     /**
      * Constructor.
+     * @param pView the data view
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected SecurityPriceTable(final JFieldManager pFieldMgr,
+    protected SecurityPriceTable(final View pView,
+                                 final JFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final ErrorPanel pError) {
         /* Record the passed details */
+        theView = pView;
         theError = pError;
         theFieldMgr = pFieldMgr;
         setFieldMgr(theFieldMgr);
@@ -185,8 +211,9 @@ public class SecurityPriceTable
      */
     protected void refreshData() {
         /* Access the prices list */
-        thePrices = theUpdateSet.findDataList(MoneyWiseDataType.SECURITYPRICE, SecurityPriceList.class);
+        thePrices = theUpdateSet.findDataList(MoneyWiseDataType.SECURITYPRICE, ViewSecurityPriceList.class);
         theHeader = new PriceHeader(thePrices);
+        theDilutions = theView.getDilutions();
         setList(thePrices);
         fireStateChanged();
     }
@@ -224,7 +251,7 @@ public class SecurityPriceTable
      * JTable Data Model.
      */
     private final class SecurityPriceTableModel
-            extends JDataTableModel<SecurityPrice, MoneyWiseDataType> {
+            extends JDataTableModel<ViewSecurityPrice, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -254,19 +281,19 @@ public class SecurityPriceTable
         }
 
         @Override
-        public JDataField getFieldForCell(final SecurityPrice pItem,
+        public JDataField getFieldForCell(final ViewSecurityPrice pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final SecurityPrice pItem,
+        public boolean isCellEditable(final ViewSecurityPrice pItem,
                                       final int pColIndex) {
             return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
-        public SecurityPrice getItemAtIndex(final int pRowIndex) {
+        public ViewSecurityPrice getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
                                  ? theHeader
@@ -274,7 +301,7 @@ public class SecurityPriceTable
         }
 
         @Override
-        public Object getItemValue(final SecurityPrice pItem,
+        public Object getItemValue(final ViewSecurityPrice pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pItem.isHeader()
@@ -283,7 +310,7 @@ public class SecurityPriceTable
         }
 
         @Override
-        public void setItemValue(final SecurityPrice pItem,
+        public void setItemValue(final ViewSecurityPrice pItem,
                                  final int pColIndex,
                                  final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
@@ -297,7 +324,7 @@ public class SecurityPriceTable
         }
 
         @Override
-        public boolean includeRow(final SecurityPrice pRow) {
+        public boolean includeRow(final ViewSecurityPrice pRow) {
             /* Ignore deleted rows and all rows if no security is selected */
             if (pRow.isDeleted() || theSecurity == null) {
                 return false;
@@ -313,7 +340,9 @@ public class SecurityPriceTable
          * Adjust header.
          */
         private void adjustHeader() {
-            fireUpdateRowEvents(0);
+            if (theSecurity != null) {
+                fireUpdateRowEvents(0);
+            }
         }
 
         /**
@@ -321,7 +350,7 @@ public class SecurityPriceTable
          */
         private void addNewItem() {
             /* Create the new price */
-            SecurityPrice myPrice = new SecurityPrice(thePrices);
+            ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
 
             /* Protect against Exceptions */
             try {
@@ -376,9 +405,19 @@ public class SecurityPriceTable
         private static final int COLUMN_PRICE = 1;
 
         /**
+         * Dilution column id.
+         */
+        private static final int COLUMN_DILUTION = 2;
+
+        /**
+         * DilutedPrice column id.
+         */
+        private static final int COLUMN_DILUTEDPRICE = 3;
+
+        /**
          * Action column id.
          */
-        private static final int COLUMN_ACTION = 2;
+        private static final int COLUMN_ACTION = 4;
 
         /**
          * Date Renderer.
@@ -411,6 +450,16 @@ public class SecurityPriceTable
         private final IconButtonCellEditor<ActionType> theActionIconEditor;
 
         /**
+         * Dilution column.
+         */
+        private final JDataTableColumn theDilutionColumn;
+
+        /**
+         * DilutedPrice column.
+         */
+        private final JDataTableColumn theDilutedColumn;
+
+        /**
          * Action column.
          */
         private final JDataTableColumn theActionColumn;
@@ -437,6 +486,10 @@ public class SecurityPriceTable
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
+            theDilutionColumn = new JDataTableColumn(COLUMN_DILUTION, WIDTH_PRICE, theDecimalRenderer);
+            declareColumn(theDilutionColumn);
+            theDilutedColumn = new JDataTableColumn(COLUMN_DILUTEDPRICE, WIDTH_PRICE, theDecimalRenderer);
+            declareColumn(theDilutedColumn);
             theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor);
             declareColumn(theActionColumn);
 
@@ -448,6 +501,16 @@ public class SecurityPriceTable
          * Set visible columns according to the mode.
          */
         private void setColumns() {
+            /* Determine whether the security is diluted */
+            boolean isDiluted = theDilutions != null && theDilutions.hasDilution(theSecurity);
+            if (isDiluted) {
+                revealColumn(theDilutionColumn);
+                revealColumn(theDilutedColumn);
+            } else {
+                hideColumn(theDilutionColumn);
+                hideColumn(theDilutedColumn);
+            }
+
             /* Switch on mode */
             if (isEditable) {
                 revealColumn(theActionColumn);
@@ -467,6 +530,10 @@ public class SecurityPriceTable
                     return TITLE_DATE;
                 case COLUMN_PRICE:
                     return TITLE_PRICE;
+                case COLUMN_DILUTION:
+                    return TITLE_DILUTION;
+                case COLUMN_DILUTEDPRICE:
+                    return TITLE_DILUTEDPRICE;
                 case COLUMN_ACTION:
                     return TITLE_ACTION;
                 default:
@@ -495,7 +562,7 @@ public class SecurityPriceTable
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final SecurityPrice pItem,
+        protected Object getItemValue(final ViewSecurityPrice pItem,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
@@ -503,6 +570,10 @@ public class SecurityPriceTable
                     return pItem.getDate();
                 case COLUMN_PRICE:
                     return pItem.getPrice();
+                case COLUMN_DILUTION:
+                    return pItem.getDilution();
+                case COLUMN_DILUTEDPRICE:
+                    return pItem.getDilutedPrice();
                 case COLUMN_ACTION:
                     return theModel.getViewRowCount() > 1
                                                          ? ActionType.DELETE
@@ -519,7 +590,7 @@ public class SecurityPriceTable
          * @param pValue the value to set
          * @throws JOceanusException on error
          */
-        private void setItemValue(final SecurityPrice pItem,
+        private void setItemValue(final ViewSecurityPrice pItem,
                                   final int pColIndex,
                                   final Object pValue) throws JOceanusException {
             /* Set the appropriate value */
@@ -548,12 +619,15 @@ public class SecurityPriceTable
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final SecurityPrice pItem,
+        private boolean isCellEditable(final ViewSecurityPrice pItem,
                                        final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_DATE:
                 case COLUMN_PRICE:
                     return isEditable;
+                case COLUMN_DILUTION:
+                case COLUMN_DILUTEDPRICE:
+                    return false;
                 case COLUMN_ACTION:
                     return isEditable && theModel.getViewRowCount() > 1;
                 default:
@@ -573,6 +647,10 @@ public class SecurityPriceTable
                     return SecurityPrice.FIELD_DATE;
                 case COLUMN_PRICE:
                     return SecurityPrice.FIELD_PRICE;
+                case COLUMN_DILUTION:
+                    return ViewSecurityPrice.FIELD_DILUTION;
+                case COLUMN_DILUTEDPRICE:
+                    return ViewSecurityPrice.FIELD_DILUTEDPRICE;
                 default:
                     return null;
             }
@@ -583,12 +661,12 @@ public class SecurityPriceTable
      * Price Header class.
      */
     private static class PriceHeader
-            extends SecurityPrice {
+            extends ViewSecurityPrice {
         /**
          * Constructor.
          * @param pList the SecurityPrice list
          */
-        protected PriceHeader(final SecurityPriceList pList) {
+        protected PriceHeader(final ViewSecurityPriceList pList) {
             super(pList);
             setHeader(true);
         }

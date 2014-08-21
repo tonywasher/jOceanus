@@ -207,7 +207,7 @@ public class TaxYearTable
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry(TaxYear.class.getSimpleName() + "2");
+        theDataEntry = myDataMgr.new JDataEntry(TaxYear.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 

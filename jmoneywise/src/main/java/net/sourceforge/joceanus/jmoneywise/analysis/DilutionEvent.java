@@ -22,16 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -261,64 +264,45 @@ public final class DilutionEvent
     }
 
     /**
-     * List of DilutionEvents.
+     * Map of DilutionLists indexed by Security Id.
      */
-    public static class DilutionEventList
-            extends OrderedIdList<Integer, DilutionEvent>
-            implements JDataContents {
+    public static class DilutionEventMap
+            extends NestedHashMap<Integer, List<DilutionEvent>>
+            implements JDataFormat {
         /**
-         * Report fields.
+         * Serial Id.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
-        }
-
-        /**
-         * Size Field Id.
-         */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
+        private static final long serialVersionUID = 2572420680159829956L;
 
         /**
          * The next Id.
          */
         private int theNextId = 1;
 
-        /**
-         * Constructor.
-         */
-        public DilutionEventList() {
-            super(DilutionEvent.class);
+        @Override
+        public String formatObject() {
+            return getClass().getSimpleName();
         }
 
         /**
-         * Add Dilution Event to List.
+         * Add Dilution Event to Map.
          * @param pTrans the base transaction
          */
         public void addDilution(final Transaction pTrans) {
             /* Create the dilution event */
             DilutionEvent myDilution = new DilutionEvent(theNextId++, pTrans);
 
+            /* Look for the list associated with the security */
+            Security mySecurity = myDilution.getSecurity();
+            List<DilutionEvent> myList = get(mySecurity.getId());
+            if (myList == null) {
+                /* allocate new list if necessary */
+                myList = new ArrayList<DilutionEvent>();
+                put(mySecurity.getId(), myList);
+            }
+
             /* Add it to the list */
-            add(myDilution);
+            myList.add(myDilution);
         }
 
         /**
@@ -327,20 +311,8 @@ public final class DilutionEvent
          * @return <code>true</code> if the security has diluted prices, <code>false</code> otherwise
          */
         public boolean hasDilution(final Security pSecurity) {
-            /* Loop through the items */
-            Iterator<DilutionEvent> myIterator = listIterator();
-            while (myIterator.hasNext()) {
-                DilutionEvent myEvent = myIterator.next();
-
-                /* If the event is for this security */
-                if (!Difference.isEqual(pSecurity, myEvent.getSecurity())) {
-                    /* Set result and break loop */
-                    return true;
-                }
-            }
-
-            /* Return no dilution */
-            return false;
+            /* Check for dilutions for this security */
+            return pSecurity != null && get(pSecurity.getId()) != null;
         }
 
         /**
@@ -351,22 +323,25 @@ public final class DilutionEvent
          */
         public JDilution getDilutionFactor(final Security pSecurity,
                                            final JDateDay pDate) {
-            /* No factor if the security has no dilutions */
-            if (!hasDilution(pSecurity)) {
+            /* Access the dilutions for this security */
+            List<DilutionEvent> myList = get(pSecurity.getId());
+            if (myList == null) {
                 return null;
             }
 
             /* Loop through the items */
-            Iterator<DilutionEvent> myIterator = listIterator();
+            Iterator<DilutionEvent> myIterator = myList.iterator();
             JDilution myDilution = new JDilution(JDilution.MAX_DILUTION);
             while (myIterator.hasNext()) {
                 DilutionEvent myEvent = myIterator.next();
-                /* If the event is for this security, and if the dilution date is later */
-                if ((Difference.isEqual(pSecurity, myEvent.getSecurity()))
-                    && (pDate.compareTo(myEvent.getDate()) < 0)) {
-                    /* add in the dilution factor */
-                    myDilution = myDilution.getFurtherDilution(myEvent.getDilution());
+
+                /* If the event is earlier than we are interested in */
+                if (pDate.compareTo(myEvent.getDate()) > 0) {
+                    break;
                 }
+
+                /* add in the dilution factor */
+                myDilution = myDilution.getFurtherDilution(myEvent.getDilution());
             }
 
             /* If there is no dilution at all */

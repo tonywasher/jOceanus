@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
@@ -183,7 +183,7 @@ public class TransactionAnalyser
     /**
      * The dilutions.
      */
-    private final DilutionEventList theDilutions;
+    private final DilutionEventMap theDilutions;
 
     /**
      * Obtain the analysis manager.
@@ -197,7 +197,7 @@ public class TransactionAnalyser
      * Obtain the dilutions.
      * @return the dilutions
      */
-    public DilutionEventList getDilutions() {
+    public DilutionEventMap getDilutions() {
         return theDilutions;
     }
 

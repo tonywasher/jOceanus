@@ -49,11 +49,6 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     private static final String ERROR_TYPE = "Invalid DataType: ";
 
     /**
-     * The standard mask.
-     */
-    private static final String STRING_MASK = "*****";
-
-    /**
      * The FieldSet.
      */
     private final JFieldSet<T> theFieldSet;
@@ -318,7 +313,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
             } else if (myValue instanceof char[]) {
                 /* Set edit/display values */
                 theEdit = new String((char[]) myValue);
-                theDisplay = STRING_MASK;
+                theDisplay = theEdit;
 
                 /* If this is a Short */
             } else if (myValue instanceof Short) {

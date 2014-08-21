@@ -319,7 +319,9 @@ public class DepositRateTable
          * Adjust header.
          */
         private void adjustHeader() {
-            fireUpdateRowEvents(0);
+            if (theDeposit != null) {
+                fireUpdateRowEvents(0);
+            }
         }
 
         /**

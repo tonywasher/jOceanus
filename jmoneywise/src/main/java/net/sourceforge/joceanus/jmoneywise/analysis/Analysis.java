@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCateg
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
@@ -332,7 +332,7 @@ public class Analysis
     /**
      * The dilutions.
      */
-    private final DilutionEventList theDilutions;
+    private final DilutionEventMap theDilutions;
 
     /**
      * Obtain the data.
@@ -482,7 +482,7 @@ public class Analysis
      * Obtain the dilutions.
      * @return the dilutions
      */
-    public DilutionEventList getDilutions() {
+    public DilutionEventMap getDilutions() {
         return theDilutions;
     }
 
@@ -515,7 +515,7 @@ public class Analysis
 
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
-        theDilutions = new DilutionEventList();
+        theDilutions = new DilutionEventMap();
 
         /* Create the security price map */
         thePrices = new SecurityPriceMap(theData);

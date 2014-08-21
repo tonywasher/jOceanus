@@ -493,6 +493,15 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      */
     protected static final class JFieldArea<T extends JFieldSetItem>
             extends JFieldComponent<T> {
+        /**
+         * The Component.
+         */
+        private final JTextArea theComponent;
+
+        /**
+         * The DataModel.
+         */
+        private final JModelString<T> theModel;
 
         @Override
         protected JTextArea getUnderlyingComponent() {
@@ -513,6 +522,14 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
                            final JModelString<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
+
+            /* Store parameters */
+            theComponent = pComponent;
+            theModel = pModel;
+
+            /* Create the listener and attach it */
+            StringListener myListener = new StringListener();
+            pComponent.addFocusListener(myListener);
         }
 
         @Override
@@ -523,6 +540,71 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             /* Display it */
             getUnderlyingComponent().setText(myDisplay);
             getReadOnlyLabel().setText(myDisplay);
+        }
+
+        /**
+         * Handle focus change.
+         */
+        private final class StringListener
+                extends FocusAdapter {
+            /**
+             * Cached color.
+             */
+            private Color theCacheColor;
+
+            @Override
+            public void focusGained(final FocusEvent e) {
+                startEdit();
+            }
+
+            @Override
+            public void focusLost(final FocusEvent e) {
+                finishEdit();
+            }
+
+            /**
+             * startEdit.
+             */
+            private void startEdit() {
+                /* Show the edit text */
+                theComponent.setText(theModel.getEditString());
+            }
+
+            /**
+             * finishEdit.
+             */
+            private void finishEdit() {
+                /* Clear any toolTip text */
+                theComponent.setToolTipText(null);
+
+                /* If we have a cached colour */
+                if (theCacheColor != null) {
+                    /* Restore colour and reset cache */
+                    theComponent.setForeground(theCacheColor);
+                    theCacheColor = null;
+                }
+
+                /* Process the new value */
+                boolean bChange = theModel.processValue(theComponent.getText());
+
+                /* If we have an invalid value */
+                if (theModel.isError()) {
+                    /* Cache the existing colour */
+                    theCacheColor = theComponent.getForeground();
+
+                    /* If the object is invalid */
+                    theComponent.setToolTipText("Invalid Value");
+                    theComponent.setForeground(Color.red);
+
+                    /* Re-acquire the focus */
+                    theComponent.requestFocusInWindow();
+
+                    /* else if the value has not changed */
+                } else if (!bChange) {
+                    /* Redisplay the field */
+                    displayField();
+                }
+            }
         }
     }
 
