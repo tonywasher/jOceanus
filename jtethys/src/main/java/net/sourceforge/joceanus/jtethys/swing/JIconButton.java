@@ -379,6 +379,20 @@ public class JIconButton<T>
             Map<T, Icon> myMap = mySet.getIconMap();
             return myMap.get(pValue);
         }
+
+        /**
+         * Obtain toolTip for explicit value and state.
+         * @param pValue the value
+         * @param pState the state
+         * @return the toolTip
+         */
+        public String getToolTipForValueAndState(final Object pValue,
+                                                 final S pState) {
+            /* Look for state */
+            IconMapSet<T> mySet = theStateMap.get(pState);
+            Map<T, String> myMap = mySet.getToolTipMap();
+            return myMap.get(pValue);
+        }
     }
 
     /**

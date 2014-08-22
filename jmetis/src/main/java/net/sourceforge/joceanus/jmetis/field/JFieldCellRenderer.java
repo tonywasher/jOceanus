@@ -300,6 +300,7 @@ public final class JFieldCellRenderer {
 
             /* If we are using a complexState */
             Icon myIcon;
+            String myTooltip;
             if (theState instanceof ComplexIconButtonState) {
                 ComplexIconButtonState<T, Boolean> myState = (ComplexIconButtonState<T, Boolean>) theState;
 
@@ -310,13 +311,18 @@ public final class JFieldCellRenderer {
 
                 /* Determine icon */
                 myIcon = myState.getIconForValueAndState(pValue, isEditable);
+                myTooltip = myState.getToolTipForValueAndState(pValue, isEditable);
             } else {
                 myIcon = theState.getIconForValue(pValue);
+                myTooltip = theState.getToolTipForValue(pValue);
             }
 
             /* Store details */
             setIcon(myIcon);
             setText(null);
+            if (theData.getToolTip() == null) {
+                setToolTipText(myTooltip);
+            }
 
             /* Return this as the render item */
             return this;

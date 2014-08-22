@@ -181,8 +181,8 @@ public class ViewSecurityPrice
         DilutionEventMap myDilutions = myList.getDilutions();
 
         /* If we are unsure about dilutions check for them */
-        if (theDilutionState.equals(DilutionState.UNKNOWN) &&
-            !myDilutions.hasDilution(mySecurity)) {
+        if (theDilutionState.equals(DilutionState.UNKNOWN)
+            && !myDilutions.hasDilution(mySecurity)) {
             theDilutionState = DilutionState.UNDILUTED;
             return;
         }

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
+import java.util.ResourceBundle;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -107,6 +109,71 @@ public final class MoneyWiseIcons
     private static final Icon ICON_GOTO = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyGoTo.png")), ICON_XTRA_SIZE);
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseIcons.class.getName());
+
+    /**
+     * GoTo Button ToolTip.
+     */
+    private static final String TIP_GOTO = NLS_BUNDLE.getString("ButtonGoTo");
+
+    /**
+     * Edit Button ToolTip.
+     */
+    private static final String TIP_EDIT = NLS_BUNDLE.getString("ButtonEdit");
+
+    /**
+     * Commit Button ToolTip.
+     */
+    private static final String TIP_COMMIT = NLS_BUNDLE.getString("ButtonCommit");
+
+    /**
+     * UnDo Button ToolTip.
+     */
+    private static final String TIP_UNDO = NLS_BUNDLE.getString("ButtonUnDo");
+
+    /**
+     * Reset Button ToolTip.
+     */
+    private static final String TIP_RESET = NLS_BUNDLE.getString("ButtonReset");
+
+    /**
+     * Cancel Button ToolTip.
+     */
+    private static final String TIP_CANCEL = NLS_BUNDLE.getString("ButtonCancel");
+
+    /**
+     * Reconcile Button ToolTip.
+     */
+    private static final String TIP_RECONCILE = NLS_BUNDLE.getString("ButtonReconcile");
+
+    /**
+     * Release Button ToolTip.
+     */
+    private static final String TIP_RELEASE = NLS_BUNDLE.getString("ButtonRelease");
+
+    /**
+     * Frozen Button ToolTip.
+     */
+    private static final String TIP_FROZEN = NLS_BUNDLE.getString("ButtonFrozen");
+
+    /**
+     * Locked Button ToolTip.
+     */
+    private static final String TIP_LOCKED = NLS_BUNDLE.getString("ButtonLocked");
+
+    /**
+     * Lock Button ToolTip.
+     */
+    private static final String TIP_LOCK = NLS_BUNDLE.getString("ButtonLock");
+
+    /**
+     * UnLock Button ToolTip.
+     */
+    private static final String TIP_UNLOCK = NLS_BUNDLE.getString("ButtonUnLock");
+
+    /**
      * Private constructor to prevent instantiation.
      */
     private MoneyWiseIcons() {
@@ -117,7 +184,9 @@ public final class MoneyWiseIcons
      * @return the scroll button
      */
     public static JScrollButton<ActionDetailEvent> getGotoButton() {
-        return new JScrollButton<ActionDetailEvent>(ICON_GOTO);
+        JScrollButton<ActionDetailEvent> myButton = new JScrollButton<ActionDetailEvent>(ICON_GOTO);
+        myButton.setToolTipText(TIP_GOTO);
+        return myButton;
     }
 
     /**
@@ -128,10 +197,14 @@ public final class MoneyWiseIcons
         pState.setState(Boolean.TRUE);
         pState.setIconForValue(Boolean.FALSE, ICON_LOCKABLE);
         pState.setIconForValue(Boolean.TRUE, ICON_UNLOCKABLE);
+        pState.setTooltipForValue(Boolean.FALSE, TIP_LOCK);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_UNLOCK);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
         pState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
         pState.setState(Boolean.FALSE);
         pState.setIconForValue(Boolean.TRUE, ICON_LOCKED);
+        pState.setTooltipForValue(Boolean.FALSE, TIP_ACTIVE);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_LOCKED);
     }
 
     /**
@@ -141,10 +214,13 @@ public final class MoneyWiseIcons
     public static void buildReconciledButton(final ComplexIconButtonState<Boolean, Boolean> pState) {
         pState.setState(Boolean.TRUE);
         pState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
+        pState.setTooltipForValue(Boolean.FALSE, TIP_RECONCILE);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_RELEASE);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
         pState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
         pState.setState(Boolean.FALSE);
         pState.setIconForValue(Boolean.TRUE, ICON_FROZEN_RECONCILED);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_FROZEN);
     }
 
     /**
@@ -169,6 +245,7 @@ public final class MoneyWiseIcons
     public static void buildEditButton(final DefaultIconButtonState<Boolean> pState) {
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_EDIT);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_EDIT);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 
@@ -179,6 +256,7 @@ public final class MoneyWiseIcons
     public static void buildCommitButton(final DefaultIconButtonState<Boolean> pState) {
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_COMMIT);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 
@@ -189,6 +267,7 @@ public final class MoneyWiseIcons
     public static void buildUndoButton(final DefaultIconButtonState<Boolean> pState) {
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_UNDO);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_UNDO);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 
@@ -199,6 +278,7 @@ public final class MoneyWiseIcons
     public static void buildResetButton(final DefaultIconButtonState<Boolean> pState) {
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_RESET);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_RESET);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 
@@ -209,6 +289,7 @@ public final class MoneyWiseIcons
     public static void buildCancelButton(final DefaultIconButtonState<Boolean> pState) {
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_CANCEL);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_CANCEL);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 }

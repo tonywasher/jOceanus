@@ -247,7 +247,8 @@ public class CategoryPanel
         mySelect.add(Box.createHorizontalGlue());
         mySelect.add(theFilterCardPanel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.setMaximumSize(new Dimension(JDataTable.WIDTH_PANEL + PANEL_PAD, PANEL_PAD));
+        mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, PANEL_PAD));
+        mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, PANEL_PAD));
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

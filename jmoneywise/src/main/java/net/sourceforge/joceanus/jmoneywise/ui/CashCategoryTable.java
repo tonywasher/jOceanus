@@ -31,7 +31,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -126,11 +125,6 @@ public class CashCategoryTable
      * Filter Parents Title.
      */
     private static final String FILTER_PARENTS = NLS_BUNDLE.getString("PromptFilterParents");
-
-    /**
-     * Text for New Button.
-     */
-    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
 
     /**
      * The data view.
@@ -272,9 +266,7 @@ public class CashCategoryTable
         theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create new button */
-        theNewButton = new JButton(NLS_NEW);
-        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theNewButton = MoneyWiseIcons.getNewButton();
 
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();

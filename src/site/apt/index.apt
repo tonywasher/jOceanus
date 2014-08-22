@@ -1,11 +1,14 @@
 jOceanus Project
 
-  jOceanus is an overarching project that was derived from the embedded jMoneyWise project.
+  <<jOceanus>> is an overarching project that pulls together the underlying components of the embedded <<jMoneyWise>>
+project. The project is still under development, and should currently be viewed as a set of source examples, 
+with no pre-built downloadable files available.
 
-  In developing <<jMoneyWise>>, a number of supporting generic components were built. Together with jMoneyWise, these have
-been aggregated as the <<jOceanus>> project.
+ The underlying projects are as follows.
 
-  The project is still under development, and should currently be viewed as a set of source examples.
+* <<jMoneyWise>> application
+
+  * a Personal Finance application providing functionality similar to <<Quicken>> and <<MoneyDance>>
 
 * Utility classes (<<jTethys>>)
 
@@ -18,9 +21,9 @@ the <<BigDecimal>> class
 
 * Encryption classes (<<jGordianKnot>>)
 
-  A set of classes providing triple encryption and extended support for encrypted zipFiles.
+  * A set of classes providing triple encryption and extended support for encrypted zipFiles.
 
-* Data classes (<<jMetis>>/<<jPrometheus>>.)
+* Data classes (<<jMetis>>/<<jPrometheus>>)
 
   * Access classes for MySQL/PostgreSQL/SQLServer databases as well as OpenOffice/Excel spreadsheets.
 
@@ -31,6 +34,11 @@ the <<BigDecimal>> class
   * Integrated Data Viewer
 
   * Sorted LinkedList implementation.
+
+* SourceControl classes (<<jThemis>>)
+
+  * Classes for analysing a subversion repository and creating an equivalent Git repository.
+
 
 
   

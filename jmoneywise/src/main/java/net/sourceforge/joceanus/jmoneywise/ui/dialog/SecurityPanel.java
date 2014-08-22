@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.GridLayout;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -73,6 +74,16 @@ public class SecurityPanel
      * Serial Id.
      */
     private static final long serialVersionUID = 7711868258621672746L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityPanel.class.getName());
+
+    /**
+     * Prices Tab Title.
+     */
+    protected static final String TAB_PRICES = NLS_BUNDLE.getString("TabPrices");
 
     /**
      * The Field Set.
@@ -161,7 +172,7 @@ public class SecurityPanel
 
         /* Create the SecurityPrices table */
         thePrices = new SecurityPriceTable(pView, pFieldMgr, getUpdateSet(), pError);
-        myTabs.add("Prices", thePrices.getPanel());
+        myTabs.add(TAB_PRICES, thePrices.getPanel());
 
         /* Layout the main panel */
         myPanel = getMainPanel();

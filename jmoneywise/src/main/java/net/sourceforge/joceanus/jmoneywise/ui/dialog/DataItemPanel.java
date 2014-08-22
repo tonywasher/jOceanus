@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -63,6 +64,16 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Serial Id.
      */
     private static final long serialVersionUID = 7514751065536367674L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataItemPanel.class.getName());
+
+    /**
+     * Details Tab Title.
+     */
+    protected static final String TAB_DETAILS = NLS_BUNDLE.getString("TabDetails");
 
     /**
      * ReadOnly EditVersion.

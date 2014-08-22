@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -93,11 +92,6 @@ public class TransactionTagTable
      * Active Column Title.
      */
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
-
-    /**
-     * Text for New Button.
-     */
-    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
 
     /**
      * The data view.
@@ -228,9 +222,7 @@ public class TransactionTagTable
         thePanel.add(theActiveTag);
 
         /* Create new button */
-        theNewButton = new JButton(NLS_NEW);
-        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theNewButton = MoneyWiseIcons.getNewButton();
 
         /* Create a dummy filter panel */
         theFilterPanel = new JPanel();

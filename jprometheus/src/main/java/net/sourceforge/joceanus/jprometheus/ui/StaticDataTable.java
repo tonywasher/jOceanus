@@ -100,11 +100,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
 
     /**
-     * Text for New Button.
-     */
-    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
-
-    /**
      * The Data view.
      */
     private final transient DataControl<?, E> theControl;
@@ -222,7 +217,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        theNewButton = new JScrollButton<S>(NLS_NEW);
+        theNewButton = PrometheusIcons.getNewScrollButton();
 
         /* Create the panel */
         thePanel = new JEnablePanel();

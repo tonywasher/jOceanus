@@ -26,6 +26,7 @@ import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -77,6 +78,16 @@ public class DepositPanel
      * Serial Id.
      */
     private static final long serialVersionUID = -5458693709039462001L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositPanel.class.getName());
+
+    /**
+     * Rates Tab Title.
+     */
+    protected static final String TAB_RATES = NLS_BUNDLE.getString("TabRates");
 
     /**
      * The Field Set.
@@ -165,7 +176,7 @@ public class DepositPanel
 
         /* Build the detail panel */
         JPanel myPanel = buildXtrasPanel();
-        myTabs.add("Details", myPanel);
+        myTabs.add(TAB_DETAILS, myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
@@ -173,7 +184,7 @@ public class DepositPanel
 
         /* Create the DepositRates table */
         theRates = new DepositRateTable(pFieldMgr, getUpdateSet(), pError);
-        myTabs.add("Rates", theRates.getPanel());
+        myTabs.add(TAB_RATES, theRates.getPanel());
 
         /* Layout the main panel */
         myPanel = getMainPanel();

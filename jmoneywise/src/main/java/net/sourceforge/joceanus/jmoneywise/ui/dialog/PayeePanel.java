@@ -128,7 +128,7 @@ public class PayeePanel
 
         /* Build the detail panel */
         JPanel myPanel = buildXtrasPanel();
-        myTabs.add("Details", myPanel);
+        myTabs.add(TAB_DETAILS, myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
