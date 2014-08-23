@@ -62,6 +62,21 @@ public abstract class PrometheusIcons {
     private static final Icon ICON_NEW = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("GreenJellyPlus.png")));
 
     /**
+     * The commit icon.
+     */
+    protected static final Icon ICON_COMMIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("GreenJellyCheck.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The undo arrow.
+     */
+    protected static final Icon ICON_UNDO = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyArrowLeft.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The reset arrow.
+     */
+    protected static final Icon ICON_RESET = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyDoubleArrowLeft.png")), ICON_XTRA_SIZE);
+
+    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PrometheusIcons.class.getName());
@@ -90,6 +105,21 @@ public abstract class PrometheusIcons {
      * Disable Button ToolTip.
      */
     private static final String TIP_DISABLE = NLS_BUNDLE.getString("ButtonDisable");
+
+    /**
+     * Commit Button ToolTip.
+     */
+    private static final String TIP_COMMIT = NLS_BUNDLE.getString("ButtonCommit");
+
+    /**
+     * UnDo Button ToolTip.
+     */
+    private static final String TIP_UNDO = NLS_BUNDLE.getString("ButtonUnDo");
+
+    /**
+     * Reset Button ToolTip.
+     */
+    private static final String TIP_RESET = NLS_BUNDLE.getString("ButtonReset");
 
     /**
      * Resize an icon to the row height.
@@ -174,6 +204,39 @@ public abstract class PrometheusIcons {
         pState.setTooltipForValue(Boolean.FALSE, TIP_ENABLE);
         pState.setTooltipForValue(Boolean.TRUE, TIP_DISABLE);
         pState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build commit button state.
+     * @param pState the button state
+     */
+    public static void buildCommitButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_COMMIT);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_COMMIT);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build undo button state.
+     * @param pState the button state
+     */
+    public static void buildUndoButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_UNDO);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_UNDO);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build reset button state.
+     * @param pState the button state
+     */
+    public static void buildResetButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_RESET);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_RESET);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 

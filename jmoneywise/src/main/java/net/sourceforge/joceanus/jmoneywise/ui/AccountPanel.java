@@ -52,9 +52,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -170,9 +170,14 @@ public class AccountPanel
     private final ErrorPanel theError;
 
     /**
-     * The save buttons panel.
+     * The action buttons panel.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
+
+    /**
+     * Are we refreshing?
+     */
+    private boolean isRefreshing = false;
 
     /**
      * Constructor.
@@ -192,8 +197,8 @@ public class AccountPanel
         /* Create the error panel */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
 
-        /* Create the save buttons panel */
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        /* Create the action buttons panel */
+        theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the CheckBox */
         theLockedCheckBox = new JCheckBox("Show Closed");
@@ -242,12 +247,17 @@ public class AccountPanel
         mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, CategoryPanel.PANEL_PAD));
         mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, CategoryPanel.PANEL_PAD));
 
+        /* Create the header panel */
+        JPanel myHeader = new JPanel();
+        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
+        myHeader.add(mySelect);
+        myHeader.add(theError);
+        myHeader.add(theActionButtons);
+
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(mySelect);
-        add(theError);
+        add(myHeader);
         add(theCardPanel);
-        add(theSaveButtons);
 
         /* Create the listener */
         AccountListener myListener = new AccountListener();
@@ -266,10 +276,10 @@ public class AccountPanel
         theSecurityTable.addActionListener(myListener);
         thePayeeTable.addChangeListener(myListener);
         thePayeeTable.addActionListener(myListener);
-        theSaveButtons.addActionListener(myListener);
+        theActionButtons.addActionListener(myListener);
 
-        /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        /* Hide the action buttons initially */
+        theActionButtons.setVisible(false);
     }
 
     /**
@@ -318,6 +328,9 @@ public class AccountPanel
      * @throws JOceanusException on error
      */
     protected void refreshData() throws JOceanusException {
+        /* Note that we are refreshing */
+        isRefreshing = true;
+
         /* Must be done in dataType order to ensure that links are resolved correctly */
         thePayeeTable.refreshData();
         theSecurityTable.refreshData();
@@ -326,8 +339,9 @@ public class AccountPanel
         theLoanTable.refreshData();
         thePortfolioTable.refreshData();
 
-        /* Enable the save buttons */
-        theSaveButtons.setEnabled(true);
+        /* Clear refreshing flag */
+        isRefreshing = false;
+        setVisibility();
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
@@ -524,9 +538,9 @@ public class AccountPanel
         boolean hasUpdates = hasUpdates();
         boolean isItemEditing = isItemEditing();
 
-        /* Update the save buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates && !isItemEditing);
+        /* Update the action buttons */
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates && !isItemEditing);
 
         /* Update the selection */
         theSelectButton.setEnabled(!isItemEditing);
@@ -546,16 +560,13 @@ public class AccountPanel
             Object o = pEvent.getSource();
             String myCmd = pEvent.getActionCommand();
 
-            /* if this is the save buttons reporting */
-            if (theSaveButtons.equals(o)) {
+            /* if this is the action buttons reporting */
+            if (theActionButtons.equals(o)) {
                 /* Cancel Editing */
                 cancelEditing();
 
                 /* Process the command */
                 theUpdateSet.processCommand(myCmd, theError);
-
-                /* Adjust visibility */
-                setVisibility();
 
                 /* If this is an ActionDetailEvent */
             } else if (pEvent instanceof ActionDetailEvent) {
@@ -598,11 +609,11 @@ public class AccountPanel
                 /* Lock scroll-able area */
                 theCardPanel.setEnabled(!isError);
 
-                /* Lock Save Buttons */
-                theSaveButtons.setEnabled(!isError);
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
 
                 /* if this is one of the sub-panels */
-            } else {
+            } else if (!isRefreshing) {
                 /* Adjust visibility */
                 setVisibility();
             }

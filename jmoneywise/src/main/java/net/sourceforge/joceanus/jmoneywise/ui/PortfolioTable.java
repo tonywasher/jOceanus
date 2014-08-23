@@ -269,7 +269,6 @@ public class PortfolioTable
 
         /* Notify of the change */
         setList(thePortfolios);
-        fireStateChanged();
     }
 
     @Override

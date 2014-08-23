@@ -332,7 +332,6 @@ public class DepositCategoryTable
 
         /* Notify of the change */
         setList(theCategories);
-        fireStateChanged();
     }
 
     @Override

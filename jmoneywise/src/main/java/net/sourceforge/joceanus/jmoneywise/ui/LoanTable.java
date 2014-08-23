@@ -300,7 +300,6 @@ public class LoanTable
 
         /* Notify of the change */
         setList(theLoans);
-        fireStateChanged();
     }
 
     @Override

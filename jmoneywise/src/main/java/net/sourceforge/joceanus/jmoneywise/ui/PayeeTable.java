@@ -274,7 +274,6 @@ public class PayeeTable
 
         /* Notify of the change */
         setList(thePayees);
-        fireStateChanged();
     }
 
     @Override

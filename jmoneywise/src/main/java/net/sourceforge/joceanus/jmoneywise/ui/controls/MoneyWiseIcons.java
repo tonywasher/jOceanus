@@ -54,11 +54,6 @@ public final class MoneyWiseIcons
     private static final Icon ICON_LOCKABLE = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("Lock-icon.png")));
 
     /**
-     * The reconciled icon.
-     */
-    private static final Icon ICON_RECONCILED = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("GreenJellyCheck.png")), ICON_XTRA_SIZE);
-
-    /**
      * The frozen reconciled icon.
      */
     private static final Icon ICON_FROZEN_RECONCILED = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyCheck.png")), ICON_XTRA_SIZE);
@@ -82,16 +77,6 @@ public final class MoneyWiseIcons
      * The frozen set check box.
      */
     private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyCheckBox.png")));
-
-    /**
-     * The undo arrow.
-     */
-    private static final Icon ICON_UNDO = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("OrangeJellyArrowLeft.png")), ICON_XTRA_SIZE);
-
-    /**
-     * The reset arrow.
-     */
-    private static final Icon ICON_RESET = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("OrangeJellyDoubleArrowLeft.png")), ICON_XTRA_SIZE);
 
     /**
      * The cancel arrow.
@@ -122,21 +107,6 @@ public final class MoneyWiseIcons
      * Edit Button ToolTip.
      */
     private static final String TIP_EDIT = NLS_BUNDLE.getString("ButtonEdit");
-
-    /**
-     * Commit Button ToolTip.
-     */
-    private static final String TIP_COMMIT = NLS_BUNDLE.getString("ButtonCommit");
-
-    /**
-     * UnDo Button ToolTip.
-     */
-    private static final String TIP_UNDO = NLS_BUNDLE.getString("ButtonUnDo");
-
-    /**
-     * Reset Button ToolTip.
-     */
-    private static final String TIP_RESET = NLS_BUNDLE.getString("ButtonReset");
 
     /**
      * Cancel Button ToolTip.
@@ -213,7 +183,7 @@ public final class MoneyWiseIcons
      */
     public static void buildReconciledButton(final ComplexIconButtonState<Boolean, Boolean> pState) {
         pState.setState(Boolean.TRUE);
-        pState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
+        pState.setIconForValue(Boolean.TRUE, ICON_COMMIT);
         pState.setTooltipForValue(Boolean.FALSE, TIP_RECONCILE);
         pState.setTooltipForValue(Boolean.TRUE, TIP_RELEASE);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
@@ -246,39 +216,6 @@ public final class MoneyWiseIcons
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_EDIT);
         pState.setTooltipForValue(Boolean.TRUE, TIP_EDIT);
-        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-    }
-
-    /**
-     * Build commit button state.
-     * @param pState the button state
-     */
-    public static void buildCommitButton(final DefaultIconButtonState<Boolean> pState) {
-        /* Configure the delete iconButton */
-        pState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
-        pState.setTooltipForValue(Boolean.TRUE, TIP_COMMIT);
-        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-    }
-
-    /**
-     * Build undo button state.
-     * @param pState the button state
-     */
-    public static void buildUndoButton(final DefaultIconButtonState<Boolean> pState) {
-        /* Configure the delete iconButton */
-        pState.setIconForValue(Boolean.TRUE, ICON_UNDO);
-        pState.setTooltipForValue(Boolean.TRUE, TIP_UNDO);
-        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-    }
-
-    /**
-     * Build reset button state.
-     * @param pState the button state
-     */
-    public static void buildResetButton(final DefaultIconButtonState<Boolean> pState) {
-        /* Configure the delete iconButton */
-        pState.setIconForValue(Boolean.TRUE, ICON_RESET);
-        pState.setTooltipForValue(Boolean.TRUE, TIP_RESET);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 

@@ -500,49 +500,49 @@ public class MainTab
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker && hasControl);
 
-        /* Access the Register panel and determine its status */
-        int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        boolean showTab = !hasWorker && (!hasSession || theRegister.hasSession());
-
         /* Enable/Disable the register tab */
+        int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, showTab);
+            boolean doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
-
-        /* Access the Statement panel */
-        iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
-        showTab = !hasWorker && (!hasSession || theStatement.hasSession());
 
         /* Enable/Disable the statement tab */
+        iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, showTab);
+            boolean doEnabled = !hasWorker && (!hasSession || theStatement.hasSession());
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
-
-        /* Access the Report panel */
-        iIndex = theTabs.indexOfTab(TITLE_REPORT);
-        showTab = !hasWorker && !hasSession;
 
         /* Enable/Disable the reports tab */
+        iIndex = theTabs.indexOfTab(TITLE_REPORT);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, showTab);
+            boolean doEnabled = !hasWorker && !hasSession;
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
-
-        /* Access the SpotView panel and determine its status */
-        iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
-        showTab = !hasWorker && (!hasSession || theSpotView.hasSession());
 
         /* Enable/Disable the spotView tab */
+        iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, showTab);
+            boolean doEnabled = !hasWorker && (!hasSession || theSpotView.hasSession());
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
 
-        /* Access the Maintenance panel */
-        iIndex = theTabs.indexOfTab(TITLE_MAINT);
-        showTab = !hasWorker && (!hasSession || theMaint.hasSession());
-
         /* Enable/Disable the maintenance tab */
+        iIndex = theTabs.indexOfTab(TITLE_MAINT);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, showTab);
+            boolean doEnabled = !hasWorker && (!hasSession || theMaint.hasSession());
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
 
         /* Enable/Disable the tabs */

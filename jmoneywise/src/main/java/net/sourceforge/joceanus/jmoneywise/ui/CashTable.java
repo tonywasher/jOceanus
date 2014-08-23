@@ -291,7 +291,6 @@ public class CashTable
 
         /* Notify of the change */
         setList(theCash);
-        fireStateChanged();
     }
 
     @Override

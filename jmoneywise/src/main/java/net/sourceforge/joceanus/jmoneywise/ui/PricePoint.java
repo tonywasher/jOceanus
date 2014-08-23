@@ -50,13 +50,13 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurity
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableMouse;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -137,9 +137,9 @@ public class PricePoint
     private final SpotSelect theSelect;
 
     /**
-     * The save buttons.
+     * The action buttons.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
 
     /**
      * The data entry.
@@ -232,7 +232,7 @@ public class PricePoint
 
         /* Create the sub panels */
         theSelect = new SpotSelect(theView);
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataPrice);
@@ -241,22 +241,27 @@ public class PricePoint
         SpotViewListener myListener = new SpotViewListener();
         theSelect.addChangeListener(myListener);
         theError.addChangeListener(myListener);
-        theSaveButtons.addActionListener(myListener);
+        theActionButtons.addActionListener(myListener);
         theUpdateSet.addActionListener(myListener);
         theView.addChangeListener(myListener);
+
+        /* Create the header panel */
+        JPanel myHeader = new JPanel();
+        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
+        myHeader.add(theSelect);
+        myHeader.add(theError);
+        myHeader.add(theActionButtons);
 
         /* Create the panel */
         thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theSelect);
-        thePanel.add(theError);
+        thePanel.add(myHeader);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
-        /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        /* Hide the action buttons initially */
+        theActionButtons.setVisible(false);
     }
 
     /**
@@ -302,8 +307,8 @@ public class PricePoint
         boolean hasUpdates = hasUpdates();
 
         /* Update the table buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates);
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates);
         theSelect.setEnabled(!hasUpdates);
 
         /* Notify listeners */
@@ -342,7 +347,7 @@ public class PricePoint
         /* Update other details */
         setList(thePrices);
         theUpdateEntry.setDataList(thePrices);
-        theSaveButtons.setEnabled(true);
+        theActionButtons.setEnabled(true);
         theSelect.setEnabled(true);
         fireStateChanged();
     }
@@ -476,8 +481,8 @@ public class PricePoint
                 /* Lock scroll area */
                 getScrollPane().setEnabled(!isError);
 
-                /* Lock Save Buttons */
-                theSaveButtons.setEnabled(!isError);
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
             }
         }
 
@@ -485,15 +490,15 @@ public class PricePoint
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
-            /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(o)) {
+            /* If this event relates to the action buttons */
+            if (theActionButtons.equals(o)) {
                 /* Cancel Editing */
                 cancelEditing();
 
                 /* Perform the command */
                 theUpdateSet.processCommand(evt.getActionCommand(), theError);
 
-                /* Notify listeners of changes */
+                /* Adjust for changes */
                 notifyChanges();
 
                 /* If we are performing a rewind */

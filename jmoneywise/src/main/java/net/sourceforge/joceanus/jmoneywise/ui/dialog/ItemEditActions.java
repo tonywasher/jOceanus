@@ -22,10 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
@@ -76,7 +78,7 @@ public class ItemEditActions
         /* Store parameters */
         theParent = pParent;
 
-        /* Create the buttons */
+        /* Create the button states */
         DefaultIconButtonState<Boolean> myCommitState = new DefaultIconButtonState<Boolean>();
         DefaultIconButtonState<Boolean> myUndoState = new DefaultIconButtonState<Boolean>();
         DefaultIconButtonState<Boolean> myResetState = new DefaultIconButtonState<Boolean>();
@@ -101,11 +103,17 @@ public class ItemEditActions
         MoneyWiseIcons.buildResetButton(myResetState);
         MoneyWiseIcons.buildCancelButton(myCancelState);
 
+        /* Create the standard strut */
+        Dimension myStrutSize = new Dimension(0, ItemActions.STRUT_HEIGHT);
+
         /* Create the layout */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(theCommitButton);
+        add(Box.createRigidArea(myStrutSize));
         add(theUndoButton);
+        add(Box.createRigidArea(myStrutSize));
         add(theResetButton);
+        add(Box.createRigidArea(myStrutSize));
         add(theCancelButton);
 
         /* Create the listener */
@@ -133,6 +141,7 @@ public class ItemEditActions
 
         /* Check for no errors */
         boolean hasErrors = theParent.hasErrors();
+        hasUpdates |= theParent.isNew();
         theCommitButton.setEnabled(hasUpdates && !hasErrors);
     }
 

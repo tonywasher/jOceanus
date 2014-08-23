@@ -98,6 +98,16 @@ public class MoneyWiseData
      */
     private static final Map<JDataField, MoneyWiseDataType> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, MoneyWiseDataType.class);
 
+    /**
+     * DateRange Type Field Id.
+     */
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRange"));
+
+    /**
+     * DefaultCurrency Field Id.
+     */
+    public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCurrency"));
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -105,6 +115,13 @@ public class MoneyWiseData
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_DATERANGE.equals(pField)) {
+            return theDateRange;
+        }
+        if (FIELD_DEFCURR.equals(pField)) {
+            return theDefaultCurrency;
+        }
+
         /* Handle List fields */
         MoneyWiseDataType myType = FIELDSET_MAP.get(pField);
         if (myType != null) {

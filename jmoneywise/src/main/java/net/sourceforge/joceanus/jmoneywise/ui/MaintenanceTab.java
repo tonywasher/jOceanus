@@ -267,8 +267,6 @@ public class MaintenanceTab
             theTaxYearTab.refreshData();
             theStatic.refreshData();
 
-            /* Determine visibility */
-            setVisibility();
         } catch (JOceanusException e) {
             /* Show the error */
             theView.addError(e);
@@ -405,44 +403,49 @@ public class MaintenanceTab
         /* Determine whether we have any locked session */
         boolean hasSession = hasSession();
 
-        /* Access the Account index */
-        int iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
-
         /* Enable/Disable the Account tab */
+        int iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasSession || theAccountTab.hasSession());
+            boolean doEnabled = !hasSession || theAccountTab.hasSession();
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
-
-        /* Access the Category index */
-        iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
 
         /* Enable/Disable the Category tab */
+        iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasSession || theCategoryTab.hasSession());
+            boolean doEnabled = !hasSession || theCategoryTab.hasSession();
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
-
-        /* Access the TaxYear index */
-        iIndex = theTabs.indexOfTab(TITLE_TAXYEARS);
 
         /* Enable/Disable the TaxYear tab */
+        iIndex = theTabs.indexOfTab(TITLE_TAXYEARS);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasSession || theTaxYearTab.hasSession());
+            boolean doEnabled = !hasSession || theTaxYearTab.hasSession();
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
-
-        /* Access the Static panel */
-        iIndex = theTabs.indexOfTab(TITLE_STATIC);
 
         /* Enable/Disable the static tab */
+        iIndex = theTabs.indexOfTab(TITLE_STATIC);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasSession || theStatic.hasSession());
+            boolean doEnabled = !hasSession || theStatic.hasSession();
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
 
-        /* Access the Properties panel */
-        iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
-
         /* Enable/Disable the Properties tab */
+        iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasSession || thePreferences.hasSession());
+            boolean doEnabled = !hasSession || thePreferences.hasSession();
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
         }
 
         /* Update the top level tabs */
@@ -488,6 +491,8 @@ public class MaintenanceTab
      */
     private final class MaintenanceListener
             implements ChangeListener, ActionListener {
+        private boolean refreshing = false;
+
         @Override
         public void stateChanged(final ChangeEvent e) {
             Object o = e.getSource();
@@ -497,9 +502,16 @@ public class MaintenanceTab
                 /* Determine the focus */
                 determineFocus();
             } else if (theView.equals(o)) {
-                /* Refresh the data */
+                /* Refresh the data locking visibility setting for the duration */
+                refreshing = true;
                 refreshData();
-            } else {
+                refreshing = false;
+
+                /* Update visibility */
+                setVisibility();
+
+                /* Don't set visibility if called from refresh */
+            } else if (!refreshing) {
                 /* Set the visibility */
                 setVisibility();
             }

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
@@ -473,11 +473,11 @@ public class UpdateSet<E extends Enum<E>>
     public void processCommand(final String pCmd,
                                final ErrorDisplay pError) {
         /* Switch on command */
-        if (SaveButtons.CMD_OK.equals(pCmd)) {
+        if (ActionButtons.CMD_OK.equals(pCmd)) {
             applyChanges();
-        } else if (SaveButtons.CMD_UNDO.equals(pCmd)) {
+        } else if (ActionButtons.CMD_UNDO.equals(pCmd)) {
             undoLastChange();
-        } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
+        } else if (ActionButtons.CMD_RESET.equals(pCmd)) {
             resetChanges();
         }
 

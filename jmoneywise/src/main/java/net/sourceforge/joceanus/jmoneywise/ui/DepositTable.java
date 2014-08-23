@@ -319,7 +319,6 @@ public class DepositTable
 
         /* Notify of the change */
         setList(theDeposits);
-        fireStateChanged();
     }
 
     @Override

@@ -74,10 +74,10 @@ public class AnalysisMaps {
          * @param pData the dataSet
          */
         protected SecurityPriceMap(final MoneyWiseData pData) {
-            /* Loop through the prices */
-            Iterator<SecurityPrice> myIterator = pData.getSecurityPrices().iterator();
-            while (myIterator.hasNext()) {
-                SecurityPrice myPrice = myIterator.next();
+            /* Loop through the prices in ascending date order */
+            ListIterator<SecurityPrice> myIterator = pData.getSecurityPrices().listIterator();
+            while (myIterator.hasPrevious()) {
+                SecurityPrice myPrice = myIterator.previous();
 
                 /* Add to the map */
                 addPriceToMap(myPrice);
@@ -123,9 +123,9 @@ public class AnalysisMaps {
             SecurityPrices myList = get(mySecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<SecurityPrice> myIterator = myList.iterator();
-                while (myIterator.hasNext()) {
-                    SecurityPrice myCurr = myIterator.next();
+                ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
+                while (myIterator.hasPrevious()) {
+                    SecurityPrice myCurr = myIterator.previous();
 
                     /* Return this price if this is earlier or equal to the the date */
                     if (pDate.compareTo(myCurr.getDate()) <= 0) {
@@ -156,9 +156,9 @@ public class AnalysisMaps {
             SecurityPrices myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<SecurityPrice> myIterator = myList.iterator();
-                while (myIterator.hasNext()) {
-                    SecurityPrice myCurr = myIterator.next();
+                ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
+                while (myIterator.hasPrevious()) {
+                    SecurityPrice myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
                     int iComp = pRange.compareTo(myCurr.getDate());

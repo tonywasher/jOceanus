@@ -47,9 +47,9 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -165,14 +165,19 @@ public class CategoryPanel
     private final transient JDataEntry theDataEntry;
 
     /**
-     * The save buttons panel.
+     * The action buttons panel.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
 
     /**
      * The error panel.
      */
     private final ErrorPanel theError;
+
+    /**
+     * Are we refreshing?
+     */
+    private boolean isRefreshing = false;
 
     /**
      * Constructor.
@@ -192,8 +197,8 @@ public class CategoryPanel
         /* Create the error panel */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
 
-        /* Create the save buttons panel */
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        /* Create the action buttons panel */
+        theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the table panels */
         theDepositTable = new DepositCategoryTable(pView, theUpdateSet, theError);
@@ -250,16 +255,22 @@ public class CategoryPanel
         mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, PANEL_PAD));
         mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, PANEL_PAD));
 
+        /* Create the header panel */
+        JPanel myHeader = new JPanel();
+        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
+        myHeader.add(mySelect);
+        myHeader.add(theError);
+        myHeader.add(theActionButtons);
+
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(mySelect);
-        add(theError);
+        add(myHeader);
         add(Box.createVerticalGlue());
         add(theCardPanel);
-        add(theSaveButtons);
 
         /* Create the listener */
         CategoryListener myListener = new CategoryListener();
+        theError.addChangeListener(myListener);
         theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theDepositTable.addChangeListener(myListener);
         theDepositTable.addActionListener(myListener);
@@ -271,10 +282,10 @@ public class CategoryPanel
         theEventTable.addActionListener(myListener);
         theTagTable.addChangeListener(myListener);
         theTagTable.addActionListener(myListener);
-        theSaveButtons.addActionListener(myListener);
+        theActionButtons.addActionListener(myListener);
 
-        /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        /* Hide the action buttons initially */
+        theActionButtons.setVisible(false);
     }
 
     /**
@@ -296,6 +307,9 @@ public class CategoryPanel
      * @throws JOceanusException on error
      */
     protected void refreshData() throws JOceanusException {
+        /* Note that we are refreshing */
+        isRefreshing = true;
+
         /* Refresh the tables */
         theDepositTable.refreshData();
         theCashTable.refreshData();
@@ -303,8 +317,9 @@ public class CategoryPanel
         theEventTable.refreshData();
         theTagTable.refreshData();
 
-        /* Enable the save buttons */
-        theSaveButtons.setEnabled(true);
+        /* Clear refreshing flag */
+        isRefreshing = false;
+        setVisibility();
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
@@ -493,9 +508,9 @@ public class CategoryPanel
         boolean hasUpdates = hasUpdates();
         boolean isItemEditing = isItemEditing();
 
-        /* Update the save buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates && !isItemEditing);
+        /* Update the action buttons */
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates && !isItemEditing);
 
         /* Update the selection */
         theSelectButton.setEnabled(!isItemEditing);
@@ -526,17 +541,14 @@ public class CategoryPanel
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
 
-            /* if this is the save buttons reporting */
-            if (theSaveButtons.equals(o)) {
+            /* if this is the action buttons reporting */
+            if (theActionButtons.equals(o)) {
                 /* Cancel Editing */
                 cancelEditing();
 
                 /* Process the command */
                 String myCmd = pEvent.getActionCommand();
                 theUpdateSet.processCommand(myCmd, theError);
-
-                /* Adjust visibility */
-                setVisibility();
 
                 /* If this is an ActionDetailEvent */
             } else if (pEvent instanceof ActionDetailEvent) {
@@ -567,8 +579,27 @@ public class CategoryPanel
 
         @Override
         public void stateChanged(final ChangeEvent e) {
-            /* Adjust visibility */
-            setVisibility();
+            /* Access reporting object */
+            Object o = e.getSource();
+
+            /* If this is the error panel reporting */
+            if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelectButton.setVisible(!isError);
+
+                /* Lock scroll-able area */
+                theCardPanel.setEnabled(!isError);
+
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
+
+                /* if this is one of the sub-panels */
+            } else if (!isRefreshing) {
+                setVisibility();
+            }
         }
 
         @Override

@@ -57,13 +57,13 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.TaxYearPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -133,9 +133,9 @@ public class TaxYearTable
     private final ErrorPanel theError;
 
     /**
-     * Save Buttons.
+     * Action Buttons.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
 
     /**
      * The data entry.
@@ -214,8 +214,8 @@ public class TaxYearTable
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
 
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        /* Create the action buttons */
+        theActionButtons = new ActionButtons(theUpdateSet, false);
 
         /* Create the table model */
         theModel = new TaxYearTableModel(this);
@@ -232,19 +232,24 @@ public class TaxYearTable
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
+        /* Create the main panel */
+        JPanel myMain = new JEnablePanel();
+        myMain.setLayout(new BoxLayout(myMain, BoxLayout.X_AXIS));
+        myMain.add(getScrollPane());
+        myMain.add(theActionButtons);
+
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(theError);
-        thePanel.add(getScrollPane());
+        thePanel.add(myMain);
 
         /* Create a TaxYear panel */
         theActiveYear = new TaxYearPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveYear);
-        thePanel.add(theSaveButtons);
 
-        /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        /* Hide the action buttons initially */
+        theActionButtons.setVisible(false);
 
         /* Create listener */
         new TaxYearListener();
@@ -347,9 +352,9 @@ public class TaxYearTable
         boolean hasUpdates = hasUpdates();
         boolean isItemEditing = isItemEditing();
 
-        /* Update the save buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates && !isItemEditing);
+        /* Update the action buttons */
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates && !isItemEditing);
     }
 
     /**
@@ -447,8 +452,7 @@ public class TaxYearTable
         private TaxYearListener() {
             /* Listen to correct events */
             theUpdateSet.addChangeListener(this);
-            theView.addChangeListener(this);
-            theSaveButtons.addActionListener(this);
+            theActionButtons.addActionListener(this);
             theError.addChangeListener(this);
             theActiveYear.addChangeListener(this);
             theActiveYear.addActionListener(this);
@@ -470,8 +474,8 @@ public class TaxYearTable
                 /* Lock scroll area */
                 getScrollPane().setEnabled(!isError);
 
-                /* Lock Save Buttons */
-                theSaveButtons.setEnabled(!isError);
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
             }
 
             /* If we are performing a rewind */
@@ -484,12 +488,6 @@ public class TaxYearTable
 
                 /* Adjust for changes */
                 notifyChanges();
-            }
-
-            /* If this is the data view */
-            if (theView.equals(o)) {
-                /* Refresh Data */
-                refreshData();
             }
 
             /* If we are noting change of edit state */
@@ -529,8 +527,8 @@ public class TaxYearTable
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
 
-            /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(o)) {
+            /* If this event relates to the action buttons */
+            if (theActionButtons.equals(o)) {
                 /* Cancel any editing */
                 cancelEditing();
 

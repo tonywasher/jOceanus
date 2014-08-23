@@ -332,7 +332,6 @@ public class CashCategoryTable
 
         /* Notify of the change */
         setList(theCategories);
-        fireStateChanged();
     }
 
     @Override

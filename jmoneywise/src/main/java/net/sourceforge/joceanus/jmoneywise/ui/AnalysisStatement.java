@@ -57,12 +57,12 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementS
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -177,9 +177,9 @@ public class AnalysisStatement
     private final AnalysisSelect theSelect;
 
     /**
-     * The save buttons.
+     * The action buttons.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
 
     /**
      * The error panel.
@@ -257,8 +257,8 @@ public class AnalysisStatement
         /* Create the Analysis Selection */
         theSelect = new AnalysisSelect();
 
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        /* Create the action buttons */
+        theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataAnalysis);
@@ -271,23 +271,29 @@ public class AnalysisStatement
         theColumns = new AnalysisColumnModel(this);
         setColumnModel(theColumns);
 
+        /* Create the header panel */
+        JPanel myHeader = new JPanel();
+        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
+        myHeader.add(theSelect);
+        myHeader.add(theError);
+        myHeader.add(theActionButtons);
+
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theSelect);
-        thePanel.add(theError);
+        thePanel.add(myHeader);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
         /* Create listener */
         AnalysisListener myListener = new AnalysisListener();
+        theError.addChangeListener(myListener);
         theView.addChangeListener(myListener);
         theSelect.addChangeListener(myListener);
-        theSaveButtons.addActionListener(myListener);
+        theActionButtons.addActionListener(myListener);
         theUpdateSet.addChangeListener(myListener);
 
-        /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        /* Hide the action buttons initially */
+        theActionButtons.setVisible(false);
     }
 
     /**
@@ -351,8 +357,8 @@ public class AnalysisStatement
         boolean hasUpdates = hasUpdates();
 
         /* Update the table buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates);
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates);
         theSelect.setEnabled(!hasUpdates);
 
         /* Update the top level tabs */
@@ -379,7 +385,7 @@ public class AnalysisStatement
         setList(theTransactions);
         theTransEntry.setDataList(theTransactions);
         theInfoEntry.setDataList(myInfo);
-        theSaveButtons.setEnabled(true);
+        theActionButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
         fireStateChanged();
 
@@ -505,20 +511,32 @@ public class AnalysisStatement
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the View */
-            if (theView.equals(o)) {
+            /* If this is the error panel */
+            if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelect.setVisible(!isError);
+
+                /* Lock scroll area */
+                getScrollPane().setEnabled(!isError);
+
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
+
+                /* If this is the View */
+            } else if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
-            }
 
-            /* If we are performing a rewind */
-            if (theUpdateSet.equals(o)) {
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
-            }
 
-            /* If this is the Selection */
-            if (theSelect.equals(o)) {
+                /* If this is the Selection */
+            } else if (theSelect.equals(o)) {
                 /* Set the filter */
                 theFilter = theSelect.getFilter();
 
@@ -536,8 +554,8 @@ public class AnalysisStatement
         public void actionPerformed(final ActionEvent e) {
             Object o = e.getSource();
 
-            /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(o)) {
+            /* If this event relates to the action buttons */
+            if (theActionButtons.equals(o)) {
                 /* Cancel any editing */
                 cancelEditing();
 

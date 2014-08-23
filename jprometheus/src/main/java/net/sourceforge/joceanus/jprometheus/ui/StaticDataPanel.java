@@ -148,9 +148,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     private final ErrorPanel theError;
 
     /**
-     * The save buttons panel.
+     * The action buttons panel.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
 
     /**
      * The UpdateSet.
@@ -198,8 +198,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /* Create the error panel */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
 
-        /* Create the save buttons panel */
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        /* Create the action buttons panel */
+        theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -212,7 +212,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theListener = new StaticListener();
         theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theListener);
         theError.addChangeListener(theListener);
-        theSaveButtons.addActionListener(theListener);
+        theActionButtons.addActionListener(theListener);
         theDisabledCheckBox.addItemListener(theListener);
 
         /* Create the selection panel */
@@ -240,6 +240,13 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         mySelect.add(theNewCard);
         mySelect.add(Box.createHorizontalGlue());
 
+        /* Create the header panel */
+        JPanel myHeader = new JPanel();
+        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
+        myHeader.add(mySelect);
+        myHeader.add(theError);
+        myHeader.add(theActionButtons);
+
         /* Create the table card panel */
         theTableCard = new JEnablePanel();
         theTableLayout = new CardLayout();
@@ -250,17 +257,15 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(mySelect);
-        add(theError);
+        add(myHeader);
         add(Box.createVerticalGlue());
         add(theTableCard);
-        add(theSaveButtons);
 
         /* Set visibility of new button */
         showNewButton();
 
-        /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        /* Hide the action buttons initially */
+        theActionButtons.setVisible(false);
     }
 
     /**
@@ -378,12 +383,6 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             myPanel.refreshData();
         }
 
-        /* Enable the save buttons */
-        theSaveButtons.setEnabled(true);
-
-        /* Set visibility of new button */
-        showNewButton();
-
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
     }
@@ -428,9 +427,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
 
-        /* Update the save buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates);
+        /* Update the action buttons */
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates);
 
         /* Set visibility of New Button */
         showNewButton();
@@ -504,8 +503,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                 /* Lock scroll-able area */
                 theTableCard.setEnabled(!isError);
 
-                /* Lock Save Buttons */
-                theSaveButtons.setEnabled(!isError);
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
 
                 /* if this is the data menu builder reporting */
             } else if (theDataMenuBuilder.equals(o)) {
@@ -528,8 +527,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             Object o = pEvent.getSource();
             String myCmd = pEvent.getActionCommand();
 
-            /* if this is the save buttons reporting */
-            if (theSaveButtons.equals(o)) {
+            /* if this is the action buttons reporting */
+            if (theActionButtons.equals(o)) {
                 /* Cancel Editing */
                 cancelEditing();
 

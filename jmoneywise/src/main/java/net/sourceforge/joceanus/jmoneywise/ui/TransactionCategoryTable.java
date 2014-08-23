@@ -333,7 +333,6 @@ public class TransactionCategoryTable
 
         /* Notify of the change */
         setList(theCategories);
-        fireStateChanged();
     }
 
     @Override

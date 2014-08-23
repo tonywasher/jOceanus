@@ -61,13 +61,13 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableMouse;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -225,9 +225,9 @@ public class Register
     private JDateDayRangeSelect theSelect = null;
 
     /**
-     * Save Buttons.
+     * Action Buttons.
      */
-    private final SaveButtons theSaveButtons;
+    private final ActionButtons theActionButtons;
 
     /**
      * Data Entry.
@@ -300,7 +300,7 @@ public class Register
 
         /* Create the sub panels */
         theSelect = new JDateDayRangeSelect(false);
-        theSaveButtons = new SaveButtons(theUpdateSet);
+        theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataRegister);
@@ -309,22 +309,27 @@ public class Register
         RegisterListener myListener = new RegisterListener();
         theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theError.addChangeListener(myListener);
-        theSaveButtons.addActionListener(myListener);
+        theActionButtons.addActionListener(myListener);
         theUpdateSet.addChangeListener(myListener);
         theView.addChangeListener(myListener);
+
+        /* Create the header panel */
+        JPanel myHeader = new JPanel();
+        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
+        myHeader.add(theSelect);
+        myHeader.add(theError);
+        myHeader.add(theActionButtons);
 
         /* Create the panel */
         thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
-        thePanel.add(theSelect);
+        thePanel.add(myHeader);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
         /* Hide the save buttons initially */
-        theSaveButtons.setVisible(false);
+        theActionButtons.setVisible(false);
     }
 
     /**
@@ -378,8 +383,8 @@ public class Register
         boolean hasUpdates = hasUpdates();
 
         /* Update the table buttons */
-        theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates);
+        theActionButtons.setEnabled(true);
+        theActionButtons.setVisible(hasUpdates);
         theSelect.setEnabled(!hasUpdates);
 
         /* Update the top level tabs */
@@ -405,7 +410,7 @@ public class Register
         setList(theTransactions);
         theEventEntry.setDataList(theTransactions);
         theInfoEntry.setDataList(myInfo);
-        theSaveButtons.setEnabled(true);
+        theActionButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
         fireStateChanged();
 
@@ -460,8 +465,8 @@ public class Register
                 /* Lock scroll area */
                 getScrollPane().setEnabled(!isError);
 
-                /* Lock Save Buttons */
-                theSaveButtons.setEnabled(!isError);
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
 
                 /* If this is the data view */
             } else if (theView.equals(o)) {
@@ -505,8 +510,8 @@ public class Register
         public void actionPerformed(final ActionEvent e) {
             Object o = e.getSource();
 
-            /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(o)) {
+            /* If this event relates to the action buttons */
+            if (theActionButtons.equals(o)) {
                 /* Cancel any editing */
                 cancelEditing();
 

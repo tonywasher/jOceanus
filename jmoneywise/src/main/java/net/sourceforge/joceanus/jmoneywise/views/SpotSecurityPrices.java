@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
@@ -379,9 +380,9 @@ public class SpotSecurityPrices
             setBase(myPrices);
 
             /* Loop through the prices */
-            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
-            while (myIterator.hasNext()) {
-                SecurityPrice myPrice = myIterator.next();
+            ListIterator<SecurityPrice> myIterator = myPrices.listIterator();
+            while (myIterator.hasPrevious()) {
+                SecurityPrice myPrice = myIterator.previous();
 
                 /* Test the Date */
                 int iDiff = theDate.compareTo(myPrice.getDate());

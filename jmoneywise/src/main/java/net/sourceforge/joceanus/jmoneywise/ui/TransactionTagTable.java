@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
@@ -262,7 +263,6 @@ public class TransactionTagTable
 
         /* Notify of the change */
         setList(theTransactionTags);
-        fireStateChanged();
     }
 
     @Override
@@ -398,6 +398,41 @@ public class TransactionTagTable
             /* Handle filter */
             return true;
         }
+
+        /**
+         * New item.
+         */
+        private void addNewItem() {
+            /* Create the new tag */
+            TransactionTag myTag = new TransactionTag(theTransactionTags);
+
+            /* Protect against Exceptions */
+            try {
+                /* Set the item value */
+                myTag.setName("NewTag");
+
+                /* Handle Exceptions */
+            } catch (JOceanusException e) {
+                /* Build the error */
+                JOceanusException myError = new JMoneyWiseDataException("Failed to create new tag", e);
+
+                /* Show the error */
+                setError(myError);
+                return;
+            }
+
+            /* Add the new item */
+            myTag.setNewVersion();
+            theTransactionTags.append(myTag);
+
+            /* Validate the new item and notify of the changes */
+            myTag.validate();
+            incrementVersion();
+
+            /* Lock the table */
+            setEnabled(false);
+            theActiveTag.setNewItem(myTag);
+        }
     }
 
     /**
@@ -438,8 +473,8 @@ public class TransactionTagTable
 
             /* If we are noting change of edit state */
             if (theActiveTag.equals(o)) {
-                /* If the tag is now deleted */
-                if (theActiveTag.isItemDeleted()) {
+                /* Only action if we are not editing */
+                if (!theActiveTag.isEditing()) {
                     /* Refresh the model */
                     theModel.fireNewDataEvents();
                 }
@@ -458,6 +493,8 @@ public class TransactionTagTable
             if ((theActiveTag.equals(o))
                 && (pEvent instanceof ActionDetailEvent)) {
                 cascadeActionEvent((ActionDetailEvent) pEvent);
+            } else if (theNewButton.equals(o)) {
+                theModel.addNewItem();
             }
         }
 

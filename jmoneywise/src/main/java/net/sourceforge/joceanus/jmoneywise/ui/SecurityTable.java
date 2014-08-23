@@ -312,7 +312,6 @@ public class SecurityTable
 
         /* Notify of the change */
         setList(theSecurities);
-        fireStateChanged();
     }
 
     @Override

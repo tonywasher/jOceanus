@@ -136,6 +136,11 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     private transient int theEditVersion = VERSION_READONLY;
 
     /**
+     * Is this a new item.
+     */
+    private transient boolean isNew = false;
+
+    /**
      * Obtain the field Set.
      * @return the FieldSet
      */
@@ -182,6 +187,14 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     public boolean isItemDeleted() {
         return theItem != null
                && theItem.isDeleted();
+    }
+
+    /**
+     * Is the item new?
+     * @return true/false
+     */
+    public boolean isNew() {
+        return isNew;
     }
 
     /**
@@ -259,6 +272,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
         } else {
             /* Set EditVersion */
             theEditVersion = VERSION_READONLY;
+            isNew = false;
 
             /* Set visibility */
             setVisible(false);
@@ -286,6 +300,19 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
             /* Set readOnly */
             setEditable(false);
         }
+    }
+
+    /**
+     * Set new item.
+     * @param pItem the item
+     */
+    public void setNewItem(final T pItem) {
+        /* Store the element */
+        theItem = pItem;
+        isNew = true;
+
+        /* Set editable */
+        setEditable(true);
     }
 
     /**
@@ -396,7 +423,11 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     protected void requestCancel() {
         /* If we have any updates */
-        if (hasUpdates()) {
+        if (isNew) {
+            /* Rewind any changes to before the new item */
+            theUpdateSet.rewindToVersion(theEditVersion - 1);
+            theItem = null;
+        } else if (hasUpdates()) {
             /* Rewind any changes that have been made */
             theUpdateSet.rewindToVersion(theEditVersion);
         }
@@ -435,9 +466,11 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     protected void requestCommit() {
         /* If we have any updates */
-        if (hasUpdates()) {
-            /* Undo the last change */
-            theUpdateSet.condenseHistory(theEditVersion + 1);
+        if (isNew || hasUpdates()) {
+            /* Condense history to a single update */
+            theUpdateSet.condenseHistory(isNew
+                                              ? theEditVersion
+                                              : theEditVersion + 1);
         }
 
         /* Stop element being editable */

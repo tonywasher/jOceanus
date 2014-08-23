@@ -215,7 +215,6 @@ public class SecurityPriceTable
         theHeader = new PriceHeader(thePrices);
         theDilutions = theView.getDilutions();
         setList(thePrices);
-        fireStateChanged();
     }
 
     /**

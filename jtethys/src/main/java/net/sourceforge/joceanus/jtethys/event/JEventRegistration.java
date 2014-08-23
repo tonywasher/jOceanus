@@ -96,6 +96,11 @@ public abstract class JEventRegistration<T> {
         private final ChangeListener theListener;
 
         /**
+         * Timing.
+         */
+        private long theElapsed;
+
+        /**
          * Constructor.
          * @param pListener the listener
          */
@@ -105,7 +110,10 @@ public abstract class JEventRegistration<T> {
 
         @Override
         protected void processEvent(final ChangeEvent pEvent) {
+            long myStart = System.currentTimeMillis();
             theListener.stateChanged(pEvent);
+            long myEnd = System.currentTimeMillis();
+            theElapsed = myEnd - myStart;
         }
 
         @Override

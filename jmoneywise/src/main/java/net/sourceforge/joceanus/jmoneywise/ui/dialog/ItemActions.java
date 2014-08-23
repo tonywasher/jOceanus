@@ -22,10 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -47,6 +49,11 @@ public class ItemActions
      * Serial Id.
      */
     private static final long serialVersionUID = 6509682125660951159L;
+
+    /**
+     * Strut height.
+     */
+    protected static final int STRUT_HEIGHT = 5;
 
     /**
      * The goTo button.
@@ -95,10 +102,15 @@ public class ItemActions
         MoneyWiseIcons.buildEditButton(myEditState);
         MoneyWiseIcons.buildDeleteButton(myDeleteState);
 
+        /* Create the standard strut */
+        Dimension myStrutSize = new Dimension(0, STRUT_HEIGHT);
+
         /* Create the layout */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(theGoToButton);
+        add(Box.createRigidArea(myStrutSize));
         add(theEditButton);
+        add(Box.createRigidArea(myStrutSize));
         add(theDeleteButton);
 
         /* Create the listener */

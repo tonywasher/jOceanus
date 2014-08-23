@@ -194,7 +194,6 @@ public class DepositRateTable
         theRates = theUpdateSet.findDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
         theHeader = new RateHeader(theRates);
         setList(theRates);
-        fireStateChanged();
     }
 
     /**
