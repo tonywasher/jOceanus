@@ -85,6 +85,16 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataSubCat"));
 
     /**
+     * New parent name.
+     */
+    private static final String NAME_NEWPARENT = NLS_BUNDLE.getString("NameNewParent");
+
+    /**
+     * New Category name.
+     */
+    private static final String NAME_NEWCATEGORY = NLS_BUNDLE.getString("NameNewCategory");
+
+    /**
      * Invalid Parent Error.
      */
     protected static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
@@ -609,9 +619,14 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Set a new parent category.
      * @param pParent the new parent
+     * @throws JOceanusException on error
      */
-    public void setParentCategory(final T pParent) {
+    public void setParentCategory(final T pParent) throws JOceanusException {
         setValueParent(pParent);
+        String mySubName = getSubCategory();
+        if (mySubName != null) {
+            setSubCategoryName(mySubName);
+        }
     }
 
     @Override
@@ -731,6 +746,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Adjust count if we found the name */
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -750,6 +772,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* return if we found a name */
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -757,6 +786,34 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Obtain unique name for new category.
+         * @param pParent the parent category
+         * @return The new name
+         */
+        public String getUniqueName(final T pParent) {
+            /* Set up base constraints */
+            String myBase = pParent == null
+                                           ? ""
+                                           : pParent.getName() + STR_SEP;
+            String myCore = pParent == null
+                                           ? NAME_NEWPARENT
+                                           : NAME_NEWCATEGORY;
+            int iNextId = 1;
+
+            /* Loop until we found a name */
+            String myName = myCore;
+            for (;;) {
+                /* try out the name */
+                if (findItemByName(myBase + myName) == null) {
+                    return myName;
+                }
+
+                /* Look for next name */
+                myName = myCore + iNextId++;
+            }
         }
 
         /**

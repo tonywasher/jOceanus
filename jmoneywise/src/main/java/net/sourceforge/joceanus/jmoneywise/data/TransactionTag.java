@@ -75,6 +75,11 @@ public class TransactionTag
      */
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
+    /**
+     * New Tag name.
+     */
+    private static final String NAME_NEWTAG = NLS_BUNDLE.getString("NameNewTag");
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -329,6 +334,15 @@ public class TransactionTag
         setNextDataKeySet();
     }
 
+    /**
+     * Set defaults.
+     * @throws JOceanusException on error
+     */
+    public void setDefaults() throws JOceanusException {
+        /* Set values */
+        setName(getList().getUniqueName());
+    }
+
     @Override
     public int compareTo(final TransactionTag pThat) {
         /* Handle the trivial cases */
@@ -552,6 +566,13 @@ public class TransactionTag
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 TransactionTag myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Adjust count if we found the name */
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -573,6 +594,13 @@ public class TransactionTag
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 TransactionTag myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* return if we found a name */
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -580,6 +608,28 @@ public class TransactionTag
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Obtain unique name for new tag.
+         * @return The new name
+         */
+        public String getUniqueName() {
+            /* Set up base constraints */
+            String myBase = NAME_NEWTAG;
+            int iNextId = 1;
+
+            /* Loop until we found a name */
+            String myName = myBase;
+            for (;;) {
+                /* try out the name */
+                if (findItemByName(myName) == null) {
+                    return myName;
+                }
+
+                /* Look for next name */
+                myName = myBase + iNextId++;
+            }
         }
 
         @Override

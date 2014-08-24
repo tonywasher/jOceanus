@@ -162,22 +162,25 @@ public class CashCategoryPanel
         /* Determine whether parent/full-name fields are visible */
         CashCategory myCategory = getItem();
         CashCategoryType myType = myCategory.getCategoryType();
-        boolean showParent = !myType.isCashCategory(CashCategoryClass.PARENT);
+        boolean isParent = myType.isCashCategory(CashCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(CashCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(CashCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(CashCategory.FIELD_SUBCAT, showParent);
+        theFieldSet.setVisibility(CashCategory.FIELD_PARENT, !isParent);
+        theFieldSet.setVisibility(CashCategory.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
+
+        /* We cannot change a parent category type */
+        canEdit &= !isParent;
         theFieldSet.setEditable(CashCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(CashCategory.FIELD_NAME, isEditable && !showParent);
+        theFieldSet.setEditable(CashCategory.FIELD_NAME, isEditable && isParent);
     }
 
     @Override

@@ -174,7 +174,7 @@ public class TransactionCategoryPanel
         theFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
-        boolean canEdit = isEditable && !myCategory.isActive() && !myCurrType.isChangeable();
+        boolean canEdit = isEditable && !myCategory.isActive() && myCurrType.isChangeable();
         theFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
@@ -308,7 +308,7 @@ public class TransactionCategoryPanel
             /* Record active item */
             TransactionCategory myCategory = getItem();
             TransactionCategory myCurr = myCategory.getParentCategory();
-            boolean isExpense = myCategory.getCategoryTypeClass().isExpense();
+            CategoryType myCurrType = CategoryType.determineType(myCategory);
             JMenuItem myActive = null;
 
             /* Loop through the TransactionCategories */
@@ -324,7 +324,7 @@ public class TransactionCategoryPanel
                 }
 
                 /* If we are interested */
-                if (myClass.isExpense() == isExpense) {
+                if (myCurrType.isParentMatch(myClass)) {
                     /* Create a new action for the type */
                     JMenuItem myItem = theParentMenuBuilder.addItem(myCat);
 
@@ -455,6 +455,24 @@ public class TransactionCategoryPanel
                     return false;
                 default:
                     return true;
+            }
+        }
+
+        /**
+         * is this parent class a match?
+         * @param pClass the parent class
+         * @return true/false
+         */
+        public boolean isParentMatch(final TransactionCategoryClass pClass) {
+            switch (this) {
+                case INCOME:
+                    return pClass.isIncome();
+                case EXPENSE:
+                    return pClass.isExpense();
+                case STOCKXFER:
+                    return pClass.isStockTransfer();
+                default:
+                    return false;
             }
         }
     }

@@ -168,7 +168,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Obtain the item.
      * @return the item
      */
-    protected T getItem() {
+    public T getItem() {
         return theItem;
     }
 
@@ -313,6 +313,9 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
 
         /* Set editable */
         setEditable(true);
+
+        /* Note status has changed */
+        fireStateChanged();
     }
 
     /**

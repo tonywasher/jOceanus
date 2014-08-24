@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -194,6 +195,21 @@ public class DepositCategory
      */
     public DepositCategory(final DepositCategoryList pList) {
         super(pList);
+    }
+
+    /**
+     * Set defaults.
+     * @param pParent the parent
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final DepositCategory pParent) throws JOceanusException {
+        /* Set values */
+        DepositCategoryTypeList myTypes = getDataSet().getDepositCategoryTypes();
+        setCategoryType(myTypes.findItemByClass(pParent == null
+                                                               ? DepositCategoryClass.PARENT
+                                                               : DepositCategoryClass.SAVINGS));
+        setParentCategory(pParent);
+        setSubCategoryName(getList().getUniqueName(pParent));
     }
 
     @Override
@@ -404,27 +420,6 @@ public class DepositCategory
             DepositCategory myCategory = new DepositCategory(this);
             add(myCategory);
             return myCategory;
-        }
-
-        /**
-         * Search for a particular item by Name.
-         * @param pName Name of item
-         * @return The Item if present (or null)
-         */
-        public DepositCategory findItemByName(final String pName) {
-            /* Access the iterator */
-            Iterator<DepositCategory> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                DepositCategory myCurr = myIterator.next();
-                if (pName.equals(myCurr.getName())) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
         }
 
         @Override

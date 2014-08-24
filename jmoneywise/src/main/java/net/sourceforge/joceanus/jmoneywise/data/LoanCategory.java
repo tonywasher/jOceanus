@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -194,6 +195,21 @@ public class LoanCategory
      */
     public LoanCategory(final LoanCategoryList pList) {
         super(pList);
+    }
+
+    /**
+     * Set defaults.
+     * @param pParent the parent
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final LoanCategory pParent) throws JOceanusException {
+        /* Set values */
+        LoanCategoryTypeList myTypes = getDataSet().getLoanCategoryTypes();
+        setCategoryType(myTypes.findItemByClass(pParent == null
+                                                               ? LoanCategoryClass.PARENT
+                                                               : LoanCategoryClass.LOAN));
+        setParentCategory(pParent);
+        setSubCategoryName(getList().getUniqueName(pParent));
     }
 
     @Override

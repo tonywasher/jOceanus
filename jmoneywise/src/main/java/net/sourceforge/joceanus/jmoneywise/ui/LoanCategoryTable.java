@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -495,6 +496,38 @@ public class LoanCategoryTable
                                       ? pRow.isCategoryClass(LoanCategoryClass.PARENT)
                                       : theParent.equals(pRow.getParentCategory());
         }
+
+        /**
+         * New item.
+         */
+        private void addNewItem() {
+            /* Protect against Exceptions */
+            try {
+                /* Create the new category */
+                LoanCategory myCategory = new LoanCategory(theCategories);
+                myCategory.setDefaults(theParent);
+
+                /* Add the new item */
+                myCategory.setNewVersion();
+                theCategories.append(myCategory);
+
+                /* Validate the new item and notify of the changes */
+                myCategory.validate();
+                incrementVersion();
+
+                /* Lock the table */
+                setEnabled(false);
+                theActiveCategory.setNewItem(myCategory);
+
+                /* Handle Exceptions */
+            } catch (JOceanusException e) {
+                /* Build the error */
+                JOceanusException myError = new JMoneyWiseDataException("Failed to create new tag", e);
+
+                /* Show the error */
+                setError(myError);
+            }
+        }
     }
 
     /**
@@ -557,8 +590,8 @@ public class LoanCategoryTable
 
             /* If we are noting change of edit state */
             if (theActiveCategory.equals(o)) {
-                /* If the category is now deleted */
-                if (theActiveCategory.isItemDeleted()) {
+                /* Only action if we are not editing */
+                if (!theActiveCategory.isEditing()) {
                     /* Refresh the model */
                     theModel.fireNewDataEvents();
                 }
@@ -577,6 +610,8 @@ public class LoanCategoryTable
             if ((theActiveCategory.equals(o))
                 && (pEvent instanceof ActionDetailEvent)) {
                 cascadeActionEvent((ActionDetailEvent) pEvent);
+            } else if (theNewButton.equals(o)) {
+                theModel.addNewItem();
             }
         }
 
@@ -586,12 +621,29 @@ public class LoanCategoryTable
             if (!pEvent.getValueIsAdjusting()) {
                 /* Access selection model */
                 ListSelectionModel myModel = getSelectionModel();
+                int iIndex = -1;
                 if (!myModel.isSelectionEmpty()) {
-                    /* Loop through the indices */
-                    int iIndex = myModel.getMinSelectionIndex();
-                    iIndex = convertRowIndexToModel(iIndex);
+                    /* Determine the selected item */
+                    iIndex = myModel.getMinSelectionIndex();
+
+                    /* perform a health check */
+                    if (theModel.getViewRowCount() == 0) {
+                        iIndex = -1;
+                    }
+
+                    /* Convert to the model */
+                    if (iIndex != -1) {
+                        iIndex = convertRowIndexToModel(iIndex);
+                    }
+                }
+
+                /* If we have a selected row */
+                if (iIndex != -1) {
+                    /* Select the correct item */
                     LoanCategory myCategory = theCategories.get(iIndex);
                     theActiveCategory.setItem(myCategory);
+
+                    /* else clear the item panel */
                 } else {
                     theActiveCategory.setEditable(false);
                     theActiveCategory.setItem(null);

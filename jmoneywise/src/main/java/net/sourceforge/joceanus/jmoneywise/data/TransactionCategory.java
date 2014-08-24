@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -223,6 +224,30 @@ public final class TransactionCategory
      */
     public TransactionCategory(final TransactionCategoryList pList) {
         super(pList);
+    }
+
+    /**
+     * Set defaults.
+     * @param pParent the parent
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final TransactionCategory pParent) throws JOceanusException {
+        /* Set values */
+        TransactionCategoryTypeList myTypes = getDataSet().getTransCategoryTypes();
+        TransactionCategoryClass myParentClass = pParent.getCategoryTypeClass();
+        TransactionCategoryClass myNewClass;
+        if (myParentClass.isTotals()) {
+            myNewClass = TransactionCategoryClass.EXPENSETOTALS;
+        } else if (myParentClass.isIncome()) {
+            myNewClass = TransactionCategoryClass.OTHERINCOME;
+        } else if (myParentClass.isTransfer()) {
+            myNewClass = TransactionCategoryClass.STOCKSPLIT;
+        } else {
+            myNewClass = TransactionCategoryClass.EXPENSE;
+        }
+        setCategoryType(myTypes.findItemByClass(myNewClass));
+        setParentCategory(pParent);
+        setSubCategoryName(getList().getUniqueName(pParent));
     }
 
     @Override

@@ -167,22 +167,25 @@ public class DepositCategoryPanel
         /* Determine whether parent/full-name fields are visible */
         DepositCategory myCategory = getItem();
         DepositCategoryType myType = myCategory.getCategoryType();
-        boolean showParent = !myType.isDepositCategory(DepositCategoryClass.PARENT);
+        boolean isParent = myType.isDepositCategory(DepositCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(DepositCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(DepositCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(DepositCategory.FIELD_SUBCAT, showParent);
+        theFieldSet.setVisibility(DepositCategory.FIELD_PARENT, !isParent);
+        theFieldSet.setVisibility(DepositCategory.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
+
+        /* We cannot change a parent category type */
+        canEdit &= !isParent;
         theFieldSet.setEditable(DepositCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(DepositCategory.FIELD_NAME, isEditable && !showParent);
+        theFieldSet.setEditable(DepositCategory.FIELD_NAME, isEditable && isParent);
     }
 
     @Override

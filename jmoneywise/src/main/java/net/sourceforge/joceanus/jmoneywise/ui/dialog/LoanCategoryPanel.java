@@ -162,22 +162,25 @@ public class LoanCategoryPanel
         /* Determine whether parent/full-name fields are visible */
         LoanCategory myCategory = getItem();
         LoanCategoryType myType = myCategory.getCategoryType();
-        boolean showParent = !myType.isLoanCategory(LoanCategoryClass.PARENT);
+        boolean isParent = myType.isLoanCategory(LoanCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(LoanCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(LoanCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, showParent);
+        theFieldSet.setVisibility(LoanCategory.FIELD_PARENT, !isParent);
+        theFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
+
+        /* We cannot change a parent category type */
+        canEdit &= !isParent;
         theFieldSet.setEditable(LoanCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(LoanCategory.FIELD_NAME, isEditable && !showParent);
+        theFieldSet.setEditable(LoanCategory.FIELD_NAME, isEditable && isParent);
     }
 
     @Override

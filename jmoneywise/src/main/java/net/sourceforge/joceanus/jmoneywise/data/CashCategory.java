@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -194,6 +195,21 @@ public class CashCategory
      */
     public CashCategory(final CashCategoryList pList) {
         super(pList);
+    }
+
+    /**
+     * Set defaults.
+     * @param pParent the parent
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final CashCategory pParent) throws JOceanusException {
+        /* Set values */
+        CashCategoryTypeList myTypes = getDataSet().getCashCategoryTypes();
+        setCategoryType(myTypes.findItemByClass(pParent == null
+                                                               ? CashCategoryClass.PARENT
+                                                               : CashCategoryClass.CASH));
+        setParentCategory(pParent);
+        setSubCategoryName(getList().getUniqueName(pParent));
     }
 
     @Override

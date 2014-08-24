@@ -40,6 +40,13 @@ public enum CashCategoryClass implements CategoryInterface {
     CASH(1, 0),
 
     /**
+     * AutoExpense Cash Account.
+     * <p>
+     * This is a cash account and represents cash that is held by the client outside of any institution.
+     */
+    AUTOEXPENSE(2, 1),
+
+    /**
      * Parent Category.
      * <p>
      * This is used as a sub-total bucket and is used purely for reporting purposes.

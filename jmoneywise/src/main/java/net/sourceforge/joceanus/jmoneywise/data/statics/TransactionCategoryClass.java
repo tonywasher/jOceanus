@@ -372,9 +372,6 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXABLEGAIN:
             case CAPITALGAIN:
             case TAXFREEGAIN:
-            case INCOMETOTALS:
-            case EXPENSETOTALS:
-            case STOCKPARENT:
             case TOTALS:
                 return true;
             default:
@@ -622,19 +619,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
     public boolean isTransfer() {
         switch (this) {
             case TRANSFER:
-            case STOCKADJUST:
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case STOCKTAKEOVER:
-            case STOCKRIGHTSWAIVED:
-            case STOCKRIGHTSTAKEN:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXERCISE:
-            case OPTIONSEXPIRE:
                 return true;
             default:
-                return false;
+                return isStockTransfer();
         }
     }
 

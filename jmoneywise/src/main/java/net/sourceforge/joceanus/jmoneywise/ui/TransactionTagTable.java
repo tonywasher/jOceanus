@@ -403,13 +403,23 @@ public class TransactionTagTable
          * New item.
          */
         private void addNewItem() {
-            /* Create the new tag */
-            TransactionTag myTag = new TransactionTag(theTransactionTags);
-
             /* Protect against Exceptions */
             try {
-                /* Set the item value */
-                myTag.setName("NewTag");
+                /* Create the new tag */
+                TransactionTag myTag = new TransactionTag(theTransactionTags);
+                myTag.setDefaults();
+
+                /* Add the new item */
+                myTag.setNewVersion();
+                theTransactionTags.append(myTag);
+
+                /* Validate the new item and notify of the changes */
+                myTag.validate();
+                incrementVersion();
+
+                /* Lock the table */
+                setEnabled(false);
+                theActiveTag.setNewItem(myTag);
 
                 /* Handle Exceptions */
             } catch (JOceanusException e) {
@@ -418,20 +428,7 @@ public class TransactionTagTable
 
                 /* Show the error */
                 setError(myError);
-                return;
             }
-
-            /* Add the new item */
-            myTag.setNewVersion();
-            theTransactionTags.append(myTag);
-
-            /* Validate the new item and notify of the changes */
-            myTag.validate();
-            incrementVersion();
-
-            /* Lock the table */
-            setEnabled(false);
-            theActiveTag.setNewItem(myTag);
         }
     }
 
