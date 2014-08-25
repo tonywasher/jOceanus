@@ -198,11 +198,6 @@ public class DepositTable
     private transient DepositList theDeposits = null;
 
     /**
-     * DepositRates.
-     */
-    private transient DepositRateList theRates = null;
-
-    /**
      * Categories.
      */
     private transient DepositCategoryList theCategories = null;
@@ -310,9 +305,9 @@ public class DepositTable
 
         /* Get the Deposit rates list */
         DepositRateList myRates = myData.getDepositRates();
-        theRates = myRates.deriveEditList();
-        theRates.resolveUpdateSetLinks(theUpdateSet);
-        theRateEntry.setDataList(theRates);
+        myRates = myRates.deriveEditList();
+        myRates.resolveUpdateSetLinks(theUpdateSet);
+        theRateEntry.setDataList(myRates);
 
         /* Notify panel of refresh */
         theActiveAccount.refreshData();

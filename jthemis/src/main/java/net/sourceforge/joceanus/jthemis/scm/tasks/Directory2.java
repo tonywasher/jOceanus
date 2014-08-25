@@ -72,6 +72,11 @@ public final class Directory2 {
      * @throws JOceanusException on error
      */
     public static void createDirectory(final Path pDir) throws JOceanusException {
+        /* Handle null directory */
+        if (pDir == null) {
+            return;
+        }
+
         /* Remove any existing directory */
         removeDirectory(pDir);
 

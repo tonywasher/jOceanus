@@ -74,7 +74,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a Cash.
  */
 public class CashPanel
-        extends DataItemPanel<Cash> {
+        extends MoneyWiseDataItemPanel<Cash> {
     /**
      * Serial Id.
      */

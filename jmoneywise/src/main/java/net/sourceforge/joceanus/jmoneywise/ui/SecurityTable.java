@@ -192,11 +192,6 @@ public class SecurityTable
     private transient SecurityList theSecurities = null;
 
     /**
-     * SecurityPrices.
-     */
-    private transient ViewSecurityPriceList thePrices = null;
-
-    /**
      * Security types.
      */
     private transient SecurityTypeList theSecTypes = null;
@@ -303,9 +298,9 @@ public class SecurityTable
         theInfoEntry.setDataList(myInfo);
 
         /* Get the Security prices list */
-        thePrices = new ViewSecurityPriceList(theView);
-        thePrices.resolveUpdateSetLinks(theUpdateSet);
-        thePriceEntry.setDataList(thePrices);
+        ViewSecurityPriceList myPrices = new ViewSecurityPriceList(theView);
+        myPrices.resolveUpdateSetLinks(theUpdateSet);
+        thePriceEntry.setDataList(myPrices);
 
         /* Notify panel of refresh */
         theActiveAccount.refreshData();

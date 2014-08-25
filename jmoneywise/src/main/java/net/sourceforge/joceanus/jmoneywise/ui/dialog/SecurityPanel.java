@@ -69,7 +69,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a Security.
  */
 public class SecurityPanel
-        extends DataItemPanel<Security> {
+        extends MoneyWiseDataItemPanel<Security> {
     /**
      * Serial Id.
      */

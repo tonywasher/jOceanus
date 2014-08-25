@@ -30,7 +30,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraProject.JiraComponent;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraProject.JiraVersion;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraUser;
@@ -86,16 +85,6 @@ public class JiraIssue
      * Version Link error text.
      */
     private static final String ERROR_LINKVERS = "Failed to link version";
-
-    /**
-     * Invalid Component error text.
-     */
-    private static final String ERROR_COMP = "Component does not exist ";
-
-    /**
-     * Invalid Version error text.
-     */
-    private static final String ERROR_VERS = "Version does not exist ";
 
     /**
      * Server.
@@ -575,10 +564,6 @@ public class JiraIssue
 
         /* Access component to link */
         JiraComponent myNewComp = theProject.getComponent(pComponent);
-        if (myNewComp == null) {
-            /* Pass the exception on */
-            throw new JThemisLogicException(ERROR_COMP + pComponent);
-        }
 
         /* Protect against exceptions */
         try {
@@ -623,10 +608,6 @@ public class JiraIssue
 
         /* Access version to link */
         JiraVersion myNewVers = theProject.getVersion(pVersion);
-        if (myNewVers == null) {
-            /* Pass the exception on */
-            throw new JThemisLogicException(ERROR_VERS + pVersion);
-        }
 
         /* Protect against exceptions */
         try {
@@ -671,10 +652,6 @@ public class JiraIssue
 
         /* Access version to link */
         JiraVersion myNewVers = theProject.getVersion(pVersion);
-        if (myNewVers == null) {
-            /* Pass the exception on */
-            throw new JThemisLogicException(ERROR_VERS + pVersion);
-        }
 
         /* Protect against exceptions */
         try {

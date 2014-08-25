@@ -37,11 +37,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -69,6 +66,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -189,6 +187,11 @@ public class TransactionCategoryTable
     private final TransactionCategoryPanel theActiveCategory;
 
     /**
+     * The List Selection Model.
+     */
+    private final transient JDataTableSelection<TransactionCategory, MoneyWiseDataType> theSelectionModel;
+
+    /**
      * Event Categories.
      */
     private transient TransactionCategoryList theCategories = null;
@@ -293,6 +296,9 @@ public class TransactionCategoryTable
 
         /* Initialise the columns */
         theColumns.setColumns();
+
+        /* Create the selection model */
+        theSelectionModel = new JDataTableSelection<TransactionCategory, MoneyWiseDataType>(this, theActiveCategory);
 
         /* Create listener */
         new CategoryListener();
@@ -403,8 +409,7 @@ public class TransactionCategoryTable
             theSelectButton.setValue(pParent);
         }
         theColumns.setColumns();
-        theModel.fireNewDataEvents();
-        getSelectionModel().setSelectionInterval(0, 0);
+        theSelectionModel.handleNewFilter();
     }
 
     @Override
@@ -539,7 +544,7 @@ public class TransactionCategoryTable
      * Listener class.
      */
     private final class CategoryListener
-            implements PropertyChangeListener, ChangeListener, ActionListener, ListSelectionListener {
+            implements PropertyChangeListener, ChangeListener, ActionListener {
         /**
          * Category menu builder.
          */
@@ -559,9 +564,6 @@ public class TransactionCategoryTable
             theNewButton.addActionListener(this);
             theActiveCategory.addChangeListener(this);
             theActiveCategory.addActionListener(this);
-
-            /* Add selection listener */
-            getSelectionModel().addListSelectionListener(this);
         }
 
         @Override
@@ -573,9 +575,9 @@ public class TransactionCategoryTable
             if (theUpdateSet.equals(o)) {
                 /* Only action if we are not editing */
                 if (!theActiveCategory.isEditing()) {
-                    /* Refresh the model */
+                    /* Handle the reWind */
                     theSelectButton.refreshText();
-                    theModel.fireNewDataEvents();
+                    theSelectionModel.handleReWind();
                 }
 
                 /* Adjust for changes */
@@ -597,8 +599,8 @@ public class TransactionCategoryTable
             if (theActiveCategory.equals(o)) {
                 /* Only action if we are not editing */
                 if (!theActiveCategory.isEditing()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
                 }
 
                 /* Note changes */
@@ -617,43 +619,6 @@ public class TransactionCategoryTable
                 cascadeActionEvent((ActionDetailEvent) pEvent);
             } else if (theNewButton.equals(o)) {
                 theModel.addNewItem();
-            }
-        }
-
-        @Override
-        public void valueChanged(final ListSelectionEvent pEvent) {
-            /* If we have finished selecting */
-            if (!pEvent.getValueIsAdjusting()) {
-                /* Access selection model */
-                ListSelectionModel myModel = getSelectionModel();
-                int iIndex = -1;
-                if (!myModel.isSelectionEmpty()) {
-                    /* Determine the selected item */
-                    iIndex = myModel.getMinSelectionIndex();
-
-                    /* perform a health check */
-                    if (theModel.getViewRowCount() == 0) {
-                        iIndex = -1;
-                    }
-
-                    /* Convert to the model */
-                    if (iIndex != -1) {
-                        iIndex = convertRowIndexToModel(iIndex);
-                    }
-                }
-
-                /* If we have a selected row */
-                if (iIndex != -1) {
-                    /* Select the correct item */
-                    TransactionCategory myCategory = theCategories.get(iIndex);
-                    theActiveCategory.setItem(myCategory);
-
-                    /* else clear the item panel */
-                } else {
-                    theActiveCategory.setEditable(false);
-                    theActiveCategory.setItem(null);
-                    notifyChanges();
-                }
             }
         }
 

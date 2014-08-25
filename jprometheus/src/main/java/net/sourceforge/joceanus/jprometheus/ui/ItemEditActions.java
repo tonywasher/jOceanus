@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.dialog;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -30,15 +30,15 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
-import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 
 /**
  * Utility panel to handle actions on selected item.
+ * @param <E> the data type enum class
  */
-public class ItemEditActions
+public class ItemEditActions<E extends Enum<E>>
         extends JEnablePanel {
     /**
      * Serial Id.
@@ -68,13 +68,13 @@ public class ItemEditActions
     /**
      * The parent panel.
      */
-    private final DataItemPanel<?> theParent;
+    private final DataItemPanel<?, E> theParent;
 
     /**
      * Constructor.
      * @param pParent the parent panel
      */
-    protected ItemEditActions(final DataItemPanel<?> pParent) {
+    protected ItemEditActions(final DataItemPanel<?, E> pParent) {
         /* Store parameters */
         theParent = pParent;
 
@@ -98,10 +98,10 @@ public class ItemEditActions
         theCancelButton.setMargin(myInsets);
 
         /* Set the states */
-        MoneyWiseIcons.buildCommitButton(myCommitState);
-        MoneyWiseIcons.buildUndoButton(myUndoState);
-        MoneyWiseIcons.buildResetButton(myResetState);
-        MoneyWiseIcons.buildCancelButton(myCancelState);
+        PrometheusIcons.buildCommitButton(myCommitState);
+        PrometheusIcons.buildUndoButton(myUndoState);
+        PrometheusIcons.buildResetButton(myResetState);
+        PrometheusIcons.buildCancelButton(myCancelState);
 
         /* Create the standard strut */
         Dimension myStrutSize = new Dimension(0, ItemActions.STRUT_HEIGHT);

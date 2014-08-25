@@ -29,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
@@ -77,6 +78,21 @@ public abstract class PrometheusIcons {
     protected static final Icon ICON_RESET = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyDoubleArrowLeft.png")), ICON_XTRA_SIZE);
 
     /**
+     * The edit arrow.
+     */
+    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("ItemEdit.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The goto arrow.
+     */
+    private static final Icon ICON_GOTO = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("BlueJellyGoTo.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The cancel arrow.
+     */
+    private static final Icon ICON_CANCEL = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyUndo.png")), ICON_XTRA_SIZE);
+
+    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PrometheusIcons.class.getName());
@@ -122,6 +138,21 @@ public abstract class PrometheusIcons {
     private static final String TIP_RESET = NLS_BUNDLE.getString("ButtonReset");
 
     /**
+     * GoTo Button ToolTip.
+     */
+    private static final String TIP_GOTO = NLS_BUNDLE.getString("ButtonGoTo");
+
+    /**
+     * Edit Button ToolTip.
+     */
+    private static final String TIP_EDIT = NLS_BUNDLE.getString("ButtonEdit");
+
+    /**
+     * Cancel Button ToolTip.
+     */
+    private static final String TIP_CANCEL = NLS_BUNDLE.getString("ButtonCancel");
+
+    /**
      * Resize an icon to the row height.
      * @param pSource the source icon
      * @return the resized icon
@@ -148,6 +179,16 @@ public abstract class PrometheusIcons {
     public static JButton getNewButton() {
         JButton myButton = new JButton(ICON_NEW);
         myButton.setToolTipText(TIP_NEW);
+        return myButton;
+    }
+
+    /**
+     * Obtain goTo icon ScrollButton.
+     * @return the scroll button
+     */
+    public static JScrollButton<ActionDetailEvent> getGotoButton() {
+        JScrollButton<ActionDetailEvent> myButton = new JScrollButton<ActionDetailEvent>(ICON_GOTO);
+        myButton.setToolTipText(TIP_GOTO);
         return myButton;
     }
 
@@ -237,6 +278,28 @@ public abstract class PrometheusIcons {
         /* Configure the delete iconButton */
         pState.setIconForValue(Boolean.TRUE, ICON_RESET);
         pState.setTooltipForValue(Boolean.TRUE, TIP_RESET);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build edit button state.
+     * @param pState the button state
+     */
+    public static void buildEditButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_EDIT);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_EDIT);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build cancel button state.
+     * @param pState the button state
+     */
+    public static void buildCancelButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_CANCEL);
+        pState.setTooltipForValue(Boolean.TRUE, TIP_CANCEL);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 

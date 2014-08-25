@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.dialog;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -36,17 +36,9 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.ui.MainTab;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
@@ -57,8 +49,9 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 /**
  * Class to enable display/editing of and individual dataItem.
  * @param <T> the item type
+ * @param <E> the data type enum class
  */
-public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
+public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends JEventPanel {
     /**
      * Serial Id.
@@ -98,7 +91,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     /**
      * The Update Set.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<E> theUpdateSet;
 
     /**
      * The ErrorPanel.
@@ -113,22 +106,22 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     /**
      * The Item Actions.
      */
-    private final ItemActions theItemActions;
+    private final ItemActions<E> theItemActions;
 
     /**
      * The Item Actions.
      */
-    private final ItemEditActions theEditActions;
-
-    /**
-     * The GoToMenuBuilder.
-     */
-    private JScrollMenuBuilder<ActionDetailEvent> theGoToBuilder;
+    private final ItemEditActions<E> theEditActions;
 
     /**
      * The Item.
      */
     private transient T theItem;
+
+    /**
+     * The New Item.
+     */
+    private transient T theSelectedItem;
 
     /**
      * The EditVersion.
@@ -152,7 +145,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Obtain the Update Set.
      * @return the UpdateSet
      */
-    protected UpdateSet<MoneyWiseDataType> getUpdateSet() {
+    protected UpdateSet<E> getUpdateSet() {
         return theUpdateSet;
     }
 
@@ -168,8 +161,16 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Obtain the item.
      * @return the item
      */
-    public T getItem() {
+    protected T getItem() {
         return theItem;
+    }
+
+    /**
+     * Obtain the selected item.
+     * @return the selected item
+     */
+    public T getSelectedItem() {
+        return theSelectedItem;
     }
 
     /**
@@ -204,7 +205,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * @param pError the error panel
      */
     protected DataItemPanel(final JFieldManager pFieldMgr,
-                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final UpdateSet<E> pUpdateSet,
                             final ErrorPanel pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
@@ -223,8 +224,8 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         /* create the action panels */
-        theItemActions = new ItemActions(this);
-        theEditActions = new ItemEditActions(this);
+        theItemActions = new ItemActions<E>(this);
+        theEditActions = new ItemEditActions<E>(this);
     }
 
     /**
@@ -308,6 +309,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     public void setNewItem(final T pItem) {
         /* Store the element */
+        theSelectedItem = theItem;
         theItem = pItem;
         isNew = true;
 
@@ -361,9 +363,9 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * @param pClass the list class
      * @return the list
      */
-    public <L extends DataList<X, MoneyWiseDataType>, X extends DataItem<MoneyWiseDataType> & Comparable<? super X>>
+    public <L extends DataList<X, E>, X extends DataItem<E> & Comparable<? super X>>
             L
-            findDataList(final MoneyWiseDataType pDataType,
+            findDataList(final E pDataType,
                          final Class<L> pClass) {
         /* Look up the base list */
         return theUpdateSet.findDataList(pDataType, pClass);
@@ -478,6 +480,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
 
         /* Stop element being editable */
         setEditable(false);
+        theSelectedItem = theItem;
 
         /* Note status has changed */
         fireStateChanged();
@@ -489,6 +492,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     protected void requestEdit() {
         /* Start editing */
         setEditable(true);
+        theSelectedItem = theItem;
 
         /* Note status has changed */
         fireStateChanged();
@@ -520,9 +524,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Build goTo menu.
      * @param pBuilder the menu builder
      */
-    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder) {
-        theGoToBuilder = pBuilder;
-    }
+    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder);
 
     /**
      * Build goTo menu.
@@ -535,46 +537,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Build a GoTo entry.
      * @param pItem the item
      */
-    protected void buildGoToEvent(final DataItem<MoneyWiseDataType> pItem) {
-        /* Ignore null items */
-        if (pItem == null) {
-            return;
-        }
-
-        /* set default values */
-        int myId = -1;
-        String myName = null;
-
-        /* Handle differing items */
-        if (pItem instanceof StaticData) {
-            StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) pItem;
-            myId = MainTab.ACTION_VIEWSTATIC;
-            myName = myStatic.getName();
-        } else if (pItem instanceof AssetBase) {
-            AssetBase<?> myAccount = (AssetBase<?>) pItem;
-            myId = MainTab.ACTION_VIEWACCOUNT;
-            myName = myAccount.getName();
-        } else if (pItem instanceof CategoryBase) {
-            CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) pItem;
-            myId = MainTab.ACTION_VIEWCATEGORY;
-            myName = myCategory.getName();
-        } else if (pItem instanceof TaxYear) {
-            TaxYear myYear = (TaxYear) pItem;
-            myId = MainTab.ACTION_VIEWTAXYEAR;
-            myName = myYear.getTaxYear().toString();
-        } else if (pItem instanceof TransactionTag) {
-            TransactionTag myTag = (TransactionTag) pItem;
-            myId = MainTab.ACTION_VIEWTAG;
-            myName = myTag.getName();
-        }
-
-        /* Add a prefix */
-        myName = pItem.getItemType().toString() + ": " + myName;
-
-        /* Build the item */
-        ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, pItem);
-        theGoToBuilder.addItem(myEvent, myName);
-    }
+    protected abstract void buildGoToEvent(final DataItem<E> pItem);
 
     /**
      * FieldListener class.
@@ -628,7 +591,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
                 theItem.popHistory();
 
                 /* Build the error */
-                JOceanusException myError = new JMoneyWiseDataException("Failed to update field", e);
+                JOceanusException myError = new JPrometheusDataException("Failed to update field", e);
 
                 /* Show the error */
                 theError.addError(myError);

@@ -28,10 +28,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons;
-import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
  * Utility class to manage status icon buttons.
@@ -79,39 +76,9 @@ public final class MoneyWiseIcons
     private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyCheckBox.png")));
 
     /**
-     * The cancel arrow.
-     */
-    private static final Icon ICON_CANCEL = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("OrangeJellyUndo.png")), ICON_XTRA_SIZE);
-
-    /**
-     * The edit arrow.
-     */
-    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("ItemEdit.png")), ICON_XTRA_SIZE);
-
-    /**
-     * The goto arrow.
-     */
-    private static final Icon ICON_GOTO = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyGoTo.png")), ICON_XTRA_SIZE);
-
-    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseIcons.class.getName());
-
-    /**
-     * GoTo Button ToolTip.
-     */
-    private static final String TIP_GOTO = NLS_BUNDLE.getString("ButtonGoTo");
-
-    /**
-     * Edit Button ToolTip.
-     */
-    private static final String TIP_EDIT = NLS_BUNDLE.getString("ButtonEdit");
-
-    /**
-     * Cancel Button ToolTip.
-     */
-    private static final String TIP_CANCEL = NLS_BUNDLE.getString("ButtonCancel");
 
     /**
      * Reconcile Button ToolTip.
@@ -147,16 +114,6 @@ public final class MoneyWiseIcons
      * Private constructor to prevent instantiation.
      */
     private MoneyWiseIcons() {
-    }
-
-    /**
-     * Obtain goTo icon ScrollButton.
-     * @return the scroll button
-     */
-    public static JScrollButton<ActionDetailEvent> getGotoButton() {
-        JScrollButton<ActionDetailEvent> myButton = new JScrollButton<ActionDetailEvent>(ICON_GOTO);
-        myButton.setToolTipText(TIP_GOTO);
-        return myButton;
     }
 
     /**
@@ -206,27 +163,5 @@ public final class MoneyWiseIcons
         pState.setState(Boolean.FALSE);
         pState.setIconForValue(Boolean.TRUE, ICON_FROZEN_BOXCHECK);
         pState.setIconForValue(Boolean.FALSE, ICON_FROZEN_BOXCLEAR);
-    }
-
-    /**
-     * Build edit button state.
-     * @param pState the button state
-     */
-    public static void buildEditButton(final DefaultIconButtonState<Boolean> pState) {
-        /* Configure the delete iconButton */
-        pState.setIconForValue(Boolean.TRUE, ICON_EDIT);
-        pState.setTooltipForValue(Boolean.TRUE, TIP_EDIT);
-        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-    }
-
-    /**
-     * Build cancel button state.
-     * @param pState the button state
-     */
-    public static void buildCancelButton(final DefaultIconButtonState<Boolean> pState) {
-        /* Configure the delete iconButton */
-        pState.setIconForValue(Boolean.TRUE, ICON_CANCEL);
-        pState.setTooltipForValue(Boolean.TRUE, TIP_CANCEL);
-        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 }

@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a Loan.
  */
 public class LoanPanel
-        extends DataItemPanel<Loan> {
+        extends MoneyWiseDataItemPanel<Loan> {
     /**
      * Serial Id.
      */

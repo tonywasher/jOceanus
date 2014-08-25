@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a TaxYear.
  */
 public class TaxYearPanel
-        extends DataItemPanel<TaxYear> {
+        extends MoneyWiseDataItemPanel<TaxYear> {
     /**
      * Serial Id.
      */

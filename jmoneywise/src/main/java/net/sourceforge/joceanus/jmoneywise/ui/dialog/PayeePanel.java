@@ -64,7 +64,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a Payee.
  */
 public class PayeePanel
-        extends DataItemPanel<Payee> {
+        extends MoneyWiseDataItemPanel<Payee> {
     /**
      * Serial Id.
      */

@@ -73,7 +73,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a Deposit.
  */
 public class DepositPanel
-        extends DataItemPanel<Deposit> {
+        extends MoneyWiseDataItemPanel<Deposit> {
     /**
      * Serial Id.
      */

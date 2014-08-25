@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a DepositCategory.
  */
 public class DepositCategoryPanel
-        extends DataItemPanel<DepositCategory> {
+        extends MoneyWiseDataItemPanel<DepositCategory> {
     /**
      * Serial Id.
      */
@@ -64,21 +64,6 @@ public class DepositCategoryPanel
      * The Field Set.
      */
     private final transient JFieldSet<DepositCategory> theFieldSet;
-
-    /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * SubName Text Field.
-     */
-    private final JTextField theSubName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
 
     /**
      * Category Type Button Field.
@@ -103,31 +88,31 @@ public class DepositCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField();
-        theSubName = new JTextField();
-        theDesc = new JTextField();
+        JTextField myName = new JTextField();
+        JTextField mySubName = new JTextField();
+        JTextField myDesc = new JTextField();
 
         /* restrict the fields */
-        restrictField(theName, DepositCategory.NAMELEN);
-        restrictField(theSubName, DepositCategory.NAMELEN);
-        restrictField(theDesc, DepositCategory.NAMELEN);
+        restrictField(myName, DepositCategory.NAMELEN);
+        restrictField(mySubName, DepositCategory.NAMELEN);
+        restrictField(myDesc, DepositCategory.NAMELEN);
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<DepositCategoryType>();
         theParentButton = new JScrollButton<DepositCategory>();
 
         /* restrict the fields */
-        restrictField(theName, DepositCategory.NAMELEN);
-        restrictField(theSubName, DepositCategory.NAMELEN);
-        restrictField(theDesc, DepositCategory.NAMELEN);
+        restrictField(myName, DepositCategory.NAMELEN);
+        restrictField(mySubName, DepositCategory.NAMELEN);
+        restrictField(myDesc, DepositCategory.NAMELEN);
         restrictField(theTypeButton, DepositCategory.NAMELEN);
         restrictField(theParentButton, DepositCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(DepositCategory.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_SUBCAT, DataType.STRING, theSubName);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(DepositCategory.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(DepositCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
+        theFieldSet.addFieldElement(DepositCategory.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(DepositCategory.FIELD_PARENT, DepositCategory.class, theParentButton);
 

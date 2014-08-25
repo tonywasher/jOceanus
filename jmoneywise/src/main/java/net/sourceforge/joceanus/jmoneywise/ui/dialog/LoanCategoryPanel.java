@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a LoanCategory.
  */
 public class LoanCategoryPanel
-        extends DataItemPanel<LoanCategory> {
+        extends MoneyWiseDataItemPanel<LoanCategory> {
     /**
      * Serial Id.
      */
@@ -64,21 +64,6 @@ public class LoanCategoryPanel
      * The Field Set.
      */
     private final transient JFieldSet<LoanCategory> theFieldSet;
-
-    /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * SubName Text Field.
-     */
-    private final JTextField theSubName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
 
     /**
      * Category Type Button Field.
@@ -103,26 +88,26 @@ public class LoanCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField();
-        theSubName = new JTextField();
-        theDesc = new JTextField();
+        JTextField myName = new JTextField();
+        JTextField mySubName = new JTextField();
+        JTextField myDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<LoanCategoryType>();
         theParentButton = new JScrollButton<LoanCategory>();
 
         /* restrict the fields */
-        restrictField(theName, LoanCategory.NAMELEN);
-        restrictField(theSubName, LoanCategory.NAMELEN);
-        restrictField(theDesc, LoanCategory.NAMELEN);
+        restrictField(myName, LoanCategory.NAMELEN);
+        restrictField(mySubName, LoanCategory.NAMELEN);
+        restrictField(myDesc, LoanCategory.NAMELEN);
         restrictField(theTypeButton, LoanCategory.NAMELEN);
         restrictField(theParentButton, LoanCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(LoanCategory.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_SUBCAT, DataType.STRING, theSubName);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(LoanCategory.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(LoanCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
+        theFieldSet.addFieldElement(LoanCategory.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(LoanCategory.FIELD_CATTYPE, LoanCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(LoanCategory.FIELD_PARENT, LoanCategory.class, theParentButton);
 

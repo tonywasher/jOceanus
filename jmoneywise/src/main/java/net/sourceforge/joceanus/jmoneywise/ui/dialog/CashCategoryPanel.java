@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a CashCategory.
  */
 public class CashCategoryPanel
-        extends DataItemPanel<CashCategory> {
+        extends MoneyWiseDataItemPanel<CashCategory> {
     /**
      * Serial Id.
      */
@@ -64,21 +64,6 @@ public class CashCategoryPanel
      * The Field Set.
      */
     private final transient JFieldSet<CashCategory> theFieldSet;
-
-    /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * SubName Text Field.
-     */
-    private final JTextField theSubName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
 
     /**
      * Category Type Button Field.
@@ -103,26 +88,26 @@ public class CashCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField();
-        theSubName = new JTextField();
-        theDesc = new JTextField();
+        JTextField myName = new JTextField();
+        JTextField mySubName = new JTextField();
+        JTextField myDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<CashCategoryType>();
         theParentButton = new JScrollButton<CashCategory>();
 
         /* restrict the fields */
-        restrictField(theName, CashCategory.NAMELEN);
-        restrictField(theSubName, CashCategory.NAMELEN);
-        restrictField(theDesc, CashCategory.NAMELEN);
+        restrictField(myName, CashCategory.NAMELEN);
+        restrictField(mySubName, CashCategory.NAMELEN);
+        restrictField(myDesc, CashCategory.NAMELEN);
         restrictField(theTypeButton, CashCategory.NAMELEN);
         restrictField(theParentButton, CashCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, DataType.STRING, theSubName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
+        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, theParentButton);
 

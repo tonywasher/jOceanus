@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a TransactionTag.
  */
 public class TransactionTagPanel
-        extends DataItemPanel<TransactionTag> {
+        extends MoneyWiseDataItemPanel<TransactionTag> {
     /**
      * Serial Id.
      */
@@ -53,16 +53,6 @@ public class TransactionTagPanel
      * The Field Set.
      */
     private final transient JFieldSet<TransactionTag> theFieldSet;
-
-    /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
 
     /**
      * Constructor.
@@ -77,17 +67,17 @@ public class TransactionTagPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
 
         /* restrict the fields */
-        restrictField(theName, TransactionTag.NAMELEN);
-        restrictField(theDesc, TransactionTag.NAMELEN);
+        restrictField(myName, TransactionTag.NAMELEN);
+        restrictField(myDesc, TransactionTag.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, DataType.STRING, myDesc);
 
         /* Layout the main panel */
         JPanel myPanel = getMainPanel();

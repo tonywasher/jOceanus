@@ -491,6 +491,9 @@ public class MaintenanceTab
      */
     private final class MaintenanceListener
             implements ChangeListener, ActionListener {
+        /**
+         * Refreshing flag.
+         */
         private boolean refreshing = false;
 
         @Override

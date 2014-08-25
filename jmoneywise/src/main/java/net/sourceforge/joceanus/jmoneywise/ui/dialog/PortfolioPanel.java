@@ -62,7 +62,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Panel to display/edit/create a Portfolio.
  */
 public class PortfolioPanel
-        extends DataItemPanel<Portfolio> {
+        extends MoneyWiseDataItemPanel<Portfolio> {
     /**
      * Serial Id.
      */

@@ -31,11 +31,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
@@ -57,6 +54,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -150,6 +148,11 @@ public class TransactionTagTable
     private final TransactionTagPanel theActiveTag;
 
     /**
+     * The List Selection Model.
+     */
+    private final transient JDataTableSelection<TransactionTag, MoneyWiseDataType> theSelectionModel;
+
+    /**
      * TransactionTags.
      */
     private transient TransactionTagList theTransactionTags = null;
@@ -231,6 +234,9 @@ public class TransactionTagTable
         theFilterPanel.add(Box.createHorizontalGlue());
         theFilterPanel.add(theNewButton);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+
+        /* Create the selection model */
+        theSelectionModel = new JDataTableSelection<TransactionTag, MoneyWiseDataType>(this, theActiveTag);
 
         /* Create listener */
         new TransactionTagListener();
@@ -436,7 +442,7 @@ public class TransactionTagTable
      * Listener class.
      */
     private final class TransactionTagListener
-            implements ActionListener, ChangeListener, ListSelectionListener {
+            implements ActionListener, ChangeListener {
         /**
          * Constructor.
          */
@@ -446,9 +452,6 @@ public class TransactionTagTable
             theNewButton.addActionListener(this);
             theActiveTag.addChangeListener(this);
             theActiveTag.addActionListener(this);
-
-            /* Add selection listener */
-            getSelectionModel().addListSelectionListener(this);
         }
 
         @Override
@@ -460,8 +463,8 @@ public class TransactionTagTable
             if (theUpdateSet.equals(o)) {
                 /* Only action if we are not editing */
                 if (!theActiveTag.isEditing()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                    /* handle the ReWind */
+                    theSelectionModel.handleReWind();
                 }
 
                 /* Adjust for changes */
@@ -472,8 +475,8 @@ public class TransactionTagTable
             if (theActiveTag.equals(o)) {
                 /* Only action if we are not editing */
                 if (!theActiveTag.isEditing()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
                 }
 
                 /* Note changes */
@@ -492,26 +495,6 @@ public class TransactionTagTable
                 cascadeActionEvent((ActionDetailEvent) pEvent);
             } else if (theNewButton.equals(o)) {
                 theModel.addNewItem();
-            }
-        }
-
-        @Override
-        public void valueChanged(final ListSelectionEvent pEvent) {
-            /* If we have finished selecting */
-            if (!pEvent.getValueIsAdjusting()) {
-                /* Access selection model */
-                ListSelectionModel myModel = getSelectionModel();
-                if (!myModel.isSelectionEmpty()) {
-                    /* Loop through the indices */
-                    int iIndex = myModel.getMinSelectionIndex();
-                    iIndex = convertRowIndexToModel(iIndex);
-                    TransactionTag myTag = theTransactionTags.get(iIndex);
-                    theActiveTag.setItem(myTag);
-                } else {
-                    theActiveTag.setEditable(false);
-                    theActiveTag.setItem(null);
-                    notifyChanges();
-                }
             }
         }
     }

@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
  * Dialog to display/edit/create a TransactionCategory.
  */
 public class TransactionCategoryPanel
-        extends DataItemPanel<TransactionCategory> {
+        extends MoneyWiseDataItemPanel<TransactionCategory> {
     /**
      * Serial Id.
      */
@@ -64,21 +64,6 @@ public class TransactionCategoryPanel
      * The Field Set.
      */
     private final transient JFieldSet<TransactionCategory> theFieldSet;
-
-    /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * SubName Text Field.
-     */
-    private final JTextField theSubName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
 
     /**
      * Category Type Button Field.
@@ -103,26 +88,26 @@ public class TransactionCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField();
-        theSubName = new JTextField();
-        theDesc = new JTextField();
+        JTextField myName = new JTextField();
+        JTextField mySubName = new JTextField();
+        JTextField myDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<TransactionCategoryType>();
         theParentButton = new JScrollButton<TransactionCategory>();
 
         /* restrict the fields */
-        restrictField(theName, TransactionCategory.NAMELEN);
-        restrictField(theSubName, TransactionCategory.NAMELEN);
-        restrictField(theDesc, TransactionCategory.NAMELEN);
+        restrictField(myName, TransactionCategory.NAMELEN);
+        restrictField(mySubName, TransactionCategory.NAMELEN);
+        restrictField(myDesc, TransactionCategory.NAMELEN);
         restrictField(theTypeButton, TransactionCategory.NAMELEN);
         restrictField(theParentButton, TransactionCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, DataType.STRING, theSubName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, theParentButton);
 
