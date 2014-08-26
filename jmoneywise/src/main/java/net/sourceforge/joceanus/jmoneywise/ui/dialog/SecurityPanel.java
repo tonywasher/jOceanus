@@ -494,6 +494,7 @@ public class SecurityPanel
 
                 /* Ignore deleted or non-owner */
                 boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                bIgnore |= myPayee.isClosed();
                 if (bIgnore) {
                     continue;
                 }

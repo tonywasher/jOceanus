@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -101,6 +102,16 @@ public class Loan
     private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
 
     /**
+     * Parent Closed Error Text.
+     */
+    private static final String ERROR_PARCLOSED = NLS_BUNDLE.getString("ErrorParentClosed");
+
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
+
+    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -114,11 +125,6 @@ public class Loan
      * LoanInfoSet.
      */
     private final LoanInfoSet theInfoSet;
-
-    /**
-     * Parent Closed Error Text.
-     */
-    private static final String ERROR_PARCLOSED = NLS_BUNDLE.getString("ErrorParentClosed");
 
     @Override
     public JDataFields declareFields() {
@@ -608,6 +614,21 @@ public class Loan
         theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    /**
+     * Set defaults.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Set values */
+        LoanCategoryList myCategories = getDataSet().getLoanCategories();
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        setLoanCategory(myCategories.getDefaultCategory());
+        setLoanCurrency(getDataSet().getDefaultCurrency());
+        setParent(myPayees.getDefaultParent());
+        setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
     }
 

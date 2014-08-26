@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -87,6 +88,11 @@ public class Payee
      * Bad InfoSet Error Text.
      */
     private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
 
     /**
      * Do we have an InfoSet.
@@ -499,6 +505,17 @@ public class Payee
         theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    /**
+     * Set defaults.
+     * @throws JOceanusException on error
+     */
+    public void setDefaults() throws JOceanusException {
+        /* Set values */
+        PayeeTypeList myTypes = getDataSet().getPayeeTypes();
+        setPayeeType(myTypes.getDefaultPayeeType());
+        setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
     }
 
@@ -924,6 +941,31 @@ public class Payee
 
             /* Return it */
             return myPayee;
+        }
+
+        /**
+         * Obtain default parent for new account.
+         * @return the default payee
+         */
+        public Payee getDefaultParent() {
+            /* loop through the payees */
+            Iterator<Payee> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Payee myPayee = myIterator.next();
+
+                /* Ignore deleted and closed payees */
+                if (myPayee.isDeleted() || myPayee.isClosed()) {
+                    continue;
+                }
+
+                /* If the payee can parent */
+                if (myPayee.getPayeeTypeClass().canParentAccount()) {
+                    return myPayee;
+                }
+            }
+
+            /* Return no payee */
+            return null;
         }
     }
 }

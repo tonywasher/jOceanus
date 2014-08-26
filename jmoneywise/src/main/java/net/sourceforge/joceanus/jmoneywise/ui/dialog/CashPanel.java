@@ -303,7 +303,7 @@ public class CashPanel
 
         /* Currency cannot be changed if the item is active */
         boolean bIsActive = myCash.isActive();
-        theFieldSet.setEditable(Cash.FIELD_CURRENCY, !bIsActive);
+        theFieldSet.setEditable(Cash.FIELD_CURRENCY, !bIsActive && isEditable);
 
         /* Currency is hidden if we are autoExpense */
         boolean isAutoExpense = myCash.isAutoExpense();

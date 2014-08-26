@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -135,6 +136,11 @@ public class Security
      * Parent Closed Error Text.
      */
     private static final String ERROR_PARCLOSED = NLS_BUNDLE.getString("ErrorParentClosed");
+
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
 
     /**
      * Initial Price.
@@ -781,6 +787,22 @@ public class Security
         theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    /**
+     * Set defaults.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Set values */
+        SecurityTypeList myTypes = getDataSet().getSecurityTypes();
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        setSecurityType(myTypes.getDefaultSecurityType());
+        setSecurityCurrency(getDataSet().getDefaultCurrency());
+        setParent(myPayees.getDefaultParent());
+        setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setSymbol(getName());
         setClosed(Boolean.FALSE);
     }
 

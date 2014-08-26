@@ -102,6 +102,11 @@ public class Portfolio
     private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
 
     /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
+
+    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -533,7 +538,20 @@ public class Portfolio
         theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    /**
+     * Set defaults.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Set values */
+        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        setHolding(myDeposits.getDefaultHolding());
+        setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
+        setTaxFree(Boolean.FALSE);
     }
 
     @Override

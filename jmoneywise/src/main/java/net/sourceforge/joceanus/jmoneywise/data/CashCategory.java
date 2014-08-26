@@ -439,5 +439,30 @@ public class CashCategory
             /* Return it */
             return myCategory;
         }
+
+        /**
+         * Obtain default category for new cash account.
+         * @return the default category
+         */
+        public CashCategory getDefaultCategory() {
+            /* loop through the categories */
+            Iterator<CashCategory> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                CashCategory myCategory = myIterator.next();
+
+                /* Ignore deleted categories */
+                if (myCategory.isDeleted()) {
+                    continue;
+                }
+
+                /* If the category is not a parent */
+                if (!myCategory.isCategoryClass(CashCategoryClass.PARENT)) {
+                    return myCategory;
+                }
+            }
+
+            /* Return no category */
+            return null;
+        }
     }
 }

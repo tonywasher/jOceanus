@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
@@ -114,6 +115,11 @@ public class Deposit
      * Bad InfoSet Error Text.
      */
     private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
 
     /**
      * Do we have an InfoSet.
@@ -751,7 +757,24 @@ public class Deposit
         theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    /**
+     * Set defaults.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Set values */
+        DepositCategoryList myCategories = getDataSet().getDepositCategories();
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        setDepositCategory(myCategories.getDefaultCategory());
+        setDepositCurrency(getDataSet().getDefaultCurrency());
+        setParent(myPayees.getDefaultParent());
+        setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
+        setGross(Boolean.FALSE);
+        setTaxFree(Boolean.FALSE);
     }
 
     @Override
@@ -1248,6 +1271,29 @@ public class Deposit
 
             /* Return it */
             return myDeposit;
+        }
+
+        /**
+         * Obtain default holding for new portfolio.
+         * @return the default holding
+         */
+        public Deposit getDefaultHolding() {
+            /* loop through the deposits */
+            Iterator<Deposit> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Deposit myDeposit = myIterator.next();
+
+                /* Ignore deleted and closed deposits */
+                if (myDeposit.isDeleted() || myDeposit.isClosed()) {
+                    continue;
+                }
+
+                /* Return the deposit */
+                return myDeposit;
+            }
+
+            /* Return no payee */
+            return null;
         }
     }
 }

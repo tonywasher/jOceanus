@@ -824,12 +824,17 @@ public abstract class AssetBase<T extends AssetBase<T>>
          * @return The Item if present (or null)
          */
         public T findItemByName(final String pName) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-
             /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* return if we found a name */
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -837,6 +842,28 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Obtain unique name for new account.
+         * @param pBase the base name
+         * @return The new name
+         */
+        public String getUniqueName(final String pBase) {
+            /* Set up base constraints */
+            int iNextId = 1;
+
+            /* Loop until we found a name */
+            String myName = pBase;
+            for (;;) {
+                /* try out the name */
+                if (findItemByName(myName) == null) {
+                    return myName;
+                }
+
+                /* Build next name */
+                myName = pBase.concat(Integer.toString(iNextId++));
+            }
         }
 
         /**

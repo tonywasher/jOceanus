@@ -507,6 +507,7 @@ public class LoanPanel
 
                 /* Ignore deleted or non-owner */
                 boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                bIgnore |= myPayee.isClosed();
                 if (bIgnore) {
                     continue;
                 }

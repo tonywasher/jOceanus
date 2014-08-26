@@ -627,8 +627,8 @@ public class TransactionTag
                     return myName;
                 }
 
-                /* Look for next name */
-                myName = myBase + iNextId++;
+                /* Build next name */
+                myName = myBase.concat(Integer.toString(iNextId++));
             }
         }
 

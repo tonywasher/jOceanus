@@ -811,8 +811,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
                     return myName;
                 }
 
-                /* Look for next name */
-                myName = myCore + iNextId++;
+                /* Build next name */
+                myName = myBase.concat(Integer.toString(iNextId++));
             }
         }
 

@@ -34,18 +34,46 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public enum PayeeTypeClass implements StaticInterface {
     /**
+     * Generic Payee Account.
+     * <p>
+     * This is a simple payee that represents an entity that monies are paid to.
+     */
+    PAYEE(1, 0),
+
+    /**
+     * Employer Account.
+     * <p>
+     * This is an employer account which is a specialised form of an {@link #INSTITUTION} payee. It has the ability to pay dividends.
+     */
+    EMPLOYER(2, 1),
+
+    /**
+     * Institution Payee.
+     * <p>
+     * This is an institution (e.g. a bank) that holds another account of behalf of the client. It is a specialised form of payee.
+     */
+    INSTITUTION(3, 2),
+
+    /**
+     * LoanHolder Account.
+     * <p>
+     * This is an individual who can own a PrivateLoan account, and who can be inherited from. It is a specialised form of a payee.
+     */
+    INDIVIDUAL(4, 3),
+
+    /**
      * Inland Revenue.
      * <p>
      * This is a singular payee representing the tax authority. All TaxCredits etc. are deemed to have been paid to the single account of this type.
      */
-    TAXMAN(1, 0),
+    TAXMAN(5, 4),
 
     /**
      * Government.
      * <p>
      * This is a singular payee representing the government. All Local Taxes should be paid to the single account of this type.
      */
-    GOVERNMENT(2, 1),
+    GOVERNMENT(6, 5),
 
     /**
      * Market pseudo account.
@@ -53,35 +81,7 @@ public enum PayeeTypeClass implements StaticInterface {
      * This is a singular payee representing the market. All increases/decreases in value of an asset that are due to fluctuations in unit prices are viewed as
      * income/expense from the single account of this type.
      */
-    MARKET(3, 2),
-
-    /**
-     * Institution Payee.
-     * <p>
-     * This is an institution (e.g. a bank) that holds another account of behalf of the client. It is a specialised form of payee.
-     */
-    INSTITUTION(4, 3),
-
-    /**
-     * LoanHolder Account.
-     * <p>
-     * This is an individual who can own a PrivateLoan account, and who can be inherited from. It is a specialised form of a payee.
-     */
-    INDIVIDUAL(5, 4),
-
-    /**
-     * Employer Account.
-     * <p>
-     * This is an employer account which is a specialised form of an {@link #INSTITUTION} payee. It has the ability to pay dividends.
-     */
-    EMPLOYER(6, 5),
-
-    /**
-     * Generic Payee Account.
-     * <p>
-     * This is a simple payee that represents an entity that monies are paid to.
-     */
-    PAYEE(7, 6);
+    MARKET(7, 6);
 
     /**
      * Resource Bundle.

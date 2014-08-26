@@ -439,5 +439,30 @@ public class LoanCategory
             /* Return it */
             return myCategory;
         }
+
+        /**
+         * Obtain default category for new loan account.
+         * @return the default category
+         */
+        public LoanCategory getDefaultCategory() {
+            /* loop through the categories */
+            Iterator<LoanCategory> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                LoanCategory myCategory = myIterator.next();
+
+                /* Ignore deleted categories */
+                if (myCategory.isDeleted()) {
+                    continue;
+                }
+
+                /* If the category is not a parent */
+                if (!myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
+                    return myCategory;
+                }
+            }
+
+            /* Return no category */
+            return null;
+        }
     }
 }

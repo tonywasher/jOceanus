@@ -385,6 +385,8 @@ public class DepositPanel
         theFieldSet.setEditable(Deposit.FIELD_GROSS, bIsChangeable);
         theFieldSet.setEditable(Deposit.FIELD_TAXFREE, bIsChangeable);
         theFieldSet.setEditable(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), bIsChangeable);
+        theTaxFreeState.setState(bEditClosed);
+        theGrossState.setState(bEditClosed);
     }
 
     @Override
@@ -620,6 +622,7 @@ public class DepositPanel
 
                 /* Ignore deleted or non-owner */
                 boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                bIgnore |= myPayee.isClosed();
                 if (bIgnore) {
                     continue;
                 }

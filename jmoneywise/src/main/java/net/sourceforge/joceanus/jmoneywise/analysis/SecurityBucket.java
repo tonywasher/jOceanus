@@ -880,10 +880,12 @@ public final class SecurityBucket
 
         /**
          * Mark active securities.
+         * @return true/false are there active securities?
          * @throws JOceanusException on error
          */
-        protected void markActiveSecurities() throws JOceanusException {
+        protected boolean markActiveSecurities() throws JOceanusException {
             /* Loop through the buckets */
+            boolean areActive = false;
             Iterator<SecurityBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
                 SecurityBucket myCurr = myIterator.next();
@@ -893,6 +895,7 @@ public final class SecurityBucket
                 if (myCurr.isActive()) {
                     /* Set the security as relevant */
                     mySecurity.setRelevant();
+                    areActive = true;
                 }
 
                 /* If we are closed */
@@ -907,6 +910,9 @@ public final class SecurityBucket
                     }
                 }
             }
+
+            /* Return active indication */
+            return areActive;
         }
     }
 }

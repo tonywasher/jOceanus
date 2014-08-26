@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -92,6 +93,11 @@ public class Cash
      * Bad InfoSet Error Text.
      */
     private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
 
     /**
      * Do we have an InfoSet.
@@ -527,6 +533,18 @@ public class Cash
         theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    /**
+     * Set defaults.
+     * @throws JOceanusException on error
+     */
+    public void setDefaults() throws JOceanusException {
+        /* Set values */
+        CashCategoryList myCategories = getDataSet().getCashCategories();
+        setCashCategory(myCategories.getDefaultCategory());
+        setCashCurrency(getDataSet().getDefaultCurrency());
+        setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
     }
 

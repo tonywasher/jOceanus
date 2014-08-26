@@ -26,19 +26,21 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -49,6 +51,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
@@ -71,6 +74,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -181,9 +185,29 @@ public class LoanTable
     private final JEnablePanel thePanel;
 
     /**
+     * The filter panel.
+     */
+    private final JEnablePanel theFilterPanel;
+
+    /**
+     * The locked check box.
+     */
+    private final JCheckBox theLockedCheckBox;
+
+    /**
+     * The new button.
+     */
+    private final JButton theNewButton;
+
+    /**
      * The Loan dialog.
      */
     private final LoanPanel theActiveAccount;
+
+    /**
+     * The List Selection Model.
+     */
+    private final transient JDataTableSelection<Loan, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Loans.
@@ -206,6 +230,14 @@ public class LoanTable
      */
     public JPanel getPanel() {
         return thePanel;
+    }
+
+    /**
+     * Obtain the filter panel.
+     * @return the filter panel
+     */
+    protected JPanel getFilterPanel() {
+        return theFilterPanel;
     }
 
     /**
@@ -252,6 +284,21 @@ public class LoanTable
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
+        /* Create the CheckBox */
+        theLockedCheckBox = new JCheckBox("Show Closed");
+
+        /* Create new button */
+        theNewButton = MoneyWiseIcons.getNewButton();
+
+        /* Create the filter panel */
+        theFilterPanel = new JEnablePanel();
+        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
+        theFilterPanel.add(Box.createHorizontalGlue());
+        theFilterPanel.add(theLockedCheckBox);
+        theFilterPanel.add(Box.createHorizontalGlue());
+        theFilterPanel.add(theNewButton);
+        theFilterPanel.add(Box.createRigidArea(new Dimension(AccountPanel.STRUT_WIDTH, 0)));
+
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
@@ -260,6 +307,9 @@ public class LoanTable
         /* Create an account panel */
         theActiveAccount = new LoanPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
+
+        /* Create the selection model */
+        theSelectionModel = new JDataTableSelection<Loan, MoneyWiseDataType>(this, theActiveAccount);
 
         /* Create listener */
         new LoanListener();
@@ -442,24 +492,55 @@ public class LoanTable
             /* Handle filter */
             return showAll() || !pRow.isDisabled();
         }
+
+        /**
+         * New item.
+         */
+        private void addNewItem() {
+            /* Protect against Exceptions */
+            try {
+                /* Create the new loan */
+                Loan myLoan = new Loan(theLoans);
+                myLoan.setDefaults(theUpdateSet);
+
+                /* Add the new item */
+                myLoan.setNewVersion();
+                theLoans.append(myLoan);
+
+                /* Validate the new item and notify of the changes */
+                myLoan.validate();
+                incrementVersion();
+
+                /* Lock the table */
+                setEnabled(false);
+                theActiveAccount.setNewItem(myLoan);
+
+                /* Handle Exceptions */
+            } catch (JOceanusException e) {
+                /* Build the error */
+                JOceanusException myError = new JMoneyWiseDataException("Failed to create new account", e);
+
+                /* Show the error */
+                setError(myError);
+            }
+        }
     }
 
     /**
      * Listener class.
      */
     private final class LoanListener
-            implements ActionListener, ChangeListener, ListSelectionListener {
+            implements ActionListener, ItemListener, ChangeListener {
         /**
          * Constructor.
          */
         private LoanListener() {
             /* Listen to correct events */
             theUpdateSet.addChangeListener(this);
+            theNewButton.addActionListener(this);
+            theLockedCheckBox.addItemListener(this);
             theActiveAccount.addChangeListener(this);
             theActiveAccount.addActionListener(this);
-
-            /* Add selection listener */
-            getSelectionModel().addListSelectionListener(this);
         }
 
         @Override
@@ -471,8 +552,8 @@ public class LoanTable
             if (theUpdateSet.equals(o)) {
                 /* Only action if we are not editing */
                 if (!theActiveAccount.isEditing()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                    /* Handle the reWind */
+                    theSelectionModel.handleReWind();
                 }
 
                 /* Adjust for changes */
@@ -481,14 +562,26 @@ public class LoanTable
 
             /* If we are noting change of edit state */
             if (theActiveAccount.equals(o)) {
-                /* If the account is now deleted */
-                if (theActiveAccount.isItemDeleted()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveAccount.isEditing()) {
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
                 }
 
                 /* Note changes */
                 notifyChanges();
+            }
+        }
+
+        @Override
+        public void itemStateChanged(final ItemEvent pEvent) {
+            /* Access reporting object and command */
+            Object o = pEvent.getSource();
+
+            /* if this is the locked check box reporting */
+            if (theLockedCheckBox.equals(o)) {
+                /* Adjust the showAll settings */
+                setShowAll(theLockedCheckBox.isSelected());
             }
         }
 
@@ -501,26 +594,8 @@ public class LoanTable
             if ((theActiveAccount.equals(o))
                 && (pEvent instanceof ActionDetailEvent)) {
                 cascadeActionEvent((ActionDetailEvent) pEvent);
-            }
-        }
-
-        @Override
-        public void valueChanged(final ListSelectionEvent pEvent) {
-            /* If we have finished selecting */
-            if (!pEvent.getValueIsAdjusting()) {
-                /* Access selection model */
-                ListSelectionModel myModel = getSelectionModel();
-                if (!myModel.isSelectionEmpty()) {
-                    /* Loop through the indices */
-                    int iIndex = myModel.getMinSelectionIndex();
-                    iIndex = convertRowIndexToModel(iIndex);
-                    Loan myAccount = theLoans.get(iIndex);
-                    theActiveAccount.setItem(myAccount);
-                } else {
-                    theActiveAccount.setEditable(false);
-                    theActiveAccount.setItem(null);
-                    notifyChanges();
-                }
+            } else if (theNewButton.equals(o)) {
+                theModel.addNewItem();
             }
         }
     }

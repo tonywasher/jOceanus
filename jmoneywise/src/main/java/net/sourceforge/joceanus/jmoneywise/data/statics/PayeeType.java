@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -263,6 +265,26 @@ public class PayeeType
 
             /* Return it */
             return myType;
+        }
+
+        /**
+         * Obtain payee type for new payee account.
+         * @return the payee type
+         */
+        public PayeeType getDefaultPayeeType() {
+            /* loop through the payee types */
+            Iterator<PayeeType> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                PayeeType myType = myIterator.next();
+
+                /* Ignore deleted types */
+                if (!myType.isDeleted()) {
+                    return myType;
+                }
+            }
+
+            /* Return no category */
+            return null;
         }
     }
 }

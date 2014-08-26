@@ -26,8 +26,6 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
@@ -35,7 +33,6 @@ import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -105,11 +102,6 @@ public class AccountPanel
     private final JScrollButton<PanelName> theSelectButton;
 
     /**
-     * The locked check box.
-     */
-    private final JCheckBox theLockedCheckBox;
-
-    /**
      * The card panel.
      */
     private final JPanel theCardPanel;
@@ -118,6 +110,16 @@ public class AccountPanel
      * The card layout.
      */
     private final CardLayout theLayout;
+
+    /**
+     * The filter card panel.
+     */
+    private final JEnablePanel theFilterCardPanel;
+
+    /**
+     * The card layout for the filter button.
+     */
+    private final CardLayout theFilterLayout;
 
     /**
      * The active panel.
@@ -200,9 +202,6 @@ public class AccountPanel
         /* Create the action buttons panel */
         theActionButtons = new ActionButtons(theUpdateSet);
 
-        /* Create the CheckBox */
-        theLockedCheckBox = new JCheckBox("Show Closed");
-
         /* Create the table panels */
         thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
         theSecurityTable = new SecurityTable(pView, theUpdateSet, theError);
@@ -231,19 +230,34 @@ public class AccountPanel
         theActive = PanelName.DEPOSITS;
         theSelectButton.setText(theActive.toString());
 
+        /* Create the new card panel */
+        theFilterCardPanel = new JEnablePanel();
+        theFilterLayout = new CardLayout();
+        theFilterCardPanel.setLayout(theFilterLayout);
+
+        /* Build the new card panel */
+        theFilterCardPanel.add(theDepositTable.getFilterPanel(), PanelName.DEPOSITS.toString());
+        theFilterCardPanel.add(theCashTable.getFilterPanel(), PanelName.CASH.toString());
+        theFilterCardPanel.add(theLoanTable.getFilterPanel(), PanelName.LOANS.toString());
+        theFilterCardPanel.add(thePortfolioTable.getFilterPanel(), PanelName.PORTFOLIOS.toString());
+        theFilterCardPanel.add(theSecurityTable.getFilterPanel(), PanelName.SECURITIES.toString());
+        theFilterCardPanel.add(thePayeeTable.getFilterPanel(), PanelName.PAYEES.toString());
+
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
         mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
         mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(myLabel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(theSelectButton);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(Box.createHorizontalGlue());
-        mySelect.add(theLockedCheckBox);
+        mySelect.add(theFilterCardPanel);
         mySelect.add(Box.createHorizontalGlue());
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, CategoryPanel.PANEL_PAD));
         mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, CategoryPanel.PANEL_PAD));
 
@@ -263,7 +277,6 @@ public class AccountPanel
         AccountListener myListener = new AccountListener();
         theError.addChangeListener(myListener);
         theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theLockedCheckBox.addItemListener(myListener);
         theDepositTable.addChangeListener(myListener);
         theDepositTable.addActionListener(myListener);
         theCashTable.addChangeListener(myListener);
@@ -521,6 +534,7 @@ public class AccountPanel
 
         /* Move correct card to front */
         theLayout.show(theCardPanel, myName);
+        theFilterLayout.show(theFilterCardPanel, myName);
 
         /* Note the active panel */
         theActive = pName;
@@ -544,7 +558,7 @@ public class AccountPanel
 
         /* Update the selection */
         theSelectButton.setEnabled(!isItemEditing);
-        theLockedCheckBox.setEnabled(!isItemEditing);
+        theFilterCardPanel.setEnabled(!isItemEditing);
 
         /* Alert listeners that there has been a change */
         fireStateChanged();
@@ -554,7 +568,7 @@ public class AccountPanel
      * Listener.
      */
     private final class AccountListener
-            implements ActionListener, ChangeListener, ItemListener, PropertyChangeListener {
+            implements ActionListener, ChangeListener, PropertyChangeListener {
         @Override
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
@@ -616,18 +630,6 @@ public class AccountPanel
             } else if (!isRefreshing) {
                 /* Adjust visibility */
                 setVisibility();
-            }
-        }
-
-        @Override
-        public void itemStateChanged(final ItemEvent pEvent) {
-            /* Access reporting object and command */
-            Object o = pEvent.getSource();
-
-            /* if this is the disabled check box reporting */
-            if (theLockedCheckBox.equals(o)) {
-                /* Adjust the locked settings */
-                showLocked(theLockedCheckBox.isSelected());
             }
         }
 

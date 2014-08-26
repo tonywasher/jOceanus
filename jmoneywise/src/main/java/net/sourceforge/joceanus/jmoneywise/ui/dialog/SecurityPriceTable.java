@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRend
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -223,9 +224,10 @@ public class SecurityPriceTable
      */
     protected void setSecurity(final Security pSecurity) {
         /* Store the security */
-        theSecurity = pSecurity;
-        theModel.fireNewDataEvents();
-        fireStateChanged();
+        if (!Difference.isEqual(pSecurity, theSecurity)) {
+            theSecurity = pSecurity;
+            theModel.fireNewDataEvents();
+        }
     }
 
     /**

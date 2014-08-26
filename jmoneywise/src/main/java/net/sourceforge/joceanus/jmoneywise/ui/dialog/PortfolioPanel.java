@@ -287,6 +287,8 @@ public class PortfolioPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Portfolio myPortfolio = getItem();
+        boolean bIsActive = myPortfolio.isActive();
+        boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = myPortfolio.isClosed() || !myPortfolio.isRelevant();
@@ -316,9 +318,9 @@ public class PortfolioPanel
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Holding and TaxFree status cannot be changed if the item is active */
-        boolean bIsActive = myPortfolio.isActive();
-        theFieldSet.setEditable(Portfolio.FIELD_HOLDING, isEditable && !bIsActive);
-        theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, isEditable && !bIsActive);
+        theFieldSet.setEditable(Portfolio.FIELD_HOLDING, bIsChangeable);
+        theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, bIsChangeable);
+        theTaxFreeState.setState(bIsChangeable);
     }
 
     @Override

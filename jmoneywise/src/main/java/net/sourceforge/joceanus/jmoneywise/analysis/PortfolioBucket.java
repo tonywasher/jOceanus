@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
@@ -700,11 +701,21 @@ public final class PortfolioBucket
             /* Loop through the portfolio buckets */
             Iterator<PortfolioBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myPortfolio = myIterator.next();
+                PortfolioBucket myCurr = myIterator.next();
 
                 /* Mark active securities */
-                SecurityBucketList mySecurities = myPortfolio.getSecurities();
-                mySecurities.markActiveSecurities();
+                SecurityBucketList mySecurities = myCurr.getSecurities();
+                if (mySecurities.markActiveSecurities()) {
+                    /* Check closed state */
+                    Portfolio myPortfolio = myCurr.getPortfolio();
+                    if (myPortfolio.isClosed()) {
+                        /* throw exception */
+                        throw new JMoneyWiseDataException(myCurr, "Illegally closed portfolio");
+                    }
+
+                    /* Note that the portfolio is relevant as it has relevant securities */
+                    myPortfolio.setRelevant();
+                }
             }
         }
     }

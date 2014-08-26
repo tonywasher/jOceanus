@@ -439,5 +439,30 @@ public class DepositCategory
             /* Return it */
             return myCategory;
         }
+
+        /**
+         * Obtain default category for new deposit account.
+         * @return the default category
+         */
+        public DepositCategory getDefaultCategory() {
+            /* loop through the categories */
+            Iterator<DepositCategory> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                DepositCategory myCategory = myIterator.next();
+
+                /* Ignore deleted categories */
+                if (myCategory.isDeleted()) {
+                    continue;
+                }
+
+                /* If the category is not a parent */
+                if (!myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
+                    return myCategory;
+                }
+            }
+
+            /* Return no category */
+            return null;
+        }
     }
 }
