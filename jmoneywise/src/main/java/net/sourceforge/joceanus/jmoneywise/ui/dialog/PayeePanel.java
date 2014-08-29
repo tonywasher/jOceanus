@@ -277,11 +277,17 @@ public class PayeePanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Payee myPayee = getItem();
+        boolean bIsClosed = myPayee.isClosed();
+        boolean bIsActive = myPayee.isActive();
+        boolean bIsRelevant = myPayee.isRelevant();
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = myPayee.isClosed() || !myPayee.isRelevant();
+        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Payee.FIELD_CLOSED, bShowClosed);
-        theClosedState.setState(bShowClosed);
+
+        /* Determine the state of the closed button */
+        boolean bEditClosed = bIsClosed || !bIsRelevant;
+        theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myPayee.getDesc() != null;
@@ -306,7 +312,6 @@ public class PayeePanel
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Payee type cannot be changed if the item is active */
-        boolean bIsActive = myPayee.isActive();
         theFieldSet.setEditable(Payee.FIELD_PAYEETYPE, !bIsActive);
     }
 

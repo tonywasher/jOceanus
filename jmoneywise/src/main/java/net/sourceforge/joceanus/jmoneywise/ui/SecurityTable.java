@@ -61,6 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -951,6 +952,7 @@ public class SecurityTable
 
                 /* Record active item */
                 Security mySecurity = theSecurities.get(myCell.y);
+                SecurityTypeClass myType = mySecurity.getSecurityTypeClass();
                 Payee myCurr = mySecurity.getParent();
                 JMenuItem myActive = null;
 
@@ -963,7 +965,7 @@ public class SecurityTable
                     Payee myPayee = myIterator.next();
 
                     /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
                     bIgnore |= myPayee.isClosed();
                     if (bIgnore) {
                         continue;

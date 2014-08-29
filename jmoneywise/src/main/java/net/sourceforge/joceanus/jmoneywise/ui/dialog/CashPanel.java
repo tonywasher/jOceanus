@@ -285,32 +285,40 @@ public class CashPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Cash myCash = getItem();
+        boolean bIsClosed = myCash.isClosed();
+        boolean bIsActive = myCash.isActive();
+        boolean bIsRelevant = myCash.isRelevant();
+        boolean isAutoExpense = myCash.isAutoExpense();
 
         /* Determine whether the closed button should be visible */
-        boolean isClosed = myCash.isClosed();
-        boolean bShowClosed = isClosed || !myCash.isRelevant();
+        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Cash.FIELD_CLOSED, bShowClosed);
-        theClosedState.setState(bShowClosed);
+
+        /* Determine the state of the closed button */
+        boolean bEditClosed = bIsClosed || !bIsRelevant;
+        theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myCash.getDesc() != null;
         theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
-        /* AutoExpense/Payee cannot be changed for closed item */
-        boolean canEdit = isEditable && !isClosed;
-        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
-        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
-
-        /* Currency cannot be changed if the item is active */
-        boolean bIsActive = myCash.isActive();
+        /* Category/Currency cannot be changed if the item is active */
+        theFieldSet.setEditable(Cash.FIELD_CATEGORY, !bIsActive && isEditable);
         theFieldSet.setEditable(Cash.FIELD_CURRENCY, !bIsActive && isEditable);
 
         /* Currency is hidden if we are autoExpense */
-        boolean isAutoExpense = myCash.isAutoExpense();
         theFieldSet.setVisibility(Cash.FIELD_CURRENCY, !isAutoExpense);
 
-        /* AutoPayee is hidden unless we are autoExpense */
-        theFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), isAutoExpense);
+        /* AutoExpense/Payee is hidden unless we are autoExpense */
+        JDataField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
+        JDataField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
+        theFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
+        theFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
+
+        /* AutoExpense/Payee cannot be changed for closed item */
+        boolean canEdit = isEditable && !bIsClosed;
+        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
+        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
     }
 
     @Override
@@ -329,6 +337,7 @@ public class CashPanel
         } else if (myField.equals(Cash.FIELD_CATEGORY)) {
             /* Update the Category */
             myCash.setCashCategory(pUpdate.getValue(CashCategory.class));
+            myCash.adjustForCategory(getUpdateSet());
         } else if (myField.equals(Cash.FIELD_CURRENCY)) {
             /* Update the Currency */
             myCash.setCashCurrency(pUpdate.getValue(AccountCurrency.class));
@@ -340,11 +349,6 @@ public class CashPanel
             switch (CashInfoSet.getClassForField(myField)) {
                 case AUTOEXPENSE:
                     myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
-                    if (myCash.getAutoExpense() == null) {
-                        myCash.setAutoPayee(null);
-                    } else if (myCash.getAutoPayee() == null) {
-                        /* Select a new payee */
-                    }
                     break;
                 case AUTOPAYEE:
                     myCash.setAutoPayee(pUpdate.getValue(Payee.class));
@@ -479,7 +483,7 @@ public class CashPanel
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory);
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                 /* Note active category */
                 if (myCategory.equals(myCurr)) {
@@ -537,7 +541,7 @@ public class CashPanel
 
                 /* Ignore deleted or non-expense-subTotal items */
                 TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
-                boolean bIgnore = myCategory.isDeleted() || myClass.isSubTotal();
+                boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
                 bIgnore |= !myClass.isExpense();
                 if (bIgnore) {
                     continue;
@@ -548,7 +552,7 @@ public class CashPanel
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theAutoExpenseMenuBuilder.addItem(myMenu, myCategory);
+                JMenuItem myItem = theAutoExpenseMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                 /* Note active category */
                 if (myCategory.equals(myCurr)) {

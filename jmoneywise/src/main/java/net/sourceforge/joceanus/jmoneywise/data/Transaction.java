@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -493,7 +494,8 @@ public class Transaction
         useInfoSet = true;
 
         /* If we need a tax Credit */
-        if (needsTaxCredit(getCategory(), getDebit())) {
+        if (TransactionInfoSet.isTaxCreditClassRequired(getDebit(),
+                null, getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
             /* Calculate the tax credit */
             setTaxCredit(calculateTaxCredit());
         }

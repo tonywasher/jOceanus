@@ -286,15 +286,18 @@ public class LoanPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Loan myLoan = getItem();
+        boolean bIsClosed = myLoan.isClosed();
+        boolean bIsActive = myLoan.isActive();
+        boolean bIsRelevant = myLoan.isRelevant();
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = myLoan.isClosed() || !myLoan.isRelevant();
+        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Loan.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = myLoan.isClosed()
-                                               ? !myLoan.getParent().isClosed()
-                                               : !myLoan.isRelevant();
+        boolean bEditClosed = bIsClosed
+                                       ? !myLoan.getParent().isClosed()
+                                       : !bIsRelevant;
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
@@ -311,8 +314,8 @@ public class LoanPanel
         boolean bShowNotes = isEditable || myLoan.getNotes() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Currency cannot be changed if the item is active */
-        boolean bIsActive = myLoan.isActive();
+        /* Category/Currency cannot be changed if the item is active */
+        theFieldSet.setEditable(Loan.FIELD_CATEGORY, isEditable && !bIsActive);
         theFieldSet.setEditable(Loan.FIELD_CURRENCY, isEditable && !bIsActive);
     }
 
@@ -332,6 +335,7 @@ public class LoanPanel
         } else if (myField.equals(Loan.FIELD_CATEGORY)) {
             /* Update the Category */
             myLoan.setLoanCategory(pUpdate.getValue(LoanCategory.class));
+            myLoan.adjustForCategory(getUpdateSet());
         } else if (myField.equals(Loan.FIELD_PARENT)) {
             /* Update the Parent */
             myLoan.setParent(pUpdate.getValue(Payee.class));
@@ -472,7 +476,7 @@ public class LoanPanel
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory);
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                 /* Note active category */
                 if (myCategory.equals(myCurr)) {
@@ -494,6 +498,7 @@ public class LoanPanel
 
             /* Record active item */
             Loan myLoan = getItem();
+            LoanCategoryClass myType = myLoan.getCategoryClass();
             Payee myCurr = myLoan.getParent();
             JMenuItem myActive = null;
 
@@ -506,7 +511,7 @@ public class LoanPanel
                 Payee myPayee = myIterator.next();
 
                 /* Ignore deleted or non-owner */
-                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentLoan(myType);
                 bIgnore |= myPayee.isClosed();
                 if (bIgnore) {
                     continue;

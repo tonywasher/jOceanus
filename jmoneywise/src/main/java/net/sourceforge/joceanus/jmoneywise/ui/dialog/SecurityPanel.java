@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountC
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -277,15 +278,18 @@ public class SecurityPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Security mySecurity = getItem();
+        boolean bIsClosed = mySecurity.isClosed();
+        boolean bIsActive = mySecurity.isActive();
+        boolean bIsRelevant = mySecurity.isRelevant();
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = mySecurity.isClosed() || !mySecurity.isRelevant();
+        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = mySecurity.isClosed()
-                                                   ? !mySecurity.getParent().isClosed()
-                                                   : !mySecurity.isRelevant();
+        boolean bEditClosed = bIsClosed
+                                       ? !mySecurity.getParent().isClosed()
+                                       : !bIsRelevant;
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
@@ -297,7 +301,6 @@ public class SecurityPanel
         theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Security type and currency cannot be changed if the item is active */
-        boolean bIsActive = mySecurity.isActive();
         theFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
         theFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
     }
@@ -321,6 +324,7 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_SECTYPE)) {
             /* Update the Security Type */
             mySecurity.setSecurityType(pUpdate.getValue(SecurityType.class));
+            mySecurity.adjustForCategory(getUpdateSet());
         } else if (myField.equals(Security.FIELD_PARENT)) {
             /* Update the Parent */
             mySecurity.setParent(pUpdate.getValue(Payee.class));
@@ -481,6 +485,7 @@ public class SecurityPanel
 
             /* Record active item */
             Security mySecurity = getItem();
+            SecurityTypeClass myType = mySecurity.getSecurityTypeClass();
             Payee myCurr = mySecurity.getParent();
             JMenuItem myActive = null;
 
@@ -493,7 +498,7 @@ public class SecurityPanel
                 Payee myPayee = myIterator.next();
 
                 /* Ignore deleted or non-owner */
-                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
                 bIgnore |= myPayee.isClosed();
                 if (bIgnore) {
                     continue;

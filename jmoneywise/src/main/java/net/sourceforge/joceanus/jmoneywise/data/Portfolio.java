@@ -102,6 +102,11 @@ public class Portfolio
     private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
 
     /**
+     * Holding Tax Invalid Error Text.
+     */
+    private static final String ERROR_HOLDTAX = NLS_BUNDLE.getString("ErrorHoldTax");
+
+    /**
      * New Account name.
      */
     private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
@@ -547,11 +552,22 @@ public class Portfolio
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
-        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-        setHolding(myDeposits.getDefaultHolding());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
+        adjustForTaxFree(pUpdateSet);
+    }
+
+    /**
+     * adjust values after taxFree change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void adjustForTaxFree(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access taxFree status */
+        Boolean isTaxFree = isTaxFree();
+        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        setHolding(myDeposits.getDefaultHolding(isTaxFree));
     }
 
     @Override
@@ -724,6 +740,11 @@ public class Portfolio
             /* If we are open then holding account must be open */
             if (!isClosed() && myHolding.isClosed()) {
                 addError(ERROR_HOLDCLOSED, FIELD_HOLDING);
+            }
+
+            /* We must have the same tax free status as the holding account */
+            if (!isTaxFree().equals(myHolding.isTaxFree())) {
+                addError(ERROR_HOLDTAX, FIELD_HOLDING);
             }
         }
 

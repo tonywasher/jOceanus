@@ -947,6 +947,7 @@ public class LoanTable
 
                 /* Record active item */
                 Loan myLoan = theLoans.get(myCell.y);
+                LoanCategoryClass myType = myLoan.getCategoryClass();
                 Payee myCurr = myLoan.getParent();
                 JMenuItem myActive = null;
 
@@ -959,7 +960,7 @@ public class LoanTable
                     Payee myPayee = myIterator.next();
 
                     /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentLoan(myType);
                     bIgnore |= myPayee.isClosed();
                     if (bIgnore) {
                         continue;
@@ -1029,7 +1030,7 @@ public class LoanTable
                     JScrollMenu myMenu = myMap.get(myParent.getName());
 
                     /* Create a new JMenuItem and add it to the popUp */
-                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory);
+                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                     /* Note active category */
                     if (myCategory.equals(myActiveCat)) {

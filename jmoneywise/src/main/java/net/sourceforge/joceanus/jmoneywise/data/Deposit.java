@@ -770,11 +770,38 @@ public class Deposit
         PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         setDepositCategory(myCategories.getDefaultCategory());
         setDepositCurrency(getDataSet().getDefaultCurrency());
-        setParent(myPayees.getDefaultParent());
+        setParent(myPayees.getDefaultDepositParent(getCategoryClass()));
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
         setGross(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
+        adjustForCategory(pUpdateSet);
+    }
+
+    /**
+     * adjust values after category change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access category class */
+        DepositCategoryClass myClass = getCategoryClass();
+        Payee myParent = getParent();
+
+        /* Check that parent is valid for category */
+        if (!myParent.getPayeeTypeClass().canParentDeposit(myClass)) {
+            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            setParent(myPayees.getDefaultDepositParent(myClass));
+        }
+
+        /* Set bond date if required */
+        if (DepositCategoryClass.BOND.equals(myClass)) {
+            JDateDay myDate = new JDateDay();
+            myDate.adjustYear(1);
+            setMaturity(myDate);
+        } else {
+            setMaturity(null);
+        }
     }
 
     @Override
@@ -1005,7 +1032,7 @@ public class Deposit
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            addError("Invalid Category", FIELD_CATEGORY);
+            addError(ERROR_BADCATEGORY, FIELD_CATEGORY);
         }
 
         /* Currency must be non-null and enabled */
@@ -1022,10 +1049,16 @@ public class Deposit
             /* Must have parent */
         } else if (myParent == null) {
             addError(ERROR_MISSING, FIELD_PARENT);
+        } else {
+            /* Parent must be suitable */
+            if (!myParent.getPayeeTypeClass().canParentDeposit(myClass)) {
+                addError(ERROR_BADPARENT, FIELD_PARENT);
+            }
 
             /* If we are open then parent must be open */
-        } else if (!isClosed() && myParent.isClosed()) {
-            addError(ERROR_PARCLOSED, FIELD_CLOSED);
+            if (!isClosed() && myParent.isClosed()) {
+                addError(ERROR_PARCLOSED, FIELD_CLOSED);
+            }
         }
 
         /* If the account is tax free, check that it is allowed */
@@ -1274,17 +1307,20 @@ public class Deposit
         }
 
         /**
-         * Obtain default holding for new portfolio.
+         * Obtain default holding for portfolio.
+         * @param isTaxFree should holding be taxFree?
          * @return the default holding
          */
-        public Deposit getDefaultHolding() {
+        public Deposit getDefaultHolding(final Boolean isTaxFree) {
             /* loop through the deposits */
             Iterator<Deposit> myIterator = iterator();
             while (myIterator.hasNext()) {
                 Deposit myDeposit = myIterator.next();
 
-                /* Ignore deleted and closed deposits */
-                if (myDeposit.isDeleted() || myDeposit.isClosed()) {
+                /* Ignore deleted and closed deposits and wrong taxFree status */
+                boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+                bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
+                if (bIgnore) {
                     continue;
                 }
 

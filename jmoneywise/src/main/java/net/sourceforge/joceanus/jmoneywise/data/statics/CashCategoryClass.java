@@ -51,7 +51,7 @@ public enum CashCategoryClass implements CategoryInterface {
      * <p>
      * This is used as a sub-total bucket and is used purely for reporting purposes.
      */
-    PARENT(2, 1);
+    PARENT(3, 2);
 
     /**
      * Resource Bundle.

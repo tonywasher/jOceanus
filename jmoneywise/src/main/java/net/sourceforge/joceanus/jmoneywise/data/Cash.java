@@ -37,6 +37,8 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -46,6 +48,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -326,7 +329,7 @@ public class Cash
 
     @Override
     public boolean isAutoExpense() {
-        return getAutoExpense() != null;
+        return CashCategoryClass.AUTOEXPENSE.equals(getCategoryClass());
     }
 
     @Override
@@ -537,15 +540,52 @@ public class Cash
 
     /**
      * Set defaults.
+     * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
-    public void setDefaults() throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
         CashCategoryList myCategories = getDataSet().getCashCategories();
         setCashCategory(myCategories.getDefaultCategory());
-        setCashCurrency(getDataSet().getDefaultCurrency());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
+        adjustForCategory(pUpdateSet);
+    }
+
+    /**
+     * adjust values after category change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* If we are autoExpense */
+        if (isAutoExpense()) {
+            /* Ensure that we have an autoExpense */
+            if (getAutoExpense() == null) {
+                TransactionCategoryList myCategories = getDataSet().getTransCategories();
+                setAutoExpense(myCategories.getDefaultAutoExpense());
+            }
+
+            /* Ensure that we have an autoPayee */
+            if (getAutoPayee() == null) {
+                PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+                setAutoPayee(myPayees.getDefaultAutoPayee());
+            }
+
+            /* No currency */
+            setCashCurrency(null);
+
+            /* Else standard cash account */
+        } else {
+            /* Ensure that autoPayee and Expense are null */
+            setAutoExpense(null);
+            setAutoPayee(null);
+
+            /* Ensure that we have a currency */
+            if (getCashCurrency() == null) {
+                setCashCurrency(getDataSet().getDefaultCurrency());
+            }
+        }
     }
 
     @Override
@@ -643,7 +683,10 @@ public class Cash
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
-        getCashCurrency().touchItem(this);
+        AccountCurrency myCurrency = getCashCurrency();
+        if (myCurrency != null) {
+            myCurrency.touchItem(this);
+        }
     }
 
     @Override
@@ -664,12 +707,16 @@ public class Cash
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            addError("Invalid Category", FIELD_CATEGORY);
+            addError(ERROR_BADCATEGORY, FIELD_CATEGORY);
         }
 
-        /* Currency must be non-null and enabled */
+        /* Currency must be non-null and enabled for nonAutoExpense and must be null otherwise */
         if (myCurrency == null) {
-            addError(ERROR_MISSING, FIELD_CURRENCY);
+            if (!isAutoExpense()) {
+                addError(ERROR_MISSING, FIELD_CURRENCY);
+            }
+        } else if (isAutoExpense()) {
+            addError(ERROR_EXIST, FIELD_CURRENCY);
         } else if (!myCurrency.getEnabled()) {
             addError(ERROR_DISABLED, FIELD_CURRENCY);
         }

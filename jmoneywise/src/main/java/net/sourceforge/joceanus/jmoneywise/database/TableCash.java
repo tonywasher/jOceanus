@@ -62,7 +62,7 @@ public class TableCash
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Cash.FIELD_CATEGORY, TableCashCategory.TABLE_NAME);
-        myTableDef.addReferenceColumn(Cash.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addNullReferenceColumn(Cash.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
         myTableDef.addEncryptedColumn(Cash.FIELD_NAME, Cash.NAMELEN);
         myTableDef.addNullEncryptedColumn(Cash.FIELD_DESC, Cash.DESCLEN);
         myTableDef.addBooleanColumn(Cash.FIELD_CLOSED);

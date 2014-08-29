@@ -961,6 +961,7 @@ public class DepositTable
 
                 /* Record active item */
                 Deposit myDeposit = theDeposits.get(myCell.y);
+                DepositCategoryClass myType = myDeposit.getCategoryClass();
                 Payee myCurr = myDeposit.getParent();
                 JMenuItem myActive = null;
 
@@ -973,7 +974,7 @@ public class DepositTable
                     Payee myPayee = myIterator.next();
 
                     /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
                     bIgnore |= myPayee.isClosed();
                     if (bIgnore) {
                         continue;
@@ -1043,7 +1044,7 @@ public class DepositTable
                     JScrollMenu myMenu = myMap.get(myParent.getName());
 
                     /* Create a new JMenuItem and add it to the popUp */
-                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory);
+                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                     /* Note active category */
                     if (myCategory.equals(myActiveCat)) {

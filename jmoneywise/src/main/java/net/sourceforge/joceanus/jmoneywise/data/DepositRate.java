@@ -123,6 +123,36 @@ public class DepositRate
         return super.includeXmlField(pField);
     }
 
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access Key Values */
+        EncryptedValueSet myValues = getValueSet();
+        Object myDeposit = myValues.getValue(FIELD_DEPOSIT, Object.class);
+        Object myRate = myValues.getValue(FIELD_RATE, Object.class);
+        Object myEndDate = myValues.getValue(FIELD_ENDDATE, Object.class);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Create string builder */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myFormatter.formatObject(myDeposit));
+        myBuilder.append('@');
+        myBuilder.append(myFormatter.formatObject(myRate));
+        if (myEndDate != null) {
+            myBuilder.append("->");
+            myBuilder.append(myFormatter.formatObject(myEndDate));
+        }
+
+        /* return it */
+        return myBuilder.toString();
+    }
+
     /**
      * Obtain Rate.
      * @return the rate

@@ -95,6 +95,16 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsRelevant"));
 
+    /**
+     * Bad category error.
+     */
+    protected static final String ERROR_BADCATEGORY = NLS_BUNDLE.getString("ErrorBadCategory");
+
+    /**
+     * Bad parent error.
+     */
+    protected static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+
     @Override
     public String formatObject() {
         return getName();

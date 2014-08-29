@@ -287,13 +287,22 @@ public class PortfolioPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Portfolio myPortfolio = getItem();
+        boolean bIsClosed = myPortfolio.isClosed();
         boolean bIsActive = myPortfolio.isActive();
+        boolean bIsRelevant = myPortfolio.isRelevant();
         boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = myPortfolio.isClosed() || !myPortfolio.isRelevant();
+        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Portfolio.FIELD_CLOSED, bShowClosed);
-        theClosedState.setState(bShowClosed);
+
+        /* Determine the state of the closed button */
+        boolean bEditClosed = bIsClosed || !bIsRelevant;
+        theClosedState.setState(bEditClosed);
+
+        /* Determine whether the taxFree button should be visible */
+        boolean bShowTaxFree = myPortfolio.isTaxFree() || bIsChangeable;
+        theFieldSet.setVisibility(Portfolio.FIELD_TAXFREE, bShowTaxFree);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
@@ -345,6 +354,7 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_TAXFREE)) {
             /* Update the taxFree indication */
             myPortfolio.setTaxFree(pUpdate.getBoolean());
+            myPortfolio.adjustForTaxFree(getUpdateSet());
         } else {
             /* Switch on the field */
             switch (PortfolioInfoSet.getClassForField(myField)) {
@@ -424,6 +434,7 @@ public class PortfolioPanel
             /* Record active item */
             Portfolio myPortfolio = getItem();
             Deposit myCurr = myPortfolio.getHolding();
+            Boolean isTaxFree = myPortfolio.isTaxFree();
             JMenuItem myActive = null;
 
             /* Access Payees */
@@ -434,8 +445,9 @@ public class PortfolioPanel
             while (myIterator.hasNext()) {
                 Deposit myDeposit = myIterator.next();
 
-                /* Ignore deleted/closed */
+                /* Ignore deleted/closed and different tax status deposits */
                 boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+                bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
                 if (bIgnore) {
                     continue;
                 }

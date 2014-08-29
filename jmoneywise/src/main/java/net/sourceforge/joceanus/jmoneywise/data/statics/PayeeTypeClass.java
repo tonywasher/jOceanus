@@ -180,18 +180,62 @@ public enum PayeeTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType can parent accounts.
-     * @return <code>true</code> if the account category type can parent accounts, <code>false</code> otherwise.
+     * Determine whether the PayeeType can parent the deposit type.
+     * @param pClass the Deposit type
+     * @return <code>true</code> if the payee type can the deposit type, <code>false</code> otherwise.
      */
-    public boolean canParentAccount() {
+    public boolean canParentDeposit(final DepositCategoryClass pClass) {
+        switch (this) {
+            case GOVERNMENT:
+                return !DepositCategoryClass.CHECKING.equals(pClass);
+            case INSTITUTION:
+            case EMPLOYER:
+                return true;
+            case PAYEE:
+            case INDIVIDUAL:
+            case MARKET:
+            case TAXMAN:
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the PayeeType can parent the loan type.
+     * @param pClass the Loan type
+     * @return <code>true</code> if the payee type can the loan type, <code>false</code> otherwise.
+     */
+    public boolean canParentLoan(final LoanCategoryClass pClass) {
         switch (this) {
             case TAXMAN:
             case GOVERNMENT:
-            case MARKET:
             case INSTITUTION:
             case EMPLOYER:
+                return !LoanCategoryClass.PRIVATELOAN.equals(pClass);
             case INDIVIDUAL:
-                return true;
+                return LoanCategoryClass.PRIVATELOAN.equals(pClass);
+            case MARKET:
+            case PAYEE:
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the PayeeType can parent the security type.
+     * @param pClass the Security type
+     * @return <code>true</code> if the payee type can the security type, <code>false</code> otherwise.
+     */
+    public boolean canParentSecurity(final SecurityTypeClass pClass) {
+        switch (this) {
+            case MARKET:
+                return pClass.needsMarketParent();
+            case INSTITUTION:
+            case EMPLOYER:
+                return !pClass.needsMarketParent();
+            case GOVERNMENT:
+            case TAXMAN:
+            case INDIVIDUAL:
             default:
                 return false;
         }

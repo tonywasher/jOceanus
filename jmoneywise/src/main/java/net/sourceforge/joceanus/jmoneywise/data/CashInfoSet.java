@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 
@@ -223,10 +224,10 @@ public class CashInfoSet
         switch (pClass) {
         /* Allowed set */
             case NOTES:
-            case AUTOEXPENSE:
                 return JDataFieldRequired.CANEXIST;
 
             case AUTOPAYEE:
+            case AUTOEXPENSE:
                 return myCash.isAutoExpense()
                                              ? JDataFieldRequired.MUSTEXIST
                                              : JDataFieldRequired.NOTALLOWED;
@@ -282,7 +283,8 @@ public class CashInfoSet
                 case AUTOEXPENSE:
                     /* Access data */
                     TransactionCategory myExpense = myInfo.getEventCategory();
-                    if (!myExpense.getCategoryTypeClass().isExpense()) {
+                    TransactionCategoryClass myCatClass = myExpense.getCategoryTypeClass();
+                    if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
                         myDeposit.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
                     }
                     break;

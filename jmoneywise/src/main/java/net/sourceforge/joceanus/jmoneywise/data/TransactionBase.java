@@ -1238,63 +1238,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Determines whether an event needs a tax credit.
-     * @param pCategory the category
-     * @param pDebit the debit account
-     * @return needs tax credit true/false
-     */
-    public static boolean needsTaxCredit(final TransactionCategory pCategory,
-                                         final AssetBase<?> pDebit) {
-        /* Handle null category */
-        if (pCategory == null) {
-            return false;
-        }
-
-        /* Switch on category class */
-        switch (pCategory.getCategoryTypeClass()) {
-        /* If this is a Taxable Gain/TaxedIncome we need a tax credit */
-        // case TaxableGain:
-            case TAXEDINCOME:
-                return true;
-                /* Check for interest */
-            case INTEREST:
-                return (pDebit instanceof Deposit) && !((Deposit) pDebit).isTaxFree();
-                /* Check for interest */
-            case DIVIDEND:
-                if (!(pDebit instanceof Security)) {
-                    return true;
-                }
-                return false; // TODO check portfolio tax status
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determines whether an event needs a dilution factor.
-     * @param pCategory the category
-     * @return needs dilution factor true/false
-     */
-    public static boolean needsDilution(final TransactionCategory pCategory) {
-        /* Handle null category */
-        if (pCategory == null) {
-            return false;
-        }
-
-        /* Switch on category type */
-        switch (pCategory.getCategoryType().getCategoryClass()) {
-        /* If this is a Stock Operation we need a dilution factor */
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case STOCKRIGHTSTAKEN:
-            case STOCKRIGHTSWAIVED:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Set a new debit account.
      * @param pDebit the debit account
      */

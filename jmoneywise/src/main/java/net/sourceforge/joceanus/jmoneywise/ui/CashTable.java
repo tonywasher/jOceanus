@@ -492,7 +492,7 @@ public class CashTable
             try {
                 /* Create the new cash */
                 Cash myCash = new Cash(theCash);
-                myCash.setDefaults();
+                myCash.setDefaults(theUpdateSet);
 
                 /* Add the new item */
                 myCash.setNewVersion();
@@ -949,7 +949,7 @@ public class CashTable
                     JScrollMenu myMenu = myMap.get(myParent.getName());
 
                     /* Create a new JMenuItem and add it to the popUp */
-                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory);
+                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                     /* Note active category */
                     if (myCategory.equals(myActiveCat)) {

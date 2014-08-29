@@ -627,9 +627,26 @@ public class Loan
         PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         setLoanCategory(myCategories.getDefaultCategory());
         setLoanCurrency(getDataSet().getDefaultCurrency());
-        setParent(myPayees.getDefaultParent());
+        setParent(myPayees.getDefaultLoanParent(getCategoryClass()));
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
+    }
+
+    /**
+     * adjust values after category change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access category class and parent */
+        LoanCategoryClass myClass = getCategoryClass();
+        Payee myParent = getParent();
+
+        /* Check that parent is valid for category */
+        if (!myParent.getPayeeTypeClass().canParentLoan(myClass)) {
+            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            setParent(myPayees.getDefaultLoanParent(myClass));
+        }
     }
 
     @Override
@@ -779,7 +796,7 @@ public class Loan
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            addError("Invalid Category", FIELD_CATEGORY);
+            addError(ERROR_BADCATEGORY, FIELD_CATEGORY);
         }
 
         /* Currency must be non-null and enabled */
@@ -796,10 +813,16 @@ public class Loan
             /* Must have parent */
         } else if (myParent == null) {
             addError(ERROR_MISSING, FIELD_PARENT);
+        } else {
+            /* Parent must be suitable */
+            if (!myParent.getPayeeTypeClass().canParentLoan(myClass)) {
+                addError(ERROR_BADPARENT, FIELD_PARENT);
+            }
 
             /* If we are open then parent must be open */
-        } else if (!isClosed() && myParent.isClosed()) {
-            addError(ERROR_PARCLOSED, FIELD_CLOSED);
+            if (!isClosed() && myParent.isClosed()) {
+                addError(ERROR_PARCLOSED, FIELD_CLOSED);
+            }
         }
 
         /* If we have an infoSet */

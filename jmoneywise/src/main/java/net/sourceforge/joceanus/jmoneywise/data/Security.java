@@ -113,11 +113,6 @@ public class Security
     private static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInitialPrice"));
 
     /**
-     * Parent Not Market Error Text.
-     */
-    private static final String ERROR_PARMARKET = NLS_BUNDLE.getString("ErrorParentMarket");
-
-    /**
      * SecurityInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
@@ -126,11 +121,6 @@ public class Security
      * Bad InfoSet Error Text.
      */
     private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
-
-    /**
-     * Parent Invalid Error Text.
-     */
-    private static final String ERROR_PARBAD = NLS_BUNDLE.getString("ErrorBadParent");
 
     /**
      * Parent Closed Error Text.
@@ -800,10 +790,27 @@ public class Security
         PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         setSecurityType(myTypes.getDefaultSecurityType());
         setSecurityCurrency(getDataSet().getDefaultCurrency());
-        setParent(myPayees.getDefaultParent());
+        setParent(myPayees.getDefaultSecurityParent(getSecurityTypeClass()));
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setSymbol(getName());
         setClosed(Boolean.FALSE);
+    }
+
+    /**
+     * adjust values after category change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access category class and parent */
+        SecurityTypeClass myClass = getSecurityTypeClass();
+        Payee myParent = getParent();
+
+        /* Check that parent is valid for category */
+        if (!myParent.getPayeeTypeClass().canParentSecurity(myClass)) {
+            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            setParent(myPayees.getDefaultSecurityParent(myClass));
+        }
     }
 
     @Override
@@ -962,13 +969,14 @@ public class Security
             SecurityTypeClass myClass = mySecType.getSecurityClass();
             PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
 
-            /* If the account needs a market parent */
-            if ((myClass.needsMarketParent()) && (myParClass != PayeeTypeClass.MARKET)) {
-                addError(ERROR_PARMARKET, FIELD_PARENT);
+            /* Parent must be suitable */
+            if (!myParClass.canParentSecurity(myClass)) {
+                addError(ERROR_BADPARENT, FIELD_PARENT);
+            }
 
-                /* else check that any parent is owner */
-            } else if (!myParClass.canParentAccount()) {
-                addError(ERROR_PARBAD, FIELD_PARENT);
+            /* If we are open then parent must be open */
+            if (!isClosed() && myParent.isClosed()) {
+                addError(ERROR_PARCLOSED, FIELD_CLOSED);
             }
         }
 
@@ -979,11 +987,6 @@ public class Security
             /* Check that the symbol is valid */
         } else if (mySymbol.length() > SYMBOLLEN) {
             addError(ERROR_LENGTH, FIELD_SYMBOL);
-        }
-
-        /* If we are open then parent must be open */
-        if (!isClosed() && myParent.isClosed()) {
-            addError(ERROR_PARCLOSED, FIELD_CLOSED);
         }
 
         /* If we have an infoSet */

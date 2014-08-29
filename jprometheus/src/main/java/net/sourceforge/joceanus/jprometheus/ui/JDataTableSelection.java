@@ -82,7 +82,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         theTableModel.fireNewDataEvents();
 
         /* Set default selection */
-        theSelectionModel.setSelectionInterval(0, 0);
+        theTable.selectRowWithScroll(0);
     }
 
     /**
@@ -96,7 +96,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         if ((theTable.getSelectedRow() == -1)
             && (theTableModel.getViewRowCount() > 0)) {
             /* Set default selection */
-            theSelectionModel.setSelectionInterval(0, 0);
+            theTable.selectRowWithScroll(0);
         }
     }
 
@@ -128,7 +128,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
             }
 
             /* Set selection */
-            theSelectionModel.setSelectionInterval(iIndex, iIndex);
+            theTable.selectRowWithScroll(iIndex);
         }
     }
 

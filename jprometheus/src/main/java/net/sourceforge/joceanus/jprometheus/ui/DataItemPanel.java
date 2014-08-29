@@ -419,8 +419,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Refresh the item after an updateSet reWind.
      */
     protected void refreshAfterUpdate() {
-        theFieldSet.renderSet(theItem);
-        theEditActions.updateState();
+        setEditable(isEditing());
     }
 
     /**

@@ -261,7 +261,7 @@ public class TransactionInfoSet
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
-                return isTaxCreditClassRequired(myDebit, myClass);
+                return isTaxCreditClassRequired(myDebit, getPortfolio(TransactionInfoClass.PORTFOLIO), myClass);
 
                 /* Handle debit units separately */
             case DEBITUNITS:
@@ -302,11 +302,13 @@ public class TransactionInfoSet
     /**
      * Determine if a TaxCredit infoSet class is required.
      * @param pDebit the debit account
+     * @param pPortfolio the portfolio
      * @param pClass the category class
      * @return the status
      */
-    private JDataFieldRequired isTaxCreditClassRequired(final AssetBase<?> pDebit,
-                                                        final TransactionCategoryClass pClass) {
+    protected static JDataFieldRequired isTaxCreditClassRequired(final AssetBase<?> pDebit,
+                                                                 final Portfolio pPortfolio,
+                                                                 final TransactionCategoryClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
@@ -329,10 +331,9 @@ public class TransactionInfoSet
                 }
 
                 /* Check portfolio tax status */
-                Portfolio myPortfolio = getPortfolio(TransactionInfoClass.PORTFOLIO);
-                return ((myPortfolio != null) && !myPortfolio.isTaxFree())
-                                                                          ? JDataFieldRequired.MUSTEXIST
-                                                                          : JDataFieldRequired.NOTALLOWED;
+                return ((pPortfolio != null) && !pPortfolio.isTaxFree())
+                                                                        ? JDataFieldRequired.MUSTEXIST
+                                                                        : JDataFieldRequired.NOTALLOWED;
             case TRANSFER:
                 return (pDebit instanceof Security)
                        && (((Security) pDebit).isSecurityClass(SecurityTypeClass.LIFEBOND))
@@ -349,8 +350,8 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    private JDataFieldRequired isDebitUnitsClassRequired(final AssetBase<?> pDebit,
-                                                         final TransactionCategoryClass pClass) {
+    protected static JDataFieldRequired isDebitUnitsClassRequired(final AssetBase<?> pDebit,
+                                                                  final TransactionCategoryClass pClass) {
         /* Debit Asset must be security */
         if (!(pDebit instanceof Security)) {
             return JDataFieldRequired.NOTALLOWED;
@@ -371,8 +372,8 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    private JDataFieldRequired isCreditUnitsClassRequired(final AssetBase<?> pCredit,
-                                                          final TransactionCategoryClass pClass) {
+    protected static JDataFieldRequired isCreditUnitsClassRequired(final AssetBase<?> pCredit,
+                                                                   final TransactionCategoryClass pClass) {
         /* Credit Asset must be security */
         if (!(pCredit instanceof Security)) {
             return JDataFieldRequired.NOTALLOWED;
@@ -398,7 +399,7 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    private JDataFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
+    protected static JDataFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
         /* Dilution is only required for stock split/rights/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
@@ -417,8 +418,8 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    private JDataFieldRequired isThirdPartyClassRequired(final Transaction pTransaction,
-                                                         final TransactionCategoryClass pClass) {
+    protected static JDataFieldRequired isThirdPartyClassRequired(final Transaction pTransaction,
+                                                                  final TransactionCategoryClass pClass) {
         /* ThirdParty is possible only for StockTakeOver */
         switch (pClass) {
             case STOCKTAKEOVER:

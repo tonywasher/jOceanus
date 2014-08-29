@@ -132,6 +132,8 @@ public final class MoneyWiseIcons
         pState.setIconForValue(Boolean.TRUE, ICON_LOCKED);
         pState.setTooltipForValue(Boolean.FALSE, TIP_ACTIVE);
         pState.setTooltipForValue(Boolean.TRUE, TIP_LOCKED);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.TRUE);
+        pState.setNewValueForValue(Boolean.FALSE, Boolean.FALSE);
     }
 
     /**
@@ -148,6 +150,8 @@ public final class MoneyWiseIcons
         pState.setState(Boolean.FALSE);
         pState.setIconForValue(Boolean.TRUE, ICON_FROZEN_RECONCILED);
         pState.setTooltipForValue(Boolean.TRUE, TIP_FROZEN);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.TRUE);
+        pState.setNewValueForValue(Boolean.FALSE, Boolean.FALSE);
     }
 
     /**
@@ -163,5 +167,7 @@ public final class MoneyWiseIcons
         pState.setState(Boolean.FALSE);
         pState.setIconForValue(Boolean.TRUE, ICON_FROZEN_BOXCHECK);
         pState.setIconForValue(Boolean.FALSE, ICON_FROZEN_BOXCLEAR);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.TRUE);
+        pState.setNewValueForValue(Boolean.FALSE, Boolean.FALSE);
     }
 }

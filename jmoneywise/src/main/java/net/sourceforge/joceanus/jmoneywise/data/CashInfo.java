@@ -458,6 +458,12 @@ public class CashInfo
                 throw new JMoneyWiseDataException(pCash, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
+            /* If we are setting autoExpense */
+            if (AccountInfoClass.AUTOEXPENSE.equals(pInfoClass)) {
+                /* Clear currency on the account */
+                pCash.setCashCurrency(null);
+            }
+
             /* Create the values */
             DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);

@@ -113,6 +113,34 @@ public class SecurityPrice
         return super.includeXmlField(pField);
     }
 
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access Key Values */
+        EncryptedValueSet myValues = getValueSet();
+        Object mySecurity = myValues.getValue(FIELD_SECURITY, Object.class);
+        Object myDate = myValues.getValue(FIELD_DATE, Object.class);
+        Object myPrice = myValues.getValue(FIELD_PRICE, Object.class);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Create string builder */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myFormatter.formatObject(mySecurity));
+        myBuilder.append(": ");
+        myBuilder.append(myFormatter.formatObject(myPrice));
+        myBuilder.append('@');
+        myBuilder.append(myFormatter.formatObject(myDate));
+
+        /* return it */
+        return myBuilder.toString();
+    }
+
     /**
      * Obtain Price.
      * @return the price

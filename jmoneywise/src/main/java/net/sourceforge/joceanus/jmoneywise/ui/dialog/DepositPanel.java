@@ -341,24 +341,32 @@ public class DepositPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Deposit myDeposit = getItem();
+        DepositCategoryClass myClass = myDeposit.getCategoryClass();
+        boolean bIsClosed = myDeposit.isClosed();
         boolean bIsActive = myDeposit.isActive();
+        boolean bIsGross = myDeposit.isGross();
+        boolean bIsTaxFree = myDeposit.isTaxFree();
+        boolean bIsRelevant = myDeposit.isRelevant();
         boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = myDeposit.isClosed() || !myDeposit.isRelevant();
+        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Deposit.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = myDeposit.isClosed()
-                                                  ? !myDeposit.getParent().isClosed()
-                                                  : !myDeposit.isRelevant();
+        boolean bEditClosed = bIsClosed
+                                       ? !myDeposit.getParent().isClosed()
+                                       : !bIsRelevant;
+        theFieldSet.setEditable(Deposit.FIELD_CLOSED, bIsChangeable);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the taxFree/Gross buttons should be visible */
-        boolean bShowTaxFree = myDeposit.isTaxFree() || bIsChangeable;
+        boolean bShowTaxFree = bIsTaxFree || (bIsChangeable && !bIsGross);
         theFieldSet.setVisibility(Deposit.FIELD_TAXFREE, bShowTaxFree);
-        boolean bShowGross = myDeposit.isGross() || bIsChangeable;
+        theTaxFreeState.setState(bEditClosed);
+        boolean bShowGross = bIsGross || (bIsChangeable && !bIsTaxFree);
         theFieldSet.setVisibility(Deposit.FIELD_GROSS, bShowGross);
+        theGrossState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
@@ -372,21 +380,26 @@ public class DepositPanel
         boolean bShowReference = isEditable || myDeposit.getReference() != null;
         theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         boolean bShowOpening = bIsChangeable || myDeposit.getOpeningBalance() != null;
-        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), bShowOpening);
+        JDataField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        theFieldSet.setVisibility(myOpeningField, bShowOpening);
         boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
         theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Maturity is only visible if the item is a bond */
         boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
-        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), bShowMaturity);
+        JDataField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
+        theFieldSet.setVisibility(myMaturityField, bShowMaturity);
+        theFieldSet.setEditable(myMaturityField, !bIsClosed);
 
-        /* Currency, Gross and TaxFree status cannot be changed if the item is active */
+        /* Category, Currency, Gross and TaxFree status cannot be changed if the item is active */
+        boolean canTaxFree = myClass.canTaxFree();
+        boolean isHolding = myDeposit.getTouchStatus().touchedBy(MoneyWiseDataType.PORTFOLIO);
+        boolean canTaxChange = canTaxFree && !isHolding && bIsChangeable;
+        theFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
         theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable);
-        theFieldSet.setEditable(Deposit.FIELD_GROSS, bIsChangeable);
-        theFieldSet.setEditable(Deposit.FIELD_TAXFREE, bIsChangeable);
-        theFieldSet.setEditable(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), bIsChangeable);
-        theTaxFreeState.setState(bEditClosed);
-        theGrossState.setState(bEditClosed);
+        theFieldSet.setEditable(Deposit.FIELD_GROSS, canTaxChange && !bIsTaxFree);
+        theFieldSet.setEditable(Deposit.FIELD_TAXFREE, canTaxChange && !bIsGross);
+        theFieldSet.setEditable(myOpeningField, bIsChangeable);
     }
 
     @Override
@@ -405,6 +418,7 @@ public class DepositPanel
         } else if (myField.equals(Deposit.FIELD_CATEGORY)) {
             /* Update the Category */
             myDeposit.setDepositCategory(pUpdate.getValue(DepositCategory.class));
+            myDeposit.adjustForCategory(getUpdateSet());
         } else if (myField.equals(Deposit.FIELD_PARENT)) {
             /* Update the Parent */
             myDeposit.setParent(pUpdate.getValue(Payee.class));
@@ -609,6 +623,7 @@ public class DepositPanel
 
             /* Record active item */
             Deposit myDeposit = getItem();
+            DepositCategoryClass myType = myDeposit.getCategoryClass();
             Payee myCurr = myDeposit.getParent();
             JMenuItem myActive = null;
 
@@ -621,7 +636,7 @@ public class DepositPanel
                 Payee myPayee = myIterator.next();
 
                 /* Ignore deleted or non-owner */
-                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
                 bIgnore |= myPayee.isClosed();
                 if (bIgnore) {
                     continue;
