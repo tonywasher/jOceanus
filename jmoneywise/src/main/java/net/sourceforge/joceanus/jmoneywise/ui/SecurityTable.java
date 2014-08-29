@@ -515,6 +515,9 @@ public class SecurityTable
                 mySecurity.setNewVersion();
                 theSecurities.append(mySecurity);
 
+                /* Add new price */
+                theActiveAccount.addNewPrice(mySecurity);
+
                 /* Validate the new item and notify of the changes */
                 mySecurity.validate();
                 incrementVersion();

@@ -482,6 +482,15 @@ public class DepositPanel
     }
 
     @Override
+    public void setNewItem(final Deposit pItem) {
+        /* Update the rates */
+        theRates.setDeposit(pItem);
+
+        /* Pass call onwards */
+        super.setNewItem(pItem);
+    }
+
+    @Override
     public void setEditable(final boolean isEditable) {
         /* Update the rates */
         theRates.setEditable(isEditable);

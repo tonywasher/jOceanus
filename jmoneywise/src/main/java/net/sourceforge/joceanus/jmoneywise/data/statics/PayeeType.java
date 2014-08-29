@@ -277,8 +277,8 @@ public class PayeeType
             while (myIterator.hasNext()) {
                 PayeeType myType = myIterator.next();
 
-                /* Ignore deleted types */
-                if (!myType.isDeleted()) {
+                /* Ignore deleted and singular types */
+                if (!myType.isDeleted() && !myType.getPayeeClass().isSingular()) {
                     return myType;
                 }
             }

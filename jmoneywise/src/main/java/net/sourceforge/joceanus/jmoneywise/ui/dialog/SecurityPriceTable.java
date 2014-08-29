@@ -231,6 +231,28 @@ public class SecurityPriceTable
     }
 
     /**
+     * Add a new price for a new security.
+     * @param pSecurity the security
+     * @throws JOceanusException on error
+     */
+    protected void addNewPrice(final Security pSecurity) throws JOceanusException {
+        /* Create the new price */
+        ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
+
+        /* Set the item value */
+        myPrice.setSecurity(pSecurity);
+        myPrice.setDate(new JDateDay());
+        myPrice.setPrice(JPrice.getWholeUnits(1, pSecurity.getSecurityCurrency().getCurrency()));
+
+        /* Add to the list */
+        myPrice.setNewVersion();
+        thePrices.append(myPrice);
+
+        /* Validate the price */
+        myPrice.validate();
+    }
+
+    /**
      * Set whether the table is editable.
      * @param pEditable true/false
      */
@@ -350,15 +372,10 @@ public class SecurityPriceTable
          * New item.
          */
         private void addNewItem() {
-            /* Create the new price */
-            ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
-
             /* Protect against Exceptions */
             try {
-                /* Set the item value */
-                myPrice.setSecurity(theSecurity);
-                myPrice.setDate(new JDateDay());
-                myPrice.setPrice(JPrice.getWholeUnits(1, theSecurity.getSecurityCurrency().getCurrency()));
+                /* Add a new price */
+                addNewPrice(theSecurity);
 
                 /* Handle Exceptions */
             } catch (JOceanusException e) {
@@ -370,12 +387,7 @@ public class SecurityPriceTable
                 return;
             }
 
-            /* Add the new item */
-            myPrice.setNewVersion();
-            thePrices.append(myPrice);
-
-            /* Validate the new item and notify of the changes */
-            myPrice.validate();
+            /* notify of the changes */
             theModel.fireNewDataEvents();
 
             /* Shift display to line */

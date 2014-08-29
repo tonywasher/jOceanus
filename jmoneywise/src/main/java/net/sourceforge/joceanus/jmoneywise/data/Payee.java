@@ -906,6 +906,13 @@ public class Payee
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 Payee myCurr = myIterator.next();
+
+                /* Ignore deleted payees */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* If the payee is correct class */
                 if (myCurr.getPayeeTypeClass() == pClass) {
                     return myCurr;
                 }

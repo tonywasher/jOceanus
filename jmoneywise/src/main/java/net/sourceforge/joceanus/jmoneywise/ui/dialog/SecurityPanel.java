@@ -367,6 +367,25 @@ public class SecurityPanel
     }
 
     @Override
+    public void setNewItem(final Security pItem) {
+        /* Update the prices */
+        thePrices.setSecurity(pItem);
+
+        /* Pass call onwards */
+        super.setNewItem(pItem);
+    }
+
+    /**
+     * Add a new price for a new security.
+     * @param pSecurity the security
+     * @throws JOceanusException on error
+     */
+    public void addNewPrice(final Security pSecurity) throws JOceanusException {
+        /* Create the new price */
+        thePrices.addNewPrice(pSecurity);
+    }
+
+    @Override
     public void setEditable(final boolean isEditable) {
         /* Update the prices */
         thePrices.setEditable(isEditable);

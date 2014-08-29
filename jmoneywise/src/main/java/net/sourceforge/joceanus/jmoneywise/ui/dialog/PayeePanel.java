@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.data.PayeeInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -311,8 +312,10 @@ public class PayeePanel
         boolean bShowNotes = isEditable || myPayee.getNotes() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Payee type cannot be changed if the item is active */
-        theFieldSet.setEditable(Payee.FIELD_PAYEETYPE, !bIsActive);
+        /* Payee type cannot be changed if the item is singular, or if its relevant */
+        PayeeTypeClass myClass = myPayee.getPayeeTypeClass();
+        boolean bIsSingular = myClass.isSingular();
+        theFieldSet.setEditable(Payee.FIELD_PAYEETYPE, isEditable && !bIsSingular && !bIsRelevant);
     }
 
     @Override
@@ -426,6 +429,19 @@ public class PayeePanel
 
                 /* Ignore deleted or disabled */
                 boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+                /* If the type is a likely candidate */
+                if (!bIgnore) {
+                    /* Check for singular class */
+                    PayeeTypeClass myClass = myType.getPayeeClass();
+                    if (myClass.isSingular()) {
+                        /* Cannot change to this type if one already exists */
+                        Payee myExisting = myPayee.getList().getSingularClass(myClass);
+                        bIgnore = myExisting != null;
+                    }
+                }
+
+                /* Skip record if necessary */
                 if (bIgnore) {
                     continue;
                 }
