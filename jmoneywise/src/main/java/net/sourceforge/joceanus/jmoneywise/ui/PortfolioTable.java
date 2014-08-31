@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -304,7 +305,11 @@ public class PortfolioTable
      * Refresh data.
      * @throws JOceanusException on error
      */
-    public void refreshData() throws JOceanusException {
+    protected void refreshData() throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Portfolios");
+
         /* Get the Portfolios edit list */
         MoneyWiseData myData = theView.getData();
         PortfolioList myPortfolios = myData.getPortfolios();
@@ -319,6 +324,9 @@ public class PortfolioTable
 
         /* Notify of the change */
         setList(thePortfolios);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

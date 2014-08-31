@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -213,7 +212,7 @@ public final class SvnComponent
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
-            getRepository().getLogger().log(Level.SEVERE, "Parse Failure", e);
+            getRepository().getLogger().error("Parse Failure", e);
             return null;
         }
     }
@@ -278,7 +277,7 @@ public final class SvnComponent
                 try {
                     myInput.close();
                 } catch (IOException e) {
-                    getLogger().log(Level.SEVERE, "Close Failure", e);
+                    getLogger().error("Close Failure", e);
                 }
             }
         }

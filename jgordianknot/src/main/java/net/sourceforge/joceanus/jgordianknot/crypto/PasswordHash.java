@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
@@ -548,7 +547,7 @@ public class PasswordHash {
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
-            theGenerator.getLogger().log(Level.SEVERE, "Password attempt failed", e);
+            theGenerator.getLogger().error("Password attempt failed", e);
             return null;
         } catch (InvalidCredentialsException e) {
             return null;

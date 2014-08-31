@@ -22,10 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Properties;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main entry point for program.
@@ -40,7 +43,7 @@ public final class Control {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger(Control.class.getName());
+    private static Logger theLogger = LoggerFactory.getLogger(Control.class.getName());
 
     /**
      * Private constructor to avoid instantiation.
@@ -53,11 +56,19 @@ public final class Control {
      */
     private static void createAndShowGUI() {
         try {
+            /* Configure log4j */
+            Properties myLogProp = new Properties();
+            myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
+            myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
+            myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
+            myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
+            PropertyConfigurator.configure(myLogProp);
+
             theWindow = new MainTab(theLogger);
             theWindow.makeFrame();
 
         } catch (JOceanusException e) {
-            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
+            theLogger.error("createGUI didn't complete successfully", e);
         }
     }
 

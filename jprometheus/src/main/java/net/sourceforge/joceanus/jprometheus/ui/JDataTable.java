@@ -27,7 +27,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Array;
-import java.util.logging.Logger;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,6 +46,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.JEventTable;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
+
+import org.slf4j.Logger;
 
 /**
  * Template class to provide a table to handle a data type.

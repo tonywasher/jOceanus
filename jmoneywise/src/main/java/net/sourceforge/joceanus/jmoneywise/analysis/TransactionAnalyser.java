@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -186,6 +187,11 @@ public class TransactionAnalyser
     private final DilutionEventMap theDilutions;
 
     /**
+     * The profile.
+     */
+    private final JDataProfile theProfile;
+
+    /**
      * Obtain the analysis manager.
      * @return the analysis manager
      */
@@ -203,12 +209,18 @@ public class TransactionAnalyser
 
     /**
      * Constructor for a full year set of accounts.
+     * @param pTask the profiled task
      * @param pData the Data to analyse
      * @param pPreferenceMgr the preference manager
      * @throws JOceanusException on error
      */
-    public TransactionAnalyser(final MoneyWiseData pData,
+    public TransactionAnalyser(final JDataProfile pTask,
+                               final MoneyWiseData pData,
                                final PreferenceManager pPreferenceMgr) throws JOceanusException {
+        /* Start a new task */
+        theProfile = pTask;
+        JDataProfile myTask = theProfile.startTask("analyseTransactions");
+
         /* Store the parameters */
         theData = pData;
 
@@ -217,6 +229,7 @@ public class TransactionAnalyser
         TransactionList myTrans = theData.getTransactions();
 
         /* Create a new analysis */
+        myTask.startTask("Initialise");
         theAnalysis = new Analysis(theData, pPreferenceMgr);
         theManager = new AnalysisManager(theAnalysis, pPreferenceMgr.getLogger());
 
@@ -231,16 +244,18 @@ public class TransactionAnalyser
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
 
-        /* Access the Transaction iterator */
-        Iterator<Transaction> myIterator = myTrans.listIterator();
+        /* reset groups */
+        myTask.startTask("ResetGroups");
+        myTrans.resetGroups();
+
+        /* Initialise data */
         TaxYear myTax = null;
         JDateDay myDate = null;
         int myResult = -1;
 
-        /* reset groups */
-        myTrans.resetGroups();
-
         /* Loop through the Transactions extracting relevant elements */
+        myTask.startTask("Transactions");
+        Iterator<Transaction> myIterator = myTrans.listIterator();
         while (myIterator.hasNext()) {
             Transaction myCurr = myIterator.next();
             JDateDay myCurrDay = myCurr.getDate();
@@ -287,7 +302,11 @@ public class TransactionAnalyser
         }
 
         /* Analyse the basic ranged analysis */
+        myTask.startTask("AnalyseBase");
         theManager.analyseBase();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -295,6 +314,9 @@ public class TransactionAnalyser
      * @throws JOceanusException on error
      */
     public void markActiveAccounts() throws JOceanusException {
+        /* Start a new task */
+        JDataProfile myTask = theProfile.startTask("AnalyseAccounts");
+
         /* Mark relevant accounts */
         theDepositBuckets.markActiveAccounts();
         theCashBuckets.markActiveAccounts();
@@ -302,6 +324,9 @@ public class TransactionAnalyser
 
         /* Mark relevant securities */
         thePortfolioBuckets.markActiveSecurities();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**

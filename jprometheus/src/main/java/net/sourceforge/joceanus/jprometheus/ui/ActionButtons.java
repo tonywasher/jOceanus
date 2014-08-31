@@ -55,21 +55,6 @@ public class ActionButtons
     private static final int STRUT_LENGTH = 5;
 
     /**
-     * OK.
-     */
-    public static final String CMD_OK = "OK";
-
-    /**
-     * Undo last change.
-     */
-    public static final String CMD_UNDO = "UNDO";
-
-    /**
-     * Reset all changes.
-     */
-    public static final String CMD_RESET = "RESET";
-
-    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ActionButtons.class.getName());
@@ -223,17 +208,17 @@ public class ActionButtons
             /* If this event relates to the OK button */
             if (theCommitButton.equals(o)) {
                 /* Pass command to the table */
-                fireActionPerformed(CMD_OK);
+                fireActionPerformed(UpdateSet.CMD_OK);
 
                 /* If this event relates to the Undo button */
             } else if (theUndoButton.equals(o)) {
                 /* Pass command to the table */
-                fireActionPerformed(CMD_UNDO);
+                fireActionPerformed(UpdateSet.CMD_UNDO);
 
                 /* If this event relates to the Reset button */
             } else if (theResetButton.equals(o)) {
                 /* Pass command to the table */
-                fireActionPerformed(CMD_RESET);
+                fireActionPerformed(UpdateSet.CMD_RESET);
             }
         }
     }

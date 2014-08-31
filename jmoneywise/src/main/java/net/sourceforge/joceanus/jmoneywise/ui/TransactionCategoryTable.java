@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -321,6 +322,10 @@ public class TransactionCategoryTable
      * @throws JOceanusException on error
      */
     protected void refreshData() throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Transactions");
+
         /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
         theCategoryTypes = myData.getTransCategoryTypes();
@@ -341,6 +346,9 @@ public class TransactionCategoryTable
 
         /* Notify of the change */
         setList(theCategories);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

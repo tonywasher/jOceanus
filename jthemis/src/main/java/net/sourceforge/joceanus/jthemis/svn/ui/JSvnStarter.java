@@ -22,9 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.ui;
 
-import java.util.logging.Logger;
-
 import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Top level JSvnManager starter.
@@ -39,7 +40,7 @@ public final class JSvnStarter {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger(JSvnStarter.class.getName());
+    private static Logger theLogger = LoggerFactory.getLogger(JSvnStarter.class.getName());
 
     /**
      * Obtain the manager.

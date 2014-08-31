@@ -33,6 +33,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -49,6 +50,7 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
@@ -377,14 +379,24 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * @throws JOceanusException on error
      */
     public void refreshData() throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("StaticData");
+
         /* Loop through the map */
-        for (StaticDataTable<?, ?, ?, ?> myPanel : theMap.values()) {
+        for (Entry<String, StaticDataTable<?, ?, ?, E>> myEntry : theMap.entrySet()) {
+            /* Note the stage */
+            myTask.startTask(myEntry.getKey());
+
             /* Refresh the panel */
-            myPanel.refreshData();
+            myEntry.getValue().refreshData();
         }
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**

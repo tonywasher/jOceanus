@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -56,6 +54,8 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+
+import org.slf4j.Logger;
 
 /**
  * Preference maintenance panel.
@@ -318,7 +318,7 @@ public class PreferencesPanel
         try {
             theActive.storeChanges();
         } catch (JOceanusException e) {
-            theLogger.log(Level.SEVERE, ERROR_STORE, e);
+            theLogger.error(ERROR_STORE, e);
         }
 
         /* Set correct visibility */

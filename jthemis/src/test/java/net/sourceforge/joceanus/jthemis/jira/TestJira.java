@@ -22,11 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.jira;
 
-import java.util.logging.Logger;
+import java.util.Properties;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Jira test suite.
@@ -35,7 +39,7 @@ public class TestJira {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger(TestJira.class.getName());
+    private static Logger theLogger = LoggerFactory.getLogger(TestJira.class.getName());
 
     /**
      * Main entry point.
@@ -43,6 +47,14 @@ public class TestJira {
      */
     public static void main(String[] args) {
         try {
+            /* Configure log4j */
+            Properties myLogProp = new Properties();
+            myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
+            myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
+            myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
+            myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
+            PropertyConfigurator.configure(myLogProp);
+
             JiraServer myServer = new JiraServer(new PreferenceManager(theLogger));
             myServer.getIssue("BOX-1");
             System.exit(0);

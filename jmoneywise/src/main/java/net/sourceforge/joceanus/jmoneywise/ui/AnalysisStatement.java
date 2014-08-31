@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -326,7 +327,11 @@ public class AnalysisStatement
     /**
      * Refresh data.
      */
-    public void refreshData() {
+    private void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Statement");
+
         /* Update the selection */
         theSelect.refreshData(theView);
 
@@ -336,6 +341,9 @@ public class AnalysisStatement
         /* Set the selection */
         theRange = null;
         setSelection(theSelect.getRange());
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

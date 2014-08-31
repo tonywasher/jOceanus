@@ -335,7 +335,6 @@ public class ViewSecurityPrice
         @Override
         public ViewSecurityPrice addNewItem() {
             ViewSecurityPrice myPrice = new ViewSecurityPrice(this);
-            // myPrice.setSecurity(theSecurity);
             add(myPrice);
             return myPrice;
         }

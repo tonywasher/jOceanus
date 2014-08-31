@@ -28,8 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
@@ -38,6 +36,8 @@ import javax.swing.table.JTableHeader;
 
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+
+import org.slf4j.Logger;
 
 /**
  * Template class to provide mouse support for a table.
@@ -369,7 +369,7 @@ public abstract class JDataTableMouse<T extends DataItem<E> & Comparable<? super
             }
         } catch (JOceanusException e) {
             Logger myLogger = theTable.getLogger();
-            myLogger.log(Level.SEVERE, "Failed to NULL column", e);
+            myLogger.error("Failed to NULL column", e);
         }
     }
 

@@ -34,7 +34,6 @@ import java.security.Security;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -61,6 +60,8 @@ import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Security Test suite.
@@ -69,7 +70,7 @@ public class SecurityTest {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger(SecurityTest.class.getName());
+    private static Logger theLogger = LoggerFactory.getLogger(SecurityTest.class.getName());
 
     /**
      * Main entry point.

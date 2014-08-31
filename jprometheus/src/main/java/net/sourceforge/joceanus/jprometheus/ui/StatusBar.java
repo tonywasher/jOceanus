@@ -167,6 +167,11 @@ public class StatusBar
     private final ThreadControl theControl;
 
     /**
+     * Data control.
+     */
+    private final DataControl<?, ?> theData;
+
+    /**
      * Errors.
      */
     private final DataErrorList<JMetisExceptionWrapper> theErrors;
@@ -224,9 +229,10 @@ public class StatusBar
                      final DataControl<?, ?> pData) {
         /* Record passed parameters */
         theControl = pThread;
+        theData = pData;
 
         /* Store access to the Data Entry */
-        theDataEntry = pData.getDataEntry(DataControl.DATA_ERROR);
+        theDataEntry = theData.getDataEntry(DataControl.DATA_ERROR);
         theErrors = new DataErrorList<JMetisExceptionWrapper>();
 
         /* Create the boxes */
@@ -355,6 +361,9 @@ public class StatusBar
 
     @Override
     public void setSuccess(final String pOperation) {
+        /* Stop the active task */
+        theData.getActiveProfile().end();
+
         /* Set the status text field */
         theStatusLabel.setText(pOperation + " " + NLS_SUCCESS);
 
@@ -373,6 +382,9 @@ public class StatusBar
     @Override
     public void setFailure(final String pOperation,
                            final DataErrorList<JMetisExceptionWrapper> pErrors) {
+        /* Stop the active task */
+        theData.getActiveProfile().end();
+
         /* Initialise the message */
         String myText = pOperation + " " + NLS_FAIL;
 

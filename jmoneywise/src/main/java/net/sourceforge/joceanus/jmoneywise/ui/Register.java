@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -347,6 +348,10 @@ public class Register
      * Refresh views/controls after a load/update of underlying data.
      */
     private void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Register");
+
         /* Protect against exceptions */
         try {
             /* Access range */
@@ -367,6 +372,9 @@ public class Register
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**

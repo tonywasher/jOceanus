@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.preferences;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jprometheus.database.BatchControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -124,7 +123,7 @@ public class DatabasePreferences
     /**
      * Default Database batch size.
      */
-    private static final Integer DEFAULT_DBBATCH = BatchControl.DEF_BATCH_SIZE;
+    public static final Integer DEFAULT_DBBATCH = 50;
 
     /**
      * Default Database user.

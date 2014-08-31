@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -339,7 +340,11 @@ public class DepositTable
      * Refresh data.
      * @throws JOceanusException on error
      */
-    public void refreshData() throws JOceanusException {
+    protected void refreshData() throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Deposits");
+
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         theCurrencies = myData.getAccountCurrencies();
@@ -364,6 +369,9 @@ public class DepositTable
 
         /* Notify of the change */
         setList(theDeposits);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

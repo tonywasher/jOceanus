@@ -657,9 +657,8 @@ public final class SecurityBucket
         JMoney myValue = theValues.getMoneyValue(SecurityAttribute.DELTA);
         myValue = new JMoney(myValue);
 
-        /* Subtract the investment and gains */
+        /* Subtract the investment */
         myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
-        // myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Gains));
 
         /* Set the delta */
         setValue(SecurityAttribute.MARKET, myValue);

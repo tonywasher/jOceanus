@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -210,7 +209,7 @@ public final class GitComponent
                 try {
                     myInput.close();
                 } catch (IOException e) {
-                    getLogger().log(Level.SEVERE, "Close Failure", e);
+                    getLogger().error("Close Failure", e);
                 }
             }
         }

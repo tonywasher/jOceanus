@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -270,6 +271,10 @@ public class TaxYearTable
      * Refresh data.
      */
     public void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("TaxYearTab");
+
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         theRegimes = myData.getTaxRegimes();
@@ -287,6 +292,9 @@ public class TaxYearTable
         /* Notify of the change */
         setList(theTaxYears);
         fireStateChanged();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

@@ -23,10 +23,11 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+
+import org.slf4j.Logger;
 
 /**
  * Generator class for various security primitives.

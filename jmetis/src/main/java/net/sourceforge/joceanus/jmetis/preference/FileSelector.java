@@ -25,12 +25,12 @@ package net.sourceforge.joceanus.jmetis.preference;
 import java.awt.Component;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+
+import org.slf4j.Logger;
 
 /**
  * File selector class.
@@ -153,10 +153,10 @@ public class FileSelector
                     }
                 });
             } catch (InvocationTargetException e) {
-                pLogger.log(Level.SEVERE, ERROR_SHOW, e);
+                pLogger.error(ERROR_SHOW, e);
                 theResult = null;
             } catch (InterruptedException e) {
-                pLogger.log(Level.SEVERE, ERROR_SHOW, e);
+                pLogger.error(ERROR_SHOW, e);
                 theResult = null;
             }
         }

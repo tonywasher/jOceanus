@@ -129,7 +129,7 @@ public class Cash
             return true;
         }
         if (FIELD_CURRENCY.equals(pField)) {
-            return true;
+            return getCashCurrency() != null;
         }
 
         /* Pass call on */

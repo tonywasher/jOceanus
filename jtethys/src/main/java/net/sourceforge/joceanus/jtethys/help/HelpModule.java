@@ -27,13 +27,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -246,7 +245,7 @@ public abstract class HelpModule {
                     theList.add(myPage);
 
                 } catch (IOException ex) {
-                    theLogger.log(Level.SEVERE, ERROR_STREAM, ex);
+                    theLogger.error(ERROR_STREAM, ex);
                 }
             }
 

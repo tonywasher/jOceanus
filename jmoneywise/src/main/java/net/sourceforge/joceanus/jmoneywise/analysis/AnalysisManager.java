@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -41,6 +38,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+
+import org.slf4j.Logger;
 
 /**
  * Analysis manager.
@@ -251,13 +250,13 @@ public class AnalysisManager
 
         /* Check identities */
         if (!myDepTotal.equals(myPayTotal)) {
-            theLogger.log(Level.SEVERE, "Payee total mismatch");
+            theLogger.error("Payee total mismatch");
         }
         if (!myDepTotal.equals(myEvtTotal)) {
-            theLogger.log(Level.SEVERE, "EventCategory total mismatch");
+            theLogger.error("EventCategory total mismatch");
         }
         if (!myDepTotal.equals(myTaxTotal)) {
-            theLogger.log(Level.SEVERE, "TaxBasis total mismatch");
+            theLogger.error("TaxBasis total mismatch");
         }
     }
 }

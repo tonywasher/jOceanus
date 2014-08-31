@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jtethys.help;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -46,6 +44,8 @@ import javax.swing.text.html.StyleSheet;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import org.slf4j.Logger;
 
 /**
  * Help Window class, responsible for displaying the help.
@@ -259,7 +259,7 @@ public class HelpWindow
                     theEditor.setPage(e.getURL());
                 }
             } catch (IOException t) {
-                theLogger.log(Level.SEVERE, HelpModule.ERROR_STREAM, t);
+                theLogger.error(HelpModule.ERROR_STREAM, t);
             }
         }
     }

@@ -29,8 +29,6 @@ import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -44,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.CreateBackup;
@@ -62,6 +61,8 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jtethys.help.HelpWindow;
+
+import org.slf4j.Logger;
 
 /**
  * Main window for application.
@@ -871,22 +872,34 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * UnDo last edit.
      */
     private void undoLastEdit() {
+        /* Create a new profile */
+        JDataProfile myTask = theView.getNewProfile("unDoLastEdit");
+
         /* Undo the last edit */
         theView.undoLastChange();
 
         /* Adjust visibility */
         setVisibility();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
      * reset Edit changes.
      */
     private void resetEdit() {
+        /* Create a new profile */
+        JDataProfile myTask = theView.getNewProfile("resetEdit");
+
         /* Reset the edit View */
         theView.resetChanges();
 
         /* Adjust visibility */
         setVisibility();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -1015,7 +1028,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             theHelpWdw.showDialog();
         } catch (JOceanusException e) {
             Logger myLogger = theView.getLogger();
-            myLogger.log(Level.SEVERE, "Failed to start Help Window", e);
+            myLogger.error("Failed to start Help Window", e);
             theHelpWdw = null;
         }
     }

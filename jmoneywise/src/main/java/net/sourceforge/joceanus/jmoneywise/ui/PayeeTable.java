@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -307,7 +308,11 @@ public class PayeeTable
     /**
      * Refresh data.
      */
-    public void refreshData() {
+    protected void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Payees");
+
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         thePayeeTypes = myData.getPayeeTypes();
@@ -324,6 +329,9 @@ public class PayeeTable
 
         /* Notify of the change */
         setList(thePayees);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

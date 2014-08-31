@@ -22,10 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import java.util.logging.Logger;
-
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
+
+import org.slf4j.Logger;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.
@@ -103,4 +104,23 @@ public interface TaskControl<T extends DataSet<T, ?>> {
      * @return the logger
      */
     Logger getLogger();
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    JDataProfile getNewProfile(final String pTask);
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    JDataProfile getActiveProfile();
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    JDataProfile getActiveTask();
 }

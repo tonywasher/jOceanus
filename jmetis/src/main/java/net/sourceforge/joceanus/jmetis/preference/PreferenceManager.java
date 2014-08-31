@@ -26,14 +26,14 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
+
+import org.slf4j.Logger;
 
 /**
  * Manager class for preference sets.
@@ -69,8 +69,8 @@ public class PreferenceManager
 
         /* Return the value */
         return (mySet == null)
-                ? JDataFieldValue.UNKNOWN
-                : mySet;
+                              ? JDataFieldValue.UNKNOWN
+                              : mySet;
     }
 
     /**
@@ -135,10 +135,10 @@ public class PreferenceManager
                 /* Fire the action performed */
                 fireActionEvent(ActionEvent.ACTION_PERFORMED, mySet);
             } catch (IllegalAccessException e) {
-                theLogger.log(Level.SEVERE, ERROR_LOAD, e);
+                theLogger.error(ERROR_LOAD, e);
                 mySet = null;
             } catch (InstantiationException e) {
-                theLogger.log(Level.SEVERE, ERROR_LOAD, e);
+                theLogger.error(ERROR_LOAD, e);
                 mySet = null;
             }
         }

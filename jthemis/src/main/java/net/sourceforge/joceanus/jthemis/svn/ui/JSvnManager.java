@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -55,6 +54,7 @@ import net.sourceforge.joceanus.jthemis.svn.threads.DiscoverData;
 import net.sourceforge.joceanus.jthemis.svn.threads.RevertWorkingCopy;
 import net.sourceforge.joceanus.jthemis.svn.threads.UpdateWorkingCopy;
 
+import org.slf4j.Logger;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**

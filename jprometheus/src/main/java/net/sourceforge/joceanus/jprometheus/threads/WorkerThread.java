@@ -68,6 +68,9 @@ public abstract class WorkerThread<T>
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
         theErrors = new DataErrorList<JMetisExceptionWrapper>();
+
+        /* Create a new profiler */
+        pStatus.getNewProfile(pTask);
     }
 
     /**

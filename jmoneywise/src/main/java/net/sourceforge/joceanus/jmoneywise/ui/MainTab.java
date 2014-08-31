@@ -26,7 +26,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -39,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
+import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
@@ -54,6 +53,8 @@ import net.sourceforge.joceanus.jtethys.help.HelpException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
+
+import org.slf4j.Logger;
 
 /**
  * Main Window for jMoneyWise.
@@ -223,7 +224,7 @@ public class MainTab
     @Override
     protected HelpModule getHelpModule() throws JOceanusException {
         try {
-            return new FinanceHelp(theLogger);
+            return new MoneyWiseHelp(theLogger);
         } catch (HelpException e) {
             throw new JMoneyWiseIOException("Unable to load help", e);
         }

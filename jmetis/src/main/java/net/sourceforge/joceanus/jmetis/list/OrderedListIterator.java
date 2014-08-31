@@ -294,21 +294,32 @@ public class OrderedListIterator<T extends Comparable<? super T>>
         /* Note that we can no longer remove the item */
         canRemove = false;
 
+        /* Access the list map */
+        OrderedIndex<T> myIndex = theList.getIndex();
+
         /* If the last operation was forward */
         if (wasForward) {
+            /* Determine next value */
+            OrderedNode<T> myNext = previousNode();
+
             /* Remove the item */
             theList.removeNode(theNodeBefore);
+            myIndex.deRegisterLink(theNodeBefore);
 
             /* Record the new node before */
-            theNodeBefore = previousNode();
+            theNodeBefore = myNext;
 
             /* else the last operation was backwards */
         } else {
+            /* Determine next value */
+            OrderedNode<T> myNext = nextNode();
+
             /* Remove the item */
             theList.removeNode(theNodeAfter);
+            myIndex.deRegisterLink(theNodeAfter);
 
             /* Record the new node after */
-            theNodeAfter = nextNode();
+            theNodeAfter = myNext;
         }
 
         /* Record new modification count */

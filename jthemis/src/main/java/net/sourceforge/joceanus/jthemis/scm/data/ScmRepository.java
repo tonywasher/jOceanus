@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -34,6 +33,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
+
+import org.slf4j.Logger;
 
 /**
  * Represents a repository.

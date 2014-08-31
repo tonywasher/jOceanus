@@ -27,8 +27,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
@@ -43,6 +41,7 @@ import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -63,6 +62,7 @@ import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -224,6 +224,10 @@ public class ReportTab
      * Refresh views/controls after a load/update of underlying data.
      */
     private void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Reports");
+
         /* Protect against exceptions */
         try {
             /* Hide the instant debug since it is now invalid */
@@ -242,6 +246,9 @@ public class ReportTab
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -257,7 +264,7 @@ public class ReportTab
             /* Print the report */
             thePrint.print();
         } catch (PrinterException e) {
-            theLogger.log(Level.SEVERE, "Failed to print", e);
+            theLogger.error("Failed to print", e);
         }
     }
 

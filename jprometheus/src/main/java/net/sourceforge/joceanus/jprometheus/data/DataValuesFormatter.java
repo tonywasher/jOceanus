@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -166,7 +165,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* Delete the file on error */
             if (!bContinue && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
-                theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
+                theTask.getLogger().error(ERROR_DELETE);
             }
         }
     }
@@ -214,7 +213,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* Delete the file on error */
             if (!bContinue && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
-                theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
+                theTask.getLogger().error(ERROR_DELETE);
             }
         }
     }

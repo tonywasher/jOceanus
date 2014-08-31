@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jthemis.scm.data;
 
 import java.util.Iterator;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -31,6 +30,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchList;
+
+import org.slf4j.Logger;
 
 /**
  * Represents a component in the repository.

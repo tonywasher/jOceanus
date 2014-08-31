@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -323,7 +324,11 @@ public class CashTable
     /**
      * Refresh data.
      */
-    public void refreshData() {
+    protected void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Cash");
+
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         theCurrencies = myData.getAccountCurrencies();
@@ -341,6 +346,9 @@ public class CashTable
 
         /* Notify of the change */
         setList(theCash);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

@@ -27,8 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -51,6 +49,8 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+
+import org.slf4j.Logger;
 
 /**
  * Data Item.
@@ -468,7 +468,7 @@ public class JDataItem {
                             theEditor.setPage(pEvent.getURL());
                         }
                     } catch (IOException e) {
-                        theLogger.log(Level.SEVERE, "Failed to access link", e);
+                        theLogger.error("Failed to access link", e);
                     }
                 }
             }

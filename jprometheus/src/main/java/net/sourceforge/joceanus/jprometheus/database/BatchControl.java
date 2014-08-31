@@ -29,20 +29,16 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.
  */
 public class BatchControl {
     /**
-     * Default batch size for updates.
-     */
-    public static final int DEF_BATCH_SIZE = 50;
-
-    /**
      * Batch size for updates.
      */
-    private int theBatchSize = DEF_BATCH_SIZE;
+    private int theBatchSize = DatabasePreferences.DEFAULT_DBBATCH;
 
     /**
      * Capacity of Batch Control (0=Unlimited).

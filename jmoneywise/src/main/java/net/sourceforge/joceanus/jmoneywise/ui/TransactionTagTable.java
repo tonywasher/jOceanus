@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -258,6 +259,10 @@ public class TransactionTagTable
      * Refresh data.
      */
     protected void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Tags");
+
         /* Get the Events edit list */
         MoneyWiseData myData = theView.getData();
         TransactionTagList myTransactionTags = myData.getTransactionTags();
@@ -269,6 +274,9 @@ public class TransactionTagTable
 
         /* Notify of the change */
         setList(theTransactionTags);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     @Override

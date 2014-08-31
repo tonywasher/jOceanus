@@ -26,21 +26,21 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
+
+import org.slf4j.Logger;
 
 /**
  * Provides control of a set of update-able DataLists.
@@ -63,6 +63,21 @@ public class UpdateSet<E extends Enum<E>>
      * Version field id.
      */
     public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataVersion"));
+
+    /**
+     * OK.
+     */
+    public static final String CMD_OK = "OK";
+
+    /**
+     * Undo last change.
+     */
+    public static final String CMD_UNDO = "UNDO";
+
+    /**
+     * Reset all changes.
+     */
+    public static final String CMD_RESET = "RESET";
 
     /**
      * Report fields.
@@ -231,6 +246,10 @@ public class UpdateSet<E extends Enum<E>>
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("reWindToVersion");
+
         /* Record the version */
         theVersion = pVersion;
 
@@ -243,6 +262,9 @@ public class UpdateSet<E extends Enum<E>>
 
             /* If the list exists */
             if (myDataList != null) {
+                /* Note the new step */
+                myTask.startTask(myDataList.listName());
+
                 /* Rewind the version */
                 myDataList.rewindToVersion(theVersion);
 
@@ -251,8 +273,14 @@ public class UpdateSet<E extends Enum<E>>
             }
         }
 
+        /* Note the new step */
+        myTask.startTask("Notify");
+
         /* Fire that we have rewound the updateSet */
         fireStateChanged();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -291,13 +319,23 @@ public class UpdateSet<E extends Enum<E>>
      * Apply changes in a ViewSet into the core data.
      */
     public void applyChanges() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("applyChanges");
+
         /* Validate the changes */
         validate();
 
         /* Reject request if there are errors */
         if (hasErrors()) {
+            /* We have finished */
+            myTask.startTask("Notify");
+
             /* Fire that we have rewound the updateSet */
             fireStateChanged();
+
+            /* Complete the task */
+            myTask.end();
             return;
         }
 
@@ -306,6 +344,7 @@ public class UpdateSet<E extends Enum<E>>
 
         /* analyse the data */
         if (bSuccess) {
+            /* Declare the apply changes */
             bSuccess = theControl.analyseData(false);
         }
 
@@ -319,12 +358,15 @@ public class UpdateSet<E extends Enum<E>>
 
             /* else we failed */
         } else {
-            /* Rollback the changes */
+            /* RollBack the changes */
             rollBackChanges();
 
             /* Re-analyse the data */
             theControl.analyseData(true);
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -332,50 +374,85 @@ public class UpdateSet<E extends Enum<E>>
      * @return success true/false
      */
     private boolean prepareChanges() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("prepareChanges");
+        boolean bSuccess = true;
+
         /* Protect against exceptions */
         try {
             /* Loop through the items in the list */
             Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
-                /* Prepare changes for the entry */
                 UpdateEntry<?, E> myEntry = myIterator.next();
+
+                /* Note the new step */
+                myTask.startTask(myEntry.getName());
+
+                /* Prepare changes for the entry */
                 myEntry.prepareChanges();
             }
-            return true;
+
         } catch (JOceanusException e) {
             Logger myLogger = theControl.getLogger();
-            myLogger.log(Level.SEVERE, "Failed to prepare changes", e);
-            return false;
+            myLogger.error("Failed to prepare changes", e);
+            bSuccess = false;
         }
+
+        /* Complete the task */
+        myTask.end();
+        return bSuccess;
     }
 
     /**
      * Commit changes in a ViewSet back into the core data.
      */
     private void commitChanges() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("commitChanges");
+
         /* Loop through the items in the list */
         Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            /* Commit changes for the entry */
             UpdateEntry<?, E> myEntry = myIterator.next();
+
+            /* Note the new step */
+            myTask.startTask(myEntry.getName());
+
+            /* Commit changes for the entry */
             myEntry.commitChanges();
         }
 
         /* Increment the version and notify listeners */
         theControl.incrementVersion();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
      * RollBack changes in a ViewSet back into the core data.
      */
     private void rollBackChanges() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("rollBackChanges");
+
         /* Loop through the items in the list */
         Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            /* RollBack changes for the entry */
             UpdateEntry<?, E> myEntry = myIterator.next();
+
+            /* Note the new step */
+            myTask.startTask(myEntry.getName());
+
+            /* RollBack changes for the entry */
             myEntry.rollBackChanges();
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -426,6 +503,10 @@ public class UpdateSet<E extends Enum<E>>
      * Validate the updateSet.
      */
     public void validate() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getActiveTask();
+        myTask = myTask.startTask("validate");
+
         /* Loop through the items in the list */
         Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
@@ -435,11 +516,17 @@ public class UpdateSet<E extends Enum<E>>
 
             /* Combine states if list exists */
             if (myDataList != null) {
+                /* Note the new step */
+                myTask.startTask(myDataList.listName());
+
                 /* Validate and calculate edit State */
                 myDataList.validate();
                 myDataList.findEditState();
             }
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -472,12 +559,15 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void processCommand(final String pCmd,
                                final ErrorDisplay pError) {
+        /* Create a new profile */
+        JDataProfile myTask = theControl.getNewProfile("EditCommand");
+
         /* Switch on command */
-        if (ActionButtons.CMD_OK.equals(pCmd)) {
+        if (CMD_OK.equals(pCmd)) {
             applyChanges();
-        } else if (ActionButtons.CMD_UNDO.equals(pCmd)) {
+        } else if (CMD_UNDO.equals(pCmd)) {
             undoLastChange();
-        } else if (ActionButtons.CMD_RESET.equals(pCmd)) {
+        } else if (CMD_RESET.equals(pCmd)) {
             resetChanges();
         }
 
@@ -488,6 +578,9 @@ public class UpdateSet<E extends Enum<E>>
         if (!myErrors.isEmpty()) {
             pError.setErrors(myErrors);
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**

@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
@@ -159,7 +158,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             /* Delete the file on error */
             if ((!bSuccess) && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
-                theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
+                theTask.getLogger().error(ERROR_DELETE);
             }
         }
     }

@@ -40,6 +40,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
@@ -98,6 +99,11 @@ public class CategoryPanel
      * Text for Selection Prompt.
      */
     private static final String NLS_DATA = NLS_BUNDLE.getString("SelectionPrompt");
+
+    /**
+     * The Data View.
+     */
+    private final transient View theView;
 
     /**
      * The select button.
@@ -184,6 +190,9 @@ public class CategoryPanel
      * @param pView the data view
      */
     public CategoryPanel(final View pView) {
+        /* Store details */
+        theView = pView;
+
         /* Build the Update set */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
 
@@ -307,6 +316,10 @@ public class CategoryPanel
      * @throws JOceanusException on error
      */
     protected void refreshData() throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Categories");
+
         /* Note that we are refreshing */
         isRefreshing = true;
 
@@ -323,6 +336,9 @@ public class CategoryPanel
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**

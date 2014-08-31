@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.views;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -47,6 +47,8 @@ import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
+import org.slf4j.Logger;
+
 /**
  * Provides top-level control of data.
  * @param <T> the DataSet type
@@ -54,11 +56,6 @@ import net.sourceforge.joceanus.jtethys.event.JEventObject;
  */
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         extends JEventObject {
-    /**
-     * Rewind action.
-     */
-    public static final String ACTION_UPDATE = "DataUpdate";
-
     /**
      * Resource Bundle.
      */
@@ -98,6 +95,11 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Error Name.
      */
     public static final String DATA_ERROR = NLS_BUNDLE.getString("DataError");
+
+    /**
+     * Active Profile.
+     */
+    public static final String DATA_PROFILE = NLS_BUNDLE.getString("DataProfile");
 
     /**
      * The DataSet.
@@ -148,6 +150,11 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * The Render Manager.
      */
     private final PreferenceManager thePreferenceMgr;
+
+    /**
+     * The Active Profile.
+     */
+    private JDataProfile theProfile;
 
     /**
      * The Data Entry hashMap.
@@ -228,9 +235,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         /* Increment data versions */
         int myVersion = theData.getVersion();
         theData.setVersion(myVersion + 1);
-
-        /* Alert listeners */
-        fireActionPerformed(ACTION_UPDATE);
     }
 
     /**
@@ -345,8 +349,10 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         JDataEntry myEdit = getDataEntry(DATA_EDIT);
         JDataEntry myMaint = getDataEntry(DATA_MAINT);
         JDataEntry myError = getDataEntry(DATA_ERROR);
+        JDataEntry myProfile = getDataEntry(DATA_PROFILE);
 
         /* Create the structure */
+        myProfile.addAsRootChild();
         myViews.addAsRootChild();
         myEdit.addAsRootChild();
         myMaint.addAsRootChild();
@@ -417,14 +423,25 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * refresh the data view.
      */
     protected final void refreshViews() {
+        /* Obtain the active profile */
+        JDataProfile myTask = getActiveTask();
+        myTask = myTask.startTask("refreshViews");
+
         /* Refresh the Control */
         fireStateChanged();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
      * Undo changes in a viewSet.
      */
     public void undoLastChange() {
+        /* Obtain the active profile */
+        JDataProfile myTask = getActiveTask();
+        myTask = myTask.startTask("unDoLastChange");
+
         /* UndoLastChange */
         theData.undoLastChange();
 
@@ -433,12 +450,19 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Refresh the views */
         refreshViews();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
      * Reset changes in a viewSet.
      */
     public void resetChanges() {
+        /* Obtain the active profile */
+        JDataProfile myTask = getActiveTask();
+        myTask = myTask.startTask("resetChanges");
+
         /* Rewind the data */
         theData.resetChanges();
 
@@ -447,6 +471,46 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Refresh the views */
         refreshViews();
+
+        /* Complete the task */
+        myTask.end();
+    }
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    public JDataProfile getNewProfile(final String pTask) {
+        /* Create a new profile */
+        theProfile = new JDataProfile(pTask);
+
+        /* Update the Data entry */
+        JDataEntry myData = getDataEntry(DATA_PROFILE);
+        myData.setObject(theProfile);
+
+        /* Return the new profile */
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    public JDataProfile getActiveProfile() {
+        /* Create a new profile */
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    public JDataProfile getActiveTask() {
+        /* Create a new profile */
+        return theProfile == null
+                                 ? null
+                                 : theProfile.getActiveTask();
     }
 
     /**

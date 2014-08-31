@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
-import java.util.logging.Logger;
-
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -44,6 +43,8 @@ import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+
+import org.slf4j.Logger;
 
 /**
  * Data Control for MoneyWiseApp.
@@ -112,8 +113,14 @@ public class View
         /* Call super-constructor */
         super(pLogger);
 
+        /* Create a default profiler */
+        JDataProfile myTask = getNewProfile("StartUp");
+
         /* Create an empty data set */
         setData(getNewData());
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -158,11 +165,16 @@ public class View
      * @throws JOceanusException on error
      */
     public final TransactionAnalyser analyseData(final MoneyWiseData pData) throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = getActiveTask();
+        myTask = myTask.startTask("analyseData");
+
         /* Initialise the analysis */
+        myTask.startTask("Initialise");
         pData.initialiseAnalysis();
 
         /* Create the analysis */
-        TransactionAnalyser myAnalyser = new TransactionAnalyser(pData, getPreferenceMgr());
+        TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceMgr());
 
         /* Access the top level debug entry for this analysis */
         JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
@@ -172,13 +184,18 @@ public class View
         myAnalyser.markActiveAccounts();
 
         /* Validate transaction groups */
+        myTask.startTask("AnalyseGroups");
         DataErrorList<Transaction> myErrors = pData.getTransactions().validateGroups();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
 
         /* Complete the analysis */
+        myTask.startTask("CompleteAnalysis");
         pData.completeAnalysis();
+
+        /* Complete the task */
+        myTask.end();
 
         /* Return the analyser */
         return myAnalyser;
@@ -186,6 +203,10 @@ public class View
 
     @Override
     protected boolean analyseData(final boolean bPreserve) {
+        /* Obtain the active profile */
+        JDataProfile myTask = getActiveTask();
+        myTask = myTask.startTask("analyseData");
+
         /* Clear the errors */
         if (!bPreserve) {
             clearErrors();
@@ -207,9 +228,11 @@ public class View
             myData.setObject(theAnalyser);
 
             /* Access the dilutions */
+            myTask.startTask("deriveDilutions");
             theDilutions = theAnalyser.getDilutions();
 
             /* Derive the update Set */
+            myTask.startTask("deriveUpdates");
             deriveUpdates();
 
             /* Catch any exceptions */
@@ -218,6 +241,9 @@ public class View
                 addError(e);
             }
         }
+
+        /* Complete the task */
+        myTask.end();
 
         /* Return whether there was success */
         return getErrors().isEmpty();

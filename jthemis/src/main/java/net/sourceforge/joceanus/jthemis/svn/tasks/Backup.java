@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
@@ -296,7 +295,7 @@ public class Backup {
         } finally {
             /* Delete the file on error */
             if (doDelete && !myZipName.delete()) {
-                thePreferenceMgr.getLogger().log(Level.SEVERE, "Failed to delete file on failure");
+                thePreferenceMgr.getLogger().error("Failed to delete file on failure");
             }
         }
     }

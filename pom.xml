@@ -63,17 +63,19 @@
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <appLibDir/>
-    <JDateButtonVersion>v1.3.0-SNAPSHOT</JDateButtonVersion>
+    <JDateButtonVersion>v1.3.0-b1</JDateButtonVersion>
     <BouncyCastleVersion>1.51</BouncyCastleVersion>
     <SvnKitVersion>1.8.6</SvnKitVersion>
     <JGitVersion>3.4.1.201406201815-r</JGitVersion>
     <JiraRestVersion>2.0.0-m30</JiraRestVersion>
-    <ApacheMavenVersion>3.2.1</ApacheMavenVersion>
+    <ApacheMavenVersion>3.2.3</ApacheMavenVersion>
     <MySQLVersion>5.1.30</MySQLVersion>
     <PostGreSQLVersion>9.2-1003-jdbc4</PostGreSQLVersion>
     <ApachePOIVersion>3.10-FINAL</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.9.1</XercesVersion>
+    <SLF4JVersion>1.7.7</SLF4JVersion>
+    <LOG4JVersion>2.0.2</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
   <repositories>

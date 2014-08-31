@@ -22,18 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads;
 
-import java.util.logging.Logger;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+
+import org.slf4j.Logger;
 
 /**
  * Thread Status.
@@ -99,6 +100,21 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public DataControl<T, E> getControl() {
         return theControl;
+    }
+
+    @Override
+    public JDataProfile getNewProfile(final String pTask) {
+        return theControl.getNewProfile(pTask);
+    }
+
+    @Override
+    public JDataProfile getActiveProfile() {
+        return theControl.getActiveProfile();
+    }
+
+    @Override
+    public JDataProfile getActiveTask() {
+        return theControl.getActiveTask();
     }
 
     @Override

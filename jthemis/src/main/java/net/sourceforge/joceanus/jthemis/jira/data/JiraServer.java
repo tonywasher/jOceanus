@@ -28,7 +28,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -36,8 +35,6 @@ import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraUser;
-
-import org.apache.log4j.PropertyConfigurator;
 
 import com.atlassian.jira.rest.client.api.AddressableEntity;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -194,14 +191,6 @@ public class JiraServer {
      * @throws JOceanusException on error
      */
     public JiraServer(final PreferenceManager pManager) throws JOceanusException {
-        /* Configure log4j */
-        Properties myLogProp = new Properties();
-        myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
-        myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
-        myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
-        myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
-        PropertyConfigurator.configure(myLogProp);
-
         /* Allocate the lists */
         theProjects = new ArrayList<JiraProject>();
         theFilters = new ArrayList<JiraFilter>();

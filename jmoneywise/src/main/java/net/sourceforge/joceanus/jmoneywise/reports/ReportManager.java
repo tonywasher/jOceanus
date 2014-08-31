@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JEditorPane;
 import javax.xml.transform.OutputKeys;
@@ -42,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -199,7 +198,7 @@ public class ReportManager
                 return;
             }
         } catch (JOceanusException e) {
-            theLogger.log(Level.SEVERE, "Failed to process reference", e);
+            theLogger.error("Failed to process reference", e);
             myText = null;
         }
 

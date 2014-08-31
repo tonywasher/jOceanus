@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmetis.viewer;
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -35,6 +34,8 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataValues;
+
+import org.slf4j.Logger;
 
 /**
  * Data Manager.

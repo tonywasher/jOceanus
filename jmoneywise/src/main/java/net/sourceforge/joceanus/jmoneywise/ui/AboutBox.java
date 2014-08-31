@@ -29,8 +29,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -39,6 +37,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
 
 /**
  * Display the about box.
@@ -178,7 +178,7 @@ public class AboutBox
             /* Return the properties */
             return myProperties;
         } catch (IOException e) {
-            pLogger.log(Level.SEVERE, ERROR_LOAD, e);
+            pLogger.error(ERROR_LOAD, e);
             return new Properties();
         } finally {
             try {
@@ -186,7 +186,7 @@ public class AboutBox
                     in.close();
                 }
             } catch (IOException e) {
-                pLogger.log(Level.SEVERE, ERROR_LOAD, e);
+                pLogger.error(ERROR_LOAD, e);
             }
         }
     }

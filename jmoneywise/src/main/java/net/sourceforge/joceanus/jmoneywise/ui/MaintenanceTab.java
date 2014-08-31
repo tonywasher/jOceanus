@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -260,6 +261,11 @@ public class MaintenanceTab
      * Refresh data.
      */
     private void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("MaintenanceTab");
+
+        /* Protect against exceptions */
         try {
             /* Refresh sub-panels */
             theAccountTab.refreshData();
@@ -271,6 +277,9 @@ public class MaintenanceTab
             /* Show the error */
             theView.addError(e);
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**

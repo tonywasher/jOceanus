@@ -31,8 +31,6 @@ import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -47,6 +45,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
+
+import org.slf4j.Logger;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -377,7 +377,7 @@ public class PasswordDialog
                     }
                 });
             } catch (InvocationTargetException | InterruptedException e) {
-                pLogger.log(Level.SEVERE, "Failed to display dialog", e);
+                pLogger.error("Failed to display dialog", e);
             }
         }
 

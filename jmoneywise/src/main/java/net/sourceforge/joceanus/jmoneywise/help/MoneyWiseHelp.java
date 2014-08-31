@@ -22,23 +22,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
-import java.util.logging.Logger;
-
 import net.sourceforge.joceanus.jtethys.help.HelpException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
+
+import org.slf4j.Logger;
 
 /**
  * Help Module for FinanceApp.
  * @author Tony Washer
  */
-public class FinanceHelp
+public class MoneyWiseHelp
         extends HelpModule {
     /**
      * Constructor.
      * @param pLogger the logger
      * @throws HelpException on error
      */
-    public FinanceHelp(final Logger pLogger) throws HelpException {
-        super(FinanceHelp.class, "help.xml", pLogger);
+    public MoneyWiseHelp(final Logger pLogger) throws HelpException {
+        super(MoneyWiseHelp.class, "help.xml", pLogger);
     }
 }

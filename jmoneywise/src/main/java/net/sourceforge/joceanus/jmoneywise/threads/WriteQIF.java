@@ -30,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
@@ -140,7 +139,7 @@ public class WriteQIF
             /* Delete the file */
             if ((!bSuccess) && (!myOutFile.delete())) {
                 /* Nothing that we can do. At least we tried */
-                theStatus.getLogger().log(Level.SEVERE, ERROR_DELETE);
+                theStatus.getLogger().error(ERROR_DELETE);
             }
         }
 
@@ -163,7 +162,7 @@ public class WriteQIF
             /* Check that we successfully parsed the file */
             QIFFile myNewFile = myQParser.getFile();
             if (!myNewFile.equals(myQFile)) {
-                theStatus.getLogger().log(Level.SEVERE, "Parsed file does not match source");
+                theStatus.getLogger().error("Parsed file does not match source");
             }
 
         } catch (IOException e) {

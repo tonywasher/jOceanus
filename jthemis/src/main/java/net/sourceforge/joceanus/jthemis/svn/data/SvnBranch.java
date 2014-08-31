@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -229,7 +228,7 @@ public final class SvnBranch
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
-            theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
+            theRepository.getLogger().error("Parse Failure", e);
             return null;
         }
     }

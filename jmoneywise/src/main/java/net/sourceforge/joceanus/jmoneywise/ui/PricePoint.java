@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -279,6 +280,10 @@ public class PricePoint
      * Refresh views/controls after a load/update of underlying data.
      */
     private void refreshData() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("SpotPrices");
+
         /* Protect against exceptions */
         try {
             /* Refresh the data */
@@ -296,6 +301,9 @@ public class PricePoint
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
