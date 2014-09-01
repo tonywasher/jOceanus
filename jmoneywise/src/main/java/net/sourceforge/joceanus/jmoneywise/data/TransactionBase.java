@@ -399,6 +399,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain Parent.
      * @return the parent
      */
+    @SuppressWarnings("unchecked")
     public T getParent() {
         return (T) getParent(getValueSet());
     }
@@ -412,6 +413,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain ParentId.
      * @return the parentId
      */
+    @SuppressWarnings("unchecked")
     public Integer getParentId() {
         T myParent = (T) getParent(getValueSet());
         return (myParent == null)
@@ -515,6 +517,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param <T> the transaction data type
      * @return the Parent Event
      */
+    @SuppressWarnings("unchecked")
     public static <T extends TransactionBase<T>> TransactionBase<T> getParent(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, TransactionBase.class);
     }
@@ -695,6 +698,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public TransactionBaseList<T> getList() {
         return (TransactionBaseList<T>) super.getList();
     }
@@ -725,6 +729,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
+    @SuppressWarnings("unchecked")
     protected TransactionBase(final TransactionBaseList<T> pList,
                               final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
@@ -879,9 +884,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             /* else if we are comparing against a child */
         } else if (myAltParent != null) {
             /* Compare with targets parent */
-            iDiff = Difference.compareObject((T) this, myAltParent);
-            if (iDiff != 0) {
-                return iDiff;
+            @SuppressWarnings("unchecked")
+            int iDiff1 = Difference.compareObject((T) this, myAltParent);
+            if (iDiff1 != 0) {
+                return iDiff1;
             }
 
             /* We are comparing against our parent, so always later */

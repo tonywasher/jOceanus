@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.list;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -770,7 +770,7 @@ public class OrderedList<T extends Comparable<? super T>>
         /* Allocate the new array if required */
         X[] myRows = a;
         if (a.length < iSize) {
-            myRows = (X[]) Array.newInstance(myClass, iSize);
+            myRows = Arrays.copyOf(a, iSize);
         }
 
         /* Access the array as an object array */
@@ -996,6 +996,7 @@ public class OrderedList<T extends Comparable<? super T>>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object clone() throws CloneNotSupportedException {
         /* Clone the underlying object */
         OrderedList<T> myResult = (OrderedList<T>) super.clone();
@@ -1061,7 +1062,7 @@ public class OrderedList<T extends Comparable<? super T>>
         /* Read the keys and values, and put the mappings in the HashMap */
         for (int i = 0; i < mySize; i++) {
             /* Read the values in */
-            T myItem = (T) pInput.readObject();
+            T myItem = theClass.cast(pInput.readObject());
 
             /* Add to list */
             append(myItem);

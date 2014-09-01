@@ -321,6 +321,12 @@ public class SecurityPrice
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public SecurityPriceBaseList<? extends SecurityPrice> getList() {
+        return (SecurityPriceBaseList<? extends SecurityPrice>) super.getList();
+    }
+
+    @Override
     public SecurityPrice getBase() {
         return (SecurityPrice) super.getBase();
     }
@@ -460,7 +466,7 @@ public class SecurityPrice
     public void validate() {
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
-        SecurityPriceBaseList<SecurityPrice> myList = (SecurityPriceBaseList<SecurityPrice>) getList();
+        SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
         MoneyWiseData mySet = getDataSet();
 
         /* The date must be non-null */

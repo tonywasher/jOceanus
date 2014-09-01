@@ -48,6 +48,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      * Get the index as an OrderedIdIndex.
      * @return the index
      */
+    @SuppressWarnings("unchecked")
     private OrderedIdIndex<I, T> getTheIndex() {
         return (OrderedIdIndex<I, T>) super.getIndex();
     }

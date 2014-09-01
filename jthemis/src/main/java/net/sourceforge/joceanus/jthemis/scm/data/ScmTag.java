@@ -202,7 +202,7 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
         if (!(pThat instanceof ScmTag)) {
             return false;
         }
-        T myThat = (T) pThat;
+        ScmTag<?, ?, ?, ?> myThat = (ScmTag<?, ?, ?, ?>) pThat;
 
         /* Compare fields */
         if (!theBranch.equals(myThat.getBranch())) {

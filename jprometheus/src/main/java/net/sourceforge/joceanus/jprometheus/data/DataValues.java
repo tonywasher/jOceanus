@@ -224,6 +224,7 @@ public class DataValues<E extends Enum<E>> {
         /* If the item is an infoSet item */
         if (pItem instanceof InfoSetItem) {
             /* Access InfoSet */
+            @SuppressWarnings("unchecked")
             DataInfoSet<?, ?, ?, ?, E> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
 
             /* If the InfoSet is non-empty */
@@ -242,6 +243,7 @@ public class DataValues<E extends Enum<E>> {
                     /* If this is a DataInfo item */
                     if (myCurr instanceof DataInfo) {
                         /* Access as DataArguments */
+                        @SuppressWarnings("unchecked")
                         DataInfo<?, ?, ?, ?, E> myItem = (DataInfo<?, ?, ?, ?, E>) myCurr;
 
                         /* Add item to the list */
@@ -259,6 +261,7 @@ public class DataValues<E extends Enum<E>> {
         /* If the item is a grouped item */
         if (pItem instanceof GroupedItem) {
             /* Access child iterator */
+            @SuppressWarnings("unchecked")
             Iterator<? extends DataItem<E>> myChildIterator = ((GroupedItem<E>) pItem).childIterator();
 
             /* If there are no children */
@@ -668,7 +671,7 @@ public class DataValues<E extends Enum<E>> {
             }
 
             /* Access the object as an InfoItem */
-            InfoItem<E> myItem = (InfoItem<E>) pThat;
+            InfoItem<?> myItem = (InfoItem<?>) pThat;
 
             if (!theName.equals(myItem.getName())) {
                 return false;

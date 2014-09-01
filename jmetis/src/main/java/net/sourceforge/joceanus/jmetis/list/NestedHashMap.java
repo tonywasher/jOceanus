@@ -1553,6 +1553,7 @@ public class NestedHashMap<K, V>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object clone() throws CloneNotSupportedException {
         /* Clone the underlying object */
         NestedHashMap<K, V> myResult = (NestedHashMap<K, V>) super.clone();
@@ -1619,6 +1620,7 @@ public class NestedHashMap<K, V>
      * @throws IOException on error
      * @throws ClassNotFoundException on error
      */
+    @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream pInput) throws IOException, ClassNotFoundException {
         /* Read in the default stuff */
         pInput.defaultReadObject();

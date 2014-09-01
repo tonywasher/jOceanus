@@ -197,6 +197,15 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
     }
 
     /**
+     * Get Component Branches.
+     * @return the component branch list
+     */
+    @SuppressWarnings("unchecked")
+    public ScmBranchList<B, C, R> getComponentBranchList() {
+        return (ScmBranchList<B, C, R>) theComponent.getBranches();
+    }
+
+    /**
      * Get Project Definition.
      * @return the project definition
      */
@@ -368,7 +377,7 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
         if (!(pThat instanceof ScmBranch)) {
             return false;
         }
-        B myThat = (B) pThat;
+        ScmBranch<?, ?, ?> myThat = (ScmBranch<?, ?, ?>) pThat;
 
         /* Compare fields */
         if (theMajorVersion != myThat.getMajorVersion()) {
@@ -402,8 +411,8 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
      */
     public B nextMajorBranch() {
         /* Determine the next major branch */
-        ScmBranchList<?, C, R> myBranches = theComponent.getBranches();
-        return (B) myBranches.nextMajorBranch();
+        ScmBranchList<B, C, R> myBranches = getComponentBranchList();
+        return myBranches.nextMajorBranch();
     }
 
     /**
@@ -412,8 +421,8 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
      */
     public B nextMinorBranch() {
         /* Determine the next major branch */
-        ScmBranchList<B, C, R> myBranches = (ScmBranchList<B, C, R>) theComponent.getBranches();
-        return myBranches.nextMinorBranch((B) this);
+        ScmBranchList<B, C, R> myBranches = getComponentBranchList();
+        return myBranches.nextMinorBranch(this);
     }
 
     /**
@@ -422,8 +431,8 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
      */
     public B nextDeltaBranch() {
         /* Determine the next major branch */
-        ScmBranchList<B, C, R> myBranches = (ScmBranchList<B, C, R>) theComponent.getBranches();
-        return myBranches.nextDeltaBranch((B) this);
+        ScmBranchList<B, C, R> myBranches = getComponentBranchList();
+        return myBranches.nextDeltaBranch(this);
     }
 
     /**
@@ -629,7 +638,7 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
          * @param pBase the branch to base from
          * @return the minor branch
          */
-        private B nextMinorBranch(final B pBase) {
+        private B nextMinorBranch(final ScmBranch<?, C, R> pBase) {
             /* Access major version */
             int myMajor = pBase.getMajorVersion();
 
@@ -667,7 +676,7 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
          * @param pBase the branch to base from
          * @return the delta branch
          */
-        private B nextDeltaBranch(final B pBase) {
+        private B nextDeltaBranch(final ScmBranch<?, C, R> pBase) {
             /* Access major/minor version */
             int myMajor = pBase.getMajorVersion();
             int myMinor = pBase.getMinorVersion();

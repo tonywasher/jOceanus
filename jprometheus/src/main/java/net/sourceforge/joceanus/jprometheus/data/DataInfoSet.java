@@ -366,6 +366,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      * @param pInfoClass the Info Class
      * @return the value
      */
+    @SuppressWarnings("unchecked")
     protected DataInfoLinkSet<T, O, I, S, E> getInfoLinkSet(final S pInfoClass) {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {

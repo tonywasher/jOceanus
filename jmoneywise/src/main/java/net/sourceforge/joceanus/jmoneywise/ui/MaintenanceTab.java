@@ -380,7 +380,8 @@ public class MaintenanceTab
             /* View the requested static */
             case MainTab.ACTION_VIEWSTATIC:
                 /* Select the requested tag */
-                StaticData<?, ?, MoneyWiseDataType> myData = pEvent.getDetails(StaticData.class);
+                @SuppressWarnings("unchecked")
+                StaticData<?, ?, MoneyWiseDataType> myData = (StaticData<?, ?, MoneyWiseDataType>) pEvent.getDetails(StaticData.class);
                 theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */

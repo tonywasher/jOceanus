@@ -278,6 +278,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         }
 
         /* Cast correctly */
+        @SuppressWarnings("unchecked")
         QIFRecord<T> myThat = (QIFRecord<T>) pThat;
 
         /* Check class */

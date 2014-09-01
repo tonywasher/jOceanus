@@ -159,7 +159,8 @@ public class UpdateSet<E extends Enum<E>>
      */
     public <T extends DataItem<E> & Comparable<? super T>> UpdateEntry<T, E> registerType(final E pDataType) {
         /* Locate any existing entry */
-        UpdateEntry<?, E> myEntry = theMap.get(pDataType);
+        @SuppressWarnings("unchecked")
+        UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
         if (myEntry == null) {
             /* Not found , so add it */
             myEntry = new UpdateEntry<T, E>(pDataType);
@@ -169,7 +170,7 @@ public class UpdateSet<E extends Enum<E>>
 
         /* Update list to null and return */
         myEntry.setDataList(null);
-        return (UpdateEntry<T, E>) myEntry;
+        return myEntry;
     }
 
     /**
@@ -183,6 +184,7 @@ public class UpdateSet<E extends Enum<E>>
     public <L extends DataList<T, E>, T extends DataItem<E> & Comparable<? super T>> L findDataList(final E pDataType,
                                                                                                     final Class<L> pClass) {
         /* Locate an existing entry */
+        @SuppressWarnings("unchecked")
         UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
 
         /* Cast correctly */

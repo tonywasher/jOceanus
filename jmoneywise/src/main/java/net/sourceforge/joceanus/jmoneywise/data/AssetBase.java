@@ -463,6 +463,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public AssetBaseList<T> getList() {
         return (AssetBaseList<T>) super.getList();
     }
@@ -720,7 +721,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public void validate() {
         String myName = getName();
         String myDesc = getDesc();
-        AssetBaseList<?> myList = getList();
+        AssetBaseList<T> myList = getList();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -740,8 +741,9 @@ public abstract class AssetBase<T extends AssetBase<T>>
             /* Loop through any unique lists */
             MoneyWiseData myData = getDataSet();
             for (MoneyWiseDataType myType : getUniqueSet()) {
-                myList = myData.getDataList(myType, AssetBaseList.class);
-                if (myList.findItemByName(myName) != null) {
+                @SuppressWarnings("unchecked")
+                AssetBaseList<?> mySubList = myData.getDataList(myType, AssetBaseList.class);
+                if (mySubList.findItemByName(myName) != null) {
                     addError(ERROR_DUPLICATE, FIELD_NAME);
                     break;
                 }

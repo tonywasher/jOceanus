@@ -294,6 +294,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             }
 
             /* Access as DataItem */
+            @SuppressWarnings("unchecked")
             DataItem<E> myItem = (DataItem<E>) myObject;
 
             /* Skip over child items */

@@ -116,7 +116,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         /* Cast correctly */
-        QIFLine<T> myLine = (QIFLine<T>) pThat;
+        QIFLine<?> myLine = (QIFLine<?>) pThat;
 
         /* Check value */
         return getLineType().equals(myLine.getLineType());
@@ -183,7 +183,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFStringLine<X> myLine = (QIFStringLine<X>) pThat;
+            QIFStringLine<?> myLine = (QIFStringLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -260,7 +260,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFMoneyLine<X> myLine = (QIFMoneyLine<X>) pThat;
+            QIFMoneyLine<?> myLine = (QIFMoneyLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -334,7 +334,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFDateLine<X> myLine = (QIFDateLine<X>) pThat;
+            QIFDateLine<?> myLine = (QIFDateLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -401,7 +401,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFFlagLine<X> myLine = (QIFFlagLine<X>) pThat;
+            QIFFlagLine<?> myLine = (QIFFlagLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -512,7 +512,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFPriceLine<X> myLine = (QIFPriceLine<X>) pThat;
+            QIFPriceLine<?> myLine = (QIFPriceLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -586,7 +586,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFUnitsLine<X> myLine = (QIFUnitsLine<X>) pThat;
+            QIFUnitsLine<?> myLine = (QIFUnitsLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -660,7 +660,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFRateLine<X> myLine = (QIFRateLine<X>) pThat;
+            QIFRateLine<?> myLine = (QIFRateLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -734,7 +734,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFRatioLine<X> myLine = (QIFRatioLine<X>) pThat;
+            QIFRatioLine<?> myLine = (QIFRatioLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -808,7 +808,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFSecurityLine<X> myLine = (QIFSecurityLine<X>) pThat;
+            QIFSecurityLine<?> myLine = (QIFSecurityLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1005,7 +1005,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFXferAccountLine<X> myLine = (QIFXferAccountLine<X>) pThat;
+            QIFXferAccountLine<?> myLine = (QIFXferAccountLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1094,7 +1094,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFPayeeLine<X> myLine = (QIFPayeeLine<X>) pThat;
+            QIFPayeeLine<?> myLine = (QIFPayeeLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1285,7 +1285,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFCategoryLine<X> myLine = (QIFCategoryLine<X>) pThat;
+            QIFCategoryLine<?> myLine = (QIFCategoryLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1433,7 +1433,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFCategoryAccountLine<X> myLine = (QIFCategoryAccountLine<X>) pThat;
+            QIFCategoryAccountLine<?> myLine = (QIFCategoryAccountLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {

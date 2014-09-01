@@ -430,6 +430,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         int[] mySelected = getSelectedRows();
 
         /* Create a row array relating to the selections */
+        @SuppressWarnings("unchecked")
         T[] myRows = (T[]) Array.newInstance(getDataClass(), mySelected.length);
 
         /* Loop through the selection indices */

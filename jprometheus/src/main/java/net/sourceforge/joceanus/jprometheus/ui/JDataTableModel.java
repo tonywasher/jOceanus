@@ -446,6 +446,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
                 /* Access the row */
                 JDataTableModel<?, E> myModel = theTable.getTableModel();
                 DataItem<E> myRow = myModel.getItemAtIndex(iRow);
+                @SuppressWarnings("unchecked")
                 JDataTableColumnModel<E> myColModel = (JDataTableColumnModel<E>) theTable.getColumnModel();
                 JDataField[] iFields = myColModel.getColumnFields();
 

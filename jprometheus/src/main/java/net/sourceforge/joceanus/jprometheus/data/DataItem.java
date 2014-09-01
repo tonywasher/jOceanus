@@ -815,7 +815,7 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Convert dataItem reference to Id */
         if (myValue instanceof DataItem) {
-            myValue = ((DataItem<E>) myValue).getId();
+            myValue = ((DataItem<?>) myValue).getId();
         }
 
         /* Lookup Id reference */
@@ -878,8 +878,9 @@ public abstract class DataItem<E extends Enum<E>>
         pList.setNewId(this);
 
         /* Create the touch status */
-        DataSet<?, ?> myData = getTheDataSet();
-        Class<E> myClass = (Class<E>) myData.getEnumClass();
+        @SuppressWarnings("unchecked")
+        DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
+        Class<E> myClass = myData.getEnumClass();
         theTouchStatus = new DataTouch<E>(myData, myClass);
     }
 

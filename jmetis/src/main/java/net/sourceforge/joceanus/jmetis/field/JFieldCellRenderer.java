@@ -302,7 +302,7 @@ public final class JFieldCellRenderer {
             Icon myIcon;
             String myTooltip;
             if (theState instanceof ComplexIconButtonState) {
-                ComplexIconButtonState<T, Boolean> myState = (ComplexIconButtonState<T, Boolean>) theState;
+                ComplexIconButtonState<T, Boolean> myState = getComplexState();
 
                 /* Determine whether the cell is editable */
                 int iRow = pTable.convertRowIndexToModel(pRowIndex);
@@ -326,6 +326,17 @@ public final class JFieldCellRenderer {
 
             /* Return this as the render item */
             return this;
+        }
+
+        /**
+         * Obtain complex state.
+         * @return the state machine
+         */
+        @SuppressWarnings("unchecked")
+        public ComplexIconButtonState<T, Boolean> getComplexState() {
+            return (theState instanceof ComplexIconButtonState)
+                                                               ? (ComplexIconButtonState<T, Boolean>) theState
+                                                               : null;
         }
     }
 

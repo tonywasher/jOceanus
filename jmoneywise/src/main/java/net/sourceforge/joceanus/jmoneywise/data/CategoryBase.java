@@ -402,11 +402,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CategoryBaseList<T, S, C> getList() {
         return (CategoryBaseList<T, S, C>) super.getList();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T getBase() {
         return (T) super.getBase();
     }
@@ -597,7 +599,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         /* If we should update the children */
         if (updateChildren) {
             CategoryBaseList<T, S, C> myList = getList();
-            myList.updateChildren((T) this);
+            myList.updateChildren(myList.getBaseClass().cast(this));
         }
     }
 

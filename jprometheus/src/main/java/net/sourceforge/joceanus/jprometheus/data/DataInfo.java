@@ -131,7 +131,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         }
 
         /* Access InfoType */
-        I myInfoType = (I) myType;
+        StaticData<?, ?, ?> myInfoType = (StaticData<?, ?, ?>) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + formatObject();
@@ -147,7 +147,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         }
 
         /* Access InfoType */
-        I myInfoType = (I) myType;
+        I myInfoType = getInfoType();
 
         /* Access formatter */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();
@@ -525,6 +525,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pValues the values
      * @throws JOceanusException on error
      */
+    @SuppressWarnings("unchecked")
     protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
                        final DataValues<E> pValues) throws JOceanusException {
         /* Initialise the item */

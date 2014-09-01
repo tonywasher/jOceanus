@@ -408,9 +408,10 @@ public final class JFieldCellEditor {
         }
 
         /**
-         * Determine Icon for value.
+         * Obtain complex state.
          * @return the state machine
          */
+        @SuppressWarnings("unchecked")
         public ComplexIconButtonState<T, Boolean> getComplexState() {
             return (theState instanceof ComplexIconButtonState)
                                                                ? (ComplexIconButtonState<T, Boolean>) theState

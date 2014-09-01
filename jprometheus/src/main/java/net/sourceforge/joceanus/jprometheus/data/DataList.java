@@ -375,6 +375,15 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
+     * Get Manager index.
+     * @return the manager index
+     */
+    @SuppressWarnings("unchecked")
+    private IdManager<T, E> getManagerIndex() {
+        return (IdManager<T, E>) super.getIndex();
+    }
+
+    /**
      * Construct a new object.
      * @param pBaseClass the class of the underlying object
      * @param pDataSet the owning dataSet
@@ -391,7 +400,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         theDataSet = pDataSet;
         theGranularity = pDataSet.getGranularity();
         theGeneration = pDataSet.getGeneration();
-        theMgr = (IdManager<T, E>) getIndex();
+        theMgr = getManagerIndex();
 
         /* Declare fields (allowing for subclasses) */
         theFields = declareFields();
@@ -405,7 +414,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         super(pSource.getBaseClass(), new IdManager<T, E>(pSource.getGranularity()));
         theStyle = ListStyle.COPY;
         theItemType = pSource.getItemType();
-        theMgr = (IdManager<T, E>) getIndex();
+        theMgr = getManagerIndex();
         theBase = pSource;
         theDataSet = pSource.getDataSet();
         theGranularity = pSource.getGranularity();

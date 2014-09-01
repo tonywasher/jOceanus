@@ -191,7 +191,7 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
         if (!(pThat instanceof ScmComponent)) {
             return false;
         }
-        C myThat = (C) pThat;
+        ScmComponent<?, ?> myThat = (ScmComponent<?, ?>) pThat;
 
         /* Compare fields */
         if (!theRepository.equals(myThat.getRepository())) {

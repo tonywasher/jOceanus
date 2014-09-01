@@ -214,7 +214,7 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
         if (!(pThat instanceof ScmRepository)) {
             return false;
         }
-        R myThat = (R) pThat;
+        ScmRepository<?> myThat = (ScmRepository<?>) pThat;
 
         /* Compare fields */
         return theName.equals(myThat.getName());

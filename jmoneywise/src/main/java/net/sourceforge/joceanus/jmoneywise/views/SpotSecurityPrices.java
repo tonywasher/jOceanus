@@ -42,11 +42,11 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
@@ -234,7 +234,7 @@ public class SpotSecurityPrices
      * The Spot Prices List class.
      */
     public static class SpotSecurityList
-            extends EncryptedList<SpotSecurityPrice, MoneyWiseDataType> {
+            extends SecurityPriceBaseList<SpotSecurityPrice> {
         /**
          * Local Report fields.
          */
@@ -344,7 +344,7 @@ public class SpotSecurityPrices
          */
         public SpotSecurityList(final SpotSecurityPrices pPrices) {
             /* Build initial list */
-            super(SpotSecurityPrice.class, pPrices.getData(), MoneyWiseDataType.SECURITYPRICE);
+            super(pPrices.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();
