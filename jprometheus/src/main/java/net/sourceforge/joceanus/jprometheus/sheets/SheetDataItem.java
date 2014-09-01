@@ -121,6 +121,11 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
         return theLastItem;
     }
 
+    @Override
+    public String toString() {
+        return theRangeName;
+    }
+
     /**
      * Constructor for a load operation.
      * @param pReader the spreadsheet reader

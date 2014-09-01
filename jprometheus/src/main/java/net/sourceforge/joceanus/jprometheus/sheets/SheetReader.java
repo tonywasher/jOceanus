@@ -22,9 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -179,16 +178,26 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
                           final ZipFileEntry pEntry) throws JOceanusException {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
+            /* Obtain the active profile */
+            JDataProfile myTask = theTask.getActiveTask();
+            JDataProfile myStage = myTask.startTask("Loading");
+            myStage.startTask("Parsing");
+
             /* Initialise the workbook */
             boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(pEntry.getFileName()));
 
             /* Load the workbook */
             if (bContinue) {
+                myStage.startTask("Reading");
                 bContinue = loadWorkBook();
             }
 
             /* Close the Stream to force out errors */
+            myStage.startTask("Closing");
             myStream.close();
+
+            /* Complete the task */
+            myStage.end();
 
             /* Check for cancellation */
             if (!bContinue) {
@@ -198,43 +207,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
             /* Report the error */
             throw new JPrometheusIOException("Failed to load Backup Workbook: " + pEntry.getFileName(), e);
         }
-    }
-
-    /**
-     * Load an Extract Workbook.
-     * @param pFile the Extract file to load from
-     * @return the loaded DataSet
-     * @throws JOceanusException on error
-     */
-    public T loadExtract(final File pFile) throws JOceanusException {
-        /* Protect the workbook retrieval */
-        try (FileInputStream myInFile = new FileInputStream(pFile);
-             InputStream myStream = new BufferedInputStream(myInFile)) {
-            /* Determine the type of the workbook */
-            WorkBookType myType = WorkBookType.determineType(pFile.getName());
-
-            /* Initialise the workbook */
-            boolean bContinue = initialiseWorkBook(myStream, myType);
-
-            /* Load the workbook */
-            if (bContinue) {
-                bContinue = loadWorkBook();
-            }
-
-            /* Close the Stream to force out errors */
-            myStream.close();
-
-            /* Check for cancellation */
-            if (!bContinue) {
-                throw new JPrometheusCancelException(ERROR_CANCEL);
-            }
-        } catch (IOException e) {
-            /* Report the error */
-            throw new JPrometheusIOException("Failed to load Edit-able Workbook: " + pFile.getName(), e);
-        }
-
-        /* Return the new DataSet */
-        return theData;
     }
 
     /**
@@ -296,20 +268,20 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     private boolean loadWorkBook() throws JOceanusException {
-        SheetDataItem<?, ?> mySheet;
-
-        /* Access the iterator for the list */
-        Iterator<SheetDataItem<?, ?>> myIterator = theSheets.iterator();
+        /* Obtain the active profile */
+        JDataProfile myTask = theTask.getActiveTask();
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
+        Iterator<SheetDataItem<?, ?>> myIterator = theSheets.iterator();
         while ((bContinue) && (myIterator.hasNext())) {
             /* Access the next sheet */
-            mySheet = myIterator.next();
+            SheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Load data for the sheet */
+            myTask.startTask(mySheet.toString());
             bContinue = mySheet.loadSpreadSheet();
         }
 

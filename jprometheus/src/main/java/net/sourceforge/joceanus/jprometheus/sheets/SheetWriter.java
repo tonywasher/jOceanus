@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -197,20 +198,21 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * @throws IOException on write error
      */
     private void writeWorkBook(final OutputStream pStream) throws JOceanusException, IOException {
-        SheetDataItem<?, ?> mySheet;
-
-        /* Access the iterator for the list */
-        Iterator<SheetDataItem<?, ?>> myIterator = theSheets.iterator();
+        /* Obtain the active profile */
+        JDataProfile myTask = theTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("Writing");
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
+        Iterator<SheetDataItem<?, ?>> myIterator = theSheets.iterator();
         while ((bContinue) && (myIterator.hasNext())) {
             /* Access the next sheet */
-            mySheet = myIterator.next();
+            SheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Write data for the sheet */
+            myStage.startTask(mySheet.toString());
             bContinue = mySheet.writeSpreadSheet();
         }
 
@@ -222,8 +224,12 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         /* If we have created the workbook OK */
         if (bContinue) {
             /* Write it out to disk and close the stream */
+            myStage.startTask("Saving");
             theWorkBook.saveToStream(pStream);
         }
+
+        /* Complete the task */
+        myStage.end();
 
         /* Check for cancellation */
         if (!bContinue) {

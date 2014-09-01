@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
@@ -126,6 +127,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     public boolean createBackup(final T pData,
                                 final File pFile) throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("Writing");
+
         /* Create a clone of the security control */
         SecureManager mySecure = pData.getSecurity();
         PasswordHash myBase = pData.getPasswordHash();
@@ -152,9 +157,13 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                 /* If this list should be written */
                 if (myList.includeDataXML()) {
                     /* Write the list details */
+                    myStage.startTask(myList.listName());
                     bContinue = writeXMLListToFile(myList, myZipFile, true);
                 }
             }
+
+            /* Complete the task */
+            myStage.end();
 
             /* return success */
             return bContinue;
@@ -179,6 +188,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     public boolean createExtract(final T pData,
                                  final File pFile) throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("Writing");
+
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
 
@@ -200,9 +213,13 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                 /* If this list should be written */
                 if (myList.includeDataXML()) {
                     /* Write the list details */
+                    myStage.startTask(myList.listName());
                     bContinue = writeXMLListToFile(myList, myZipFile, false);
                 }
             }
+
+            /* Complete the task */
+            myStage.end();
 
             /* return success */
             return bContinue;
@@ -330,6 +347,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     public boolean loadZipFile(final T pData,
                                final File pFile) throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("Loading");
+        myStage.startTask("Parsing");
+
         /* Access the zip file */
         try (ZipReadFile myZipFile = new ZipReadFile(pFile)) {
             /* Obtain the hash bytes from the file */
@@ -348,7 +370,12 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             }
 
             /* Parse the Zip File */
-            return parseZipFile(pData, myZipFile);
+            boolean bSuccess = parseZipFile(myStage, pData, myZipFile);
+
+            /* Complete the task */
+            myStage.end();
+            return bSuccess;
+
         } catch (IOException e) {
             throw new JPrometheusIOException("Failed to load file", e);
         }
@@ -356,13 +383,18 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
     /**
      * Parse a ZipFile.
+     * @param pProfile the active profile
      * @param pData DataSet to load into
      * @param pZipFile the file to parse
      * @return success true/false
      * @throws JOceanusException on error
      */
-    private boolean parseZipFile(final T pData,
+    private boolean parseZipFile(final JDataProfile pProfile,
+                                 final T pData,
                                  final ZipReadFile pZipFile) throws JOceanusException {
+        /* Start new stage */
+        JDataProfile myStage = pProfile.startTask("Loading");
+
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(pData.getListMap().size());
 
@@ -379,6 +411,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* If this list should be read */
             if (myList.includeDataXML()) {
                 /* Write the list details */
+                myStage.startTask(myList.listName());
                 bContinue = readXMLListFromFile(myList, pZipFile);
             }
 
@@ -391,6 +424,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         if (bContinue) {
             pData.getControlData().addNewControl(theVersion);
         }
+
+        /* Complete the task */
+        myStage.end();
 
         /* return success */
         return bContinue;

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -71,6 +72,11 @@ public class JDataProfile
     private static final JDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataElapsed"));
 
     /**
+     * Hidden Field Id.
+     */
+    private static final JDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHidden"));
+
+    /**
      * Report fields.
      */
     private final JDataFields theFields = new JDataFields(NAME_CLASS, FIELD_DEFS);
@@ -99,6 +105,11 @@ public class JDataProfile
      * Elapsed (in milliseconds).
      */
     private JDecimal theElapsed;
+
+    /**
+     * Hidden Elapsed (in milliseconds).
+     */
+    private JDecimal theHidden;
 
     /**
      * Current subTask.
@@ -141,6 +152,11 @@ public class JDataProfile
             return theStatus.isRunning()
                                         ? JDataFieldValue.SKIP
                                         : theElapsed;
+        }
+        if (FIELD_HIDDEN.equals(pField)) {
+            return theHidden == null
+                                    ? JDataFieldValue.SKIP
+                                    : theHidden;
         }
 
         /* Only possible if we have subTasks */
@@ -237,10 +253,34 @@ public class JDataProfile
             /* Stop the task and calculate the elapsed time */
             theEnd = System.nanoTime();
             theElapsed = new JDecimal(theEnd - theStart, NUM_DECIMALS);
+            theHidden = theSubTasks == null
+                                           ? null
+                                           : calculateHidden();
 
             /* Mark time as stopped */
             theStatus = ProfileStatus.STOPPED;
         }
+    }
+
+    /**
+     * Calculate the hidden time.
+     * @return the hidden time
+     */
+    private JDecimal calculateHidden() {
+        /* Initialise hidden value */
+        JDecimal myHidden = new JDecimal(theElapsed);
+
+        /* Loop through the subTasks */
+        Iterator<JDataProfile> myIterator = theSubTasks.iterator();
+        while (myIterator.hasNext()) {
+            JDataProfile myProfile = myIterator.next();
+
+            /* Subtract child time */
+            myHidden.subtractValue(myProfile.theElapsed);
+        }
+
+        /* Return calculated value */
+        return myHidden;
     }
 
     /**
