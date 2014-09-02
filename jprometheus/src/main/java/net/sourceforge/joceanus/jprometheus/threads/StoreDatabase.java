@@ -87,7 +87,7 @@ public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
             T myData = myDatabase.loadDatabase(theStatus);
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myData.getDifferenceSet(theStatus, theControl.getData());
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

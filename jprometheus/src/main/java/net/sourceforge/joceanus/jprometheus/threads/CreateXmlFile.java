@@ -184,7 +184,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
                 theStatus.initTask("Verifying Backup");
 
                 /* Create a difference set between the two data copies */
-                DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
+                DataSet<T, ?> myDiff = myNewData.getDifferenceSet(theStatus, myOldData);
 
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {

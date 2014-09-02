@@ -38,19 +38,38 @@ import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -238,6 +257,11 @@ public class ArchiveLoader {
                                             final JDateDay pLastEvent) throws JOceanusException {
         /* Protect the workbook retrieval */
         try {
+            /* Access current profile */
+            JDataProfile myTask = pTask.getActiveTask();
+            myTask = myTask.startTask("LoadArchive");
+            myTask.startTask("ParseWorkBook");
+
             /* Create the Data */
             MoneyWiseData myData = pTask.getNewDataSet();
             theParentCache = new ParentCache(myData);
@@ -246,64 +270,84 @@ public class ArchiveLoader {
             DataWorkBook myWorkbook = new DataWorkBook(pStream, pType);
 
             /* Determine Year Range */
+            JDataProfile myStage = myTask.startTask("LoadSheets");
+            myStage.startTask("Range");
             boolean bContinue = loadArchive(pTask, myWorkbook, myData);
 
             /* Load Tables */
             if (bContinue) {
+                myStage.startTask(DepositCategoryType.LIST_NAME);
                 bContinue = SheetDepositCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(CashCategoryType.LIST_NAME);
                 bContinue = SheetCashCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(LoanCategoryType.LIST_NAME);
                 bContinue = SheetLoanCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(SecurityType.LIST_NAME);
                 bContinue = SheetSecurityType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(PayeeType.LIST_NAME);
                 bContinue = SheetPayeeType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TransactionCategoryType.LIST_NAME);
                 bContinue = SheetTransCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TaxBasis.LIST_NAME);
                 bContinue = SheetTaxBasis.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TaxCategory.LIST_NAME);
                 bContinue = SheetTaxCategory.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(AccountCurrency.LIST_NAME);
                 bContinue = SheetAccountCurrency.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TaxRegime.LIST_NAME);
                 bContinue = SheetTaxRegime.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(Frequency.LIST_NAME);
                 bContinue = SheetFrequency.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TaxYearInfoType.LIST_NAME);
                 bContinue = SheetTaxYearInfoType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(AccountInfoType.LIST_NAME);
                 bContinue = SheetAccountInfoType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TransactionInfoType.LIST_NAME);
                 bContinue = SheetTransInfoType.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {
+                myStage.startTask(TransactionTag.LIST_NAME);
                 bContinue = SheetTransTag.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {
+                myStage.startTask("AccountCategories");
                 bContinue = SheetAccountCategory.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(TransactionCategory.LIST_NAME);
                 bContinue = SheetTransCategory.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {
+                myStage.startTask(TaxYear.LIST_NAME);
                 bContinue = SheetTaxYear.loadArchive(pTask, myWorkbook, myData, this);
             }
             if (bContinue) {
@@ -311,16 +355,20 @@ public class ArchiveLoader {
             }
 
             if (bContinue) {
+                myStage.startTask("Accounts");
                 bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData, this);
             }
             if (bContinue) {
+                myStage.startTask(DepositRate.LIST_NAME);
                 bContinue = SheetDepositRate.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                myStage.startTask(SecurityPrice.LIST_NAME);
                 bContinue = SheetSecurityPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
             }
 
             if (bContinue) {
+                myStage.startTask(Transaction.LIST_NAME);
                 bContinue = SheetTransaction.loadArchive(pTask, myWorkbook, myData, this, pLastEvent);
             }
 
@@ -331,6 +379,9 @@ public class ArchiveLoader {
             if (!pTask.setNewStage("Refreshing data")) {
                 bContinue = false;
             }
+
+            /* Complete task */
+            myTask.end();
 
             /* Check for cancellation */
             if (!bContinue) {

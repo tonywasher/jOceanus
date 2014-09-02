@@ -143,7 +143,7 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             T myNewData = mySheet.loadBackup(theStatus, myFile);
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(theStatus, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

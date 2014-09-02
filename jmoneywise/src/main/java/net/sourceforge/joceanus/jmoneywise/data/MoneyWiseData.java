@@ -75,6 +75,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
@@ -630,12 +631,13 @@ public class MoneyWiseData
      * @throws JOceanusException on error
      */
     @Override
-    public MoneyWiseData getDifferenceSet(final MoneyWiseData pOld) throws JOceanusException {
+    public MoneyWiseData getDifferenceSet(final TaskControl<MoneyWiseData> pTask,
+                                          final MoneyWiseData pOld) throws JOceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myDiffers = new MoneyWiseData(this);
 
         /* Obtain underlying differences */
-        myDiffers.deriveDifferences(this, pOld);
+        myDiffers.deriveDifferences(pTask, this, pOld);
 
         /* Return the differences */
         return myDiffers;

@@ -126,6 +126,10 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     public T loadBackup(final File pFile) throws JOceanusException {
+        /* Start the task */
+        JDataProfile myTask = theTask.getActiveTask();
+        myTask = myTask.startTask("Loading");
+
         /* Access the zip file */
         try (ZipReadFile myFile = new ZipReadFile(pFile)) {
             /* Obtain the hash bytes from the file */
@@ -164,6 +168,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
             throw new JPrometheusIOException("Failed to load Backup Workbook: " + pFile.getName(), e);
         }
 
+        /* Complete the task */
+        myTask.end();
+
         /* Return the new DataSet */
         return theData;
     }
@@ -180,24 +187,20 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Obtain the active profile */
             JDataProfile myTask = theTask.getActiveTask();
-            JDataProfile myStage = myTask.startTask("Loading");
-            myStage.startTask("Parsing");
+            myTask.startTask("Parsing");
 
             /* Initialise the workbook */
             boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(pEntry.getFileName()));
 
             /* Load the workbook */
             if (bContinue) {
-                myStage.startTask("Reading");
+                myTask.startTask("Reading");
                 bContinue = loadWorkBook();
             }
 
             /* Close the Stream to force out errors */
-            myStage.startTask("Closing");
+            myTask.startTask("Closing");
             myStream.close();
-
-            /* Complete the task */
-            myStage.end();
 
             /* Check for cancellation */
             if (!bContinue) {

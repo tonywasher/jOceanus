@@ -82,7 +82,7 @@ public class CreateDatabase<T extends DataSet<T, ?>>
             /* Re-base this set on a null set */
             T myNull = theControl.getNewData();
             T myData = theControl.getData();
-            myData.reBase(myNull);
+            myData.reBase(theStatus, myNull);
 
             /* Derive the new set of updates */
             theControl.deriveUpdates();

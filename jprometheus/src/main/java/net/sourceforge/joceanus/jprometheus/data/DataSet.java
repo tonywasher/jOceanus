@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
@@ -488,22 +489,30 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
      * in the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
      * Items that are in both list but differ will be viewed as changed
+     * @param pTask the task control
      * @param pOld The old list to extract from
      * @return the difference set
      * @throws JOceanusException on error
      */
-    public abstract T getDifferenceSet(final T pOld) throws JOceanusException;
+    public abstract T getDifferenceSet(final TaskControl<T> pTask,
+                                       final T pOld) throws JOceanusException;
 
     /**
      * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
      * in the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
      * Items that are in both list but differ will be viewed as changed
+     * @param pTask the task control
      * @param pNew The new list to compare
      * @param pOld The old list to compare
      * @throws JOceanusException on error
      */
-    protected void deriveDifferences(final T pNew,
+    protected void deriveDifferences(final TaskControl<T> pTask,
+                                     final T pNew,
                                      final T pOld) throws JOceanusException {
+        /* Access current profile */
+        JDataProfile myTask = pTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("checkDifferences");
+
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
         theDataKeySets = pNew.getDataKeySets().deriveDifferences(this, pOld.getDataKeySets());
@@ -524,16 +533,26 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             DataList<?, E> myOld = myOldMap.get(myType);
 
             /* Derive Differences */
+            myStage.startTask(myNew.listName());
             addList(myType, myNew.deriveDifferences(this, myOld));
         }
+
+        /* Complete task */
+        myStage.end();
     }
 
     /**
      * ReBase this data set against an earlier version.
+     * @param pTask the task control
      * @param pOld The old data to reBase against
      * @throws JOceanusException on error
      */
-    public void reBase(final T pOld) throws JOceanusException {
+    public void reBase(final TaskControl<T> pTask,
+                       final T pOld) throws JOceanusException {
+        /* Access current profile */
+        JDataProfile myTask = pTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("ReBase");
+
         /* ReBase the security items */
         theControlKeys.reBase(pOld.getControlKeys());
         theDataKeySets.reBase(pOld.getDataKeySets());
@@ -553,8 +572,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             DataList<?, E> myList = myEntry.getValue();
 
             /* ReBase on Old dataList */
+            myStage.startTask(myList.listName());
             myList.reBase(myMap.get(myType));
         }
+
+        /* Complete task */
+        myStage.end();
     }
 
     /**
@@ -872,6 +895,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean initialiseSecurity(final TaskControl<T> pTask,
                                       final T pBase) throws JOceanusException {
+        /* Access current profile */
+        JDataProfile myTask = pTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("InitSecurity");
+
         /* Set the number of stages */
         if (!pTask.setNumStages(1 + theNumEncrypted)) {
             return false;
@@ -898,12 +925,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Adopt the security */
+                myStage.startTask(myList.listName());
                 EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
                 if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?, E>) myBase)) {
                     return false;
                 }
             }
         }
+
+        /* Complete the task */
+        myStage.end();
 
         /* Return success */
         return true;
@@ -916,6 +947,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @throws JOceanusException on error
      */
     public boolean renewSecurity(final TaskControl<T> pTask) throws JOceanusException {
+        /* Access current profile */
+        JDataProfile myTask = pTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("ReNewSecurity");
+
         /* Access ControlData */
         ControlData myControl = getControl();
 
@@ -926,7 +961,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         myControl.setControlKey(myKey);
 
         /* Update Security */
-        return updateSecurity(pTask);
+        boolean bSuccess = updateSecurity(pTask);
+
+        /* Complete task */
+        myStage.end();
+        return bSuccess;
     }
 
     /**
@@ -936,6 +975,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @throws JOceanusException on error
      */
     public boolean checkSecurity(final TaskControl<T> pTask) throws JOceanusException {
+        /* Access current profile */
+        JDataProfile myTask = pTask.getActiveTask();
+        JDataProfile myStage = myTask.startTask("CheckSecurity");
+
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {
             /* Update to the selected controlKey */
@@ -949,6 +992,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Return success */
+        myStage.end();
         return true;
     }
 

@@ -122,6 +122,10 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     public void createBackup(final T pData,
                              final File pFile,
                              final WorkBookType pType) throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theTask.getActiveTask();
+        myTask = myTask.startTask("Writing");
+
         /* Create a clone of the security control */
         SecureManager mySecure = pData.getSecurity();
         PasswordHash myBase = pData.getPasswordHash();
@@ -162,6 +166,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
                 theTask.getLogger().error(ERROR_DELETE);
             }
         }
+
+        /* Complete task */
+        myTask.end();
     }
 
     /**
@@ -200,7 +207,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     private void writeWorkBook(final OutputStream pStream) throws JOceanusException, IOException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("Writing");
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
@@ -212,7 +218,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             SheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Write data for the sheet */
-            myStage.startTask(mySheet.toString());
+            myTask.startTask(mySheet.toString());
             bContinue = mySheet.writeSpreadSheet();
         }
 
@@ -224,12 +230,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         /* If we have created the workbook OK */
         if (bContinue) {
             /* Write it out to disk and close the stream */
-            myStage.startTask("Saving");
+            myTask.startTask("Saving");
             theWorkBook.saveToStream(pStream);
         }
-
-        /* Complete the task */
-        myStage.end();
 
         /* Check for cancellation */
         if (!bContinue) {

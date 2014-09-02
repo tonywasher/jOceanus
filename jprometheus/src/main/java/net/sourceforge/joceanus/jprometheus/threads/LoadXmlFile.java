@@ -124,6 +124,9 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
         /* Load underlying database */
         T myStore = myDatabase.loadDatabase(theStatus);
 
+        /* Check security on the database */
+        myStore.checkSecurity(theStatus);
+
         /* Initialise the status window */
         theStatus.initTask("Re-applying Security");
 
@@ -131,7 +134,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
         myNewData.initialiseSecurity(theStatus, myStore);
 
         /* Re-base the loaded backup onto the database image */
-        myNewData.reBase(myStore);
+        myNewData.reBase(theStatus, myStore);
 
         /* Return the Data */
         return myNewData;

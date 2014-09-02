@@ -106,7 +106,7 @@ public class LoadArchive
             myData.initialiseSecurity(theStatus, myStore);
 
             /* Re-base the loaded spreadsheet onto the database image */
-            myData.reBase(myStore);
+            myData.reBase(theStatus, myStore);
 
             /* Return the loaded data */
             return myData;
