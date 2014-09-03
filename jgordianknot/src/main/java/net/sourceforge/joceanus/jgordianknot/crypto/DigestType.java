@@ -23,11 +23,11 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * DataDigest types. Available algorithms.
@@ -69,11 +69,6 @@ public enum DigestType {
     SKEIN(7);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DigestType.class.getName());
-
-    /**
      * Invalid number of digests error text.
      */
     private static final String ERROR_NUMTYPES = "Invalid number of Digests: ";
@@ -92,7 +87,7 @@ public enum DigestType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(CryptoResource.getKeyForDigest(this));
         }
 
         /* return the name */
@@ -140,16 +135,16 @@ public enum DigestType {
         switch (this) {
             case SKEIN:
                 return (bLong)
-                        ? "SKEIN-512-512"
-                        : "SKEIN-256-256";
+                              ? "SKEIN-512-512"
+                              : "SKEIN-256-256";
             case SHA3:
                 return (bLong)
-                        ? "SHA3-512"
-                        : "SHA3-256";
+                              ? "SHA3-512"
+                              : "SHA3-256";
             case SHA2:
                 return (bLong)
-                        ? "SHA512"
-                        : "SHA-256";
+                              ? "SHA512"
+                              : "SHA-256";
             case RIPEMD:
                 return "RIPEMD320";
             case GOST:

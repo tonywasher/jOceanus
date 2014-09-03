@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -39,6 +40,21 @@ import org.slf4j.Logger;
  * passwords will be attempted. If no match is found, then the user will be prompted for the password.
  */
 public class SecureManager {
+    /**
+     * Text for Password title.
+     */
+    private static final String NLS_TITLEPASS = ResourceMgr.getString(CryptoResource.TITLE_PASSWORD);
+
+    /**
+     * Text for New Password title.
+     */
+    private static final String NLS_TITLENEWPASS = ResourceMgr.getString(CryptoResource.TITLE_NEWPASS);
+
+    /**
+     * Text for Bad Password Error.
+     */
+    private static final String NLS_ERRORPASS = ResourceMgr.getString(CryptoResource.ERROR_BADPASS);
+
     /**
      * Security generator.
      */
@@ -128,10 +144,10 @@ public class SecureManager {
 
         /* Create the title for the window */
         if (needConfirm) {
-            myTitle = "Enter New Password for "
+            myTitle = NLS_TITLENEWPASS
                       + pSource;
         } else {
-            myTitle = "Enter Password for "
+            myTitle = NLS_TITLEPASS
                       + pSource;
         }
 
@@ -159,7 +175,7 @@ public class SecureManager {
                 theHashList.add(myHash);
                 break;
             } catch (InvalidCredentialsException e) {
-                myPass.setError("Incorrect password. Please re-enter");
+                myPass.setError(NLS_ERRORPASS);
             }
         }
 

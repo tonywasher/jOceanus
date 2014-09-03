@@ -228,7 +228,6 @@ public class View
             myData.setObject(theAnalyser);
 
             /* Access the dilutions */
-            myTask.startTask("deriveDilutions");
             theDilutions = theAnalyser.getDilutions();
 
             /* Derive the update Set */

@@ -23,11 +23,11 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Mac types. Available algorithms.
@@ -59,11 +59,6 @@ public enum MacType {
     VMPC(5);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MacType.class.getName());
-
-    /**
      * The external Id of the algorithm.
      */
     private int theId = 0;
@@ -78,7 +73,7 @@ public enum MacType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(CryptoResource.getKeyForHMac(this));
         }
 
         /* return the name */
@@ -126,14 +121,14 @@ public enum MacType {
         switch (this) {
             case GMAC:
                 return (pKeyType.isStdBlock())
-                        ? pKeyType.name()
-                          + "-GMAC"
-                        : null;
+                                              ? pKeyType.name()
+                                                + "-GMAC"
+                                              : null;
             case POLY1305:
                 return (pKeyType.isStdBlock())
-                        ? "POLY1305-"
-                          + pKeyType.name()
-                        : null;
+                                              ? "POLY1305-"
+                                                + pKeyType.name()
+                                              : null;
             default:
                 return null;
         }
@@ -151,8 +146,8 @@ public enum MacType {
             case SKEIN:
                 return "SKEIN-MAC-"
                        + ((bLong)
-                               ? "512-512"
-                               : "256-256");
+                                 ? "512-512"
+                                 : "256-256");
             default:
                 return null;
         }

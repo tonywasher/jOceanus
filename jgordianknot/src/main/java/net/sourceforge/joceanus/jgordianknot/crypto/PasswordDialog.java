@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -44,6 +43,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 import org.slf4j.Logger;
@@ -80,49 +80,44 @@ public class PasswordDialog
     private static final int PADDING_SIZE = 5;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PasswordDialog.class.getName());
-
-    /**
      * Text for Password Label.
      */
-    private static final String NLS_PASSWORD = NLS_BUNDLE.getString("Password");
+    private static final String NLS_PASSWORD = ResourceMgr.getString(CryptoResource.LABEL_PASSWORD);
 
     /**
      * Text for Confirm Label.
      */
-    private static final String NLS_CONFIRM = NLS_BUNDLE.getString("Confirm");
+    private static final String NLS_CONFIRM = ResourceMgr.getString(CryptoResource.LABEL_CONFIRM);
 
     /**
      * Text for OK Button.
      */
-    private static final String NLS_OK = NLS_BUNDLE.getString("OKButton");
+    private static final String NLS_OK = ResourceMgr.getString(CryptoResource.BUTTON_OK);
 
     /**
      * Text for Cancel Button.
      */
-    private static final String NLS_CANCEL = NLS_BUNDLE.getString("CancelButton");
+    private static final String NLS_CANCEL = ResourceMgr.getString(CryptoResource.BUTTON_CANCEL);
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_ERROR = NLS_BUNDLE.getString("Error");
+    private static final String NLS_ERROR = ResourceMgr.getString(CryptoResource.TITLE_ERROR);
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_CONFIRMERROR = NLS_BUNDLE.getString("ConfirmError");
+    private static final String NLS_CONFIRMERROR = ResourceMgr.getString(CryptoResource.ERROR_CONFIRM);
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR1 = NLS_BUNDLE.getString("LengthError1");
+    private static final String NLS_LENGTHERR1 = ResourceMgr.getString(CryptoResource.ERROR_LENGTH1);
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR2 = NLS_BUNDLE.getString("LengthError2");
+    private static final String NLS_LENGTHERR2 = ResourceMgr.getString(CryptoResource.ERROR_LENGTH2);
 
     /**
      * Obtained password.

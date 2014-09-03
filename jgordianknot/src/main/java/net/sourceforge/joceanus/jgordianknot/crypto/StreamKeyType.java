@@ -23,11 +23,11 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Stream Key Type.
@@ -54,11 +54,6 @@ public enum StreamKeyType {
     VMPC(4);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StreamKeyType.class.getName());
-
-    /**
      * The external Id of the algorithm.
      */
     private final int theId;
@@ -73,7 +68,7 @@ public enum StreamKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(CryptoResource.getKeyForStream(this));
         }
 
         /* return the name */
@@ -99,12 +94,12 @@ public enum StreamKeyType {
                 return "VMPC-KSA3";
             case HC256:
                 return pRestricted
-                        ? "HC128"
-                        : name();
+                                  ? "HC128"
+                                  : name();
             case XSALSA20:
                 return pRestricted
-                        ? "SALSA20"
-                        : name();
+                                  ? "SALSA20"
+                                  : name();
             default:
                 return name();
         }

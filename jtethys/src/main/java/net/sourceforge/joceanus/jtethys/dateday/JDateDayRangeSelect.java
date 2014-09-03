@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -63,44 +63,39 @@ public class JDateDayRangeSelect
     public static final String PROPERTY_RANGE = "SelectedDateDayRange";
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDateDayRangeSelect.class.getName());
-
-    /**
      * ToolTip for Next Button.
      */
-    private static final String NLS_NEXTTIP = NLS_BUNDLE.getString("NextTip");
+    private static final String NLS_NEXTTIP = ResourceMgr.getString(JDateDayResource.TIP_NEXTDATE);
 
     /**
      * ToolTip for Previous Button.
      */
-    private static final String NLS_PREVTIP = NLS_BUNDLE.getString("PrevTip");
+    private static final String NLS_PREVTIP = ResourceMgr.getString(JDateDayResource.TIP_PREVDATE);
 
     /**
      * Text for Start Label.
      */
-    private static final String NLS_START = NLS_BUNDLE.getString("StartLabel");
+    private static final String NLS_START = ResourceMgr.getString(JDateDayResource.LABEL_STARTING);
 
     /**
      * Text for End Label.
      */
-    private static final String NLS_END = NLS_BUNDLE.getString("EndLabel");
+    private static final String NLS_END = ResourceMgr.getString(JDateDayResource.LABEL_ENDING);
 
     /**
      * Text for Containing Label.
      */
-    private static final String NLS_CONTAIN = NLS_BUNDLE.getString("ContainLabel");
+    private static final String NLS_CONTAIN = ResourceMgr.getString(JDateDayResource.LABEL_CONTAINING);
 
     /**
      * Text for Period Label.
      */
-    private static final String NLS_PERIOD = NLS_BUNDLE.getString("PeriodLabel");
+    private static final String NLS_PERIOD = ResourceMgr.getString(JDateDayResource.LABEL_PERIOD);
 
     /**
      * Text for Box Title.
      */
-    private static final String NLS_TITLE = NLS_BUNDLE.getString("BoxTitle");
+    private static final String NLS_TITLE = ResourceMgr.getString(JDateDayResource.TITLE_BOX);
 
     /**
      * The Start Date button.

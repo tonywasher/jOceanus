@@ -23,7 +23,8 @@
 package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.time.temporal.ChronoUnit;
-import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * DatePeriod class representing standard date ranges.
@@ -96,11 +97,6 @@ public enum JDatePeriod {
     ALLDATES(null, -1);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDatePeriod.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -151,7 +147,7 @@ public enum JDatePeriod {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(JDateDayResource.getKeyForPeriod(this));
         }
 
         /* return the name */

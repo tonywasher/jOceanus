@@ -23,11 +23,11 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -69,11 +69,6 @@ public enum SymKeyType {
     THREEFISH(7);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SymKeyType.class.getName());
-
-    /**
      * The external Id of the algorithm.
      */
     private final int theId;
@@ -88,7 +83,7 @@ public enum SymKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(CryptoResource.getKeyForSym(this));
         }
 
         /* return the name */
@@ -128,8 +123,8 @@ public enum SymKeyType {
     public CipherMode adjustCipherMode(final CipherMode pMode) {
         /* If the mode needs a Standard block cipher and this is not one switch to OFB */
         return (pMode.needsStdBlock() && !isStdBlock())
-                ? CipherMode.OFB
-                : pMode;
+                                                       ? CipherMode.OFB
+                                                       : pMode;
     }
 
     /**

@@ -33,7 +33,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Represents a Date object that is fixed to a particular day. There is no concept of time within the day Calendar objects that are built to represent the Date
@@ -57,24 +58,19 @@ public class JDateDay
     protected static final int MONTHS_IN_QUARTER = 3;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDateDay.class.getName());
-
-    /**
      * Text for Null Date Error.
      */
-    private static final String ERROR_NULLDATE = NLS_BUNDLE.getString("ErrorNullDate");
+    private static final String ERROR_NULLDATE = ResourceMgr.getString(JDateDayResource.ERROR_NULLDATE);
 
     /**
      * Text for Null Locale Error.
      */
-    private static final String ERROR_NULLLOCALE = NLS_BUNDLE.getString("ErrorNullLocale");
+    private static final String ERROR_NULLLOCALE = ResourceMgr.getString(JDateDayResource.ERROR_NULLLOCALE);
 
     /**
      * Text for Bad Format Error.
      */
-    private static final String ERROR_BADFORMAT = NLS_BUNDLE.getString("ErrorBadFormat");
+    private static final String ERROR_BADFORMAT = ResourceMgr.getString(JDateDayResource.ERROR_BADFORMAT);
 
     /**
      * The format to be used.
