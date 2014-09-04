@@ -530,7 +530,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     }
 
     @Override
-    public int compareTo(final T pThat) {
+    public int compareTo(final DataInfo<T, O, I, S, E> pThat) {
         return getInfoType().compareTo(pThat.getInfoType());
     }
 }

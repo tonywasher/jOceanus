@@ -327,11 +327,12 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Determine whether the list got any changes.
+     * Determine whether the list got any updates.
      * @return <code>true/false</code>
      */
-    public boolean hasChanges() {
-        return theEdit != EditState.CLEAN;
+    public boolean hasUpdates() {
+        /* We have changes if version is non-zero */
+        return theVersion != 0;
     }
 
     /**
@@ -695,73 +696,21 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Calculate the Edit State for the list.
-     */
-    public void findEditState() {
-        boolean isDirty = false;
-        boolean isValid = false;
-
-        /* Create an iterator for the list */
-        Iterator<T> myIterator = iterator();
-
-        /* Loop through the items to find the match */
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-
-            /* If the item is deleted */
-            if (myCurr.isDeleted()) {
-                /* If this is a deleted change then we are valid */
-                if (myCurr.getState() != DataState.CLEAN) {
-                    isValid = true;
-                }
-
-                /* Else the item is active */
-            } else {
-                switch (myCurr.getEditState()) {
-                    case CLEAN:
-                        break;
-                    case DIRTY:
-                        isDirty = true;
-                        break;
-                    case VALID:
-                        isValid = true;
-                        break;
-                    case ERROR:
-                        theEdit = EditState.ERROR;
-                        return;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        /* Set state */
-        if (isDirty) {
-            theEdit = EditState.DIRTY;
-        } else if (isValid) {
-            theEdit = EditState.VALID;
-        } else {
-            theEdit = EditState.CLEAN;
-        }
-    }
-
-    /**
      * Validate the data items.
      * @return the error list (or null if no errors)
      */
     public DataErrorList<DataItem<E>> validate() {
         /* Allocate error list */
         DataErrorList<DataItem<E>> myErrors = null;
-
-        /* Clear the errors */
-        clearErrors();
-
-        /* Create an iterator for the list */
-        Iterator<T> myIterator = iterator();
+        EditState myState = EditState.CLEAN;
 
         /* Loop through the items */
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
+
+            /* Clear errors for the item */
+            myCurr.clearErrors();
 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
@@ -769,8 +718,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 continue;
             }
 
-            /* Validate the item */
+            /* Validate the item and build up the state */
             myCurr.validate();
+            myState = myState.combineState(myCurr.getEditState());
 
             /* If the item is in error */
             if (myCurr.hasErrors()) {
@@ -785,8 +735,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             }
         }
 
-        /* Determine the Edit State */
-        findEditState();
+        /* Store the edit state */
+        theEdit = myState;
 
         /* Return the errors */
         return myErrors;
@@ -802,29 +752,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         if (myErrors != null) {
             throw new JPrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
-    }
-
-    /**
-     * Check whether we have updates.
-     * @return <code>true/false</code>
-     */
-    public boolean hasUpdates() {
-        /* Loop through the items */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-
-            /* Ignore clean items */
-            if (myCurr.getState() == DataState.CLEAN) {
-                continue;
-            }
-
-            /* We have an update */
-            return true;
-        }
-
-        /* We have no updates */
-        return false;
     }
 
     /**

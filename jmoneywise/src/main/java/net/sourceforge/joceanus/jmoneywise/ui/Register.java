@@ -382,11 +382,6 @@ public class Register
      */
     @Override
     public void notifyChanges() {
-        /* Find the edit state */
-        if (theTransactions != null) {
-            theTransactions.findEditState();
-        }
-
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
 

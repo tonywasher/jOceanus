@@ -172,7 +172,7 @@ public class SecurityInfo
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
-    public int compareTo(final SecurityInfo pThat) {
+    public int compareTo(final DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;

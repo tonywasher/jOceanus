@@ -460,7 +460,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
                 mySet.sortLinks();
             }
         }
-
     }
 
     /**

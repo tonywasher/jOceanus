@@ -52,18 +52,20 @@ public enum EditState {
      * @return the combined state
      */
     public EditState combineState(final EditState pState) {
-        if ((this == ERROR)
-            || (pState == ERROR)) {
-            return ERROR;
+        switch (this) {
+            case ERROR:
+                return this;
+            case DIRTY:
+                return pState == ERROR
+                                      ? pState
+                                      : this;
+            case VALID:
+                return pState != CLEAN
+                                      ? pState
+                                      : this;
+            case CLEAN:
+            default:
+                return pState;
         }
-        if ((this == DIRTY)
-            || (pState == DIRTY)) {
-            return DIRTY;
-        }
-        if ((this == VALID)
-            || (pState == VALID)) {
-            return VALID;
-        }
-        return CLEAN;
     }
 }

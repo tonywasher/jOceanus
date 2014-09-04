@@ -821,6 +821,12 @@ public abstract class AssetBase<T extends AssetBase<T>>
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Adjust count */
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }

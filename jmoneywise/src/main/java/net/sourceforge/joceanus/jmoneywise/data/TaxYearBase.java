@@ -514,6 +514,11 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
 
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
                 /* Access the range for this tax year */
                 JDateDayRange myRange = myCurr.getDateRange();
 
@@ -541,6 +546,13 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Adjust count */
                 int iDiff = pDate.compareTo(myCurr.getTaxYear());
                 if (iDiff == 0) {
                     iCount++;

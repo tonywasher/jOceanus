@@ -443,38 +443,6 @@ public class SpotSecurityPrices
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * Calculate the Edit State for the list.
-         */
-        @Override
-        public void findEditState() {
-            /* Access the iterator */
-            Iterator<SpotSecurityPrice> myIterator = listIterator();
-            EditState myEdit = EditState.CLEAN;
-
-            /* Loop through the list */
-            while (myIterator.hasNext()) {
-                SpotSecurityPrice myCurr = myIterator.next();
-                /* Switch on new state */
-                switch (myCurr.getState()) {
-                    case NEW:
-                    case DELETED:
-                    case DELCHG:
-                    case CHANGED:
-                    case RECOVERED:
-                        myEdit = EditState.VALID;
-                        break;
-                    case CLEAN:
-                    case DELNEW:
-                    default:
-                        break;
-                }
-            }
-
-            /* Set the Edit State */
-            setEditState(myEdit);
-        }
-
         @Override
         public boolean hasUpdates() {
             /* Access the iterator */

@@ -444,6 +444,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* UndoLastChange */
         theData.undoLastChange();
+        myTask.end();
 
         /* Analyse the data */
         analyseData(false);
@@ -465,6 +466,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Rewind the data */
         theData.resetChanges();
+        myTask.end();
 
         /* Analyse the data */
         analyseData(false);

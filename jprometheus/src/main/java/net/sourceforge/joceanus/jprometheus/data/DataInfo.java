@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  */
 public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
         extends EncryptedItem<E>
-        implements Comparable<T> {
+        implements Comparable<DataInfo<T, O, I, S, E>> {
     /**
      * Maximum DataLength.
      */
@@ -889,7 +889,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param <S> the Info Class that applies to this item
      * @param <E> the data type enum class
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<T>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<DataInfo<T, O, I, S, E>>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
             extends EncryptedList<T, E> {
         /**
          * Local Report fields.

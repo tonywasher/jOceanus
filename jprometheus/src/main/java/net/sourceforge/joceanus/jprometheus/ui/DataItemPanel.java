@@ -429,11 +429,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (isNew) {
             /* Rewind any changes to before the new item */
-            theUpdateSet.rewindToVersion(theEditVersion - 1);
+            theUpdateSet.processEditCommand(UpdateSet.CMD_REWIND, theEditVersion - 1, theError);
             theItem = null;
         } else if (hasUpdates()) {
             /* Rewind any changes that have been made */
-            theUpdateSet.rewindToVersion(theEditVersion);
+            theUpdateSet.processEditCommand(UpdateSet.CMD_REWIND, theEditVersion, theError);
         }
 
         /* Stop element being editable */
@@ -450,7 +450,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (hasUpdates()) {
             /* Rewind any changes that have been made */
-            theUpdateSet.rewindToVersion(theEditVersion);
+            theUpdateSet.processEditCommand(UpdateSet.CMD_REWIND, theEditVersion, theError);
         }
     }
 
@@ -461,7 +461,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (hasUpdates()) {
             /* Undo the last change */
-            theUpdateSet.undoLastChange();
+            theUpdateSet.processEditCommand(UpdateSet.CMD_UNDO, VERSION_READONLY, theError);
         }
     }
 
@@ -472,9 +472,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (isNew || hasUpdates()) {
             /* Condense history to a single update */
-            theUpdateSet.condenseHistory(isNew
-                                              ? theEditVersion
-                                              : theEditVersion + 1);
+            theUpdateSet.processEditCommand(UpdateSet.CMD_OK, isNew
+                                                                   ? theEditVersion
+                                                                   : theEditVersion + 1, theError);
         }
 
         /* Stop element being editable */

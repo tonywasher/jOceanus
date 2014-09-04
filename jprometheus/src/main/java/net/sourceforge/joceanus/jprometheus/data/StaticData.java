@@ -845,6 +845,13 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Adjust count */
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -867,6 +874,13 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
+
+                /* Ignore deleted items */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Adjust count */
                 if (iOrder == myCurr.getOrder()) {
                     iCount++;
                 }

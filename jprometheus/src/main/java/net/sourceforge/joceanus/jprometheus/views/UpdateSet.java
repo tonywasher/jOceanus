@@ -75,6 +75,11 @@ public class UpdateSet<E extends Enum<E>>
     public static final String CMD_UNDO = "UNDO";
 
     /**
+     * Rewind to explicit point.
+     */
+    public static final String CMD_REWIND = "REWIND";
+
+    /**
      * Reset all changes.
      */
     public static final String CMD_RESET = "RESET";
@@ -223,6 +228,9 @@ public class UpdateSet<E extends Enum<E>>
      * Increment Version.
      */
     public void incrementVersion() {
+        /* Obtain the active profile */
+        JDataProfile myTask = theControl.getNewProfile("incrementVersion");
+
         /* Increment the version */
         theVersion++;
 
@@ -235,19 +243,24 @@ public class UpdateSet<E extends Enum<E>>
 
             /* Increment the version if the list exists */
             if (myDataList != null) {
+                /* Note the new step */
+                myTask.startTask(myDataList.listName());
+
                 /* Set the new version and validate the list */
                 myDataList.setVersion(theVersion);
                 myDataList.validate();
-                myDataList.findEditState();
             }
         }
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
      * Rewind items to the require version.
      * @param pVersion the version to rewind to
      */
-    public void rewindToVersion(final int pVersion) {
+    private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
         JDataProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("reWindToVersion");
@@ -269,9 +282,6 @@ public class UpdateSet<E extends Enum<E>>
 
                 /* Rewind the version */
                 myDataList.rewindToVersion(theVersion);
-
-                /* determine edit state */
-                myDataList.findEditState();
             }
         }
 
@@ -288,7 +298,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Undo changes in a viewSet.
      */
-    public void undoLastChange() {
+    private void undoLastChange() {
         /* Ignore if we have no changes */
         if (theVersion == 0) {
             return;
@@ -304,7 +314,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Reset changes in a viewSet.
      */
-    public void resetChanges() {
+    private void resetChanges() {
         /* Ignore if we have no changes */
         if (theVersion == 0) {
             return;
@@ -320,7 +330,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Apply changes in a ViewSet into the core data.
      */
-    public void applyChanges() {
+    private void applyChanges() {
         /* Obtain the active profile */
         JDataProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("applyChanges");
@@ -458,29 +468,16 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
-     * Has this ViewList got updates.
+     * Has this UpdateSet got updates?
      * @return true/false
      */
     public boolean hasUpdates() {
-        /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
-            /* Access the list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
-
-            /* Determine whether there are updates */
-            if ((myDataList != null) && (myDataList.hasUpdates())) {
-                return true;
-            }
-        }
-
-        /* Return to caller */
-        return false;
+        /* We have changes if version is non-zero */
+        return theVersion != 0;
     }
 
     /**
-     * Has this ViewList got errors.
+     * Has this UpdateSet got errors?
      * @return true/false
      */
     public boolean hasErrors() {
@@ -521,9 +518,8 @@ public class UpdateSet<E extends Enum<E>>
                 /* Note the new step */
                 myTask.startTask(myDataList.listName());
 
-                /* Validate and calculate edit State */
+                /* Validate */
                 myDataList.validate();
-                myDataList.findEditState();
             }
         }
 
@@ -586,10 +582,43 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
+     * Process Edit command.
+     * @param pCmd the command.
+     * @param pVersion the version
+     * @param pError the error panel
+     */
+    public void processEditCommand(final String pCmd,
+                                   final int pVersion,
+                                   final ErrorDisplay pError) {
+        /* Create a new profile */
+        JDataProfile myTask = theControl.getNewProfile("ItemCommand");
+
+        /* Switch on command */
+        if (CMD_OK.equals(pCmd)) {
+            condenseHistory(pVersion);
+        } else if (CMD_UNDO.equals(pCmd)) {
+            undoLastChange();
+        } else if (CMD_REWIND.equals(pCmd)) {
+            rewindToVersion(pVersion);
+        }
+
+        /* Access any error */
+        DataErrorList<JMetisExceptionWrapper> myErrors = theControl.getErrors();
+
+        /* Show the error */
+        if (!myErrors.isEmpty()) {
+            pError.setErrors(myErrors);
+        }
+
+        /* Complete the task */
+        myTask.end();
+    }
+
+    /**
      * Condense history.
      * @param pNewVersion the new maximum version
      */
-    public void condenseHistory(final int pNewVersion) {
+    private void condenseHistory(final int pNewVersion) {
         /* Loop through the items in the list */
         Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {

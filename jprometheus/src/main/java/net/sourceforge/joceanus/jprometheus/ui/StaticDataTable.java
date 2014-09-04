@@ -246,11 +246,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
 
     @Override
     public void notifyChanges() {
-        /* Find the edit state */
-        if (theStatic != null) {
-            theStatic.findEditState();
-        }
-
         /* Notify that there have been changes */
         fireStateChanged();
     }

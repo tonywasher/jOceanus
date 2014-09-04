@@ -666,9 +666,6 @@ public abstract class DataItem<E extends Enum<E>>
             /* Pop history */
             theHistory.popTheHistory();
         }
-
-        /* clear errors */
-        clearErrors();
     }
 
     /**
@@ -1109,7 +1106,9 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
-     * Validate the element Dirty items become valid.
+     * Validate the element
+     * <p>
+     * Dirty items become valid.
      */
     public void validate() {
         if (getEditState() == EditState.DIRTY) {
