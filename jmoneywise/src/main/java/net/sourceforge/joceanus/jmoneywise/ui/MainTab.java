@@ -33,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -43,6 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -248,26 +250,35 @@ public class MainTab
 
     @Override
     protected JComponent buildMainPanel() throws JOceanusException {
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("buildMain");
+
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 
         /* Create the Report Tab */
+        myTask.startTask("Report");
         ReportTab myReportTab = new ReportTab(theView);
         theTabs.addTab(TITLE_REPORT, myReportTab);
 
         /* Create the Analysis Tab */
+        myTask.startTask("Analysis");
         theStatement = new AnalysisStatement(theView);
         theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
 
         /* Create the Register Tab */
+        myTask.startTask("Register");
         theRegister = new Register(theView);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotView Tab */
+        myTask.startTask("SpotPrices");
         theSpotView = new PricePoint(theView);
         theTabs.addTab(TITLE_SPOTVIEW, theSpotView.getPanel());
 
         /* Create the Maintenance Tab */
+        myTask.startTask("Maintenance");
         theMaint = new MaintenanceTab(this);
         theTabs.addTab(TITLE_MAINT, theMaint);
 
@@ -284,6 +295,12 @@ public class MainTab
         myReportTab.addActionListener(myListener);
         theMaint.addActionListener(myListener);
         determineFocus();
+
+        /* Set the icon */
+        getFrame().setIconImage(MoneyWiseIcons.getProgramImage());
+
+        /* Complete task */
+        myTask.end();
 
         /* Return the panel */
         return theTabs;

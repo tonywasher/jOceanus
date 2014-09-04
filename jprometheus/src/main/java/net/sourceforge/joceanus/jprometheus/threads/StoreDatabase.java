@@ -84,16 +84,20 @@ public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
             theStatus.initTask("Verifying Store");
 
             /* Load database */
-            T myData = myDatabase.loadDatabase(theStatus);
+            T myStore = myDatabase.loadDatabase(theStatus);
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(theStatus, theControl.getData());
+            T myData = theControl.getData();
+            DataSet<T, ?> myDiff = myData.getDifferenceSet(theStatus, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
                 throw new JPrometheusDataException(myDiff, "DataStore is inconsistent");
             }
+
+            /* DataSet version is now zero */
+            myData.setVersion(0);
 
             /* Derive new update list */
             theControl.deriveUpdates();

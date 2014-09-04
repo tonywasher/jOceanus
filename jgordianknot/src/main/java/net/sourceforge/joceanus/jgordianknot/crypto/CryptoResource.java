@@ -22,10 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
 
 /**
- * Resource IDs for Crypto package.
+ * Resource IDs for Cryptographic package.
  */
 public enum CryptoResource implements ResourceId {
     /**
@@ -204,12 +206,18 @@ public enum CryptoResource implements ResourceId {
     ERROR_LENGTH2("error.length2");
 
     /**
+     * The Bundle name.
+     */
+    private final static String BUNDLE_NAME = ResourceMgr.getPackageBundle(JGordianCryptoException.class.getCanonicalName());
+
+    /**
      * The Id.
      */
     private final String theKeyName;
 
     /**
      * Constructor.
+     * @param pKeyName the key name
      */
     private CryptoResource(final String pKeyName) {
         theKeyName = pKeyName;
@@ -227,12 +235,12 @@ public enum CryptoResource implements ResourceId {
 
     @Override
     public String getBundleName() {
-        return SecurityGenerator.class.getName();
+        return BUNDLE_NAME;
     }
 
     /**
-     * Obtain key for HMac.
-     * @param pMac the MacType
+     * Obtain key for Provider.
+     * @param pProvider the Provider
      * @return the resource key
      */
     protected static CryptoResource getKeyForProvider(final SecurityProvider pProvider) {

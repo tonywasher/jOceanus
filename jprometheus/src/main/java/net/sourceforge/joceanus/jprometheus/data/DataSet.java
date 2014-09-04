@@ -483,6 +483,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* Create the update list */
             addList(myType, myList.deriveList(ListStyle.UPDATE));
         }
+
+        /* If we have updates */
+        if (!isEmpty()) {
+            /* Update the version */
+            setVersion(1);
+        }
     }
 
     /**
@@ -554,10 +560,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         JDataProfile myStage = myTask.startTask("ReBase");
 
         /* ReBase the security items */
-        theControlKeys.reBase(pOld.getControlKeys());
-        theDataKeySets.reBase(pOld.getDataKeySets());
-        theDataKeys.reBase(pOld.getDataKeys());
-        theControlData.reBase(pOld.getControlData());
+        boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
+        bUpdates |= theDataKeySets.reBase(pOld.getDataKeySets());
+        bUpdates |= theDataKeys.reBase(pOld.getDataKeys());
+        bUpdates |= theControlData.reBase(pOld.getControlData());
 
         /* Obtain old listMap */
         Map<E, DataList<?, E>> myMap = pOld.getListMap();
@@ -573,7 +579,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* ReBase on Old dataList */
             myStage.startTask(myList.listName());
-            myList.reBase(myMap.get(myType));
+            bUpdates |= myList.reBase(myMap.get(myType));
+        }
+
+        /* If we have updates */
+        if (bUpdates) {
+            /* Update the version */
+            setVersion(getVersion() + 1);
         }
 
         /* Complete task */
@@ -1028,6 +1040,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Delete old ControlSets */
         theControlKeys.purgeOldControlKeys();
+        setVersion(1);
 
         /* Return success */
         return true;

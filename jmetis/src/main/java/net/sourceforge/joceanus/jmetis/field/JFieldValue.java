@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Special values for renderer.
@@ -34,11 +34,6 @@ public enum JFieldValue {
     ERROR;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JFieldValue.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -48,7 +43,7 @@ public enum JFieldValue {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(JFieldResource.getKeyForFieldValue(this));
         }
 
         /* return the name */

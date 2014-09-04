@@ -22,6 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
 import java.util.Properties;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -35,6 +41,16 @@ import org.slf4j.LoggerFactory;
  * @author Tony Washer
  */
 public final class Control {
+    /**
+     * The Splash Font.
+     */
+    private static int SPLASH_PITCH = 16;
+
+    /**
+     * The Splash Character Width.
+     */
+    private static int SPLASH_CHARWIDTH = 10;
+
     /**
      * The Main window.
      */
@@ -56,6 +72,7 @@ public final class Control {
      */
     private static void createAndShowGUI() {
         try {
+
             /* Configure log4j */
             Properties myLogProp = new Properties();
             myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
@@ -73,10 +90,57 @@ public final class Control {
     }
 
     /**
+     * Add text to the splash screen.
+     */
+    private static void renderSplashFrame() {
+        /* Access the splash screen */
+        final SplashScreen mySplash = SplashScreen.getSplashScreen();
+        if (mySplash != null) {
+            /* Access the graphics */
+            Graphics2D myGraphics = mySplash.createGraphics();
+            if (myGraphics != null) {
+                /* Access the names */
+                String myName = "jMoneyWise";
+                String myVersion = "v1.3.0-SNAPSHOT";
+
+                /* Determine width of the box */
+                int myNameLen = myName.length();
+                int myVerLen = myVersion.length();
+
+                /* Access the splash screen dimensions */
+                Dimension mySize = mySplash.getSize();
+                int myWidth = Math.max(myNameLen, myVerLen + 1) * SPLASH_CHARWIDTH;
+                int myX = (mySize.width - myWidth) >> 1;
+                int myY = mySize.height - (mySize.height >> 2);
+
+                /* Set up for painting */
+                Font myFont = new Font("Courier", Font.BOLD, SPLASH_PITCH);
+                myGraphics.setComposite(AlphaComposite.Clear);
+                myGraphics.setPaintMode();
+                myGraphics.setFont(myFont);
+                myGraphics.setColor(Color.BLUE);
+                myGraphics.fillRect(myX, myY - SPLASH_PITCH + (SPLASH_PITCH >> 2), myWidth, SPLASH_PITCH << 1);
+                myGraphics.setColor(Color.WHITE);
+
+                /* Write text */
+                myGraphics.drawString(myName, myX, myY);
+                myGraphics.drawString(myVersion, myX + SPLASH_CHARWIDTH, myY + SPLASH_PITCH);
+
+                /* Update the screen */
+                mySplash.update();
+            }
+        }
+    }
+
+    /**
      * Main entry point.
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
+        /* Sort out splash frame */
+        renderSplashFrame();
+
+        /* Build the GUI */
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

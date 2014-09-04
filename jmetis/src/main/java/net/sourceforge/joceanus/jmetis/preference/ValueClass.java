@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Classes of ValueField.
@@ -69,11 +69,6 @@ public enum ValueClass {
     CHARARRAY;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ValueClass.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -83,7 +78,7 @@ public enum ValueClass {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(PreferenceResource.getKeyForValueClass(this));
         }
 
         /* return the name */

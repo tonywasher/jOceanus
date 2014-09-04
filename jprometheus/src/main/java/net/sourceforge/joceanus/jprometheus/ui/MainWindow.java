@@ -408,6 +408,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         theView = pView;
         theDataMgr = theView.getDataMgr();
 
+        /* Obtain the active profile */
+        JDataProfile myTask = theView.getActiveTask();
+        myTask.startTask("buildGUI");
+
         /* Create the new status bar */
         theStatusBar = new StatusBar(this, theView);
         JPanel myProgress = theStatusBar.getProgressPanel();
@@ -418,6 +422,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         /* Create the panel */
         thePanel = new JPanel();
 
+        /* Create the frame */
+        theFrame = new JFrame(getFrameName());
+
         /* Build the Main Panel */
         JComponent myMainPanel = buildMainPanel();
 
@@ -427,15 +434,15 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         thePanel.add(myProgress);
         thePanel.add(myMainPanel);
 
-        /* Create the frame */
-        theFrame = new JFrame(getFrameName());
-
         /* Attach the panel to the frame */
         thePanel.setOpaque(true);
         theFrame.setContentPane(thePanel);
 
         /* Build the Main Menu */
         buildMainMenu();
+
+        /* Complete task */
+        myTask.end();
     }
 
     /**

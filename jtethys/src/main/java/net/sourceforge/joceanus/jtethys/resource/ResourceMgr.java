@@ -36,6 +36,7 @@ public final class ResourceMgr {
 
     /**
      * Obtain string from resource bundle.
+     * @param <K> the the resource key data type
      * @param pKey the resource Key
      * @return the string
      */
@@ -51,6 +52,39 @@ public final class ResourceMgr {
 
         /* Access the required resource */
         return myBundle.getString(myBuilder.toString());
+    }
+
+    /**
+     * Obtain bundle name based on package name.
+     * @param pClass the class name.
+     * @return the bundle name
+     */
+    public static String getPackageBundle(final String pClass) {
+        /* If we have a simple class name */
+        int myIndex = pClass.lastIndexOf('.');
+        if (myIndex != -1) {
+            /* Strip the class name off */
+            String myResult = pClass.substring(0, myIndex);
+
+            /* Access the package name */
+            myIndex = myResult.lastIndexOf('.');
+
+            /* If we are OK */
+            if (myIndex != -1) {
+                /* Access the package name */
+                String myPackage = myResult.substring(myIndex + 1);
+
+                /* Build a new package name */
+                StringBuilder myBuilder = new StringBuilder();
+                myBuilder.append(myResult);
+                myBuilder.append('.');
+                myBuilder.append(myPackage);
+                return myBuilder.toString();
+            }
+        }
+
+        /* No change */
+        return pClass;
     }
 
     /**

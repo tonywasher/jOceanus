@@ -31,7 +31,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -52,6 +51,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -74,39 +74,34 @@ public class PreferencesPanel
     private static final int STRUT_WIDTH = 5;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferencesPanel.class.getName());
-
-    /**
      * Text for OK.
      */
-    private static final String NLS_OK = NLS_BUNDLE.getString("OKButton");
+    private static final String NLS_OK = ResourceMgr.getString(PreferenceResource.UI_BUTTON_OK);
 
     /**
      * Text for Reset.
      */
-    private static final String NLS_RESET = NLS_BUNDLE.getString("ResetButton");
+    private static final String NLS_RESET = ResourceMgr.getString(PreferenceResource.UI_BUTTON_RESET);
 
     /**
      * Text for Options.
      */
-    private static final String NLS_OPTIONS = NLS_BUNDLE.getString("SaveOptions");
+    private static final String NLS_OPTIONS = ResourceMgr.getString(PreferenceResource.UI_TITLE_SAVE);
 
     /**
      * Text for Selection.
      */
-    private static final String NLS_SELECT = NLS_BUNDLE.getString("Selection");
+    private static final String NLS_SELECT = ResourceMgr.getString(PreferenceResource.UI_TITLE_SELECT);
 
     /**
      * Text for Set.
      */
-    private static final String NLS_SET = NLS_BUNDLE.getString("PreferenceSet");
+    private static final String NLS_SET = ResourceMgr.getString(PreferenceResource.UI_LABEL_SET);
 
     /**
      * Store data error text.
      */
-    private static final String ERROR_STORE = NLS_BUNDLE.getString("ErrorStore");
+    private static final String ERROR_STORE = ResourceMgr.getString(PreferenceResource.UI_ERROR_STORE);
 
     /**
      * The field manager.

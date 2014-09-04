@@ -23,9 +23,9 @@
 package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.util.Arrays;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataDiffers;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Difference enum and utility.
@@ -48,11 +48,6 @@ public enum Difference {
     SECURITY;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Difference.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -62,7 +57,7 @@ public enum Difference {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(ViewerResource.getKeyForDifference(this));
         }
 
         /* return the name */
@@ -127,8 +122,8 @@ public enum Difference {
                 return pThat;
             case SECURITY:
                 return (pThat == DIFFERENT)
-                        ? pThat
-                        : this;
+                                           ? pThat
+                                           : this;
             default:
                 return this;
         }
@@ -165,8 +160,8 @@ public enum Difference {
 
         /* Handle Standard cases */
         return (pCurr.equals(pNew))
-                ? IDENTICAL
-                : DIFFERENT;
+                                   ? IDENTICAL
+                                   : DIFFERENT;
     }
 
     /**
@@ -248,13 +243,13 @@ public enum Difference {
         /* Handle positioning of nulls */
         if (pCurr == null) {
             return (pNullLast)
-                    ? 1
-                    : -1;
+                              ? 1
+                              : -1;
         }
         if (pNew == null) {
             return (pNullLast)
-                    ? -1
-                    : 1;
+                              ? -1
+                              : 1;
         }
 
         /* Both non-Null, so pass the call on */

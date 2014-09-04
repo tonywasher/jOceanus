@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmetis.viewer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Viewable version of SLF4J Profile data.
@@ -42,14 +42,9 @@ public class JDataProfile
     private static final int NUM_DECIMALS = 6;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDataProfile.class.getName());
-
-    /**
      * Task Field Id.
      */
-    private static final String NAME_CLASS = NLS_BUNDLE.getString("DataName");
+    private static final String NAME_CLASS = ResourceMgr.getString(ViewerResource.PROFILE_NAME);
 
     /**
      * Local Report fields.
@@ -59,22 +54,22 @@ public class JDataProfile
     /**
      * Task Field Id.
      */
-    private static final JDataField FIELD_TASK = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTask"));
+    private static final JDataField FIELD_TASK = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_TASK));
 
     /**
      * Status Field Id.
      */
-    private static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataStatus"));
+    private static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_STATUS));
 
     /**
      * Elapsed Field Id.
      */
-    private static final JDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataElapsed"));
+    private static final JDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_ELAPSED));
 
     /**
      * Hidden Field Id.
      */
-    private static final JDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHidden"));
+    private static final JDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_HIDDEN));
 
     /**
      * Report fields.

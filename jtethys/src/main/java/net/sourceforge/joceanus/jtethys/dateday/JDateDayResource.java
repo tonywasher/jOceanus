@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
 
 /**
@@ -144,12 +146,18 @@ public enum JDateDayResource implements ResourceId {
     PERIOD_ALLDATES("period.allDates");
 
     /**
+     * The Bundle name.
+     */
+    private final static String BUNDLE_NAME = ResourceMgr.getPackageBundle(JOceanusException.class.getCanonicalName());
+
+    /**
      * The Id.
      */
     private final String theKeyName;
 
     /**
      * Constructor.
+     * @param pKeyName the key name
      */
     private JDateDayResource(final String pKeyName) {
         theKeyName = pKeyName;
@@ -162,12 +170,12 @@ public enum JDateDayResource implements ResourceId {
 
     @Override
     public String getNameSpace() {
-        return JDateDay.class.getSimpleName();
+        return "JDateDay";
     }
 
     @Override
     public String getBundleName() {
-        return JDateDay.class.getName();
+        return BUNDLE_NAME;
     }
 
     /**

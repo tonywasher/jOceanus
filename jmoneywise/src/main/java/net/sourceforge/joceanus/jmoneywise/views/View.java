@@ -115,6 +115,7 @@ public class View
 
         /* Create a default profiler */
         JDataProfile myTask = getNewProfile("StartUp");
+        myTask = myTask.startTask("InitData");
 
         /* Create an empty data set */
         setData(getNewData());

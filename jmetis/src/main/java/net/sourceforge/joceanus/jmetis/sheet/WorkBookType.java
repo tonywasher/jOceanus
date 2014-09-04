@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * WorkBook types.
@@ -40,11 +39,6 @@ public enum WorkBookType {
      * Oasis ods.
      */
     OASISODS("ods");
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(WorkBookType.class.getName());
 
     /**
      * The String name.
@@ -99,7 +93,7 @@ public enum WorkBookType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(SheetResource.getKeyForWorkBook(this));
         }
 
         /* return the name */

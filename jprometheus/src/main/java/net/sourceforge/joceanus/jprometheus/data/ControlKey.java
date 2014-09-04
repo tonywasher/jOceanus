@@ -657,7 +657,10 @@ public final class ControlKey
         PasswordHash myHash = getPasswordHash();
 
         /* Update the hash for the KeySet */
-        theDataKeySet.updatePasswordHash(isHashPrime, myHash);
+        if (theDataKeySet.updatePasswordHash(isHashPrime, myHash)) {
+            DataSet<?, ?> myData = getDataSet();
+            myData.setVersion(myData.getVersion() + 1);
+        }
     }
 
     /**
@@ -985,18 +988,23 @@ public final class ControlKey
          * Update the Password Hash.
          * @param pPrimeHash this is the prime hash
          * @param pHash the new password hash
+         * @return were there changes? true/false
          * @throws JOceanusException on error
          */
-        private void updatePasswordHash(final Boolean pPrimeHash,
-                                        final PasswordHash pHash) throws JOceanusException {
+        private boolean updatePasswordHash(final Boolean pPrimeHash,
+                                           final PasswordHash pHash) throws JOceanusException {
             /* Loop through the KeySets */
+            boolean bChanges = false;
             Iterator<DataKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
                 DataKeySet mySet = myIterator.next();
 
                 /* Update the KeySet */
-                mySet.updatePasswordHash(pPrimeHash, pHash);
+                bChanges |= mySet.updatePasswordHash(pPrimeHash, pHash);
             }
+
+            /* return the flag */
+            return bChanges;
         }
 
         /**

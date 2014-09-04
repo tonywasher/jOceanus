@@ -472,10 +472,11 @@ public class DataKey
      * Update password hash.
      * @param pPrimeHash this is the prime hash
      * @param pHash the new password hash
+     * @return were there changes? true/false
      * @throws JOceanusException on error
      */
-    protected void updatePasswordHash(final Boolean pPrimeHash,
-                                      final PasswordHash pHash) throws JOceanusException {
+    protected boolean updatePasswordHash(final Boolean pPrimeHash,
+                                         final PasswordHash pHash) throws JOceanusException {
         /* Determine whether we need to update */
         if (!pPrimeHash.equals(isHashPrime())) {
             /* Store the current detail into history */
@@ -487,8 +488,13 @@ public class DataKey
             setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
 
             /* Check for changes */
-            checkForHistory();
+            if (checkForHistory()) {
+                return true;
+            }
         }
+
+        /* No changes */
+        return false;
     }
 
     /**

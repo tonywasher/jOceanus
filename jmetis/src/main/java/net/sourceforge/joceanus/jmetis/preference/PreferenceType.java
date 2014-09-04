@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enum class for preference types.
@@ -74,11 +74,6 @@ public enum PreferenceType {
     FONT;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferenceType.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -88,7 +83,7 @@ public enum PreferenceType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(PreferenceResource.getKeyForPrefType(this));
         }
 
         /* return the name */

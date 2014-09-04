@@ -451,20 +451,25 @@ public class DataKeySet
      * Update password hash.
      * @param pPrimeHash this is the prime hash
      * @param pHash the new password hash
+     * @return were there changes? true/false
      * @throws JOceanusException on error
      */
-    protected void updatePasswordHash(final Boolean pPrimeHash,
-                                      final PasswordHash pHash) throws JOceanusException {
+    protected boolean updatePasswordHash(final Boolean pPrimeHash,
+                                         final PasswordHash pHash) throws JOceanusException {
         /* Loop through the SymKeyType values */
+        boolean bChanges = false;
         for (SymKeyType myType : SymKeyType.values()) {
             /* Access the Data Key */
             DataKey myKey = theMap.get(myType);
 
             /* Update the password hash */
             if (myKey != null) {
-                myKey.updatePasswordHash(pPrimeHash, pHash);
+                bChanges |= myKey.updatePasswordHash(pPrimeHash, pHash);
             }
         }
+
+        /* return the flag */
+        return bChanges;
     }
 
     /**

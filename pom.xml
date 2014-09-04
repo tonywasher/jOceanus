@@ -212,6 +212,7 @@
               </manifest>
               <manifestEntries>
                 <Revision>${svnRepository}-r${buildNumber}</Revision>
+                <SplashScreen-Image>${packageSplash}</SplashScreen-Image>
               </manifestEntries>
             </archive>
           </configuration>

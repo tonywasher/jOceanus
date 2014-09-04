@@ -922,7 +922,7 @@ public abstract class DataItem<E extends Enum<E>>
                         break;
 
                     case DELETED:
-                        pushHistory();
+                        theHistory.pushHistory(1);
                         break;
 
                     /* Changed items need to have new values at version 1 and originals at version 0 */

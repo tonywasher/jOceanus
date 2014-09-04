@@ -37,7 +37,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -62,6 +61,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -90,34 +90,29 @@ public class PreferenceSetPanel
     private static final int WIDTH_INTEGER = 10;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferenceSetPanel.class.getName());
-
-    /**
      * Text for Preferences Title.
      */
-    private static final String NLS_PREFERENCES = NLS_BUNDLE.getString("PreferencesTitle");
+    private static final String NLS_PREFERENCES = ResourceMgr.getString(PreferenceResource.UI_TITLE_PREFERENCES);
 
     /**
      * Text for Options Title.
      */
-    private static final String NLS_OPTIONS = NLS_BUNDLE.getString("OptionsTitle");
+    private static final String NLS_OPTIONS = ResourceMgr.getString(PreferenceResource.UI_TITLE_OPTIONS);
 
     /**
      * Title for Colour Dialog.
      */
-    private static final String NLS_COLORTITLE = NLS_BUNDLE.getString("ColourTitle");
+    private static final String NLS_COLORTITLE = ResourceMgr.getString(PreferenceResource.UI_TITLE_COLOR);
 
     /**
      * Text for Colour Button.
      */
-    private static final String NLS_COLORTEXT = NLS_BUNDLE.getString("ColourText");
+    private static final String NLS_COLORTEXT = ResourceMgr.getString(PreferenceResource.UI_PROMPT_COLOR);
 
     /**
      * Text for Select prompt.
      */
-    private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectText");
+    private static final String NLS_SELECT = ResourceMgr.getString(PreferenceResource.UI_HEADER_SELECT);
 
     /**
      * The PreferenceSet for this panel.

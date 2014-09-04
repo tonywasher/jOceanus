@@ -588,10 +588,12 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * list will be viewed as inserted. Items that are in the base list but not in this list list will be viewed as deleted. Items that are in both list but
      * differ will be viewed as changed
      * @param pBase The base list to re-base on
+     * @return are there any changes
      */
-    public void reBase(final DataList<?, E> pBase) {
+    public boolean reBase(final DataList<?, E> pBase) {
         /* Access an Id Map of the old list */
         Map<Integer, ?> myBase = pBase.getIdMap();
+        boolean bChanges = false;
 
         /* Loop through this list */
         Iterator<T> myIterator = iterator();
@@ -605,6 +607,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 /* Mark this as a new item */
                 myCurr.getValueSet().setVersion(getVersion() + 1);
                 myCurr.setBase(null);
+                bChanges = true;
 
                 /* else the item exists in the old list */
             } else {
@@ -613,6 +616,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                     /* Set correct history */
                     myCurr.setHistory(myItem);
                     myCurr.setBase(null);
+                    bChanges = true;
 
                     /* else it is identical */
                 } else {
@@ -635,7 +639,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             myItem.setBase(null);
             myItem.setHistory(myCurr);
             myItem.getValueSet().setDeletion(true);
+            bChanges = true;
         }
+
+        /* Return flag */
+        return bChanges;
     }
 
     /**

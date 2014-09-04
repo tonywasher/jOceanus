@@ -626,6 +626,7 @@ public class MoneyWiseData
      * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
      * in this list, but not in the old list will be viewed as inserted. Items that are in the old list but not in this list will be viewed as deleted. Items
      * that are in both lists but differ will be viewed as changed
+     * @param pTask the task control
      * @param pOld The DataSet to compare to
      * @return the difference extract
      * @throws JOceanusException on error
