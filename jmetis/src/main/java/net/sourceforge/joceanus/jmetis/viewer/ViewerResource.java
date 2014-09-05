@@ -83,7 +83,7 @@ public enum ViewerResource implements ResourceId {
     /**
      * The Bundle name.
      */
-    private final static String BUNDLE_NAME = ResourceMgr.getPackageBundle(JMetisDataException.class.getCanonicalName());
+    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(JMetisDataException.class.getCanonicalName());
 
     /**
      * The Id.

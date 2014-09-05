@@ -26,9 +26,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -37,6 +34,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -52,19 +51,29 @@ public class AboutBox
     private static final long serialVersionUID = -5518361782722672513L;
 
     /**
-     * Load error.
+     * Program version.
      */
-    private static final String ERROR_LOAD = "Failed to load application properties";
+    private static final String PROGRAM_VERSION = ResourceMgr.getString(ProgramResource.PROGRAM_VERSION);
+
+    /**
+     * Program revision.
+     */
+    private static final String PROGRAM_REVISION = ResourceMgr.getString(ProgramResource.PROGRAM_REVISION);
+
+    /**
+     * Program buildDate.
+     */
+    private static final String PROGRAM_BUILDDATE = ResourceMgr.getString(ProgramResource.PROGRAM_BUILTON);
+
+    /**
+     * Program copyright.
+     */
+    private static final String PROGRAM_COPYRIGHT = ResourceMgr.getString(ProgramResource.PROGRAM_COPYRIGHT);
 
     /**
      * Border thickness.
      */
     private static final int BORDER_WIDTH = 3;
-
-    /**
-     * The properties.
-     */
-    private static Properties theProperties;
 
     /**
      * The OK button.
@@ -83,21 +92,18 @@ public class AboutBox
         /* Initialise the dialog (this calls dialogInit) */
         super(pParent, pTitle, true);
 
-        /* Load properties */
-        Properties myProperties = loadProperties(pLogger);
-
         /* Set as undecorated */
         setUndecorated(true);
 
         /* Create the components */
         JLabel myProduct = new JLabel(pTitle);
         JLabel myVersion = new JLabel("version: "
-                                      + myProperties.getProperty("version"));
+                                      + PROGRAM_VERSION);
         JLabel myRevision = new JLabel("revision: "
-                                       + myProperties.getProperty("revision"));
+                                       + PROGRAM_REVISION);
         JLabel myBuild = new JLabel("builtOn: "
-                                    + myProperties.getProperty("timeStamp"));
-        JLabel myCopyright = new JLabel("Copyright 2012,2014 Tony Washer");
+                                    + PROGRAM_BUILDDATE);
+        JLabel myCopyright = new JLabel(PROGRAM_COPYRIGHT);
         myProduct.setAlignmentX(Component.CENTER_ALIGNMENT);
         myVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
         myRevision.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -148,46 +154,6 @@ public class AboutBox
         if (theOKButton.equals(o)) {
             /* Close the dialog */
             setVisible(false);
-        }
-    }
-
-    /**
-     * Load the project properties.
-     * @param pLogger the logger
-     * @return the project properties.
-     */
-    private Properties loadProperties(final Logger pLogger) {
-        /* Return previously cached value if available */
-        if (theProperties != null) {
-            return theProperties;
-        }
-
-        /* Protect calls */
-        InputStream in = null;
-        try {
-            /* Create the properties */
-            Properties myProperties = new Properties();
-
-            /* Load the stream */
-            in = AboutBox.class.getResourceAsStream("/META-INF/jMoneyWise.properties");
-            myProperties.load(in);
-
-            /* Store properties */
-            theProperties = myProperties;
-
-            /* Return the properties */
-            return myProperties;
-        } catch (IOException e) {
-            pLogger.error(ERROR_LOAD, e);
-            return new Properties();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                pLogger.error(ERROR_LOAD, e);
-            }
         }
     }
 }

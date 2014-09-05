@@ -156,36 +156,26 @@ public class AnalysisMaps {
             SecurityPrices myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
-                while (myIterator.hasPrevious()) {
-                    SecurityPrice myCurr = myIterator.previous();
+                Iterator<SecurityPrice> myIterator = myList.iterator();
+                while (myIterator.hasNext()) {
+                    SecurityPrice myCurr = myIterator.next();
 
                     /* Check for the range of the date */
                     int iComp = pRange.compareTo(myCurr.getDate());
 
-                    /* If this is later than the range just ignore */
+                    /* If this is later than the range we are finished */
                     if (iComp < 0) {
-                        continue;
+                        break;
                     }
 
                     /* Record as best price */
-                    myFirst = myCurr.getPrice();
+                    myLatest = myCurr.getPrice();
 
-                    /* Record latest price */
-                    if (myLatest == null) {
-                        myLatest = myFirst;
-                    }
-
-                    /* If this is earlier than the range then we are finished */
+                    /* Record early price */
                     if (iComp > 0) {
-                        continue;
+                        myFirst = myLatest;
                     }
                 }
-            }
-
-            /* Record latest price */
-            if (myLatest == null) {
-                myLatest = myFirst;
             }
 
             /* Return the prices */

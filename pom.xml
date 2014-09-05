@@ -26,7 +26,7 @@
   <developers>
     <developer>
       <id>tony</id>
-      <name>Tony Washer</name>
+      <name>${MyName}</name>
       <email>Tony.Washer@yahoo.co.uk</email>
       <roles>
         <role>architect</role>
@@ -52,6 +52,9 @@
     </site>
   </distributionManagement>
   <properties>
+    <MyName>Tony Washer</MyName>
+    <currentYear>${maven.build.timestamp}</currentYear>
+    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <svnHost>Tony-HP</svnHost>
     <svnRepository>Finance</svnRepository>

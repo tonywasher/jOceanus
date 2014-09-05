@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,30 +20,45 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.sheet;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
-import net.sourceforge.joceanus.jmetis.JMetisDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
 
 /**
- * Resource IDs for JMetis Sheet.
+ * Resource IDs for JMetis viewer.
  */
-public enum SheetResource implements ResourceId {
+public enum ProgramResource implements ResourceId {
     /**
-     * WorkBook ExcelXLS.
+     * Program Name.
      */
-    WORKBOOK_EXCELXLS("workBook.EXCELXLS"),
+    PROGRAM_NAME("name"),
 
     /**
-     * WorkBook OasisODS.
+     * Program Version.
      */
-    WORKBOOK_OASISODS("workBook.OASISODS");
+    PROGRAM_VERSION("version"),
+
+    /**
+     * Program Revision.
+     */
+    PROGRAM_REVISION("revision"),
+
+    /**
+     * Program BuildDate.
+     */
+    PROGRAM_BUILTON("builtOn"),
+
+    /**
+     * Program Copyright.
+     */
+    PROGRAM_COPYRIGHT("copyright");
 
     /**
      * The Bundle name.
      */
-    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(JMetisDataException.class.getCanonicalName());
+    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(MoneyWiseDataType.class.getCanonicalName());
 
     /**
      * The Id.
@@ -54,7 +69,7 @@ public enum SheetResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private SheetResource(final String pKeyName) {
+    private ProgramResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -65,27 +80,11 @@ public enum SheetResource implements ResourceId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.sheet";
+        return "program";
     }
 
     @Override
     public String getBundleName() {
         return BUNDLE_NAME;
-    }
-
-    /**
-     * Obtain key for workBookType.
-     * @param pType the Type
-     * @return the resource key
-     */
-    protected static SheetResource getKeyForWorkBook(final WorkBookType pType) {
-        switch (pType) {
-            case EXCELXLS:
-                return WORKBOOK_EXCELXLS;
-            case OASISODS:
-                return WORKBOOK_OASISODS;
-            default:
-                return null;
-        }
     }
 }

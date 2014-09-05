@@ -171,10 +171,15 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Constructor for default control.
+     * @param pProfile the startup profile
      * @param pLogger the logger.
      * @throws JOceanusException on error
      */
-    protected DataControl(final Logger pLogger) throws JOceanusException {
+    protected DataControl(final JDataProfile pProfile,
+                          final Logger pLogger) throws JOceanusException {
+        /* Store the active profile */
+        theProfile = pProfile;
+
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
 
@@ -185,6 +190,10 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         /* Create the data manager */
         theDataMgr = new JDataManager(theLogger);
         initDataMgr();
+
+        /* Update the Profile entry */
+        JDataEntry myData = getDataEntry(DATA_PROFILE);
+        myData.setObject(theProfile);
 
         /* Access the Security Preferences */
         SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);

@@ -148,7 +148,7 @@ public enum JDateDayResource implements ResourceId {
     /**
      * The Bundle name.
      */
-    private final static String BUNDLE_NAME = ResourceMgr.getPackageBundle(JOceanusException.class.getCanonicalName());
+    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(JOceanusException.class.getCanonicalName());
 
     /**
      * The Id.

@@ -30,7 +30,9 @@ import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.util.Properties;
 
+import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -44,12 +46,12 @@ public final class Control {
     /**
      * The Splash Font.
      */
-    private static int SPLASH_PITCH = 16;
+    private static final int SPLASH_PITCH = 16;
 
     /**
      * The Splash Character Width.
      */
-    private static int SPLASH_CHARWIDTH = 10;
+    private static final int SPLASH_CHARWIDTH = 10;
 
     /**
      * The Main window.
@@ -69,8 +71,9 @@ public final class Control {
 
     /**
      * Create and show the GUI.
+     * @param pProfile the startup profile
      */
-    private static void createAndShowGUI() {
+    private static void createAndShowGUI(final JDataProfile pProfile) {
         try {
 
             /* Configure log4j */
@@ -81,7 +84,7 @@ public final class Control {
             myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
             PropertyConfigurator.configure(myLogProp);
 
-            theWindow = new MainTab(theLogger);
+            theWindow = new MainTab(pProfile, theLogger);
             theWindow.makeFrame();
 
         } catch (JOceanusException e) {
@@ -100,8 +103,8 @@ public final class Control {
             Graphics2D myGraphics = mySplash.createGraphics();
             if (myGraphics != null) {
                 /* Access the names */
-                String myName = "jMoneyWise";
-                String myVersion = "v1.3.0-SNAPSHOT";
+                String myName = ResourceMgr.getString(ProgramResource.PROGRAM_NAME);
+                String myVersion = ResourceMgr.getString(ProgramResource.PROGRAM_VERSION);
 
                 /* Determine width of the box */
                 int myNameLen = myName.length();
@@ -137,6 +140,9 @@ public final class Control {
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
+        /* Create a timer */
+        JDataProfile myProfile = new JDataProfile("StartUp");
+
         /* Sort out splash frame */
         renderSplashFrame();
 
@@ -144,7 +150,7 @@ public final class Control {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                createAndShowGUI();
+                createAndShowGUI(myProfile);
             }
         });
     }

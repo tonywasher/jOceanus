@@ -106,22 +106,17 @@ public class View
 
     /**
      * Constructor.
+     * @param pProfile the startup profile
      * @param pLogger the logger.
      * @throws JOceanusException on error
      */
-    public View(final Logger pLogger) throws JOceanusException {
+    public View(final JDataProfile pProfile,
+                final Logger pLogger) throws JOceanusException {
         /* Call super-constructor */
-        super(pLogger);
-
-        /* Create a default profiler */
-        JDataProfile myTask = getNewProfile("StartUp");
-        myTask = myTask.startTask("InitData");
+        super(pProfile, pLogger);
 
         /* Create an empty data set */
         setData(getNewData());
-
-        /* Complete the task */
-        myTask.end();
     }
 
     /**

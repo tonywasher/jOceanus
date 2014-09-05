@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.help.HelpException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 
@@ -152,7 +153,7 @@ public class MainTab
     /**
      * Program name.
      */
-    private static final String PROGRAM_NAME = NLS_BUNDLE.getString("ProgramName");
+    private static final String PROGRAM_NAME = ResourceMgr.getString(ProgramResource.PROGRAM_NAME);
 
     /**
      * The data view.
@@ -234,15 +235,17 @@ public class MainTab
 
     /**
      * Constructor.
+     * @param pProfile the startup profile
      * @param pLogger the logger
      * @throws JOceanusException on error
      */
-    public MainTab(final Logger pLogger) throws JOceanusException {
+    public MainTab(final JDataProfile pProfile,
+                   final Logger pLogger) throws JOceanusException {
         /* Store the logger */
         theLogger = pLogger;
 
         /* Create the view */
-        theView = new View(theLogger);
+        theView = new View(pProfile, theLogger);
 
         /* Build the main window */
         buildMainWindow(theView);
