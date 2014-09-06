@@ -145,6 +145,7 @@ public class QIFAccount
         myMap.put(DepositCategoryClass.SAVINGS, QIFACT_BANK);
         myMap.put(DepositCategoryClass.BOND, QIFACT_BANK);
         myMap.put(CashCategoryClass.CASH, QIFACT_CASH);
+        myMap.put(CashCategoryClass.AUTOEXPENSE, QIFACT_CASH);
         myMap.put(LoanCategoryClass.CREDITCARD, QIFACT_CCARD);
         myMap.put(MoneyWiseDataType.PORTFOLIO, QIFACT_INVST);
         myMap.put(LoanCategoryClass.PRIVATELOAN, QIFACT_ASSET);

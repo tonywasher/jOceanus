@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.JFieldState;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSetHistory;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
@@ -53,79 +53,74 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public abstract class DataItem<E extends Enum<E>>
         implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataItem.class.getName());
-
-    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAITEM_NAME));
 
     /**
      * Validation error.
      */
-    public static final String ERROR_VALIDATION = NLS_BUNDLE.getString("ErrorValidation");
+    public static final String ERROR_VALIDATION = ResourceMgr.getString(DataResource.DATAITEM_ERROR_VALIDATION);
 
     /**
      * Resolution error.
      */
-    public static final String ERROR_RESOLUTION = NLS_BUNDLE.getString("ErrorResolution");
+    public static final String ERROR_RESOLUTION = ResourceMgr.getString(DataResource.DATAITEM_ERROR_RESOLUTION);
 
     /**
      * Duplicate Id error.
      */
-    public static final String ERROR_DUPLICATE = NLS_BUNDLE.getString("ErrorDuplicate");
+    public static final String ERROR_DUPLICATE = ResourceMgr.getString(DataResource.DATAITEM_ERROR_DUPLICATE);
 
     /**
      * Unknown Id error.
      */
-    public static final String ERROR_UNKNOWN = NLS_BUNDLE.getString("ErrorUnknown");
+    public static final String ERROR_UNKNOWN = ResourceMgr.getString(DataResource.DATAITEM_ERROR_UNKNOWN);
 
     /**
      * Existing value error.
      */
-    public static final String ERROR_EXIST = NLS_BUNDLE.getString("ErrorExist");
+    public static final String ERROR_EXIST = ResourceMgr.getString(DataResource.DATAITEM_ERROR_EXIST);
 
     /**
      * Missing value error.
      */
-    public static final String ERROR_MISSING = NLS_BUNDLE.getString("ErrorMissing");
+    public static final String ERROR_MISSING = ResourceMgr.getString(DataResource.DATAITEM_ERROR_MISSING);
 
     /**
      * Value too long error.
      */
-    public static final String ERROR_LENGTH = NLS_BUNDLE.getString("ErrorLength");
+    public static final String ERROR_LENGTH = ResourceMgr.getString(DataResource.DATAITEM_ERROR_LENGTH);
 
     /**
      * Value negative error.
      */
-    public static final String ERROR_NEGATIVE = NLS_BUNDLE.getString("ErrorNegative");
+    public static final String ERROR_NEGATIVE = ResourceMgr.getString(DataResource.DATAITEM_ERROR_NEGATIVE);
 
     /**
      * Value zero error.
      */
-    public static final String ERROR_ZERO = NLS_BUNDLE.getString("ErrorZero");
+    public static final String ERROR_ZERO = ResourceMgr.getString(DataResource.DATAITEM_ERROR_ZERO);
 
     /**
      * Value outside valid range.
      */
-    public static final String ERROR_RANGE = NLS_BUNDLE.getString("ErrorRange");
+    public static final String ERROR_RANGE = ResourceMgr.getString(DataResource.DATAITEM_ERROR_RANGE);
 
     /**
      * Value disabled error.
      */
-    public static final String ERROR_DISABLED = NLS_BUNDLE.getString("ErrorDisabled");
+    public static final String ERROR_DISABLED = ResourceMgr.getString(DataResource.DATAITEM_ERROR_DISABLED);
 
     /**
      * Creation failure.
      */
-    public static final String ERROR_CREATEITEM = NLS_BUNDLE.getString("ErrorCreate");
+    public static final String ERROR_CREATEITEM = ResourceMgr.getString(DataResource.DATAITEM_ERROR_CREATE);
 
     /**
      * Multiple instances Error.
      */
-    public static final String ERROR_MULT = NLS_BUNDLE.getString("ErrorMultiple");
+    public static final String ERROR_MULT = ResourceMgr.getString(DataResource.DATAITEM_ERROR_MULTIPLE);
 
     /**
      * Instance ReportFields.
@@ -179,62 +174,62 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Id Field Id.
      */
-    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
+    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(DataResource.DATAITEM_ID));
 
     /**
      * Type Field Id.
      */
-    public static final JDataField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
+    public static final JDataField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_TYPE));
 
     /**
      * List Field Id.
      */
-    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataList"));
+    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_NAME));
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBase"));
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_BASE));
 
     /**
      * TouchStatus Field Id.
      */
-    public static final JDataField FIELD_TOUCH = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTouch"));
+    public static final JDataField FIELD_TOUCH = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_TOUCH));
 
     /**
      * Deleted Field Id.
      */
-    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDeleted"));
+    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_DELETED));
 
     /**
      * DataState Field Id.
      */
-    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataState"));
+    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_STATE));
 
     /**
      * Edit State Field Id.
      */
-    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEditState"));
+    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_EDITSTATE));
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_VERSION));
 
     /**
      * Header Field Id.
      */
-    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHeader"));
+    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_HEADER));
 
     /**
      * History Field Id.
      */
-    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
+    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_HISTORY));
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataErrors"));
+    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_ERRORS));
 
     @Override
     public String formatObject() {

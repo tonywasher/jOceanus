@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
@@ -51,11 +51,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 public class DataKeySet
         extends DataItem<CryptographyDataType>
         implements Comparable<DataKeySet> {
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataKeySet.class.getName());
-
     /**
      * Object name.
      */
@@ -79,22 +74,22 @@ public class DataKeySet
     /**
      * Field ID for ControlKey.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataControlKey"));
+    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
 
     /**
      * Field ID for CreationDate.
      */
-    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCreateDate"));
+    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAKEYSET_CREATION));
 
     /**
      * Field ID for DataKeyMap.
      */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataKeyMap"));
+    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEYSET_KEYMAP));
 
     /**
      * Field ID for CipherSet.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCipher"));
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEYSET_CIPHERSET));
 
     /**
      * The DataKey Map.

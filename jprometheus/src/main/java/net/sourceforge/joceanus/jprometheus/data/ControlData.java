@@ -22,14 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ControlData definition and list. The Control Data represents the data version of the entire data set, allowing for migration code to be written to map
@@ -43,11 +42,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public class ControlData
         extends DataItem<CryptographyDataType>
         implements Comparable<ControlData> {
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ControlData.class.getName());
-
     /**
      * Object name.
      */
@@ -71,7 +65,7 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataVersion"));
+    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLDATA_VERSION));
 
     /**
      * Field ID for Control Key.
@@ -81,7 +75,7 @@ public class ControlData
     /**
      * Error message for already exists.
      */
-    public static final String ERROR_CTLEXISTS = NLS_BUNDLE.getString("ErrorExists");
+    public static final String ERROR_CTLEXISTS = ResourceMgr.getString(DataResource.CONTROLDATA_ERROR_EXISTS);
 
     /**
      * Get the data version.

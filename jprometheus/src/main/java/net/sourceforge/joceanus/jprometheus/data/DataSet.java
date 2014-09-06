@@ -26,7 +26,6 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
@@ -45,6 +44,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preferences.DataListPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -54,11 +54,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataSet.class.getName());
-
-    /**
      * The Hash prime.
      */
     protected static final int HASH_PRIME = 19;
@@ -66,52 +61,52 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATASET_NAME));
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGeneration"));
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GENERATION));
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGranularity"));
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GRANULARITY));
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_VERSION));
 
     /**
      * Locked Field Id.
      */
-    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLocked"));
+    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_LOCKED));
 
     /**
      * Security Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSecurity"));
+    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_SECURITY));
 
     /**
      * ControlKeys Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(CryptographyDataType.CONTROLKEY.getListName());
+    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.CONTROLKEY_LIST));
 
     /**
      * DataKeySets Field Id.
      */
-    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(CryptographyDataType.DATAKEYSET.getListName());
+    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEYSET_LIST));
 
     /**
      * DataKeys Field Id.
      */
-    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(CryptographyDataType.DATAKEY.getListName());
+    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEY_LIST));
 
     /**
      * ControlData Field Id.
      */
-    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(CryptographyDataType.CONTROLDATA.getListName());
+    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.CONTROLDATA_LIST));
 
     @Override
     public JDataFields getDataFields() {
@@ -1163,7 +1158,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we have not yet loaded the name */
             if (theName == null) {
                 /* Load the name */
-                theName = NLS_BUNDLE.getString(name());
+                theName = ResourceMgr.getString(DataResource.getKeyForCryptoItem(this));
             }
 
             /* return the name */
@@ -1186,7 +1181,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we have not yet loaded the name */
             if (theListName == null) {
                 /* Load the name */
-                theListName = NLS_BUNDLE.getString("list" + name());
+                theListName = ResourceMgr.getString(DataResource.getKeyForCryptoList(this));
             }
 
             /* return the list name */

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Template for a Static Data item and List.
@@ -48,14 +48,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         extends EncryptedItem<E>
         implements Comparable<T> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticData.class.getName());
-
-    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataDataName"), EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.STATICDATA_NAME), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -65,37 +60,37 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAITEM_FIELD_NAME));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAITEM_FIELD_DESC));
 
     /**
      * Enabled Field Id.
      */
-    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataEnabled"));
+    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.STATICDATA_ENABLED));
 
     /**
      * Order Field Id.
      */
-    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataOrder"));
+    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.STATICDATA_SORT));
 
     /**
      * Class Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClass"));
+    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.STATICDATA_CLASS));
 
     /**
      * BadId error.
      */
-    public static final String ERROR_BADID = NLS_BUNDLE.getString("ErrorBadId");
+    public static final String ERROR_BADID = ResourceMgr.getString(DataResource.STATICDATA_ERROR_ID);
 
     /**
      * BadName error.
      */
-    public static final String ERROR_BADNAME = NLS_BUNDLE.getString("ErrorBadName");
+    public static final String ERROR_BADNAME = ResourceMgr.getString(DataResource.STATICDATA_ERROR_NAME);
 
     /**
      * The Enum Class for this Static Data.

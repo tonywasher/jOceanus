@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
@@ -48,11 +48,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public final class ControlKey
         extends DataItem<CryptographyDataType>
         implements Comparable<ControlKey> {
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ControlKey.class.getName());
-
     /**
      * Object name.
      */
@@ -76,47 +71,47 @@ public final class ControlKey
     /**
      * Field ID for Prime passwordHash.
      */
-    public static final JDataField FIELD_PRIMEPASSHASH = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPrimeHash"));
+    public static final JDataField FIELD_PRIMEPASSHASH = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLKEY_PRIMEHASH));
 
     /**
      * Field ID for Alternate passwordHash.
      */
-    public static final JDataField FIELD_ALTPASSHASH = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataAltHash"));
+    public static final JDataField FIELD_ALTPASSHASH = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLKEY_ALTHASH));
 
     /**
      * Field ID for HashKey.
      */
-    public static final JDataField FIELD_PRIMEHASHKEY = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataPrimeKey"));
+    public static final JDataField FIELD_PRIMEHASHKEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.CONTROLKEY_PRIMEKEY));
 
     /**
      * Field ID for HashKey.
      */
-    public static final JDataField FIELD_ALTHASHKEY = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataAltKey"));
+    public static final JDataField FIELD_ALTHASHKEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.CONTROLKEY_ALTKEY));
 
     /**
      * HashPrime Field Id.
      */
-    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHashPrime"));
+    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLKEY_PRIME));
 
     /**
      * Field ID for PrimeHashBytes.
      */
-    public static final JDataField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataPrimeBytes"));
+    public static final JDataField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.CONTROLKEY_PRIMEBYTES));
 
     /**
      * Field ID for AltHashBytes.
      */
-    public static final JDataField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataAltBytes"));
+    public static final JDataField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.CONTROLKEY_ALTBYTES));
 
     /**
      * Field ID for DataKeySet.
      */
-    public static final JDataField FIELD_SETS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataKeySet"));
+    public static final JDataField FIELD_SETS = FIELD_DEFS.declareLocalField(DataKeySet.LIST_NAME);
 
     /**
      * Name of Database.
      */
-    public static final String NAME_DATABASE = NLS_BUNDLE.getString("NameDataBase");
+    public static final String NAME_DATABASE = ResourceMgr.getString(DataResource.CONTROLKEY_DATABASE);
 
     /**
      * PasswordHash Length.
@@ -896,12 +891,12 @@ public final class ControlKey
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataKeySetResource"));
+        protected static final JDataFields FIELD_DEFS = new JDataFields(DataKeySet.LIST_NAME);
 
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_SIZE));
 
         @Override
         public JDataFields getDataFields() {

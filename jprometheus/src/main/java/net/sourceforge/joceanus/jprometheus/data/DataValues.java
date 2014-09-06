@@ -27,12 +27,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,39 +75,34 @@ public class DataValues<E extends Enum<E>> {
     }
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataValues.class.getName());
-
-    /**
      * InfoSet Items tag.
      */
-    private static final String TAG_INFOSET = NLS_BUNDLE.getString("DataInfoSet");
+    private static final String TAG_INFOSET = ResourceMgr.getString(DataResource.DATAINFOSET_NAME);
 
     /**
      * Children Items tag.
      */
-    private static final String TAG_CHILDREN = NLS_BUNDLE.getString("DataChildren");
+    private static final String TAG_CHILDREN = ResourceMgr.getString(DataResource.DATAVALUES_CHILDREN);
 
     /**
      * Child Item tag.
      */
-    private static final String TAG_CHILD = NLS_BUNDLE.getString("DataChild");
+    private static final String TAG_CHILD = ResourceMgr.getString(DataResource.DATAVALUES_CHILD);
 
     /**
      * List type attribute.
      */
-    protected static final String ATTR_TYPE = NLS_BUNDLE.getString("DataAttrType");
+    protected static final String ATTR_TYPE = ResourceMgr.getString(DataResource.DATAVALUES_ATTRTYPE);
 
     /**
      * List size attribute.
      */
-    protected static final String ATTR_SIZE = NLS_BUNDLE.getString("DataAttrSize");
+    protected static final String ATTR_SIZE = ResourceMgr.getString(DataResource.DATAVALUES_ATTRSIZE);
 
     /**
      * Data Version attribute.
      */
-    protected static final String ATTR_VERS = NLS_BUNDLE.getString("DataAttrVersion");
+    protected static final String ATTR_VERS = ResourceMgr.getString(DataResource.DATAVALUES_ATTRVER);
 
     /**
      * The item type.

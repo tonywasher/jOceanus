@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.DataCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
@@ -36,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the ControlKey. For a single control key, one DataKey is allocated
@@ -45,11 +44,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public class DataKey
         extends DataItem<CryptographyDataType>
         implements Comparable<DataKey> {
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataKey.class.getName());
-
     /**
      * Object name.
      */
@@ -78,27 +72,27 @@ public class DataKey
     /**
      * KeyType Field Id.
      */
-    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataType"));
+    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAKEY_TYPE));
 
     /**
      * HashPrime Field Id.
      */
-    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHashPrime"));
+    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLKEY_PRIME));
 
     /**
      * KeyDefinition Field Id.
      */
-    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDefinition"));
+    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAKEY_DEF));
 
     /**
      * DataKey Field Id.
      */
-    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataKey"));
+    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.DATAKEY_KEY));
 
     /**
      * Cipher Field Id.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataCipher"));
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.DATAKEY_CIPHER));
 
     /**
      * Encrypted Symmetric Key Length.

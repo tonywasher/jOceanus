@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Report-able object list.
@@ -44,19 +44,14 @@ public class DataErrorList<T extends JDataContents>
     private static final long serialVersionUID = 6574043212647066938L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataErrorList.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.ERRORLIST_NAME));
 
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
+    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_SIZE));
 
     @Override
     public JDataFields getDataFields() {

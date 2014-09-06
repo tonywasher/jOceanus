@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
@@ -44,11 +44,6 @@ public enum JDBCDriver {
     MYSQL;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDBCDriver.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -58,7 +53,7 @@ public enum JDBCDriver {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(PreferenceResource.getKeyForDriver(this));
         }
 
         /* return the name */
@@ -163,8 +158,8 @@ public enum JDBCDriver {
         switch (pType) {
             case BOOLEAN:
                 return isPostgreSQL
-                                    ? "boolean"
-                                    : "bit";
+                                   ? "boolean"
+                                   : "bit";
             case SHORT:
                 return "smallint";
             case INTEGER:
@@ -175,8 +170,10 @@ public enum JDBCDriver {
                 return "real";
             case DOUBLE:
                 return isSQLServer
-                                    ? "float"
-                                    : isPostgreSQL ? "double precision" : "double";
+                                  ? "float"
+                                  : isPostgreSQL
+                                                ? "double precision"
+                                                : "double";
             case DATE:
                 return "date";
             case MONEY:
@@ -189,8 +186,8 @@ public enum JDBCDriver {
                                     : "numeric";
             case BINARY:
                 return (isPostgreSQL)
-                                    ? "bytea"
-                                    : "varbinary";
+                                     ? "bytea"
+                                     : "varbinary";
             case STRING:
             default:
                 return "varchar";

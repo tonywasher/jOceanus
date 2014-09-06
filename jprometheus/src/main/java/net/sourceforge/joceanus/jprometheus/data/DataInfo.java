@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -61,14 +61,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     public static final int DATALEN = 512;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataInfo.class.getName());
-
-    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAINFO_NAME), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -78,37 +73,37 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * InfoType Field Id.
      */
-    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataInfoType"));
+    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAINFO_TYPE));
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataOwner"));
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAINFO_OWNER));
 
     /**
      * Value Field Id.
      */
-    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataValue"));
+    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAINFO_VALUE));
 
     /**
      * Link Field Id.
      */
-    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataLink"));
+    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.DATAINFO_LINK));
 
     /**
      * Invalid Data Type Error.
      */
-    protected static final String ERROR_BADDATATYPE = NLS_BUNDLE.getString("ErrorDataType");
+    protected static final String ERROR_BADDATATYPE = ResourceMgr.getString(DataResource.DATAINFO_ERROR_TYPE);
 
     /**
      * Invalid Data Error.
      */
-    protected static final String ERROR_BADDATA = NLS_BUNDLE.getString("ErrorData");
+    protected static final String ERROR_BADDATA = ResourceMgr.getString(DataResource.DATAINFO_ERROR_DATA);
 
     /**
      * Invalid Info Class Error.
      */
-    protected static final String ERROR_BADINFOCLASS = NLS_BUNDLE.getString("ErrorInfoClass");
+    protected static final String ERROR_BADINFOCLASS = ResourceMgr.getString(DataResource.DATAINFO_ERROR_CLASS);
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -894,7 +889,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAINFO_LIST), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

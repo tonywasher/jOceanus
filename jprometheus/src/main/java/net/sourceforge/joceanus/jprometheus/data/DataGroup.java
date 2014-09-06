@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Group class for data item.
@@ -39,19 +38,14 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataGroup.class.getName());
-
-    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAGROUP_NAME));
 
     /**
      * Parent field id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataParent"));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAGROUP_PARENT));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

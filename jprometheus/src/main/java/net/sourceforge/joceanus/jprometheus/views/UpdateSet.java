@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.views;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -37,8 +36,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -50,19 +51,14 @@ public class UpdateSet<E extends Enum<E>>
         extends JEventObject
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(UpdateSet.class.getName());
-
-    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(ViewResource.UPDATESET_NAME));
 
     /**
      * Version field id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataVersion"));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(DataResource.DATASET_VERSION));
 
     /**
      * OK.

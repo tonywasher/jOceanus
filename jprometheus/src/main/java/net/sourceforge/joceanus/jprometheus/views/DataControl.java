@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jprometheus.views;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
@@ -46,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -57,49 +57,44 @@ import org.slf4j.Logger;
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         extends JEventObject {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataControl.class.getName());
-
-    /**
      * Debug View Name.
      */
-    public static final String DATA_VIEWS = NLS_BUNDLE.getString("DataDataViews");
+    public static final String DATA_VIEWS = ResourceMgr.getString(ViewResource.DATAENTRY_VIEWS);
 
     /**
      * Underlying Data Name.
      */
-    public static final String DATA_DATASET = NLS_BUNDLE.getString("DataSet");
+    public static final String DATA_DATASET = ResourceMgr.getString(ViewResource.DATAENTRY_DATA);
 
     /**
      * Data Updates Name.
      */
-    public static final String DATA_UPDATES = NLS_BUNDLE.getString("DataUpdates");
+    public static final String DATA_UPDATES = ResourceMgr.getString(ViewResource.DATAENTRY_UPDATES);
 
     /**
      * Analysis Name.
      */
-    public static final String DATA_ANALYSIS = NLS_BUNDLE.getString("DataAnalysis");
+    public static final String DATA_ANALYSIS = ResourceMgr.getString(ViewResource.DATAENTRY_ANALYSIS);
 
     /**
      * Debug Edit Name.
      */
-    public static final String DATA_EDIT = NLS_BUNDLE.getString("DataEditViews");
+    public static final String DATA_EDIT = ResourceMgr.getString(ViewResource.DATAENTRY_EDIT);
 
     /**
      * Debug Maintenance Name.
      */
-    public static final String DATA_MAINT = NLS_BUNDLE.getString("DataMaint");
+    public static final String DATA_MAINT = ResourceMgr.getString(ViewResource.DATAENTRY_MAINT);
 
     /**
      * Error Name.
      */
-    public static final String DATA_ERROR = NLS_BUNDLE.getString("DataError");
+    public static final String DATA_ERROR = ResourceMgr.getString(ViewResource.DATAENTRY_ERROR);
 
     /**
      * Active Profile.
      */
-    public static final String DATA_PROFILE = NLS_BUNDLE.getString("DataProfile");
+    public static final String DATA_PROFILE = ResourceMgr.getString(ViewResource.DATAENTRY_PROFILE);
 
     /**
      * The DataSet.

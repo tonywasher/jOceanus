@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Encrypted Data Item and List.
@@ -42,14 +42,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public abstract class EncryptedItem<E extends Enum<E>>
         extends DataItem<E> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EncryptedItem.class.getName());
-
-    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.ENCRYPTED_NAME), DataItem.FIELD_DEFS);
 
     @Override
     public EncryptedValueSet getValueSet() {
@@ -69,7 +64,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Error message for bad usage.
      */
-    public static final String ERROR_USAGE = NLS_BUNDLE.getString("ErrorUsage");
+    public static final String ERROR_USAGE = ResourceMgr.getString(DataResource.ENCRYPTED_ERROR_USAGE);
 
     /**
      * Generator field.

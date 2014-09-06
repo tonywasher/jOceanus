@@ -26,7 +26,6 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -41,6 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Representation of an information set extension of a DataItem.
@@ -54,35 +54,22 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
         implements JDataContents, Iterable<T> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataInfoSet.class.getName());
-
-    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
-
-    /**
-     * Version Field Id.
-     */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAINFOSET_NAME));
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataOwner"));
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAINFO_OWNER));
 
     /**
      * Values Field Id.
      */
-    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataValues"));
+    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAINFOSET_VALUES));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
         if (FIELD_OWNER.equals(pField)) {
             return theOwner;
         }
@@ -96,11 +83,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     public String formatObject() {
         return getDataFields().getName();
     }
-
-    /**
-     * Version # of the values.
-     */
-    private int theVersion;
 
     /**
      * The Owner to which this set belongs.

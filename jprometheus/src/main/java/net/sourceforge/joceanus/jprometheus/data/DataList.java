@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Generic implementation of a DataList for DataItems.
@@ -48,14 +48,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataList.class.getName());
-
-    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATALIST_NAME));
 
     /**
      * Instance ReportFields.
@@ -82,52 +77,52 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
+    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_SIZE));
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGranularity"));
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GRANULARITY));
 
     /**
      * ListStyle Field Id.
      */
-    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataStyle"));
+    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_STYLE));
 
     /**
      * DataSet Field Id.
      */
-    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSet"));
+    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_NAME));
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGeneration"));
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GENERATION));
 
     /**
      * NextVersion Field Id.
      */
-    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
+    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_VERSION));
 
     /**
      * EditState Field Id.
      */
-    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEditState"));
+    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_EDITSTATE));
 
     /**
      * ListType Field Id.
      */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
+    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_TYPE));
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBase"));
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_BASE));
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField("Errors");
+    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_ERRORS));
 
     @Override
     public String formatObject() {
