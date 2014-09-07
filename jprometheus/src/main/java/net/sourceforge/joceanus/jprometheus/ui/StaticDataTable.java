@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.ui;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -51,6 +50,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -68,11 +68,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * Serial Id.
      */
     private static final long serialVersionUID = -8747707037700378702L;
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticDataTable.class.getName());
 
     /**
      * Class column title.
@@ -97,7 +92,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * Active column title.
      */
-    private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
+    private static final String TITLE_ACTIVE = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_ACTIVE);
 
     /**
      * The Data view.

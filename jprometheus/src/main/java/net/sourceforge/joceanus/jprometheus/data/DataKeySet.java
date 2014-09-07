@@ -79,17 +79,17 @@ public class DataKeySet
     /**
      * Field ID for CreationDate.
      */
-    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAKEYSET_CREATION));
+    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_CREATION));
 
     /**
      * Field ID for DataKeyMap.
      */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEYSET_KEYMAP));
+    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_KEYMAP));
 
     /**
      * Field ID for CipherSet.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEYSET_CIPHERSET));
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_CIPHERSET));
 
     /**
      * The DataKey Map.

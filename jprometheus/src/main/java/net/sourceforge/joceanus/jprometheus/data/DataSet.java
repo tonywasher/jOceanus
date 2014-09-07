@@ -61,52 +61,52 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATASET_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATASET_NAME));
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GENERATION));
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_GENERATION));
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GRANULARITY));
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_GRANULARITY));
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_VERSION));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_VERSION));
 
     /**
      * Locked Field Id.
      */
-    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_LOCKED));
+    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_LOCKED));
 
     /**
      * Security Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_SECURITY));
+    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_SECURITY));
 
     /**
      * ControlKeys Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.CONTROLKEY_LIST));
+    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_LIST));
 
     /**
      * DataKeySets Field Id.
      */
-    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEYSET_LIST));
+    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_LIST));
 
     /**
      * DataKeys Field Id.
      */
-    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAKEY_LIST));
+    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEY_LIST));
 
     /**
      * ControlData Field Id.
      */
-    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.CONTROLDATA_LIST));
+    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.CONTROLDATA_LIST));
 
     @Override
     public JDataFields getDataFields() {
@@ -1158,7 +1158,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we have not yet loaded the name */
             if (theName == null) {
                 /* Load the name */
-                theName = ResourceMgr.getString(DataResource.getKeyForCryptoItem(this));
+                theName = ResourceMgr.getString(PrometheusDataResource.getKeyForCryptoItem(this));
             }
 
             /* return the name */
@@ -1181,7 +1181,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we have not yet loaded the name */
             if (theListName == null) {
                 /* Load the name */
-                theListName = ResourceMgr.getString(DataResource.getKeyForCryptoList(this));
+                theListName = ResourceMgr.getString(PrometheusDataResource.getKeyForCryptoList(this));
             }
 
             /* return the list name */

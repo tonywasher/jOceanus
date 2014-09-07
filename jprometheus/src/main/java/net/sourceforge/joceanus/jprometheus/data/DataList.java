@@ -50,7 +50,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATALIST_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATALIST_NAME));
 
     /**
      * Instance ReportFields.
@@ -77,52 +77,52 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_SIZE));
+    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GRANULARITY));
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_GRANULARITY));
 
     /**
      * ListStyle Field Id.
      */
-    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATALIST_STYLE));
+    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_STYLE));
 
     /**
      * DataSet Field Id.
      */
-    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_NAME));
+    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_NAME));
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_GENERATION));
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_GENERATION));
 
     /**
      * NextVersion Field Id.
      */
-    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATASET_VERSION));
+    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_VERSION));
 
     /**
      * EditState Field Id.
      */
-    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_EDITSTATE));
+    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_EDITSTATE));
 
     /**
      * ListType Field Id.
      */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_TYPE));
+    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_TYPE));
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_BASE));
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_BASE));
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAITEM_ERRORS));
+    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERRORS));
 
     @Override
     public String formatObject() {

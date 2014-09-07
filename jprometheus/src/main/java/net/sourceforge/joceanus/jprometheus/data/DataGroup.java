@@ -40,12 +40,12 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAGROUP_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_NAME));
 
     /**
      * Parent field id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAGROUP_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_PARENT));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Error panel.
@@ -61,19 +61,14 @@ public class ErrorPanel
     private static final int STRUT_WIDTH = 10;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ErrorPanel.class.getName());
-
-    /**
      * Text for Clear Button.
      */
-    private static final String NLS_CLEAR = NLS_BUNDLE.getString("ClearButton");
+    private static final String NLS_CLEAR = ResourceMgr.getString(PrometheusUIResource.ERROR_BUTTON_CLEAR);
 
     /**
      * Text for Box title.
      */
-    private static final String NLS_TITLE = NLS_BUNDLE.getString("BoxTitle");
+    private static final String NLS_TITLE = ResourceMgr.getString(PrometheusUIResource.ERROR_TITLE);
 
     /**
      * The error field.

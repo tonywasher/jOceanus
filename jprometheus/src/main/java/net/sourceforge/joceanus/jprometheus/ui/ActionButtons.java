@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,6 +34,7 @@ import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 
@@ -55,14 +55,9 @@ public class ActionButtons
     private static final int STRUT_LENGTH = 5;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ActionButtons.class.getName());
-
-    /**
      * Text for Box Title.
      */
-    private static final String NLS_TITLE = NLS_BUNDLE.getString("BoxTitle");
+    private static final String NLS_TITLE = ResourceMgr.getString(PrometheusUIResource.ACTION_TITLE_SAVE);
 
     /**
      * The update set.

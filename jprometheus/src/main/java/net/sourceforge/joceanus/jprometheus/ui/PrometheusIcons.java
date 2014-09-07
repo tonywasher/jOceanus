@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Image;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
@@ -45,112 +45,108 @@ public abstract class PrometheusIcons {
     /**
      * The active icon.
      */
-    private static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("Active.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/Active.png")), ICON_XTRA_SIZE);
 
     /**
      * The delete icon.
      */
-    private static final Icon ICON_DELETE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("RedDelete.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_DELETE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/RedDelete.png")), ICON_XTRA_SIZE);
 
     /**
      * The disabled icon.
      */
-    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("Disabled.png")));
+    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/Disabled.png")));
 
     /**
      * The new icon.
      */
-    private static final Icon ICON_NEW = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("GreenJellyPlus.png")));
+    private static final Icon ICON_NEW = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/GreenJellyPlus.png")));
 
     /**
      * The commit icon.
      */
-    protected static final Icon ICON_COMMIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("GreenJellyCheck.png")), ICON_XTRA_SIZE);
+    protected static final Icon ICON_COMMIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/GreenJellyCheck.png")), ICON_XTRA_SIZE);
 
     /**
      * The undo arrow.
      */
-    protected static final Icon ICON_UNDO = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyArrowLeft.png")), ICON_XTRA_SIZE);
+    protected static final Icon ICON_UNDO = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/OrangeJellyArrowLeft.png")), ICON_XTRA_SIZE);
 
     /**
      * The reset arrow.
      */
-    protected static final Icon ICON_RESET = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyDoubleArrowLeft.png")), ICON_XTRA_SIZE);
+    protected static final Icon ICON_RESET = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/OrangeJellyDoubleArrowLeft.png")),
+            ICON_XTRA_SIZE);
 
     /**
      * The edit arrow.
      */
-    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("ItemEdit.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/ItemEdit.png")), ICON_XTRA_SIZE);
 
     /**
      * The goto arrow.
      */
-    private static final Icon ICON_GOTO = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("BlueJellyGoTo.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_GOTO = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/BlueJellyGoTo.png")), ICON_XTRA_SIZE);
 
     /**
      * The cancel arrow.
      */
-    private static final Icon ICON_CANCEL = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("OrangeJellyUndo.png")), ICON_XTRA_SIZE);
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PrometheusIcons.class.getName());
+    private static final Icon ICON_CANCEL = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/OrangeJellyUndo.png")), ICON_XTRA_SIZE);
 
     /**
      * Delete Button ToolTip.
      */
-    private static final String TIP_DELETE = NLS_BUNDLE.getString("ButtonDelete");
+    private static final String TIP_DELETE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_DELETE);
 
     /**
      * New Button ToolTip.
      */
-    private static final String TIP_NEW = NLS_BUNDLE.getString("ButtonNew");
+    private static final String TIP_NEW = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_NEW);
 
     /**
      * Active Button ToolTip.
      */
-    protected static final String TIP_ACTIVE = NLS_BUNDLE.getString("ButtonActive");
+    protected static final String TIP_ACTIVE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_ACTIVE);
 
     /**
      * Enable Button ToolTip.
      */
-    private static final String TIP_ENABLE = NLS_BUNDLE.getString("ButtonEnable");
+    private static final String TIP_ENABLE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_ENABLE);
 
     /**
      * Disable Button ToolTip.
      */
-    private static final String TIP_DISABLE = NLS_BUNDLE.getString("ButtonDisable");
+    private static final String TIP_DISABLE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_DISABLE);
 
     /**
      * Commit Button ToolTip.
      */
-    private static final String TIP_COMMIT = NLS_BUNDLE.getString("ButtonCommit");
+    private static final String TIP_COMMIT = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_COMMIT);
 
     /**
      * UnDo Button ToolTip.
      */
-    private static final String TIP_UNDO = NLS_BUNDLE.getString("ButtonUnDo");
+    private static final String TIP_UNDO = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_UNDO);
 
     /**
      * Reset Button ToolTip.
      */
-    private static final String TIP_RESET = NLS_BUNDLE.getString("ButtonReset");
+    private static final String TIP_RESET = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_RESET);
 
     /**
      * GoTo Button ToolTip.
      */
-    private static final String TIP_GOTO = NLS_BUNDLE.getString("ButtonGoTo");
+    private static final String TIP_GOTO = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_GOTO);
 
     /**
      * Edit Button ToolTip.
      */
-    private static final String TIP_EDIT = NLS_BUNDLE.getString("ButtonEdit");
+    private static final String TIP_EDIT = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_EDIT);
 
     /**
      * Cancel Button ToolTip.
      */
-    private static final String TIP_CANCEL = NLS_BUNDLE.getString("ButtonCancel");
+    private static final String TIP_CANCEL = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_CANCEL);
 
     /**
      * Resize an icon to the row height.

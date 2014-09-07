@@ -56,17 +56,17 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.DATAINFOSET_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAINFO_OWNER));
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFO_OWNER));
 
     /**
      * Values Field Id.
      */
-    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(DataResource.DATAINFOSET_VALUES));
+    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_VALUES));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

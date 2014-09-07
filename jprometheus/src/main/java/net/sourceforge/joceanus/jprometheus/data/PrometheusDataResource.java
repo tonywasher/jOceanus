@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
 /**
  * Resource IDs for jPrometheus Data Fields.
  */
-public enum DataResource implements ResourceId {
+public enum PrometheusDataResource implements ResourceId {
     /**
      * DataSet Name.
      */
@@ -478,7 +478,7 @@ public enum DataResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private DataResource(final String pKeyName) {
+    private PrometheusDataResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -502,7 +502,7 @@ public enum DataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static DataResource getKeyForCryptoItem(final CryptographyDataType pValue) {
+    protected static PrometheusDataResource getKeyForCryptoItem(final CryptographyDataType pValue) {
         switch (pValue) {
             case CONTROLKEY:
                 return CONTROLKEY_NAME;
@@ -522,7 +522,7 @@ public enum DataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static DataResource getKeyForCryptoList(final CryptographyDataType pValue) {
+    protected static PrometheusDataResource getKeyForCryptoList(final CryptographyDataType pValue) {
         switch (pValue) {
             case CONTROLKEY:
                 return CONTROLKEY_LIST;

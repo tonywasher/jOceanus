@@ -65,7 +65,7 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLDATA_VERSION));
+    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLDATA_VERSION));
 
     /**
      * Field ID for Control Key.
@@ -75,7 +75,7 @@ public class ControlData
     /**
      * Error message for already exists.
      */
-    public static final String ERROR_CTLEXISTS = ResourceMgr.getString(DataResource.CONTROLDATA_ERROR_EXISTS);
+    public static final String ERROR_CTLEXISTS = ResourceMgr.getString(PrometheusDataResource.CONTROLDATA_ERROR_EXISTS);
 
     /**
      * Get the data version.

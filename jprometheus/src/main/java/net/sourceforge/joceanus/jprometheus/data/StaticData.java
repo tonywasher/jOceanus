@@ -50,7 +50,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.STATICDATA_NAME), EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.STATICDATA_NAME), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -60,37 +60,37 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAITEM_FIELD_NAME));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_NAME));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAITEM_FIELD_DESC));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_DESC));
 
     /**
      * Enabled Field Id.
      */
-    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.STATICDATA_ENABLED));
+    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.STATICDATA_ENABLED));
 
     /**
      * Order Field Id.
      */
-    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.STATICDATA_SORT));
+    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.STATICDATA_SORT));
 
     /**
      * Class Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.STATICDATA_CLASS));
+    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.STATICDATA_CLASS));
 
     /**
      * BadId error.
      */
-    public static final String ERROR_BADID = ResourceMgr.getString(DataResource.STATICDATA_ERROR_ID);
+    public static final String ERROR_BADID = ResourceMgr.getString(PrometheusDataResource.STATICDATA_ERROR_ID);
 
     /**
      * BadName error.
      */
-    public static final String ERROR_BADNAME = ResourceMgr.getString(DataResource.STATICDATA_ERROR_NAME);
+    public static final String ERROR_BADNAME = ResourceMgr.getString(PrometheusDataResource.STATICDATA_ERROR_NAME);
 
     /**
      * The Enum Class for this Static Data.

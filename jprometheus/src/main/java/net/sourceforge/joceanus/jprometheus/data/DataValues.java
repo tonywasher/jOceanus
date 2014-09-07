@@ -77,32 +77,32 @@ public class DataValues<E extends Enum<E>> {
     /**
      * InfoSet Items tag.
      */
-    private static final String TAG_INFOSET = ResourceMgr.getString(DataResource.DATAINFOSET_NAME);
+    private static final String TAG_INFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME);
 
     /**
      * Children Items tag.
      */
-    private static final String TAG_CHILDREN = ResourceMgr.getString(DataResource.DATAVALUES_CHILDREN);
+    private static final String TAG_CHILDREN = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_CHILDREN);
 
     /**
      * Child Item tag.
      */
-    private static final String TAG_CHILD = ResourceMgr.getString(DataResource.DATAVALUES_CHILD);
+    private static final String TAG_CHILD = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_CHILD);
 
     /**
      * List type attribute.
      */
-    protected static final String ATTR_TYPE = ResourceMgr.getString(DataResource.DATAVALUES_ATTRTYPE);
+    protected static final String ATTR_TYPE = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_ATTRTYPE);
 
     /**
      * List size attribute.
      */
-    protected static final String ATTR_SIZE = ResourceMgr.getString(DataResource.DATAVALUES_ATTRSIZE);
+    protected static final String ATTR_SIZE = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_ATTRSIZE);
 
     /**
      * Data Version attribute.
      */
-    protected static final String ATTR_VERS = ResourceMgr.getString(DataResource.DATAVALUES_ATTRVER);
+    protected static final String ATTR_VERS = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_ATTRVER);
 
     /**
      * The item type.

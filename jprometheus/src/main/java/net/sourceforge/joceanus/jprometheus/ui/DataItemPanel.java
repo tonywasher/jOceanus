@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -44,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
@@ -59,14 +59,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     private static final long serialVersionUID = 7514751065536367674L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataItemPanel.class.getName());
-
-    /**
      * Details Tab Title.
      */
-    protected static final String TAB_DETAILS = NLS_BUNDLE.getString("TabDetails");
+    protected static final String TAB_DETAILS = ResourceMgr.getString(PrometheusUIResource.PANEL_TAB_DETAILS);
 
     /**
      * ReadOnly EditVersion.

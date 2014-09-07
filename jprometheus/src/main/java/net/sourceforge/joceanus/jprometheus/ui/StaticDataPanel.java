@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -59,6 +58,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -80,24 +80,19 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     private static final int STRUT_WIDTH = 5;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticDataPanel.class.getName());
-
-    /**
      * Text for Selection Title.
      */
-    private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectionTitle");
+    private static final String NLS_SELECT = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_SELECT);
 
     /**
      * Text for Data.
      */
-    private static final String NLS_DATA = NLS_BUNDLE.getString("StaticData");
+    private static final String NLS_DATA = ResourceMgr.getString(PrometheusUIResource.STATIC_PROMPT_DATA);
 
     /**
      * Text for Show Disabled.
      */
-    private static final String NLS_DISABLED = NLS_BUNDLE.getString("ShowDisabled");
+    private static final String NLS_DISABLED = ResourceMgr.getString(PrometheusUIResource.STATIC_PROMPT_DISABLED);
 
     /**
      * The data control.

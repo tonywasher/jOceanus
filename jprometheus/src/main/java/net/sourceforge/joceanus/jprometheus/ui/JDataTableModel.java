@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.ResourceBundle;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
 
@@ -54,14 +54,9 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     private static final long serialVersionUID = 3815818983288519203L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDataTableModel.class.getName());
-
-    /**
      * Table header.
      */
-    private static final String TITLE_ROW = NLS_BUNDLE.getString("TitleRow");
+    private static final String TITLE_ROW = ResourceMgr.getString(PrometheusUIResource.TABLE_TITLE_ROW);
 
     /**
      * The Table.

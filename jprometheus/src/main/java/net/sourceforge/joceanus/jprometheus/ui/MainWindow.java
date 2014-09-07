@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -61,6 +60,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jtethys.help.HelpWindow;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -73,124 +73,119 @@ import org.slf4j.Logger;
 public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         implements ThreadControl, ActionListener {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainWindow.class.getName());
-
-    /**
      * Data menu title.
      */
-    private static final String MENU_DATA = NLS_BUNDLE.getString("MenuData");
+    private static final String MENU_DATA = ResourceMgr.getString(PrometheusUIResource.MENU_DATA);
 
     /**
      * Edit menu title.
      */
-    private static final String MENU_EDIT = NLS_BUNDLE.getString("MenuEdit");
+    private static final String MENU_EDIT = ResourceMgr.getString(PrometheusUIResource.MENU_EDIT);
 
     /**
      * Backup menu title.
      */
-    private static final String MENU_BACKUP = NLS_BUNDLE.getString("MenuBackup");
+    private static final String MENU_BACKUP = ResourceMgr.getString(PrometheusUIResource.MENU_BACKUP);
 
     /**
      * Security menu title.
      */
-    private static final String MENU_SECURITY = NLS_BUNDLE.getString("MenuSecurity");
+    private static final String MENU_SECURITY = ResourceMgr.getString(PrometheusUIResource.MENU_SECURITY);
 
     /**
      * Help menu title.
      */
-    private static final String MENU_HELP = NLS_BUNDLE.getString("MenuHelp");
+    private static final String MENU_HELP = ResourceMgr.getString(PrometheusUIResource.MENU_HELP);
 
     /**
      * Load Database menu item.
      */
-    private static final String ITEM_LOADDB = NLS_BUNDLE.getString("ItemLoadDB");
+    private static final String ITEM_LOADDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_LOADDB);
 
     /**
      * Store Database menu item.
      */
-    private static final String ITEM_STOREDB = NLS_BUNDLE.getString("ItemStoreDB");
+    private static final String ITEM_STOREDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_STOREDB);
 
     /**
      * Create Database menu item.
      */
-    private static final String ITEM_CREATEDB = NLS_BUNDLE.getString("ItemCreateDB");
+    private static final String ITEM_CREATEDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_CREATEDB);
 
     /**
      * Purge Database menu item.
      */
-    private static final String ITEM_PURGEDB = NLS_BUNDLE.getString("ItemPurgeDB");
+    private static final String ITEM_PURGEDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_PURGEDB);
 
     /**
      * Undo Edit menu item.
      */
-    private static final String ITEM_UNDO = NLS_BUNDLE.getString("ItemUnDo");
+    private static final String ITEM_UNDO = ResourceMgr.getString(PrometheusUIResource.MENUITEM_UNDO);
 
     /**
      * Reset Edit menu item.
      */
-    private static final String ITEM_RESET = NLS_BUNDLE.getString("ItemReset");
+    private static final String ITEM_RESET = ResourceMgr.getString(PrometheusUIResource.MENUITEM_RESET);
 
     /**
      * Create Backup menu item.
      */
-    private static final String ITEM_MAKEBACKUP = NLS_BUNDLE.getString("ItemCreateBackup");
+    private static final String ITEM_MAKEBACKUP = ResourceMgr.getString(PrometheusUIResource.MENUITEM_BACKUPCREATE);
 
     /**
      * Restore Backup menu item.
      */
-    private static final String ITEM_RESTOREBACK = NLS_BUNDLE.getString("ItemRestoreBackup");
+    private static final String ITEM_RESTOREBACK = ResourceMgr.getString(PrometheusUIResource.MENUITEM_BACKUPRESTORE);
 
     /**
      * Create Xml menu item.
      */
-    private static final String ITEM_CREATEXML = NLS_BUNDLE.getString("ItemCreateXml");
+    private static final String ITEM_CREATEXML = ResourceMgr.getString(PrometheusUIResource.MENUITEM_XMLCREATE);
 
     /**
      * Create Xml Xtract menu item.
      */
-    private static final String ITEM_CREATEXTRACT = NLS_BUNDLE.getString("ItemCreateXtract");
+    private static final String ITEM_CREATEXTRACT = ResourceMgr.getString(PrometheusUIResource.MENUITEM_XTRACTCREATE);
 
     /**
      * Load Xml menu item.
      */
-    private static final String ITEM_LOADXML = NLS_BUNDLE.getString("ItemLoadXml");
+    private static final String ITEM_LOADXML = ResourceMgr.getString(PrometheusUIResource.MENUITEM_XMLLOAD);
 
     /**
      * Renew Security.
      */
-    private static final String ITEM_RENEWSEC = NLS_BUNDLE.getString("ItemRenewSecurity");
+    private static final String ITEM_RENEWSEC = ResourceMgr.getString(PrometheusUIResource.MENUITEM_SECURERENEW);
 
     /**
      * Change Password menu item.
      */
-    private static final String ITEM_CHGPASS = NLS_BUNDLE.getString("ItemChangePass");
+    private static final String ITEM_CHGPASS = ResourceMgr.getString(PrometheusUIResource.MENUITEM_CHANGEPASS);
 
     /**
      * Help menu item.
      */
-    private static final String ITEM_HELP = NLS_BUNDLE.getString("ItemHelp");
+    private static final String ITEM_HELP = ResourceMgr.getString(PrometheusUIResource.MENUITEM_HELP);
 
     /**
      * Data Manager menu item.
      */
-    private static final String ITEM_DATAMGR = NLS_BUNDLE.getString("ItemDataMgr");
+    private static final String ITEM_DATAMGR = ResourceMgr.getString(PrometheusUIResource.MENUITEM_DATAMGR);
 
     /**
      * About menu item.
      */
-    private static final String ITEM_ABOUT = NLS_BUNDLE.getString("ItemAbout");
+    private static final String ITEM_ABOUT = ResourceMgr.getString(PrometheusUIResource.MENUITEM_ABOUT);
 
     /**
      * Discard prompt.
      */
-    private static final String PROMPT_DISCARD = NLS_BUNDLE.getString("PromptDiscard");
+    private static final String PROMPT_DISCARD = ResourceMgr.getString(PrometheusUIResource.PROMPT_DISCARD);
 
     /**
      * Close Dialog title.
      */
-    private static final String TITLE_CLOSE = NLS_BUNDLE.getString("TitleClose");
+    private static final String TITLE_CLOSE = ResourceMgr.getString(PrometheusUIResource.TITLE_CLOSE);
 
     /**
      * The data view.

@@ -44,7 +44,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(DataResource.ENCRYPTED_NAME), DataItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.ENCRYPTED_NAME), DataItem.FIELD_DEFS);
 
     @Override
     public EncryptedValueSet getValueSet() {
@@ -64,7 +64,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Error message for bad usage.
      */
-    public static final String ERROR_USAGE = ResourceMgr.getString(DataResource.ENCRYPTED_ERROR_USAGE);
+    public static final String ERROR_USAGE = ResourceMgr.getString(PrometheusDataResource.ENCRYPTED_ERROR_USAGE);
 
     /**
      * Generator field.

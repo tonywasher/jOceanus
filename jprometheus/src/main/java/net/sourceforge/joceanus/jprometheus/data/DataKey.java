@@ -72,27 +72,27 @@ public class DataKey
     /**
      * KeyType Field Id.
      */
-    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAKEY_TYPE));
+    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAKEY_TYPE));
 
     /**
      * HashPrime Field Id.
      */
-    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.CONTROLKEY_PRIME));
+    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_PRIME));
 
     /**
      * KeyDefinition Field Id.
      */
-    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(DataResource.DATAKEY_DEF));
+    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAKEY_DEF));
 
     /**
      * DataKey Field Id.
      */
-    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.DATAKEY_KEY));
+    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.DATAKEY_KEY));
 
     /**
      * Cipher Field Id.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(DataResource.DATAKEY_CIPHER));
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.DATAKEY_CIPHER));
 
     /**
      * Encrypted Symmetric Key Length.
