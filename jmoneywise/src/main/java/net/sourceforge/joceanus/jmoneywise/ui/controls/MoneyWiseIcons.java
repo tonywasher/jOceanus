@@ -39,48 +39,48 @@ public final class MoneyWiseIcons
     /**
      * The program icon.
      */
-    private static final ImageIcon ICON_PROGRAM = new ImageIcon(MoneyWiseIcons.class.getResource("../icons/MoneyWiseIcon.png"));
+    private static final ImageIcon ICON_PROGRAM = new ImageIcon(MoneyWiseIcons.class.getResource("icons/MoneyWiseIcon.png"));
 
     /**
      * The locked icon.
      */
-    private static final Icon ICON_LOCKED = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/AccountLocked.png")));
+    private static final Icon ICON_LOCKED = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/AccountLocked.png")));
 
     /**
      * The unlock-able icon.
      */
-    private static final Icon ICON_UNLOCKABLE = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/PadLock-icon.png")));
+    private static final Icon ICON_UNLOCKABLE = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/PadLock-icon.png")));
 
     /**
      * The lock-able icon.
      */
-    private static final Icon ICON_LOCKABLE = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/Lock-icon.png")));
+    private static final Icon ICON_LOCKABLE = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/Lock-icon.png")));
 
     /**
      * The frozen reconciled icon.
      */
-    private static final Icon ICON_FROZEN_RECONCILED = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/BlueJellyCheck.png")),
+    private static final Icon ICON_FROZEN_RECONCILED = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/BlueJellyCheck.png")),
             ICON_XTRA_SIZE);
 
     /**
      * The cleared check box.
      */
-    private static final Icon ICON_BOXCLEAR = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/GreenJellyClearBox.png")));
+    private static final Icon ICON_BOXCLEAR = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/GreenJellyClearBox.png")));
 
     /**
      * The set check box.
      */
-    private static final Icon ICON_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/GreenJellyCheckBox.png")));
+    private static final Icon ICON_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/GreenJellyCheckBox.png")));
 
     /**
      * The frozen cleared check box.
      */
-    private static final Icon ICON_FROZEN_BOXCLEAR = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/BlueJellyClearBox.png")));
+    private static final Icon ICON_FROZEN_BOXCLEAR = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/BlueJellyClearBox.png")));
 
     /**
      * The frozen set check box.
      */
-    private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("../icons/BlueJellyCheckBox.png")));
+    private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/BlueJellyCheckBox.png")));
 
     /**
      * Resource Bundle.

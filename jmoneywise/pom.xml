@@ -41,7 +41,7 @@
     <svnComponent>jmoneywise</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
     <packageMain>${packageName}.ui.Control</packageMain>
-    <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/icons/MoneyWiseSplash.png</packageSplash>
+    <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/controls/icons/MoneyWiseSplash.png</packageSplash>
   </properties>
   <build>
     <plugins>
