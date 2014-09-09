@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountI
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * PayeeInfoSet class.
@@ -45,14 +45,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 public class CashInfoSet
         extends DataInfoSet<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CashInfoSet.class.getName());
-
-    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.CASH_INFOSET), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -67,7 +62,7 @@ public class CashInfoSet
     /**
      * AutoExpense Not Expense Error Text.
      */
-    private static final String ERROR_AUTOEXP = NLS_BUNDLE.getString("ErrorAutoExpense");
+    private static final String ERROR_AUTOEXP = ResourceMgr.getString(MoneyWiseDataResource.CASH_ERROR_AUTOEXPENSE);
 
     @Override
     public JDataFields getDataFields() {

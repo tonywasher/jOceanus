@@ -23,7 +23,6 @@ o * jMoneyWise: Finance Application
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -50,10 +49,12 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Deposit class.
@@ -72,11 +73,6 @@ public class Deposit
     public static final String LIST_NAME = MoneyWiseDataType.DEPOSIT.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Deposit.class.getName());
-
-    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
@@ -89,7 +85,7 @@ public class Deposit
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_PARENT));
 
     /**
      * Currency Field Id.
@@ -99,27 +95,27 @@ public class Deposit
     /**
      * isGross Field Id.
      */
-    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataGross"));
+    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_GROSS));
 
     /**
      * isTaxFree Field Id.
      */
-    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxFree"));
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_TAXFREE));
 
     /**
      * DepositInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
+    private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_NEWACCOUNT);
 
     /**
      * Do we have an InfoSet.
@@ -139,22 +135,22 @@ public class Deposit
     /**
      * TaxFree Error Text.
      */
-    private static final String ERROR_TAXFREE = NLS_BUNDLE.getString("ErrorTaxFree");
+    private static final String ERROR_TAXFREE = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREE);
 
     /**
      * GrossInterest Error Text.
      */
-    private static final String ERROR_GROSS = NLS_BUNDLE.getString("ErrorGross");
+    private static final String ERROR_GROSS = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_GROSS);
 
     /**
      * taxFree And GrossInterest Error Text.
      */
-    private static final String ERROR_TAXFREEGROSS = NLS_BUNDLE.getString("ErrorTaxFreeGross");
+    private static final String ERROR_TAXFREEGROSS = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS);
 
     /**
      * Parent Closed Error Text.
      */
-    private static final String ERROR_PARCLOSED = NLS_BUNDLE.getString("ErrorParentClosed");
+    private static final String ERROR_PARCLOSED = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED);
 
     @Override
     public JDataFields declareFields() {

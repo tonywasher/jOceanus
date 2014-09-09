@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * PayeeInfoSet class.
@@ -46,14 +46,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public class DepositInfoSet
         extends DataInfoSet<DepositInfo, Deposit, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositInfoSet.class.getName());
-
-    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_INFOSET), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -68,7 +63,7 @@ public class DepositInfoSet
     /**
      * Opening Balance Currency Error Text.
      */
-    private static final String ERROR_BALANCE = NLS_BUNDLE.getString("ErrorBalance");
+    private static final String ERROR_BALANCE = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_BALANCE);
 
     @Override
     public JDataFields getDataFields() {

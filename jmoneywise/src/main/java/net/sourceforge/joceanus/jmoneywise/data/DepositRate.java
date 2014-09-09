@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedRate;
@@ -45,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * AccountRate data type.
@@ -64,11 +64,6 @@ public class DepositRate
     public static final String LIST_NAME = MoneyWiseDataType.DEPOSITRATE.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositRate.class.getName());
-
-    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
@@ -86,22 +81,22 @@ public class DepositRate
     /**
      * Rate Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataRate"));
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_RATE));
 
     /**
      * Bonus Field Id.
      */
-    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataBonus"));
+    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_BONUS));
 
     /**
      * EndDate Field Id.
      */
-    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataEndDate"));
+    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_ENDDATE));
 
     /**
      * Null Date Error.
      */
-    private static final String ERROR_NULLDATE = NLS_BUNDLE.getString("ErrorNullDate");
+    private static final String ERROR_NULLDATE = ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_ERROR_NULLDATE);
 
     @Override
     public boolean includeXmlField(final JDataField pField) {

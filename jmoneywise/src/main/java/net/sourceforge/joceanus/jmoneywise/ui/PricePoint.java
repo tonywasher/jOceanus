@@ -50,14 +50,12 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableMouse;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -227,10 +225,6 @@ public class PricePoint
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
-        /* Add the mouse listener */
-        SpotViewMouse myMouse = new SpotViewMouse(this);
-        addMouseListener(myMouse);
-
         /* Create the sub panels */
         theSelect = new SpotSelect(theView);
         theActionButtons = new ActionButtons(theUpdateSet);
@@ -358,72 +352,6 @@ public class PricePoint
         theActionButtons.setEnabled(true);
         theSelect.setEnabled(true);
         fireStateChanged();
-    }
-
-    /**
-     * Check whether insert is allowed for this table.
-     * @return insert allowed (true/false)
-     */
-    @Override
-    protected boolean insertAllowed() {
-        return false;
-    }
-
-    /**
-     * Check whether a row is deletable.
-     * @param pRow the row
-     * @return is the row deletable
-     */
-    @Override
-    protected boolean isRowDeletable(final SpotSecurityPrice pRow) {
-        /* Switch on the Data State */
-        switch (pRow.getState()) {
-            case CLEAN:
-                DataItem<?> myBase = pRow.getBase();
-                if ((myBase != null) && (myBase.isDeleted())) {
-                    return false;
-                }
-                return true;
-            case NEW:
-            case CHANGED:
-            case RECOVERED:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Check whether a row is recoverable.
-     * @param pRow the row
-     * @return is the row recoverable
-     */
-    @Override
-    protected boolean isRowRecoverable(final SpotSecurityPrice pRow) {
-        /* Switch on the Data State */
-        switch (pRow.getState()) {
-        /* Recoverable if there are changes */
-            case DELNEW:
-                return pRow.hasHistory();
-                /* Recoverable if date is the same */
-            case DELETED:
-                return !pRow.getDate().equals(theDate);
-                /* DELCHG must be recoverable */
-            case DELCHG:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Check whether we can duplicate a row.
-     * @param pRow the row
-     * @return false
-     */
-    @Override
-    protected boolean isRowDuplicatable(final SpotSecurityPrice pRow) {
-        return false;
     }
 
     @Override
@@ -600,21 +528,6 @@ public class PricePoint
                                  final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
-        }
-    }
-
-    /**
-     * SpotView mouse listener.
-     */
-    private static final class SpotViewMouse
-            extends JDataTableMouse<SpotSecurityPrice, MoneyWiseDataType> {
-        /**
-         * Constructor.
-         * @param pTable the table
-         */
-        private SpotViewMouse(final PricePoint pTable) {
-            /* Call super-constructor */
-            super(pTable);
         }
     }
 

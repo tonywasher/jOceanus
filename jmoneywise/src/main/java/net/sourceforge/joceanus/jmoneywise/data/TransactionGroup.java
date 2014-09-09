@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Transaction group type.
@@ -33,14 +32,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 public class TransactionGroup
         extends TransactionBaseGroup<Transaction> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionGroup.class.getName());
-
-    /**
      * Multiple Portfolios Error.
      */
-    private static final String ERROR_PORTFOLIO = NLS_BUNDLE.getString("ErrorMultiplePortfolios");
+    private static final String ERROR_PORTFOLIO = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_MULTPORT);
 
     /**
      * Active Portfolio.

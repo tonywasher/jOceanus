@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
@@ -37,7 +36,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Tag for a transaction.
@@ -56,11 +57,6 @@ public class TransactionTag
     public static final String LIST_NAME = MoneyWiseDataType.TRANSTAG.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionTag.class.getName());
-
-    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
@@ -68,17 +64,17 @@ public class TransactionTag
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_NAME));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_DESC));
 
     /**
      * New Tag name.
      */
-    private static final String NAME_NEWTAG = NLS_BUNDLE.getString("NameNewTag");
+    private static final String NAME_NEWTAG = ResourceMgr.getString(MoneyWiseDataResource.TRANSTAG_NEWTAG);
 
     @Override
     public JDataFields declareFields() {

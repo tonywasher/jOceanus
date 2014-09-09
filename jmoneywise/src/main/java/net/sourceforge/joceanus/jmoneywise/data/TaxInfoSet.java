@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearI
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * TaxInfoSet class.
@@ -46,14 +46,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 public class TaxInfoSet
         extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxInfoSet.class.getName());
-
-    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_INFOSET));
 
     /**
      * FieldSet map.
@@ -68,12 +63,12 @@ public class TaxInfoSet
     /**
      * Allowance Limit Error Text.
      */
-    private static final String ERROR_ALLOW = NLS_BUNDLE.getString("ErrorAllowance");
+    private static final String ERROR_ALLOW = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_ALLOWANCE);
 
     /**
      * LoAgeAllowance Limit Error Text.
      */
-    private static final String ERROR_LOALLOW = NLS_BUNDLE.getString("ErrorLoAllowance");
+    private static final String ERROR_LOALLOW = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_LOALLOWANCE);
 
     @Override
     public JDataFields getDataFields() {

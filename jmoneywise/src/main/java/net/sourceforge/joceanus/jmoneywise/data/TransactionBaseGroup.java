@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -32,6 +31,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataGroup;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Event group type.
@@ -41,29 +41,24 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
         extends DataGroup<T, MoneyWiseDataType> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionBaseGroup.class.getName());
-
-    /**
      * Split Indication.
      */
-    protected static final String NAME_SPLIT = NLS_BUNDLE.getString("SplitIndication");
+    protected static final String NAME_SPLIT = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ID_SPLIT);
 
     /**
      * Multiple Dates Error.
      */
-    private static final String ERROR_DATE = NLS_BUNDLE.getString("ErrorMultipleDates");
+    private static final String ERROR_DATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_MULTDATES);
 
     /**
      * Multiple Payees Error.
      */
-    private static final String ERROR_PAYEE = NLS_BUNDLE.getString("ErrorMultiplePayees");
+    private static final String ERROR_PAYEE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_MULTPAYEES);
 
     /**
      * Bad Owner Error.
      */
-    private static final String ERROR_OWNER = NLS_BUNDLE.getString("ErrorBadOwner");
+    private static final String ERROR_OWNER = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADOWNER);
 
     /**
      * Local Report fields.

@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enumeration of Payee Type Classes.
@@ -84,11 +83,6 @@ public enum PayeeTypeClass implements StaticInterface {
     MARKET(7, 6);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PayeeTypeClass.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -118,7 +112,7 @@ public enum PayeeTypeClass implements StaticInterface {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(StaticDataResource.getKeyForPayeeType(this));
         }
 
         /* return the name */

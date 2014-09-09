@@ -312,7 +312,7 @@ public class SecurityPriceTable
         @Override
         public boolean isCellEditable(final ViewSecurityPrice pItem,
                                       final int pColIndex) {
-            return theColumns.isCellEditable(pItem, pColIndex);
+            return theColumns.isCellEditable(pColIndex);
         }
 
         @Override
@@ -632,8 +632,7 @@ public class SecurityPriceTable
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final ViewSecurityPrice pItem,
-                                       final int pColIndex) {
+        private boolean isCellEditable(final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_DATE:
                 case COLUMN_PRICE:

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.time.Month;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -62,11 +62,6 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     public static final int END_OF_MONTH_DAY = 5;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYearBase.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
@@ -74,12 +69,12 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     /**
      * TaxYear field Id.
      */
-    public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxYear"));
+    public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXYEAR.getItemName());
 
     /**
      * DateRange field Id.
      */
-    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataRange"));
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
 
     /**
      * TaxRegime field Id.
@@ -89,7 +84,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     /**
      * Bad Date Error Text.
      */
-    private static final String ERROR_BADDATE = NLS_BUNDLE.getString("ErrorBadDate");
+    private static final String ERROR_BADDATE = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_BADDATE);
 
     @Override
     public String formatObject() {

@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * MoneyWise Item Types.
@@ -226,11 +225,6 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     SCHEDULE;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseDataType.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -245,7 +239,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(MoneyWiseDataTypeResource.getKeyForDataType(this));
         }
 
         /* return the name */
@@ -268,7 +262,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
         /* If we have not yet loaded the name */
         if (theListName == null) {
             /* Load the name */
-            theListName = NLS_BUNDLE.getString("list" + name());
+            theListName = ResourceMgr.getString(MoneyWiseDataTypeResource.getKeyForDataList(this));
         }
 
         /* return the list name */

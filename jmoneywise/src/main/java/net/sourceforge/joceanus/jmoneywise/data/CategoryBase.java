@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
@@ -37,8 +36,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CategoryInterface;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Category Base class.
@@ -55,11 +56,6 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     public static final String STR_SEP = ":";
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CategoryBase.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(CategoryBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
@@ -67,42 +63,42 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_NAME));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_DESC));
 
     /**
      * Parent Category Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_PARENT));
 
     /**
      * SubCategory Field Id.
      */
-    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataSubCat"));
+    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_SUBCAT));
 
     /**
      * New parent name.
      */
-    private static final String NAME_NEWPARENT = NLS_BUNDLE.getString("NameNewParent");
+    private static final String NAME_NEWPARENT = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_NEWPARENT);
 
     /**
      * New Category name.
      */
-    private static final String NAME_NEWCATEGORY = NLS_BUNDLE.getString("NameNewCategory");
+    private static final String NAME_NEWCATEGORY = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_NEWCAT);
 
     /**
      * Invalid Parent Error.
      */
-    protected static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+    protected static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_ERROR_BADPARENT);
 
     /**
      * NonMatching Parent Error.
      */
-    protected static final String ERROR_MATCHPARENT = NLS_BUNDLE.getString("ErrorMatchParent");
+    protected static final String ERROR_MATCHPARENT = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_ERROR_MATCHPARENT);
 
     @Override
     public String formatObject() {

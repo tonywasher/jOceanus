@@ -22,11 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enumeration of CashCategory Type Classes.
@@ -52,11 +51,6 @@ public enum CashCategoryClass implements CategoryInterface {
      * This is used as a sub-total bucket and is used purely for reporting purposes.
      */
     PARENT(3, 2);
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CashCategoryClass.class.getName());
 
     /**
      * The String name.
@@ -88,7 +82,7 @@ public enum CashCategoryClass implements CategoryInterface {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(StaticDataResource.getKeyForCashType(this));
         }
 
         /* return the name */

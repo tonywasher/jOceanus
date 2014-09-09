@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
@@ -43,10 +42,12 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * TaxYear DataItem utilising TaxYearInfo.
@@ -66,11 +67,6 @@ public class TaxYear
     public static final String LIST_NAME = MoneyWiseDataType.TAXYEAR.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYear.class.getName());
-
-    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TaxYearBase.FIELD_DEFS);
@@ -78,17 +74,17 @@ public class TaxYear
     /**
      * TaxInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
 
     /**
      * Bad ListGap Error Text.
      */
-    private static final String ERROR_LISTGAP = NLS_BUNDLE.getString("ErrorListGap");
+    private static final String ERROR_LISTGAP = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_LISTGAP);
 
     @Override
     public JDataFields declareFields() {

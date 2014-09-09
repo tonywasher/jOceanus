@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedMoney;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
@@ -41,11 +39,13 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Transaction data type.
@@ -66,11 +66,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     private static final char CHAR_BLANK = ' ';
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionBase.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
@@ -78,27 +73,27 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDate"));
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
     /**
      * AssetPair Field Id.
      */
-    public static final JDataField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPair"));
+    public static final JDataField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ASSETPAIR));
 
     /**
      * Debit Field Id.
      */
-    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDebit"));
+    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_DEBIT));
 
     /**
      * Credit Field Id.
      */
-    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCredit"));
+    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_CREDIT));
 
     /**
      * Amount Field Id.
      */
-    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataAmount"));
+    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_AMOUNT));
 
     /**
      * Category Field Id.
@@ -108,42 +103,42 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Reconciled Field Id.
      */
-    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataReconciled"));
+    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_RECONCILED));
 
     /**
      * Split Event Field Id.
      */
-    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSplit"));
+    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_SPLIT));
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_PARENT));
 
     /**
      * Hidden Category Error Text.
      */
-    private static final String ERROR_HIDDEN = NLS_BUNDLE.getString("ErrorHidden");
+    private static final String ERROR_HIDDEN = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_HIDDEN);
 
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
-    private static final String ERROR_COMBO = NLS_BUNDLE.getString("ErrorCombo");
+    private static final String ERROR_COMBO = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_ASSETPAIR);
 
     /**
      * Invalid Parent Error Text.
      */
-    private static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+    private static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADPARENT);
 
     /**
      * Parent Date Error Text.
      */
-    private static final String ERROR_PARENTDATE = NLS_BUNDLE.getString("ErrorParentDate");
+    private static final String ERROR_PARENTDATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_PARENTDATE);
 
     /**
      * Zero Amount Error Text.
      */
-    private static final String ERROR_ZEROAMOUNT = NLS_BUNDLE.getString("ErrorZeroAmount");
+    private static final String ERROR_ZEROAMOUNT = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_ZERO);
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -1481,7 +1476,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /**
          * Range field id.
          */
-        private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRange"));
+        private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

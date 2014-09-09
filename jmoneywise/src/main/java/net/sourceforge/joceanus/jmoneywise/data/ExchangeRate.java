@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Currency;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -44,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ExchangeRate class.
@@ -62,11 +62,6 @@ public final class ExchangeRate
     public static final String LIST_NAME = MoneyWiseDataType.EXCHANGERATE.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ExchangeRate.class.getName());
-
-    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
@@ -74,32 +69,32 @@ public final class ExchangeRate
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDate"));
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
     /**
      * From Currency Field Id.
      */
-    public static final JDataField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataFrom"));
+    public static final JDataField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_FROM));
 
     /**
      * To Currency Field Id.
      */
-    public static final JDataField FIELD_TO = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTo"));
+    public static final JDataField FIELD_TO = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_TO));
 
     /**
      * Rate Type Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataRate"));
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_RATE));
 
     /**
      * Circular Rate Error.
      */
-    private static final String ERROR_CIRCLE = NLS_BUNDLE.getString("ErrorCircle");
+    private static final String ERROR_CIRCLE = ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_ERROR_CIRCLE);
 
     /**
      * Default Rate Error.
      */
-    private static final String ERROR_DEF = NLS_BUNDLE.getString("ErrorDefault");
+    private static final String ERROR_DEF = ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_ERROR_DEFAULT);
 
     @Override
     public JDataFields declareFields() {
@@ -627,7 +622,7 @@ public final class ExchangeRate
         /**
          * Default Field Id.
          */
-        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDef"));
+        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_DEFAULT));
 
         @Override
         public JDataFields declareFields() {

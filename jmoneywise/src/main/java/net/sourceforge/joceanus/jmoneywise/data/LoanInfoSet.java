@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * PayeeInfoSet class.
@@ -44,14 +44,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 public class LoanInfoSet
         extends DataInfoSet<LoanInfo, Loan, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(LoanInfoSet.class.getName());
-
-    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.LOAN_INFOSET), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.

@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * AccountCurrency data type.
@@ -64,7 +65,7 @@ public class AccountCurrency
     /**
      * Default Field Id.
      */
-    public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField("Default");
+    public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(StaticDataResource.CURRENCY_DEFAULT));
 
     @Override
     public JDataFields declareFields() {

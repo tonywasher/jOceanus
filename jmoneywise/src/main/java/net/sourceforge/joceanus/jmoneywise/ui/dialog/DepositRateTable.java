@@ -269,7 +269,7 @@ public class DepositRateTable
         @Override
         public boolean isCellEditable(final DepositRate pItem,
                                       final int pColIndex) {
-            return theColumns.isCellEditable(pItem, pColIndex);
+            return theColumns.isCellEditable(pColIndex);
         }
 
         @Override
@@ -579,12 +579,10 @@ public class DepositRateTable
 
         /**
          * Is the cell editable?
-         * @param pItem the item
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final DepositRate pItem,
-                                       final int pColIndex) {
+        private boolean isCellEditable(final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_RATE:
                 case COLUMN_BONUS:

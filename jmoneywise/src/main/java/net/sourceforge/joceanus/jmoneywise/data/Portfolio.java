@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -47,8 +46,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Portfolio class.
@@ -67,11 +68,6 @@ public class Portfolio
     public static final String LIST_NAME = MoneyWiseDataType.PORTFOLIO.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Portfolio.class.getName());
-
-    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
@@ -79,37 +75,37 @@ public class Portfolio
     /**
      * Holding Field Id.
      */
-    public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHolding"));
+    public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_HOLDING));
 
     /**
      * isTaxFree Field Id.
      */
-    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxFree"));
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_TAXFREE));
 
     /**
      * PortfolioInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
 
     /**
      * Holding Closed Error Text.
      */
-    private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
+    private static final String ERROR_HOLDCLOSED = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDCLOSED);
 
     /**
      * Holding Tax Invalid Error Text.
      */
-    private static final String ERROR_HOLDTAX = NLS_BUNDLE.getString("ErrorHoldTax");
+    private static final String ERROR_HOLDTAX = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDTAX);
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
+    private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_NEWACCOUNT);
 
     /**
      * Do we have an InfoSet.

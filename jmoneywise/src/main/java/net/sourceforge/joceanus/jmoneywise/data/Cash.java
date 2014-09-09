@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -48,8 +47,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Cash class.
@@ -66,11 +67,6 @@ public class Cash
      * List name.
      */
     public static final String LIST_NAME = MoneyWiseDataType.CASH.getListName();
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Cash.class.getName());
 
     /**
      * Local Report fields.
@@ -90,17 +86,17 @@ public class Cash
     /**
      * PayeeInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = NLS_BUNDLE.getString("NameNewAccount");
+    private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.CASH_NEWACCOUNT);
 
     /**
      * Do we have an InfoSet.

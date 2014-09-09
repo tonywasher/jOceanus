@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * SecurityPrice data type.
@@ -67,11 +68,6 @@ public class SecurityPrice
     public static final String LIST_NAME = MoneyWiseDataType.SECURITYPRICE.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityPrice.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
@@ -89,12 +85,12 @@ public class SecurityPrice
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDate"));
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
     /**
      * Price Field Id.
      */
-    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPrice"));
+    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(StaticDataResource.TRANSINFO_PRICE));
 
     @Override
     public boolean includeXmlField(final JDataField pField) {

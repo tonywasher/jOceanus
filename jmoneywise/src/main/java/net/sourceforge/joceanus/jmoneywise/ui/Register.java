@@ -30,9 +30,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -61,14 +59,12 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableMouse;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -129,46 +125,6 @@ public class Register
      * Reconciled Column Title.
      */
     private static final String TITLE_RECONCILED = NLS_BUNDLE.getString("TitleReconciled");
-
-    /**
-     * PopUp viewAccount.
-     */
-    private static final String POPUP_VIEW = NLS_BUNDLE.getString("PopUpViewAccount");
-
-    /**
-     * PopUp maintAccount.
-     */
-    private static final String POPUP_MAINT = NLS_BUNDLE.getString("PopUpMaintAccount");
-
-    /**
-     * PopUp nullDebitUnits.
-     */
-    protected static final String POPUP_NULLDEBUNITS = NLS_BUNDLE.getString("PopUpNullDebitUnits");
-
-    /**
-     * PopUp nullCreditUnits.
-     */
-    protected static final String POPUP_NULLCREDUNITS = NLS_BUNDLE.getString("PopUpNullCreditUnits");
-
-    /**
-     * PopUp nullTaxCredit.
-     */
-    protected static final String POPUP_NULLTAX = NLS_BUNDLE.getString("PopUpNullTax");
-
-    /**
-     * PopUp nullYears.
-     */
-    protected static final String POPUP_NULLYEARS = NLS_BUNDLE.getString("PopUpNullYears");
-
-    /**
-     * PopUp nullDilution.
-     */
-    protected static final String POPUP_NULLDILUTE = NLS_BUNDLE.getString("PopUpNullDilute");
-
-    /**
-     * PopUp calcTax.
-     */
-    protected static final String POPUP_CALCTAX = NLS_BUNDLE.getString("PopUpCalcTax");
 
     /**
      * Data View.
@@ -294,10 +250,6 @@ public class Register
 
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, HEIGHT_PANEL));
-
-        /* Add the mouse listener */
-        RegisterMouse myMouse = new RegisterMouse();
-        addMouseListener(myMouse);
 
         /* Create the sub panels */
         theSelect = new JDateDayRangeSelect(false);
@@ -604,331 +556,6 @@ public class Register
                                  final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
-        }
-    }
-
-    /**
-     * Register mouse listener.
-     */
-    private final class RegisterMouse
-            extends JDataTableMouse<Transaction, MoneyWiseDataType> {
-        /**
-         * Constructor.
-         */
-        private RegisterMouse() {
-            /* Call super-constructor */
-            super(Register.this);
-        }
-
-        /**
-         * Add Null commands to menu.
-         * @param pMenu the menu to add to
-         */
-        @Override
-        protected void addNullCommands(final JPopupMenu pMenu) {
-            JMenuItem myItem;
-            boolean enableNullDebUnits = false;
-            boolean enableNullCredUnits = false;
-            boolean enableNullTax = false;
-            boolean enableNullYears = false;
-            boolean enableNullDilution = false;
-            Register mySelf = Register.this;
-
-            /* Nothing to do if the table is locked */
-            if (mySelf.isLocked()) {
-                return;
-            }
-
-            /* Loop through the selected rows */
-            for (DataItem<?> myRow : mySelf.cacheSelectedRows()) {
-                /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
-                    continue;
-                }
-
-                /* Access as transaction */
-                Transaction myTrans = (Transaction) myRow;
-
-                /* Enable null Units if we have units */
-                if (myTrans.getDebitUnits() != null) {
-                    enableNullDebUnits = true;
-                }
-
-                /* Enable null CreditUnits if we have units */
-                if (myTrans.getCreditUnits() != null) {
-                    enableNullCredUnits = true;
-                }
-
-                /* Enable null Tax if we have tax */
-                if (myTrans.getTaxCredit() != null) {
-                    enableNullTax = true;
-                }
-
-                /* Enable null Years if we have years */
-                if (myTrans.getYears() != null) {
-                    enableNullYears = true;
-                }
-
-                /* Enable null Dilution if we have dilution */
-                if (myTrans.getDilution() != null) {
-                    enableNullDilution = true;
-                }
-            }
-
-            /* If there is something to add and there are already items in the menu */
-            boolean nullItem = enableNullDebUnits || enableNullCredUnits || enableNullTax;
-            nullItem = nullItem || enableNullYears || enableNullDilution;
-            if ((nullItem) && (pMenu.getComponentCount() > 0)) {
-                /* Add a separator */
-                pMenu.addSeparator();
-            }
-
-            /* If we can set null debit units */
-            if (enableNullDebUnits) {
-                /* Add the null choice */
-                myItem = new JMenuItem(POPUP_NULLDEBUNITS);
-                myItem.setActionCommand(POPUP_NULLDEBUNITS);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-
-            /* If we can set null credit units */
-            if (enableNullCredUnits) {
-                /* Add the null choice */
-                myItem = new JMenuItem(POPUP_NULLCREDUNITS);
-                myItem.setActionCommand(POPUP_NULLCREDUNITS);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-
-            /* If we can set null tax */
-            if (enableNullTax) {
-                /* Add the null choice */
-                myItem = new JMenuItem(POPUP_NULLTAX);
-                myItem.setActionCommand(POPUP_NULLTAX);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-
-            /* If we can set null years */
-            if (enableNullYears) {
-                /* Add the null choice */
-                myItem = new JMenuItem(POPUP_NULLYEARS);
-                myItem.setActionCommand(POPUP_NULLYEARS);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-
-            /* If we can set null dilution */
-            if (enableNullDilution) {
-                /* Add the null choice */
-                myItem = new JMenuItem(POPUP_NULLDILUTE);
-                myItem.setActionCommand(POPUP_NULLDILUTE);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-        }
-
-        /**
-         * Add Special commands to menu.
-         * @param pMenu the menu to add to
-         */
-        @Override
-        protected void addSpecialCommands(final JPopupMenu pMenu) {
-            boolean enableCalcTax = false;
-            Register mySelf = Register.this;
-
-            /* Nothing to do if the table is locked */
-            if (mySelf.isLocked()) {
-                return;
-            }
-
-            /* Loop through the selected rows */
-            for (DataItem<?> myRow : mySelf.cacheSelectedRows()) {
-                /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
-                    continue;
-                }
-
-                /* Access as event */
-                Transaction myTrans = (Transaction) myRow;
-                JMoney myTax = myTrans.getTaxCredit();
-                TransactionCategory myCat = myTrans.getCategory();
-
-                /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = (myCat != null) && (myTrans.isInterest() || myTrans.isDividend());
-                if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
-                    enableCalcTax = true;
-                }
-            }
-
-            /* If there is something to add and there are already items in the menu */
-            if ((enableCalcTax) && (pMenu.getComponentCount() > 0)) {
-                /* Add a separator */
-                pMenu.addSeparator();
-            }
-
-            /* If we can calculate tax */
-            if (enableCalcTax) {
-                /* Add the undo change choice */
-                JMenuItem myItem = new JMenuItem(POPUP_CALCTAX);
-                myItem.setActionCommand(POPUP_CALCTAX);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-        }
-
-        /**
-         * Add Navigation commands to menu.
-         * @param pMenu the menu to add to
-         */
-        @Override
-        protected void addNavigationCommands(final JPopupMenu pMenu) {
-            /* Nothing to do if the table is locked */
-            if (Register.this.isLocked()) {
-                return;
-            }
-
-            /* Access the popUp row/column and ignore if not valid */
-            int myRow = getPopupRow();
-            int myCol = getPopupCol();
-            if (myRow < 0) {
-                return;
-            }
-
-            /* Access the transaction */
-            Transaction myTrans = theModel.getItemAtIndex(myRow);
-
-            /* If the column is Credit */
-            AssetBase<?> myAccount;
-            if (myCol == RegisterColumnModel.COLUMN_CREDIT) {
-                myAccount = myTrans.getCredit();
-            } else if (myCol == RegisterColumnModel.COLUMN_DEBIT) {
-                myAccount = myTrans.getDebit();
-            } else {
-                myAccount = null;
-            }
-
-            /* If we have an account we can navigate */
-            boolean enableNavigate = myAccount != null;
-
-            /* If there is something to add and there are already items in the menu */
-            if ((enableNavigate) && (pMenu.getComponentCount() > 0)) {
-                /* Add a separator */
-                pMenu.addSeparator();
-            }
-
-            /* If we can navigate */
-            if (enableNavigate) {
-                /* Create the View account choice */
-                JMenuItem myItem = new JMenuItem(POPUP_VIEW + ": " + myAccount.getName());
-
-                /* Set the command and add to menu */
-                myItem.setActionCommand(POPUP_VIEW + ":" + myAccount.getName());
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-
-                /* Create the Maintain account choice */
-                myItem = new JMenuItem(POPUP_MAINT + ": " + myAccount.getName());
-
-                /* Set the command and add to menu */
-                myItem.setActionCommand(POPUP_MAINT + ":" + myAccount.getName());
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            String myCmd = evt.getActionCommand();
-
-            /* Cancel any editing */
-            Register.this.cancelEditing();
-
-            /* If this is a calculate Tax Credits command */
-            if (myCmd.equals(POPUP_CALCTAX)) {
-                /* Calculate the tax credits */
-                calculateTaxCredits();
-
-                /* If this is a navigate command */
-            } else if ((myCmd.startsWith(POPUP_VIEW)) || (myCmd.startsWith(POPUP_MAINT))) {
-                /* perform the navigation */
-                performNavigation(myCmd);
-
-                /* else we do not recognise the action */
-            } else {
-                /* Pass it to the superclass */
-                super.actionPerformed(evt);
-                return;
-            }
-
-            /* Notify of any changes */
-            theModel.fireTableDataChanged();
-            notifyChanges();
-        }
-
-        /**
-         * Calculate tax credits.
-         */
-        private void calculateTaxCredits() {
-            Register mySelf = Register.this;
-
-            /* Loop through the selected rows */
-            for (DataItem<?> myRow : mySelf.cacheSelectedRows()) {
-                /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
-                    continue;
-                }
-
-                /* Access the event */
-                Transaction myTrans = (Transaction) myRow;
-                TransactionCategory myCat = myTrans.getCategory();
-                JMoney myTax = myTrans.getTaxCredit();
-
-                /* Ignore rows with invalid category type */
-                if ((myCat == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
-                    continue;
-                }
-
-                /* Ignore rows with tax credit already set */
-                if ((myTax != null) && (myTax.isNonZero())) {
-                    continue;
-                }
-
-                /* Calculate the tax credit */
-                myTax = myTrans.calculateTaxCredit();
-            }
-
-            /* Increment version */
-            theUpdateSet.incrementVersion();
-        }
-
-        /**
-         * Perform a navigation command.
-         * @param pCmd the navigation command
-         */
-        private void performNavigation(final String pCmd) {
-            /* Access the action command */
-            // String[] tokens = pCmd.split(":");
-            // String myCmd = tokens[0];
-            // String myName = null;
-            // if (tokens.length > 1) {
-            // myName = tokens[1];
-            // }
-
-            /* Access the correct account */
-            // Account myAccount = theView.getData().getAccounts().findItemByName(myName);
-
-            /* If this is an account view request */
-            // if (myCmd.compareTo(POPUP_VIEW) == 0) {
-            /* Switch view */
-            // fireActionEvent(MainTab.ACTION_VIEWACCOUNT, new ActionRequest(myAccount, theSelect));
-
-            /* If this is an account maintenance request */
-            // } else if (myCmd.compareTo(POPUP_MAINT) == 0) {
-            /* Switch view */
-            // fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(myAccount));
-            // }
         }
     }
 

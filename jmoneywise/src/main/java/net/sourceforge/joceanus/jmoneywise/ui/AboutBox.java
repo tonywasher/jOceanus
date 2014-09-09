@@ -37,8 +37,6 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
-import org.slf4j.Logger;
-
 /**
  * Display the about box.
  */
@@ -84,11 +82,9 @@ public class AboutBox
      * Constructor.
      * @param pParent the parent frame for the dialog
      * @param pTitle the title
-     * @param pLogger the logger
      */
     public AboutBox(final JFrame pParent,
-                    final String pTitle,
-                    final Logger pLogger) {
+                    final String pTitle) {
         /* Initialise the dialog (this calls dialogInit) */
         super(pParent, pTitle, true);
 

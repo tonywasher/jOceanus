@@ -305,6 +305,11 @@ public enum PrometheusDataResource implements ResourceId {
     DATAINFOSET_VALUES("DataInfoSet.Values"),
 
     /**
+     * DataInfoSet Values.
+     */
+    DATAINFOSET_ERROR_BADSET("DataInfoSet.Error.BadSet"),
+
+    /**
      * DataValues Children.
      */
     DATAVALUES_CHILDREN("DataValues.Children"),

@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
@@ -39,9 +38,11 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Class representing an account that can be part of a transaction.
@@ -51,11 +52,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
         extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<T> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AssetBase.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(AssetBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
@@ -63,47 +59,47 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_NAME));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_DESC));
 
     /**
      * isClosed Field Id.
      */
-    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_CLOSED));
 
     /**
      * CloseDate Field Id.
      */
-    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCloseDate"));
+    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_CLOSEDATE));
 
     /**
      * firstEvent Field Id.
      */
-    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataFirstEvent"));
+    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_FIRSTEVENT));
 
     /**
      * lastEvent Field Id.
      */
-    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLastEvent"));
+    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_LASTEVENT));
 
     /**
      * isRelevant Field Id.
      */
-    private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsRelevant"));
+    private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_RELEVANT));
 
     /**
      * Bad category error.
      */
-    protected static final String ERROR_BADCATEGORY = NLS_BUNDLE.getString("ErrorBadCategory");
+    protected static final String ERROR_BADCATEGORY = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_BADCAT);
 
     /**
      * Bad parent error.
      */
-    protected static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+    protected static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_BADPARENT);
 
     @Override
     public String formatObject() {

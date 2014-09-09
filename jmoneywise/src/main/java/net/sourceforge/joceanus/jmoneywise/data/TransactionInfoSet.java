@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * EventInfoSet class.
@@ -50,14 +50,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 public class TransactionInfoSet
         extends DataInfoSet<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionInfoSet.class.getName());
-
-    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_INFOSET), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -72,7 +67,7 @@ public class TransactionInfoSet
     /**
      * Bad Credit Date Error Text.
      */
-    private static final String ERROR_BADDATE = NLS_BUNDLE.getString("ErrorBadDate");
+    private static final String ERROR_BADDATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADCREDITDATE);
 
     @Override
     public JDataFields getDataFields() {

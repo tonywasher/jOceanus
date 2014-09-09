@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enumeration of Tax Category Classes.
@@ -234,11 +233,6 @@ public enum TaxCategoryClass implements StaticInterface {
     TAXPROFITLOSS(40, 1, TaxCategorySection.TAXTOTAL);
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCategoryClass.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -281,7 +275,7 @@ public enum TaxCategoryClass implements StaticInterface {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(StaticDataResource.getKeyForTaxCategory(this));
         }
 
         /* return the name */

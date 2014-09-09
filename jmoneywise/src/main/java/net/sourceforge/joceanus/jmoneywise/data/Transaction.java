@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -48,6 +47,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -74,11 +75,6 @@ public class Transaction
     public static final String LIST_NAME = MoneyWiseDataType.TRANSACTION.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Transaction.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
@@ -86,22 +82,22 @@ public class Transaction
     /**
      * EventInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
 
     /**
      * Early Date Error Text.
      */
-    private static final String ERROR_BADDATE = NLS_BUNDLE.getString("ErrorBadDate");
+    private static final String ERROR_BADDATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE);
 
     /**
      * Circular update Error Text.
      */
-    private static final String ERROR_CIRCULAR = NLS_BUNDLE.getString("ErrorCircular");
+    private static final String ERROR_CIRCULAR = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_CIRCLE);
 
     @Override
     public JDataFields declareFields() {
@@ -893,7 +889,7 @@ public class Transaction
         /**
          * EventGroupList field Id.
          */
-        private static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGroups"));
+        private static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_GROUPS));
 
         /**
          * EventGroupMap.
