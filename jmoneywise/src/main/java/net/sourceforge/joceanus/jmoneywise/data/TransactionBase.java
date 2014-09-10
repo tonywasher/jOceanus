@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -1096,6 +1097,17 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 /* Dividend must be paid to valued account or else re-invested into capital */
                 return myCreditType.isValued() || (isRecursive && myDebit.isCapital());
 
+            case CASHBACK:
+                /* CashBack must be from creditCard to Asset */
+                return (myDebit instanceof Loan)
+                       && ((Loan) myDebit).isLoanClass(LoanCategoryClass.CREDITCARD)
+                       && myCreditType.isAsset();
+
+            case LOYALTYBONUS:
+                /* LoyaltyBonus must be from portfolio to Security/Deposit */
+                return (myDebit instanceof Portfolio)
+                       && ((myCredit instanceof Security) || (myCredit instanceof Deposit));
+
             case STOCKRIGHTSTAKEN:
                 /* Stock rights taken is a transfer from a valued account to shares */
                 return myDebitType.isValued() && myCredit.isShares();
@@ -1159,6 +1171,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             case EXPENSE:
                 /* Recovered expense is from nonAsset to Asset */
                 return !myDebitType.isValued() && myCreditType.isValued();
+
+            case PORTFOLIOXFER:
+                /* portfolioXfer is nonRecursive and from Portfolio/Security to Portfolio */
+                return !isRecursive
+                       && (myCredit instanceof Portfolio)
+                       && ((myDebit instanceof Security) || (myCredit instanceof Portfolio));
 
             default:
                 return false;

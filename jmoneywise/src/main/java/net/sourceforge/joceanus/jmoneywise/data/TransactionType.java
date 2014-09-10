@@ -173,6 +173,10 @@ public enum TransactionType {
             case INHERITED:
             case MARKETGROWTH:
             case CAPITALGAIN:
+            case CASHBACK:
+            case LOYALTYBONUS:
+            case OPTIONSEXERCISE:
+            case OPTIONSVEST:
             case OTHERINCOME:
                 return INCOME;
             case TRANSFER:

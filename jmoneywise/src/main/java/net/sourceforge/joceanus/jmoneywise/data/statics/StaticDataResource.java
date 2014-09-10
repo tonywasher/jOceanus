@@ -196,6 +196,11 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_LOANINTEARNED("TransType.LoanInterestEarned"),
 
     /**
+     * TransType LoyaltyBonus.
+     */
+    TRANSTYPE_LOYALTYBONUS("TransType.LoyaltyBonus"),
+
+    /**
      * TransType TaxedIncome.
      */
     TRANSTYPE_OTHERINCOME("TransType.OtherIncome"),
@@ -236,9 +241,9 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_STOCKRIGHTWAIVE("TransType.StockRightsWaived"),
 
     /**
-     * TransType OptionsGrant.
+     * TransType PortfolioXfer.
      */
-    TRANSTYPE_OPTIONSGRANT("TransType.OptionsGrant"),
+    TRANSTYPE_PORTFOLIOXFER("TransType.PortfolioXfer"),
 
     /**
      * TransType OptionsVest.
@@ -249,11 +254,6 @@ public enum StaticDataResource implements ResourceId {
      * TransType OptionsExercise.
      */
     TRANSTYPE_OPTIONSEXERCISE("TransType.OptionsExercise"),
-
-    /**
-     * TransType OptionsGrant.
-     */
-    TRANSTYPE_OPTIONSEXPIRE("TransType.OptionsExpire"),
 
     /**
      * TransType Expense.
@@ -1131,6 +1131,8 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_INHERITED;
             case LOANINTERESTEARNED:
                 return TRANSTYPE_LOANINTEARNED;
+            case LOYALTYBONUS:
+                return TRANSTYPE_LOYALTYBONUS;
             case OTHERINCOME:
                 return TRANSTYPE_OTHERINCOME;
             case TRANSFER:
@@ -1147,14 +1149,12 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_STOCKRIGHTTAKE;
             case STOCKRIGHTSWAIVED:
                 return TRANSTYPE_STOCKRIGHTWAIVE;
-            case OPTIONSGRANT:
-                return TRANSTYPE_OPTIONSGRANT;
+            case PORTFOLIOXFER:
+                return TRANSTYPE_PORTFOLIOXFER;
             case OPTIONSVEST:
                 return TRANSTYPE_OPTIONSVEST;
             case OPTIONSEXERCISE:
                 return TRANSTYPE_OPTIONSEXERCISE;
-            case OPTIONSEXPIRE:
-                return TRANSTYPE_OPTIONSEXPIRE;
             case EXPENSE:
                 return TRANSTYPE_EXPENSE;
             case LOCALTAXES:

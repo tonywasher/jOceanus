@@ -900,6 +900,8 @@ public final class TaxBasisBucket
                 case LOANINTERESTEARNED:
                 case GRANTINCOME:
                 case INHERITED:
+                case CASHBACK:
+                case LOYALTYBONUS:
                 case GIFTEDINCOME:
                     /* Adjust the Tax Free bucket */
                     myBucket = getBucket(TaxBasisClass.TAXFREE);
@@ -916,11 +918,13 @@ public final class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.EXPENSE);
                     myBucket.addExpenseTransaction(pTrans);
                     break;
+                case STOCKADJUST:
                 case STOCKTAKEOVER:
                 case STOCKSPLIT:
                 case STOCKDEMERGER:
                 case STOCKRIGHTSTAKEN:
                 case STOCKRIGHTSWAIVED:
+                case PORTFOLIOXFER:
                 case TRANSFER:
                 default:
                     break;

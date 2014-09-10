@@ -364,12 +364,14 @@ public class TransactionAnalyser
                     myDebit = myDebit.getParent();
                     break;
                 case LOANINTERESTEARNED:
-                    /* True debit account is the parent of the loan */
+                case CASHBACK:
+                case LOYALTYBONUS:
+                    /* True debit account is the parent of the asset */
                     myDebit = myDebit.getParent();
                     break;
                 case RENTALINCOME:
                 case ROOMRENTALINCOME:
-                    /* True debit account is the parent of the loan */
+                    /* True debit account is the parent of the security */
                     myChild = myDebit.equals(myCredit)
                                                       ? null
                                                       : myDebit;

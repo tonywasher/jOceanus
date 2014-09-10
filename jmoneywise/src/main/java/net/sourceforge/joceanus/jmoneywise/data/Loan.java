@@ -525,6 +525,16 @@ public class Loan
     }
 
     /**
+     * Is this payee the required class.
+     * @param pClass the required payee class.
+     * @return true/false
+     */
+    public boolean isLoanClass(final LoanCategoryClass pClass) {
+        /* Check for match */
+        return getCategoryClass() == pClass;
+    }
+
+    /**
      * Copy Constructor.
      * @param pList the list
      * @param pLoan The Loan to copy
