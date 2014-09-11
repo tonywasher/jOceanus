@@ -196,6 +196,11 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_LOANINTEARNED("TransType.LoanInterestEarned"),
 
     /**
+     * TransType CashBack.
+     */
+    TRANSTYPE_CASHBACK("TransType.CashBack"),
+
+    /**
      * TransType LoyaltyBonus.
      */
     TRANSTYPE_LOYALTYBONUS("TransType.LoyaltyBonus"),
@@ -333,7 +338,7 @@ public enum StaticDataResource implements ResourceId {
     /**
      * TransType CapitalGain.
      */
-    TRANSTYPE_MARKETGROWTH("TransType.MarkeytGrowth"),
+    TRANSTYPE_MARKETGROWTH("TransType.MarketGrowth"),
 
     /**
      * TransType CurrencyFluctuation.
@@ -408,12 +413,12 @@ public enum StaticDataResource implements ResourceId {
     /**
      * TaxBasis TaxableGains.
      */
-    TAXBASIS_TAXABLEGAINS("TaxBasis.TaxableGains"),
+    TAXBASIS_TAXABLEGAINS("TaxBasis.GrossTaxableGains"),
 
     /**
      * TaxBasis CapitalGains.
      */
-    TAXBASIS_CAPITALGAINS("TaxBasis.CapitalGains"),
+    TAXBASIS_CAPITALGAINS("TaxBasis.GrossCapitalGains"),
 
     /**
      * TaxBasis TaxPaid.
@@ -1131,6 +1136,8 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_INHERITED;
             case LOANINTERESTEARNED:
                 return TRANSTYPE_LOANINTEARNED;
+            case CASHBACK:
+                return TRANSTYPE_CASHBACK;
             case LOYALTYBONUS:
                 return TRANSTYPE_LOYALTYBONUS;
             case OTHERINCOME:

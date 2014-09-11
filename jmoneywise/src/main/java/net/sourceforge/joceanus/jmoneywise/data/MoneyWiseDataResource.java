@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
+import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
 
 /**
@@ -228,7 +229,7 @@ public enum MoneyWiseDataResource implements ResourceId {
     /**
      * AssetType AutoExpense.
      */
-    ASSETTYPE_AUTOEXPENSE("CashInfo.AutoExpense"),
+    ASSETTYPE_AUTOEXPENSE(StaticDataResource.CASHTYPE_AUTO),
 
     /**
      * AssetType Loan.

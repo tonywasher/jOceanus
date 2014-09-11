@@ -504,7 +504,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         setValueOrder(pClass.getOrder());
 
         /* Record the name */
-        setValueName(pClass.name());
+        setValueName(pClass.toString());
         setValueEnabled(Boolean.TRUE);
 
         /* Set the DataKeySet */
@@ -592,7 +592,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /* Loop through the enum constants */
         for (S myValue : myEnums) {
             /* If this is the desired value */
-            if (myValue.name().equalsIgnoreCase(pValue)) {
+            if (myValue.toString().equalsIgnoreCase(pValue)) {
                 /* Store the class */
                 setValueClass(myValue);
 

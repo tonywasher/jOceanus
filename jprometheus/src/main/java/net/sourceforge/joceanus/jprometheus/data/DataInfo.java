@@ -107,13 +107,29 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
     @Override
     public boolean skipField(final JDataField pField) {
-        if ((FIELD_LINK.equals(pField)) && !getInfoClass().isLink()) {
+        if ((FIELD_LINK.equals(pField)) && !isInfoLink()) {
             return true;
         }
-        if ((FIELD_VALUE.equals(pField)) && getInfoClass().isLink()) {
+        if ((FIELD_VALUE.equals(pField)) && isInfoLink()) {
             return true;
         }
         return super.skipField(pField);
+    }
+
+    /**
+     * Is this item a link as far as skipField is concerned?
+     * @return true/false
+     */
+    private boolean isInfoLink() {
+        /* Access Info Class Value */
+        EncryptedValueSet myValues = getValueSet();
+        Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        if (!(myType instanceof StaticData)) {
+            return false;
+        }
+
+        /* Access class */
+        return getInfoClass().isLink();
     }
 
     @Override
