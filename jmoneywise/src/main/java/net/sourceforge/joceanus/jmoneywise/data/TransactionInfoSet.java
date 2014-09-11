@@ -334,6 +334,10 @@ public class TransactionInfoSet
                        && (((Security) pDebit).isSecurityClass(SecurityTypeClass.LIFEBOND))
                                                                                            ? JDataFieldRequired.MUSTEXIST
                                                                                            : JDataFieldRequired.NOTALLOWED;
+            case LOYALTYBONUS:
+                return (pDebit instanceof Portfolio) && (!((Portfolio) pDebit).isTaxFree())
+                                                                                           ? JDataFieldRequired.MUSTEXIST
+                                                                                           : JDataFieldRequired.NOTALLOWED;
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }

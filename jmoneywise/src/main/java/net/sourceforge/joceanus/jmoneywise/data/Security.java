@@ -114,16 +114,6 @@ public class Security
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
-     * Bad InfoSet Error Text.
-     */
-    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
-
-    /**
-     * Parent Closed Error Text.
-     */
-    private static final String ERROR_PARCLOSED = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED);
-
-    /**
      * New Account name.
      */
     private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.SECURITY_NEWACCOUNT);

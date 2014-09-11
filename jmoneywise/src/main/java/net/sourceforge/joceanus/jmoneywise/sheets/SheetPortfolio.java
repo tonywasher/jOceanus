@@ -55,9 +55,14 @@ public class SheetPortfolio
     private static final int COL_DESC = COL_NAME + 1;
 
     /**
+     * Parent column.
+     */
+    private static final int COL_PARENT = COL_DESC + 1;
+
+    /**
      * Holding column.
      */
-    private static final int COL_HOLDING = COL_DESC + 1;
+    private static final int COL_HOLDING = COL_PARENT + 1;
 
     /**
      * TaxFree column.
@@ -104,6 +109,7 @@ public class SheetPortfolio
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
+        myValues.addValue(Portfolio.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Portfolio.FIELD_HOLDING, loadInteger(COL_HOLDING));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, loadBytes(COL_DESC));
@@ -118,6 +124,7 @@ public class SheetPortfolio
     protected void insertSecureItem(final Portfolio pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
+        writeInteger(COL_PARENT, pItem.getParentId());
         writeInteger(COL_HOLDING, pItem.getHoldingId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -175,8 +182,10 @@ public class SheetPortfolio
             isClosed = myCell.getBooleanValue();
         }
 
-        /* Skip parent, alias and portfolio columns */
-        iAdjust++;
+        /* Access Parent account */
+        String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Skip alias and portfolio columns */
         iAdjust++;
         iAdjust++;
 
@@ -186,6 +195,7 @@ public class SheetPortfolio
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myName);
+        myValues.addValue(Portfolio.FIELD_PARENT, myParent);
         myValues.addValue(Portfolio.FIELD_HOLDING, myHolding);
         myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
         myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);

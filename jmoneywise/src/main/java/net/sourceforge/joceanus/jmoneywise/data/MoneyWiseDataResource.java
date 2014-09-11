@@ -372,6 +372,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     PORTFOLIO_ERROR_HOLDTAX("Portfolio.Error.HoldTax"),
 
     /**
+     * Portfolio HoldingParent Error.
+     */
+    PORTFOLIO_ERROR_HOLDPARENT("Portfolio.Error.HoldParent"),
+
+    /**
      * Transaction AssetPair.
      */
     TRANSACTION_ASSETPAIR("Transaction.AssetPair"),

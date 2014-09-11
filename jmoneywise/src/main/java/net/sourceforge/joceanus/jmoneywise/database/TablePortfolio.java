@@ -59,6 +59,7 @@ public class TablePortfolio
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
+        myTableDef.addReferenceColumn(Portfolio.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addReferenceColumn(Portfolio.FIELD_HOLDING, TableDeposit.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(Portfolio.FIELD_DESC, Portfolio.DESCLEN);
         myTableDef.addBooleanColumn(Portfolio.FIELD_TAXFREE);
@@ -81,6 +82,7 @@ public class TablePortfolio
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myTableDef.getBinaryValue(Portfolio.FIELD_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, myTableDef.getBinaryValue(Portfolio.FIELD_DESC));
+        myValues.addValue(Portfolio.FIELD_PARENT, myTableDef.getIntegerValue(Portfolio.FIELD_PARENT));
         myValues.addValue(Portfolio.FIELD_HOLDING, myTableDef.getIntegerValue(Portfolio.FIELD_HOLDING));
         myValues.addValue(Portfolio.FIELD_TAXFREE, myTableDef.getBooleanValue(Portfolio.FIELD_TAXFREE));
         myValues.addValue(Portfolio.FIELD_CLOSED, myTableDef.getBooleanValue(Portfolio.FIELD_CLOSED));
@@ -98,6 +100,8 @@ public class TablePortfolio
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Portfolio.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
+        } else if (Portfolio.FIELD_PARENT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Portfolio.FIELD_HOLDING.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getHoldingId());
         } else if (Portfolio.FIELD_TAXFREE.equals(iField)) {

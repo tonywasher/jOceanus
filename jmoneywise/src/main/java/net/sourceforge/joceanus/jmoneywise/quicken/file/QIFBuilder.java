@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
@@ -326,9 +327,14 @@ public class QIFBuilder {
         AssetBase<?> myCredit = pTrans.getCredit();
         TransactionCategory myCat = pTrans.getCategory();
 
-        /* If this is a cash AutoExpense */
-        if ((myCredit instanceof Cash)
-            && ((Cash) myCredit).isAutoExpense()) {
+        /* If this is a loyaltyBonus */
+        if (myDebit instanceof Portfolio) {
+            /* Process as loyaltyBonus */
+            processLoyaltyBonus((Portfolio) myDebit, pTrans);
+
+            /* If this is a cash AutoExpense */
+        } else if ((myCredit instanceof Cash)
+                   && ((Cash) myCredit).isAutoExpense()) {
             /* Process as standard expense */
             processCashExpense((Cash) myCredit, pTrans);
 
@@ -356,6 +362,10 @@ public class QIFBuilder {
         } else {
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
+                case CASHBACK:
+                    /* Process as cashBack payment */
+                    processCashBack(pTrans);
+                    break;
                 case INTEREST:
                     /* Process as interest payment */
                     processInterest(pTrans);
@@ -839,6 +849,115 @@ public class QIFBuilder {
 
             /* Add event to event list */
             myAccount.addEvent(myEvent);
+        }
+    }
+
+    /**
+     * Process cashBack.
+     * @param pTrans the transaction
+     */
+    protected void processCashBack(final Transaction pTrans) {
+        /* Access details */
+        AssetBase<?> myDebit = pTrans.getDebit();
+        AssetBase<?> myCredit = pTrans.getCredit();
+        JMoney myAmount = pTrans.getAmount();
+
+        /* Determine mode */
+        boolean isRecursive = myDebit.equals(myCredit);
+        boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
+
+        /* Access the Account details */
+        QIFAccountEvents myBaseAccount = theFile.registerAccount(myDebit);
+
+        /* Access the payee */
+        QIFPayee myPayee = theFile.registerPayee((Payee) myDebit.getParent());
+
+        /* Access the category */
+        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
+        /* If this is a simple cashBack */
+        if (isRecursive) {
+            /* Create a new event */
+            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+
+            /* Build simple event and add it */
+            myEvent.recordAmount(myAmount);
+            myEvent.recordPayee(myPayee);
+            myEvent.recordCategory(myCategory, myList);
+
+            /* Add event to event list */
+            myBaseAccount.addEvent(myEvent);
+
+            /* Else we need splits */
+        } else {
+            /* Create a new event */
+            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+
+            /* Record basic details */
+            myEvent.recordAmount(isRecursive
+                                            ? myAmount
+                                            : new JMoney());
+            myEvent.recordPayee(myPayee);
+
+            /* Add Split event */
+            myAmount = new JMoney(myAmount);
+            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
+
+            /* Add to amount */
+            JMoney myOutAmount = new JMoney(pTrans.getAmount());
+            myOutAmount.negate();
+
+            /* Access the Account details */
+            QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+
+            /* Add Split event */
+            myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
+
+            /* Add event to event list */
+            myBaseAccount.addEvent(myEvent);
+        }
+
+        /* If we need a balancing transfer */
+        if (!isRecursive && !hideBalancingTransfer) {
+            /* Access the Account details */
+            QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+
+            /* Create a new event */
+            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+
+            /* Build simple event and add it */
+            myEvent.recordAmount(pTrans.getAmount());
+            myEvent.recordAccount(myBaseAccount.getAccount(), myList);
+
+            /* Build payee description */
+            myEvent.recordPayee(buildXferFromPayee(myDebit));
+
+            /* Add event to event list */
+            myAccount.addEvent(myEvent);
+        }
+    }
+
+    /**
+     * Process loyaltyBonus.
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     */
+    protected void processLoyaltyBonus(final Portfolio pPortfolio,
+                                       final Transaction pTrans) {
+        /* Access details */
+        Payee myPayee = pPortfolio.getParent();
+
+        /* if we have additional detail */
+        if (hasXtraDetail(pTrans)) {
+            /* process as detailed income */
+            processDetailedIncome(myPayee, pTrans);
+
+        } else {
+            /* process as standard income */
+            processStandardIncome(myPayee, pTrans);
         }
     }
 

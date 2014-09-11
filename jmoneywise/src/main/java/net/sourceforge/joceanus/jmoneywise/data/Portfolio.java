@@ -36,10 +36,12 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -73,6 +75,11 @@ public class Portfolio
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
+     * Parent Field Id.
+     */
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_PARENT));
+
+    /**
      * Holding Field Id.
      */
     public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_HOLDING));
@@ -88,14 +95,14 @@ public class Portfolio
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
-     * Bad InfoSet Error Text.
-     */
-    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
-
-    /**
      * Holding Closed Error Text.
      */
     private static final String ERROR_HOLDCLOSED = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDCLOSED);
+
+    /**
+     * Holding Parent Error Text.
+     */
+    private static final String ERROR_HOLDPARENT = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDPARENT);
 
     /**
      * Holding Tax Invalid Error Text.
@@ -130,6 +137,9 @@ public class Portfolio
     @Override
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
+        if (FIELD_PARENT.equals(pField)) {
+            return true;
+        }
         if (FIELD_HOLDING.equals(pField)) {
             return true;
         }
@@ -245,6 +255,33 @@ public class Portfolio
                          : null;
     }
 
+    @Override
+    public Payee getParent() {
+        return getParent(getValueSet());
+    }
+
+    /**
+     * Obtain ParentId.
+     * @return the parentId
+     */
+    public Integer getParentId() {
+        Payee myParent = getParent();
+        return (myParent == null)
+                                 ? null
+                                 : myParent.getId();
+    }
+
+    /**
+     * Obtain ParentName.
+     * @return the parentName
+     */
+    public String getParentName() {
+        Payee myParent = getParent();
+        return (myParent == null)
+                                 ? null
+                                 : myParent.getName();
+    }
+
     /**
      * Obtain Holding.
      * @return the holding account
@@ -284,6 +321,15 @@ public class Portfolio
     }
 
     /**
+     * Obtain Parent.
+     * @param pValueSet the valueSet
+     * @return the Parent
+     */
+    public static Payee getParent(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARENT, Payee.class);
+    }
+
+    /**
      * Obtain Holding.
      * @param pValueSet the valueSet
      * @return the Holding Account
@@ -299,6 +345,30 @@ public class Portfolio
      */
     public static Boolean isTaxFree(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_TAXFREE, Boolean.class);
+    }
+
+    /**
+     * Set parent value.
+     * @param pValue the value
+     */
+    private void setValueParent(final Payee pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent id.
+     * @param pValue the value
+     */
+    private void setValueParent(final Integer pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent name.
+     * @param pValue the value
+     */
+    private void setValueParent(final String pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
     /**
@@ -500,8 +570,16 @@ public class Portfolio
 
         /* Protect against exceptions */
         try {
+            /* Store the Parent */
+            Object myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
             /* Store the Holding */
-            Object myValue = pValues.getValue(FIELD_HOLDING);
+            myValue = pValues.getValue(FIELD_HOLDING);
             if (myValue instanceof Integer) {
                 setValueHolding((Integer) myValue);
             } else if (myValue instanceof String) {
@@ -555,15 +633,39 @@ public class Portfolio
     }
 
     /**
+     * adjust values after parent change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void adjustForParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access taxFree status */
+        Boolean isTaxFree = isTaxFree();
+        Payee myParent = getParent();
+        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        setHolding(myDeposits.getDefaultHolding(myParent, isTaxFree));
+    }
+
+    /**
      * adjust values after taxFree change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
     public void adjustForTaxFree(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Access taxFree status */
+        /* Access taxFree status and parent */
         Boolean isTaxFree = isTaxFree();
+        Payee myParent = getParent();
+
+        /* Check that the current parent is viable */
+        if ((myParent == null) || !myParent.canParentPortfolio(pUpdateSet, isTaxFree)) {
+            /* Select new parent */
+            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            myParent = myPayees.getDefaultPortfolioParent(pUpdateSet, isTaxFree);
+            setParent(myParent);
+        }
+
+        /* Select relevant deposit */
         DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-        setHolding(myDeposits.getDefaultHolding(isTaxFree));
+        setHolding(myDeposits.getDefaultHolding(myParent, isTaxFree));
     }
 
     @Override
@@ -574,6 +676,7 @@ public class Portfolio
         /* Resolve holding account */
         MoneyWiseData myData = getDataSet();
         ValueSet myValues = getValueSet();
+        resolveDataLink(FIELD_PARENT, myData.getPayees());
         resolveDataLink(FIELD_HOLDING, myData.getDeposits());
 
         /* Adjust TaxFree */
@@ -585,9 +688,20 @@ public class Portfolio
 
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Resolve holding within list */
+        /* Resolve parent/holding within list */
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        resolveDataLink(FIELD_PARENT, myPayees);
         resolveDataLink(FIELD_HOLDING, myDeposits);
+    }
+
+    /**
+     * Set a new parent.
+     * @param pParent the parent
+     * @throws JOceanusException on error
+     */
+    public void setParent(final Payee pParent) throws JOceanusException {
+        setValueParent(pParent);
     }
 
     /**
@@ -724,10 +838,27 @@ public class Portfolio
 
     @Override
     public void validate() {
+        Payee myParent = getParent();
         Deposit myHolding = getHolding();
 
         /* Validate base components */
         super.validate();
+
+        /* Parent account must exist */
+        if (myParent == null) {
+            addError(ERROR_MISSING, FIELD_PARENT);
+        } else {
+            /* Parent must be suitable */
+            PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
+            if (!myParClass.canParentPortfolio()) {
+                addError(ERROR_BADPARENT, FIELD_PARENT);
+            }
+
+            /* If we are open then parent must be open */
+            if (!isClosed() && myParent.isClosed()) {
+                addError(ERROR_PARCLOSED, FIELD_CLOSED);
+            }
+        }
 
         /* Holding account must exist */
         if (myHolding == null) {
@@ -741,6 +872,11 @@ public class Portfolio
             /* We must have the same tax free status as the holding account */
             if (!isTaxFree().equals(myHolding.isTaxFree())) {
                 addError(ERROR_HOLDTAX, FIELD_HOLDING);
+            }
+
+            /* We must have the same parent as the holding account */
+            if (myParent != null && !myParent.equals(myHolding.getParent())) {
+                addError(ERROR_HOLDPARENT, FIELD_PARENT);
             }
         }
 
@@ -774,6 +910,11 @@ public class Portfolio
 
         /* Apply basic changes */
         applyBasicChanges(myPortfolio);
+
+        /* Update the parent account if required */
+        if (!Difference.isEqual(getParent(), myPortfolio.getParent())) {
+            setValueParent(myPortfolio.getParent());
+        }
 
         /* Update the holding account if required */
         if (!Difference.isEqual(getHolding(), myPortfolio.getHolding())) {

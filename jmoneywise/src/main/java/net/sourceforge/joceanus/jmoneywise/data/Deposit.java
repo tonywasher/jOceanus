@@ -108,11 +108,6 @@ public class Deposit
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
 
     /**
-     * Bad InfoSet Error Text.
-     */
-    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
-
-    /**
      * New Account name.
      */
     private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_NEWACCOUNT);
@@ -146,11 +141,6 @@ public class Deposit
      * taxFree And GrossInterest Error Text.
      */
     private static final String ERROR_TAXFREEGROSS = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS);
-
-    /**
-     * Parent Closed Error Text.
-     */
-    private static final String ERROR_PARCLOSED = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED);
 
     @Override
     public JDataFields declareFields() {
@@ -1304,10 +1294,12 @@ public class Deposit
 
         /**
          * Obtain default holding for portfolio.
+         * @param pParent the parent
          * @param isTaxFree should holding be taxFree?
          * @return the default holding
          */
-        public Deposit getDefaultHolding(final Boolean isTaxFree) {
+        public Deposit getDefaultHolding(final Payee pParent,
+                                         final Boolean isTaxFree) {
             /* loop through the deposits */
             Iterator<Deposit> myIterator = iterator();
             while (myIterator.hasNext()) {
@@ -1315,6 +1307,7 @@ public class Deposit
 
                 /* Ignore deleted and closed deposits and wrong taxFree status */
                 boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+                bIgnore |= !pParent.equals(myDeposit.getParent());
                 bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
                 if (bIgnore) {
                     continue;

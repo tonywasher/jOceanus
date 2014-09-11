@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -49,6 +50,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
@@ -82,11 +84,6 @@ public class Payee
      * PayeeInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
-
-    /**
-     * Bad InfoSet Error Text.
-     */
-    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
 
     /**
      * New Account name.
@@ -516,6 +513,40 @@ public class Payee
         setPayeeType(myTypes.getDefaultPayeeType());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
+    }
+
+    /**
+     * Can this payee parent a portfolio of the required Tax status?
+     * @param pUpdateSet the updateSet
+     * @param pTaxFree is the portfolio taxFree?
+     * @return true/false
+     */
+    public boolean canParentPortfolio(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                      final Boolean pTaxFree) {
+        /* Check that it is the correct class */
+        if (!getPayeeTypeClass().canParentPortfolio()) {
+            return false;
+        }
+
+        /* Access Deposits */
+        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+
+        /* Loop through the Deposits */
+        Iterator<Deposit> myIterator = myDeposits.iterator();
+        while (myIterator.hasNext()) {
+            Deposit myDeposit = myIterator.next();
+
+            /* Ignore deleted/closed/different parent and different tax status deposits */
+            boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+            bIgnore |= !this.equals(myDeposit.getParent());
+            bIgnore |= !pTaxFree.equals(myDeposit.isTaxFree());
+            if (!bIgnore) {
+                return true;
+            }
+        }
+
+        /* Can't parent portfolio */
+        return false;
     }
 
     @Override
@@ -1021,6 +1052,34 @@ public class Payee
                 if (myPayee.getPayeeTypeClass().canParentSecurity(pClass)) {
                     return myPayee;
                 }
+            }
+
+            /* Return no payee */
+            return null;
+        }
+
+        /**
+         * Obtain default parent for portfolio.
+         * @param pUpdateSet the update set
+         * @param isTaxFree should holding be taxFree?
+         * @return the default parent
+         */
+        public Payee getDefaultPortfolioParent(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                               final Boolean isTaxFree) {
+            /* loop through the payees */
+            Iterator<Payee> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Payee myPayee = myIterator.next();
+
+                /* Ignore deleted and closed payees and those that cannot parent this portfolio */
+                boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
+                bIgnore |= !myPayee.canParentPortfolio(pUpdateSet, isTaxFree);
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Return the payee */
+                return myPayee;
             }
 
             /* Return no payee */

@@ -281,6 +281,12 @@ Sub analyseYear(ByRef Context As FinanceState, _
 
 			'Else this is an income
 			Else
+				'If this is income from a portfolio
+				If (myDebInfo.isPortfolio) Then
+					'Switch to the parent account
+					myDebInfo = myDebInfo.acctParent
+				End If
+				
 				'If this is a recovered transaction
 				If Not (myCatInfo.isIncome) Then
 					'Subtract from expense and reverse sign

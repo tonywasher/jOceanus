@@ -43,6 +43,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfoSet;
@@ -84,6 +86,11 @@ public class PortfolioPanel
     private final JTextField theDesc;
 
     /**
+     * Parent Button Field.
+     */
+    private final JScrollButton<Payee> theParentButton;
+
+    /**
      * HoldingDeposit Button Field.
      */
     private final JScrollButton<Deposit> theHoldingButton;
@@ -116,6 +123,7 @@ public class PortfolioPanel
 
         /* Create the buttons */
         theHoldingButton = new JScrollButton<Deposit>();
+        theParentButton = new JScrollButton<Payee>();
 
         /* Set button states */
         theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
@@ -165,6 +173,7 @@ public class PortfolioPanel
         /* restrict the fields */
         restrictField(theName, Portfolio.NAMELEN);
         restrictField(theDesc, Portfolio.NAMELEN);
+        restrictField(theParentButton, Portfolio.NAMELEN);
         restrictField(theHoldingButton, Portfolio.NAMELEN);
         restrictField(myClosedButton, Portfolio.NAMELEN);
         restrictField(myTaxFreeButton, Portfolio.NAMELEN);
@@ -172,6 +181,7 @@ public class PortfolioPanel
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_HOLDING, Deposit.class, theHoldingButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
@@ -184,6 +194,7 @@ public class PortfolioPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_PARENT, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_HOLDING, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, myPanel);
@@ -326,7 +337,8 @@ public class PortfolioPanel
         boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Holding and TaxFree status cannot be changed if the item is active */
+        /* Parent, Holding and TaxFree status cannot be changed if the item is active */
+        theFieldSet.setEditable(Portfolio.FIELD_PARENT, bIsChangeable);
         theFieldSet.setEditable(Portfolio.FIELD_HOLDING, bIsChangeable);
         theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, bIsChangeable);
         theTaxFreeState.setState(bIsChangeable);
@@ -345,6 +357,10 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_DESC)) {
             /* Update the Description */
             myPortfolio.setDescription(pUpdate.getString());
+        } else if (myField.equals(Portfolio.FIELD_PARENT)) {
+            /* Update the Parent */
+            myPortfolio.setParent(pUpdate.getValue(Payee.class));
+            myPortfolio.adjustForParent(getUpdateSet());
         } else if (myField.equals(Portfolio.FIELD_HOLDING)) {
             /* Update the Holding */
             myPortfolio.setHolding(pUpdate.getValue(Deposit.class));
@@ -391,7 +407,9 @@ public class PortfolioPanel
     @Override
     protected void buildGoToMenu() {
         Portfolio myItem = getItem();
+        Payee myParent = myItem.getParent();
         Deposit myHolding = myItem.getHolding();
+        buildGoToEvent(myParent);
         buildGoToEvent(myHolding);
     }
 
@@ -400,6 +418,11 @@ public class PortfolioPanel
      */
     private final class PortfolioListener
             implements ChangeListener {
+        /**
+         * The Parent Menu Builder.
+         */
+        private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
+
         /**
          * The Holding Menu Builder.
          */
@@ -410,6 +433,8 @@ public class PortfolioPanel
          */
         private PortfolioListener() {
             /* Access the MenuBuilders */
+            theParentMenuBuilder = theParentButton.getMenuBuilder();
+            theParentMenuBuilder.addChangeListener(this);
             theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
             theHoldingMenuBuilder.addChangeListener(this);
         }
@@ -419,9 +444,53 @@ public class PortfolioPanel
             Object o = pEvent.getSource();
 
             /* Handle menu type */
-            if (theHoldingMenuBuilder.equals(o)) {
+            if (theParentMenuBuilder.equals(o)) {
+                buildParentMenu();
+            } else if (theHoldingMenuBuilder.equals(o)) {
                 buildHoldingMenu();
             }
+        }
+
+        /**
+         * Build the parent list for the item.
+         */
+        private void buildParentMenu() {
+            /* Clear the menu */
+            theParentMenuBuilder.clearMenu();
+
+            /* Record active item */
+            Portfolio myPortfolio = getItem();
+            Payee myCurr = myPortfolio.getParent();
+            Boolean isTaxFree = myPortfolio.isTaxFree();
+            JMenuItem myActive = null;
+
+            /* Access Payees */
+            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+
+            /* Loop through the Payees */
+            Iterator<Payee> myIterator = myPayees.iterator();
+            while (myIterator.hasNext()) {
+                Payee myPayee = myIterator.next();
+
+                /* Ignore deleted/closed and ones that cannot own this portfolio */
+                boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
+                bIgnore |= !myPayee.canParentPortfolio(getUpdateSet(), isTaxFree);
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the payee */
+                JMenuItem myItem = theParentMenuBuilder.addItem(myPayee);
+
+                /* If this is the active parent */
+                if (myPayee.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theParentMenuBuilder.showItem(myActive);
         }
 
         /**
@@ -434,10 +503,11 @@ public class PortfolioPanel
             /* Record active item */
             Portfolio myPortfolio = getItem();
             Deposit myCurr = myPortfolio.getHolding();
+            Payee myParent = myPortfolio.getParent();
             Boolean isTaxFree = myPortfolio.isTaxFree();
             JMenuItem myActive = null;
 
-            /* Access Payees */
+            /* Access Deposits */
             DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
             /* Loop through the Deposits */
@@ -445,14 +515,15 @@ public class PortfolioPanel
             while (myIterator.hasNext()) {
                 Deposit myDeposit = myIterator.next();
 
-                /* Ignore deleted/closed and different tax status deposits */
+                /* Ignore deleted/closed/different parent and different tax status deposits */
                 boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+                bIgnore |= !myParent.equals(myDeposit.getParent());
                 bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
                 if (bIgnore) {
                     continue;
                 }
 
-                /* Create a new action for the payee */
+                /* Create a new action for the deposit */
                 JMenuItem myItem = theHoldingMenuBuilder.addItem(myDeposit);
 
                 /* If this is the active holding */

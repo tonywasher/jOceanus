@@ -218,7 +218,7 @@ public enum PayeeTypeClass implements StaticInterface {
     /**
      * Determine whether the PayeeType can parent the security type.
      * @param pClass the Security type
-     * @return <code>true</code> if the payee type can the security type, <code>false</code> otherwise.
+     * @return <code>true</code> if the payee type can parent the security type, <code>false</code> otherwise.
      */
     public boolean canParentSecurity(final SecurityTypeClass pClass) {
         switch (this) {
@@ -230,6 +230,26 @@ public enum PayeeTypeClass implements StaticInterface {
             case GOVERNMENT:
             case TAXMAN:
             case INDIVIDUAL:
+            case PAYEE:
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the PayeeType can parent a portfolio.
+     * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code> otherwise.
+     */
+    public boolean canParentPortfolio() {
+        switch (this) {
+            case MARKET:
+            case INSTITUTION:
+            case EMPLOYER:
+                return true;
+            case GOVERNMENT:
+            case TAXMAN:
+            case INDIVIDUAL:
+            case PAYEE:
             default:
                 return false;
         }

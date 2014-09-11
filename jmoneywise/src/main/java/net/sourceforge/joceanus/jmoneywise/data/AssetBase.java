@@ -101,6 +101,16 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_BADPARENT);
 
+    /**
+     * Bad InfoSet Error Text.
+     */
+    protected static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
+
+    /**
+     * Parent Closed Error Text.
+     */
+    protected static final String ERROR_PARCLOSED = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED);
+
     @Override
     public String formatObject() {
         return getName();
