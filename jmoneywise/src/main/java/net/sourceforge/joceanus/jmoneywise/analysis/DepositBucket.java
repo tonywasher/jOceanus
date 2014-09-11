@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -34,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Deposit Bucket class.
@@ -41,14 +40,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public final class DepositBucket
         extends AccountBucket<Deposit> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositBucket.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), AccountBucket.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DEPOSIT_NAME), AccountBucket.FIELD_DEFS);
 
     /**
      * Deposit Category Field Id.
@@ -170,7 +164,7 @@ public final class DepositBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), AccountBucketList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DEPOSIT_LIST), AccountBucketList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {

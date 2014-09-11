@@ -245,7 +245,7 @@
         <configuration>
            <linkXref>true</linkXref>
            <aggregate>true</aggregate>
-           <targetJdk>1.7</targetJdk>
+           <targetJdk>1.8</targetJdk>
            <excludes>
                <exclude>**/SevenZip/**/*.java</exclude>
            </excludes>

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
@@ -35,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Loan Bucket class.
@@ -42,14 +41,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public final class LoanBucket
         extends AccountBucket<Loan> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(LoanBucket.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), AccountBucket.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.LOAN_NAME), AccountBucket.FIELD_DEFS);
 
     /**
      * Loan Category Field Id.
@@ -59,7 +53,7 @@ public final class LoanBucket
     /**
      * IsCreditCard Field Id.
      */
-    private static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCredit"));
+    private static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.LOAN_CREDITCARD));
 
     /**
      * The loan category.
@@ -192,7 +186,7 @@ public final class LoanBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), AccountBucketList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.LOAN_LIST), AccountBucketList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {

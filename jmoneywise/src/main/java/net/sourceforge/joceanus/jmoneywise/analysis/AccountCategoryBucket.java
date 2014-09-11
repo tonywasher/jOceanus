@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -35,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Account Category Bucket.
@@ -44,11 +44,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         implements JDataContents, Comparable<AccountCategoryBucket<T, C>>, OrderedIdItem<Integer> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountCategoryBucket.class.getName());
-
-    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCategoryBucket.class.getSimpleName());
@@ -56,7 +51,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.BUCKET_BASEVALUES));
 
     /**
      * FieldSet map.
@@ -66,7 +61,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Totals bucket name.
      */
-    protected static final String NAME_TOTALS = NLS_BUNDLE.getString("NameTotals");
+    protected static final String NAME_TOTALS = ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS);
 
     /**
      * Values.

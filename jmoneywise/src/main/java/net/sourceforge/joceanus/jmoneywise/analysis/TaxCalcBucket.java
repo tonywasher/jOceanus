@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
@@ -39,9 +38,11 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Tax Bucket class.
@@ -49,19 +50,14 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
 public final class TaxCalcBucket
         implements JDataContents, Comparable<TaxCalcBucket>, OrderedIdItem<Integer> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCalcBucket.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.TAXCALC_NAME));
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
 
     /**
      * Tax Category Field Id.
@@ -71,12 +67,12 @@ public final class TaxCalcBucket
     /**
      * Tax Section Field Id.
      */
-    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSection"));
+    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.TAXCALC_SECTION));
 
     /**
      * Parent Field Id.
      */
-    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataParent"));
+    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_PARENT));
 
     /**
      * FieldSet map.
@@ -431,7 +427,7 @@ public final class TaxCalcBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
+        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.TAXCALC_LIST));
 
         @Override
         public JDataFields getDataFields() {
@@ -446,32 +442,32 @@ public final class TaxCalcBucket
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
 
         /**
          * TaxYear Field Id.
          */
-        private static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataYear"));
+        private static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_YEAR));
 
         /**
          * Age Field Id.
          */
-        private static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAge"));
+        private static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_AGE));
 
         /**
          * GainsSlices Field Id.
          */
-        private static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSlices"));
+        private static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_SLICES));
 
         /**
          * ReducedAllowance Field Id.
          */
-        private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAllow"));
+        private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_ALLOW));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

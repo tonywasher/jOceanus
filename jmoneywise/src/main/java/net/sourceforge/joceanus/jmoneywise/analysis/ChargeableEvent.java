@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
@@ -32,10 +31,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Chargeable event for LifeBonds.
@@ -43,14 +45,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public final class ChargeableEvent
         implements OrderedIdItem<Integer>, JDataContents, Comparable<ChargeableEvent> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ChargeableEvent.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.CHARGE_NAME));
 
     @Override
     public JDataFields getDataFields() {
@@ -65,22 +62,22 @@ public final class ChargeableEvent
     /**
      * The Gains field id.
      */
-    private static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataGains"));
+    private static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.SECURITYATTR_GAINS));
 
     /**
      * The Slice field id.
      */
-    private static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSlice"));
+    private static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.CHARGE_SLICE));
 
     /**
      * The Taxation field id.
      */
-    private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTax"));
+    private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.CHARGE_TAX));
 
     /**
      * The Transaction field id.
      */
-    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTrans"));
+    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -278,7 +275,7 @@ public final class ChargeableEvent
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
+        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.CHARGE_LIST));
 
         @Override
         public JDataFields getDataFields() {
@@ -296,7 +293,7 @@ public final class ChargeableEvent
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

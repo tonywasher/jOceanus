@@ -23,19 +23,20 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,34 +47,29 @@ import org.w3c.dom.Element;
 public class PortfolioView
         extends BasicReport {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PortfolioView.class.getName());
-
-    /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.PORTFOLIO_TITLE);
 
     /**
      * The Cost text.
      */
-    private static final String TEXT_COST = NLS_BUNDLE.getString("ReportCost");
+    private static final String TEXT_COST = ResourceMgr.getString(AnalysisResource.SECURITYATTR_COST);
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = NLS_BUNDLE.getString("ReportValue");
+    private static final String TEXT_VALUE = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_VALUATION);
 
     /**
      * The Gains text.
      */
-    private static final String TEXT_GAINS = NLS_BUNDLE.getString("ReportGains");
+    private static final String TEXT_GAINS = ResourceMgr.getString(AnalysisResource.SECURITYATTR_GAINS);
 
     /**
      * The Dividend text.
      */
-    private static final String TEXT_DIVIDEND = NLS_BUNDLE.getString("ReportDividend");
+    private static final String TEXT_DIVIDEND = ResourceMgr.getString(AnalysisResource.SECURITYATTR_DIVIDEND);
 
     /**
      * HTML builder.

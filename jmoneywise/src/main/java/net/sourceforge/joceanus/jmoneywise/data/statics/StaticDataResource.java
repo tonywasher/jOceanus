@@ -893,7 +893,7 @@ public enum StaticDataResource implements ResourceId {
     /**
      * TransInfo Dilution.
      */
-    TRANSINFO_DILUTION("TransInfoType.Dilution"),
+    TRANSINFO_DILUTION("MoneyWiseData.Field.Dilution"),
 
     /**
      * TransInfo QualifyYears.
@@ -918,7 +918,7 @@ public enum StaticDataResource implements ResourceId {
     /**
      * TransInfo Price.
      */
-    TRANSINFO_PRICE("TransInfoType.Price"),
+    TRANSINFO_PRICE("MoneyWiseData.Field.Price"),
 
     /**
      * TransInfo Commission.

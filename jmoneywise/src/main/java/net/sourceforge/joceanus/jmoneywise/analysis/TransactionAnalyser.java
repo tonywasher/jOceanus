@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -66,6 +65,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Class to analyse transactions.
@@ -74,24 +74,19 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 public class TransactionAnalyser
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionAnalyser.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.ANALYSIS_ANALYSER));
 
     /**
      * Analysis field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
 
     /**
      * Analysis Manager field Id.
      */
-    private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataManager"));
+    private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_MANAGER));
 
     @Override
     public JDataFields getDataFields() {

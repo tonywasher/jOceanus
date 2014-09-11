@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,14 +44,9 @@ import org.w3c.dom.Element;
 public class CashFlow
         extends BasicReport {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CashFlow.class.getName());
-
-    /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.CASHFLOW_TITLE);
 
     /**
      * HTML builder.

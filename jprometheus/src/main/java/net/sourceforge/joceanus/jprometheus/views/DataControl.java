@@ -59,42 +59,42 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Debug View Name.
      */
-    public static final String DATA_VIEWS = ResourceMgr.getString(ViewResource.DATAENTRY_VIEWS);
+    public static final String DATA_VIEWS = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_VIEWS);
 
     /**
      * Underlying Data Name.
      */
-    public static final String DATA_DATASET = ResourceMgr.getString(ViewResource.DATAENTRY_DATA);
+    public static final String DATA_DATASET = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_DATA);
 
     /**
      * Data Updates Name.
      */
-    public static final String DATA_UPDATES = ResourceMgr.getString(ViewResource.DATAENTRY_UPDATES);
+    public static final String DATA_UPDATES = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_UPDATES);
 
     /**
      * Analysis Name.
      */
-    public static final String DATA_ANALYSIS = ResourceMgr.getString(ViewResource.DATAENTRY_ANALYSIS);
+    public static final String DATA_ANALYSIS = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_ANALYSIS);
 
     /**
      * Debug Edit Name.
      */
-    public static final String DATA_EDIT = ResourceMgr.getString(ViewResource.DATAENTRY_EDIT);
+    public static final String DATA_EDIT = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_EDIT);
 
     /**
      * Debug Maintenance Name.
      */
-    public static final String DATA_MAINT = ResourceMgr.getString(ViewResource.DATAENTRY_MAINT);
+    public static final String DATA_MAINT = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_MAINT);
 
     /**
      * Error Name.
      */
-    public static final String DATA_ERROR = ResourceMgr.getString(ViewResource.DATAENTRY_ERROR);
+    public static final String DATA_ERROR = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_ERROR);
 
     /**
      * Active Profile.
      */
-    public static final String DATA_PROFILE = ResourceMgr.getString(ViewResource.DATAENTRY_PROFILE);
+    public static final String DATA_PROFILE = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_PROFILE);
 
     /**
      * The DataSet.

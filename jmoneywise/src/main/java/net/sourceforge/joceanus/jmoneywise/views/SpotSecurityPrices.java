@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Extension of AccountPrice to cater for spot prices.
@@ -57,14 +58,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 public class SpotSecurityPrices
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotSecurityPrices.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_NAME));
 
     @Override
     public JDataFields getDataFields() {
@@ -74,32 +70,32 @@ public class SpotSecurityPrices
     /**
      * View Field Id.
      */
-    public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataView"));
+    public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.VIEW_NAME));
 
     /**
      * Portfolio Field Id.
      */
-    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
+    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDate"));
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
     /**
      * Next Field Id.
      */
-    public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataNext"));
+    public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_NEXTDATE));
 
     /**
      * Previous Field Id.
      */
-    public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrevious"));
+    public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_PREVDATE));
 
     /**
      * Prices Field Id.
      */
-    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrices"));
+    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_NAME));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -238,27 +234,27 @@ public class SpotSecurityPrices
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_NAME), DataList.FIELD_DEFS);
 
         /**
          * The portfolio field Id.
          */
-        public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
+        public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
         /**
          * The date field Id.
          */
-        public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDate"));
+        public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
         /**
          * The next date field Id.
          */
-        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataNext"));
+        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_NEXTDATE));
 
         /**
          * The previous date field Id.
          */
-        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrevious"));
+        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_PREVDATE));
 
         @Override
         public JDataFields declareFields() {
@@ -501,12 +497,12 @@ public class SpotSecurityPrices
         /**
          * Previous Date field Id.
          */
-        public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPrevDate"));
+        public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_PREVDATE));
 
         /**
          * Previous Price field Id.
          */
-        public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPrevPrice"));
+        public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(MoneyWiseViewResource.SPOTPRICE_PREVPRICE));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.DepositRateMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -47,11 +47,13 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Data Analysis.
@@ -60,14 +62,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public class Analysis
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Analysis.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
 
     @Override
     public JDataFields getDataFields() {
@@ -77,82 +74,82 @@ public class Analysis
     /**
      * Range Field Id.
      */
-    private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRange"));
+    private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
 
     /**
      * DepositBuckets Field Id.
      */
-    private static final JDataField FIELD_DEPOSITS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDeposits"));
+    private static final JDataField FIELD_DEPOSITS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSIT.getListName());
 
     /**
      * CashBuckets Field Id.
      */
-    private static final JDataField FIELD_CASH = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCash"));
+    private static final JDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getListName());
 
     /**
      * LoanBuckets Field Id.
      */
-    private static final JDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLoans"));
+    private static final JDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOAN.getListName());
 
     /**
      * PayeeBuckets Field Id.
      */
-    private static final JDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPayees"));
+    private static final JDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getListName());
 
     /**
      * PortfolioBuckets Field Id.
      */
-    private static final JDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolios"));
+    private static final JDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getListName());
 
     /**
      * DepositCategoryBuckets Field Id.
      */
-    private static final JDataField FIELD_DEPCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDepositCat"));
+    private static final JDataField FIELD_DEPCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getListName());
 
     /**
      * CashCategoryBuckets Field Id.
      */
-    private static final JDataField FIELD_CASHCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCashCat"));
+    private static final JDataField FIELD_CASHCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getListName());
 
     /**
      * LoanCategoryBuckets Field Id.
      */
-    private static final JDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLoanCat"));
+    private static final JDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getListName());
 
     /**
      * EventCategoryBuckets Field Id.
      */
-    private static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEventCat"));
+    private static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListName());
 
     /**
      * TaxBasisBuckets Field Id.
      */
-    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxBasis"));
+    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListName());
 
     /**
      * TaxCalcBuckets Field Id.
      */
-    private static final JDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxCalc"));
+    private static final JDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_TAXCALC));
 
     /**
      * Prices Field Id.
      */
-    private static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrices"));
+    private static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYPRICE.getListName());
 
     /**
      * Rates Field Id.
      */
-    private static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRates"));
+    private static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITRATE.getListName());
 
     /**
      * Charges Field Id.
      */
-    private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCharges"));
+    private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_CHARGES));
 
     /**
      * Dilutions Field Id.
      */
-    private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDilutions"));
+    private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_DILUTIONS));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

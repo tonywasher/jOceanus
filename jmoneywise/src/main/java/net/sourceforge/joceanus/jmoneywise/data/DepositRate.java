@@ -81,7 +81,7 @@ public class DepositRate
     /**
      * Rate Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_RATE));
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE));
 
     /**
      * Bonus Field Id.

@@ -51,6 +51,21 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_FIELD_DATE("MoneyWiseData.Field.Date"),
 
     /**
+     * MoneyWiseData Price.
+     */
+    MONEYWISEDATA_FIELD_PRICE("MoneyWiseData.Field.Price"),
+
+    /**
+     * MoneyWiseData Rate.
+     */
+    MONEYWISEDATA_FIELD_RATE("MoneyWiseData.Field.Rate"),
+
+    /**
+     * MoneyWiseData Dilution.
+     */
+    MONEYWISEDATA_FIELD_DILUTION("MoneyWiseData.Field.Dilution"),
+
+    /**
      * Category SubCategory.
      */
     CATEGORY_SUBCAT("Category.SubCategory"),
@@ -291,11 +306,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     DEPOSIT_ERROR_BALANCE("Deposit.Error.Balance"),
 
     /**
-     * DepositRate Rate.
-     */
-    DEPOSITRATE_RATE("DepositRate.Rate"),
-
-    /**
      * DepositRate Bonus.
      */
     DEPOSITRATE_BONUS("DepositRate.Bonus"),
@@ -478,7 +488,7 @@ public enum MoneyWiseDataResource implements ResourceId {
     /**
      * The Underlying resource.
      */
-    private final MoneyWiseDataTypeResource theUnderlying;
+    private final ResourceId theUnderlying;
 
     /**
      * Constructor.
@@ -493,7 +503,7 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    private MoneyWiseDataResource(final MoneyWiseDataTypeResource pResource) {
+    private MoneyWiseDataResource(final ResourceId pResource) {
         theKeyName = null;
         theUnderlying = pResource;
     }

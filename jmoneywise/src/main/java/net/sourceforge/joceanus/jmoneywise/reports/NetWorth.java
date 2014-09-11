@@ -23,35 +23,36 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
@@ -63,6 +64,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -73,49 +75,44 @@ import org.w3c.dom.Element;
 public class NetWorth
         extends BasicReport {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(NetWorth.class.getName());
-
-    /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.NETWORTH_TITLE);
 
     /**
      * The Asset text.
      */
-    private static final String TEXT_ASSET = NLS_BUNDLE.getString("ReportAsset");
+    private static final String TEXT_ASSET = ResourceMgr.getString(ReportResource.NETWORTH_ASSET);
 
     /**
      * The Units text.
      */
-    private static final String TEXT_UNITS = NLS_BUNDLE.getString("ReportUnits");
+    private static final String TEXT_UNITS = ResourceMgr.getString(AnalysisResource.SECURITYATTR_UNITS);
 
     /**
      * The Price text.
      */
-    private static final String TEXT_PRICE = NLS_BUNDLE.getString("ReportPrice");
+    private static final String TEXT_PRICE = ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE);
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = NLS_BUNDLE.getString("ReportValue");
+    private static final String TEXT_VALUE = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_VALUATION);
 
     /**
      * The Account text.
      */
-    private static final String TEXT_ACCOUNT = NLS_BUNDLE.getString("ReportAccount");
+    private static final String TEXT_ACCOUNT = ResourceMgr.getString(AnalysisResource.BUCKET_ACCOUNT);
 
     /**
      * The Rate text.
      */
-    private static final String TEXT_RATE = NLS_BUNDLE.getString("ReportRate");
+    private static final String TEXT_RATE = ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE);
 
     /**
      * The Maturity text.
      */
-    private static final String TEXT_MATURITY = NLS_BUNDLE.getString("ReportMaturity");
+    private static final String TEXT_MATURITY = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_MATURITY);
 
     /**
      * HTML builder.

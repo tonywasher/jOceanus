@@ -23,19 +23,20 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,34 +47,29 @@ import org.w3c.dom.Element;
 public class MarketGrowth
         extends BasicReport {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MarketGrowth.class.getName());
-
-    /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.MARKETGROWTH_TITLE);
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = NLS_BUNDLE.getString("ReportValue");
+    private static final String TEXT_VALUE = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_VALUATION);
 
     /**
      * The Invested text.
      */
-    private static final String TEXT_INVEST = NLS_BUNDLE.getString("ReportInvest");
+    private static final String TEXT_INVEST = ResourceMgr.getString(AnalysisResource.SECURITYATTR_INVESTED);
 
     /**
      * The Base text.
      */
-    private static final String TEXT_BASE = NLS_BUNDLE.getString("ReportBase");
+    private static final String TEXT_BASE = ResourceMgr.getString(ReportResource.MARKETGROWTH_BASE);
 
     /**
      * The Growth text.
      */
-    private static final String TEXT_GROWTH = NLS_BUNDLE.getString("ReportGrowth");
+    private static final String TEXT_GROWTH = ResourceMgr.getString(AnalysisResource.SECURITYATTR_MARKET);
 
     /**
      * HTML builder.

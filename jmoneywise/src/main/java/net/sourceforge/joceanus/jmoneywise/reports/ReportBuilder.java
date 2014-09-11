@@ -24,10 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 
@@ -37,29 +38,24 @@ import org.w3c.dom.Document;
  */
 public class ReportBuilder {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportBuilder.class.getName());
-
-    /**
      * The Total text.
      */
-    protected static final String TEXT_TOTAL = NLS_BUNDLE.getString("ReportTotal");
+    protected static final String TEXT_TOTAL = ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS);
 
     /**
      * The Profit text.
      */
-    protected static final String TEXT_PROFIT = NLS_BUNDLE.getString("ReportProfit");
+    protected static final String TEXT_PROFIT = ResourceMgr.getString(AnalysisResource.SECURITYATTR_PROFIT);
 
     /**
      * The Income text.
      */
-    protected static final String TEXT_INCOME = NLS_BUNDLE.getString("ReportIncome");
+    protected static final String TEXT_INCOME = ResourceMgr.getString(AnalysisResource.PAYEEATTR_INCOME);
 
     /**
      * The Expense text.
      */
-    protected static final String TEXT_EXPENSE = NLS_BUNDLE.getString("ReportExpense");
+    protected static final String TEXT_EXPENSE = ResourceMgr.getString(AnalysisResource.PAYEEATTR_EXPENSE);
 
     /**
      * The Report Manager.

@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -60,6 +59,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Analysis Filter Classes.
@@ -68,14 +68,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AnalysisFilter.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseViewResource.FILTER_NAME));
 
     @Override
     public JDataFields getDataFields() {
@@ -85,12 +80,12 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     /**
      * Bucket Field Id.
      */
-    private static final JDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBucket"));
+    private static final JDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.FILTER_BUCKET));
 
     /**
      * Attribute Field Id.
      */
-    private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAttr"));
+    private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.FILTER_ATTR));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

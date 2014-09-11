@@ -22,17 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * History snapShot for a bucket.
@@ -42,39 +44,34 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
         implements JDataContents {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(BucketSnapShot.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.BUCKET_SNAPSHOT));
 
     /**
      * Id Id.
      */
-    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
+    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
 
     /**
      * Transaction Id.
      */
-    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTrans"));
+    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * Date Id.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDate"));
+    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
     /**
      * Values Id.
      */
-    private static final JDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataValues"));
+    private static final JDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.BUCKET_VALUES));
 
     /**
      * Previous Values Id.
      */
-    private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPrevious"));
+    private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.BUCKET_PREVIOUS));
 
     @Override
     public String formatObject() {

@@ -53,7 +53,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(ViewResource.UPDATESET_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseViewResource.UPDATESET_NAME));
 
     /**
      * Version field id.

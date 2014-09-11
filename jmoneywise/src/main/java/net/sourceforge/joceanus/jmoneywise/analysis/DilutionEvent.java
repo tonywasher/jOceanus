@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
@@ -35,12 +34,17 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Dilution Events relating to stock dilution.
@@ -49,14 +53,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 public final class DilutionEvent
         implements OrderedIdItem<Integer>, JDataContents, Comparable<DilutionEvent> {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DilutionEvent.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DILUTION_NAME));
 
     @Override
     public JDataFields getDataFields() {
@@ -71,27 +70,27 @@ public final class DilutionEvent
     /**
      * Id Field Id.
      */
-    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
+    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
 
     /**
      * Security Field Id.
      */
-    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSecurity"));
+    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Date Field Id.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDate"));
+    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
 
     /**
      * Dilution Field Id.
      */
-    private static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDilution"));
+    private static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(StaticDataResource.TRANSINFO_DILUTION));
 
     /**
      * Transaction Field Id.
      */
-    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTrans"));
+    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     @Override
     public Object getFieldValue(final JDataField pField) {

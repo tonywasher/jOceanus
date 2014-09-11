@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
 /**
  * Resource IDs for jPrometheus View Fields.
  */
-public enum ViewResource implements ResourceId {
+public enum MoneyWiseViewResource implements ResourceId {
     /**
      * DataEntry Views.
      */
@@ -88,7 +88,7 @@ public enum ViewResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private ViewResource(final String pKeyName) {
+    private MoneyWiseViewResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -23,15 +23,16 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -43,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Extension of SecurityPrice to cater for diluted prices.
@@ -51,19 +53,14 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 public class ViewSecurityPrice
         extends SecurityPrice {
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ViewSecurityPrice.class.getName());
-
-    /**
      * Object name.
      */
-    public static final String OBJECT_NAME = NLS_BUNDLE.getString("DataName");
+    public static final String OBJECT_NAME = ResourceMgr.getString(MoneyWiseViewResource.VIEWPRICE_NAME);
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = NLS_BUNDLE.getString("DataListName");
+    public static final String LIST_NAME = ResourceMgr.getString(MoneyWiseViewResource.VIEWPRICE_LIST);
 
     /**
      * Report fields.
@@ -78,12 +75,14 @@ public class ViewSecurityPrice
     /**
      * Dilution Field Id.
      */
-    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDilution"));
+    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(ResourceMgr
+            .getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION));
 
     /**
      * Diluted Price Field Id.
      */
-    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDilutedPrice"));
+    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(ResourceMgr
+            .getString(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE));
 
     /**
      * Dilution state.
@@ -266,7 +265,7 @@ public class ViewSecurityPrice
         /**
          * The Dilutions field id.
          */
-        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDilutions"));
+        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.ANALYSIS_DILUTIONS));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

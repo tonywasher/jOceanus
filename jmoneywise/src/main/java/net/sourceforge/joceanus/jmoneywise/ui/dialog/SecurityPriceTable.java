@@ -628,7 +628,6 @@ public class SecurityPriceTable
 
         /**
          * Is the cell editable?
-         * @param pItem the item
          * @param pColIndex the column index
          * @return true/false
          */

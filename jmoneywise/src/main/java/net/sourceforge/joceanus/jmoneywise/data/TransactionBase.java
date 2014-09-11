@@ -1176,7 +1176,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 /* portfolioXfer is nonRecursive and from Portfolio/Security to Portfolio */
                 return !isRecursive
                        && (myCredit instanceof Portfolio)
-                       && ((myDebit instanceof Security) || (myCredit instanceof Portfolio));
+                       && ((myDebit instanceof Security) || (myDebit instanceof Portfolio));
 
             default:
                 return false;

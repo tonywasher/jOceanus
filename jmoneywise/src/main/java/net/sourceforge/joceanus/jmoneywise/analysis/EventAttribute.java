@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * EventAttribute enumeration.
@@ -46,11 +45,6 @@ public enum EventAttribute implements BucketAttribute {
     EXPENSE;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventAttribute.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -60,7 +54,7 @@ public enum EventAttribute implements BucketAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(AnalysisResource.getKeyForEventAttr(this));
         }
 
         /* return the name */

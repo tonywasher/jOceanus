@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Analysis Types.
@@ -64,11 +64,6 @@ public enum AnalysisType {
     TAXBASIS;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AnalysisType.class.getName());
-
-    /**
      * Report Name.
      */
     private String theName;
@@ -78,7 +73,7 @@ public enum AnalysisType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(AnalysisResource.getKeyForAnalysisType(this));
         }
 
         /* return the name */

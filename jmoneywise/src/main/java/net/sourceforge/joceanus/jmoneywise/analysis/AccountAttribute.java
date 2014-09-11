@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * AccountAttribute enumeration.
@@ -56,11 +55,6 @@ public enum AccountAttribute implements BucketAttribute {
     SPEND;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountAttribute.class.getName());
-
-    /**
      * The String name.
      */
     private String theName;
@@ -70,7 +64,7 @@ public enum AccountAttribute implements BucketAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
+            theName = ResourceMgr.getString(AnalysisResource.getKeyForAccountAttr(this));
         }
 
         /* return the name */
