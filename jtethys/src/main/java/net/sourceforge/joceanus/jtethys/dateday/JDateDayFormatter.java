@@ -47,6 +47,11 @@ public class JDateDayFormatter
     private static final String DEFAULT_FORMAT = "dd-MMM-yyyy";
 
     /**
+     * One hundred years.
+     */
+    private static final int YEARS_CENTURY = 100;
+
+    /**
      * The locale.
      */
     private Locale theLocale;
@@ -259,6 +264,24 @@ public class JDateDayFormatter
      */
     public JDateDay parseDateDay(final String pValue) {
         LocalDate myDate = parseLocalDate(pValue);
+        return new JDateDay(myDate);
+    }
+
+    /**
+     * Parse DateDay using the passed year as base date.
+     * <p>
+     * This is used when a two digit year is utilised
+     * @param pValue Formatted DateDay
+     * @param pBaseYear the base year
+     * @return the DateDay
+     * @throws IllegalArgumentException on error
+     */
+    public JDateDay parseDateDayBase(final String pValue,
+                                     final int pBaseYear) {
+        LocalDate myDate = parseLocalDate(pValue);
+        if (myDate.getYear() >= pBaseYear + YEARS_CENTURY) {
+            myDate = myDate.minusYears(YEARS_CENTURY);
+        }
         return new JDateDay(myDate);
     }
 

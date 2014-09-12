@@ -645,7 +645,9 @@ public class DepositRate
      * @param pDate the new date
      */
     public void setEndDate(final JDateDay pDate) {
-        setValueEndDate(new JDateDay(pDate));
+        setValueEndDate(pDate == null
+                                     ? null
+                                     : new JDateDay(pDate));
     }
 
     @Override

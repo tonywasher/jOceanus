@@ -48,8 +48,11 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
+import net.sourceforge.jdatebutton.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellEditor;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -843,9 +846,14 @@ public final class JFieldCellEditor {
         private static final long serialVersionUID = -5463480186940634327L;
 
         /**
-         * The Selectable range.
+         * The Select-able range.
          */
         private transient JDateDayRange theRange = null;
+
+        /**
+         * Is null date allowed?
+         */
+        private transient boolean isNullDateAllowed = false;
 
         /**
          * Constructor.
@@ -857,11 +865,19 @@ public final class JFieldCellEditor {
         }
 
         /**
-         * Set the selectable range.
+         * Set the select-able range.
          * @param pRange the range
          */
         public void setRange(final JDateDayRange pRange) {
             theRange = pRange;
+        }
+
+        /**
+         * Set whether null dates are allowed.
+         * @param pNullDateAllowed true/false
+         */
+        public void setNullDateAllowed(final boolean pNullDateAllowed) {
+            isNullDateAllowed = pNullDateAllowed;
         }
 
         @Override
@@ -890,6 +906,7 @@ public final class JFieldCellEditor {
             /* Set up initial values and range */
             setEarliestDateDay(myStart);
             setLatestDateDay(myEnd);
+            setNullDateAllowed(isNullDateAllowed);
 
             /* Pass onwards */
             return super.getTableCellEditorComponent(pTable, myCurr, isSelected, pRowIndex, pColIndex);
@@ -908,6 +925,98 @@ public final class JFieldCellEditor {
                 return false;
             }
             return super.stopCellEditing();
+        }
+    }
+
+    /**
+     * DateDay Cell Editor.
+     */
+    public static class DateDayCellEditor
+            extends JEventCellEditor
+            implements TableCellEditor, JDateEditor {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 2421257860258168379L;
+
+        /**
+         * The Button.
+         */
+        private transient JDateDayButton theButton;
+
+        /**
+         * The point at which the editor is active.
+         */
+        private transient Point thePoint;
+
+        /**
+         * Constructor.
+         * @param pFormatter the formatter
+         */
+        protected DateDayCellEditor(final JDateDayFormatter pFormatter) {
+            /* Create a new button */
+            theButton = new JDateDayButton(pFormatter);
+            theButton.setEditor(this);
+        }
+
+        /**
+         * Obtain the DateConfig.
+         * @return the configuration
+         */
+        public JDateDayConfig getDateConfig() {
+            return theButton.getDateConfig();
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
+        }
+
+        @Override
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
+                                                      final boolean isSelected,
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            /* Store location of box */
+            int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            thePoint = new Point(myCol, myRow);
+
+            /* Enable updates to comboBox */
+            fireStateChanged();
+
+            /* If the value is the date */
+            if (pValue instanceof JDateDay) {
+                JDateDay myDate = (JDateDay) pValue;
+                /* Set the selected date */
+                theButton.setSelectedDateDay(myDate);
+
+                /* else set the selected date to null */
+            } else {
+                theButton.setSelectedDate(null);
+            }
+
+            /* Return the button as the component */
+            return theButton;
+        }
+
+        @Override
+        public void fireEditingCanceledEvent() {
+            fireEditingCanceled();
+        }
+
+        @Override
+        public void fireEditingStoppedEvent() {
+            fireEditingStopped();
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return theButton.getSelectedDateDay();
         }
     }
 

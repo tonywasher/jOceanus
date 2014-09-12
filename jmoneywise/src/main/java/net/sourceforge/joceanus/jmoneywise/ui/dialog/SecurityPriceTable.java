@@ -27,7 +27,7 @@ import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DateDayCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
@@ -54,6 +54,8 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
@@ -215,6 +217,7 @@ public class SecurityPriceTable
         thePrices = theUpdateSet.findDataList(MoneyWiseDataType.SECURITYPRICE, ViewSecurityPriceList.class);
         theHeader = new PriceHeader(thePrices);
         theDilutions = theView.getDilutions();
+        theColumns.setDateRange();
         setList(thePrices);
     }
 
@@ -455,7 +458,12 @@ public class SecurityPriceTable
         /**
          * Date editor.
          */
-        private final CalendarCellEditor theDateEditor;
+        private final DateDayCellEditor theDateEditor;
+
+        /**
+         * Date configuration.
+         */
+        private final JDateDayConfig theDateConfig;
 
         /**
          * Action Icon editor.
@@ -487,7 +495,8 @@ public class SecurityPriceTable
 
             /* Create the relevant formatters */
             thePriceEditor = theFieldMgr.allocatePriceCellEditor();
-            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theDateEditor = theFieldMgr.allocateDateDayCellEditor();
+            theDateConfig = theDateEditor.getDateConfig();
             theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
@@ -508,6 +517,18 @@ public class SecurityPriceTable
 
             /* Initialise the columns */
             setColumns();
+        }
+
+        /**
+         * Adjust date range.
+         */
+        private void setDateRange() {
+            /* Access date range */
+            JDateDayRange myRange = thePrices.getDataSet().getDateRange();
+
+            /* Adjust editor range */
+            theDateConfig.setEarliestDateDay(myRange.getStart());
+            theDateConfig.setLatestDateDay(myRange.getEnd());
         }
 
         /**

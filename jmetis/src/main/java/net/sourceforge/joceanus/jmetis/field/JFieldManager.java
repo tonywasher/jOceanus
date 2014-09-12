@@ -31,6 +31,7 @@ import javax.swing.border.Border;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DateDayCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
@@ -334,6 +335,15 @@ public class JFieldManager {
     public CalendarCellEditor allocateCalendarCellEditor() {
         /* Return a new CalendarEditor object */
         return new CalendarCellEditor(theFormatter.getDateFormatter());
+    }
+
+    /**
+     * Allocate a DateDayEditor object.
+     * @return the dateDay editor
+     */
+    public DateDayCellEditor allocateDateDayCellEditor() {
+        /* Return a new DateDayEditor object */
+        return new DateDayCellEditor(theFormatter.getDateFormatter());
     }
 
     /**

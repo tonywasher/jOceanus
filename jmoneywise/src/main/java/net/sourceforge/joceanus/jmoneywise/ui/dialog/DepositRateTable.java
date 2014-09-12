@@ -23,12 +23,15 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DateDayCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
@@ -52,6 +55,8 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
@@ -194,6 +199,7 @@ public class DepositRateTable
         /* Access the rates list */
         theRates = theUpdateSet.findDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
         theHeader = new RateHeader(theRates);
+        theColumns.setDateRange();
         setList(theRates);
     }
 
@@ -432,7 +438,12 @@ public class DepositRateTable
         /**
          * Date editor.
          */
-        private final CalendarCellEditor theDateEditor;
+        private final DateDayCellEditor theDateEditor;
+
+        /**
+         * Date configuration.
+         */
+        private final JDateDayConfig theDateConfig;
 
         /**
          * Action Icon editor.
@@ -454,7 +465,8 @@ public class DepositRateTable
 
             /* Create the relevant formatters */
             theRateEditor = theFieldMgr.allocateRateCellEditor();
-            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theDateEditor = theFieldMgr.allocateDateDayCellEditor();
+            theDateConfig = theDateEditor.getDateConfig();
             theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
@@ -472,6 +484,20 @@ public class DepositRateTable
 
             /* Initialise the columns */
             setColumns();
+
+            /* Add DateCell listener */
+            theDateEditor.addChangeListener(new DateCellListener());
+        }
+
+        /**
+         * Adjust date range.
+         */
+        private void setDateRange() {
+            /* Access date range */
+            JDateDayRange myRange = theRates.getDataSet().getDateRange();
+
+            /* Adjust editor range */
+            theDateConfig.setEarliestDateDay(myRange.getStart());
         }
 
         /**
@@ -611,6 +637,23 @@ public class DepositRateTable
                     return DepositRate.FIELD_ENDDATE;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * DateCellListener.
+         */
+        private class DateCellListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                /* Access details */
+                Point myCell = theDateEditor.getPoint();
+
+                /* Determine whether this is the latest entry */
+                int i = convertRowIndexToView(myCell.y);
+                boolean bAllowNull = i == 1;
+                theDateConfig.setAllowNullDateSelection(bAllowNull);
             }
         }
     }

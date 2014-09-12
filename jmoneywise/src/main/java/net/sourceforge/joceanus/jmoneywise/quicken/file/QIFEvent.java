@@ -157,7 +157,7 @@ public class QIFEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        JDateDay myDateDay = myDateParser.parseDateDay(myData);
+                        JDateDay myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;

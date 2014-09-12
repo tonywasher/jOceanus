@@ -41,6 +41,11 @@ public class QIFWriter {
     protected static final String QIF_DATEFORMAT = "dd/MM/yy";
 
     /**
+     * Quicken BaseYear.
+     */
+    protected static final int QIF_BASEYEAR = 1970;
+
+    /**
      * AutoSwitch option.
      */
     protected static final String QIF_AUTOSWITCH = "AutoSwitch";
