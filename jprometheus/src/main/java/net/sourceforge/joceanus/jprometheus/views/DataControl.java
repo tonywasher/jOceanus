@@ -59,42 +59,42 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Debug View Name.
      */
-    public static final String DATA_VIEWS = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_VIEWS);
+    public static final String DATA_VIEWS = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_VIEWS);
 
     /**
      * Underlying Data Name.
      */
-    public static final String DATA_DATASET = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_DATA);
+    public static final String DATA_DATASET = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_DATA);
 
     /**
      * Data Updates Name.
      */
-    public static final String DATA_UPDATES = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_UPDATES);
+    public static final String DATA_UPDATES = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_UPDATES);
 
     /**
      * Analysis Name.
      */
-    public static final String DATA_ANALYSIS = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_ANALYSIS);
+    public static final String DATA_ANALYSIS = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_ANALYSIS);
 
     /**
      * Debug Edit Name.
      */
-    public static final String DATA_EDIT = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_EDIT);
+    public static final String DATA_EDIT = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_EDIT);
 
     /**
      * Debug Maintenance Name.
      */
-    public static final String DATA_MAINT = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_MAINT);
+    public static final String DATA_MAINT = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_MAINT);
 
     /**
      * Error Name.
      */
-    public static final String DATA_ERROR = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_ERROR);
+    public static final String DATA_ERROR = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_ERROR);
 
     /**
      * Active Profile.
      */
-    public static final String DATA_PROFILE = ResourceMgr.getString(MoneyWiseViewResource.DATAENTRY_PROFILE);
+    public static final String DATA_PROFILE = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_PROFILE);
 
     /**
      * The DataSet.
