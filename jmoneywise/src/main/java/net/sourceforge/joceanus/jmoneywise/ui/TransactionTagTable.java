@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -57,11 +56,13 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * TransactionTag Table.
@@ -72,11 +73,6 @@ public class TransactionTagTable
      * Serial Id.
      */
     private static final long serialVersionUID = -3505466850582535851L;
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionTagTable.class.getName());
 
     /**
      * Name Column Title.
@@ -91,7 +87,7 @@ public class TransactionTagTable
     /**
      * Active Column Title.
      */
-    private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
+    private static final String TITLE_ACTIVE = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_ACTIVE);
 
     /**
      * The data view.

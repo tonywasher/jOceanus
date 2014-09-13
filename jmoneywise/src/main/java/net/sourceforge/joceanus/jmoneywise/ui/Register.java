@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -74,6 +73,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Event Register Table.
@@ -85,11 +85,6 @@ public class Register
      * Serial Id.
      */
     private static final long serialVersionUID = -5531752729052421790L;
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Register.class.getName());
 
     /**
      * Date column title.
@@ -124,7 +119,7 @@ public class Register
     /**
      * Reconciled Column Title.
      */
-    private static final String TITLE_RECONCILED = NLS_BUNDLE.getString("TitleReconciled");
+    private static final String TITLE_RECONCILED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_RECONCILED);
 
     /**
      * Data View.

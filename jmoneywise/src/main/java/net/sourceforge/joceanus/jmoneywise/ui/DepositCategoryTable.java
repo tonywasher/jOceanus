@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -68,11 +67,13 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -87,11 +88,6 @@ public class DepositCategoryTable
     private static final long serialVersionUID = 733879777015598066L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositCategoryTable.class.getName());
-
-    /**
      * Name Column Title.
      */
     private static final String TITLE_NAME = DepositCategory.FIELD_NAME.getName();
@@ -99,7 +95,7 @@ public class DepositCategoryTable
     /**
      * FullName Column Title.
      */
-    private static final String TITLE_FULLNAME = NLS_BUNDLE.getString("TitleFullName");
+    private static final String TITLE_FULLNAME = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_COLUMN_FULLNAME);
 
     /**
      * Category Column Title.
@@ -114,17 +110,17 @@ public class DepositCategoryTable
     /**
      * Active Column Title.
      */
-    private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
+    private static final String TITLE_ACTIVE = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_ACTIVE);
 
     /**
      * Filter Prompt.
      */
-    private static final String TITLE_FILTER = NLS_BUNDLE.getString("PromptFilter");
+    private static final String TITLE_FILTER = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_PROMPT_FILTER);
 
     /**
      * Filter Parents Title.
      */
-    private static final String FILTER_PARENTS = NLS_BUNDLE.getString("PromptFilterParents");
+    private static final String FILTER_PARENTS = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_FILTER_PARENT);
 
     /**
      * The data view.

@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -41,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -63,27 +63,22 @@ public class ReportSelect
     /**
      * Print operation string.
      */
-    public static final String ACTION_PRINT = "PrintRequest";
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportSelect.class.getName());
+    private static final String ACTION_PRINT = "PrintRequest";
 
     /**
      * Text for Report Label.
      */
-    private static final String NLS_REPORT = NLS_BUNDLE.getString("SelectReport");
+    private static final String NLS_REPORT = ResourceMgr.getString(MoneyWiseUIControlResource.REPORT_PROMPT);
 
     /**
      * Text for Print Button.
      */
-    private static final String NLS_PRINT = NLS_BUNDLE.getString("PrintButton");
+    private static final String NLS_PRINT = ResourceMgr.getString(MoneyWiseUIControlResource.REPORT_PRINT);
 
     /**
      * Text for Selection Title.
      */
-    private static final String NLS_TITLE = NLS_BUNDLE.getString("SelectTitle");
+    private static final String NLS_TITLE = ResourceMgr.getString(MoneyWiseUIControlResource.REPORT_TITLE);
 
     /**
      * Reports scroll button.

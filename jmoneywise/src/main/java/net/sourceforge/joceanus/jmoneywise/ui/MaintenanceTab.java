@@ -26,7 +26,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -63,6 +62,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
@@ -79,34 +79,29 @@ public class MaintenanceTab
     private static final long serialVersionUID = 4291381331160920L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintenanceTab.class.getName());
-
-    /**
      * TaxYears tab title.
      */
-    private static final String TITLE_TAXYEARS = NLS_BUNDLE.getString("TabTaxYear");
+    private static final String TITLE_TAXYEARS = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_TAXYEAR);
 
     /**
      * Preferences tab title.
      */
-    private static final String TITLE_PREFERENCES = NLS_BUNDLE.getString("TabPreference");
+    private static final String TITLE_PREFERENCES = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_SETTINGS);
 
     /**
      * Account tab title.
      */
-    private static final String TITLE_ACCOUNT = NLS_BUNDLE.getString("TabAccount");
+    private static final String TITLE_ACCOUNT = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_ACCOUNT);
 
     /**
      * Category tab title.
      */
-    private static final String TITLE_CATEGORY = NLS_BUNDLE.getString("TabCategory");
+    private static final String TITLE_CATEGORY = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_CATEGORY);
 
     /**
      * Static tab title.
      */
-    private static final String TITLE_STATIC = NLS_BUNDLE.getString("TabStatic");
+    private static final String TITLE_STATIC = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_STATIC);
 
     /**
      * The Data View.

@@ -30,7 +30,6 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -54,6 +53,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -75,14 +75,9 @@ public class SpotSelect
     private static final int STRUT_WIDTH = 10;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotSelect.class.getName());
-
-    /**
      * Text for Date Label.
      */
-    private static final String NLS_DATE = NLS_BUNDLE.getString("SelectDate");
+    private static final String NLS_DATE = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_DATE);
 
     /**
      * Text for Portfolio Label.
@@ -92,22 +87,22 @@ public class SpotSelect
     /**
      * Text for Show Closed.
      */
-    private static final String NLS_CLOSED = NLS_BUNDLE.getString("ShowClosed");
+    private static final String NLS_CLOSED = ResourceMgr.getString(MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED);
 
     /**
      * Text for Title.
      */
-    private static final String NLS_TITLE = NLS_BUNDLE.getString("SpotTitle");
+    private static final String NLS_TITLE = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_TITLE);
 
     /**
      * Text for Next toolTip.
      */
-    private static final String NLS_NEXTTIP = NLS_BUNDLE.getString("NextTip");
+    private static final String NLS_NEXTTIP = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_NEXT);
 
     /**
      * Text for Previous toolTip.
      */
-    private static final String NLS_PREVTIP = NLS_BUNDLE.getString("PrevTip");
+    private static final String NLS_PREVTIP = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_PREV);
 
     /**
      * The data view.

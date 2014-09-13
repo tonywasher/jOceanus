@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -101,54 +100,49 @@ public class MainTab
     public static final int ACTION_VIEWSTATIC = ACTION_VIEWTAXYEAR + 1;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainTab.class.getName());
-
-    /**
      * Report tab title.
      */
-    private static final String TITLE_REPORT = NLS_BUNDLE.getString("TabReport");
+    private static final String TITLE_REPORT = ResourceMgr.getString(MoneyWiseUIResource.MAIN_REPORT);
 
     /**
      * Statement tab title.
      */
-    private static final String TITLE_STATEMENT = NLS_BUNDLE.getString("TabStatement");
+    private static final String TITLE_STATEMENT = ResourceMgr.getString(MoneyWiseUIResource.MAIN_STATEMENT);
 
     /**
      * Register tab title.
      */
-    private static final String TITLE_REGISTER = NLS_BUNDLE.getString("TabRegister");
+    private static final String TITLE_REGISTER = ResourceMgr.getString(MoneyWiseUIResource.MAIN_REGISTER);
 
     /**
      * SpotPrices tab title.
      */
-    private static final String TITLE_SPOTVIEW = NLS_BUNDLE.getString("TabSpotPrices");
+    private static final String TITLE_SPOTVIEW = ResourceMgr.getString(MoneyWiseUIResource.MAIN_SPOTPRICE);
 
     /**
      * Maintenance tab title.
      */
-    private static final String TITLE_MAINT = NLS_BUNDLE.getString("TabMaint");
+    private static final String TITLE_MAINT = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MAINTENANCE);
 
     /**
      * QIF menu title.
      */
-    private static final String MENU_CREATEQIF = NLS_BUNDLE.getString("MenuCreateQIF");
+    private static final String MENU_CREATEQIF = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_CREATEQIF);
 
     /**
      * Archive menu title.
      */
-    private static final String MENU_ARCHIVE = NLS_BUNDLE.getString("MenuArchive");
+    private static final String MENU_ARCHIVE = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_LOADARCHIVE);
 
     /**
      * SubVersion menu title.
      */
-    private static final String MENU_BACKUPSVN = NLS_BUNDLE.getString("MenuBackupSVN");
+    private static final String MENU_BACKUPSVN = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_BACKUPSVN);
 
     /**
      * SubVersion menu title.
      */
-    private static final String MENU_RESTORESVN = NLS_BUNDLE.getString("MenuRestoreSVN");
+    private static final String MENU_RESTORESVN = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_RESTORESVN);
 
     /**
      * Program name.

@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -57,6 +56,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -81,24 +81,19 @@ public class CategoryPanel
     protected static final int PANEL_PAD = 50;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CategoryPanel.class.getName());
-
-    /**
      * Text for DataEntry Title.
      */
-    private static final String NLS_DATAENTRY = NLS_BUNDLE.getString("DataEntryTitle");
+    private static final String NLS_DATAENTRY = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_DATAENTRY);
 
     /**
      * Text for Selection Title.
      */
-    private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectionTitle");
+    private static final String NLS_SELECT = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_TITLE_SELECT);
 
     /**
      * Text for Selection Prompt.
      */
-    private static final String NLS_DATA = NLS_BUNDLE.getString("SelectionPrompt");
+    private static final String NLS_DATA = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_PROMPT_SELECT);
 
     /**
      * The Data View.
@@ -640,41 +635,43 @@ public class CategoryPanel
         /**
          * Deposits.
          */
-        DEPOSITS,
+        DEPOSITS(MoneyWiseDataType.DEPOSITCATEGORY),
 
         /**
          * Cash.
          */
-        CASH,
+        CASH(MoneyWiseDataType.CASHCATEGORY),
 
         /**
          * Loans.
          */
-        LOANS,
+        LOANS(MoneyWiseDataType.LOANCATEGORY),
 
         /**
          * Events.
          */
-        EVENTS,
+        EVENTS(MoneyWiseDataType.TRANSCATEGORY),
 
         /**
          * Tags.
          */
-        EVENTTAGS;
+        EVENTTAGS(MoneyWiseDataType.TRANSTAG);
 
         /**
          * The String name.
          */
         private String theName;
 
+        /**
+         * Constructor.
+         * @param pDataType the dataType
+         */
+        private PanelName(final MoneyWiseDataType pDataType) {
+            theName = pDataType.getListName();
+        }
+
         @Override
         public String toString() {
-            /* If we have not yet loaded the name */
-            if (theName == null) {
-                /* Load the name */
-                theName = NLS_BUNDLE.getString(name());
-            }
-
             /* return the name */
             return theName;
         }

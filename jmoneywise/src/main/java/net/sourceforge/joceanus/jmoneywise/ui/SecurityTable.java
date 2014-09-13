@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -75,11 +74,13 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
@@ -91,11 +92,6 @@ public class SecurityTable
      * Serial Id.
      */
     private static final long serialVersionUID = -9040660595889670213L;
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityTable.class.getName());
 
     /**
      * Name Column Title.
@@ -135,7 +131,7 @@ public class SecurityTable
     /**
      * Active Column Title.
      */
-    private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
+    private static final String TITLE_ACTIVE = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_ACTIVE);
 
     /**
      * The data view.

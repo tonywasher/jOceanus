@@ -4,7 +4,7 @@ setlocal
 if ".%1" == "." goto :default
 set projectName=JDateButton
 set source=c:\Users\Tony\jOceanus\%projectName%
-set target=c:\Users\Tony\sourceforge\%projectName%\trunk
+set target=c:\Users\Tony\sourceforge\%projectName%\branches\v1.3.0
 set dirNames=.
 goto :docopy
 

@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventM
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
@@ -58,6 +59,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Panel to display a list of SecurityPrices associated with a Security.
@@ -92,7 +94,7 @@ public class SecurityPriceTable
     /**
      * Action Column Title.
      */
-    private static final String TITLE_ACTION = "Action";
+    private static final String TITLE_ACTION = ResourceMgr.getString(MoneyWiseUIControlResource.COLUMN_ACTION);
 
     /**
      * The data view.

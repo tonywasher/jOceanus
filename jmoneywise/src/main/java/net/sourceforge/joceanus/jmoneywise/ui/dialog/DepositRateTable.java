@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
@@ -59,6 +60,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Panel to display a list of DepositRates associated with a Deposit.
@@ -88,7 +90,7 @@ public class DepositRateTable
     /**
      * Action Column Title.
      */
-    private static final String TITLE_ACTION = "Action";
+    private static final String TITLE_ACTION = ResourceMgr.getString(MoneyWiseUIControlResource.COLUMN_ACTION);
 
     /**
      * The field manager.

@@ -23,12 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Image;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 
 /**
@@ -83,39 +83,34 @@ public final class MoneyWiseIcons
     private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("icons/BlueJellyCheckBox.png")));
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseIcons.class.getName());
-
-    /**
      * Reconcile Button ToolTip.
      */
-    private static final String TIP_RECONCILE = NLS_BUNDLE.getString("ButtonReconcile");
+    private static final String TIP_RECONCILE = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_RECONCILE);
 
     /**
      * Release Button ToolTip.
      */
-    private static final String TIP_RELEASE = NLS_BUNDLE.getString("ButtonRelease");
+    private static final String TIP_RELEASE = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_RELEASE);
 
     /**
      * Frozen Button ToolTip.
      */
-    private static final String TIP_FROZEN = NLS_BUNDLE.getString("ButtonFrozen");
+    private static final String TIP_FROZEN = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_FROZEN);
 
     /**
      * Locked Button ToolTip.
      */
-    private static final String TIP_LOCKED = NLS_BUNDLE.getString("ButtonLocked");
+    private static final String TIP_LOCKED = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_LOCKED);
 
     /**
      * Lock Button ToolTip.
      */
-    private static final String TIP_LOCK = NLS_BUNDLE.getString("ButtonLock");
+    private static final String TIP_LOCK = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_LOCK);
 
     /**
      * UnLock Button ToolTip.
      */
-    private static final String TIP_UNLOCK = NLS_BUNDLE.getString("ButtonUnLock");
+    private static final String TIP_UNLOCK = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_UNLOCK);
 
     /**
      * Private constructor to prevent instantiation.

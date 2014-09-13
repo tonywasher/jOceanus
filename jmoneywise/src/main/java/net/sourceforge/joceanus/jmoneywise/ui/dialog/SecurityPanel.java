@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.GridLayout;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -55,11 +54,13 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -77,14 +78,9 @@ public class SecurityPanel
     private static final long serialVersionUID = 7711868258621672746L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityPanel.class.getName());
-
-    /**
      * Prices Tab Title.
      */
-    protected static final String TAB_PRICES = NLS_BUNDLE.getString("TabPrices");
+    private static final String TAB_PRICES = ResourceMgr.getString(MoneyWiseUIControlResource.SECURITYPANEL_TAB_PRICES);
 
     /**
      * The Field Set.

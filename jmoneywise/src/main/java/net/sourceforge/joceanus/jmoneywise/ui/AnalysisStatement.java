@@ -23,7 +23,6 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -71,6 +70,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Analysis Statement.
@@ -81,11 +81,6 @@ public class AnalysisStatement
      * Serial Id.
      */
     private static final long serialVersionUID = -8054491530459145911L;
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AnalysisStatement.class.getName());
 
     /**
      * Date Column Title.
@@ -115,27 +110,27 @@ public class AnalysisStatement
     /**
      * Reconciled Column Title.
      */
-    private static final String TITLE_RECONCILED = NLS_BUNDLE.getString("TitleReconciled");
+    private static final String TITLE_RECONCILED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_RECONCILED);
 
     /**
      * Debited Column Title.
      */
-    private static final String TITLE_DEBITED = NLS_BUNDLE.getString("TitleDebited");
+    private static final String TITLE_DEBITED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_DEBIT);
 
     /**
      * Credited Column Title.
      */
-    private static final String TITLE_CREDITED = NLS_BUNDLE.getString("TitleCredited");
+    private static final String TITLE_CREDITED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_CREDIT);
 
     /**
      * Balance Column Title.
      */
-    private static final String TITLE_BALANCE = NLS_BUNDLE.getString("TitleBalance");
+    private static final String TITLE_BALANCE = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_BALANCE);
 
     /**
      * Opening Balance Text.
      */
-    private static final String TEXT_OPENBALANCE = NLS_BUNDLE.getString("TextOpenBalance");
+    private static final String TEXT_OPENBALANCE = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_OPENINGBALANCE);
 
     /**
      * The data view.

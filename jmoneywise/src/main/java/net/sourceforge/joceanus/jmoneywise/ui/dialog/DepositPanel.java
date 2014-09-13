@@ -26,7 +26,6 @@ import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -57,11 +56,13 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountC
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -80,14 +81,9 @@ public class DepositPanel
     private static final long serialVersionUID = -5458693709039462001L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositPanel.class.getName());
-
-    /**
      * Rates Tab Title.
      */
-    protected static final String TAB_RATES = NLS_BUNDLE.getString("TabRates");
+    private static final String TAB_RATES = ResourceMgr.getString(MoneyWiseUIControlResource.DEPOSITPANEL_TAB_RATES);
 
     /**
      * The Field Set.
