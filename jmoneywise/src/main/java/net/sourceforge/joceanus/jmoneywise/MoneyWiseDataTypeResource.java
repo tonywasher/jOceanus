@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for jMoneyWise DataType Fields.
@@ -419,14 +420,19 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
     SCHEDULE_LIST("Schedule.List");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = MoneyWiseDataType.class.getCanonicalName();
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -447,8 +453,15 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 
     /**

@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Event Category Bucket.
@@ -61,12 +60,12 @@ public final class EventCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.EVENTCATEGORY_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.EVENTCATEGORY_NAME.getValue());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Event Category Field Id.
@@ -81,12 +80,12 @@ public final class EventCategoryBucket
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.BUCKET_BASEVALUES));
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.BUCKET_HISTORY));
+    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * FieldSet map.
@@ -96,7 +95,7 @@ public final class EventCategoryBucket
     /**
      * Totals bucket name.
      */
-    private static final String NAME_TOTALS = ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS);
+    private static final String NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS.getValue();
 
     /**
      * The analysis.
@@ -760,7 +759,7 @@ public final class EventCategoryBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.EVENTCATEGORY_LIST));
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.EVENTCATEGORY_LIST.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -775,12 +774,12 @@ public final class EventCategoryBucket
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.

@@ -27,7 +27,6 @@ import java.security.SecureRandom;
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Stream Key Type.
@@ -68,7 +67,7 @@ public enum StreamKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(CryptoResource.getKeyForStream(this));
+            theName = CryptoResource.getKeyForStream(this).getValue();
         }
 
         /* return the name */

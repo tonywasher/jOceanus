@@ -53,7 +53,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -77,7 +76,7 @@ public class SpotSelect
     /**
      * Text for Date Label.
      */
-    private static final String NLS_DATE = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_DATE);
+    private static final String NLS_DATE = MoneyWiseUIControlResource.SPOTPRICE_DATE.getValue();
 
     /**
      * Text for Portfolio Label.
@@ -87,22 +86,22 @@ public class SpotSelect
     /**
      * Text for Show Closed.
      */
-    private static final String NLS_CLOSED = ResourceMgr.getString(MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED);
+    private static final String NLS_CLOSED = MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED.getValue();
 
     /**
      * Text for Title.
      */
-    private static final String NLS_TITLE = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_TITLE);
+    private static final String NLS_TITLE = MoneyWiseUIControlResource.SPOTPRICE_TITLE.getValue();
 
     /**
      * Text for Next toolTip.
      */
-    private static final String NLS_NEXTTIP = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_NEXT);
+    private static final String NLS_NEXTTIP = MoneyWiseUIControlResource.SPOTPRICE_NEXT.getValue();
 
     /**
      * Text for Previous toolTip.
      */
-    private static final String NLS_PREVTIP = ResourceMgr.getString(MoneyWiseUIControlResource.SPOTPRICE_PREV);
+    private static final String NLS_PREVTIP = MoneyWiseUIControlResource.SPOTPRICE_PREV.getValue();
 
     /**
      * The data view.

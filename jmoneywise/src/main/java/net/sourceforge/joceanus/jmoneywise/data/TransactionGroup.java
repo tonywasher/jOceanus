@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Transaction group type.
@@ -34,7 +33,7 @@ public class TransactionGroup
     /**
      * Multiple Portfolios Error.
      */
-    private static final String ERROR_PORTFOLIO = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_MULTPORT);
+    private static final String ERROR_PORTFOLIO = MoneyWiseDataResource.TRANSACTION_ERROR_MULTPORT.getValue();
 
     /**
      * Active Portfolio.

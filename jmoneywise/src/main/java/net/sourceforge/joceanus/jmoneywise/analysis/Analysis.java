@@ -53,7 +53,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Data Analysis.
@@ -64,7 +63,7 @@ public class Analysis
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.ANALYSIS_NAME.getValue());
 
     @Override
     public JDataFields getDataFields() {
@@ -74,7 +73,7 @@ public class Analysis
     /**
      * Range Field Id.
      */
-    private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
+    private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
     /**
      * DepositBuckets Field Id.
@@ -129,7 +128,7 @@ public class Analysis
     /**
      * TaxCalcBuckets Field Id.
      */
-    private static final JDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_TAXCALC));
+    private static final JDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TAXCALC.getValue());
 
     /**
      * Prices Field Id.
@@ -144,12 +143,12 @@ public class Analysis
     /**
      * Charges Field Id.
      */
-    private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_CHARGES));
+    private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_CHARGES.getValue());
 
     /**
      * Dilutions Field Id.
      */
-    private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_DILUTIONS));
+    private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
     @Override
     public Object getFieldValue(final JDataField pField) {

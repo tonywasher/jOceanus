@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -74,7 +73,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     /**
      * DateRange field Id.
      */
-    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
     /**
      * TaxRegime field Id.
@@ -84,7 +83,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     /**
      * Bad Date Error Text.
      */
-    private static final String ERROR_BADDATE = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_BADDATE);
+    private static final String ERROR_BADDATE = MoneyWiseDataResource.TAXYEAR_ERROR_BADDATE.getValue();
 
     @Override
     public String formatObject() {

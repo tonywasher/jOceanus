@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Portfolio class.
@@ -77,42 +76,42 @@ public class Portfolio
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
      * Holding Field Id.
      */
-    public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_HOLDING));
+    public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.PORTFOLIO_HOLDING.getValue());
 
     /**
      * isTaxFree Field Id.
      */
-    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_TAXFREE));
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue());
 
     /**
      * PortfolioInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * Holding Closed Error Text.
      */
-    private static final String ERROR_HOLDCLOSED = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDCLOSED);
+    private static final String ERROR_HOLDCLOSED = MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDCLOSED.getValue();
 
     /**
      * Holding Parent Error Text.
      */
-    private static final String ERROR_HOLDPARENT = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDPARENT);
+    private static final String ERROR_HOLDPARENT = MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDPARENT.getValue();
 
     /**
      * Holding Tax Invalid Error Text.
      */
-    private static final String ERROR_HOLDTAX = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDTAX);
+    private static final String ERROR_HOLDTAX = MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDTAX.getValue();
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_NEWACCOUNT);
+    private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.PORTFOLIO_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.

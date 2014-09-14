@@ -23,7 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for jMoneyWise UI Fields.
@@ -180,14 +181,19 @@ public enum MoneyWiseUIResource implements ResourceId {
     MAIN_MENU_CREATEQIF("Main.Menu.CreateQIF");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = MoneyWiseIcons.class.getCanonicalName();
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseIcons.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -208,8 +214,14 @@ public enum MoneyWiseUIResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
-    }
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
 
+        /* return the value */
+        return theValue;
+    }
 }

@@ -58,7 +58,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -82,17 +81,17 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * Text for Selection Title.
      */
-    private static final String NLS_SELECT = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_SELECT);
+    private static final String NLS_SELECT = PrometheusUIResource.STATIC_TITLE_SELECT.getValue();
 
     /**
      * Text for Data.
      */
-    private static final String NLS_DATA = ResourceMgr.getString(PrometheusUIResource.STATIC_PROMPT_DATA);
+    private static final String NLS_DATA = PrometheusUIResource.STATIC_PROMPT_DATA.getValue();
 
     /**
      * Text for Show Disabled.
      */
-    private static final String NLS_DISABLED = ResourceMgr.getString(PrometheusUIResource.STATIC_PROMPT_DISABLED);
+    private static final String NLS_DISABLED = PrometheusUIResource.STATIC_PROMPT_DISABLED.getValue();
 
     /**
      * The data control.

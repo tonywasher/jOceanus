@@ -59,7 +59,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Analysis Filter Classes.
@@ -70,7 +69,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseViewResource.FILTER_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseViewResource.FILTER_NAME.getValue());
 
     @Override
     public JDataFields getDataFields() {
@@ -80,12 +79,12 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     /**
      * Bucket Field Id.
      */
-    private static final JDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.FILTER_BUCKET));
+    private static final JDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET.getValue());
 
     /**
      * Attribute Field Id.
      */
-    private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseViewResource.FILTER_ATTR));
+    private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
 
     @Override
     public Object getFieldValue(final JDataField pField) {

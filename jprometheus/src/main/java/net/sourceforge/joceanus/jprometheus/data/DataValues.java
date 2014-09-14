@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,32 +76,32 @@ public class DataValues<E extends Enum<E>> {
     /**
      * InfoSet Items tag.
      */
-    private static final String TAG_INFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME);
+    private static final String TAG_INFOSET = PrometheusDataResource.DATAINFOSET_NAME.getValue();
 
     /**
      * Children Items tag.
      */
-    private static final String TAG_CHILDREN = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_CHILDREN);
+    private static final String TAG_CHILDREN = PrometheusDataResource.DATAVALUES_CHILDREN.getValue();
 
     /**
      * Child Item tag.
      */
-    private static final String TAG_CHILD = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_CHILD);
+    private static final String TAG_CHILD = PrometheusDataResource.DATAVALUES_CHILD.getValue();
 
     /**
      * List type attribute.
      */
-    protected static final String ATTR_TYPE = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_ATTRTYPE);
+    protected static final String ATTR_TYPE = PrometheusDataResource.DATAVALUES_ATTRTYPE.getValue();
 
     /**
      * List size attribute.
      */
-    protected static final String ATTR_SIZE = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_ATTRSIZE);
+    protected static final String ATTR_SIZE = PrometheusDataResource.DATAVALUES_ATTRSIZE.getValue();
 
     /**
      * Data Version attribute.
      */
-    protected static final String ATTR_VERS = ResourceMgr.getString(PrometheusDataResource.DATAVALUES_ATTRVER);
+    protected static final String ATTR_VERS = PrometheusDataResource.DATAVALUES_ATTRVER.getValue();
 
     /**
      * The item type.

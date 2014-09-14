@@ -65,7 +65,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Class to analyse transactions.
@@ -76,17 +75,17 @@ public class TransactionAnalyser
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.ANALYSIS_ANALYSER));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.ANALYSIS_ANALYSER.getValue());
 
     /**
      * Analysis field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Analysis Manager field Id.
      */
-    private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_MANAGER));
+    private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_MANAGER.getValue());
 
     @Override
     public JDataFields getDataFields() {

@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,7 +51,7 @@ public class TaxCalculation
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.TAXCALC_TITLE);
+    private static final String TEXT_TITLE = ReportResource.TAXCALC_TITLE.getValue();
 
     /**
      * HTML builder.

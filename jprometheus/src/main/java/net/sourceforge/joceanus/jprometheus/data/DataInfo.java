@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -63,7 +62,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAINFO_NAME), EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFO_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -73,37 +72,37 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * InfoType Field Id.
      */
-    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAINFO_TYPE));
+    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_TYPE.getValue());
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAINFO_OWNER));
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_OWNER.getValue());
 
     /**
      * Value Field Id.
      */
-    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAINFO_VALUE));
+    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_VALUE.getValue());
 
     /**
      * Link Field Id.
      */
-    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.DATAINFO_LINK));
+    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
 
     /**
      * Invalid Data Type Error.
      */
-    protected static final String ERROR_BADDATATYPE = ResourceMgr.getString(PrometheusDataResource.DATAINFO_ERROR_TYPE);
+    protected static final String ERROR_BADDATATYPE = PrometheusDataResource.DATAINFO_ERROR_TYPE.getValue();
 
     /**
      * Invalid Data Error.
      */
-    protected static final String ERROR_BADDATA = ResourceMgr.getString(PrometheusDataResource.DATAINFO_ERROR_DATA);
+    protected static final String ERROR_BADDATA = PrometheusDataResource.DATAINFO_ERROR_DATA.getValue();
 
     /**
      * Invalid Info Class Error.
      */
-    protected static final String ERROR_BADINFOCLASS = ResourceMgr.getString(PrometheusDataResource.DATAINFO_ERROR_CLASS);
+    protected static final String ERROR_BADINFOCLASS = PrometheusDataResource.DATAINFO_ERROR_CLASS.getValue();
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -905,7 +904,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAINFO_LIST), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFO_LIST.getValue(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

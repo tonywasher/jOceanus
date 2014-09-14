@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Cash Bucket class.
@@ -39,7 +38,7 @@ public final class CashBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.CASH_NAME), AccountBucket.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CASH_NAME.getValue(), AccountBucket.FIELD_DEFS);
 
     /**
      * Cash Category Field Id.
@@ -126,7 +125,7 @@ public final class CashBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.CASH_LIST), AccountBucketList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CASH_LIST.getValue(), AccountBucketList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {

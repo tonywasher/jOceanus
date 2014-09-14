@@ -55,7 +55,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Security class.
@@ -91,12 +90,12 @@ public class Security
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
      * Symbol Field Id.
      */
-    public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.SECURITY_SYMBOL));
+    public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
 
     /**
      * Currency Field Id.
@@ -106,17 +105,17 @@ public class Security
     /**
      * initialPrice Field Id.
      */
-    private static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.SECURITY_INITIALPRICE));
+    private static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.SECURITY_INITIALPRICE.getValue());
 
     /**
      * SecurityInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.SECURITY_NEWACCOUNT);
+    private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.SECURITY_NEWACCOUNT.getValue();
 
     /**
      * Initial Price.

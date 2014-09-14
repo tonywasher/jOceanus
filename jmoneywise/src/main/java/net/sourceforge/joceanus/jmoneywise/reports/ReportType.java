@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.reports;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Report Types.
  */
@@ -78,7 +76,7 @@ public enum ReportType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(ReportResource.getKeyForReportType(this));
+            theName = ReportResource.getKeyForReportType(this).getValue();
         }
 
         /* return the name */

@@ -23,7 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for jPrometheus Data Fields.
@@ -470,14 +471,19 @@ public enum PrometheusDataResource implements ResourceId {
     CONTROLDATA_ERROR_EXISTS("ControlData.Error.Exists");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = DataSet.class.getCanonicalName();
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -498,8 +504,15 @@ public enum PrometheusDataResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 
     /**

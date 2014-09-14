@@ -27,7 +27,6 @@ import java.security.SecureRandom;
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Mac types. Available algorithms.
@@ -73,7 +72,7 @@ public enum MacType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(CryptoResource.getKeyForHMac(this));
+            theName = CryptoResource.getKeyForHMac(this).getValue();
         }
 
         /* return the name */

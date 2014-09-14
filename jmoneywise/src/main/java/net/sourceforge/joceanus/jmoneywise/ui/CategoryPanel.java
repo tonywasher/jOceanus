@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -83,17 +82,17 @@ public class CategoryPanel
     /**
      * Text for DataEntry Title.
      */
-    private static final String NLS_DATAENTRY = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_DATAENTRY);
+    private static final String NLS_DATAENTRY = MoneyWiseUIResource.CATEGORY_DATAENTRY.getValue();
 
     /**
      * Text for Selection Title.
      */
-    private static final String NLS_SELECT = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_TITLE_SELECT);
+    private static final String NLS_SELECT = MoneyWiseUIResource.CATEGORY_TITLE_SELECT.getValue();
 
     /**
      * Text for Selection Prompt.
      */
-    private static final String NLS_DATA = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_PROMPT_SELECT);
+    private static final String NLS_DATA = MoneyWiseUIResource.CATEGORY_PROMPT_SELECT.getValue();
 
     /**
      * The Data View.

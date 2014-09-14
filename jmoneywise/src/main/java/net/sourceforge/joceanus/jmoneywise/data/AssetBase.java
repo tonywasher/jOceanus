@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Class representing an account that can be part of a transaction.
@@ -59,57 +58,57 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_NAME));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_DESC));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * isClosed Field Id.
      */
-    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_CLOSED));
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_CLOSED.getValue());
 
     /**
      * CloseDate Field Id.
      */
-    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_CLOSEDATE));
+    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_CLOSEDATE.getValue());
 
     /**
      * firstEvent Field Id.
      */
-    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_FIRSTEVENT));
+    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_FIRSTEVENT.getValue());
 
     /**
      * lastEvent Field Id.
      */
-    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_LASTEVENT));
+    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_LASTEVENT.getValue());
 
     /**
      * isRelevant Field Id.
      */
-    private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_RELEVANT));
+    private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_RELEVANT.getValue());
 
     /**
      * Bad category error.
      */
-    protected static final String ERROR_BADCATEGORY = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_BADCAT);
+    protected static final String ERROR_BADCATEGORY = MoneyWiseDataResource.ASSET_ERROR_BADCAT.getValue();
 
     /**
      * Bad parent error.
      */
-    protected static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_BADPARENT);
+    protected static final String ERROR_BADPARENT = MoneyWiseDataResource.ASSET_ERROR_BADPARENT.getValue();
 
     /**
      * Bad InfoSet Error Text.
      */
-    protected static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
+    protected static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
 
     /**
      * Parent Closed Error Text.
      */
-    protected static final String ERROR_PARCLOSED = ResourceMgr.getString(MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED);
+    protected static final String ERROR_PARCLOSED = MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED.getValue();
 
     @Override
     public String formatObject() {

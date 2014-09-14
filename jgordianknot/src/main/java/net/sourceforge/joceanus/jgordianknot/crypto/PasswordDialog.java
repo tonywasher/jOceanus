@@ -43,7 +43,6 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 import org.slf4j.Logger;
@@ -82,42 +81,42 @@ public class PasswordDialog
     /**
      * Text for Password Label.
      */
-    private static final String NLS_PASSWORD = ResourceMgr.getString(CryptoResource.LABEL_PASSWORD);
+    private static final String NLS_PASSWORD = CryptoResource.LABEL_PASSWORD.getValue();
 
     /**
      * Text for Confirm Label.
      */
-    private static final String NLS_CONFIRM = ResourceMgr.getString(CryptoResource.LABEL_CONFIRM);
+    private static final String NLS_CONFIRM = CryptoResource.LABEL_CONFIRM.getValue();
 
     /**
      * Text for OK Button.
      */
-    private static final String NLS_OK = ResourceMgr.getString(CryptoResource.BUTTON_OK);
+    private static final String NLS_OK = CryptoResource.BUTTON_OK.getValue();
 
     /**
      * Text for Cancel Button.
      */
-    private static final String NLS_CANCEL = ResourceMgr.getString(CryptoResource.BUTTON_CANCEL);
+    private static final String NLS_CANCEL = CryptoResource.BUTTON_CANCEL.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_ERROR = ResourceMgr.getString(CryptoResource.TITLE_ERROR);
+    private static final String NLS_ERROR = CryptoResource.TITLE_ERROR.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_CONFIRMERROR = ResourceMgr.getString(CryptoResource.ERROR_CONFIRM);
+    private static final String NLS_CONFIRMERROR = CryptoResource.ERROR_CONFIRM.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR1 = ResourceMgr.getString(CryptoResource.ERROR_LENGTH1);
+    private static final String NLS_LENGTHERR1 = CryptoResource.ERROR_LENGTH1.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR2 = ResourceMgr.getString(CryptoResource.ERROR_LENGTH2);
+    private static final String NLS_LENGTHERR2 = CryptoResource.ERROR_LENGTH2.getValue();
 
     /**
      * Obtained password.

@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Loan Bucket class.
@@ -43,7 +42,7 @@ public final class LoanBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.LOAN_NAME), AccountBucket.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.LOAN_NAME.getValue(), AccountBucket.FIELD_DEFS);
 
     /**
      * Loan Category Field Id.
@@ -53,7 +52,7 @@ public final class LoanBucket
     /**
      * IsCreditCard Field Id.
      */
-    private static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.LOAN_CREDITCARD));
+    private static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(AnalysisResource.LOAN_CREDITCARD.getValue());
 
     /**
      * The loan category.
@@ -186,7 +185,7 @@ public final class LoanBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.LOAN_LIST), AccountBucketList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.LOAN_LIST.getValue(), AccountBucketList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {

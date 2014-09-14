@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * SecurityAttribute enumeration.
@@ -89,7 +88,7 @@ public enum SecurityAttribute implements BucketAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(AnalysisResource.getKeyForSecurityAttr(this));
+            theName = AnalysisResource.getKeyForSecurityAttr(this).getValue();
         }
 
         /* return the name */

@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Encrypted Data Item and List.
@@ -44,7 +43,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.ENCRYPTED_NAME), DataItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.ENCRYPTED_NAME.getValue(), DataItem.FIELD_DEFS);
 
     @Override
     public EncryptedValueSet getValueSet() {
@@ -64,7 +63,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Error message for bad usage.
      */
-    public static final String ERROR_USAGE = ResourceMgr.getString(PrometheusDataResource.ENCRYPTED_ERROR_USAGE);
+    public static final String ERROR_USAGE = PrometheusDataResource.ENCRYPTED_ERROR_USAGE.getValue();
 
     /**
      * Generator field.

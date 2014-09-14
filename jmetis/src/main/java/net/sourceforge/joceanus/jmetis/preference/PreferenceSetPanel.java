@@ -61,7 +61,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -92,27 +91,27 @@ public class PreferenceSetPanel
     /**
      * Text for Preferences Title.
      */
-    private static final String NLS_PREFERENCES = ResourceMgr.getString(PreferenceResource.UI_TITLE_PREFERENCES);
+    private static final String NLS_PREFERENCES = PreferenceResource.UI_TITLE_PREFERENCES.getValue();
 
     /**
      * Text for Options Title.
      */
-    private static final String NLS_OPTIONS = ResourceMgr.getString(PreferenceResource.UI_TITLE_OPTIONS);
+    private static final String NLS_OPTIONS = PreferenceResource.UI_TITLE_OPTIONS.getValue();
 
     /**
      * Title for Colour Dialog.
      */
-    private static final String NLS_COLORTITLE = ResourceMgr.getString(PreferenceResource.UI_TITLE_COLOR);
+    private static final String NLS_COLORTITLE = PreferenceResource.UI_TITLE_COLOR.getValue();
 
     /**
      * Text for Colour Button.
      */
-    private static final String NLS_COLORTEXT = ResourceMgr.getString(PreferenceResource.UI_PROMPT_COLOR);
+    private static final String NLS_COLORTEXT = PreferenceResource.UI_PROMPT_COLOR.getValue();
 
     /**
      * Text for Select prompt.
      */
-    private static final String NLS_SELECT = ResourceMgr.getString(PreferenceResource.UI_HEADER_SELECT);
+    private static final String NLS_SELECT = PreferenceResource.UI_HEADER_SELECT.getValue();
 
     /**
      * The PreferenceSet for this panel.

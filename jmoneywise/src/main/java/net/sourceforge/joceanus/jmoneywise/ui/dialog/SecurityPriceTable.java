@@ -59,7 +59,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Panel to display a list of SecurityPrices associated with a Security.
@@ -94,7 +93,7 @@ public class SecurityPriceTable
     /**
      * Action Column Title.
      */
-    private static final String TITLE_ACTION = ResourceMgr.getString(MoneyWiseUIControlResource.COLUMN_ACTION);
+    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
 
     /**
      * The data view.

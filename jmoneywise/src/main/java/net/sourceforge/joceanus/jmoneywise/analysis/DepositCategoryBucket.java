@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketL
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Deposit Category Bucket.
@@ -44,7 +43,7 @@ public final class DepositCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DEPOSITCATEGORY_NAME),
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DEPOSITCATEGORY_NAME.getValue(),
             AccountCategoryBucket.FIELD_DEFS);
 
     /**
@@ -119,22 +118,22 @@ public final class DepositCategoryBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DEPOSITCATEGORY_LIST));
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DEPOSITCATEGORY_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS));
+        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
         @Override
         public JDataFields getDataFields() {

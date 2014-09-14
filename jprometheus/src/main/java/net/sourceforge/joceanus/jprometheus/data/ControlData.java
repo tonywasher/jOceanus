@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ControlData definition and list. The Control Data represents the data version of the entire data set, allowing for migration code to be written to map
@@ -65,7 +64,7 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLDATA_VERSION));
+    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue());
 
     /**
      * Field ID for Control Key.
@@ -75,7 +74,7 @@ public class ControlData
     /**
      * Error message for already exists.
      */
-    public static final String ERROR_CTLEXISTS = ResourceMgr.getString(PrometheusDataResource.CONTROLDATA_ERROR_EXISTS);
+    public static final String ERROR_CTLEXISTS = PrometheusDataResource.CONTROLDATA_ERROR_EXISTS.getValue();
 
     /**
      * Get the data version.

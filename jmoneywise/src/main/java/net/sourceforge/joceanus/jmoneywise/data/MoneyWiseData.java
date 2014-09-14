@@ -77,7 +77,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * MoneyWise dataSet.
@@ -87,7 +86,7 @@ public class MoneyWiseData
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_NAME), DataSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_NAME.getValue(), DataSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -97,12 +96,12 @@ public class MoneyWiseData
     /**
      * DateRange Type Field Id.
      */
-    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
     /**
      * DefaultCurrency Field Id.
      */
-    public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_CURRENCY));
+    public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_CURRENCY.getValue());
 
     @Override
     public JDataFields getDataFields() {

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Analysis Types.
  */
@@ -73,7 +71,7 @@ public enum AnalysisType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(AnalysisResource.getKeyForAnalysisType(this));
+            theName = AnalysisResource.getKeyForAnalysisType(this).getValue();
         }
 
         /* return the name */

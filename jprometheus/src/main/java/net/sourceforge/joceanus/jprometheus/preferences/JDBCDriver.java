@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
  */
@@ -53,7 +51,7 @@ public enum JDBCDriver {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(PreferenceResource.getKeyForDriver(this));
+            theName = PreferenceResource.getKeyForDriver(this).getValue();
         }
 
         /* return the name */

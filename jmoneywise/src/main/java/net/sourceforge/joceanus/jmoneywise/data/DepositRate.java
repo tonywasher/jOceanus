@@ -44,10 +44,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
- * AccountRate data type.
+ * DepositRate data type.
  * @author Tony Washer
  */
 public class DepositRate
@@ -81,22 +80,22 @@ public class DepositRate
     /**
      * Rate Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE));
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue());
 
     /**
      * Bonus Field Id.
      */
-    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_BONUS));
+    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue());
 
     /**
      * EndDate Field Id.
      */
-    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_ENDDATE));
+    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue());
 
     /**
      * Null Date Error.
      */
-    private static final String ERROR_NULLDATE = ResourceMgr.getString(MoneyWiseDataResource.DEPOSITRATE_ERROR_NULLDATE);
+    private static final String ERROR_NULLDATE = MoneyWiseDataResource.DEPOSITRATE_ERROR_NULLDATE.getValue();
 
     @Override
     public boolean includeXmlField(final JDataField pField) {

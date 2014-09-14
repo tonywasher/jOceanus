@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for jMoneyWise UI Control Fields.
@@ -144,14 +145,19 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     SECURITYPANEL_TAB_PRICES("SecurityPanel.Tab.Prices");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = MoneyWiseIcons.class.getCanonicalName();
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseIcons.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -172,7 +178,14 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 }

@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * PayeeInfoSet class.
@@ -46,7 +45,7 @@ public class PayeeInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.PAYEE_INFOSET), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.

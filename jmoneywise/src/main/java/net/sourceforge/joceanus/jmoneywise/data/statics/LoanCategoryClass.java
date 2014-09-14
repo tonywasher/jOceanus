@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enumeration of LoanCategory Type Classes.
@@ -91,7 +90,7 @@ public enum LoanCategoryClass implements CategoryInterface {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(StaticDataResource.getKeyForLoanType(this));
+            theName = StaticDataResource.getKeyForLoanType(this).getValue();
         }
 
         /* return the name */

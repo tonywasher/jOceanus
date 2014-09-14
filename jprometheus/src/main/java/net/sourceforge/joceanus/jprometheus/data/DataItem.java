@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSetHistory;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
@@ -55,72 +54,72 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAITEM_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAITEM_NAME.getValue());
 
     /**
      * Validation error.
      */
-    public static final String ERROR_VALIDATION = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_VALIDATION);
+    public static final String ERROR_VALIDATION = PrometheusDataResource.DATAITEM_ERROR_VALIDATION.getValue();
 
     /**
      * Resolution error.
      */
-    public static final String ERROR_RESOLUTION = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_RESOLUTION);
+    public static final String ERROR_RESOLUTION = PrometheusDataResource.DATAITEM_ERROR_RESOLUTION.getValue();
 
     /**
      * Duplicate Id error.
      */
-    public static final String ERROR_DUPLICATE = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_DUPLICATE);
+    public static final String ERROR_DUPLICATE = PrometheusDataResource.DATAITEM_ERROR_DUPLICATE.getValue();
 
     /**
      * Unknown Id error.
      */
-    public static final String ERROR_UNKNOWN = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_UNKNOWN);
+    public static final String ERROR_UNKNOWN = PrometheusDataResource.DATAITEM_ERROR_UNKNOWN.getValue();
 
     /**
      * Existing value error.
      */
-    public static final String ERROR_EXIST = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_EXIST);
+    public static final String ERROR_EXIST = PrometheusDataResource.DATAITEM_ERROR_EXIST.getValue();
 
     /**
      * Missing value error.
      */
-    public static final String ERROR_MISSING = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_MISSING);
+    public static final String ERROR_MISSING = PrometheusDataResource.DATAITEM_ERROR_MISSING.getValue();
 
     /**
      * Value too long error.
      */
-    public static final String ERROR_LENGTH = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_LENGTH);
+    public static final String ERROR_LENGTH = PrometheusDataResource.DATAITEM_ERROR_LENGTH.getValue();
 
     /**
      * Value negative error.
      */
-    public static final String ERROR_NEGATIVE = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_NEGATIVE);
+    public static final String ERROR_NEGATIVE = PrometheusDataResource.DATAITEM_ERROR_NEGATIVE.getValue();
 
     /**
      * Value zero error.
      */
-    public static final String ERROR_ZERO = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_ZERO);
+    public static final String ERROR_ZERO = PrometheusDataResource.DATAITEM_ERROR_ZERO.getValue();
 
     /**
      * Value outside valid range.
      */
-    public static final String ERROR_RANGE = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_RANGE);
+    public static final String ERROR_RANGE = PrometheusDataResource.DATAITEM_ERROR_RANGE.getValue();
 
     /**
      * Value disabled error.
      */
-    public static final String ERROR_DISABLED = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_DISABLED);
+    public static final String ERROR_DISABLED = PrometheusDataResource.DATAITEM_ERROR_DISABLED.getValue();
 
     /**
      * Creation failure.
      */
-    public static final String ERROR_CREATEITEM = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_CREATE);
+    public static final String ERROR_CREATEITEM = PrometheusDataResource.DATAITEM_ERROR_CREATE.getValue();
 
     /**
      * Multiple instances Error.
      */
-    public static final String ERROR_MULT = ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERROR_MULTIPLE);
+    public static final String ERROR_MULT = PrometheusDataResource.DATAITEM_ERROR_MULTIPLE.getValue();
 
     /**
      * Instance ReportFields.
@@ -174,62 +173,62 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Id Field Id.
      */
-    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_ID));
+    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAITEM_ID.getValue());
 
     /**
      * Type Field Id.
      */
-    public static final JDataField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_TYPE));
+    public static final JDataField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
 
     /**
      * List Field Id.
      */
-    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_NAME));
+    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME.getValue());
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_BASE));
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
 
     /**
      * TouchStatus Field Id.
      */
-    public static final JDataField FIELD_TOUCH = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_TOUCH));
+    public static final JDataField FIELD_TOUCH = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH.getValue());
 
     /**
      * Deleted Field Id.
      */
-    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_DELETED));
+    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_DELETED.getValue());
 
     /**
      * DataState Field Id.
      */
-    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_STATE));
+    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_STATE.getValue());
 
     /**
      * Edit State Field Id.
      */
-    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_EDITSTATE));
+    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_VERSION));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * Header Field Id.
      */
-    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_HEADER));
+    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER.getValue());
 
     /**
      * History Field Id.
      */
-    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_HISTORY));
+    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HISTORY.getValue());
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_ERRORS));
+    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
 
     @Override
     public String formatObject() {

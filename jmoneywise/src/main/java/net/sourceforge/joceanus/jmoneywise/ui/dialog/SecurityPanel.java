@@ -60,7 +60,6 @@ import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -80,7 +79,7 @@ public class SecurityPanel
     /**
      * Prices Tab Title.
      */
-    private static final String TAB_PRICES = ResourceMgr.getString(MoneyWiseUIControlResource.SECURITYPANEL_TAB_PRICES);
+    private static final String TAB_PRICES = MoneyWiseUIControlResource.SECURITYPANEL_TAB_PRICES.getValue();
 
     /**
      * The Field Set.

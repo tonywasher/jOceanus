@@ -24,7 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for jMoneyWise DataType Fields.
@@ -946,9 +947,9 @@ public enum StaticDataResource implements ResourceId {
     TRANSINFO_PORTFOLIO(MoneyWiseDataTypeResource.PORTFOLIO_NAME);
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = MoneyWiseDataType.class.getCanonicalName();
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
 
     /**
      * The Id.
@@ -956,9 +957,9 @@ public enum StaticDataResource implements ResourceId {
     private final String theKeyName;
 
     /**
-     * The Underlying resource.
+     * The Value.
      */
-    private final MoneyWiseDataTypeResource theUnderlying;
+    private String theValue;
 
     /**
      * Constructor.
@@ -966,37 +967,37 @@ public enum StaticDataResource implements ResourceId {
      */
     private StaticDataResource(final String pKeyName) {
         theKeyName = pKeyName;
-        theUnderlying = null;
     }
 
     /**
      * Constructor.
      * @param pResource the underlying resource
      */
-    private StaticDataResource(final MoneyWiseDataTypeResource pResource) {
+    private StaticDataResource(final ResourceId pResource) {
         theKeyName = null;
-        theUnderlying = pResource;
+        theValue = pResource.getValue();
     }
 
     @Override
     public String getKeyName() {
-        return theUnderlying == null
-                                    ? theKeyName
-                                    : theUnderlying.getKeyName();
+        return theKeyName;
     }
 
     @Override
     public String getNameSpace() {
-        return theUnderlying == null
-                                    ? "jMoneyWise.data"
-                                    : theUnderlying.getNameSpace();
+        return "jMoneyWise.data";
     }
 
     @Override
-    public String getBundleName() {
-        return theUnderlying == null
-                                    ? BUNDLE_NAME
-                                    : theUnderlying.getBundleName();
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 
     /**

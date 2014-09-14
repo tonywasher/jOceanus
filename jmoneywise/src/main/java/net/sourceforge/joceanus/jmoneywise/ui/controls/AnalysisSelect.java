@@ -60,7 +60,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -83,32 +82,32 @@ public class AnalysisSelect
     /**
      * Text for DateRange Label.
      */
-    private static final String NLS_RANGE = ResourceMgr.getString(MoneyWiseUIControlResource.ANALYSIS_PROMPT_RANGE);
+    private static final String NLS_RANGE = MoneyWiseUIControlResource.ANALYSIS_PROMPT_RANGE.getValue();
 
     /**
      * Text for Filter Label.
      */
-    private static final String NLS_FILTER = ResourceMgr.getString(MoneyWiseUIControlResource.ANALYSIS_PROMPT_FILTER);
+    private static final String NLS_FILTER = MoneyWiseUIControlResource.ANALYSIS_PROMPT_FILTER.getValue();
 
     /**
      * Text for FilterType Label.
      */
-    private static final String NLS_FILTERTYPE = ResourceMgr.getString(MoneyWiseUIControlResource.ANALYSIS_PROMPT_FILTERTYPE);
+    private static final String NLS_FILTERTYPE = MoneyWiseUIControlResource.ANALYSIS_PROMPT_FILTERTYPE.getValue();
 
     /**
      * Text for BucketType Label.
      */
-    private static final String NLS_BUCKET = ResourceMgr.getString(MoneyWiseUIControlResource.ANALYSIS_PROMPT_BUCKET);
+    private static final String NLS_BUCKET = MoneyWiseUIControlResource.ANALYSIS_PROMPT_BUCKET.getValue();
 
     /**
      * Text for Title.
      */
-    private static final String NLS_TITLE = ResourceMgr.getString(MoneyWiseUIControlResource.ANALYSIS_TITLE);
+    private static final String NLS_TITLE = MoneyWiseUIControlResource.ANALYSIS_TITLE.getValue();
 
     /**
      * Text for Title.
      */
-    private static final String NLS_FILTERTITLE = ResourceMgr.getString(MoneyWiseUIControlResource.ANALYSIS_FILTER_TITLE);
+    private static final String NLS_FILTERTITLE = MoneyWiseUIControlResource.ANALYSIS_FILTER_TITLE.getValue();
 
     /**
      * Analysis Manager.

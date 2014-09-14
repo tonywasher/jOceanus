@@ -73,7 +73,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -95,7 +94,7 @@ public class DepositCategoryTable
     /**
      * FullName Column Title.
      */
-    private static final String TITLE_FULLNAME = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_COLUMN_FULLNAME);
+    private static final String TITLE_FULLNAME = MoneyWiseUIResource.CATEGORY_COLUMN_FULLNAME.getValue();
 
     /**
      * Category Column Title.
@@ -110,17 +109,17 @@ public class DepositCategoryTable
     /**
      * Active Column Title.
      */
-    private static final String TITLE_ACTIVE = ResourceMgr.getString(PrometheusUIResource.STATIC_TITLE_ACTIVE);
+    private static final String TITLE_ACTIVE = PrometheusUIResource.STATIC_TITLE_ACTIVE.getValue();
 
     /**
      * Filter Prompt.
      */
-    private static final String TITLE_FILTER = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_PROMPT_FILTER);
+    private static final String TITLE_FILTER = MoneyWiseUIResource.CATEGORY_PROMPT_FILTER.getValue();
 
     /**
      * Filter Parents Title.
      */
-    private static final String FILTER_PARENTS = ResourceMgr.getString(MoneyWiseUIResource.CATEGORY_FILTER_PARENT);
+    private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
 
     /**
      * The data view.

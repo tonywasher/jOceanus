@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Extension of SecurityPrice to cater for diluted prices.
@@ -55,12 +54,12 @@ public class ViewSecurityPrice
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = ResourceMgr.getString(MoneyWiseViewResource.VIEWPRICE_NAME);
+    public static final String OBJECT_NAME = MoneyWiseViewResource.VIEWPRICE_NAME.getValue();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = ResourceMgr.getString(MoneyWiseViewResource.VIEWPRICE_LIST);
+    public static final String LIST_NAME = MoneyWiseViewResource.VIEWPRICE_LIST.getValue();
 
     /**
      * Report fields.
@@ -75,14 +74,12 @@ public class ViewSecurityPrice
     /**
      * Dilution Field Id.
      */
-    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(ResourceMgr
-            .getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION));
+    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION.getValue());
 
     /**
      * Diluted Price Field Id.
      */
-    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(ResourceMgr
-            .getString(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE));
+    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE.getValue());
 
     /**
      * Dilution state.
@@ -265,7 +262,7 @@ public class ViewSecurityPrice
         /**
          * The Dilutions field id.
          */
-        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.ANALYSIS_DILUTIONS));
+        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
         @Override
         public Object getFieldValue(final JDataField pField) {

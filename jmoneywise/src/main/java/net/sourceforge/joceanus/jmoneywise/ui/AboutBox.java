@@ -35,8 +35,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Display the about box.
  */
@@ -51,22 +49,22 @@ public class AboutBox
     /**
      * Program version.
      */
-    private static final String PROGRAM_VERSION = ResourceMgr.getString(ProgramResource.PROGRAM_VERSION);
+    private static final String PROGRAM_VERSION = ProgramResource.PROGRAM_VERSION.getValue();
 
     /**
      * Program revision.
      */
-    private static final String PROGRAM_REVISION = ResourceMgr.getString(ProgramResource.PROGRAM_REVISION);
+    private static final String PROGRAM_REVISION = ProgramResource.PROGRAM_REVISION.getValue();
 
     /**
      * Program buildDate.
      */
-    private static final String PROGRAM_BUILDDATE = ResourceMgr.getString(ProgramResource.PROGRAM_BUILTON);
+    private static final String PROGRAM_BUILDDATE = ProgramResource.PROGRAM_BUILTON.getValue();
 
     /**
      * Program copyright.
      */
-    private static final String PROGRAM_COPYRIGHT = ResourceMgr.getString(ProgramResource.PROGRAM_COPYRIGHT);
+    private static final String PROGRAM_COPYRIGHT = ProgramResource.PROGRAM_COPYRIGHT.getValue();
 
     /**
      * Border thickness.

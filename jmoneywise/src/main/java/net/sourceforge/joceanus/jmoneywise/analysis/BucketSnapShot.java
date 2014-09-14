@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * History snapShot for a bucket.
@@ -46,7 +45,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.BUCKET_SNAPSHOT));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.BUCKET_SNAPSHOT.getValue());
 
     /**
      * Id Id.
@@ -61,17 +60,17 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     /**
      * Date Id.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
+    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Values Id.
      */
-    private static final JDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.BUCKET_VALUES));
+    private static final JDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_VALUES.getValue());
 
     /**
      * Previous Values Id.
      */
-    private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.BUCKET_PREVIOUS));
+    private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_PREVIOUS.getValue());
 
     @Override
     public String formatObject() {

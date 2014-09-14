@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -76,32 +75,32 @@ public class PreferencesPanel
     /**
      * Text for OK.
      */
-    private static final String NLS_OK = ResourceMgr.getString(PreferenceResource.UI_BUTTON_OK);
+    private static final String NLS_OK = PreferenceResource.UI_BUTTON_OK.getValue();
 
     /**
      * Text for Reset.
      */
-    private static final String NLS_RESET = ResourceMgr.getString(PreferenceResource.UI_BUTTON_RESET);
+    private static final String NLS_RESET = PreferenceResource.UI_BUTTON_RESET.getValue();
 
     /**
      * Text for Options.
      */
-    private static final String NLS_OPTIONS = ResourceMgr.getString(PreferenceResource.UI_TITLE_SAVE);
+    private static final String NLS_OPTIONS = PreferenceResource.UI_TITLE_SAVE.getValue();
 
     /**
      * Text for Selection.
      */
-    private static final String NLS_SELECT = ResourceMgr.getString(PreferenceResource.UI_TITLE_SELECT);
+    private static final String NLS_SELECT = PreferenceResource.UI_TITLE_SELECT.getValue();
 
     /**
      * Text for Set.
      */
-    private static final String NLS_SET = ResourceMgr.getString(PreferenceResource.UI_LABEL_SET);
+    private static final String NLS_SET = PreferenceResource.UI_LABEL_SET.getValue();
 
     /**
      * Store data error text.
      */
-    private static final String ERROR_STORE = ResourceMgr.getString(PreferenceResource.UI_ERROR_STORE);
+    private static final String ERROR_STORE = PreferenceResource.UI_ERROR_STORE.getValue();
 
     /**
      * The field manager.

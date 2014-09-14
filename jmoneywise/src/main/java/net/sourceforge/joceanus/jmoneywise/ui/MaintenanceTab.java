@@ -62,7 +62,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
@@ -81,27 +80,27 @@ public class MaintenanceTab
     /**
      * TaxYears tab title.
      */
-    private static final String TITLE_TAXYEARS = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_TAXYEAR);
+    private static final String TITLE_TAXYEARS = MoneyWiseUIResource.MAINTENANCE_TAXYEAR.getValue();
 
     /**
      * Preferences tab title.
      */
-    private static final String TITLE_PREFERENCES = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_SETTINGS);
+    private static final String TITLE_PREFERENCES = MoneyWiseUIResource.MAINTENANCE_SETTINGS.getValue();
 
     /**
      * Account tab title.
      */
-    private static final String TITLE_ACCOUNT = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_ACCOUNT);
+    private static final String TITLE_ACCOUNT = MoneyWiseUIResource.MAINTENANCE_ACCOUNT.getValue();
 
     /**
      * Category tab title.
      */
-    private static final String TITLE_CATEGORY = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_CATEGORY);
+    private static final String TITLE_CATEGORY = MoneyWiseUIResource.MAINTENANCE_CATEGORY.getValue();
 
     /**
      * Static tab title.
      */
-    private static final String TITLE_STATIC = ResourceMgr.getString(MoneyWiseUIResource.MAINTENANCE_STATIC);
+    private static final String TITLE_STATIC = MoneyWiseUIResource.MAINTENANCE_STATIC.getValue();
 
     /**
      * The Data View.

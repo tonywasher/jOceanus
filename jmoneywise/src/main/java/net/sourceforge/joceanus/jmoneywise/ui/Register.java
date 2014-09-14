@@ -73,7 +73,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Event Register Table.
@@ -119,7 +118,7 @@ public class Register
     /**
      * Reconciled Column Title.
      */
-    private static final String TITLE_RECONCILED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_RECONCILED);
+    private static final String TITLE_RECONCILED = MoneyWiseUIResource.STATEMENT_COLUMN_RECONCILED.getValue();
 
     /**
      * Data View.

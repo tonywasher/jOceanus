@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preferences.DataListPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -61,52 +60,52 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATASET_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATASET_NAME.getValue());
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_GENERATION));
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_GRANULARITY));
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_VERSION));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * Locked Field Id.
      */
-    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_LOCKED));
+    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_LOCKED.getValue());
 
     /**
      * Security Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATASET_SECURITY));
+    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_SECURITY.getValue());
 
     /**
      * ControlKeys Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_LIST));
+    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST.getValue());
 
     /**
      * DataKeySets Field Id.
      */
-    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_LIST));
+    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST.getValue());
 
     /**
      * DataKeys Field Id.
      */
-    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEY_LIST));
+    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEY_LIST.getValue());
 
     /**
      * ControlData Field Id.
      */
-    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.CONTROLDATA_LIST));
+    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST.getValue());
 
     @Override
     public JDataFields getDataFields() {
@@ -1158,7 +1157,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we have not yet loaded the name */
             if (theName == null) {
                 /* Load the name */
-                theName = ResourceMgr.getString(PrometheusDataResource.getKeyForCryptoItem(this));
+                theName = PrometheusDataResource.getKeyForCryptoItem(this).getValue();
             }
 
             /* return the name */
@@ -1181,7 +1180,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we have not yet loaded the name */
             if (theListName == null) {
                 /* Load the name */
-                theListName = ResourceMgr.getString(PrometheusDataResource.getKeyForCryptoList(this));
+                theListName = PrometheusDataResource.getKeyForCryptoList(this).getValue();
             }
 
             /* return the list name */

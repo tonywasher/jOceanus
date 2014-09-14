@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * TaxBasisAttribute enumeration.
@@ -54,7 +53,7 @@ public enum TaxBasisAttribute implements BucketAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(AnalysisResource.getKeyForTaxAttr(this));
+            theName = AnalysisResource.getKeyForTaxAttr(this).getValue();
         }
 
         /* return the name */

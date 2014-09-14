@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,7 +45,7 @@ public class CashFlow
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.CASHFLOW_TITLE);
+    private static final String TEXT_TITLE = ReportResource.CASHFLOW_TITLE.getValue();
 
     /**
      * HTML builder.

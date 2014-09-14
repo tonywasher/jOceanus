@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Group class for data item.
@@ -40,12 +39,12 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAGROUP_NAME.getValue());
 
     /**
      * Parent field id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
     @Override
     public Object getFieldValue(final JDataField pField) {

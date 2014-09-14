@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
@@ -79,17 +78,17 @@ public class DataKeySet
     /**
      * Field ID for CreationDate.
      */
-    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_CREATION));
+    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue());
 
     /**
      * Field ID for DataKeyMap.
      */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_KEYMAP));
+    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYMAP.getValue());
 
     /**
      * Field ID for CipherSet.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAKEYSET_CIPHERSET));
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_CIPHERSET.getValue());
 
     /**
      * The DataKey Map.

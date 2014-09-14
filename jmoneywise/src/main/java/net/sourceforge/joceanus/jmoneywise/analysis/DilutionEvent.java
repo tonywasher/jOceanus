@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Dilution Events relating to stock dilution.
@@ -55,7 +54,7 @@ public final class DilutionEvent
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DILUTION_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DILUTION_NAME.getValue());
 
     @Override
     public JDataFields getDataFields() {
@@ -80,12 +79,12 @@ public final class DilutionEvent
     /**
      * Date Field Id.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
+    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Dilution Field Id.
      */
-    private static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(StaticDataResource.TRANSINFO_DILUTION));
+    private static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(StaticDataResource.TRANSINFO_DILUTION.getValue());
 
     /**
      * Transaction Field Id.

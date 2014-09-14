@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Category Base class.
@@ -63,42 +62,42 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_NAME));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAITEM_FIELD_DESC));
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * Parent Category Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
     /**
      * SubCategory Field Id.
      */
-    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_SUBCAT));
+    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.CATEGORY_SUBCAT.getValue());
 
     /**
      * New parent name.
      */
-    private static final String NAME_NEWPARENT = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_NEWPARENT);
+    private static final String NAME_NEWPARENT = MoneyWiseDataResource.CATEGORY_NEWPARENT.getValue();
 
     /**
      * New Category name.
      */
-    private static final String NAME_NEWCATEGORY = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_NEWCAT);
+    private static final String NAME_NEWCATEGORY = MoneyWiseDataResource.CATEGORY_NEWCAT.getValue();
 
     /**
      * Invalid Parent Error.
      */
-    protected static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_ERROR_BADPARENT);
+    protected static final String ERROR_BADPARENT = MoneyWiseDataResource.CATEGORY_ERROR_BADPARENT.getValue();
 
     /**
      * NonMatching Parent Error.
      */
-    protected static final String ERROR_MATCHPARENT = ResourceMgr.getString(MoneyWiseDataResource.CATEGORY_ERROR_MATCHPARENT);
+    protected static final String ERROR_MATCHPARENT = MoneyWiseDataResource.CATEGORY_ERROR_MATCHPARENT.getValue();
 
     @Override
     public String formatObject() {

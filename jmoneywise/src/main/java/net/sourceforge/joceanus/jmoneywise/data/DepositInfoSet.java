@@ -37,10 +37,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
- * PayeeInfoSet class.
+ * DepositInfoSet class.
  * @author Tony Washer
  */
 public class DepositInfoSet
@@ -48,7 +47,7 @@ public class DepositInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_INFOSET), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.DEPOSIT_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -63,7 +62,7 @@ public class DepositInfoSet
     /**
      * Opening Balance Currency Error Text.
      */
-    private static final String ERROR_BALANCE = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_BALANCE);
+    private static final String ERROR_BALANCE = MoneyWiseDataResource.DEPOSIT_ERROR_BALANCE.getValue();
 
     @Override
     public JDataFields getDataFields() {

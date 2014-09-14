@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearI
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * TaxInfoSet class.
@@ -48,7 +47,7 @@ public class TaxInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_INFOSET));
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.TAXYEAR_INFOSET.getValue());
 
     /**
      * FieldSet map.
@@ -63,12 +62,12 @@ public class TaxInfoSet
     /**
      * Allowance Limit Error Text.
      */
-    private static final String ERROR_ALLOW = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_ALLOWANCE);
+    private static final String ERROR_ALLOW = MoneyWiseDataResource.TAXYEAR_ERROR_ALLOWANCE.getValue();
 
     /**
      * LoAgeAllowance Limit Error Text.
      */
-    private static final String ERROR_LOALLOW = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_LOALLOWANCE);
+    private static final String ERROR_LOALLOW = MoneyWiseDataResource.TAXYEAR_ERROR_LOALLOWANCE.getValue();
 
     @Override
     public JDataFields getDataFields() {

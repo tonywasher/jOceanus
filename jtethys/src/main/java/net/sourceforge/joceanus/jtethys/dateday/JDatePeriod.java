@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.time.temporal.ChronoUnit;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * DatePeriod class representing standard date ranges.
  * @author Tony Washer
@@ -147,7 +145,7 @@ public enum JDatePeriod {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(JDateDayResource.getKeyForPeriod(this));
+            theName = JDateDayResource.getKeyForPeriod(this).getValue();
         }
 
         /* return the name */

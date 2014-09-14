@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enumeration of Security Type Classes.
@@ -111,7 +110,7 @@ public enum SecurityTypeClass implements StaticInterface {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(StaticDataResource.getKeyForSecurityType(this));
+            theName = StaticDataResource.getKeyForSecurityType(this).getValue();
         }
 
         /* return the name */

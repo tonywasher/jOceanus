@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -53,12 +52,12 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusViewResource.UPDATESET_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(PrometheusViewResource.UPDATESET_NAME.getValue());
 
     /**
      * Version field id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(PrometheusDataResource.DATASET_VERSION));
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * OK.

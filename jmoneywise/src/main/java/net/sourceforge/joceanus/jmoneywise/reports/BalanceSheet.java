@@ -62,7 +62,6 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,7 +74,7 @@ public class BalanceSheet
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.BALANCESHEET_TITLE);
+    private static final String TEXT_TITLE = ReportResource.BALANCESHEET_TITLE.getValue();
 
     /**
      * HTML builder.

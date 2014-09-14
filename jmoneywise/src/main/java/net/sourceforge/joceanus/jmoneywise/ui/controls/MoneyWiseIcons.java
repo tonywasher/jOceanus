@@ -28,7 +28,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 
 /**
@@ -85,32 +84,32 @@ public final class MoneyWiseIcons
     /**
      * Reconcile Button ToolTip.
      */
-    private static final String TIP_RECONCILE = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_RECONCILE);
+    private static final String TIP_RECONCILE = MoneyWiseUIControlResource.ICON_RECONCILE.getValue();
 
     /**
      * Release Button ToolTip.
      */
-    private static final String TIP_RELEASE = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_RELEASE);
+    private static final String TIP_RELEASE = MoneyWiseUIControlResource.ICON_RELEASE.getValue();
 
     /**
      * Frozen Button ToolTip.
      */
-    private static final String TIP_FROZEN = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_FROZEN);
+    private static final String TIP_FROZEN = MoneyWiseUIControlResource.ICON_FROZEN.getValue();
 
     /**
      * Locked Button ToolTip.
      */
-    private static final String TIP_LOCKED = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_LOCKED);
+    private static final String TIP_LOCKED = MoneyWiseUIControlResource.ICON_LOCKED.getValue();
 
     /**
      * Lock Button ToolTip.
      */
-    private static final String TIP_LOCK = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_LOCK);
+    private static final String TIP_LOCK = MoneyWiseUIControlResource.ICON_LOCK.getValue();
 
     /**
      * UnLock Button ToolTip.
      */
-    private static final String TIP_UNLOCK = ResourceMgr.getString(MoneyWiseUIControlResource.ICON_UNLOCK);
+    private static final String TIP_UNLOCK = MoneyWiseUIControlResource.ICON_UNLOCK.getValue();
 
     /**
      * Private constructor to prevent instantiation.

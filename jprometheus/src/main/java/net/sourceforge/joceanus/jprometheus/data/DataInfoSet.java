@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Representation of an information set extension of a DataItem.
@@ -56,17 +55,17 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFO_OWNER));
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER.getValue());
 
     /**
      * Values Field Id.
      */
-    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_VALUES));
+    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES.getValue());
 
     @Override
     public Object getFieldValue(final JDataField pField) {

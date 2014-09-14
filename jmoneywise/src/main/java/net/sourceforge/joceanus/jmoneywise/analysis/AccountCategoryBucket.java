@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Account Category Bucket.
@@ -51,7 +50,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.BUCKET_BASEVALUES));
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * FieldSet map.
@@ -61,7 +60,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Totals bucket name.
      */
-    protected static final String NAME_TOTALS = ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS);
+    protected static final String NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS.getValue();
 
     /**
      * Values.

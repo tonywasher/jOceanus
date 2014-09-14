@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for Cryptographic package.
@@ -206,14 +206,19 @@ public enum CryptoResource implements ResourceId {
     ERROR_LENGTH2("error.length2");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(JGordianCryptoException.class.getCanonicalName());
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JGordianCryptoException.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -234,8 +239,15 @@ public enum CryptoResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 
     /**

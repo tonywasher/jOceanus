@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Error panel.
@@ -63,12 +62,12 @@ public class ErrorPanel
     /**
      * Text for Clear Button.
      */
-    private static final String NLS_CLEAR = ResourceMgr.getString(PrometheusUIResource.ERROR_BUTTON_CLEAR);
+    private static final String NLS_CLEAR = PrometheusUIResource.ERROR_BUTTON_CLEAR.getValue();
 
     /**
      * Text for Box title.
      */
-    private static final String NLS_TITLE = ResourceMgr.getString(PrometheusUIResource.ERROR_TITLE);
+    private static final String NLS_TITLE = PrometheusUIResource.ERROR_TITLE.getValue();
 
     /**
      * The error field.

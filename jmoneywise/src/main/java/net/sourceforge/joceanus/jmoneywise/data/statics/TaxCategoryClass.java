@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Enumeration of Tax Category Classes.
@@ -275,7 +274,7 @@ public enum TaxCategoryClass implements StaticInterface {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(StaticDataResource.getKeyForTaxCategory(this));
+            theName = StaticDataResource.getKeyForTaxCategory(this).getValue();
         }
 
         /* return the name */

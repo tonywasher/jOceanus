@@ -70,7 +70,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Analysis Statement.
@@ -110,27 +109,27 @@ public class AnalysisStatement
     /**
      * Reconciled Column Title.
      */
-    private static final String TITLE_RECONCILED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_RECONCILED);
+    private static final String TITLE_RECONCILED = MoneyWiseUIResource.STATEMENT_COLUMN_RECONCILED.getValue();
 
     /**
      * Debited Column Title.
      */
-    private static final String TITLE_DEBITED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_DEBIT);
+    private static final String TITLE_DEBITED = MoneyWiseUIResource.STATEMENT_COLUMN_DEBIT.getValue();
 
     /**
      * Credited Column Title.
      */
-    private static final String TITLE_CREDITED = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_CREDIT);
+    private static final String TITLE_CREDITED = MoneyWiseUIResource.STATEMENT_COLUMN_CREDIT.getValue();
 
     /**
      * Balance Column Title.
      */
-    private static final String TITLE_BALANCE = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_COLUMN_BALANCE);
+    private static final String TITLE_BALANCE = MoneyWiseUIResource.STATEMENT_COLUMN_BALANCE.getValue();
 
     /**
      * Opening Balance Text.
      */
-    private static final String TEXT_OPENBALANCE = ResourceMgr.getString(MoneyWiseUIResource.STATEMENT_OPENINGBALANCE);
+    private static final String TEXT_OPENBALANCE = MoneyWiseUIResource.STATEMENT_OPENINGBALANCE.getValue();
 
     /**
      * The data view.

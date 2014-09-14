@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -68,17 +67,17 @@ public class ReportSelect
     /**
      * Text for Report Label.
      */
-    private static final String NLS_REPORT = ResourceMgr.getString(MoneyWiseUIControlResource.REPORT_PROMPT);
+    private static final String NLS_REPORT = MoneyWiseUIControlResource.REPORT_PROMPT.getValue();
 
     /**
      * Text for Print Button.
      */
-    private static final String NLS_PRINT = ResourceMgr.getString(MoneyWiseUIControlResource.REPORT_PRINT);
+    private static final String NLS_PRINT = MoneyWiseUIControlResource.REPORT_PRINT.getValue();
 
     /**
      * Text for Selection Title.
      */
-    private static final String NLS_TITLE = ResourceMgr.getString(MoneyWiseUIControlResource.REPORT_TITLE);
+    private static final String NLS_TITLE = MoneyWiseUIControlResource.REPORT_TITLE.getValue();
 
     /**
      * Reports scroll button.

@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Tax Bucket class.
@@ -52,12 +51,12 @@ public final class TaxCalcBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.TAXCALC_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXCALC_NAME.getValue());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Tax Category Field Id.
@@ -67,12 +66,12 @@ public final class TaxCalcBucket
     /**
      * Tax Section Field Id.
      */
-    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.TAXCALC_SECTION));
+    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(AnalysisResource.TAXCALC_SECTION.getValue());
 
     /**
      * Parent Field Id.
      */
-    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_PARENT));
+    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_PARENT.getValue());
 
     /**
      * FieldSet map.
@@ -427,7 +426,7 @@ public final class TaxCalcBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.TAXCALC_LIST));
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXCALC_LIST.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -442,32 +441,32 @@ public final class TaxCalcBucket
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * TaxYear Field Id.
          */
-        private static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_YEAR));
+        private static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_YEAR.getValue());
 
         /**
          * Age Field Id.
          */
-        private static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_AGE));
+        private static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_AGE.getValue());
 
         /**
          * GainsSlices Field Id.
          */
-        private static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_SLICES));
+        private static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_SLICES.getValue());
 
         /**
          * ReducedAllowance Field Id.
          */
-        private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.TAXCALC_ALLOW));
+        private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_ALLOW.getValue());
 
         @Override
         public Object getFieldValue(final JDataField pField) {

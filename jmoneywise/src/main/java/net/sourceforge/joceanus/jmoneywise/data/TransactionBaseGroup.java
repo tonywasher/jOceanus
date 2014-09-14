@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataGroup;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Event group type.
@@ -43,22 +42,22 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
     /**
      * Split Indication.
      */
-    protected static final String NAME_SPLIT = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ID_SPLIT);
+    protected static final String NAME_SPLIT = MoneyWiseDataResource.TRANSACTION_ID_SPLIT.getValue();
 
     /**
      * Multiple Dates Error.
      */
-    private static final String ERROR_DATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_MULTDATES);
+    private static final String ERROR_DATE = MoneyWiseDataResource.TRANSACTION_ERROR_MULTDATES.getValue();
 
     /**
      * Multiple Payees Error.
      */
-    private static final String ERROR_PAYEE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_MULTPAYEES);
+    private static final String ERROR_PAYEE = MoneyWiseDataResource.TRANSACTION_ERROR_MULTPAYEES.getValue();
 
     /**
      * Bad Owner Error.
      */
-    private static final String ERROR_OWNER = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADOWNER);
+    private static final String ERROR_OWNER = MoneyWiseDataResource.TRANSACTION_ERROR_BADOWNER.getValue();
 
     /**
      * Local Report fields.

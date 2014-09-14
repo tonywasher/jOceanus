@@ -54,7 +54,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Deposit class.
@@ -85,7 +84,7 @@ public class Deposit
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
      * Currency Field Id.
@@ -95,22 +94,22 @@ public class Deposit
     /**
      * isGross Field Id.
      */
-    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_GROSS));
+    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSIT_GROSS.getValue());
 
     /**
      * isTaxFree Field Id.
      */
-    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.ASSET_TAXFREE));
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue());
 
     /**
      * DepositInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_NEWACCOUNT);
+    private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.DEPOSIT_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -130,17 +129,17 @@ public class Deposit
     /**
      * TaxFree Error Text.
      */
-    private static final String ERROR_TAXFREE = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREE);
+    private static final String ERROR_TAXFREE = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREE.getValue();
 
     /**
      * GrossInterest Error Text.
      */
-    private static final String ERROR_GROSS = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_GROSS);
+    private static final String ERROR_GROSS = MoneyWiseDataResource.DEPOSIT_ERROR_GROSS.getValue();
 
     /**
      * taxFree And GrossInterest Error Text.
      */
-    private static final String ERROR_TAXFREEGROSS = ResourceMgr.getString(MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS);
+    private static final String ERROR_TAXFREEGROSS = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS.getValue();
 
     @Override
     public JDataFields declareFields() {

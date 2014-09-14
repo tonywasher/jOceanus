@@ -60,7 +60,6 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jtethys.help.HelpWindow;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -75,117 +74,117 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Data menu title.
      */
-    private static final String MENU_DATA = ResourceMgr.getString(PrometheusUIResource.MENU_DATA);
+    private static final String MENU_DATA = PrometheusUIResource.MENU_DATA.getValue();
 
     /**
      * Edit menu title.
      */
-    private static final String MENU_EDIT = ResourceMgr.getString(PrometheusUIResource.MENU_EDIT);
+    private static final String MENU_EDIT = PrometheusUIResource.MENU_EDIT.getValue();
 
     /**
      * Backup menu title.
      */
-    private static final String MENU_BACKUP = ResourceMgr.getString(PrometheusUIResource.MENU_BACKUP);
+    private static final String MENU_BACKUP = PrometheusUIResource.MENU_BACKUP.getValue();
 
     /**
      * Security menu title.
      */
-    private static final String MENU_SECURITY = ResourceMgr.getString(PrometheusUIResource.MENU_SECURITY);
+    private static final String MENU_SECURITY = PrometheusUIResource.MENU_SECURITY.getValue();
 
     /**
      * Help menu title.
      */
-    private static final String MENU_HELP = ResourceMgr.getString(PrometheusUIResource.MENU_HELP);
+    private static final String MENU_HELP = PrometheusUIResource.MENU_HELP.getValue();
 
     /**
      * Load Database menu item.
      */
-    private static final String ITEM_LOADDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_LOADDB);
+    private static final String ITEM_LOADDB = PrometheusUIResource.MENUITEM_LOADDB.getValue();
 
     /**
      * Store Database menu item.
      */
-    private static final String ITEM_STOREDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_STOREDB);
+    private static final String ITEM_STOREDB = PrometheusUIResource.MENUITEM_STOREDB.getValue();
 
     /**
      * Create Database menu item.
      */
-    private static final String ITEM_CREATEDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_CREATEDB);
+    private static final String ITEM_CREATEDB = PrometheusUIResource.MENUITEM_CREATEDB.getValue();
 
     /**
      * Purge Database menu item.
      */
-    private static final String ITEM_PURGEDB = ResourceMgr.getString(PrometheusUIResource.MENUITEM_PURGEDB);
+    private static final String ITEM_PURGEDB = PrometheusUIResource.MENUITEM_PURGEDB.getValue();
 
     /**
      * Undo Edit menu item.
      */
-    private static final String ITEM_UNDO = ResourceMgr.getString(PrometheusUIResource.MENUITEM_UNDO);
+    private static final String ITEM_UNDO = PrometheusUIResource.MENUITEM_UNDO.getValue();
 
     /**
      * Reset Edit menu item.
      */
-    private static final String ITEM_RESET = ResourceMgr.getString(PrometheusUIResource.MENUITEM_RESET);
+    private static final String ITEM_RESET = PrometheusUIResource.MENUITEM_RESET.getValue();
 
     /**
      * Create Backup menu item.
      */
-    private static final String ITEM_MAKEBACKUP = ResourceMgr.getString(PrometheusUIResource.MENUITEM_BACKUPCREATE);
+    private static final String ITEM_MAKEBACKUP = PrometheusUIResource.MENUITEM_BACKUPCREATE.getValue();
 
     /**
      * Restore Backup menu item.
      */
-    private static final String ITEM_RESTOREBACK = ResourceMgr.getString(PrometheusUIResource.MENUITEM_BACKUPRESTORE);
+    private static final String ITEM_RESTOREBACK = PrometheusUIResource.MENUITEM_BACKUPRESTORE.getValue();
 
     /**
      * Create Xml menu item.
      */
-    private static final String ITEM_CREATEXML = ResourceMgr.getString(PrometheusUIResource.MENUITEM_XMLCREATE);
+    private static final String ITEM_CREATEXML = PrometheusUIResource.MENUITEM_XMLCREATE.getValue();
 
     /**
      * Create Xml Xtract menu item.
      */
-    private static final String ITEM_CREATEXTRACT = ResourceMgr.getString(PrometheusUIResource.MENUITEM_XTRACTCREATE);
+    private static final String ITEM_CREATEXTRACT = PrometheusUIResource.MENUITEM_XTRACTCREATE.getValue();
 
     /**
      * Load Xml menu item.
      */
-    private static final String ITEM_LOADXML = ResourceMgr.getString(PrometheusUIResource.MENUITEM_XMLLOAD);
+    private static final String ITEM_LOADXML = PrometheusUIResource.MENUITEM_XMLLOAD.getValue();
 
     /**
      * Renew Security.
      */
-    private static final String ITEM_RENEWSEC = ResourceMgr.getString(PrometheusUIResource.MENUITEM_SECURERENEW);
+    private static final String ITEM_RENEWSEC = PrometheusUIResource.MENUITEM_SECURERENEW.getValue();
 
     /**
      * Change Password menu item.
      */
-    private static final String ITEM_CHGPASS = ResourceMgr.getString(PrometheusUIResource.MENUITEM_CHANGEPASS);
+    private static final String ITEM_CHGPASS = PrometheusUIResource.MENUITEM_CHANGEPASS.getValue();
 
     /**
      * Help menu item.
      */
-    private static final String ITEM_HELP = ResourceMgr.getString(PrometheusUIResource.MENUITEM_HELP);
+    private static final String ITEM_HELP = PrometheusUIResource.MENUITEM_HELP.getValue();
 
     /**
      * Data Manager menu item.
      */
-    private static final String ITEM_DATAMGR = ResourceMgr.getString(PrometheusUIResource.MENUITEM_DATAMGR);
+    private static final String ITEM_DATAMGR = PrometheusUIResource.MENUITEM_DATAMGR.getValue();
 
     /**
      * About menu item.
      */
-    private static final String ITEM_ABOUT = ResourceMgr.getString(PrometheusUIResource.MENUITEM_ABOUT);
+    private static final String ITEM_ABOUT = PrometheusUIResource.MENUITEM_ABOUT.getValue();
 
     /**
      * Discard prompt.
      */
-    private static final String PROMPT_DISCARD = ResourceMgr.getString(PrometheusUIResource.PROMPT_DISCARD);
+    private static final String PROMPT_DISCARD = PrometheusUIResource.PROMPT_DISCARD.getValue();
 
     /**
      * Close Dialog title.
      */
-    private static final String TITLE_CLOSE = ResourceMgr.getString(PrometheusUIResource.TITLE_CLOSE);
+    private static final String TITLE_CLOSE = PrometheusUIResource.TITLE_CLOSE.getValue();
 
     /**
      * The data view.

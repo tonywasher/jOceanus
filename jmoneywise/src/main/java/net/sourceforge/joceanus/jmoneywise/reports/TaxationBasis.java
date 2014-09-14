@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +46,7 @@ public class TaxationBasis
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.TAXBASIS_TITLE);
+    private static final String TEXT_TITLE = ReportResource.TAXBASIS_TITLE.getValue();
 
     /**
      * HTML builder.

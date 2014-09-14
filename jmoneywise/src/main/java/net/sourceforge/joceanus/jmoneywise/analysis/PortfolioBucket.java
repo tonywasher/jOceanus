@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Portfolio Bucket.
@@ -54,7 +53,7 @@ public final class PortfolioBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.PORTFOLIO_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIO_NAME.getValue());
 
     /**
      * Portfolio Field Id.
@@ -69,7 +68,7 @@ public final class PortfolioBucket
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.BUCKET_BASEVALUES));
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * FieldSet map.
@@ -79,7 +78,7 @@ public final class PortfolioBucket
     /**
      * Totals bucket name.
      */
-    private static final String NAME_TOTALS = ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS);
+    private static final String NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS.getValue();
 
     /**
      * The portfolio.
@@ -468,7 +467,7 @@ public final class PortfolioBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.PORTFOLIO_LIST));
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIO_LIST.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -483,12 +482,12 @@ public final class PortfolioBucket
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(AnalysisResource.ANALYSIS_NAME));
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.

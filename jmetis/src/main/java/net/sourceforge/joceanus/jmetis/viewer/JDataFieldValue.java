@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Special values for return by getFieldValue.
  */
@@ -48,7 +46,7 @@ public enum JDataFieldValue {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(ViewerResource.getKeyForFieldValue(this));
+            theName = ViewerResource.getKeyForFieldValue(this).getValue();
         }
 
         /* return the name */

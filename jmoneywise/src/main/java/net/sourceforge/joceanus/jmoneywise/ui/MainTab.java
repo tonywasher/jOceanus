@@ -52,7 +52,6 @@ import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.help.HelpException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 
@@ -102,52 +101,52 @@ public class MainTab
     /**
      * Report tab title.
      */
-    private static final String TITLE_REPORT = ResourceMgr.getString(MoneyWiseUIResource.MAIN_REPORT);
+    private static final String TITLE_REPORT = MoneyWiseUIResource.MAIN_REPORT.getValue();
 
     /**
      * Statement tab title.
      */
-    private static final String TITLE_STATEMENT = ResourceMgr.getString(MoneyWiseUIResource.MAIN_STATEMENT);
+    private static final String TITLE_STATEMENT = MoneyWiseUIResource.MAIN_STATEMENT.getValue();
 
     /**
      * Register tab title.
      */
-    private static final String TITLE_REGISTER = ResourceMgr.getString(MoneyWiseUIResource.MAIN_REGISTER);
+    private static final String TITLE_REGISTER = MoneyWiseUIResource.MAIN_REGISTER.getValue();
 
     /**
      * SpotPrices tab title.
      */
-    private static final String TITLE_SPOTVIEW = ResourceMgr.getString(MoneyWiseUIResource.MAIN_SPOTPRICE);
+    private static final String TITLE_SPOTVIEW = MoneyWiseUIResource.MAIN_SPOTPRICE.getValue();
 
     /**
      * Maintenance tab title.
      */
-    private static final String TITLE_MAINT = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MAINTENANCE);
+    private static final String TITLE_MAINT = MoneyWiseUIResource.MAIN_MAINTENANCE.getValue();
 
     /**
      * QIF menu title.
      */
-    private static final String MENU_CREATEQIF = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_CREATEQIF);
+    private static final String MENU_CREATEQIF = MoneyWiseUIResource.MAIN_MENU_CREATEQIF.getValue();
 
     /**
      * Archive menu title.
      */
-    private static final String MENU_ARCHIVE = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_LOADARCHIVE);
+    private static final String MENU_ARCHIVE = MoneyWiseUIResource.MAIN_MENU_LOADARCHIVE.getValue();
 
     /**
      * SubVersion menu title.
      */
-    private static final String MENU_BACKUPSVN = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_BACKUPSVN);
+    private static final String MENU_BACKUPSVN = MoneyWiseUIResource.MAIN_MENU_BACKUPSVN.getValue();
 
     /**
      * SubVersion menu title.
      */
-    private static final String MENU_RESTORESVN = ResourceMgr.getString(MoneyWiseUIResource.MAIN_MENU_RESTORESVN);
+    private static final String MENU_RESTORESVN = MoneyWiseUIResource.MAIN_MENU_RESTORESVN.getValue();
 
     /**
      * Program name.
      */
-    private static final String PROGRAM_NAME = ResourceMgr.getString(ProgramResource.PROGRAM_NAME);
+    private static final String PROGRAM_NAME = ProgramResource.PROGRAM_NAME.getValue();
 
     /**
      * The data view.

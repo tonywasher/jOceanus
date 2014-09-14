@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Classes of ValueField.
  */
@@ -78,7 +76,7 @@ public enum ValueClass {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(PreferenceResource.getKeyForValueClass(this));
+            theName = PreferenceResource.getKeyForValueClass(this).getValue();
         }
 
         /* return the name */

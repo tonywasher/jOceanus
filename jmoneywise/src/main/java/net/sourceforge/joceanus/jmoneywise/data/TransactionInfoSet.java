@@ -41,10 +41,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
- * EventInfoSet class.
+ * TransactionInfoSet class.
  * @author Tony Washer
  */
 public class TransactionInfoSet
@@ -52,7 +51,7 @@ public class TransactionInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_INFOSET), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.TRANSACTION_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -67,7 +66,7 @@ public class TransactionInfoSet
     /**
      * Bad Credit Date Error Text.
      */
-    private static final String ERROR_BADDATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADCREDITDATE);
+    private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADCREDITDATE.getValue();
 
     @Override
     public JDataFields getDataFields() {

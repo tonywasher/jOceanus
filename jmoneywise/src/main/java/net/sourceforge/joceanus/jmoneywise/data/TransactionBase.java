@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Transaction data type.
@@ -74,27 +73,27 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * AssetPair Field Id.
      */
-    public static final JDataField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ASSETPAIR));
+    public static final JDataField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
 
     /**
      * Debit Field Id.
      */
-    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_DEBIT));
+    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_DEBIT.getValue());
 
     /**
      * Credit Field Id.
      */
-    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_CREDIT));
+    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_CREDIT.getValue());
 
     /**
      * Amount Field Id.
      */
-    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_AMOUNT));
+    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue());
 
     /**
      * Category Field Id.
@@ -104,42 +103,42 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Reconciled Field Id.
      */
-    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_RECONCILED));
+    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
 
     /**
      * Split Event Field Id.
      */
-    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_SPLIT));
+    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_SPLIT.getValue());
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.DATAGROUP_PARENT));
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
     /**
      * Hidden Category Error Text.
      */
-    private static final String ERROR_HIDDEN = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_HIDDEN);
+    private static final String ERROR_HIDDEN = MoneyWiseDataResource.TRANSACTION_ERROR_HIDDEN.getValue();
 
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
-    private static final String ERROR_COMBO = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_ASSETPAIR);
+    private static final String ERROR_COMBO = MoneyWiseDataResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
 
     /**
      * Invalid Parent Error Text.
      */
-    private static final String ERROR_BADPARENT = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADPARENT);
+    private static final String ERROR_BADPARENT = MoneyWiseDataResource.TRANSACTION_ERROR_BADPARENT.getValue();
 
     /**
      * Parent Date Error Text.
      */
-    private static final String ERROR_PARENTDATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_PARENTDATE);
+    private static final String ERROR_PARENTDATE = MoneyWiseDataResource.TRANSACTION_ERROR_PARENTDATE.getValue();
 
     /**
      * Zero Amount Error Text.
      */
-    private static final String ERROR_ZEROAMOUNT = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_ZERO);
+    private static final String ERROR_ZEROAMOUNT = MoneyWiseDataResource.TRANSACTION_ERROR_ZERO.getValue();
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -1494,7 +1493,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /**
          * Range field id.
          */
-        private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_RANGE));
+        private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
         @Override
         public Object getFieldValue(final JDataField pField) {

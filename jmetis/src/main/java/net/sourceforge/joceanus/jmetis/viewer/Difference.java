@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmetis.viewer;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataDiffers;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Difference enum and utility.
@@ -57,7 +56,7 @@ public enum Difference {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(ViewerResource.getKeyForDifference(this));
+            theName = ViewerResource.getKeyForDifference(this).getValue();
         }
 
         /* return the name */

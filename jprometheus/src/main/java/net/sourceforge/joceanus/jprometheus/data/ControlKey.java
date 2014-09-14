@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
@@ -71,37 +70,37 @@ public final class ControlKey
     /**
      * Field ID for Prime passwordHash.
      */
-    public static final JDataField FIELD_PRIMEPASSHASH = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_PRIMEHASH));
+    public static final JDataField FIELD_PRIMEPASSHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
 
     /**
      * Field ID for Alternate passwordHash.
      */
-    public static final JDataField FIELD_ALTPASSHASH = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_ALTHASH));
+    public static final JDataField FIELD_ALTPASSHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
 
     /**
      * Field ID for HashKey.
      */
-    public static final JDataField FIELD_PRIMEHASHKEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_PRIMEKEY));
+    public static final JDataField FIELD_PRIMEHASHKEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEKEY.getValue());
 
     /**
      * Field ID for HashKey.
      */
-    public static final JDataField FIELD_ALTHASHKEY = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_ALTKEY));
+    public static final JDataField FIELD_ALTHASHKEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTKEY.getValue());
 
     /**
      * HashPrime Field Id.
      */
-    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_PRIME));
+    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
 
     /**
      * Field ID for PrimeHashBytes.
      */
-    public static final JDataField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_PRIMEBYTES));
+    public static final JDataField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue());
 
     /**
      * Field ID for AltHashBytes.
      */
-    public static final JDataField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_ALTBYTES));
+    public static final JDataField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue());
 
     /**
      * Field ID for DataKeySet.
@@ -111,7 +110,7 @@ public final class ControlKey
     /**
      * Name of Database.
      */
-    public static final String NAME_DATABASE = ResourceMgr.getString(PrometheusDataResource.CONTROLKEY_DATABASE);
+    public static final String NAME_DATABASE = PrometheusDataResource.CONTROLKEY_DATABASE.getValue();
 
     /**
      * PasswordHash Length.
@@ -896,7 +895,7 @@ public final class ControlKey
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         @Override
         public JDataFields getDataFields() {

@@ -31,7 +31,6 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -43,17 +42,17 @@ public class SecureManager {
     /**
      * Text for Password title.
      */
-    private static final String NLS_TITLEPASS = ResourceMgr.getString(CryptoResource.TITLE_PASSWORD);
+    private static final String NLS_TITLEPASS = CryptoResource.TITLE_PASSWORD.getValue();
 
     /**
      * Text for New Password title.
      */
-    private static final String NLS_TITLENEWPASS = ResourceMgr.getString(CryptoResource.TITLE_NEWPASS);
+    private static final String NLS_TITLENEWPASS = CryptoResource.TITLE_NEWPASS.getValue();
 
     /**
      * Text for Bad Password Error.
      */
-    private static final String NLS_ERRORPASS = ResourceMgr.getString(CryptoResource.ERROR_BADPASS);
+    private static final String NLS_ERRORPASS = CryptoResource.ERROR_BADPASS.getValue();
 
     /**
      * Security generator.

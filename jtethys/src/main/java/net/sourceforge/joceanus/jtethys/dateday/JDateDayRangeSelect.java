@@ -36,7 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -65,37 +64,37 @@ public class JDateDayRangeSelect
     /**
      * ToolTip for Next Button.
      */
-    private static final String NLS_NEXTTIP = ResourceMgr.getString(JDateDayResource.TIP_NEXTDATE);
+    private static final String NLS_NEXTTIP = JDateDayResource.TIP_NEXTDATE.getValue();
 
     /**
      * ToolTip for Previous Button.
      */
-    private static final String NLS_PREVTIP = ResourceMgr.getString(JDateDayResource.TIP_PREVDATE);
+    private static final String NLS_PREVTIP = JDateDayResource.TIP_PREVDATE.getValue();
 
     /**
      * Text for Start Label.
      */
-    private static final String NLS_START = ResourceMgr.getString(JDateDayResource.LABEL_STARTING);
+    private static final String NLS_START = JDateDayResource.LABEL_STARTING.getValue();
 
     /**
      * Text for End Label.
      */
-    private static final String NLS_END = ResourceMgr.getString(JDateDayResource.LABEL_ENDING);
+    private static final String NLS_END = JDateDayResource.LABEL_ENDING.getValue();
 
     /**
      * Text for Containing Label.
      */
-    private static final String NLS_CONTAIN = ResourceMgr.getString(JDateDayResource.LABEL_CONTAINING);
+    private static final String NLS_CONTAIN = JDateDayResource.LABEL_CONTAINING.getValue();
 
     /**
      * Text for Period Label.
      */
-    private static final String NLS_PERIOD = ResourceMgr.getString(JDateDayResource.LABEL_PERIOD);
+    private static final String NLS_PERIOD = JDateDayResource.LABEL_PERIOD.getValue();
 
     /**
      * Text for Box Title.
      */
-    private static final String NLS_TITLE = ResourceMgr.getString(JDateDayResource.TITLE_BOX);
+    private static final String NLS_TITLE = JDateDayResource.TITLE_BOX.getValue();
 
     /**
      * The Start Date button.

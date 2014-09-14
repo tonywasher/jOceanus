@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
@@ -96,57 +95,57 @@ public abstract class PrometheusIcons {
     /**
      * Delete Button ToolTip.
      */
-    private static final String TIP_DELETE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_DELETE);
+    private static final String TIP_DELETE = PrometheusUIResource.ICON_TIP_DELETE.getValue();
 
     /**
      * New Button ToolTip.
      */
-    private static final String TIP_NEW = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_NEW);
+    private static final String TIP_NEW = PrometheusUIResource.ICON_TIP_NEW.getValue();
 
     /**
      * Active Button ToolTip.
      */
-    protected static final String TIP_ACTIVE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_ACTIVE);
+    protected static final String TIP_ACTIVE = PrometheusUIResource.ICON_TIP_ACTIVE.getValue();
 
     /**
      * Enable Button ToolTip.
      */
-    private static final String TIP_ENABLE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_ENABLE);
+    private static final String TIP_ENABLE = PrometheusUIResource.ICON_TIP_ENABLE.getValue();
 
     /**
      * Disable Button ToolTip.
      */
-    private static final String TIP_DISABLE = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_DISABLE);
+    private static final String TIP_DISABLE = PrometheusUIResource.ICON_TIP_DISABLE.getValue();
 
     /**
      * Commit Button ToolTip.
      */
-    private static final String TIP_COMMIT = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_COMMIT);
+    private static final String TIP_COMMIT = PrometheusUIResource.ICON_TIP_COMMIT.getValue();
 
     /**
      * UnDo Button ToolTip.
      */
-    private static final String TIP_UNDO = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_UNDO);
+    private static final String TIP_UNDO = PrometheusUIResource.ICON_TIP_UNDO.getValue();
 
     /**
      * Reset Button ToolTip.
      */
-    private static final String TIP_RESET = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_RESET);
+    private static final String TIP_RESET = PrometheusUIResource.ICON_TIP_RESET.getValue();
 
     /**
      * GoTo Button ToolTip.
      */
-    private static final String TIP_GOTO = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_GOTO);
+    private static final String TIP_GOTO = PrometheusUIResource.ICON_TIP_GOTO.getValue();
 
     /**
      * Edit Button ToolTip.
      */
-    private static final String TIP_EDIT = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_EDIT);
+    private static final String TIP_EDIT = PrometheusUIResource.ICON_TIP_EDIT.getValue();
 
     /**
      * Cancel Button ToolTip.
      */
-    private static final String TIP_CANCEL = ResourceMgr.getString(PrometheusUIResource.ICON_TIP_CANCEL);
+    private static final String TIP_CANCEL = PrometheusUIResource.ICON_TIP_CANCEL.getValue();
 
     /**
      * Resize an icon to the row height.

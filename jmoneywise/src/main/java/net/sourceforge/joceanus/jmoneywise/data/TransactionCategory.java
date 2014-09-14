@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Transaction Category class.
@@ -67,7 +66,7 @@ public final class TransactionCategory
     /**
      * Different Parent Error.
      */
-    private static final String ERROR_DIFFPARENT = ResourceMgr.getString(MoneyWiseDataResource.TRANSCATEGORY_ERROR_DIFFPARENT);
+    private static final String ERROR_DIFFPARENT = MoneyWiseDataResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
 
     @Override
     public JDataFields declareFields() {

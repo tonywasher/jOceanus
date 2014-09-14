@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * TaxYear DataItem utilising TaxYearInfo.
@@ -74,17 +73,17 @@ public class TaxYear
     /**
      * TaxInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
+    private static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
 
     /**
      * Bad ListGap Error Text.
      */
-    private static final String ERROR_LISTGAP = ResourceMgr.getString(MoneyWiseDataResource.TAXYEAR_ERROR_LISTGAP);
+    private static final String ERROR_LISTGAP = MoneyWiseDataResource.TAXYEAR_ERROR_LISTGAP.getValue();
 
     @Override
     public JDataFields declareFields() {

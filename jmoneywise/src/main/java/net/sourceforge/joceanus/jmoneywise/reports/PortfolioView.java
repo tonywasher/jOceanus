@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,27 +48,27 @@ public class PortfolioView
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.PORTFOLIO_TITLE);
+    private static final String TEXT_TITLE = ReportResource.PORTFOLIO_TITLE.getValue();
 
     /**
      * The Cost text.
      */
-    private static final String TEXT_COST = ResourceMgr.getString(AnalysisResource.SECURITYATTR_COST);
+    private static final String TEXT_COST = AnalysisResource.SECURITYATTR_COST.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_VALUATION);
+    private static final String TEXT_VALUE = AnalysisResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Gains text.
      */
-    private static final String TEXT_GAINS = ResourceMgr.getString(AnalysisResource.SECURITYATTR_GAINS);
+    private static final String TEXT_GAINS = AnalysisResource.SECURITYATTR_GAINS.getValue();
 
     /**
      * The Dividend text.
      */
-    private static final String TEXT_DIVIDEND = ResourceMgr.getString(AnalysisResource.SECURITYATTR_DIVIDEND);
+    private static final String TEXT_DIVIDEND = AnalysisResource.SECURITYATTR_DIVIDEND.getValue();
 
     /**
      * HTML builder.

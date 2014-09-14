@@ -35,10 +35,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
- * PayeeInfoSet class.
+ * PortfolioInfoSet class.
  * @author Tony Washer
  */
 public class PortfolioInfoSet
@@ -46,7 +45,7 @@ public class PortfolioInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.PORTFOLIO_INFOSET), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PORTFOLIO_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.

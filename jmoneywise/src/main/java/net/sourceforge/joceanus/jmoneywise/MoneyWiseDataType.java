@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * MoneyWise Item Types.
@@ -239,7 +238,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(MoneyWiseDataTypeResource.getKeyForDataType(this));
+            theName = MoneyWiseDataTypeResource.getKeyForDataType(this).getValue();
         }
 
         /* return the name */
@@ -262,7 +261,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
         /* If we have not yet loaded the name */
         if (theListName == null) {
             /* Load the name */
-            theListName = ResourceMgr.getString(MoneyWiseDataTypeResource.getKeyForDataList(this));
+            theListName = MoneyWiseDataTypeResource.getKeyForDataList(this).getValue();
         }
 
         /* return the list name */

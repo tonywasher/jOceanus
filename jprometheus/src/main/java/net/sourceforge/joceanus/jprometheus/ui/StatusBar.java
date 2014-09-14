@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Status bar panel.
@@ -79,37 +78,37 @@ public class StatusBar
     /**
      * Text for Clear Button.
      */
-    private static final String NLS_CLEAR = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_BUTTON_CLEAR);
+    private static final String NLS_CLEAR = PrometheusUIResource.STATUSBAR_BUTTON_CLEAR.getValue();
 
     /**
      * Text for Cancel Button.
      */
-    private static final String NLS_CANCEL = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_BUTTON_CANCEL);
+    private static final String NLS_CANCEL = PrometheusUIResource.STATUSBAR_BUTTON_CANCEL.getValue();
 
     /**
      * Text for Progress Title.
      */
-    private static final String NLS_PROGRESS = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_TITLE_PROGRESS);
+    private static final String NLS_PROGRESS = PrometheusUIResource.STATUSBAR_TITLE_PROGRESS.getValue();
 
     /**
      * Text for Status Title.
      */
-    private static final String NLS_STATUS = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_TITLE_STATUS);
+    private static final String NLS_STATUS = PrometheusUIResource.STATUSBAR_TITLE_STATUS.getValue();
 
     /**
      * Text for Succeeded.
      */
-    private static final String NLS_SUCCESS = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_STATUS_SUCCESS);
+    private static final String NLS_SUCCESS = PrometheusUIResource.STATUSBAR_STATUS_SUCCESS.getValue();
 
     /**
      * Text for Failed.
      */
-    private static final String NLS_FAIL = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_STATUS_FAIL);
+    private static final String NLS_FAIL = PrometheusUIResource.STATUSBAR_STATUS_FAIL.getValue();
 
     /**
      * Text for Cancelled.
      */
-    private static final String NLS_CANCELLED = ResourceMgr.getString(PrometheusUIResource.STATUSBAR_STATUS_CANCEL);
+    private static final String NLS_CANCELLED = PrometheusUIResource.STATUSBAR_STATUS_CANCEL.getValue();
 
     /**
      * Progress panel.

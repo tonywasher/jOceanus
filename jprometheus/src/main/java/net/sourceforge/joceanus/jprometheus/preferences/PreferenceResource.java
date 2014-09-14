@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.preferences;
 
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
@@ -46,14 +46,19 @@ public enum PreferenceResource implements ResourceId {
     DRIVER_MYSQL("MYSQL");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(JPrometheusDataException.class.getCanonicalName());
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JPrometheusDataException.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -74,8 +79,15 @@ public enum PreferenceResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 
     /**

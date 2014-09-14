@@ -55,7 +55,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -82,22 +81,22 @@ public class Transaction
     /**
      * EventInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_NAME));
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = ResourceMgr.getString(PrometheusDataResource.DATAINFOSET_ERROR_BADSET);
+    private static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
 
     /**
      * Early Date Error Text.
      */
-    private static final String ERROR_BADDATE = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE);
+    private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE.getValue();
 
     /**
      * Circular update Error Text.
      */
-    private static final String ERROR_CIRCULAR = ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_ERROR_CIRCLE);
+    private static final String ERROR_CIRCULAR = MoneyWiseDataResource.TRANSACTION_ERROR_CIRCLE.getValue();
 
     @Override
     public JDataFields declareFields() {
@@ -889,7 +888,7 @@ public class Transaction
         /**
          * EventGroupList field Id.
          */
-        private static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.TRANSACTION_GROUPS));
+        private static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.TRANSACTION_GROUPS.getValue());
 
         /**
          * EventGroupMap.

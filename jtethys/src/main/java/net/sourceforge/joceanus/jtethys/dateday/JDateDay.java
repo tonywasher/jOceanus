@@ -34,8 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 /**
  * Represents a Date object that is fixed to a particular day. There is no concept of time within the day Calendar objects that are built to represent the Date
  * are set to noon on the day in question.
@@ -60,17 +58,17 @@ public class JDateDay
     /**
      * Text for Null Date Error.
      */
-    private static final String ERROR_NULLDATE = ResourceMgr.getString(JDateDayResource.ERROR_NULLDATE);
+    private static final String ERROR_NULLDATE = JDateDayResource.ERROR_NULLDATE.getValue();
 
     /**
      * Text for Null Locale Error.
      */
-    private static final String ERROR_NULLLOCALE = ResourceMgr.getString(JDateDayResource.ERROR_NULLLOCALE);
+    private static final String ERROR_NULLLOCALE = JDateDayResource.ERROR_NULLLOCALE.getValue();
 
     /**
      * Text for Bad Format Error.
      */
-    private static final String ERROR_BADFORMAT = ResourceMgr.getString(JDateDayResource.ERROR_BADFORMAT);
+    private static final String ERROR_BADFORMAT = JDateDayResource.ERROR_BADFORMAT.getValue();
 
     /**
      * The format to be used.

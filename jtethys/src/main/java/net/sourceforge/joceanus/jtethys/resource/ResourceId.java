@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,31 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jtethys.resource;
 
 /**
- * Special values for renderer.
+ * Interface for resourceIds.
  */
-public enum JFieldValue {
+public interface ResourceId {
     /**
-     * Error.
+     * Get Key Name.
+     * @return the key name.
      */
-    ERROR;
+    String getKeyName();
 
     /**
-     * The String name.
+     * Get NameSpace.
+     * @return the nameSpace.
      */
-    private String theName;
+    String getNameSpace();
 
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = JFieldResource.getKeyForFieldValue(this).getValue();
-        }
-
-        /* return the name */
-        return theName;
-    }
+    /**
+     * Get Value.
+     * @return the value.
+     */
+    String getValue();
 }

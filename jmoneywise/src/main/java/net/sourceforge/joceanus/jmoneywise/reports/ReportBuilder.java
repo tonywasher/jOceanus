@@ -28,7 +28,6 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 
@@ -40,22 +39,22 @@ public class ReportBuilder {
     /**
      * The Total text.
      */
-    protected static final String TEXT_TOTAL = ResourceMgr.getString(AnalysisResource.ANALYSIS_TOTALS);
+    protected static final String TEXT_TOTAL = AnalysisResource.ANALYSIS_TOTALS.getValue();
 
     /**
      * The Profit text.
      */
-    protected static final String TEXT_PROFIT = ResourceMgr.getString(AnalysisResource.SECURITYATTR_PROFIT);
+    protected static final String TEXT_PROFIT = AnalysisResource.SECURITYATTR_PROFIT.getValue();
 
     /**
      * The Income text.
      */
-    protected static final String TEXT_INCOME = ResourceMgr.getString(AnalysisResource.PAYEEATTR_INCOME);
+    protected static final String TEXT_INCOME = AnalysisResource.PAYEEATTR_INCOME.getValue();
 
     /**
      * The Expense text.
      */
-    protected static final String TEXT_EXPENSE = ResourceMgr.getString(AnalysisResource.PAYEEATTR_EXPENSE);
+    protected static final String TEXT_EXPENSE = AnalysisResource.PAYEEATTR_EXPENSE.getValue();
 
     /**
      * The Report Manager.

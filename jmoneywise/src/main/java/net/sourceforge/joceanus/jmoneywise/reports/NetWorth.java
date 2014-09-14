@@ -64,7 +64,6 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,42 +76,42 @@ public class NetWorth
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.NETWORTH_TITLE);
+    private static final String TEXT_TITLE = ReportResource.NETWORTH_TITLE.getValue();
 
     /**
      * The Asset text.
      */
-    private static final String TEXT_ASSET = ResourceMgr.getString(ReportResource.NETWORTH_ASSET);
+    private static final String TEXT_ASSET = ReportResource.NETWORTH_ASSET.getValue();
 
     /**
      * The Units text.
      */
-    private static final String TEXT_UNITS = ResourceMgr.getString(AnalysisResource.SECURITYATTR_UNITS);
+    private static final String TEXT_UNITS = AnalysisResource.SECURITYATTR_UNITS.getValue();
 
     /**
      * The Price text.
      */
-    private static final String TEXT_PRICE = ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE);
+    private static final String TEXT_PRICE = MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_VALUATION);
+    private static final String TEXT_VALUE = AnalysisResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Account text.
      */
-    private static final String TEXT_ACCOUNT = ResourceMgr.getString(AnalysisResource.BUCKET_ACCOUNT);
+    private static final String TEXT_ACCOUNT = AnalysisResource.BUCKET_ACCOUNT.getValue();
 
     /**
      * The Rate text.
      */
-    private static final String TEXT_RATE = ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE);
+    private static final String TEXT_RATE = MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue();
 
     /**
      * The Maturity text.
      */
-    private static final String TEXT_MATURITY = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_MATURITY);
+    private static final String TEXT_MATURITY = AnalysisResource.ACCOUNTATTR_MATURITY.getValue();
 
     /**
      * HTML builder.

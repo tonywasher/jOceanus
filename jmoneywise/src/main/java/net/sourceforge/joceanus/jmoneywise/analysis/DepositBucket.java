@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * The Deposit Bucket class.
@@ -42,7 +41,7 @@ public final class DepositBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DEPOSIT_NAME), AccountBucket.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DEPOSIT_NAME.getValue(), AccountBucket.FIELD_DEFS);
 
     /**
      * Deposit Category Field Id.
@@ -164,7 +163,7 @@ public final class DepositBucket
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.DEPOSIT_LIST), AccountBucketList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DEPOSIT_LIST.getValue(), AccountBucketList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {

@@ -36,10 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountI
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
- * PayeeInfoSet class.
+ * CashInfoSet class.
  * @author Tony Washer
  */
 public class CashInfoSet
@@ -47,7 +46,7 @@ public class CashInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(MoneyWiseDataResource.CASH_INFOSET), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.CASH_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -62,7 +61,7 @@ public class CashInfoSet
     /**
      * AutoExpense Not Expense Error Text.
      */
-    private static final String ERROR_AUTOEXP = ResourceMgr.getString(MoneyWiseDataResource.CASH_ERROR_AUTOEXPENSE);
+    private static final String ERROR_AUTOEXP = MoneyWiseDataResource.CASH_ERROR_AUTOEXPENSE.getValue();
 
     @Override
     public JDataFields getDataFields() {

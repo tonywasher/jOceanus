@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jtethys.dateday;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
 /**
  * Resource IDs for JDateDay package.
@@ -146,14 +146,19 @@ public enum JDateDayResource implements ResourceId {
     PERIOD_ALLDATES("period.allDates");
 
     /**
-     * The Bundle name.
+     * The Resource Builder.
      */
-    private static final String BUNDLE_NAME = ResourceMgr.getPackageBundle(JOceanusException.class.getCanonicalName());
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JOceanusException.class.getCanonicalName());
 
     /**
      * The Id.
      */
     private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
 
     /**
      * Constructor.
@@ -174,8 +179,15 @@ public enum JDateDayResource implements ResourceId {
     }
 
     @Override
-    public String getBundleName() {
-        return BUNDLE_NAME;
+    public String getValue() {
+        /* If we have not initialised the value */
+        if (theValue == null) {
+            /* Derive the value */
+            theValue = BUILDER.getValue(this);
+        }
+
+        /* return the value */
+        return theValue;
     }
 
     /**

@@ -32,7 +32,6 @@ import java.util.Properties;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -103,8 +102,8 @@ public final class Control {
             Graphics2D myGraphics = mySplash.createGraphics();
             if (myGraphics != null) {
                 /* Access the names */
-                String myName = ResourceMgr.getString(ProgramResource.PROGRAM_NAME);
-                String myVersion = ResourceMgr.getString(ProgramResource.PROGRAM_VERSION);
+                String myName = ProgramResource.PROGRAM_NAME.getValue();
+                String myVersion = ProgramResource.PROGRAM_VERSION.getValue();
 
                 /* Determine width of the box */
                 int myNameLen = myName.length();

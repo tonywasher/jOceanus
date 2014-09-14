@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * ExchangeRate class.
@@ -69,32 +68,32 @@ public final class ExchangeRate
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE));
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * From Currency Field Id.
      */
-    public static final JDataField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_FROM));
+    public static final JDataField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
 
     /**
      * To Currency Field Id.
      */
-    public static final JDataField FIELD_TO = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_TO));
+    public static final JDataField FIELD_TO = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
 
     /**
      * Rate Type Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_RATE));
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue());
 
     /**
      * Circular Rate Error.
      */
-    private static final String ERROR_CIRCLE = ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_ERROR_CIRCLE);
+    private static final String ERROR_CIRCLE = MoneyWiseDataResource.XCHGRATE_ERROR_CIRCLE.getValue();
 
     /**
      * Default Rate Error.
      */
-    private static final String ERROR_DEF = ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_ERROR_DEFAULT);
+    private static final String ERROR_DEF = MoneyWiseDataResource.XCHGRATE_ERROR_DEFAULT.getValue();
 
     @Override
     public JDataFields declareFields() {
@@ -622,7 +621,7 @@ public final class ExchangeRate
         /**
          * Default Field Id.
          */
-        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(ResourceMgr.getString(MoneyWiseDataResource.XCHGRATE_DEFAULT));
+        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.XCHGRATE_DEFAULT.getValue());
 
         @Override
         public JDataFields declareFields() {

@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.slf4j.Logger;
 
@@ -59,42 +58,42 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Debug View Name.
      */
-    public static final String DATA_VIEWS = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_VIEWS);
+    public static final String DATA_VIEWS = PrometheusViewResource.DATAENTRY_VIEWS.getValue();
 
     /**
      * Underlying Data Name.
      */
-    public static final String DATA_DATASET = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_DATA);
+    public static final String DATA_DATASET = PrometheusViewResource.DATAENTRY_DATA.getValue();
 
     /**
      * Data Updates Name.
      */
-    public static final String DATA_UPDATES = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_UPDATES);
+    public static final String DATA_UPDATES = PrometheusViewResource.DATAENTRY_UPDATES.getValue();
 
     /**
      * Analysis Name.
      */
-    public static final String DATA_ANALYSIS = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_ANALYSIS);
+    public static final String DATA_ANALYSIS = PrometheusViewResource.DATAENTRY_ANALYSIS.getValue();
 
     /**
      * Debug Edit Name.
      */
-    public static final String DATA_EDIT = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_EDIT);
+    public static final String DATA_EDIT = PrometheusViewResource.DATAENTRY_EDIT.getValue();
 
     /**
      * Debug Maintenance Name.
      */
-    public static final String DATA_MAINT = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_MAINT);
+    public static final String DATA_MAINT = PrometheusViewResource.DATAENTRY_MAINT.getValue();
 
     /**
      * Error Name.
      */
-    public static final String DATA_ERROR = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_ERROR);
+    public static final String DATA_ERROR = PrometheusViewResource.DATAENTRY_ERROR.getValue();
 
     /**
      * Active Profile.
      */
-    public static final String DATA_PROFILE = ResourceMgr.getString(PrometheusViewResource.DATAENTRY_PROFILE);
+    public static final String DATA_PROFILE = PrometheusViewResource.DATAENTRY_PROFILE.getValue();
 
     /**
      * The DataSet.

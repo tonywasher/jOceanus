@@ -27,7 +27,6 @@ import java.security.SecureRandom;
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -83,7 +82,7 @@ public enum SymKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(CryptoResource.getKeyForSym(this));
+            theName = CryptoResource.getKeyForSym(this).getValue();
         }
 
         /* return the name */

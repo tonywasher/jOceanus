@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Chargeable event for LifeBonds.
@@ -47,7 +46,7 @@ public final class ChargeableEvent
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.CHARGE_NAME));
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CHARGE_NAME.getValue());
 
     @Override
     public JDataFields getDataFields() {
@@ -62,17 +61,17 @@ public final class ChargeableEvent
     /**
      * The Gains field id.
      */
-    private static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.SECURITYATTR_GAINS));
+    private static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField(AnalysisResource.SECURITYATTR_GAINS.getValue());
 
     /**
      * The Slice field id.
      */
-    private static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.CHARGE_SLICE));
+    private static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField(AnalysisResource.CHARGE_SLICE.getValue());
 
     /**
      * The Taxation field id.
      */
-    private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(ResourceMgr.getString(AnalysisResource.CHARGE_TAX));
+    private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(AnalysisResource.CHARGE_TAX.getValue());
 
     /**
      * The Transaction field id.
@@ -275,7 +274,7 @@ public final class ChargeableEvent
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ResourceMgr.getString(AnalysisResource.CHARGE_LIST));
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CHARGE_LIST.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -293,7 +292,7 @@ public final class ChargeableEvent
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ResourceMgr.getString(PrometheusDataResource.DATALIST_SIZE));
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         @Override
         public Object getFieldValue(final JDataField pField) {

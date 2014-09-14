@@ -29,7 +29,6 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 /**
  * Viewable version of SLF4J Profile data.
@@ -44,7 +43,7 @@ public class JDataProfile
     /**
      * Task Field Id.
      */
-    private static final String NAME_CLASS = ResourceMgr.getString(ViewerResource.PROFILE_NAME);
+    private static final String NAME_CLASS = ViewerResource.PROFILE_NAME.getValue();
 
     /**
      * Local Report fields.
@@ -54,22 +53,22 @@ public class JDataProfile
     /**
      * Task Field Id.
      */
-    private static final JDataField FIELD_TASK = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_TASK));
+    private static final JDataField FIELD_TASK = FIELD_DEFS.declareLocalField(ViewerResource.PROFILE_TASK.getValue());
 
     /**
      * Status Field Id.
      */
-    private static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_STATUS));
+    private static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(ViewerResource.PROFILE_STATUS.getValue());
 
     /**
      * Elapsed Field Id.
      */
-    private static final JDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_ELAPSED));
+    private static final JDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(ViewerResource.PROFILE_ELAPSED.getValue());
 
     /**
      * Hidden Field Id.
      */
-    private static final JDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(ResourceMgr.getString(ViewerResource.PROFILE_HIDDEN));
+    private static final JDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(ViewerResource.PROFILE_HIDDEN.getValue());
 
     /**
      * Report fields.

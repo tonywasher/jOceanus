@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 
@@ -57,7 +56,7 @@ public class ActionButtons
     /**
      * Text for Box Title.
      */
-    private static final String NLS_TITLE = ResourceMgr.getString(PrometheusUIResource.ACTION_TITLE_SAVE);
+    private static final String NLS_TITLE = PrometheusUIResource.ACTION_TITLE_SAVE.getValue();
 
     /**
      * The update set.

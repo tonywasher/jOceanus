@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.Security;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
@@ -47,7 +45,7 @@ public enum SecurityProvider {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ResourceMgr.getString(CryptoResource.getKeyForProvider(this));
+            theName = CryptoResource.getKeyForProvider(this).getValue();
         }
 
         /* return the name */

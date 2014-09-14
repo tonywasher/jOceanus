@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.resource.ResourceMgr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,27 +48,27 @@ public class MarketGrowth
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ResourceMgr.getString(ReportResource.MARKETGROWTH_TITLE);
+    private static final String TEXT_TITLE = ReportResource.MARKETGROWTH_TITLE.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = ResourceMgr.getString(AnalysisResource.ACCOUNTATTR_VALUATION);
+    private static final String TEXT_VALUE = AnalysisResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Invested text.
      */
-    private static final String TEXT_INVEST = ResourceMgr.getString(AnalysisResource.SECURITYATTR_INVESTED);
+    private static final String TEXT_INVEST = AnalysisResource.SECURITYATTR_INVESTED.getValue();
 
     /**
      * The Base text.
      */
-    private static final String TEXT_BASE = ResourceMgr.getString(ReportResource.MARKETGROWTH_BASE);
+    private static final String TEXT_BASE = ReportResource.MARKETGROWTH_BASE.getValue();
 
     /**
      * The Growth text.
      */
-    private static final String TEXT_GROWTH = ResourceMgr.getString(AnalysisResource.SECURITYATTR_MARKET);
+    private static final String TEXT_GROWTH = AnalysisResource.SECURITYATTR_MARKET.getValue();
 
     /**
      * HTML builder.
