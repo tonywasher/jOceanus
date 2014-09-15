@@ -91,6 +91,8 @@ public class MoneyWiseDatabase
         addTable(new TableLoanInfo(this));
         addTable(new TablePortfolio(this));
         addTable(new TablePortfolioInfo(this));
+        addTable(new TableStockOption(this));
+        addTable(new TableStockOptionVest(this));
         addTable(new TableTransaction(this));
         addTable(new TableTransactionInfo(this));
         addTable(new TableSchedule(this));

@@ -1206,5 +1206,30 @@ public class Security
             /* Return it */
             return mySecurity;
         }
+
+        /**
+         * Obtain default security for stockOption.
+         * @return the default security
+         */
+        public Security getDefaultStockOption() {
+            /* loop through the securities */
+            Iterator<Security> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Security mySecurity = myIterator.next();
+
+                /* Ignore deleted and closed securities */
+                if (mySecurity.isDeleted() || mySecurity.isClosed()) {
+                    continue;
+                }
+
+                /* Only allow shares */
+                if (mySecurity.isSecurityClass(SecurityTypeClass.SHARES)) {
+                    return mySecurity;
+                }
+            }
+
+            /* Return no payee */
+            return null;
+        }
     }
 }

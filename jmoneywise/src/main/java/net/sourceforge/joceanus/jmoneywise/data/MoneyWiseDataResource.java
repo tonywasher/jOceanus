@@ -58,6 +58,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_FIELD_PRICE("MoneyWiseData.Field.Price"),
 
     /**
+     * MoneyWiseData Units.
+     */
+    MONEYWISEDATA_FIELD_UNITS("MoneyWiseData.Field.Units"),
+
+    /**
      * MoneyWiseData Rate.
      */
     MONEYWISEDATA_FIELD_RATE("MoneyWiseData.Field.Rate"),
@@ -361,6 +366,31 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Portfolio NewAccount.
      */
     PORTFOLIO_NEWACCOUNT("Portfolio.NewAccount"),
+
+    /**
+     * StockOption Grant Date.
+     */
+    STOCKOPTION_GRANTDATE("StockOption.GrantDate"),
+
+    /**
+     * StockOption Expiry Date.
+     */
+    STOCKOPTION_EXPIRYDATE("StockOption.ExpiryDate"),
+
+    /**
+     * StockOption New Account.
+     */
+    STOCKOPTION_NEWACCOUNT("StockOption.NewAccount"),
+
+    /**
+     * StockOption Error BadSecurity.
+     */
+    STOCKOPTION_ERROR_BADSECURITY("StockOption.Error.BadSecurity"),
+
+    /**
+     * StockOption Error BadExpiry.
+     */
+    STOCKOPTION_ERROR_BADEXPIRE("StockOption.Error.BadExpire"),
 
     /**
      * Portfolio HoldingClosed Error.

@@ -319,7 +319,7 @@ public enum AnalysisResource implements ResourceId {
     /**
      * SecurityAttr Units.
      */
-    SECURITYATTR_UNITS("SecurityAttr.Units"),
+    SECURITYATTR_UNITS(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS),
 
     /**
      * SecurityAttr Cost.

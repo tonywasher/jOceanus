@@ -51,6 +51,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
@@ -432,6 +434,22 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain StockOptions.
+     * @return the Options
+     */
+    public StockOptionList getStockOptions() {
+        return getDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
+    }
+
+    /**
+     * Obtain StockOptionVests.
+     * @return the OptionVests
+     */
+    public StockOptionVestList getStockOptionVests() {
+        return getDataList(MoneyWiseDataType.STOCKOPTIONVEST, StockOptionVestList.class);
+    }
+
+    /**
      * Obtain Transactions.
      * @return the Transactions
      */
@@ -578,6 +596,10 @@ public class MoneyWiseData
                 return new PortfolioList(this);
             case PORTFOLIOINFO:
                 return new PortfolioInfoList(this);
+            case STOCKOPTION:
+                return new StockOptionList(this);
+            case STOCKOPTIONVEST:
+                return new StockOptionVestList(this);
             case TRANSACTION:
                 return new TransactionList(this);
             case TRANSACTIONINFO:
@@ -697,6 +719,7 @@ public class MoneyWiseData
                 case CASH:
                 case LOAN:
                 case PORTFOLIO:
+                case STOCKOPTION:
                     myList.clearActive();
                     myList.touchUnderlyingItems();
                     break;
@@ -711,6 +734,7 @@ public class MoneyWiseData
                 case TRANSACTION:
                 case DEPOSITRATE:
                 case SECURITYPRICE:
+                case STOCKOPTIONVEST:
                     break;
 
                 /* Ignore info lists that will be handled by their owner */
@@ -742,6 +766,7 @@ public class MoneyWiseData
         getLoans().validateOnLoad();
         getSecurities().validateOnLoad();
         getPayees().validateOnLoad();
+        getStockOptions().validateOnLoad();
 
         /* Reinstate the lock */
         setLocked(true);

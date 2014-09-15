@@ -83,6 +83,8 @@ public class MoneyWiseWriter
         addSheet(new SheetLoanInfo(this));
         addSheet(new SheetPortfolio(this));
         addSheet(new SheetPortfolioInfo(this));
+        addSheet(new SheetStockOption(this));
+        addSheet(new SheetStockOptionVest(this));
         addSheet(new SheetTransaction(this));
         addSheet(new SheetTransactionInfo(this));
         addSheet(new SheetSchedule(this));

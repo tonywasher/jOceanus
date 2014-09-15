@@ -458,10 +458,16 @@ public class SecurityPrice
      */
     @Override
     public void validate() {
+        Security mySecurity = getSecurity();
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
         SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
         MoneyWiseData mySet = getDataSet();
+
+        /* The security must be non-null */
+        if (mySecurity == null) {
+            addError(ERROR_MISSING, FIELD_SECURITY);
+        }
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -470,7 +476,7 @@ public class SecurityPrice
             /* else date is non-null */
         } else {
             /* Date must be unique for this security */
-            if (myList.countInstances(myDate, getSecurity()) > 1) {
+            if (myList.countInstances(myDate, mySecurity) > 1) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
 
@@ -625,7 +631,7 @@ public class SecurityPrice
          * Count the instances of a date.
          * @param pDate the date
          * @param pSecurity the security
-         * @return The Item if present (or null)
+         * @return The count
          */
         public int countInstances(final JDateDay pDate,
                                   final Security pSecurity) {

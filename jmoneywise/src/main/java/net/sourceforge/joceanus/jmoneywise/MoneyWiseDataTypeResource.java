@@ -390,6 +390,26 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
     PORTFOLIOINFO_LIST("PortfolioInfo.List"),
 
     /**
+     * StockOption Name.
+     */
+    STOCKOPTION_NAME("StockOption.Name"),
+
+    /**
+     * StockOption List.
+     */
+    STOCKOPTION_LIST("StockOption.List"),
+
+    /**
+     * StockOptionVest Name.
+     */
+    STOCKOPTIONVEST_NAME("StockOptionVest.Name"),
+
+    /**
+     * StockOptionVest List.
+     */
+    STOCKOPTIONVEST_LIST("StockOptionVest.List"),
+
+    /**
      * Transaction Name.
      */
     TRANSACTION_NAME("Transaction.Name"),
@@ -543,6 +563,10 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
                 return PORTFOLIO_NAME;
             case PORTFOLIOINFO:
                 return PORTFOLIOINFO_NAME;
+            case STOCKOPTION:
+                return STOCKOPTION_NAME;
+            case STOCKOPTIONVEST:
+                return STOCKOPTIONVEST_NAME;
             case TRANSACTION:
                 return TRANSACTION_NAME;
             case TRANSACTIONINFO:
@@ -633,6 +657,10 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
                 return PORTFOLIO_LIST;
             case PORTFOLIOINFO:
                 return PORTFOLIOINFO_LIST;
+            case STOCKOPTION:
+                return STOCKOPTION_LIST;
+            case STOCKOPTIONVEST:
+                return STOCKOPTIONVEST_LIST;
             case TRANSACTION:
                 return TRANSACTION_LIST;
             case TRANSACTIONINFO:

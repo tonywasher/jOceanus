@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public class SheetLoan
         extends SheetEncrypted<Loan, MoneyWiseDataType> {
     /**
-     * NamedArea for Deposits.
+     * NamedArea for Loans.
      */
     private static final String AREA_LOANS = Loan.LIST_NAME;
 

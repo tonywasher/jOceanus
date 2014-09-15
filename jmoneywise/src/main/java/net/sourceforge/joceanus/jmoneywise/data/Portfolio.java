@@ -1106,5 +1106,25 @@ public class Portfolio
             /* Return it */
             return myPortfolio;
         }
+
+        /**
+         * Obtain default portfolio for stockOption.
+         * @return the default portfolio
+         */
+        public Portfolio getDefaultPortfolio() {
+            /* loop through the portfolios */
+            Iterator<Portfolio> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Portfolio myPortfolio = myIterator.next();
+
+                /* Ignore deleted and closed portfolios */
+                if (!myPortfolio.isDeleted() && !myPortfolio.isClosed()) {
+                    return myPortfolio;
+                }
+            }
+
+            /* Return no payee */
+            return null;
+        }
     }
 }

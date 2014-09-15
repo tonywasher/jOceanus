@@ -86,7 +86,7 @@ public class NetWorth
     /**
      * The Units text.
      */
-    private static final String TEXT_UNITS = AnalysisResource.SECURITYATTR_UNITS.getValue();
+    private static final String TEXT_UNITS = MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue();
 
     /**
      * The Price text.
