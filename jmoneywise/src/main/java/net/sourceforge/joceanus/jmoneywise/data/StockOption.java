@@ -24,33 +24,44 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedUnits;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedPrice;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
  * StockOption class.
  */
 public class StockOption
-        extends AssetBase<StockOption> {
+        extends AssetBase<StockOption>
+        implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -87,9 +98,14 @@ public class StockOption
     public static final JDataField FIELD_EXPIREDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_EXPIRYDATE.getValue());
 
     /**
-     * Units Field Id.
+     * Price Field Id.
      */
-    public static final JDataField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue());
+    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+
+    /**
+     * StockOptionInfoSet field Id.
+     */
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Option name.
@@ -107,9 +123,19 @@ public class StockOption
     private static final String ERROR_BADSECURITY = MoneyWiseDataResource.STOCKOPTION_ERROR_BADSECURITY.getValue();
 
     /**
-     * Default number of units.
+     * Do we have an InfoSet.
      */
-    private static final int DEFAULT_UNITS = 100;
+    private final boolean hasInfoSet;
+
+    /**
+     * Should we use infoSet for DataState etc.
+     */
+    private final boolean useInfoSet;
+
+    /**
+     * StockOptionInfoSet.
+     */
+    private final StockOptionInfoSet theInfoSet;
 
     @Override
     public JDataFields declareFields() {
@@ -131,12 +157,46 @@ public class StockOption
         if (FIELD_EXPIREDATE.equals(pField)) {
             return true;
         }
-        if (FIELD_UNITS.equals(pField)) {
+        if (FIELD_PRICE.equals(pField)) {
             return true;
         }
 
         /* Pass call on */
         return super.includeXmlField(pField);
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_INFOSET.equals(pField)) {
+            return hasInfoSet
+                             ? theInfoSet
+                             : JDataFieldValue.SKIP;
+        }
+
+        /* Handle infoSet fields */
+        AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
+        if ((theInfoSet != null) && (myClass != null)) {
+            return theInfoSet.getFieldValue(pField);
+        }
+
+        /* Pass onwards */
+        return super.getFieldValue(pField);
+    }
+
+    @Override
+    public StockOptionInfoSet getInfoSet() {
+        return theInfoSet;
+    }
+
+    /**
+     * Obtain Notes.
+     * @return the notes
+     */
+    public char[] getNotes() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                         : null;
     }
 
     /**
@@ -216,27 +276,27 @@ public class StockOption
     }
 
     /**
-     * Obtain Units.
-     * @return the units
+     * Obtain Price.
+     * @return the price
      */
-    public JUnits getUnits() {
-        return getUnits(getValueSet());
+    public JPrice getPrice() {
+        return getPrice(getValueSet());
     }
 
     /**
-     * Obtain Encrypted units.
+     * Obtain Encrypted price.
      * @return the bytes
      */
-    public byte[] getUnitsBytes() {
-        return getUnitsBytes(getValueSet());
+    public byte[] getPriceBytes() {
+        return getPriceBytes(getValueSet());
     }
 
     /**
-     * Obtain Encrypted Units Field.
+     * Obtain Encrypted Price Field.
      * @return the Field
      */
-    private EncryptedUnits getUnitsField() {
-        return getUnitsField(getValueSet());
+    private EncryptedPrice getPriceField() {
+        return getPriceField(getValueSet());
     }
 
     /**
@@ -276,30 +336,30 @@ public class StockOption
     }
 
     /**
-     * Obtain Units.
+     * Obtain Price.
      * @param pValueSet the valueSet
      * @return the symbol
      */
-    public static JUnits getUnits(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_UNITS, JUnits.class);
+    public static JPrice getPrice(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, JPrice.class);
     }
 
     /**
-     * Obtain Encrypted units.
+     * Obtain Encrypted price.
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getUnitsBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_UNITS);
+    public static byte[] getPriceBytes(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldBytes(FIELD_PRICE);
     }
 
     /**
-     * Obtain Encrypted units field.
+     * Obtain Encrypted price field.
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedUnits getUnitsField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_UNITS, EncryptedUnits.class);
+    private static EncryptedPrice getPriceField(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PRICE, EncryptedPrice.class);
     }
 
     /**
@@ -367,38 +427,147 @@ public class StockOption
     }
 
     /**
-     * Set units value.
+     * Set price value.
      * @param pValue the value
      * @throws JOceanusException on error
      */
-    private void setValueUnits(final JUnits pValue) throws JOceanusException {
-        setEncryptedValue(FIELD_UNITS, pValue);
+    private void setValuePrice(final JPrice pValue) throws JOceanusException {
+        setEncryptedValue(FIELD_PRICE, pValue);
     }
 
     /**
-     * Set units value.
+     * Set price value.
      * @param pValue the value
      * @throws JOceanusException on error
      */
-    private void setValueUnits(final String pValue) throws JOceanusException {
-        getValueSet().setValue(FIELD_UNITS, pValue);
+    private void setValuePrice(final String pValue) throws JOceanusException {
+        getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
     /**
-     * Set units value.
+     * Set price value.
      * @param pValue the value
      */
-    private void setValueUnits(final EncryptedUnits pValue) {
-        getValueSet().setValue(FIELD_UNITS, pValue);
+    private void setValuePrice(final EncryptedPrice pValue) {
+        getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
     /**
-     * Set units value.
+     * Set price value.
      * @param pBytes the value
      * @throws JOceanusException on error
      */
-    private void setValueUnits(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_UNITS, pBytes, JUnits.class);
+    private void setValuePrice(final byte[] pBytes) throws JOceanusException {
+        setEncryptedValue(FIELD_PRICE, pBytes, JPrice.class);
+    }
+
+    @Override
+    public DataState getState() {
+        /* Pop history for self */
+        DataState myState = super.getState();
+
+        /* If we should use the InfoSet */
+        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public EditState getEditState() {
+        /* Pop history for self */
+        EditState myState = super.getEditState();
+
+        /* If we should use the InfoSet */
+        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getEditState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public boolean hasHistory() {
+        /* Check for history for self */
+        boolean hasHistory = super.hasHistory();
+
+        /* If we should use the InfoSet */
+        if ((!hasHistory) && (useInfoSet)) {
+            /* Check history for infoSet */
+            hasHistory = theInfoSet.hasHistory();
+        }
+
+        /* Return details */
+        return hasHistory;
+    }
+
+    @Override
+    public void pushHistory() {
+        /* Push history for self */
+        super.pushHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Push history for infoSet */
+            theInfoSet.pushHistory();
+        }
+    }
+
+    @Override
+    public void popHistory() {
+        /* Pop history for self */
+        super.popHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Pop history for infoSet */
+            theInfoSet.popHistory();
+        }
+    }
+
+    @Override
+    public boolean checkForHistory() {
+        /* Check for history for self */
+        boolean bChanges = super.checkForHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Check for history for infoSet */
+            bChanges |= theInfoSet.checkForHistory();
+        }
+
+        /* return result */
+        return bChanges;
+    }
+
+    @Override
+    public Difference fieldChanged(final JDataField pField) {
+        /* Handle InfoSet fields */
+        AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
+        if (myClass != null) {
+            return (useInfoSet)
+                               ? theInfoSet.fieldChanged(myClass)
+                               : Difference.IDENTICAL;
+        }
+
+        /* Check super fields */
+        return super.fieldChanged(pField);
+    }
+
+    @Override
+    public void setDeleted(final boolean bDeleted) {
+        /* Pass call to infoSet if required */
+        if (useInfoSet) {
+            theInfoSet.setDeleted(bDeleted);
+        }
+
+        /* Pass call onwards */
+        super.setDeleted(bDeleted);
     }
 
     /**
@@ -410,6 +579,27 @@ public class StockOption
                           final StockOption pOption) {
         /* Set standard values */
         super(pList, pOption);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+                theInfoSet.cloneDataInfoSet(pOption.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
     }
 
     /**
@@ -462,16 +652,16 @@ public class StockOption
                 setValueExpiryDate(myParser.parseDateDay((String) myValue));
             }
 
-            /* Store the Units */
-            myValue = pValues.getValue(FIELD_UNITS);
-            if (myValue instanceof JUnits) {
-                setValueUnits((JUnits) myValue);
+            /* Store the Price */
+            myValue = pValues.getValue(FIELD_PRICE);
+            if (myValue instanceof JPrice) {
+                setValuePrice((JPrice) myValue);
             } else if (myValue instanceof byte[]) {
-                setValueUnits((byte[]) myValue);
+                setValuePrice((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
-                setValueUnits(myString);
-                setValueUnits(myFormatter.parseValue(myString, JUnits.class));
+                setValuePrice(myString);
+                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
             }
 
             /* Catch Exceptions */
@@ -479,6 +669,11 @@ public class StockOption
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+
+        /* Create the InfoSet */
+        theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
     }
 
     /**
@@ -487,6 +682,11 @@ public class StockOption
      */
     public StockOption(final StockOptionList pList) {
         super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
     }
 
     @Override
@@ -537,7 +737,7 @@ public class StockOption
         myDate = new JDateDay(myDate);
         myDate.adjustYear(1);
         setExpiryDate(myDate);
-        setUnits(JUnits.getWholeUnits(DEFAULT_UNITS));
+        setPrice(JPrice.getWholeUnits(1, getSecurity().getSecurityCurrency().getCurrency()));
         setName(getList().getUniqueName(NAME_NEWOPTION));
         setClosed(Boolean.FALSE);
     }
@@ -599,12 +799,38 @@ public class StockOption
     }
 
     /**
-     * Set a new units.
-     * @param pUnits the units
+     * Set a new price.
+     * @param pPrice the price
      * @throws JOceanusException on error
      */
-    public void setUnits(final JUnits pUnits) throws JOceanusException {
-        setValueUnits(pUnits);
+    public void setPrice(final JPrice pPrice) throws JOceanusException {
+        setValuePrice(pPrice);
+    }
+
+    /**
+     * Set a new Notes.
+     * @param pNotes the new notes
+     * @throws JOceanusException on error
+     */
+    public void setNotes(final char[] pNotes) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.NOTES, pNotes);
+    }
+
+    /**
+     * Set an infoSet value.
+     * @param pInfoClass the class of info to set
+     * @param pValue the value to set
+     * @throws JOceanusException on error
+     */
+    private void setInfoSetValue(final AccountInfoClass pInfoClass,
+                                 final Object pValue) throws JOceanusException {
+        /* Reject if there is no infoSet */
+        if (!hasInfoSet) {
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+        }
+
+        /* Set the value */
+        theInfoSet.setValue(pInfoClass, pValue);
     }
 
     @Override
@@ -620,7 +846,7 @@ public class StockOption
         Security mySecurity = getSecurity();
         JDateDay myGrant = getGrantDate();
         JDateDay myExpiry = getExpiryDate();
-        JUnits myUnits = getUnits();
+        JPrice myPrice = getPrice();
         JDateDayRange myRange = getDataSet().getDateRange();
 
         /* Validate base components */
@@ -652,15 +878,15 @@ public class StockOption
             }
         }
 
-        /* Units must be non-null */
-        if (myUnits == null) {
-            addError(ERROR_MISSING, FIELD_UNITS);
+        /* Price must be non-null */
+        if (myPrice == null) {
+            addError(ERROR_MISSING, FIELD_PRICE);
 
             /* Check that the units are non-zero and positive */
-        } else if (myUnits.isZero()) {
-            addError(ERROR_ZERO, FIELD_UNITS);
-        } else if (!myUnits.isPositive()) {
-            addError(ERROR_NEGATIVE, FIELD_UNITS);
+        } else if (myPrice.isZero()) {
+            addError(ERROR_ZERO, FIELD_PRICE);
+        } else if (!myPrice.isPositive()) {
+            addError(ERROR_NEGATIVE, FIELD_PRICE);
         }
 
         /* Set validation flag */
@@ -708,9 +934,9 @@ public class StockOption
             setValueExpiryDate(myOption.getExpiryDate());
         }
 
-        /* Update the units if required */
-        if (!Difference.isEqual(getUnits(), myOption.getUnits())) {
-            setValueUnits(myOption.getUnitsField());
+        /* Update the price if required */
+        if (!Difference.isEqual(getPrice(), myOption.getPrice())) {
+            setValuePrice(myOption.getPriceField());
         }
 
         /* Check for changes */
@@ -732,6 +958,16 @@ public class StockOption
             return FIELD_DEFS;
         }
 
+        /**
+         * The StockOptionInfo List.
+         */
+        private StockOptionInfoList theInfoList = null;
+
+        /**
+         * The AccountInfoType list.
+         */
+        private AccountInfoTypeList theInfoTypeList = null;
+
         @Override
         public String listName() {
             return LIST_NAME;
@@ -745,6 +981,28 @@ public class StockOption
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
+        }
+
+        /**
+         * Obtain the stockOptionInfoList.
+         * @return the stockOption info list
+         */
+        public StockOptionInfoList getStockOptionInfo() {
+            if (theInfoList == null) {
+                theInfoList = getDataSet().getStockOptionInfo();
+            }
+            return theInfoList;
+        }
+
+        /**
+         * Obtain the accountInfoTypeList.
+         * @return the account info type list
+         */
+        public AccountInfoTypeList getActInfoTypes() {
+            if (theInfoTypeList == null) {
+                theInfoTypeList = getDataSet().getActInfoTypes();
+            }
+            return theInfoTypeList;
         }
 
         /**
@@ -777,6 +1035,13 @@ public class StockOption
         public StockOptionList deriveEditList() {
             /* Build an empty List */
             StockOptionList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = getActInfoTypes();
+
+            /* Create info List */
+            StockOptionInfoList myOptionInfo = getStockOptionInfo();
+            myList.theInfoList = myOptionInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the options */
             Iterator<StockOption> myIterator = iterator();
@@ -838,6 +1103,19 @@ public class StockOption
 
             /* Add to the list */
             append(myOption);
+
+            /* Loop through the info items */
+            if (pValues.hasInfoItems()) {
+                /* Loop through the items */
+                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                while (myIterator.hasNext()) {
+                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+
+                    /* Build info */
+                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myOption);
+                    theInfoList.addValuesItem(myValues);
+                }
+            }
 
             /* Return it */
             return myOption;

@@ -64,7 +64,7 @@ public class QIFPreference
     /**
      * Default value for QIFDirectory.
      */
-    private static final String DEFAULT_QIFDIR = "C:\\";
+    private static final String DEFAULT_QIFDIR = System.getProperty("user.home");
 
     /**
      * Default value for BackupType.

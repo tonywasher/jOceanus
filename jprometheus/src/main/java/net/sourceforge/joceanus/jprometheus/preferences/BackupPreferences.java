@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
+import java.io.File;
+
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -96,7 +98,7 @@ public class BackupPreferences
     /**
      * Default value for BackupDirectory.
      */
-    private static final String DEFAULT_BACKUPDIR = "C:\\";
+    private static final String DEFAULT_BACKUPDIR = System.getProperty("user.home");
 
     /**
      * Default value for BackupPrefix.
@@ -111,7 +113,7 @@ public class BackupPreferences
     /**
      * Default value for Archive File.
      */
-    private static final String DEFAULT_ARCHIVE_FILE = "C:\\Archive.xls";
+    private static final String DEFAULT_ARCHIVE_FILE = DEFAULT_BACKUPDIR + File.pathSeparator + "Archive.xls";
 
     /**
      * Default value for Last Event.

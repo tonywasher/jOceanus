@@ -219,6 +219,11 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     STOCKOPTIONVEST,
 
     /**
+     * StockOptionInfo.
+     */
+    STOCKOPTIONINFO,
+
+    /**
      * Transaction.
      */
     TRANSACTION,

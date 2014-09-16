@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -62,7 +61,7 @@ public class TableStockOptionVest
         /* Declare the columns */
         myTableDef.addReferenceColumn(StockOptionVest.FIELD_OPTION, TableStockOption.TABLE_NAME);
         myTableDef.addDateColumn(StockOptionVest.FIELD_DATE);
-        myTableDef.addEncryptedColumn(StockOption.FIELD_UNITS, EncryptedData.UNITSLEN);
+        myTableDef.addEncryptedColumn(StockOptionVest.FIELD_UNITS, EncryptedData.UNITSLEN);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class TableStockOptionVest
             myTableDef.setIntegerValue(iField, pItem.getStockOptionId());
         } else if (StockOptionVest.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getDate());
-        } else if (StockOption.FIELD_UNITS.equals(iField)) {
+        } else if (StockOptionVest.FIELD_UNITS.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getUnitsBytes());
         } else {
             super.setFieldValue(pItem, iField);

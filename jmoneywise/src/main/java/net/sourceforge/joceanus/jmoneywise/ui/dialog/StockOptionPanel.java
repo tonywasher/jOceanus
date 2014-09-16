@@ -27,7 +27,9 @@ import java.util.Iterator;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -45,6 +47,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -160,15 +164,15 @@ public class StockOptionPanel
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the notes panel */
-        // JPanel myPanel = buildNotesPanel();
-        // myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+        JPanel myPanel = buildNotesPanel();
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Create the StockOptionVests table */
         theVests = new StockOptionVestTable(pFieldMgr, getUpdateSet(), pError);
         myTabs.add(TAB_VESTS, theVests.getPanel());
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
+        myPanel = getMainPanel();
         myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
         myPanel.add(myMainPanel);
         myPanel.add(myTabs);
@@ -189,8 +193,8 @@ public class StockOptionPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
-        /* Build the units text field */
-        JTextField myUnits = new JTextField();
+        /* Build the price text field */
+        JTextField myPrice = new JTextField();
 
         /* restrict the fields */
         restrictField(theName, StockOption.NAMELEN);
@@ -199,7 +203,7 @@ public class StockOptionPanel
         restrictField(theSecurityButton, StockOption.NAMELEN);
         restrictField(theGrantButton, StockOption.NAMELEN);
         restrictField(theExpiryButton, StockOption.NAMELEN);
-        restrictField(myUnits, StockOption.NAMELEN);
+        restrictField(myPrice, StockOption.NAMELEN);
         restrictField(myClosedButton, StockOption.NAMELEN);
 
         theFieldSet.addFieldElement(StockOption.FIELD_NAME, DataType.STRING, theName);
@@ -208,7 +212,7 @@ public class StockOptionPanel
         theFieldSet.addFieldElement(StockOption.FIELD_SECURITY, Security.class, theSecurityButton);
         theFieldSet.addFieldElement(StockOption.FIELD_GRANTDATE, DataType.DATEDAY, theGrantButton);
         theFieldSet.addFieldElement(StockOption.FIELD_EXPIREDATE, DataType.DATEDAY, theExpiryButton);
-        theFieldSet.addFieldElement(StockOption.FIELD_UNITS, DataType.UNITS, myUnits);
+        theFieldSet.addFieldElement(StockOption.FIELD_PRICE, DataType.PRICE, myPrice);
         theFieldSet.addFieldElement(StockOption.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -223,7 +227,7 @@ public class StockOptionPanel
         theFieldSet.addFieldToPanel(StockOption.FIELD_SECURITY, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_GRANTDATE, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_EXPIREDATE, myPanel);
-        theFieldSet.addFieldToPanel(StockOption.FIELD_UNITS, myPanel);
+        theFieldSet.addFieldToPanel(StockOption.FIELD_PRICE, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_CLOSED, myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
@@ -231,30 +235,30 @@ public class StockOptionPanel
         return myPanel;
     }
 
-    // /**
-    // * Build Notes subPanel.
-    // * @return the panel
-    // */
-    // private JPanel buildNotesPanel() {
-    // /* Allocate fields */
-    // JTextArea myNotes = new JTextArea();
-    // JScrollPane myScroll = new JScrollPane(myNotes);
-    //
-    // /* Adjust FieldSet */
-    // theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
-    //
-    // /* Create the notes panel */
-    // JEnablePanel myPanel = new JEnablePanel();
-    //
-    // /* Layout the notes panel */
-    // SpringLayout mySpring = new SpringLayout();
-    // myPanel.setLayout(mySpring);
-    // theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-    // SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-    //
-    // /* Return the new panel */
-    // return myPanel;
-    // }
+    /**
+     * Build Notes subPanel.
+     * @return the panel
+     */
+    private JPanel buildNotesPanel() {
+        /* Allocate fields */
+        JTextArea myNotes = new JTextArea();
+        JScrollPane myScroll = new JScrollPane(myNotes);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+
+        /* Create the notes panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the notes panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
 
     @Override
     public void refreshData() {
@@ -295,15 +299,15 @@ public class StockOptionPanel
         theFieldSet.setVisibility(StockOption.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        // boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
-        // theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        boolean bShowNotes = isEditable || myOption.getNotes() != null;
+        theFieldSet.setVisibility(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Portfolio/Security/Dates/Units cannot be changed if the item is active */
         theFieldSet.setEditable(StockOption.FIELD_PORTFOLIO, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_SECURITY, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_GRANTDATE, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_EXPIREDATE, isEditable && !bIsActive);
-        theFieldSet.setEditable(StockOption.FIELD_UNITS, isEditable && !bIsActive);
+        theFieldSet.setEditable(StockOption.FIELD_PRICE, isEditable && !bIsActive);
     }
 
     @Override
@@ -331,21 +335,21 @@ public class StockOptionPanel
         } else if (myField.equals(StockOption.FIELD_EXPIREDATE)) {
             /* Update the ExpiryDate */
             myOption.setExpiryDate(pUpdate.getDateDay());
-        } else if (myField.equals(StockOption.FIELD_UNITS)) {
-            /* Update the Units */
-            myOption.setUnits(pUpdate.getUnits());
+        } else if (myField.equals(StockOption.FIELD_PRICE)) {
+            /* Update the Price */
+            myOption.setPrice(pUpdate.getPrice());
         } else if (myField.equals(StockOption.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myOption.setClosed(pUpdate.getBoolean());
-            // } else {
-            // /* Switch on the field */
-            // switch (SecurityInfoSet.getClassForField(myField)) {
-            // case NOTES:
-            // mySecurity.setNotes(pUpdate.getCharArray());
-            // break;
-            // default:
-            // break;
-            // }
+        } else {
+            /* Switch on the field */
+            switch (StockOptionInfoSet.getClassForField(myField)) {
+                case NOTES:
+                    myOption.setNotes(pUpdate.getCharArray());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

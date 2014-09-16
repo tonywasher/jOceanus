@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
@@ -450,6 +451,14 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain StockOptionInfo.
+     * @return the StockOption Info
+     */
+    public StockOptionInfoList getStockOptionInfo() {
+        return getDataList(MoneyWiseDataType.STOCKOPTIONINFO, StockOptionInfoList.class);
+    }
+
+    /**
      * Obtain Transactions.
      * @return the Transactions
      */
@@ -600,6 +609,8 @@ public class MoneyWiseData
                 return new StockOptionList(this);
             case STOCKOPTIONVEST:
                 return new StockOptionVestList(this);
+            case STOCKOPTIONINFO:
+                return new StockOptionInfoList(this);
             case TRANSACTION:
                 return new TransactionList(this);
             case TRANSACTIONINFO:
@@ -746,6 +757,7 @@ public class MoneyWiseData
                 case CASHINFO:
                 case LOANINFO:
                 case PORTFOLIOINFO:
+                case STOCKOPTIONINFO:
                     break;
 
                 default:

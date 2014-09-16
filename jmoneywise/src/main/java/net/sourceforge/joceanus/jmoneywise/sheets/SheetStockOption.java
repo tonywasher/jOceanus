@@ -71,14 +71,14 @@ public class SheetStockOption
     private static final int COL_EXPIRE = COL_GRANT + 1;
 
     /**
-     * Units column.
+     * Price column.
      */
-    private static final int COL_UNITS = COL_EXPIRE + 1;
+    private static final int COL_PRICE = COL_EXPIRE + 1;
 
     /**
      * Closed column.
      */
-    private static final int COL_CLOSED = COL_UNITS + 1;
+    private static final int COL_CLOSED = COL_PRICE + 1;
 
     /**
      * StockOption data list.
@@ -119,7 +119,7 @@ public class SheetStockOption
         myValues.addValue(StockOption.FIELD_SECURITY, loadInteger(COL_SECURITY));
         myValues.addValue(StockOption.FIELD_GRANTDATE, loadDate(COL_GRANT));
         myValues.addValue(StockOption.FIELD_EXPIREDATE, loadDate(COL_EXPIRE));
-        myValues.addValue(StockOption.FIELD_UNITS, loadBytes(COL_UNITS));
+        myValues.addValue(StockOption.FIELD_PRICE, loadBytes(COL_PRICE));
         myValues.addValue(StockOption.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(StockOption.FIELD_DESC, loadBytes(COL_DESC));
         myValues.addValue(StockOption.FIELD_CLOSED, loadBoolean(COL_CLOSED));
@@ -136,7 +136,7 @@ public class SheetStockOption
         writeInteger(COL_SECURITY, pItem.getSecurityId());
         writeDate(COL_GRANT, pItem.getGrantDate());
         writeDate(COL_EXPIRE, pItem.getExpiryDate());
-        writeBytes(COL_UNITS, pItem.getUnitsBytes());
+        writeBytes(COL_PRICE, pItem.getPriceBytes());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_CLOSED, pItem.isClosed());

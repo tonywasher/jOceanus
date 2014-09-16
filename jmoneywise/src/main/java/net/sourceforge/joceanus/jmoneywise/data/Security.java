@@ -1228,7 +1228,7 @@ public class Security
                 }
             }
 
-            /* Return no payee */
+            /* Return no security */
             return null;
         }
     }

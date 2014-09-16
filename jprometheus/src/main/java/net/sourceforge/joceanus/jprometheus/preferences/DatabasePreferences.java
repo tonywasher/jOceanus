@@ -128,7 +128,7 @@ public class DatabasePreferences
     /**
      * Default Database user.
      */
-    private static final String DEFAULT_DBUSER = "MoneyWiseUser";
+    private static final String DEFAULT_DBUSER = System.getProperty("user.name");
 
     /**
      * Default Database password.

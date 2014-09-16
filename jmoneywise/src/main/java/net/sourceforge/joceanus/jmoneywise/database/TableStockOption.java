@@ -63,7 +63,7 @@ public class TableStockOption
         myTableDef.addReferenceColumn(StockOption.FIELD_SECURITY, TableSecurity.TABLE_NAME);
         myTableDef.addDateColumn(StockOption.FIELD_GRANTDATE);
         myTableDef.addDateColumn(StockOption.FIELD_EXPIREDATE);
-        myTableDef.addEncryptedColumn(StockOption.FIELD_UNITS, EncryptedData.UNITSLEN);
+        myTableDef.addEncryptedColumn(StockOption.FIELD_PRICE, EncryptedData.PRICELEN);
         myTableDef.addEncryptedColumn(StockOption.FIELD_NAME, StockOption.NAMELEN);
         myTableDef.addNullEncryptedColumn(StockOption.FIELD_DESC, StockOption.DESCLEN);
         myTableDef.addBooleanColumn(StockOption.FIELD_CLOSED);
@@ -89,7 +89,7 @@ public class TableStockOption
         myValues.addValue(StockOption.FIELD_SECURITY, myTableDef.getIntegerValue(StockOption.FIELD_SECURITY));
         myValues.addValue(StockOption.FIELD_GRANTDATE, myTableDef.getDateValue(StockOption.FIELD_GRANTDATE));
         myValues.addValue(StockOption.FIELD_EXPIREDATE, myTableDef.getDateValue(StockOption.FIELD_EXPIREDATE));
-        myValues.addValue(StockOption.FIELD_UNITS, myTableDef.getBinaryValue(StockOption.FIELD_UNITS));
+        myValues.addValue(StockOption.FIELD_PRICE, myTableDef.getBinaryValue(StockOption.FIELD_PRICE));
         myValues.addValue(StockOption.FIELD_CLOSED, myTableDef.getBooleanValue(StockOption.FIELD_CLOSED));
 
         /* Return the values */
@@ -109,8 +109,8 @@ public class TableStockOption
             myTableDef.setDateValue(iField, pItem.getGrantDate());
         } else if (StockOption.FIELD_EXPIREDATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getExpiryDate());
-        } else if (StockOption.FIELD_UNITS.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getUnitsBytes());
+        } else if (StockOption.FIELD_PRICE.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getPriceBytes());
         } else if (StockOption.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (StockOption.FIELD_DESC.equals(iField)) {
@@ -127,8 +127,5 @@ public class TableStockOption
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the list */
-        theList.validateOnLoad();
     }
 }

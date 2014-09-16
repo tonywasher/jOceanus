@@ -378,6 +378,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     STOCKOPTION_EXPIRYDATE("StockOption.ExpiryDate"),
 
     /**
+     * StockOption InfoSet.
+     */
+    STOCKOPTION_INFOSET("StockOption.InfoSet"),
+
+    /**
      * StockOption New Account.
      */
     STOCKOPTION_NEWACCOUNT("StockOption.NewAccount"),
