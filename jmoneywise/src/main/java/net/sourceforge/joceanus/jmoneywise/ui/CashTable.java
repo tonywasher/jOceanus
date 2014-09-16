@@ -65,6 +65,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -117,6 +118,11 @@ public class CashTable
      * Closed Column Title.
      */
     private static final String TITLE_CLOSED = Cash.FIELD_CLOSED.getName();
+
+    /**
+     * ShowClosed prompt.
+     */
+    private static final String PROMPT_CLOSED = MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED.getValue();
 
     /**
      * Active Column Title.
@@ -274,7 +280,7 @@ public class CashTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the CheckBox */
-        theLockedCheckBox = new JCheckBox("Show Closed");
+        theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
         theNewButton = MoneyWiseIcons.getNewButton();

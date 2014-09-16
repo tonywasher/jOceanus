@@ -28,9 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -53,24 +51,19 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
-import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
-import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOption;
+import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
-import net.sourceforge.joceanus.jmoneywise.ui.dialog.DepositPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.StockOptionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -86,47 +79,41 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
 /**
- * Deposit Table.
+ * Options Table.
  */
-public class DepositTable
-        extends JDataTable<Deposit, MoneyWiseDataType> {
+public class StockOptionTable
+        extends JDataTable<StockOption, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = -3345823820472643546L;
+    private static final long serialVersionUID = -984057825141989844L;
 
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = Deposit.FIELD_NAME.getName();
+    private static final String TITLE_NAME = StockOption.FIELD_NAME.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = Deposit.FIELD_DESC.getName();
+    private static final String TITLE_DESC = StockOption.FIELD_DESC.getName();
 
     /**
-     * Category Column Title.
+     * Portfolio Column Title.
      */
-    private static final String TITLE_CAT = Deposit.FIELD_CATEGORY.getName();
+    private static final String TITLE_PORTFOLIO = StockOption.FIELD_PORTFOLIO.getName();
 
     /**
-     * Parent Column Title.
+     * Security Column Title.
      */
-    private static final String TITLE_PARENT = Deposit.FIELD_PARENT.getName();
-
-    /**
-     * Currency Column Title.
-     */
-    private static final String TITLE_CURRENCY = Deposit.FIELD_CURRENCY.getName();
+    private static final String TITLE_SECURITY = StockOption.FIELD_SECURITY.getName();
 
     /**
      * Closed Column Title.
      */
-    private static final String TITLE_CLOSED = Deposit.FIELD_CLOSED.getName();
+    private static final String TITLE_CLOSED = StockOption.FIELD_CLOSED.getName();
 
     /**
      * ShowClosed prompt.
@@ -161,17 +148,12 @@ public class DepositTable
     /**
      * The data entry.
      */
-    private final transient UpdateEntry<Deposit, MoneyWiseDataType> theDepositEntry;
+    private final transient UpdateEntry<StockOption, MoneyWiseDataType> theOptionEntry;
 
     /**
-     * DepositInfo Update Entry.
+     * OptionVest Update Entry.
      */
-    private final transient UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
-
-    /**
-     * DepositRate Update Entry.
-     */
-    private final transient UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
+    private final transient UpdateEntry<StockOptionVest, MoneyWiseDataType> theVestEntry;
 
     /**
      * The error panel.
@@ -181,12 +163,12 @@ public class DepositTable
     /**
      * The Table Model.
      */
-    private final DepositTableModel theModel;
+    private final StockOptionTableModel theModel;
 
     /**
      * The Column Model.
      */
-    private final DepositColumnModel theColumns;
+    private final StockOptionColumnModel theColumns;
 
     /**
      * The panel.
@@ -209,29 +191,19 @@ public class DepositTable
     private final JButton theNewButton;
 
     /**
-     * The Deposit dialog.
+     * The Option dialog.
      */
-    private final DepositPanel theActiveAccount;
+    private final StockOptionPanel theActiveAccount;
 
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<Deposit, MoneyWiseDataType> theSelectionModel;
+    private final transient JDataTableSelection<StockOption, MoneyWiseDataType> theSelectionModel;
 
     /**
-     * Deposits.
+     * Options.
      */
-    private transient DepositList theDeposits = null;
-
-    /**
-     * Categories.
-     */
-    private transient DepositCategoryList theCategories = null;
-
-    /**
-     * Currencies.
-     */
-    private transient AccountCurrencyList theCurrencies = null;
+    private transient StockOptionList theOptions = null;
 
     /**
      * Obtain the panel.
@@ -263,9 +235,9 @@ public class DepositTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositTable(final View pView,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final ErrorPanel pError) {
+    public StockOptionTable(final View pView,
+                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -274,18 +246,18 @@ public class DepositTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theDepositEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSIT);
-        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITINFO);
-        theRateEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITRATE);
+        theOptionEntry = theUpdateSet.registerType(MoneyWiseDataType.STOCKOPTION);
+        theVestEntry = theUpdateSet.registerType(MoneyWiseDataType.STOCKOPTIONVEST);
         setUpdateSet(theUpdateSet);
 
         /* Create the table model */
-        theModel = new DepositTableModel(this);
+        theModel = new StockOptionTableModel(this);
         setModel(theModel);
 
         /* Create the data column model and declare it */
-        theColumns = new DepositColumnModel(this);
+        theColumns = new StockOptionColumnModel(this);
         setColumnModel(theColumns);
+        theColumns.setColumns();
 
         /* Prevent reordering of columns and auto-resizing */
         getTableHeader().setReorderingAllowed(false);
@@ -315,14 +287,14 @@ public class DepositTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new DepositPanel(theFieldMgr, theUpdateSet, theError);
+        theActiveAccount = new StockOptionPanel(theView, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<Deposit, MoneyWiseDataType>(this, theActiveAccount);
+        theSelectionModel = new JDataTableSelection<StockOption, MoneyWiseDataType>(this, theActiveAccount);
 
         /* Create listener */
-        new DepositListener();
+        new StockOptionListener();
     }
 
     /**
@@ -334,7 +306,7 @@ public class DepositTable
         requestFocusInWindow();
 
         /* Set the required focus */
-        pEntry.setFocus(theDepositEntry.getName());
+        pEntry.setFocus(theOptionEntry.getName());
     }
 
     /**
@@ -344,32 +316,26 @@ public class DepositTable
     protected void refreshData() throws JOceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theView.getActiveTask();
-        myTask = myTask.startTask("Deposits");
+        myTask = myTask.startTask("Options");
 
-        /* Access the various lists */
+        /* Get the Portfolios edit list */
         MoneyWiseData myData = theView.getData();
-        theCurrencies = myData.getAccountCurrencies();
-        theCategories = myData.getDepositCategories();
+        StockOptionList myOptions = myData.getStockOptions();
+        theOptions = myOptions.deriveEditList();
+        theOptions.resolveUpdateSetLinks(theUpdateSet);
+        theOptionEntry.setDataList(theOptions);
 
-        /* Get the Deposits edit list */
-        DepositList myDeposits = myData.getDeposits();
-        theDeposits = myDeposits.deriveEditList();
-        theDeposits.resolveUpdateSetLinks(theUpdateSet);
-        theDepositEntry.setDataList(theDeposits);
-        DepositInfoList myInfo = theDeposits.getDepositInfo();
-        theInfoEntry.setDataList(myInfo);
-
-        /* Get the Deposit rates list */
-        DepositRateList myRates = myData.getDepositRates();
-        myRates = myRates.deriveEditList();
-        myRates.resolveUpdateSetLinks(theUpdateSet);
-        theRateEntry.setDataList(myRates);
+        /* Get the StockOption Vest list */
+        StockOptionVestList myVests = myData.getStockOptionVests();
+        myVests = myVests.deriveEditList();
+        myVests.resolveUpdateSetLinks(theUpdateSet);
+        theVestEntry.setDataList(myVests);
 
         /* Notify panel of refresh */
         theActiveAccount.refreshData();
 
         /* Notify of the change */
-        setList(theDeposits);
+        setList(theOptions);
 
         /* Complete the task */
         myTask.end();
@@ -411,12 +377,12 @@ public class DepositTable
     }
 
     /**
-     * Select deposit.
-     * @param pDeposit the deposit to select
+     * Select StockOption.
+     * @param pOption the option to select
      */
-    protected void selectDeposit(final Deposit pDeposit) {
+    protected void selectOption(final StockOption pOption) {
         /* Find the item in the list */
-        int myIndex = theDeposits.indexOf(pDeposit);
+        int myIndex = theOptions.indexOf(pOption);
         myIndex = convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
@@ -436,18 +402,18 @@ public class DepositTable
     /**
      * JTable Data Model.
      */
-    private final class DepositTableModel
-            extends JDataTableModel<Deposit, MoneyWiseDataType> {
+    private final class StockOptionTableModel
+            extends JDataTableModel<StockOption, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = 6333494691061725126L;
+        private static final long serialVersionUID = 2054182612545665424L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private DepositTableModel(final DepositTable pTable) {
+        private StockOptionTableModel(final StockOptionTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -461,38 +427,38 @@ public class DepositTable
 
         @Override
         public int getRowCount() {
-            return (theDeposits == null)
-                                        ? 0
-                                        : theDeposits.size();
+            return (theOptions == null)
+                                       ? 0
+                                       : theOptions.size();
         }
 
         @Override
-        public JDataField getFieldForCell(final Deposit pItem,
+        public JDataField getFieldForCell(final StockOption pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final Deposit pItem,
+        public boolean isCellEditable(final StockOption pItem,
                                       final int pColIndex) {
             return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
-        public Deposit getItemAtIndex(final int pRowIndex) {
+        public StockOption getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return theDeposits.get(pRowIndex);
+            return theOptions.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final Deposit pItem,
+        public Object getItemValue(final StockOption pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
-        public void setItemValue(final Deposit pItem,
+        public void setItemValue(final StockOption pItem,
                                  final int pColIndex,
                                  final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
@@ -506,7 +472,7 @@ public class DepositTable
         }
 
         @Override
-        public boolean includeRow(final Deposit pRow) {
+        public boolean includeRow(final StockOption pRow) {
             /* Ignore deleted rows */
             if (pRow.isDeleted()) {
                 return false;
@@ -522,21 +488,21 @@ public class DepositTable
         private void addNewItem() {
             /* Protect against Exceptions */
             try {
-                /* Create the new deposit */
-                Deposit myDeposit = new Deposit(theDeposits);
-                myDeposit.setDefaults(theUpdateSet);
+                /* Create the new option */
+                StockOption myOption = new StockOption(theOptions);
+                myOption.setDefaults(theUpdateSet);
 
                 /* Add the new item */
-                myDeposit.setNewVersion();
-                theDeposits.append(myDeposit);
+                myOption.setNewVersion();
+                theOptions.append(myOption);
 
                 /* Validate the new item and notify of the changes */
-                myDeposit.validate();
+                myOption.validate();
                 incrementVersion();
 
                 /* Lock the table */
                 setEnabled(false);
-                theActiveAccount.setNewItem(myDeposit);
+                theActiveAccount.setNewItem(myOption);
 
                 /* Handle Exceptions */
             } catch (JOceanusException e) {
@@ -552,12 +518,12 @@ public class DepositTable
     /**
      * Listener class.
      */
-    private final class DepositListener
+    private final class StockOptionListener
             implements ActionListener, ItemListener, ChangeListener {
         /**
          * Constructor.
          */
-        private DepositListener() {
+        private StockOptionListener() {
             /* Listen to correct events */
             theUpdateSet.addChangeListener(this);
             theNewButton.addActionListener(this);
@@ -626,12 +592,12 @@ public class DepositTable
     /**
      * Column Model class.
      */
-    private final class DepositColumnModel
+    private final class StockOptionColumnModel
             extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -6629043017566713861L;
+        private static final long serialVersionUID = -1924047563738775420L;
 
         /**
          * Name column id.
@@ -639,39 +605,34 @@ public class DepositTable
         private static final int COLUMN_NAME = 0;
 
         /**
-         * Category column id.
-         */
-        private static final int COLUMN_CATEGORY = 1;
-
-        /**
          * Description column id.
          */
-        private static final int COLUMN_DESC = 2;
+        private static final int COLUMN_DESC = 1;
 
         /**
-         * Parent column id.
+         * Portfolio column id.
          */
-        private static final int COLUMN_PARENT = 3;
+        private static final int COLUMN_PORTFOLIO = 2;
 
         /**
-         * Currency column id.
+         * Security column id.
          */
-        private static final int COLUMN_CURR = 4;
+        private static final int COLUMN_SECURITY = 3;
 
         /**
          * Closed column id.
          */
-        private static final int COLUMN_CLOSED = 5;
+        private static final int COLUMN_CLOSED = 4;
 
         /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 6;
+        private static final int COLUMN_ACTIVE = 5;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 7;
+        private static final int COLUMN_LASTTRAN = 6;
 
         /**
          * Closed Icon Renderer.
@@ -709,19 +670,14 @@ public class DepositTable
         private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
-         * Category ScrollButton Menu Editor.
+         * Portfolio ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<DepositCategory> theCategoryEditor;
+        private final ScrollButtonCellEditor<Portfolio> thePortfolioEditor;
 
         /**
-         * Parent ScrollButton Menu Editor.
+         * Security ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<Payee> theParentEditor;
-
-        /**
-         * Currency ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
+        private final ScrollButtonCellEditor<Security> theSecurityEditor;
 
         /**
          * Closed column.
@@ -732,7 +688,7 @@ public class DepositTable
          * Constructor.
          * @param pTable the table
          */
-        private DepositColumnModel(final DepositTable pTable) {
+        private StockOptionColumnModel(final StockOptionTable pTable) {
             /* call constructor */
             super(pTable);
 
@@ -740,9 +696,8 @@ public class DepositTable
             theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(DepositCategory.class);
-            theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
+            thePortfolioEditor = theFieldMgr.allocateScrollButtonCellEditor(Portfolio.class);
+            theSecurityEditor = theFieldMgr.allocateScrollButtonCellEditor(Security.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -754,10 +709,9 @@ public class DepositTable
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theCurrencyEditor));
+            declareColumn(new JDataTableColumn(COLUMN_PORTFOLIO, WIDTH_NAME, theStringRenderer, thePortfolioEditor));
+            declareColumn(new JDataTableColumn(COLUMN_SECURITY, WIDTH_NAME, theStringRenderer, theSecurityEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
@@ -768,9 +722,8 @@ public class DepositTable
 
             /* Add listeners */
             ScrollEditorListener myListener = new ScrollEditorListener();
-            theCategoryEditor.addChangeListener(myListener);
-            theParentEditor.addChangeListener(myListener);
-            theCurrencyEditor.addChangeListener(myListener);
+            thePortfolioEditor.addChangeListener(myListener);
+            theSecurityEditor.addChangeListener(myListener);
         }
 
         /**
@@ -796,12 +749,10 @@ public class DepositTable
                     return TITLE_NAME;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_CATEGORY:
-                    return TITLE_CAT;
-                case COLUMN_PARENT:
-                    return TITLE_PARENT;
-                case COLUMN_CURR:
-                    return TITLE_CURRENCY;
+                case COLUMN_PORTFOLIO:
+                    return TITLE_PORTFOLIO;
+                case COLUMN_SECURITY:
+                    return TITLE_SECURITY;
                 case COLUMN_CLOSED:
                     return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
@@ -814,33 +765,31 @@ public class DepositTable
         }
 
         /**
-         * Obtain the value for the deposit column.
-         * @param pDeposit deposit
+         * Obtain the value for the Option column.
+         * @param pOption StockOption
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final Deposit pDeposit,
+        protected Object getItemValue(final StockOption pOption,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return pDeposit.getName();
-                case COLUMN_CATEGORY:
-                    return pDeposit.getCategory();
+                    return pOption.getName();
+                case COLUMN_PORTFOLIO:
+                    return pOption.getPortfolio();
+                case COLUMN_SECURITY:
+                    return pOption.getSecurity();
                 case COLUMN_DESC:
-                    return pDeposit.getDesc();
-                case COLUMN_PARENT:
-                    return pDeposit.getParent();
-                case COLUMN_CURR:
-                    return pDeposit.getDepositCurrency();
+                    return pOption.getDesc();
                 case COLUMN_CLOSED:
-                    return pDeposit.isClosed();
+                    return pOption.isClosed();
                 case COLUMN_ACTIVE:
-                    return pDeposit.isActive()
-                                              ? ActionType.ACTIVE
-                                              : ActionType.DELETE;
+                    return pOption.isActive()
+                                             ? ActionType.ACTIVE
+                                             : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
-                    Transaction myTran = pDeposit.getLatest();
+                    Transaction myTran = pOption.getLatest();
                     return (myTran == null)
                                            ? null
                                            : myTran.getDate();
@@ -856,7 +805,7 @@ public class DepositTable
          * @param pValue the value to set
          * @throws JOceanusException on error
          */
-        private void setItemValue(final Deposit pItem,
+        private void setItemValue(final StockOption pItem,
                                   final int pColIndex,
                                   final Object pValue) throws JOceanusException {
             /* Set the appropriate value */
@@ -867,14 +816,11 @@ public class DepositTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
-                case COLUMN_CATEGORY:
-                    pItem.setDepositCategory((DepositCategory) pValue);
+                case COLUMN_PORTFOLIO:
+                    pItem.setPortfolio((Portfolio) pValue);
                     break;
-                case COLUMN_PARENT:
-                    pItem.setParent((Payee) pValue);
-                    break;
-                case COLUMN_CURR:
-                    pItem.setDepositCurrency((AccountCurrency) pValue);
+                case COLUMN_SECURITY:
+                    pItem.setSecurity((Security) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -893,22 +839,18 @@ public class DepositTable
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final Deposit pItem,
+        private boolean isCellEditable(final StockOption pItem,
                                        final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
-                case COLUMN_PARENT:
-                    return !pItem.isClosed();
-                case COLUMN_CATEGORY:
-                case COLUMN_CURR:
+                case COLUMN_PORTFOLIO:
+                case COLUMN_SECURITY:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
-                    return pItem.isClosed()
-                                           ? !pItem.getParent().isClosed()
-                                           : !pItem.isRelevant();
+                    return pItem.isClosed() || !pItem.isRelevant();
                 default:
                     return false;
             }
@@ -923,19 +865,17 @@ public class DepositTable
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return Deposit.FIELD_NAME;
+                    return StockOption.FIELD_NAME;
                 case COLUMN_DESC:
-                    return Deposit.FIELD_DESC;
-                case COLUMN_CATEGORY:
-                    return Deposit.FIELD_CATEGORY;
-                case COLUMN_PARENT:
-                    return Deposit.FIELD_PARENT;
-                case COLUMN_CURR:
-                    return Deposit.FIELD_CURRENCY;
+                    return StockOption.FIELD_DESC;
+                case COLUMN_PORTFOLIO:
+                    return StockOption.FIELD_PORTFOLIO;
+                case COLUMN_SECURITY:
+                    return StockOption.FIELD_SECURITY;
                 case COLUMN_CLOSED:
-                    return Deposit.FIELD_CLOSED;
+                    return StockOption.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
-                    return Deposit.FIELD_TOUCH;
+                    return StockOption.FIELD_TOUCH;
                 default:
                     return null;
             }
@@ -950,50 +890,46 @@ public class DepositTable
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();
 
-                if (theCategoryEditor.equals(o)) {
-                    buildCategoryMenu();
-                } else if (theParentEditor.equals(o)) {
-                    buildParentMenu();
-                } else if (theCurrencyEditor.equals(o)) {
-                    buildCurrencyMenu();
+                if (thePortfolioEditor.equals(o)) {
+                    buildPortfolioMenu();
+                } else if (theSecurityEditor.equals(o)) {
+                    buildSecurityMenu();
                 }
             }
 
             /**
-             * Build the popUpMenu for parents.
+             * Build the popUpMenu for portfolio.
              */
-            private void buildParentMenu() {
+            private void buildPortfolioMenu() {
                 /* Access details */
-                JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
-                Point myCell = theParentEditor.getPoint();
+                JScrollMenuBuilder<Portfolio> myBuilder = thePortfolioEditor.getMenuBuilder();
+                Point myCell = thePortfolioEditor.getPoint();
                 myBuilder.clearMenu();
 
                 /* Record active item */
-                Deposit myDeposit = theDeposits.get(myCell.y);
-                DepositCategoryClass myType = myDeposit.getCategoryClass();
-                Payee myCurr = myDeposit.getParent();
+                StockOption myOption = theOptions.get(myCell.y);
+                Portfolio myCurr = myOption.getPortfolio();
                 JMenuItem myActive = null;
 
-                /* We should use the update payee list */
-                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+                /* We should use the update portfolio list */
+                PortfolioList myPortfolios = theUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
 
-                /* Loop through the Payees */
-                Iterator<Payee> myIterator = myPayees.iterator();
+                /* Loop through the portfolios */
+                Iterator<Portfolio> myIterator = myPortfolios.iterator();
                 while (myIterator.hasNext()) {
-                    Payee myPayee = myIterator.next();
+                    Portfolio myPortfolio = myIterator.next();
 
-                    /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
-                    bIgnore |= myPayee.isClosed();
+                    /* Ignore deleted or closed */
+                    boolean bIgnore = myPortfolio.isDeleted() || myPortfolio.isClosed();
                     if (bIgnore) {
                         continue;
                     }
 
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myPayee);
+                    /* Create a new action for the portfolio */
+                    JMenuItem myItem = myBuilder.addItem(myPortfolio);
 
-                    /* If this is the active parent */
-                    if (myPayee.equals(myCurr)) {
+                    /* If this is the active portfolio */
+                    if (myPortfolio.equals(myCurr)) {
                         /* Record it */
                         myActive = myItem;
                     }
@@ -1002,108 +938,48 @@ public class DepositTable
                 /* Ensure active item is visible */
                 myBuilder.showItem(myActive);
             }
+        }
 
-            /**
-             * Obtain the popUpMenu for categories.
-             */
-            private void buildCategoryMenu() {
-                /* Access details */
-                JScrollMenuBuilder<DepositCategory> myBuilder = theCategoryEditor.getMenuBuilder();
-                Point myCell = theCategoryEditor.getPoint();
-                myBuilder.clearMenu();
+        /**
+         * Build the popUpMenu for security.
+         */
+        private void buildSecurityMenu() {
+            /* Access details */
+            JScrollMenuBuilder<Security> myBuilder = theSecurityEditor.getMenuBuilder();
+            Point myCell = theSecurityEditor.getPoint();
+            myBuilder.clearMenu();
 
-                /* Access active category */
-                JMenuItem myActive = null;
-                Deposit myDeposit = theDeposits.get(myCell.y);
-                DepositCategory myActiveCat = (myDeposit == null)
-                                                                 ? null
-                                                                 : myDeposit.getCategory();
+            /* Record active item */
+            StockOption myOption = theOptions.get(myCell.y);
+            Security myCurr = myOption.getSecurity();
+            JMenuItem myActive = null;
 
-                /* Create a simple map for top-level categories */
-                Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+            /* We should use the update security list */
+            SecurityList mySecurities = theUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
 
-                /* Loop through the available category values */
-                Iterator<DepositCategory> myIterator = theCategories.iterator();
-                while (myIterator.hasNext()) {
-                    DepositCategory myCategory = myIterator.next();
+            /* Loop through the portfolios */
+            Iterator<Security> myIterator = mySecurities.iterator();
+            while (myIterator.hasNext()) {
+                Security mySecurity = myIterator.next();
 
-                    /* Only process parent items */
-                    if (!myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
-                        continue;
-                    }
-
-                    /* Create a new JMenu and add it to the popUp */
-                    String myName = myCategory.getName();
-                    JScrollMenu myMenu = myBuilder.addSubMenu(myName);
-                    myMap.put(myName, myMenu);
+                /* Ignore deleted or closed */
+                boolean bIgnore = mySecurity.isDeleted() || mySecurity.isClosed();
+                if (bIgnore) {
+                    continue;
                 }
 
-                /* Re-Loop through the available category values */
-                myIterator = theCategories.iterator();
-                while (myIterator.hasNext()) {
-                    DepositCategory myCategory = myIterator.next();
+                /* Create a new action for the security */
+                JMenuItem myItem = myBuilder.addItem(mySecurity);
 
-                    /* Only process low-level items */
-                    if (myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
-                        continue;
-                    }
-
-                    /* Determine menu to add to */
-                    DepositCategory myParent = myCategory.getParentCategory();
-                    JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                    /* Create a new JMenuItem and add it to the popUp */
-                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                    /* Note active category */
-                    if (myCategory.equals(myActiveCat)) {
-                        myActive = myMenu;
-                        myMenu.showItem(myItem);
-                    }
+                /* If this is the active security */
+                if (mySecurity.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
                 }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
             }
 
-            /**
-             * Build the popUpMenu for currencies.
-             */
-            private void buildCurrencyMenu() {
-                /* Access details */
-                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-                Point myCell = theCurrencyEditor.getPoint();
-                myBuilder.clearMenu();
-
-                /* Record active item */
-                Deposit myDeposit = theDeposits.get(myCell.y);
-                AccountCurrency myCurr = myDeposit.getDepositCurrency();
-                JMenuItem myActive = null;
-
-                /* Loop through the Currencies */
-                Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
-                while (myIterator.hasNext()) {
-                    AccountCurrency myCurrency = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the currency */
-                    JMenuItem myItem = myBuilder.addItem(myCurrency);
-
-                    /* If this is the active currency */
-                    if (myCurrency.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
-            }
+            /* Ensure active item is visible */
+            myBuilder.showItem(myActive);
         }
     }
 }

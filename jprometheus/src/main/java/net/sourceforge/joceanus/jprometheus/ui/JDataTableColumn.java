@@ -143,6 +143,11 @@ public class JDataTableColumn
         protected static final int WIDTH_PRICE = 90;
 
         /**
+         * Units column standard width.
+         */
+        protected static final int WIDTH_UNITS = 90;
+
+        /**
          * Name column standard width.
          */
         protected static final int WIDTH_NAME = 130;

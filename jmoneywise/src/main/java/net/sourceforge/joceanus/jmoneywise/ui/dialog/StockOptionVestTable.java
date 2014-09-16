@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DateDayCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
@@ -38,14 +38,11 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.StockOption;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
+import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
@@ -56,49 +53,33 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
- * Panel to display a list of SecurityPrices associated with a Security.
+ * Panel to display a list of Vests associated with a StockOption.
  */
-public class SecurityPriceTable
-        extends JDataTable<ViewSecurityPrice, MoneyWiseDataType> {
+public class StockOptionVestTable
+        extends JDataTable<StockOptionVest, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = -153651020207724175L;
+    private static final long serialVersionUID = -4616312420617272420L;
 
     /**
      * Date Column Title.
      */
-    private static final String TITLE_DATE = SecurityPrice.FIELD_DATE.getName();
+    private static final String TITLE_DATE = StockOptionVest.FIELD_DATE.getName();
 
     /**
-     * Price Column Title.
+     * Units Column Title.
      */
-    private static final String TITLE_PRICE = SecurityPrice.FIELD_PRICE.getName();
-
-    /**
-     * Dilution Column Title.
-     */
-    private static final String TITLE_DILUTION = ViewSecurityPrice.FIELD_DILUTION.getName();
-
-    /**
-     * DilutedPrice Column Title.
-     */
-    private static final String TITLE_DILUTEDPRICE = ViewSecurityPrice.FIELD_DILUTEDPRICE.getName();
+    private static final String TITLE_UNITS = StockOptionVest.FIELD_UNITS.getName();
 
     /**
      * Action Column Title.
      */
     private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
-
-    /**
-     * The data view.
-     */
-    private final transient View theView;
 
     /**
      * The field manager.
@@ -123,32 +104,27 @@ public class SecurityPriceTable
     /**
      * The Table Model.
      */
-    private final SecurityPriceTableModel theModel;
+    private final StockOptionVestTableModel theModel;
 
     /**
      * The Column Model.
      */
-    private final SecurityPriceColumnModel theColumns;
+    private final StockOptionVestColumnModel theColumns;
 
     /**
-     * Price Header.
+     * Vest Header.
      */
-    private transient ViewSecurityPrice theHeader;
+    private transient StockOptionVest theHeader;
 
     /**
-     * Security.
+     * Option.
      */
-    private transient Security theSecurity = null;
+    private transient StockOption theOption = null;
 
     /**
-     * SecurityPrices.
+     * StockOptionVests.
      */
-    private transient ViewSecurityPriceList thePrices = null;
-
-    /**
-     * Dilutions.
-     */
-    private transient DilutionEventMap theDilutions = null;
+    private transient StockOptionVestList theVests = null;
 
     /**
      * Editable flag.
@@ -170,17 +146,14 @@ public class SecurityPriceTable
 
     /**
      * Constructor.
-     * @param pView the data view
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected SecurityPriceTable(final View pView,
-                                 final JFieldManager pFieldMgr,
-                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                 final ErrorPanel pError) {
+    protected StockOptionVestTable(final JFieldManager pFieldMgr,
+                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                   final ErrorPanel pError) {
         /* Record the passed details */
-        theView = pView;
         theError = pError;
         theFieldMgr = pFieldMgr;
         setFieldMgr(theFieldMgr);
@@ -190,11 +163,11 @@ public class SecurityPriceTable
         setUpdateSet(theUpdateSet);
 
         /* Create the table model */
-        theModel = new SecurityPriceTableModel(this);
+        theModel = new StockOptionVestTableModel(this);
         setModel(theModel);
 
         /* Create the data column model and declare it */
-        theColumns = new SecurityPriceColumnModel(this);
+        theColumns = new StockOptionVestColumnModel(this);
         setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -215,45 +188,22 @@ public class SecurityPriceTable
      */
     protected void refreshData() {
         /* Access the prices list */
-        thePrices = theUpdateSet.findDataList(MoneyWiseDataType.SECURITYPRICE, ViewSecurityPriceList.class);
-        theHeader = new PriceHeader(thePrices);
-        theDilutions = theView.getDilutions();
-        theColumns.setDateRange();
-        setList(thePrices);
+        theVests = theUpdateSet.findDataList(MoneyWiseDataType.STOCKOPTIONVEST, StockOptionVestList.class);
+        theHeader = new VestHeader(theVests);
+        setList(theVests);
     }
 
     /**
-     * Set the security.
-     * @param pSecurity the security
+     * Set the option.
+     * @param pOption the option
      */
-    protected void setSecurity(final Security pSecurity) {
-        /* Store the security */
-        if (!Difference.isEqual(pSecurity, theSecurity)) {
-            theSecurity = pSecurity;
+    protected void setOption(final StockOption pOption) {
+        /* Store the option */
+        if (!Difference.isEqual(pOption, theOption)) {
+            theOption = pOption;
+            theColumns.setDateRange();
             theModel.fireNewDataEvents();
         }
-    }
-
-    /**
-     * Add a new price for a new security.
-     * @param pSecurity the security
-     * @throws JOceanusException on error
-     */
-    protected void addNewPrice(final Security pSecurity) throws JOceanusException {
-        /* Create the new price */
-        ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
-
-        /* Set the item value */
-        myPrice.setSecurity(pSecurity);
-        myPrice.setDate(new JDateDay());
-        myPrice.setPrice(JPrice.getWholeUnits(1, pSecurity.getSecurityCurrency().getCurrency()));
-
-        /* Add to the list */
-        myPrice.setNewVersion();
-        thePrices.append(myPrice);
-
-        /* Validate the price */
-        myPrice.validate();
     }
 
     /**
@@ -264,31 +214,31 @@ public class SecurityPriceTable
         /* Store the value */
         isEditable = pEditable;
         theModel.adjustHeader();
-        theColumns.setColumns();
     }
 
     /**
      * Refresh the table after an updateSet reWind.
      */
     protected void refreshAfterUpdate() {
+        theColumns.setDateRange();
         theModel.fireNewDataEvents();
     }
 
     /**
      * JTable Data Model.
      */
-    private final class SecurityPriceTableModel
-            extends JDataTableModel<ViewSecurityPrice, MoneyWiseDataType> {
+    private final class StockOptionVestTableModel
+            extends JDataTableModel<StockOptionVest, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = 8841302608840657428L;
+        private static final long serialVersionUID = -1777194319234010821L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private SecurityPriceTableModel(final SecurityPriceTable pTable) {
+        private StockOptionVestTableModel(final StockOptionVestTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -302,33 +252,33 @@ public class SecurityPriceTable
 
         @Override
         public int getRowCount() {
-            return (thePrices == null)
-                                      ? 0
-                                      : 1 + thePrices.size();
+            return (theVests == null)
+                                     ? 0
+                                     : 1 + theVests.size();
         }
 
         @Override
-        public JDataField getFieldForCell(final ViewSecurityPrice pItem,
+        public JDataField getFieldForCell(final StockOptionVest pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final ViewSecurityPrice pItem,
+        public boolean isCellEditable(final StockOptionVest pItem,
                                       final int pColIndex) {
             return theColumns.isCellEditable(pColIndex);
         }
 
         @Override
-        public ViewSecurityPrice getItemAtIndex(final int pRowIndex) {
+        public StockOptionVest getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
                                  ? theHeader
-                                 : thePrices.get(pRowIndex - 1);
+                                 : theVests.get(pRowIndex - 1);
         }
 
         @Override
-        public Object getItemValue(final ViewSecurityPrice pItem,
+        public Object getItemValue(final StockOptionVest pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pItem.isHeader()
@@ -337,7 +287,7 @@ public class SecurityPriceTable
         }
 
         @Override
-        public void setItemValue(final ViewSecurityPrice pItem,
+        public void setItemValue(final StockOptionVest pItem,
                                  final int pColIndex,
                                  final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
@@ -351,23 +301,23 @@ public class SecurityPriceTable
         }
 
         @Override
-        public boolean includeRow(final ViewSecurityPrice pRow) {
-            /* Ignore deleted rows and all rows if no security is selected */
-            if (pRow.isDeleted() || theSecurity == null) {
+        public boolean includeRow(final StockOptionVest pRow) {
+            /* Ignore deleted rows and all rows if no option is selected */
+            if (pRow.isDeleted() || theOption == null) {
                 return false;
             }
 
             /* Handle filter */
             return pRow.isHeader()
                                   ? isEditable
-                                  : theSecurity.equals(pRow.getSecurity());
+                                  : theOption.equals(pRow.getStockOption());
         }
 
         /**
          * Adjust header.
          */
         private void adjustHeader() {
-            if (theSecurity != null) {
+            if (theOption != null) {
                 fireUpdateRowEvents(0);
             }
         }
@@ -378,13 +328,25 @@ public class SecurityPriceTable
         private void addNewItem() {
             /* Protect against Exceptions */
             try {
-                /* Add a new price */
-                addNewPrice(theSecurity);
+                /* Create the new vest */
+                StockOptionVest myVest = new StockOptionVest(theVests);
+
+                /* Set the item value */
+                myVest.setStockOption(theOption);
+                myVest.setDate(new JDateDay());
+                myVest.setUnits(JUnits.getWholeUnits(1));
+
+                /* Add to the list */
+                myVest.setNewVersion();
+                theVests.append(myVest);
+
+                /* Validate the vest */
+                myVest.validate();
 
                 /* Handle Exceptions */
             } catch (JOceanusException e) {
                 /* Build the error */
-                JOceanusException myError = new JMoneyWiseDataException("Failed to create new price", e);
+                JOceanusException myError = new JMoneyWiseDataException("Failed to create new vest", e);
 
                 /* Show the error */
                 setError(myError);
@@ -404,12 +366,12 @@ public class SecurityPriceTable
     /**
      * Column Model class.
      */
-    private final class SecurityPriceColumnModel
+    private final class StockOptionVestColumnModel
             extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -6629043017566713861L;
+        private static final long serialVersionUID = 2667655530691267129L;
 
         /**
          * Date column id.
@@ -417,24 +379,14 @@ public class SecurityPriceTable
         private static final int COLUMN_DATE = 0;
 
         /**
-         * Price column id.
+         * Units column id.
          */
-        private static final int COLUMN_PRICE = 1;
-
-        /**
-         * Dilution column id.
-         */
-        private static final int COLUMN_DILUTION = 2;
-
-        /**
-         * DilutedPrice column id.
-         */
-        private static final int COLUMN_DILUTEDPRICE = 3;
+        private static final int COLUMN_UNITS = 1;
 
         /**
          * Action column id.
          */
-        private static final int COLUMN_ACTION = 4;
+        private static final int COLUMN_ACTION = 2;
 
         /**
          * Date Renderer.
@@ -452,9 +404,9 @@ public class SecurityPriceTable
         private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
 
         /**
-         * Price editor.
+         * Units editor.
          */
-        private final PriceCellEditor thePriceEditor;
+        private final UnitsCellEditor theUnitsEditor;
 
         /**
          * Date editor.
@@ -472,16 +424,6 @@ public class SecurityPriceTable
         private final IconButtonCellEditor<ActionType> theActionIconEditor;
 
         /**
-         * Dilution column.
-         */
-        private final JDataTableColumn theDilutionColumn;
-
-        /**
-         * DilutedPrice column.
-         */
-        private final JDataTableColumn theDilutedColumn;
-
-        /**
          * Action column.
          */
         private final JDataTableColumn theActionColumn;
@@ -490,12 +432,12 @@ public class SecurityPriceTable
          * Constructor.
          * @param pTable the table
          */
-        private SecurityPriceColumnModel(final SecurityPriceTable pTable) {
+        private StockOptionVestColumnModel(final StockOptionVestTable pTable) {
             /* call constructor */
             super(pTable);
 
             /* Create the relevant formatters */
-            thePriceEditor = theFieldMgr.allocatePriceCellEditor();
+            theUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
             theDateEditor = theFieldMgr.allocateDateDayCellEditor();
             theDateConfig = theDateEditor.getDateConfig();
             theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
@@ -508,49 +450,20 @@ public class SecurityPriceTable
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
-            theDilutionColumn = new JDataTableColumn(COLUMN_DILUTION, WIDTH_PRICE, theDecimalRenderer);
-            declareColumn(theDilutionColumn);
-            theDilutedColumn = new JDataTableColumn(COLUMN_DILUTEDPRICE, WIDTH_PRICE, theDecimalRenderer);
-            declareColumn(theDilutedColumn);
+            declareColumn(new JDataTableColumn(COLUMN_UNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
             theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor);
             declareColumn(theActionColumn);
-
-            /* Initialise the columns */
-            setColumns();
         }
 
         /**
          * Adjust date range.
          */
         private void setDateRange() {
-            /* Access date range */
-            JDateDayRange myRange = thePrices.getDataSet().getDateRange();
-
-            /* Adjust editor range */
-            theDateConfig.setEarliestDateDay(myRange.getStart());
-            theDateConfig.setLatestDateDay(myRange.getEnd());
-        }
-
-        /**
-         * Set visible columns according to the mode.
-         */
-        private void setColumns() {
-            /* Determine whether the security is diluted */
-            boolean isDiluted = theDilutions != null && theDilutions.hasDilution(theSecurity);
-            if (isDiluted) {
-                revealColumn(theDilutionColumn);
-                revealColumn(theDilutedColumn);
-            } else {
-                hideColumn(theDilutionColumn);
-                hideColumn(theDilutedColumn);
-            }
-
-            /* Switch on mode */
-            if (isEditable) {
-                revealColumn(theActionColumn);
-            } else {
-                hideColumn(theActionColumn);
+            /* if we have an option */
+            if (theOption != null) {
+                /* Adjust editor range */
+                theDateConfig.setEarliestDateDay(theOption.getGrantDate());
+                theDateConfig.setLatestDateDay(theOption.getExpiryDate());
             }
         }
 
@@ -563,12 +476,8 @@ public class SecurityPriceTable
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return TITLE_DATE;
-                case COLUMN_PRICE:
-                    return TITLE_PRICE;
-                case COLUMN_DILUTION:
-                    return TITLE_DILUTION;
-                case COLUMN_DILUTEDPRICE:
-                    return TITLE_DILUTEDPRICE;
+                case COLUMN_UNITS:
+                    return TITLE_UNITS;
                 case COLUMN_ACTION:
                     return TITLE_ACTION;
                 default:
@@ -597,18 +506,14 @@ public class SecurityPriceTable
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final ViewSecurityPrice pItem,
+        protected Object getItemValue(final StockOptionVest pItem,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return pItem.getDate();
-                case COLUMN_PRICE:
-                    return pItem.getPrice();
-                case COLUMN_DILUTION:
-                    return pItem.getDilution();
-                case COLUMN_DILUTEDPRICE:
-                    return pItem.getDilutedPrice();
+                case COLUMN_UNITS:
+                    return pItem.getUnits();
                 case COLUMN_ACTION:
                     return theModel.getViewRowCount() > 1
                                                          ? ActionType.DELETE
@@ -625,7 +530,7 @@ public class SecurityPriceTable
          * @param pValue the value to set
          * @throws JOceanusException on error
          */
-        private void setItemValue(final ViewSecurityPrice pItem,
+        private void setItemValue(final StockOptionVest pItem,
                                   final int pColIndex,
                                   final Object pValue) throws JOceanusException {
             /* Set the appropriate value */
@@ -633,8 +538,8 @@ public class SecurityPriceTable
                 case COLUMN_DATE:
                     pItem.setDate((JDateDay) pValue);
                     break;
-                case COLUMN_PRICE:
-                    pItem.setPrice((JPrice) pValue);
+                case COLUMN_UNITS:
+                    pItem.setUnits((JUnits) pValue);
                     break;
                 case COLUMN_ACTION:
                     if (pItem.isHeader()) {
@@ -656,15 +561,9 @@ public class SecurityPriceTable
         private boolean isCellEditable(final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_DATE:
-                case COLUMN_PRICE:
-                    return isEditable;
-                case COLUMN_DILUTION:
-                case COLUMN_DILUTEDPRICE:
-                    return false;
+                case COLUMN_UNITS:
                 case COLUMN_ACTION:
-                    return pColIndex == 0
-                                         ? isEditable
-                                         : isEditable && theModel.getViewRowCount() > 2;
+                    return isEditable;
                 default:
                     return false;
             }
@@ -679,13 +578,9 @@ public class SecurityPriceTable
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    return SecurityPrice.FIELD_DATE;
-                case COLUMN_PRICE:
-                    return SecurityPrice.FIELD_PRICE;
-                case COLUMN_DILUTION:
-                    return ViewSecurityPrice.FIELD_DILUTION;
-                case COLUMN_DILUTEDPRICE:
-                    return ViewSecurityPrice.FIELD_DILUTEDPRICE;
+                    return StockOptionVest.FIELD_DATE;
+                case COLUMN_UNITS:
+                    return StockOptionVest.FIELD_UNITS;
                 default:
                     return null;
             }
@@ -693,15 +588,15 @@ public class SecurityPriceTable
     }
 
     /**
-     * Price Header class.
+     * Vest Header class.
      */
-    private static class PriceHeader
-            extends ViewSecurityPrice {
+    private static class VestHeader
+            extends StockOptionVest {
         /**
          * Constructor.
-         * @param pList the SecurityPrice list
+         * @param pList the StockOptionVest list
          */
-        protected PriceHeader(final ViewSecurityPriceList pList) {
+        protected VestHeader(final StockOptionVestList pList) {
             super(pList);
             setHeader(true);
         }

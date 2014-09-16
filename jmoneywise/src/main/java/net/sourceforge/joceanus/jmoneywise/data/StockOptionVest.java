@@ -451,7 +451,7 @@ public class StockOptionVest
      * @param pOption the option
      * @throws JOceanusException on error
      */
-    public void setSecurity(final StockOption pOption) throws JOceanusException {
+    public void setStockOption(final StockOption pOption) throws JOceanusException {
         setValueStockOption(pOption);
     }
 
@@ -704,5 +704,20 @@ public class StockOptionVest
             /* return to caller */
             return iCount;
         }
+
+        /**
+         * Resolve update set links.
+         * @param pUpdateSet the updateSet
+         * @throws JOceanusException on error
+         */
+        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+            /* Loop through the items */
+            Iterator<StockOptionVest> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                StockOptionVest myCurr = myIterator.next();
+                myCurr.resolveUpdateSetLinks(pUpdateSet);
+            }
+        }
+
     }
 }

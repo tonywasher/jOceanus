@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
@@ -126,6 +127,11 @@ public class SecurityTable
      * Closed Column Title.
      */
     private static final String TITLE_CLOSED = Security.FIELD_CLOSED.getName();
+
+    /**
+     * ShowClosed prompt.
+     */
+    private static final String PROMPT_CLOSED = MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED.getValue();
 
     /**
      * Active Column Title.
@@ -284,7 +290,7 @@ public class SecurityTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the CheckBox */
-        theLockedCheckBox = new JCheckBox("Show Closed");
+        theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
         theNewButton = MoneyWiseIcons.getNewButton();

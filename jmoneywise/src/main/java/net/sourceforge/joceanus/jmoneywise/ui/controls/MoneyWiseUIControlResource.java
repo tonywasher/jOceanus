@@ -140,6 +140,11 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     DEPOSITPANEL_TAB_RATES("DepositPanel.Tab.Rates"),
 
     /**
+     * OptionVests Tab.
+     */
+    OPTIONPANEL_TAB_VESTS("OptionPanel.Tab.Vests"),
+
+    /**
      * SecurityPrices Tab.
      */
     SECURITYPANEL_TAB_PRICES("SecurityPanel.Tab.Prices");

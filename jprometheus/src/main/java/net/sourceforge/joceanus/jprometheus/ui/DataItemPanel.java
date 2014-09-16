@@ -35,6 +35,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -76,6 +77,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Field Height.
      */
     protected static final int FIELD_HEIGHT = 20;
+
+    /**
+     * The DataFormatter.
+     */
+    private final transient JDataFormatter theFormatter;
 
     /**
      * The Field Set.
@@ -126,6 +132,14 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Is this a new item.
      */
     private transient boolean isNew = false;
+
+    /**
+     * Obtain the formatter.
+     * @return the formatter
+     */
+    protected JDataFormatter getFormatter() {
+        return theFormatter;
+    }
 
     /**
      * Obtain the field Set.
@@ -204,6 +218,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
+
+        /* Access the formatter */
+        theFormatter = pFieldMgr.getDataFormatter();
 
         /* Create the New FieldSet */
         theFieldSet = new JFieldSet<T>(pFieldMgr);
@@ -595,6 +612,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
             if (theItem.checkForHistory()) {
                 /* Increment the update version */
                 theUpdateSet.incrementVersion();
+                refreshAfterUpdate();
 
                 /* Update according to the details */
                 setEditable(true);

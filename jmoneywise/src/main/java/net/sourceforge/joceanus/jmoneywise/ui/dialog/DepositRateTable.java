@@ -614,7 +614,6 @@ public class DepositRateTable
                 case COLUMN_RATE:
                 case COLUMN_BONUS:
                 case COLUMN_ENDDATE:
-                    return isEditable;
                 case COLUMN_ACTION:
                     return isEditable;
                 default:

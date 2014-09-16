@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.PortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -106,6 +107,11 @@ public class PortfolioTable
      * Closed Column Title.
      */
     private static final String TITLE_CLOSED = Portfolio.FIELD_CLOSED.getName();
+
+    /**
+     * ShowClosed prompt.
+     */
+    private static final String PROMPT_CLOSED = MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED.getValue();
 
     /**
      * Active Column Title.
@@ -254,7 +260,7 @@ public class PortfolioTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the CheckBox */
-        theLockedCheckBox = new JCheckBox("Show Closed");
+        theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
         theNewButton = MoneyWiseIcons.getNewButton();

@@ -253,7 +253,7 @@ public class DepositPanel
      */
     private JPanel buildXtrasPanel() {
         /* Allocate fields */
-        JDateDayButton myMaturity = new JDateDayButton();
+        JDateDayButton myMaturity = new JDateDayButton(getFormatter().getDateFormatter());
         JTextField mySortCode = new JTextField();
         JTextField myAccount = new JTextField();
         JTextField myReference = new JTextField();

@@ -106,6 +106,11 @@ public class StockOption
      */
     private static final String ERROR_BADSECURITY = MoneyWiseDataResource.STOCKOPTION_ERROR_BADSECURITY.getValue();
 
+    /**
+     * Default number of units.
+     */
+    private static final int DEFAULT_UNITS = 100;
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -527,9 +532,12 @@ public class StockOption
         PortfolioList myPortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         setPortfolio(myPortfolios.getDefaultPortfolio());
         setSecurity(mySecurities.getDefaultStockOption());
-        setGrantDate(new JDateDay());
-        setExpiryDate(new JDateDay());
-        setUnits(JUnits.getWholeUnits(0));
+        JDateDay myDate = new JDateDay();
+        setGrantDate(myDate);
+        myDate = new JDateDay(myDate);
+        myDate.adjustYear(1);
+        setExpiryDate(myDate);
+        setUnits(JUnits.getWholeUnits(DEFAULT_UNITS));
         setName(getList().getUniqueName(NAME_NEWOPTION));
         setClosed(Boolean.FALSE);
     }
