@@ -28,15 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -56,16 +52,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.LoanPanel;
@@ -84,7 +76,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
 /**
  * Loan Table.
@@ -216,16 +207,6 @@ public class LoanTable
     private transient LoanList theLoans = null;
 
     /**
-     * Categories.
-     */
-    private transient LoanCategoryList theCategories = null;
-
-    /**
-     * Currencies.
-     */
-    private transient AccountCurrencyList theCurrencies = null;
-
-    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -339,8 +320,6 @@ public class LoanTable
 
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
-        theCurrencies = myData.getAccountCurrencies();
-        theCategories = myData.getLoanCategories();
 
         /* Obtain the loan edit list */
         LoanList myLoans = myData.getLoans();
@@ -950,42 +929,13 @@ public class LoanTable
             private void buildParentMenu() {
                 /* Access details */
                 JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
-                Point myCell = theParentEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theParentEditor.getPoint();
                 Loan myLoan = theLoans.get(myCell.y);
-                LoanCategoryClass myType = myLoan.getCategoryClass();
-                Payee myCurr = myLoan.getParent();
-                JMenuItem myActive = null;
 
-                /* We should use the update payee list */
-                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-                /* Loop through the Payees */
-                Iterator<Payee> myIterator = myPayees.iterator();
-                while (myIterator.hasNext()) {
-                    Payee myPayee = myIterator.next();
-
-                    /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentLoan(myType);
-                    bIgnore |= myPayee.isClosed();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myPayee);
-
-                    /* If this is the active parent */
-                    if (myPayee.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildParentMenu(myBuilder, myLoan);
             }
 
             /**
@@ -994,61 +944,13 @@ public class LoanTable
             private void buildCategoryMenu() {
                 /* Access details */
                 JScrollMenuBuilder<LoanCategory> myBuilder = theCategoryEditor.getMenuBuilder();
+
+                /* Record active item */
                 Point myCell = theCategoryEditor.getPoint();
-                myBuilder.clearMenu();
-
-                /* Access active category */
-                JMenuItem myActive = null;
                 Loan myLoan = theLoans.get(myCell.y);
-                LoanCategory myActiveCat = (myLoan == null)
-                                                           ? null
-                                                           : myLoan.getCategory();
 
-                /* Create a simple map for top-level categories */
-                Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
-
-                /* Loop through the available category values */
-                Iterator<LoanCategory> myIterator = theCategories.iterator();
-                while (myIterator.hasNext()) {
-                    LoanCategory myCategory = myIterator.next();
-
-                    /* Only process parent items */
-                    if (!myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
-                        continue;
-                    }
-
-                    /* Create a new JMenu and add it to the popUp */
-                    String myName = myCategory.getName();
-                    JScrollMenu myMenu = myBuilder.addSubMenu(myName);
-                    myMap.put(myName, myMenu);
-                }
-
-                /* Re-Loop through the available category values */
-                myIterator = theCategories.iterator();
-                while (myIterator.hasNext()) {
-                    LoanCategory myCategory = myIterator.next();
-
-                    /* Only process low-level items */
-                    if (myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
-                        continue;
-                    }
-
-                    /* Determine menu to add to */
-                    LoanCategory myParent = myCategory.getParentCategory();
-                    JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                    /* Create a new JMenuItem and add it to the popUp */
-                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                    /* Note active category */
-                    if (myCategory.equals(myActiveCat)) {
-                        myActive = myMenu;
-                        myMenu.showItem(myItem);
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildCategoryMenu(myBuilder, myLoan);
             }
 
             /**
@@ -1057,37 +959,13 @@ public class LoanTable
             private void buildCurrencyMenu() {
                 /* Access details */
                 JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-                Point myCell = theCurrencyEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theCurrencyEditor.getPoint();
                 Loan myLoan = theLoans.get(myCell.y);
-                AccountCurrency myCurr = myLoan.getLoanCurrency();
-                JMenuItem myActive = null;
 
-                /* Loop through the Currencies */
-                Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
-                while (myIterator.hasNext()) {
-                    AccountCurrency myCurrency = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the currency */
-                    JMenuItem myItem = myBuilder.addItem(myCurrency);
-
-                    /* If this is the active currency */
-                    if (myCurrency.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildCurrencyMenu(myBuilder, myLoan);
             }
         }
     }

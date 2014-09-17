@@ -1308,15 +1308,12 @@ public class Deposit
                 boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
                 bIgnore |= !pParent.equals(myDeposit.getParent());
                 bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
-                if (bIgnore) {
-                    continue;
+                if (!bIgnore) {
+                    return myDeposit;
                 }
-
-                /* Return the deposit */
-                return myDeposit;
             }
 
-            /* Return no payee */
+            /* Return no deposit */
             return null;
         }
     }

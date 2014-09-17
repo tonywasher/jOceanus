@@ -250,13 +250,10 @@ public class CashAnalysisSelect
         while (myIterator.hasNext()) {
             CashBucket myBucket = myIterator.next();
 
-            /* Ignore if not the correct category */
-            if (!Difference.isEqual(pCategory, myBucket.getCategory())) {
-                continue;
+            /* Return if correct category */
+            if (Difference.isEqual(pCategory, myBucket.getCategory())) {
+                return myBucket;
             }
-
-            /* Return the bucket */
-            return myBucket;
         }
 
         /* No such account */

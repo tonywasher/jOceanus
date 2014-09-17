@@ -300,15 +300,9 @@ public class SpotSelect
     private PortfolioBucket getFirstPortfolio() {
         /* Loop through the available account values */
         Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-        while (myIterator.hasNext()) {
-            PortfolioBucket myPortfolio = myIterator.next();
-
-            /* Return the bucket */
-            return myPortfolio;
-        }
-
-        /* No such portfolio */
-        return null;
+        return myIterator.hasNext()
+                                   ? myIterator.next()
+                                   : null;
     }
 
     /**

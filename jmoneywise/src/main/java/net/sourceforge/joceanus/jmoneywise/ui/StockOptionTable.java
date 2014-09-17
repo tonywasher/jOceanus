@@ -28,13 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -53,9 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
-import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
@@ -287,7 +283,7 @@ public class StockOptionTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new StockOptionPanel(theView, theFieldMgr, theUpdateSet, theError);
+        theActiveAccount = new StockOptionPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
 
         /* Create the selection model */
@@ -903,83 +899,29 @@ public class StockOptionTable
             private void buildPortfolioMenu() {
                 /* Access details */
                 JScrollMenuBuilder<Portfolio> myBuilder = thePortfolioEditor.getMenuBuilder();
-                Point myCell = thePortfolioEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = thePortfolioEditor.getPoint();
                 StockOption myOption = theOptions.get(myCell.y);
-                Portfolio myCurr = myOption.getPortfolio();
-                JMenuItem myActive = null;
 
-                /* We should use the update portfolio list */
-                PortfolioList myPortfolios = theUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-
-                /* Loop through the portfolios */
-                Iterator<Portfolio> myIterator = myPortfolios.iterator();
-                while (myIterator.hasNext()) {
-                    Portfolio myPortfolio = myIterator.next();
-
-                    /* Ignore deleted or closed */
-                    boolean bIgnore = myPortfolio.isDeleted() || myPortfolio.isClosed();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the portfolio */
-                    JMenuItem myItem = myBuilder.addItem(myPortfolio);
-
-                    /* If this is the active portfolio */
-                    if (myPortfolio.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
-            }
-        }
-
-        /**
-         * Build the popUpMenu for security.
-         */
-        private void buildSecurityMenu() {
-            /* Access details */
-            JScrollMenuBuilder<Security> myBuilder = theSecurityEditor.getMenuBuilder();
-            Point myCell = theSecurityEditor.getPoint();
-            myBuilder.clearMenu();
-
-            /* Record active item */
-            StockOption myOption = theOptions.get(myCell.y);
-            Security myCurr = myOption.getSecurity();
-            JMenuItem myActive = null;
-
-            /* We should use the update security list */
-            SecurityList mySecurities = theUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
-
-            /* Loop through the portfolios */
-            Iterator<Security> myIterator = mySecurities.iterator();
-            while (myIterator.hasNext()) {
-                Security mySecurity = myIterator.next();
-
-                /* Ignore deleted or closed */
-                boolean bIgnore = mySecurity.isDeleted() || mySecurity.isClosed();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the security */
-                JMenuItem myItem = myBuilder.addItem(mySecurity);
-
-                /* If this is the active security */
-                if (mySecurity.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
+                /* Build the menu */
+                theActiveAccount.buildPortfolioMenu(myBuilder, myOption);
             }
 
-            /* Ensure active item is visible */
-            myBuilder.showItem(myActive);
+            /**
+             * Build the popUpMenu for security.
+             */
+            private void buildSecurityMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Security> myBuilder = theSecurityEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theSecurityEditor.getPoint();
+                StockOption myOption = theOptions.get(myCell.y);
+
+                /* Build the menu */
+                theActiveAccount.buildSecurityMenu(myBuilder, myOption);
+            }
         }
     }
 }

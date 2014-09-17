@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.LoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -192,11 +191,6 @@ public class LoanCategoryTable
     private transient LoanCategoryList theCategories = null;
 
     /**
-     * Loan Categories Types.
-     */
-    private transient LoanCategoryTypeList theCategoryTypes = null;
-
-    /**
      * Active parent.
      */
     private transient LoanCategory theParent = null;
@@ -321,7 +315,6 @@ public class LoanCategoryTable
 
         /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
-        theCategoryTypes = myData.getLoanCategoryTypes();
         LoanCategoryList myCategories = myData.getLoanCategories();
         theCategories = myCategories.deriveEditList();
         theCategories.resolveUpdateSetLinks();
@@ -937,40 +930,13 @@ public class LoanCategoryTable
             private void buildCategoryTypeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<LoanCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
-                Point myCell = theScrollEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theScrollEditor.getPoint();
                 LoanCategory myCategory = theCategories.get(myCell.y);
-                LoanCategoryType myCurr = myCategory.getCategoryType();
-                JMenuItem myActive = null;
 
-                /* Loop through the LoanCategoryTypes */
-                Iterator<LoanCategoryType> myIterator = theCategoryTypes.iterator();
-                while (myIterator.hasNext()) {
-                    LoanCategoryType myType = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                    /* Ignore category if it is a parent */
-                    bIgnore |= myType.getLoanClass().isParentCategory();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myType);
-
-                    /* If this is the active type */
-                    if (myType.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
             }
         }
     }

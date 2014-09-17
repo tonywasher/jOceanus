@@ -378,6 +378,63 @@ public class PayeePanel
     }
 
     /**
+     * Build the payeeType list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pPayee the payee to build for
+     */
+    public void buildPayeeTypeMenu(final JScrollMenuBuilder<PayeeType> pMenuBuilder,
+                                   final Payee pPayee) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        PayeeType myCurr = pPayee.getPayeeType();
+        PayeeList myList = pPayee.getList();
+        JMenuItem myActive = null;
+
+        /* Access PayeeTypes */
+        MoneyWiseData myData = pPayee.getDataSet();
+        PayeeTypeList myTypes = myData.getPayeeTypes();
+
+        /* Loop through the PayeeTypes */
+        Iterator<PayeeType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            PayeeType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+            /* If the type is a likely candidate */
+            if (!bIgnore) {
+                /* Check for singular class */
+                PayeeTypeClass myClass = myType.getPayeeClass();
+                if (myClass.isSingular()) {
+                    /* Cannot change to this type if one already exists */
+                    Payee myExisting = myList.getSingularClass(myClass);
+                    bIgnore = myExisting != null;
+                }
+            }
+
+            /* Skip record if necessary */
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the payeeType */
+            JMenuItem myItem = pMenuBuilder.addItem(myType);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Payee Listener.
      */
     private final class PayeeListener
@@ -402,62 +459,8 @@ public class PayeePanel
 
             /* Handle menu type */
             if (theTypeMenuBuilder.equals(o)) {
-                buildPayeeTypeMenu();
+                buildPayeeTypeMenu(theTypeMenuBuilder, getItem());
             }
-        }
-
-        /**
-         * Build the payeeType list for the item.
-         */
-        private void buildPayeeTypeMenu() {
-            /* Clear the menu */
-            theTypeMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Payee myPayee = getItem();
-            PayeeType myCurr = myPayee.getPayeeType();
-            JMenuItem myActive = null;
-
-            /* Access PayeeTypes */
-            MoneyWiseData myData = myPayee.getDataSet();
-            PayeeTypeList myTypes = myData.getPayeeTypes();
-
-            /* Loop through the AccountCurrencies */
-            Iterator<PayeeType> myIterator = myTypes.iterator();
-            while (myIterator.hasNext()) {
-                PayeeType myType = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                /* If the type is a likely candidate */
-                if (!bIgnore) {
-                    /* Check for singular class */
-                    PayeeTypeClass myClass = myType.getPayeeClass();
-                    if (myClass.isSingular()) {
-                        /* Cannot change to this type if one already exists */
-                        Payee myExisting = myPayee.getList().getSingularClass(myClass);
-                        bIgnore = myExisting != null;
-                    }
-                }
-
-                /* Skip record if necessary */
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the payeeType */
-                JMenuItem myItem = theTypeMenuBuilder.addItem(myType);
-
-                /* If this is the active type */
-                if (myType.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theTypeMenuBuilder.showItem(myActive);
         }
     }
 }

@@ -250,13 +250,10 @@ public class DepositAnalysisSelect
         while (myIterator.hasNext()) {
             DepositBucket myBucket = myIterator.next();
 
-            /* Ignore if not the correct category */
-            if (!Difference.isEqual(pCategory, myBucket.getCategory())) {
-                continue;
+            /* Return if correct category */
+            if (Difference.isEqual(pCategory, myBucket.getCategory())) {
+                return myBucket;
             }
-
-            /* Return the bucket */
-            return myBucket;
         }
 
         /* No such account */

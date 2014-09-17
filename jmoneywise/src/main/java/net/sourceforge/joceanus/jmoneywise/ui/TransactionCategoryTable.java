@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionCategoryPanel.CategoryType;
@@ -193,11 +192,6 @@ public class TransactionCategoryTable
     private transient TransactionCategoryList theCategories = null;
 
     /**
-     * Transaction Categories Types.
-     */
-    private transient TransactionCategoryTypeList theCategoryTypes = null;
-
-    /**
      * Active parent.
      */
     private transient TransactionCategory theParent = null;
@@ -323,7 +317,6 @@ public class TransactionCategoryTable
 
         /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
-        theCategoryTypes = myData.getTransCategoryTypes();
         TransactionCategoryList myCategories = myData.getTransCategories();
         theCategories = myCategories.deriveEditList();
         theCategories.resolveUpdateSetLinks();
@@ -944,41 +937,13 @@ public class TransactionCategoryTable
             private void buildCategoryTypeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<TransactionCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
-                Point myCell = theScrollEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theScrollEditor.getPoint();
                 TransactionCategory myCategory = theCategories.get(myCell.y);
-                TransactionCategoryType myCurr = myCategory.getCategoryType();
-                CategoryType myCurrType = CategoryType.determineType(myCurr);
-                JMenuItem myActive = null;
 
-                /* Loop through the TransactionCategoryTypes */
-                Iterator<TransactionCategoryType> myIterator = theCategoryTypes.iterator();
-                while (myIterator.hasNext()) {
-                    TransactionCategoryType myType = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                    /* Ignore category if wrong type */
-                    bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myType);
-
-                    /* If this is the active type */
-                    if (myType.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
             }
         }
     }

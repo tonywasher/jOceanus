@@ -1073,12 +1073,9 @@ public class Payee
                 /* Ignore deleted and closed payees and those that cannot parent this portfolio */
                 boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
                 bIgnore |= !myPayee.canParentPortfolio(pUpdateSet, isTaxFree);
-                if (bIgnore) {
-                    continue;
+                if (!bIgnore) {
+                    return myPayee;
                 }
-
-                /* Return the payee */
-                return myPayee;
             }
 
             /* Return no payee */

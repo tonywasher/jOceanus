@@ -28,15 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -56,18 +52,14 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.DepositPanel;
@@ -86,7 +78,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
 /**
  * Deposit Table.
@@ -224,16 +215,6 @@ public class DepositTable
     private transient DepositList theDeposits = null;
 
     /**
-     * Categories.
-     */
-    private transient DepositCategoryList theCategories = null;
-
-    /**
-     * Currencies.
-     */
-    private transient AccountCurrencyList theCurrencies = null;
-
-    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -348,8 +329,6 @@ public class DepositTable
 
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
-        theCurrencies = myData.getAccountCurrencies();
-        theCategories = myData.getDepositCategories();
 
         /* Get the Deposits edit list */
         DepositList myDeposits = myData.getDeposits();
@@ -965,42 +944,13 @@ public class DepositTable
             private void buildParentMenu() {
                 /* Access details */
                 JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
-                Point myCell = theParentEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theParentEditor.getPoint();
                 Deposit myDeposit = theDeposits.get(myCell.y);
-                DepositCategoryClass myType = myDeposit.getCategoryClass();
-                Payee myCurr = myDeposit.getParent();
-                JMenuItem myActive = null;
 
-                /* We should use the update payee list */
-                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-                /* Loop through the Payees */
-                Iterator<Payee> myIterator = myPayees.iterator();
-                while (myIterator.hasNext()) {
-                    Payee myPayee = myIterator.next();
-
-                    /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
-                    bIgnore |= myPayee.isClosed();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myPayee);
-
-                    /* If this is the active parent */
-                    if (myPayee.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildParentMenu(myBuilder, myDeposit);
             }
 
             /**
@@ -1009,61 +959,13 @@ public class DepositTable
             private void buildCategoryMenu() {
                 /* Access details */
                 JScrollMenuBuilder<DepositCategory> myBuilder = theCategoryEditor.getMenuBuilder();
+
+                /* Record active item */
                 Point myCell = theCategoryEditor.getPoint();
-                myBuilder.clearMenu();
-
-                /* Access active category */
-                JMenuItem myActive = null;
                 Deposit myDeposit = theDeposits.get(myCell.y);
-                DepositCategory myActiveCat = (myDeposit == null)
-                                                                 ? null
-                                                                 : myDeposit.getCategory();
 
-                /* Create a simple map for top-level categories */
-                Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
-
-                /* Loop through the available category values */
-                Iterator<DepositCategory> myIterator = theCategories.iterator();
-                while (myIterator.hasNext()) {
-                    DepositCategory myCategory = myIterator.next();
-
-                    /* Only process parent items */
-                    if (!myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
-                        continue;
-                    }
-
-                    /* Create a new JMenu and add it to the popUp */
-                    String myName = myCategory.getName();
-                    JScrollMenu myMenu = myBuilder.addSubMenu(myName);
-                    myMap.put(myName, myMenu);
-                }
-
-                /* Re-Loop through the available category values */
-                myIterator = theCategories.iterator();
-                while (myIterator.hasNext()) {
-                    DepositCategory myCategory = myIterator.next();
-
-                    /* Only process low-level items */
-                    if (myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
-                        continue;
-                    }
-
-                    /* Determine menu to add to */
-                    DepositCategory myParent = myCategory.getParentCategory();
-                    JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                    /* Create a new JMenuItem and add it to the popUp */
-                    JMenuItem myItem = myBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                    /* Note active category */
-                    if (myCategory.equals(myActiveCat)) {
-                        myActive = myMenu;
-                        myMenu.showItem(myItem);
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildCategoryMenu(myBuilder, myDeposit);
             }
 
             /**
@@ -1072,37 +974,13 @@ public class DepositTable
             private void buildCurrencyMenu() {
                 /* Access details */
                 JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-                Point myCell = theCurrencyEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theCurrencyEditor.getPoint();
                 Deposit myDeposit = theDeposits.get(myCell.y);
-                AccountCurrency myCurr = myDeposit.getDepositCurrency();
-                JMenuItem myActive = null;
 
-                /* Loop through the Currencies */
-                Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
-                while (myIterator.hasNext()) {
-                    AccountCurrency myCurrency = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the currency */
-                    JMenuItem myItem = myBuilder.addItem(myCurrency);
-
-                    /* If this is the active currency */
-                    if (myCurrency.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildCurrencyMenu(myBuilder, myDeposit);
             }
         }
     }

@@ -201,6 +201,97 @@ public class TransactionCategoryPanel
     }
 
     /**
+     * Build the category type list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCategory the category to build for
+     */
+    public void buildCategoryTypeMenu(final JScrollMenuBuilder<TransactionCategoryType> pMenuBuilder,
+                                      final TransactionCategory pCategory) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        TransactionCategoryType myCurr = pCategory.getCategoryType();
+        CategoryType myCurrType = CategoryType.determineType(myCurr);
+        JMenuItem myActive = null;
+
+        /* Access Transaction Category types */
+        MoneyWiseData myData = pCategory.getDataSet();
+        TransactionCategoryTypeList myCategoryTypes = myData.getTransCategoryTypes();
+
+        /* Loop through the TransCategoryTypes */
+        Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategoryType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+            /* Ignore category if wrong type */
+            bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            JMenuItem myItem = pMenuBuilder.addItem(myType);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the parent list for the item.
+     * @param pMenuBuilder the menu builder
+     * @param pCategory the category to build for
+     */
+    private void buildParentMenu(final JScrollMenuBuilder<TransactionCategory> pMenuBuilder,
+                                 final TransactionCategory pCategory) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        TransactionCategory myCurr = pCategory.getParentCategory();
+        CategoryType myCurrType = CategoryType.determineType(pCategory);
+        JMenuItem myActive = null;
+
+        /* Loop through the TransactionCategories */
+        TransactionCategoryList myCategories = getItem().getList();
+        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategory myCat = myIterator.next();
+
+            /* Ignore deleted and non-subTotal items */
+            TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
+            if (myCat.isDeleted() || !myClass.isSubTotal()) {
+                continue;
+            }
+
+            /* If we are interested */
+            if (myCurrType.isParentMatch(myClass)) {
+                /* Create a new action for the type */
+                JMenuItem myItem = pMenuBuilder.addItem(myCat);
+
+                /* If this is the active parent */
+                if (myCat.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Category Listener.
      */
     private final class CategoryListener
@@ -232,97 +323,10 @@ public class TransactionCategoryPanel
 
             /* Handle menu type */
             if (theTypeMenuBuilder.equals(o)) {
-                buildCategoryTypeMenu();
+                buildCategoryTypeMenu(theTypeMenuBuilder, getItem());
             } else if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu();
+                buildParentMenu(theParentMenuBuilder, getItem());
             }
-        }
-
-        /**
-         * Build the category type list for the item.
-         */
-        private void buildCategoryTypeMenu() {
-            /* Clear the menu */
-            theTypeMenuBuilder.clearMenu();
-
-            /* Record active item */
-            TransactionCategory myCategory = getItem();
-            TransactionCategoryType myCurr = myCategory.getCategoryType();
-            CategoryType myCurrType = CategoryType.determineType(myCurr);
-            JMenuItem myActive = null;
-
-            /* Access Transaction Category types */
-            MoneyWiseData myData = myCategory.getDataSet();
-            TransactionCategoryTypeList myCategoryTypes = myData.getTransCategoryTypes();
-
-            /* Loop through the TransCategoryTypes */
-            Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
-            while (myIterator.hasNext()) {
-                TransactionCategoryType myType = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                /* Ignore category if wrong type */
-                bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the type */
-                JMenuItem myItem = theTypeMenuBuilder.addItem(myType);
-
-                /* If this is the active type */
-                if (myType.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theTypeMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the parent list for the item.
-         */
-        private void buildParentMenu() {
-            /* Clear the menu */
-            theParentMenuBuilder.clearMenu();
-
-            /* Record active item */
-            TransactionCategory myCategory = getItem();
-            TransactionCategory myCurr = myCategory.getParentCategory();
-            CategoryType myCurrType = CategoryType.determineType(myCategory);
-            JMenuItem myActive = null;
-
-            /* Loop through the TransactionCategories */
-            TransactionCategoryList myCategories = getItem().getList();
-            Iterator<TransactionCategory> myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                TransactionCategory myCat = myIterator.next();
-
-                /* Ignore deleted and non-subTotal items */
-                TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
-                if (myCat.isDeleted() || !myClass.isSubTotal()) {
-                    continue;
-                }
-
-                /* If we are interested */
-                if (myCurrType.isParentMatch(myClass)) {
-                    /* Create a new action for the type */
-                    JMenuItem myItem = theParentMenuBuilder.addItem(myCat);
-
-                    /* If this is the active type */
-                    if (myCat.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-            }
-
-            /* Ensure active item is visible */
-            theParentMenuBuilder.showItem(myActive);
         }
     }
 

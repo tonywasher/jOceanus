@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.CashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -192,11 +191,6 @@ public class CashCategoryTable
     private transient CashCategoryList theCategories = null;
 
     /**
-     * Cash Categories Types.
-     */
-    private transient CashCategoryTypeList theCategoryTypes = null;
-
-    /**
      * Active parent.
      */
     private transient CashCategory theParent = null;
@@ -321,7 +315,6 @@ public class CashCategoryTable
 
         /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
-        theCategoryTypes = myData.getCashCategoryTypes();
         CashCategoryList myCategories = myData.getCashCategories();
         theCategories = myCategories.deriveEditList();
         theCategories.resolveUpdateSetLinks();
@@ -938,40 +931,13 @@ public class CashCategoryTable
             private void buildCategoryTypeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<CashCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
-                Point myCell = theScrollEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theScrollEditor.getPoint();
                 CashCategory myCategory = theCategories.get(myCell.y);
-                CashCategoryType myCurr = myCategory.getCategoryType();
-                JMenuItem myActive = null;
 
-                /* Loop through the CashCategoryTypes */
-                Iterator<CashCategoryType> myIterator = theCategoryTypes.iterator();
-                while (myIterator.hasNext()) {
-                    CashCategoryType myType = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                    /* Ignore category if it is a parent */
-                    bIgnore |= myType.getCashClass().isParentCategory();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myType);
-
-                    /* If this is the active type */
-                    if (myType.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
             }
         }
     }

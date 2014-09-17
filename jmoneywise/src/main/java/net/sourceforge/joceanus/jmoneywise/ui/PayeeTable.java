@@ -28,13 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -58,7 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.PayeePanel;
@@ -199,11 +196,6 @@ public class PayeeTable
     private transient PayeeList thePayees = null;
 
     /**
-     * Payee types.
-     */
-    private transient PayeeTypeList thePayeeTypes = null;
-
-    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -316,7 +308,6 @@ public class PayeeTable
 
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
-        thePayeeTypes = myData.getPayeeTypes();
 
         /* Get the Payees edit list */
         PayeeList myPayees = myData.getPayees();
@@ -872,37 +863,13 @@ public class PayeeTable
             private void buildPayeeTypeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<PayeeType> myBuilder = theTypeEditor.getMenuBuilder();
-                Point myCell = theTypeEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theTypeEditor.getPoint();
                 Payee myPayee = thePayees.get(myCell.y);
-                PayeeType myCurr = myPayee.getPayeeType();
-                JMenuItem myActive = null;
 
-                /* Loop through the PayeeTypes */
-                Iterator<PayeeType> myIterator = thePayeeTypes.iterator();
-                while (myIterator.hasNext()) {
-                    PayeeType myType = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the payeeType */
-                    JMenuItem myItem = myBuilder.addItem(myType);
-
-                    /* If this is the active type */
-                    if (myType.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildPayeeTypeMenu(myBuilder, myPayee);
             }
         }
     }

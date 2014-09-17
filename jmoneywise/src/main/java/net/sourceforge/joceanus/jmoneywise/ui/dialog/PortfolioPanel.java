@@ -414,6 +414,96 @@ public class PortfolioPanel
     }
 
     /**
+     * Build the parent list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pPortfolio the portfolio to build for
+     */
+    public void buildParentMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+                                final Portfolio pPortfolio) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Payee myCurr = pPortfolio.getParent();
+        Boolean isTaxFree = pPortfolio.isTaxFree();
+        JMenuItem myActive = null;
+
+        /* Access Payees */
+        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+
+        /* Loop through the Payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted/closed and ones that cannot own this portfolio */
+            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
+            bIgnore |= !myPayee.canParentPortfolio(getUpdateSet(), isTaxFree);
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the payee */
+            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+
+            /* If this is the active parent */
+            if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the holding list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pPortfolio the portfolio to build for
+     */
+    public void buildHoldingMenu(final JScrollMenuBuilder<Deposit> pMenuBuilder,
+                                 final Portfolio pPortfolio) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Deposit myCurr = pPortfolio.getHolding();
+        Payee myParent = pPortfolio.getParent();
+        Boolean isTaxFree = pPortfolio.isTaxFree();
+        JMenuItem myActive = null;
+
+        /* Access Deposits */
+        DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+
+        /* Loop through the Deposits */
+        Iterator<Deposit> myIterator = myDeposits.iterator();
+        while (myIterator.hasNext()) {
+            Deposit myDeposit = myIterator.next();
+
+            /* Ignore deleted/closed/different parent and different tax status deposits */
+            boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+            bIgnore |= !myParent.equals(myDeposit.getParent());
+            bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the deposit */
+            JMenuItem myItem = pMenuBuilder.addItem(myDeposit);
+
+            /* If this is the active holding */
+            if (myDeposit.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Portfolio Listener.
      */
     private final class PortfolioListener
@@ -445,96 +535,10 @@ public class PortfolioPanel
 
             /* Handle menu type */
             if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu();
+                buildParentMenu(theParentMenuBuilder, getItem());
             } else if (theHoldingMenuBuilder.equals(o)) {
-                buildHoldingMenu();
+                buildHoldingMenu(theHoldingMenuBuilder, getItem());
             }
-        }
-
-        /**
-         * Build the parent list for the item.
-         */
-        private void buildParentMenu() {
-            /* Clear the menu */
-            theParentMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Portfolio myPortfolio = getItem();
-            Payee myCurr = myPortfolio.getParent();
-            Boolean isTaxFree = myPortfolio.isTaxFree();
-            JMenuItem myActive = null;
-
-            /* Access Payees */
-            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-            /* Loop through the Payees */
-            Iterator<Payee> myIterator = myPayees.iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted/closed and ones that cannot own this portfolio */
-                boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
-                bIgnore |= !myPayee.canParentPortfolio(getUpdateSet(), isTaxFree);
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the payee */
-                JMenuItem myItem = theParentMenuBuilder.addItem(myPayee);
-
-                /* If this is the active parent */
-                if (myPayee.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theParentMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the holding list for the item.
-         */
-        private void buildHoldingMenu() {
-            /* Clear the menu */
-            theHoldingMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Portfolio myPortfolio = getItem();
-            Deposit myCurr = myPortfolio.getHolding();
-            Payee myParent = myPortfolio.getParent();
-            Boolean isTaxFree = myPortfolio.isTaxFree();
-            JMenuItem myActive = null;
-
-            /* Access Deposits */
-            DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-
-            /* Loop through the Deposits */
-            Iterator<Deposit> myIterator = myDeposits.iterator();
-            while (myIterator.hasNext()) {
-                Deposit myDeposit = myIterator.next();
-
-                /* Ignore deleted/closed/different parent and different tax status deposits */
-                boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
-                bIgnore |= !myParent.equals(myDeposit.getParent());
-                bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the deposit */
-                JMenuItem myItem = theHoldingMenuBuilder.addItem(myDeposit);
-
-                /* If this is the active holding */
-                if (myDeposit.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theHoldingMenuBuilder.showItem(myActive);
         }
     }
 }

@@ -388,10 +388,11 @@ public class DepositPanel
 
         /* Category, Currency, Gross and TaxFree status cannot be changed if the item is active */
         boolean canTaxFree = myClass.canTaxFree();
+        boolean hasOpeningBalance = myDeposit.getOpeningBalance() != null;
         boolean isHolding = myDeposit.getTouchStatus().touchedBy(MoneyWiseDataType.PORTFOLIO);
         boolean canTaxChange = canTaxFree && !isHolding && bIsChangeable;
         theFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
-        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable);
+        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable && hasOpeningBalance);
         theFieldSet.setEditable(Deposit.FIELD_GROSS, canTaxChange && !bIsTaxFree);
         theFieldSet.setEditable(Deposit.FIELD_TAXFREE, canTaxChange && !bIsGross);
         theFieldSet.setEditable(myOpeningField, bIsChangeable);
@@ -504,6 +505,161 @@ public class DepositPanel
     }
 
     /**
+     * Build the category type list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pDeposit the deposit to build for
+     */
+    public void buildCategoryMenu(final JScrollMenuBuilder<DepositCategory> pMenuBuilder,
+                                  final Deposit pDeposit) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        DepositCategory myCurr = pDeposit.getCategory();
+        JMenuItem myActive = null;
+
+        /* Access Deposit Categories */
+        MoneyWiseData myData = pDeposit.getDataSet();
+        DepositCategoryList myCategories = myData.getDepositCategories();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Loop through the available category values */
+        Iterator<DepositCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            DepositCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or non-parent */
+            boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(DepositCategoryClass.PARENT);
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new JMenu and add it to the popUp */
+            String myName = myCategory.getName();
+            JScrollMenu myMenu = pMenuBuilder.addSubMenu(myName);
+            myMap.put(myName, myMenu);
+        }
+
+        /* Re-Loop through the available category values */
+        myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            DepositCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or parent */
+            boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(DepositCategoryClass.PARENT);
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            DepositCategory myParent = myCategory.getParentCategory();
+            JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            /* Note active category */
+            if (myCategory.equals(myCurr)) {
+                myActive = myMenu;
+                myMenu.showItem(myItem);
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the parent list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pDeposit the deposit to build for
+     */
+    public void buildParentMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+                                final Deposit pDeposit) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        DepositCategoryClass myType = pDeposit.getCategoryClass();
+        Payee myCurr = pDeposit.getParent();
+        JMenuItem myActive = null;
+
+        /* Access Payees */
+        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+
+        /* Loop through the Payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted or non-owner */
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
+            bIgnore |= myPayee.isClosed();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the payee */
+            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+
+            /* If this is the active parent */
+            if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the currency list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pDeposit the deposit to build for
+     */
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+                                  final Deposit pDeposit) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Deposit myDeposit = getItem();
+        AccountCurrency myCurr = myDeposit.getDepositCurrency();
+        JMenuItem myActive = null;
+
+        /* Access Currencies */
+        MoneyWiseData myData = myDeposit.getDataSet();
+        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+
+        /* Loop through the AccountCurrencies */
+        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        while (myIterator.hasNext()) {
+            AccountCurrency myCurrency = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the currency */
+            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+
+            /* If this is the active currency */
+            if (myCurrency.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Deposit Listener.
      */
     private final class DepositListener
@@ -543,162 +699,14 @@ public class DepositPanel
 
             /* Handle menu type */
             if (theCategoryMenuBuilder.equals(o)) {
-                buildCategoryMenu();
+                buildCategoryMenu(theCategoryMenuBuilder, getItem());
             } else if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu();
+                buildParentMenu(theParentMenuBuilder, getItem());
             } else if (theCurrencyMenuBuilder.equals(o)) {
-                buildCurrencyMenu();
+                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
             } else if (theRates.equals(o)) {
                 updateActions();
             }
-        }
-
-        /**
-         * Build the category type list for the item.
-         */
-        private void buildCategoryMenu() {
-            /* Clear the menu */
-            theCategoryMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Deposit myDeposit = getItem();
-            DepositCategory myCurr = myDeposit.getCategory();
-            JMenuItem myActive = null;
-
-            /* Access Deposit Categories */
-            MoneyWiseData myData = myDeposit.getDataSet();
-            DepositCategoryList myCategories = myData.getDepositCategories();
-
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
-
-            /* Loop through the available category values */
-            Iterator<DepositCategory> myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                DepositCategory myCategory = myIterator.next();
-
-                /* Ignore deleted or non-parent */
-                boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(DepositCategoryClass.PARENT);
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new JMenu and add it to the popUp */
-                String myName = myCategory.getName();
-                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
-            }
-
-            /* Re-Loop through the available category values */
-            myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                DepositCategory myCategory = myIterator.next();
-
-                /* Ignore deleted or parent */
-                boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(DepositCategoryClass.PARENT);
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Determine menu to add to */
-                DepositCategory myParent = myCategory.getParentCategory();
-                JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                /* Note active category */
-                if (myCategory.equals(myCurr)) {
-                    myActive = myMenu;
-                    myMenu.showItem(myItem);
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the parent list for the item.
-         */
-        private void buildParentMenu() {
-            /* Clear the menu */
-            theParentMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Deposit myDeposit = getItem();
-            DepositCategoryClass myType = myDeposit.getCategoryClass();
-            Payee myCurr = myDeposit.getParent();
-            JMenuItem myActive = null;
-
-            /* Access Payees */
-            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-            /* Loop through the Payees */
-            Iterator<Payee> myIterator = myPayees.iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted or non-owner */
-                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
-                bIgnore |= myPayee.isClosed();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the payee */
-                JMenuItem myItem = theParentMenuBuilder.addItem(myPayee);
-
-                /* If this is the active parent */
-                if (myPayee.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theParentMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the currency list for the item.
-         */
-        private void buildCurrencyMenu() {
-            /* Clear the menu */
-            theCurrencyMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Deposit myDeposit = getItem();
-            AccountCurrency myCurr = myDeposit.getDepositCurrency();
-            JMenuItem myActive = null;
-
-            /* Access Currencies */
-            MoneyWiseData myData = myDeposit.getDataSet();
-            AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
-
-            /* Loop through the AccountCurrencies */
-            Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
-            while (myIterator.hasNext()) {
-                AccountCurrency myCurrency = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the currency */
-                JMenuItem myItem = theCurrencyMenuBuilder.addItem(myCurrency);
-
-                /* If this is the active currency */
-                if (myCurrency.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCurrencyMenuBuilder.showItem(myActive);
         }
     }
 }

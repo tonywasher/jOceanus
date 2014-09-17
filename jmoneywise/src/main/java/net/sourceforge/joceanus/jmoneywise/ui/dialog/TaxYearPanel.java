@@ -557,6 +557,48 @@ public class TaxYearPanel
     }
 
     /**
+     * Build the regimes menu.
+     * @param pMenuBuilder the menu builder
+     * @param pTaxYear the item to build for
+     */
+    public void buildRegimeMenu(final JScrollMenuBuilder<TaxRegime> pMenuBuilder,
+                                final TaxYear pTaxYear) {
+        /* Reset the popUp menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        TaxRegime myCurr = pTaxYear.getTaxRegime();
+        JMenuItem myActive = null;
+
+        /* Access TaxRegimes */
+        MoneyWiseData myData = pTaxYear.getDataSet();
+        TaxRegimeList myRegimes = myData.getTaxRegimes();
+
+        /* Loop through the panels */
+        Iterator<TaxRegime> myIterator = myRegimes.iterator();
+        while (myIterator.hasNext()) {
+            TaxRegime myRegime = myIterator.next();
+
+            /* Skip regime if deleted or not enabled */
+            if (myRegime.isDeleted() || !myRegime.getEnabled()) {
+                continue;
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = pMenuBuilder.addItem(myRegime);
+
+            /* If this is the active regime */
+            if (myRegime.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * TaxYear Listener.
      */
     private final class TaxYearListener
@@ -581,48 +623,8 @@ public class TaxYearPanel
 
             /* Handle menu type */
             if (theMenuBuilder.equals(o)) {
-                buildRegimeMenu();
+                buildRegimeMenu(theMenuBuilder, getItem());
             }
-        }
-
-        /**
-         * Build the regimes menu.
-         */
-        private void buildRegimeMenu() {
-            /* Reset the popUp menu */
-            theMenuBuilder.clearMenu();
-
-            /* Record active item */
-            TaxYear myYear = getItem();
-            TaxRegime myCurr = myYear.getTaxRegime();
-            JMenuItem myActive = null;
-
-            /* Access PayeeTypes */
-            MoneyWiseData myData = myYear.getDataSet();
-            TaxRegimeList myRegimes = myData.getTaxRegimes();
-
-            /* Loop through the panels */
-            Iterator<TaxRegime> myIterator = myRegimes.iterator();
-            while (myIterator.hasNext()) {
-                TaxRegime myRegime = myIterator.next();
-
-                /* Skip regime if not enabled */
-                if (!myRegime.getEnabled()) {
-                    continue;
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theMenuBuilder.addItem(myRegime);
-
-                /* If this is the active regime */
-                if (myRegime.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theMenuBuilder.showItem(myActive);
         }
     }
 }

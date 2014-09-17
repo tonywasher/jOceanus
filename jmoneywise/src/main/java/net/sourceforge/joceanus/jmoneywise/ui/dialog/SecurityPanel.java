@@ -399,6 +399,136 @@ public class SecurityPanel
     }
 
     /**
+     * Build the securityType list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pSecurity the security to build for
+     */
+    public void buildSecTypeMenu(final JScrollMenuBuilder<SecurityType> pMenuBuilder,
+                                 final Security pSecurity) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        SecurityType myCurr = pSecurity.getSecurityType();
+        JMenuItem myActive = null;
+
+        /* Access SecurityTypes */
+        MoneyWiseData myData = pSecurity.getDataSet();
+        SecurityTypeList myTypes = myData.getSecurityTypes();
+
+        /* Loop through the SecurityTypes */
+        Iterator<SecurityType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            SecurityType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the secType */
+            JMenuItem myItem = pMenuBuilder.addItem(myType);
+
+            /* If this is the active secType */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the parent list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pSecurity the security to build for
+     */
+    public void buildParentMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+                                final Security pSecurity) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        SecurityTypeClass myType = pSecurity.getSecurityTypeClass();
+        Payee myCurr = pSecurity.getParent();
+        JMenuItem myActive = null;
+
+        /* Access Payees */
+        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+
+        /* Loop through the Payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted or non-owner */
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
+            bIgnore |= myPayee.isClosed();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the payee */
+            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+
+            /* If this is the active parent */
+            if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the currency list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pSecurity the security to build for
+     */
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+                                  final Security pSecurity) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        AccountCurrency myCurr = pSecurity.getSecurityCurrency();
+        JMenuItem myActive = null;
+
+        /* Access Currencies */
+        MoneyWiseData myData = pSecurity.getDataSet();
+        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+
+        /* Loop through the AccountCurrencies */
+        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        while (myIterator.hasNext()) {
+            AccountCurrency myCurrency = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the currency */
+            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+
+            /* If this is the active currency */
+            if (myCurrency.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Security Listener.
      */
     private final class SecurityListener
@@ -438,139 +568,15 @@ public class SecurityPanel
 
             /* Handle menu type */
             if (theSecTypeMenuBuilder.equals(o)) {
-                buildSecTypeMenu();
+                buildSecTypeMenu(theSecTypeMenuBuilder, getItem());
             } else if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu();
+                buildParentMenu(theParentMenuBuilder, getItem());
             } else if (theCurrencyMenuBuilder.equals(o)) {
-                buildCurrencyMenu();
+                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
             } else if (thePrices.equals(o)) {
                 updateActions();
                 fireStateChanged();
             }
-        }
-
-        /**
-         * Build the securityType list for the item.
-         */
-        private void buildSecTypeMenu() {
-            /* Clear the menu */
-            theSecTypeMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Security mySecurity = getItem();
-            SecurityType myCurr = mySecurity.getSecurityType();
-            JMenuItem myActive = null;
-
-            /* Access SecurityTypes */
-            MoneyWiseData myData = mySecurity.getDataSet();
-            SecurityTypeList myTypes = myData.getSecurityTypes();
-
-            /* Loop through the SecurityTypes */
-            Iterator<SecurityType> myIterator = myTypes.iterator();
-            while (myIterator.hasNext()) {
-                SecurityType myType = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the secType */
-                JMenuItem myItem = theSecTypeMenuBuilder.addItem(myType);
-
-                /* If this is the active secType */
-                if (myType.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theSecTypeMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the parent list for the item.
-         */
-        private void buildParentMenu() {
-            /* Clear the menu */
-            theParentMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Security mySecurity = getItem();
-            SecurityTypeClass myType = mySecurity.getSecurityTypeClass();
-            Payee myCurr = mySecurity.getParent();
-            JMenuItem myActive = null;
-
-            /* Access Payees */
-            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-            /* Loop through the Payees */
-            Iterator<Payee> myIterator = myPayees.iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted or non-owner */
-                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
-                bIgnore |= myPayee.isClosed();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the payee */
-                JMenuItem myItem = theParentMenuBuilder.addItem(myPayee);
-
-                /* If this is the active parent */
-                if (myPayee.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theParentMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the currency list for the item.
-         */
-        private void buildCurrencyMenu() {
-            /* Clear the menu */
-            theCurrencyMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Security mySecurity = getItem();
-            AccountCurrency myCurr = mySecurity.getSecurityCurrency();
-            JMenuItem myActive = null;
-
-            /* Access Currencies */
-            MoneyWiseData myData = mySecurity.getDataSet();
-            AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
-
-            /* Loop through the AccountCurrencies */
-            Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
-            while (myIterator.hasNext()) {
-                AccountCurrency myCurrency = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the currency */
-                JMenuItem myItem = theCurrencyMenuBuilder.addItem(myCurrency);
-
-                /* If this is the active currency */
-                if (myCurrency.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCurrencyMenuBuilder.showItem(myActive);
         }
     }
 }

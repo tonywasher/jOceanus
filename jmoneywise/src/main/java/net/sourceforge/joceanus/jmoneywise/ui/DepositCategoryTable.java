@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.DepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -192,11 +191,6 @@ public class DepositCategoryTable
     private transient DepositCategoryList theCategories = null;
 
     /**
-     * Deposit Categories Types.
-     */
-    private transient DepositCategoryTypeList theCategoryTypes = null;
-
-    /**
      * Active parent.
      */
     private transient DepositCategory theParent = null;
@@ -321,7 +315,6 @@ public class DepositCategoryTable
 
         /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
-        theCategoryTypes = myData.getDepositCategoryTypes();
         DepositCategoryList myCategories = myData.getDepositCategories();
         theCategories = myCategories.deriveEditList();
         theCategories.resolveUpdateSetLinks();
@@ -937,40 +930,13 @@ public class DepositCategoryTable
             private void buildCategoryTypeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<DepositCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
-                Point myCell = theScrollEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theScrollEditor.getPoint();
                 DepositCategory myCategory = theCategories.get(myCell.y);
-                DepositCategoryType myCurr = myCategory.getCategoryType();
-                JMenuItem myActive = null;
 
-                /* Loop through the DepositCategoryTypes */
-                Iterator<DepositCategoryType> myIterator = theCategoryTypes.iterator();
-                while (myIterator.hasNext()) {
-                    DepositCategoryType myType = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                    /* Ignore category if it is a parent */
-                    bIgnore |= myType.getDepositClass().isParentCategory();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myType);
-
-                    /* If this is the active type */
-                    if (myType.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
             }
         }
     }

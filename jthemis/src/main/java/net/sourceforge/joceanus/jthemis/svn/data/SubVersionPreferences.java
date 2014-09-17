@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
+import java.io.File;
+
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -132,14 +134,18 @@ public class SubVersionPreferences
     private static final String DEFAULT_SVN_PASS = "Secret";
 
     /**
+     * Base value for directories.
+     */
+    private static final String BASE_DIR = System.getProperty("user.home") + File.pathSeparator;
+    /**
      * Default value for SubversionWorkSpace.
      */
-    private static final String DEFAULT_SVN_WORK = "C:\\Users\\User\\WorkSpace";
+    private static final String DEFAULT_SVN_WORK = BASE_DIR + "WorkSpace";
 
     /**
      * Default value for SubversionBuildSpace.
      */
-    private static final String DEFAULT_SVN_BUILD = "C:\\Users\\User\\Build";
+    private static final String DEFAULT_SVN_BUILD = BASE_DIR + "Build";
 
     /**
      * Default value for SubversionDirectory.

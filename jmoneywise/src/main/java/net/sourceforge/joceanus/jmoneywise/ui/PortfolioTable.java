@@ -28,13 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -52,8 +50,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
@@ -97,6 +95,11 @@ public class PortfolioTable
      * Description Column Title.
      */
     private static final String TITLE_DESC = Portfolio.FIELD_DESC.getName();
+
+    /**
+     * Parent Column Title.
+     */
+    private static final String TITLE_PARENT = Portfolio.FIELD_PARENT.getName();
 
     /**
      * Holding Column Title.
@@ -599,24 +602,29 @@ public class PortfolioTable
         private static final int COLUMN_DESC = 1;
 
         /**
+         * Parent column id.
+         */
+        private static final int COLUMN_PARENT = 2;
+
+        /**
          * Holding column id.
          */
-        private static final int COLUMN_HOLDING = 2;
+        private static final int COLUMN_HOLDING = 3;
 
         /**
          * Closed column id.
          */
-        private static final int COLUMN_CLOSED = 3;
+        private static final int COLUMN_CLOSED = 4;
 
         /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 4;
+        private static final int COLUMN_ACTIVE = 5;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 5;
+        private static final int COLUMN_LASTTRAN = 6;
 
         /**
          * Closed Icon Renderer.
@@ -654,6 +662,11 @@ public class PortfolioTable
         private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
+         * Parent ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<Payee> theParentEditor;
+
+        /**
          * Holding ScrollButton Menu Editor.
          */
         private final ScrollButtonCellEditor<Deposit> theHoldingEditor;
@@ -675,6 +688,7 @@ public class PortfolioTable
             theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
             theHoldingEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
@@ -688,6 +702,7 @@ public class PortfolioTable
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
             declareColumn(new JDataTableColumn(COLUMN_HOLDING, WIDTH_NAME, theStringRenderer, theHoldingEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
             declareColumn(theClosedColumn);
@@ -725,6 +740,8 @@ public class PortfolioTable
                     return TITLE_NAME;
                 case COLUMN_DESC:
                     return TITLE_DESC;
+                case COLUMN_PARENT:
+                    return TITLE_PARENT;
                 case COLUMN_HOLDING:
                     return TITLE_HOLDING;
                 case COLUMN_CLOSED:
@@ -750,6 +767,8 @@ public class PortfolioTable
             switch (pColIndex) {
                 case COLUMN_NAME:
                     return pPortfolio.getName();
+                case COLUMN_PARENT:
+                    return pPortfolio.getParent();
                 case COLUMN_HOLDING:
                     return pPortfolio.getHolding();
                 case COLUMN_DESC:
@@ -788,6 +807,9 @@ public class PortfolioTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
+                case COLUMN_PARENT:
+                    pItem.setParent((Payee) pValue);
+                    break;
                 case COLUMN_HOLDING:
                     pItem.setHolding((Deposit) pValue);
                     break;
@@ -814,6 +836,7 @@ public class PortfolioTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_PARENT:
                 case COLUMN_HOLDING:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
@@ -836,6 +859,8 @@ public class PortfolioTable
                     return Portfolio.FIELD_NAME;
                 case COLUMN_DESC:
                     return Portfolio.FIELD_DESC;
+                case COLUMN_PARENT:
+                    return Portfolio.FIELD_PARENT;
                 case COLUMN_HOLDING:
                     return Portfolio.FIELD_HOLDING;
                 case COLUMN_CLOSED:
@@ -867,40 +892,13 @@ public class PortfolioTable
             private void buildHoldingMenu() {
                 /* Access details */
                 JScrollMenuBuilder<Deposit> myBuilder = theHoldingEditor.getMenuBuilder();
-                Point myCell = theHoldingEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theHoldingEditor.getPoint();
                 Portfolio myPortfolio = thePortfolios.get(myCell.y);
-                Deposit myCurr = myPortfolio.getHolding();
-                JMenuItem myActive = null;
 
-                /* We should use the update deposit list */
-                DepositList myDeposits = theUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-
-                /* Loop through the Deposits */
-                Iterator<Deposit> myIterator = myDeposits.iterator();
-                while (myIterator.hasNext()) {
-                    Deposit myDeposit = myIterator.next();
-
-                    /* Ignore deleted or closed */
-                    boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the deposit */
-                    JMenuItem myItem = myBuilder.addItem(myDeposit);
-
-                    /* If this is the active holding */
-                    if (myDeposit.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildHoldingMenu(myBuilder, myPortfolio);
             }
         }
     }

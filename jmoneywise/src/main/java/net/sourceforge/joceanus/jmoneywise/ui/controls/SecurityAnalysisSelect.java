@@ -249,15 +249,9 @@ public class SecurityAnalysisSelect
     private SecurityBucket getFirstSecurity(final PortfolioBucket pPortfolio) {
         /* Loop through the available security values */
         Iterator<SecurityBucket> myIterator = pPortfolio.securityIterator();
-        while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
-
-            /* Return the bucket */
-            return myBucket;
-        }
-
-        /* No such security */
-        return null;
+        return myIterator.hasNext()
+                                   ? myIterator.next()
+                                   : null;
     }
 
     /**

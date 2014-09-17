@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
+import java.io.File;
+
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -64,7 +66,7 @@ public class GitPreferences
     /**
      * Default value for SubversionRepository Base.
      */
-    private static final String DEFAULT_GIT_REPO = "c:\\Users\\User\\Git";
+    private static final String DEFAULT_GIT_REPO = System.getProperty("user.home") + File.pathSeparator + "Git";
 
     /**
      * Default value for SubversionRepository Name.

@@ -376,6 +376,229 @@ public class CashPanel
     }
 
     /**
+     * Build the category list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCash the cash to build for
+     */
+    public void buildCategoryMenu(final JScrollMenuBuilder<CashCategory> pMenuBuilder,
+                                  final Cash pCash) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        CashCategory myCurr = pCash.getCategory();
+        JMenuItem myActive = null;
+
+        /* Access Cash Categories */
+        MoneyWiseData myData = pCash.getDataSet();
+        CashCategoryList myCategories = myData.getCashCategories();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Loop through the available category values */
+        Iterator<CashCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            CashCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or non-parent */
+            boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(CashCategoryClass.PARENT);
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new JMenu and add it to the popUp */
+            String myName = myCategory.getName();
+            JScrollMenu myMenu = pMenuBuilder.addSubMenu(myName);
+            myMap.put(myName, myMenu);
+        }
+
+        /* Re-Loop through the available category values */
+        myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            CashCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or parent */
+            boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(CashCategoryClass.PARENT);
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            CashCategory myParent = myCategory.getParentCategory();
+            JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            /* Note active category */
+            if (myCategory.equals(myCurr)) {
+                myActive = myMenu;
+                myMenu.showItem(myItem);
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the autoExpense list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCash the cash to build for
+     */
+    private void buildAutoExpenseMenu(final JScrollMenuBuilder<TransactionCategory> pMenuBuilder,
+                                      final Cash pCash) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        TransactionCategory myCurr = pCash.getAutoExpense();
+        JMenuItem myActive = null;
+
+        /* Access Transaction Categories */
+        MoneyWiseData myData = pCash.getDataSet();
+        TransactionCategoryList myCategories = myData.getTransCategories();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Loop through the available category values */
+        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or non-expense-subTotal items */
+            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            boolean bIgnore = myCategory.isDeleted() || !myClass.isSubTotal();
+            bIgnore |= !myClass.isExpense();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new JMenu and add it to the popUp */
+            String myName = myCategory.getName();
+            JScrollMenu myMenu = pMenuBuilder.addSubMenu(myName);
+            myMap.put(myName, myMenu);
+        }
+
+        /* Re-Loop through the available category values */
+        myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or non-expense-subTotal items */
+            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
+            bIgnore |= !myClass.isExpense();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            TransactionCategory myParent = myCategory.getParentCategory();
+            JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            /* Note active category */
+            if (myCategory.equals(myCurr)) {
+                myActive = myMenu;
+                myMenu.showItem(myItem);
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the payee list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCash the cash to build for
+     */
+    private void buildAutoPayeeMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+                                    final Cash pCash) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Payee myCurr = pCash.getAutoPayee();
+        JMenuItem myActive = null;
+
+        /* Access Payees */
+        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+
+        /* Loop through the Payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted */
+            if (myPayee.isDeleted()) {
+                continue;
+            }
+
+            /* Create a new action for the payee */
+            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+
+            /* If this is the active parent */
+            if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the currency list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCash the cash to build for
+     */
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+                                  final Cash pCash) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Cash myCash = getItem();
+        AccountCurrency myCurr = myCash.getCashCurrency();
+        JMenuItem myActive = null;
+
+        /* Access Currencies */
+        MoneyWiseData myData = myCash.getDataSet();
+        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+
+        /* Loop through the AccountCurrencies */
+        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        while (myIterator.hasNext()) {
+            AccountCurrency myCurrency = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the currency */
+            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+
+            /* If this is the active currency */
+            if (myCurrency.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Cash Listener.
      */
     private final class CashListener
@@ -421,228 +644,14 @@ public class CashPanel
 
             /* Handle menu type */
             if (theCategoryMenuBuilder.equals(o)) {
-                buildCategoryMenu();
+                buildCategoryMenu(theCategoryMenuBuilder, getItem());
             } else if (theCurrencyMenuBuilder.equals(o)) {
-                buildCurrencyMenu();
+                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
             } else if (theAutoExpenseMenuBuilder.equals(o)) {
-                buildAutoExpenseMenu();
+                buildAutoExpenseMenu(theAutoExpenseMenuBuilder, getItem());
             } else if (theAutoPayeeMenuBuilder.equals(o)) {
-                buildAutoPayeeMenu();
+                buildAutoPayeeMenu(theAutoPayeeMenuBuilder, getItem());
             }
-        }
-
-        /**
-         * Build the category list for the item.
-         */
-        private void buildCategoryMenu() {
-            /* Clear the menu */
-            theCategoryMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Cash myCash = getItem();
-            CashCategory myCurr = myCash.getCategory();
-            JMenuItem myActive = null;
-
-            /* Access Cash Categories */
-            MoneyWiseData myData = myCash.getDataSet();
-            CashCategoryList myCategories = myData.getCashCategories();
-
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
-
-            /* Loop through the available category values */
-            Iterator<CashCategory> myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                CashCategory myCategory = myIterator.next();
-
-                /* Ignore deleted or non-parent */
-                boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(CashCategoryClass.PARENT);
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new JMenu and add it to the popUp */
-                String myName = myCategory.getName();
-                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
-            }
-
-            /* Re-Loop through the available category values */
-            myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                CashCategory myCategory = myIterator.next();
-
-                /* Ignore deleted or parent */
-                boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(CashCategoryClass.PARENT);
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Determine menu to add to */
-                CashCategory myParent = myCategory.getParentCategory();
-                JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                /* Note active category */
-                if (myCategory.equals(myCurr)) {
-                    myActive = myMenu;
-                    myMenu.showItem(myItem);
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the autoExpense list for the item.
-         */
-        private void buildAutoExpenseMenu() {
-            /* Clear the menu */
-            theAutoExpenseMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Cash myCash = getItem();
-            TransactionCategory myCurr = myCash.getAutoExpense();
-            JMenuItem myActive = null;
-
-            /* Access Transaction Categories */
-            MoneyWiseData myData = myCash.getDataSet();
-            TransactionCategoryList myCategories = myData.getTransCategories();
-
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
-
-            /* Loop through the available category values */
-            Iterator<TransactionCategory> myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                TransactionCategory myCategory = myIterator.next();
-
-                /* Ignore deleted or non-expense-subTotal items */
-                TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
-                boolean bIgnore = myCategory.isDeleted() || !myClass.isSubTotal();
-                bIgnore |= !myClass.isExpense();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new JMenu and add it to the popUp */
-                String myName = myCategory.getName();
-                JScrollMenu myMenu = theAutoExpenseMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
-            }
-
-            /* Re-Loop through the available category values */
-            myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                TransactionCategory myCategory = myIterator.next();
-
-                /* Ignore deleted or non-expense-subTotal items */
-                TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
-                boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
-                bIgnore |= !myClass.isExpense();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Determine menu to add to */
-                TransactionCategory myParent = myCategory.getParentCategory();
-                JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theAutoExpenseMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                /* Note active category */
-                if (myCategory.equals(myCurr)) {
-                    myActive = myMenu;
-                    myMenu.showItem(myItem);
-                }
-            }
-
-            /* Ensure active item is visible */
-            theAutoExpenseMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the payee list for the item.
-         */
-        private void buildAutoPayeeMenu() {
-            /* Clear the menu */
-            theAutoPayeeMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Cash myCash = getItem();
-            Payee myCurr = myCash.getAutoPayee();
-            JMenuItem myActive = null;
-
-            /* Access Payees */
-            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-            /* Loop through the Payees */
-            Iterator<Payee> myIterator = myPayees.iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted */
-                if (myPayee.isDeleted()) {
-                    continue;
-                }
-
-                /* Create a new action for the payee */
-                JMenuItem myItem = theAutoPayeeMenuBuilder.addItem(myPayee);
-
-                /* If this is the active parent */
-                if (myPayee.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theAutoPayeeMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the currency list for the item.
-         */
-        private void buildCurrencyMenu() {
-            /* Clear the menu */
-            theCurrencyMenuBuilder.clearMenu();
-
-            /* Record active item */
-            Cash myCash = getItem();
-            AccountCurrency myCurr = myCash.getCashCurrency();
-            JMenuItem myActive = null;
-
-            /* Access Currencies */
-            MoneyWiseData myData = myCash.getDataSet();
-            AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
-
-            /* Loop through the AccountCurrencies */
-            Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
-            while (myIterator.hasNext()) {
-                AccountCurrency myCurrency = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the currency */
-                JMenuItem myItem = theCurrencyMenuBuilder.addItem(myCurrency);
-
-                /* If this is the active currency */
-                if (myCurrency.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCurrencyMenuBuilder.showItem(myActive);
         }
     }
 }

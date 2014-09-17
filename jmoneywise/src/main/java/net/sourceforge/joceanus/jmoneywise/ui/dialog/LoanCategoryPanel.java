@@ -203,6 +203,92 @@ public class LoanCategoryPanel
     }
 
     /**
+     * Build the category type menu for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCategory the category to build for
+     */
+    public void buildCategoryTypeMenu(final JScrollMenuBuilder<LoanCategoryType> pMenuBuilder,
+                                      final LoanCategory pCategory) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        LoanCategoryType myCurr = pCategory.getCategoryType();
+        JMenuItem myActive = null;
+
+        /* Access Loan Category types */
+        MoneyWiseData myData = pCategory.getDataSet();
+        LoanCategoryTypeList myCategoryTypes = myData.getLoanCategoryTypes();
+
+        /* Loop through the LoanCategoryTypes */
+        Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();
+        while (myIterator.hasNext()) {
+            LoanCategoryType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+            /* Ignore category if it is a parent */
+            bIgnore |= myType.getLoanClass().isParentCategory();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            JMenuItem myItem = pMenuBuilder.addItem(myType);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the parent menu for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pCategory the category to build for
+     */
+    private void buildParentMenu(final JScrollMenuBuilder<LoanCategory> pMenuBuilder,
+                                 final LoanCategory pCategory) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        LoanCategory myCurr = pCategory.getParentCategory();
+        JMenuItem myActive = null;
+
+        /* Loop through the LoanCategories */
+        LoanCategoryList myCategories = pCategory.getList();
+        Iterator<LoanCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            LoanCategory myCat = myIterator.next();
+
+            /* Ignore deleted and non-parent items */
+            LoanCategoryClass myClass = myCat.getCategoryTypeClass();
+            if (myCat.isDeleted() || !myClass.isParentCategory()) {
+                continue;
+            }
+
+            /* Create a new action for the parent */
+            JMenuItem myItem = pMenuBuilder.addItem(myCat);
+
+            /* If this is the active parent */
+            if (myCat.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Category Listener.
      */
     private final class CategoryListener
@@ -234,92 +320,10 @@ public class LoanCategoryPanel
 
             /* Handle menu type */
             if (theTypeMenuBuilder.equals(o)) {
-                buildCategoryTypeMenu();
+                buildCategoryTypeMenu(theTypeMenuBuilder, getItem());
             } else if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu();
+                buildParentMenu(theParentMenuBuilder, getItem());
             }
-        }
-
-        /**
-         * Build the category type list for the item.
-         */
-        private void buildCategoryTypeMenu() {
-            /* Clear the menu */
-            theTypeMenuBuilder.clearMenu();
-
-            /* Record active item */
-            LoanCategory myCategory = getItem();
-            LoanCategoryType myCurr = myCategory.getCategoryType();
-            JMenuItem myActive = null;
-
-            /* Access Loan Category types */
-            MoneyWiseData myData = myCategory.getDataSet();
-            LoanCategoryTypeList myCategoryTypes = myData.getLoanCategoryTypes();
-
-            /* Loop through the LoanCategoryTypes */
-            Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();
-            while (myIterator.hasNext()) {
-                LoanCategoryType myType = myIterator.next();
-
-                /* Ignore deleted or disabled */
-                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-                /* Ignore category if it is a parent */
-                bIgnore |= myType.getLoanClass().isParentCategory();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new action for the type */
-                JMenuItem myItem = theTypeMenuBuilder.addItem(myType);
-
-                /* If this is the active type */
-                if (myType.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theTypeMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build the parent list for the item.
-         */
-        private void buildParentMenu() {
-            /* Clear the menu */
-            theParentMenuBuilder.clearMenu();
-
-            /* Record active item */
-            LoanCategory myCategory = getItem();
-            LoanCategoryType myCurr = myCategory.getCategoryType();
-            JMenuItem myActive = null;
-
-            /* Loop through the LoanCategories */
-            LoanCategoryList myCategories = getItem().getList();
-            Iterator<LoanCategory> myIterator = myCategories.iterator();
-            while (myIterator.hasNext()) {
-                LoanCategory myCat = myIterator.next();
-
-                /* Ignore deleted and non-parent items */
-                LoanCategoryClass myClass = myCat.getCategoryTypeClass();
-                if (myCat.isDeleted() || !myClass.isParentCategory()) {
-                    continue;
-                }
-
-                /* Create a new action for the type */
-                JMenuItem myItem = theParentMenuBuilder.addItem(myCat);
-
-                /* If this is the active type */
-                if (myCat.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theParentMenuBuilder.showItem(myActive);
         }
     }
 }

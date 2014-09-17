@@ -26,10 +26,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 
 import javax.swing.BoxLayout;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -53,7 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.TaxYearPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -164,11 +161,6 @@ public class TaxYearTable
     private transient TaxYearList theTaxYears = null;
 
     /**
-     * TaxRegimes.
-     */
-    private transient TaxRegimeList theRegimes = null;
-
-    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -272,7 +264,6 @@ public class TaxYearTable
 
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
-        theRegimes = myData.getTaxRegimes();
 
         /* Get the TaxYears edit list */
         TaxYearList myTaxYears = myData.getTaxYears();
@@ -745,37 +736,13 @@ public class TaxYearTable
             private void buildRegimeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<TaxRegime> myBuilder = theRegimeEditor.getMenuBuilder();
-                Point myCell = theRegimeEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theRegimeEditor.getPoint();
                 TaxYear myYear = theTaxYears.get(myCell.y);
-                TaxRegime myCurr = myYear.getTaxRegime();
-                JMenuItem myActive = null;
 
-                /* Loop through the Regimes */
-                Iterator<TaxRegime> myIterator = theRegimes.iterator();
-                while (myIterator.hasNext()) {
-                    TaxRegime myRegime = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myRegime.isDeleted() || !myRegime.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the regime */
-                    JMenuItem myItem = myBuilder.addItem(myRegime);
-
-                    /* If this is the active regime */
-                    if (myRegime.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveYear.buildRegimeMenu(myBuilder, myYear);
             }
         }
     }

@@ -28,13 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -52,16 +50,12 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.SecurityPanel;
@@ -219,16 +213,6 @@ public class SecurityTable
     private transient SecurityList theSecurities = null;
 
     /**
-     * Security types.
-     */
-    private transient SecurityTypeList theSecTypes = null;
-
-    /**
-     * Currencies.
-     */
-    private transient AccountCurrencyList theCurrencies = null;
-
-    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -343,8 +327,6 @@ public class SecurityTable
 
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
-        theCurrencies = myData.getAccountCurrencies();
-        theSecTypes = myData.getSecurityTypes();
 
         /* Obtain the security edit list */
         SecurityList mySecurities = myData.getSecurities();
@@ -959,42 +941,13 @@ public class SecurityTable
             private void buildParentMenu() {
                 /* Access details */
                 JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
-                Point myCell = theParentEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theParentEditor.getPoint();
                 Security mySecurity = theSecurities.get(myCell.y);
-                SecurityTypeClass myType = mySecurity.getSecurityTypeClass();
-                Payee myCurr = mySecurity.getParent();
-                JMenuItem myActive = null;
 
-                /* We should use the update payee list */
-                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-
-                /* Loop through the Payees */
-                Iterator<Payee> myIterator = myPayees.iterator();
-                while (myIterator.hasNext()) {
-                    Payee myPayee = myIterator.next();
-
-                    /* Ignore deleted/non-parent/closed */
-                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
-                    bIgnore |= myPayee.isClosed();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the type */
-                    JMenuItem myItem = myBuilder.addItem(myPayee);
-
-                    /* If this is the active parent */
-                    if (myPayee.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildParentMenu(myBuilder, mySecurity);
             }
 
             /**
@@ -1003,37 +956,13 @@ public class SecurityTable
             private void buildSecurityTypeMenu() {
                 /* Access details */
                 JScrollMenuBuilder<SecurityType> myBuilder = theTypeEditor.getMenuBuilder();
-                Point myCell = theTypeEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theTypeEditor.getPoint();
                 Security mySecurity = theSecurities.get(myCell.y);
-                SecurityType myCurr = mySecurity.getSecurityType();
-                JMenuItem myActive = null;
 
-                /* Loop through the SecurityTypes */
-                Iterator<SecurityType> myIterator = theSecTypes.iterator();
-                while (myIterator.hasNext()) {
-                    SecurityType myType = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the securityType */
-                    JMenuItem myItem = myBuilder.addItem(myType);
-
-                    /* If this is the active type */
-                    if (myType.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildSecTypeMenu(myBuilder, mySecurity);
             }
 
             /**
@@ -1042,37 +971,13 @@ public class SecurityTable
             private void buildCurrencyMenu() {
                 /* Access details */
                 JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-                Point myCell = theCurrencyEditor.getPoint();
-                myBuilder.clearMenu();
 
                 /* Record active item */
+                Point myCell = theCurrencyEditor.getPoint();
                 Security mySecurity = theSecurities.get(myCell.y);
-                AccountCurrency myCurr = mySecurity.getSecurityCurrency();
-                JMenuItem myActive = null;
 
-                /* Loop through the Currencies */
-                Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
-                while (myIterator.hasNext()) {
-                    AccountCurrency myCurrency = myIterator.next();
-
-                    /* Ignore deleted or disabled */
-                    boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-                    if (bIgnore) {
-                        continue;
-                    }
-
-                    /* Create a new action for the currency */
-                    JMenuItem myItem = myBuilder.addItem(myCurrency);
-
-                    /* If this is the active currency */
-                    if (myCurrency.equals(myCurr)) {
-                        /* Record it */
-                        myActive = myItem;
-                    }
-                }
-
-                /* Ensure active item is visible */
-                myBuilder.showItem(myActive);
+                /* Build the menu */
+                theActiveAccount.buildCurrencyMenu(myBuilder, mySecurity);
             }
         }
     }
