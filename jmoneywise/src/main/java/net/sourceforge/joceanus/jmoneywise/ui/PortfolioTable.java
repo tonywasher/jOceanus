@@ -317,8 +317,7 @@ public class PortfolioTable
         /* Get the Portfolios edit list */
         MoneyWiseData myData = theView.getData();
         PortfolioList myPortfolios = myData.getPortfolios();
-        thePortfolios = myPortfolios.deriveEditList();
-        thePortfolios.resolveUpdateSetLinks(theUpdateSet);
+        thePortfolios = myPortfolios.deriveEditList(theUpdateSet);
         thePortfolioEntry.setDataList(thePortfolios);
         PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
         theInfoEntry.setDataList(myInfo);
@@ -809,6 +808,7 @@ public class PortfolioTable
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);
+                    pItem.adjustForParent(theUpdateSet);
                     break;
                 case COLUMN_HOLDING:
                     pItem.setHolding((Deposit) pValue);

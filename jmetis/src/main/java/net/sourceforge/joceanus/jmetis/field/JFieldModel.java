@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.util.Currency;
+
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
@@ -204,6 +206,19 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         private String theError = null;
 
         /**
+         * The Assumed Currency.
+         */
+        private Currency theCurrency;
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        protected void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
+        }
+
+        /**
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
@@ -219,6 +234,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
             JDataFormatter myDataFormatter = pFieldSet.getDataFormatter();
             theParser = myDataFormatter.getDecimalParser();
             theFormatter = myDataFormatter.getDecimalFormatter();
+            theCurrency = theParser.getDefaultCurrency();
 
             /* Switch on class */
             switch (pClass) {
@@ -419,13 +435,13 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
                         /* Handle Decimal variants */
                         case MONEY:
-                            myValue = theParser.parseMoneyValue(pValue);
+                            myValue = theParser.parseMoneyValue(pValue, theCurrency);
                             break;
                         case RATE:
                             myValue = theParser.parseRateValue(pValue);
                             break;
                         case PRICE:
-                            myValue = theParser.parsePriceValue(pValue);
+                            myValue = theParser.parsePriceValue(pValue, theCurrency);
                             break;
                         case UNITS:
                             myValue = theParser.parseUnitsValue(pValue);

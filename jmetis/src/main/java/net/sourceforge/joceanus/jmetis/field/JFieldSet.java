@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.event.ActionEvent;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -227,6 +228,23 @@ public class JFieldSet<T extends JFieldSetItem>
         for (JFieldElement<T> myEl : theMap.values()) {
             /* Set the edit-ability of the element */
             myEl.setEditable(setEditable);
+        }
+    }
+
+    /**
+     * Set the assumed currency for a field.
+     * @param pField the field id
+     * @param pCurrency the assumed currency
+     */
+    public void setAssumedCurrency(final JDataField pField,
+                                   final Currency pCurrency) {
+        /* Access element */
+        JFieldElement<T> myEl = theMap.get(pField);
+
+        /* If the field exists */
+        if (myEl != null) {
+            /* Set the assumed currency of the element */
+            myEl.setAssumedCurrency(pCurrency);
         }
     }
 

@@ -779,13 +779,13 @@ public class Deposit
             setParent(myPayees.getDefaultDepositParent(myClass));
         }
 
-        /* Set bond date if required */
-        if (DepositCategoryClass.BOND.equals(myClass)) {
+        /* Adjust bond date if required */
+        if (!DepositCategoryClass.BOND.equals(myClass)) {
+            setMaturity(null);
+        } else if (getMaturity() == null) {
             JDateDay myDate = new JDateDay();
             myDate.adjustYear(1);
             setMaturity(myDate);
-        } else {
-            setMaturity(null);
         }
     }
 
@@ -1209,9 +1209,11 @@ public class Deposit
 
         /**
          * Derive Edit list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public DepositList deriveEditList() {
+        public DepositList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             DepositList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1234,6 +1236,7 @@ public class Deposit
 
                 /* Build the new linked deposit and add it to the list */
                 Deposit myDeposit = new Deposit(myList, myCurr);
+                myDeposit.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myDeposit);
             }
 

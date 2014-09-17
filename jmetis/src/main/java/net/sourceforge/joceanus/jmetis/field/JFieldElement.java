@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.CardLayout;
+import java.util.Currency;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -32,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -283,6 +285,19 @@ public class JFieldElement<T extends JFieldSetItem> {
     protected void setEditable(final boolean setEditable) {
         /* Set the visibility of the component */
         theCardPanel.setEditable(setEditable);
+    }
+
+    /**
+     * Set the assumed currency for a field.
+     * @param pCurrency the assumed currency
+     */
+    protected void setAssumedCurrency(final Currency pCurrency) {
+        /* If the model is a string model */
+        if (theModel instanceof JModelString) {
+            /* Pass call onwards */
+            JModelString<?> myModel = (JModelString<?>) theModel;
+            myModel.setAssumedCurrency(pCurrency);
+        }
     }
 
     /**

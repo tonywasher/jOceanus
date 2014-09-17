@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -156,6 +157,11 @@ public class TaxYearTable
     private final TaxYearPanel theActiveYear;
 
     /**
+     * The List Selection Model.
+     */
+    private final transient JDataTableSelection<TaxYear, MoneyWiseDataType> theSelectionModel;
+
+    /**
      * TaxYears.
      */
     private transient TaxYearList theTaxYears = null;
@@ -238,6 +244,9 @@ public class TaxYearTable
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
+
+        /* Create the selection model */
+        theSelectionModel = new JDataTableSelection<TaxYear, MoneyWiseDataType>(this, theActiveYear);
 
         /* Create listener */
         new TaxYearListener();
@@ -476,8 +485,8 @@ public class TaxYearTable
             if (theUpdateSet.equals(o)) {
                 /* Only action if we are not editing */
                 if (!theActiveYear.isEditing()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                    /* Handle the reWind */
+                    theSelectionModel.handleReWind();
                 }
 
                 /* Adjust for changes */
@@ -486,10 +495,10 @@ public class TaxYearTable
 
             /* If we are noting change of edit state */
             if (theActiveYear.equals(o)) {
-                /* If the account is now deleted */
-                if (theActiveYear.isItemDeleted()) {
-                    /* Refresh the model */
-                    theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveYear.isEditing()) {
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
                 }
 
                 /* Note changes */
@@ -668,6 +677,7 @@ public class TaxYearTable
             switch (pColIndex) {
                 case COLUMN_REGIME:
                     pItem.setTaxRegime((TaxRegime) pValue);
+                    pItem.adjustForTaxRegime();
                     break;
                 case COLUMN_ACTIVE:
                     pItem.setDeleted(true);

@@ -332,16 +332,14 @@ public class DepositTable
 
         /* Get the Deposits edit list */
         DepositList myDeposits = myData.getDeposits();
-        theDeposits = myDeposits.deriveEditList();
-        theDeposits.resolveUpdateSetLinks(theUpdateSet);
+        theDeposits = myDeposits.deriveEditList(theUpdateSet);
         theDepositEntry.setDataList(theDeposits);
         DepositInfoList myInfo = theDeposits.getDepositInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Get the Deposit rates list */
         DepositRateList myRates = myData.getDepositRates();
-        myRates = myRates.deriveEditList();
-        myRates.resolveUpdateSetLinks(theUpdateSet);
+        myRates = myRates.deriveEditList(theUpdateSet);
         theRateEntry.setDataList(myRates);
 
         /* Notify panel of refresh */
@@ -848,6 +846,7 @@ public class DepositTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setDepositCategory((DepositCategory) pValue);
+                    pItem.adjustForCategory(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);

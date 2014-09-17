@@ -611,9 +611,11 @@ public class StockOptionVest
 
         /**
          * Derive Edit list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public StockOptionVestList deriveEditList() {
+        public StockOptionVestList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             StockOptionVestList myList = getEmptyList(ListStyle.EDIT);
 
@@ -629,6 +631,7 @@ public class StockOptionVest
 
                 /* Build the new linked vest and add it to the list */
                 StockOptionVest myVest = new StockOptionVest(myList, myCurr);
+                myVest.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myVest);
             }
 
@@ -704,20 +707,5 @@ public class StockOptionVest
             /* return to caller */
             return iCount;
         }
-
-        /**
-         * Resolve update set links.
-         * @param pUpdateSet the updateSet
-         * @throws JOceanusException on error
-         */
-        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-            /* Loop through the items */
-            Iterator<StockOptionVest> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                StockOptionVest myCurr = myIterator.next();
-                myCurr.resolveUpdateSetLinks(pUpdateSet);
-            }
-        }
-
     }
 }

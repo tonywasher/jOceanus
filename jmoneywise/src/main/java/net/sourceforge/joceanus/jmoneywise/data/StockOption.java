@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
@@ -121,6 +122,11 @@ public class StockOption
      * Invalid SecurityType Error Text.
      */
     private static final String ERROR_BADSECURITY = MoneyWiseDataResource.STOCKOPTION_ERROR_BADSECURITY.getValue();
+
+    /**
+     * Invalid currency error.
+     */
+    public static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -887,6 +893,15 @@ public class StockOption
             addError(ERROR_ZERO, FIELD_PRICE);
         } else if (!myPrice.isPositive()) {
             addError(ERROR_NEGATIVE, FIELD_PRICE);
+        } else {
+            /* Ensure that currency is correct */
+            AccountCurrency myCurrency = mySecurity == null
+                                                           ? null
+                                                           : mySecurity.getSecurityCurrency();
+            if ((myCurrency != null)
+                && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
+                addError(ERROR_CURRENCY, FIELD_PRICE);
+            }
         }
 
         /* Set validation flag */
@@ -1030,9 +1045,11 @@ public class StockOption
 
         /**
          * Derive Edit list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public StockOptionList deriveEditList() {
+        public StockOptionList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             StockOptionList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1055,6 +1072,7 @@ public class StockOption
 
                 /* Build the new linked option and add it to the list */
                 StockOption myOption = new StockOption(myList, myCurr);
+                myOption.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myOption);
             }
 

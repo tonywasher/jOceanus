@@ -91,6 +91,14 @@ public class JDecimalParser {
     }
 
     /**
+     * Obtain the default currency.
+     * @return the default currency
+     */
+    public final Currency getDefaultCurrency() {
+        return theLocale.getDefaultCurrency();
+    }
+
+    /**
      * Parse a string into a decimal.
      * @param pValue The value to parse.
      * @param pResult the decimal to hold the result in
@@ -246,10 +254,12 @@ public class JDecimalParser {
     /**
      * Parse a string to extract currency information.
      * @param pWork the buffer to parse
+     * @param pDeemedCurrency the assumed currency if no currency identifier
      * @return the parsed currency
      * @throws IllegalArgumentException on invalid currency
      */
-    private Currency parseCurrency(final StringBuilder pWork) {
+    private Currency parseCurrency(final StringBuilder pWork,
+                                   final Currency pDeemedCurrency) {
         /* Look for a currency separator */
         int iPos = pWork.indexOf(JDecimalFormatter.STR_CURRSEP);
         if (iPos > -1) {
@@ -260,7 +270,7 @@ public class JDecimalParser {
         }
 
         /* Set default currency */
-        Currency myCurrency = theLocale.getDefaultCurrency();
+        Currency myCurrency = pDeemedCurrency;
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
@@ -330,6 +340,18 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid money value
      */
     public JMoney parseMoneyValue(final String pValue) {
+        return parseMoneyValue(pValue, getDefaultCurrency());
+    }
+
+    /**
+     * Parse Money value.
+     * @param pValue the string value to parse.
+     * @param pDeemedCurrency the assumed currency if no currency identifier
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public JMoney parseMoneyValue(final String pValue,
+                                  final Currency pDeemedCurrency) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -339,7 +361,7 @@ public class JDecimalParser {
         StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Determine currency */
-        Currency myCurrency = parseCurrency(myWork);
+        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency);
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
@@ -388,6 +410,18 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid price value
      */
     public JPrice parsePriceValue(final String pValue) {
+        return parsePriceValue(pValue, getDefaultCurrency());
+    }
+
+    /**
+     * Parse Price value.
+     * @param pValue the string value to parse.
+     * @param pDeemedCurrency the assumed currency if no currency identifier
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public JPrice parsePriceValue(final String pValue,
+                                  final Currency pDeemedCurrency) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -397,7 +431,7 @@ public class JDecimalParser {
         StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Look for explicit currency */
-        Currency myCurrency = parseCurrency(myWork);
+        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency);
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
@@ -426,9 +460,21 @@ public class JDecimalParser {
      * Parse DilutedPrice value.
      * @param pValue the string value to parse.
      * @return the parsed DilutedPrice
-     * @throws IllegalArgumentException on invalid diluted price value
+     * @throws IllegalArgumentException on invalid money value
      */
     public JDilutedPrice parseDilutedPriceValue(final String pValue) {
+        return parseDilutedPriceValue(pValue, getDefaultCurrency());
+    }
+
+    /**
+     * Parse DilutedPrice value.
+     * @param pValue the string value to parse.
+     * @param pDeemedCurrency the assumed currency if no currency identifier
+     * @return the parsed DilutedPrice
+     * @throws IllegalArgumentException on invalid diluted price value
+     */
+    public JDilutedPrice parseDilutedPriceValue(final String pValue,
+                                                final Currency pDeemedCurrency) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -438,7 +484,7 @@ public class JDecimalParser {
         StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Determine currency */
-        Currency myCurrency = parseCurrency(myWork);
+        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency);
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */

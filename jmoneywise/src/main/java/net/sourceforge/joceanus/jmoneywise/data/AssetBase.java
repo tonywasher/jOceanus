@@ -888,19 +888,5 @@ public abstract class AssetBase<T extends AssetBase<T>>
                 myName = pBase.concat(Integer.toString(iNextId++));
             }
         }
-
-        /**
-         * Resolve update set links.
-         * @param pUpdateSet the updateSet
-         * @throws JOceanusException on error
-         */
-        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-            /* Loop through the items */
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-                myCurr.resolveUpdateSetLinks(pUpdateSet);
-            }
-        }
     }
 }

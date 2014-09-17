@@ -323,8 +323,7 @@ public class LoanTable
 
         /* Obtain the loan edit list */
         LoanList myLoans = myData.getLoans();
-        theLoans = myLoans.deriveEditList();
-        theLoans.resolveUpdateSetLinks(theUpdateSet);
+        theLoans = myLoans.deriveEditList(theUpdateSet);
         theLoanEntry.setDataList(theLoans);
         LoanInfoList myInfo = theLoans.getLoanInfo();
         theInfoEntry.setDataList(myInfo);
@@ -833,6 +832,7 @@ public class LoanTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setLoanCategory((LoanCategory) pValue);
+                    pItem.adjustForCategory(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);

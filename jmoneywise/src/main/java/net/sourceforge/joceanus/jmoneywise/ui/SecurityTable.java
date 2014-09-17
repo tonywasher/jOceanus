@@ -330,15 +330,13 @@ public class SecurityTable
 
         /* Obtain the security edit list */
         SecurityList mySecurities = myData.getSecurities();
-        theSecurities = mySecurities.deriveEditList();
-        theSecurities.resolveUpdateSetLinks(theUpdateSet);
+        theSecurities = mySecurities.deriveEditList(theUpdateSet);
         theSecurityEntry.setDataList(theSecurities);
         SecurityInfoList myInfo = theSecurities.getSecurityInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Get the Security prices list */
-        ViewSecurityPriceList myPrices = new ViewSecurityPriceList(theView);
-        myPrices.resolveUpdateSetLinks(theUpdateSet);
+        ViewSecurityPriceList myPrices = new ViewSecurityPriceList(theView, theUpdateSet);
         thePriceEntry.setDataList(myPrices);
 
         /* Notify panel of refresh */
@@ -836,6 +834,7 @@ public class SecurityTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setSecurityType((SecurityType) pValue);
+                    pItem.adjustForCategory(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);

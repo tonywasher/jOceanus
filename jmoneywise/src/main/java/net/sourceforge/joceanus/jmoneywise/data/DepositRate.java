@@ -746,9 +746,11 @@ public class DepositRate
 
         /**
          * Construct an edit extract of a Rate list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public DepositRateList deriveEditList() {
+        public DepositRateList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             DepositRateList myList = getEmptyList(ListStyle.EDIT);
 
@@ -759,6 +761,7 @@ public class DepositRate
 
                 /* Copy the item */
                 DepositRate myItem = new DepositRate(myList, myCurr);
+                myItem.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myItem);
             }
 
@@ -845,20 +848,6 @@ public class DepositRate
 
             /* Return not found */
             return null;
-        }
-
-        /**
-         * Resolve update set links.
-         * @param pUpdateSet the updateSet
-         * @throws JOceanusException on error
-         */
-        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-            /* Loop through the items */
-            Iterator<DepositRate> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                DepositRate myCurr = myIterator.next();
-                myCurr.resolveUpdateSetLinks(pUpdateSet);
-            }
         }
 
         @Override

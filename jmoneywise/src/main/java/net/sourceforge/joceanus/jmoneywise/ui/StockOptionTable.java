@@ -317,14 +317,12 @@ public class StockOptionTable
         /* Get the Portfolios edit list */
         MoneyWiseData myData = theView.getData();
         StockOptionList myOptions = myData.getStockOptions();
-        theOptions = myOptions.deriveEditList();
-        theOptions.resolveUpdateSetLinks(theUpdateSet);
+        theOptions = myOptions.deriveEditList(theUpdateSet);
         theOptionEntry.setDataList(theOptions);
 
         /* Get the StockOption Vest list */
         StockOptionVestList myVests = myData.getStockOptionVests();
-        myVests = myVests.deriveEditList();
-        myVests.resolveUpdateSetLinks(theUpdateSet);
+        myVests = myVests.deriveEditList(theUpdateSet);
         theVestEntry.setDataList(myVests);
 
         /* Notify panel of refresh */

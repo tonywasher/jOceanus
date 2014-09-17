@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
@@ -89,6 +90,11 @@ public class SecurityPrice
      * Price Field Id.
      */
     public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+
+    /**
+     * Invalid currency error.
+     */
+    public static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     @Override
     public boolean includeXmlField(final JDataField pField) {
@@ -493,6 +499,15 @@ public class SecurityPrice
             addError(ERROR_ZERO, FIELD_PRICE);
         } else if (!myPrice.isPositive()) {
             addError(ERROR_NEGATIVE, FIELD_PRICE);
+        } else {
+            /* Ensure that currency is correct */
+            AccountCurrency myCurrency = mySecurity == null
+                                                           ? null
+                                                           : mySecurity.getSecurityCurrency();
+            if ((myCurrency != null)
+                && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
+                addError(ERROR_CURRENCY, FIELD_PRICE);
+            }
         }
 
         /* Set validation flag */

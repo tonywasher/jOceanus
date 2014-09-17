@@ -306,6 +306,9 @@ public class StockOptionPanel
         theFieldSet.setEditable(StockOption.FIELD_GRANTDATE, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_EXPIREDATE, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_PRICE, isEditable && !bIsActive);
+
+        /* Set currency for price */
+        theFieldSet.setAssumedCurrency(StockOption.FIELD_PRICE, myOption.getSecurity().getSecurityCurrency().getCurrency());
     }
 
     @Override

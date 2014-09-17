@@ -388,14 +388,16 @@ public class DepositPanel
 
         /* Category, Currency, Gross and TaxFree status cannot be changed if the item is active */
         boolean canTaxFree = myClass.canTaxFree();
-        boolean hasOpeningBalance = myDeposit.getOpeningBalance() != null;
         boolean isHolding = myDeposit.getTouchStatus().touchedBy(MoneyWiseDataType.PORTFOLIO);
         boolean canTaxChange = canTaxFree && !isHolding && bIsChangeable;
         theFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
-        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable && hasOpeningBalance);
+        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable);
         theFieldSet.setEditable(Deposit.FIELD_GROSS, canTaxChange && !bIsTaxFree);
         theFieldSet.setEditable(Deposit.FIELD_TAXFREE, canTaxChange && !bIsGross);
         theFieldSet.setEditable(myOpeningField, bIsChangeable);
+
+        /* Set currency for opening balance */
+        theFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getDepositCurrency().getCurrency());
     }
 
     @Override

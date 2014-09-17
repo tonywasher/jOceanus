@@ -73,6 +73,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_FIELD_DILUTION("MoneyWiseData.Field.Dilution"),
 
     /**
+     * MoneyWiseData InvalidCurrency Error.
+     */
+    MONEYWISEDATA_ERROR_CURRENCY("MoneyWiseData.Error.Currency"),
+
+    /**
      * Category SubCategory.
      */
     CATEGORY_SUBCAT("Category.SubCategory"),
@@ -306,11 +311,6 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Deposit TaxFree/Gross conflict Error.
      */
     DEPOSIT_ERROR_TAXFREEGROSS("Deposit.Error.TaxFreeGross"),
-
-    /**
-     * Deposit OpeningBalance Error.
-     */
-    DEPOSIT_ERROR_BALANCE("Deposit.Error.Balance"),
 
     /**
      * DepositRate Bonus.

@@ -640,8 +640,14 @@ public class Portfolio
         /* Access taxFree status */
         Boolean isTaxFree = isTaxFree();
         Payee myParent = getParent();
-        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-        setHolding(myDeposits.getDefaultHolding(myParent, isTaxFree));
+        Deposit myHolding = getHolding();
+
+        /* If the holding account needs changing */
+        if ((myHolding == null) || !Difference.isEqual(myParent, myHolding.getParent())) {
+            /* Determine new holding */
+            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            setHolding(myDeposits.getDefaultHolding(myParent, isTaxFree));
+        }
     }
 
     /**
@@ -1016,9 +1022,11 @@ public class Portfolio
 
         /**
          * Derive Edit list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public PortfolioList deriveEditList() {
+        public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             PortfolioList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1041,6 +1049,7 @@ public class Portfolio
 
                 /* Build the new linked portfolio and add it to the list */
                 Portfolio myPortfolio = new Portfolio(myList, myCurr);
+                myPortfolio.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myPortfolio);
             }
 

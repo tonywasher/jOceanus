@@ -351,7 +351,7 @@ public class UpdateSet<E extends Enum<E>>
 
         /* analyse the data */
         if (bSuccess) {
-            /* Declare the apply changes */
+            /* Analyse the applied changes */
             bSuccess = theControl.analyseData(false);
         }
 
@@ -433,6 +433,7 @@ public class UpdateSet<E extends Enum<E>>
 
         /* Increment the version and notify listeners */
         theControl.incrementVersion();
+        theVersion = 0;
 
         /* Complete the task */
         myTask.end();

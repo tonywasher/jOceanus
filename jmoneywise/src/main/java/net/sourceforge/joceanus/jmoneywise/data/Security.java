@@ -1116,9 +1116,11 @@ public class Security
 
         /**
          * Derive Edit list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public SecurityList deriveEditList() {
+        public SecurityList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             SecurityList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1141,6 +1143,7 @@ public class Security
 
                 /* Build the new linked security and add it to the list */
                 Security mySecurity = new Security(myList, myCurr);
+                mySecurity.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(mySecurity);
             }
 

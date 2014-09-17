@@ -153,7 +153,7 @@ public class ViewSecurityPrice
     protected final void calculateDiluted() {
         /* Ignore if undiluted */
         if (theDilutionState.equals(DilutionState.UNDILUTED)) {
-            calculateDiluted();
+            return;
         }
 
         /* Access the list for the item */
@@ -295,8 +295,11 @@ public class ViewSecurityPrice
         /**
          * Construct an edit extract of a Price list.
          * @param pView The master view
+         * @param pUpdateSet the updateSet
+         * @throws JOceanusException on error
          */
-        public ViewSecurityPriceList(final View pView) {
+        public ViewSecurityPriceList(final View pView,
+                                     final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Declare the data and set the style */
             super(pView.getData(), ViewSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
@@ -315,6 +318,7 @@ public class ViewSecurityPrice
 
                 /* Copy the item */
                 ViewSecurityPrice myItem = new ViewSecurityPrice(this, myCurr);
+                myItem.resolveUpdateSetLinks(pUpdateSet);
                 add(myItem);
             }
         }
@@ -338,20 +342,6 @@ public class ViewSecurityPrice
         @Override
         public ViewSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Resolve update set links.
-         * @param pUpdateSet the updateSet
-         * @throws JOceanusException on error
-         */
-        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-            /* Loop through the items */
-            Iterator<ViewSecurityPrice> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                ViewSecurityPrice myCurr = myIterator.next();
-                myCurr.resolveUpdateSetLinks(pUpdateSet);
-            }
         }
     }
 

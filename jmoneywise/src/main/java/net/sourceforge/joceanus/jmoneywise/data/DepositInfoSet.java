@@ -62,7 +62,7 @@ public class DepositInfoSet
     /**
      * Opening Balance Currency Error Text.
      */
-    private static final String ERROR_BALANCE = MoneyWiseDataResource.DEPOSIT_ERROR_BALANCE.getValue();
+    private static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     @Override
     public JDataFields getDataFields() {
@@ -228,7 +228,7 @@ public class DepositInfoSet
                     /* Access data */
                     JMoney myBalance = myInfo.getValue(JMoney.class);
                     if (!myBalance.getCurrency().equals(myDeposit.getDepositCurrency().getCurrency())) {
-                        myDeposit.addError(ERROR_BALANCE, getFieldForClass(myClass));
+                        myDeposit.addError(ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
                 case SORTCODE:

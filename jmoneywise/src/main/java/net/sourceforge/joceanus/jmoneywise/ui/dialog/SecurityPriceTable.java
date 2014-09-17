@@ -230,6 +230,7 @@ public class SecurityPriceTable
         /* Store the security */
         if (!Difference.isEqual(pSecurity, theSecurity)) {
             theSecurity = pSecurity;
+            theColumns.setAssumedCurrency();
             theModel.fireNewDataEvents();
         }
     }
@@ -530,6 +531,15 @@ public class SecurityPriceTable
             /* Adjust editor range */
             theDateConfig.setEarliestDateDay(myRange.getStart());
             theDateConfig.setLatestDateDay(myRange.getEnd());
+        }
+
+        /**
+         * Set assumed currency.
+         */
+        private void setAssumedCurrency() {
+            if (theSecurity != null) {
+                thePriceEditor.setAssumedCurrency(theSecurity.getSecurityCurrency().getCurrency());
+            }
         }
 
         /**

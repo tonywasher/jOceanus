@@ -957,9 +957,11 @@ public class Loan
 
         /**
          * Derive Edit list.
+         * @param pUpdateSet the updateSet
          * @return the edit list
+         * @throws JOceanusException on error
          */
-        public LoanList deriveEditList() {
+        public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             LoanList myList = getEmptyList(ListStyle.EDIT);
 
@@ -982,6 +984,7 @@ public class Loan
 
                 /* Build the new linked loan and add it to the list */
                 Loan myLoan = new Loan(myList, myCurr);
+                myLoan.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myLoan);
             }
 

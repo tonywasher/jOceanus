@@ -34,6 +34,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Currency;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
@@ -1104,11 +1105,25 @@ public final class JFieldCellEditor {
         private final transient JDecimalParser theParser;
 
         /**
+         * The assumed currency.
+         */
+        private transient Currency theCurrency;
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        public void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
+        }
+
+        /**
          * Constructor.
          * @param pParser the parser
          */
         protected MoneyCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
+            theCurrency = theParser.getDefaultCurrency();
         }
 
         @Override
@@ -1117,7 +1132,7 @@ public final class JFieldCellEditor {
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
-                    return theParser.parseMoneyValue((String) o);
+                    return theParser.parseMoneyValue((String) o, theCurrency);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -1218,11 +1233,25 @@ public final class JFieldCellEditor {
         private final transient JDecimalParser theParser;
 
         /**
+         * The assumed currency.
+         */
+        private transient Currency theCurrency;
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        public void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
+        }
+
+        /**
          * Constructor.
          * @param pParser the parser
          */
         protected PriceCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
+            theCurrency = theParser.getDefaultCurrency();
         }
 
         @Override
@@ -1231,7 +1260,7 @@ public final class JFieldCellEditor {
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
-                    return theParser.parsePriceValue((String) o);
+                    return theParser.parsePriceValue((String) o, theCurrency);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -1256,11 +1285,25 @@ public final class JFieldCellEditor {
         private final transient JDecimalParser theParser;
 
         /**
+         * The assumed currency.
+         */
+        private transient Currency theCurrency;
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        public void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
+        }
+
+        /**
          * Constructor.
          * @param pParser the parser
          */
         protected DilutedPriceCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
+            theCurrency = theParser.getDefaultCurrency();
         }
 
         @Override
@@ -1269,7 +1312,7 @@ public final class JFieldCellEditor {
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
-                    return theParser.parseDilutedPriceValue((String) o);
+                    return theParser.parseDilutedPriceValue((String) o, theCurrency);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
