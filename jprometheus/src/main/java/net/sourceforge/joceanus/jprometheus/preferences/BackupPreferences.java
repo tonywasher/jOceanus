@@ -113,7 +113,7 @@ public class BackupPreferences
     /**
      * Default value for Archive File.
      */
-    private static final String DEFAULT_ARCHIVE_FILE = DEFAULT_BACKUPDIR + File.pathSeparator + "Archive.xls";
+    private static final String DEFAULT_ARCHIVE_FILE = DEFAULT_BACKUPDIR + File.separator + "Archive.xls";
 
     /**
      * Default value for Last Event.

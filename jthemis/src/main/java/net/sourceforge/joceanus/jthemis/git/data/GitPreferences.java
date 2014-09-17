@@ -66,7 +66,7 @@ public class GitPreferences
     /**
      * Default value for SubversionRepository Base.
      */
-    private static final String DEFAULT_GIT_REPO = System.getProperty("user.home") + File.pathSeparator + "Git";
+    private static final String DEFAULT_GIT_REPO = System.getProperty("user.home") + File.separator + "Git";
 
     /**
      * Default value for SubversionRepository Name.
@@ -89,7 +89,7 @@ public class GitPreferences
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        defineStringPreference(NAME_GIT_REPO, DEFAULT_GIT_REPO);
+        defineDirectoryPreference(NAME_GIT_REPO, DEFAULT_GIT_REPO);
         defineStringPreference(NAME_GIT_NAME, DEFAULT_GIT_NAME);
         defineStringPreference(NAME_GIT_USER, DEFAULT_GIT_USER);
     }

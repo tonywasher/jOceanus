@@ -136,7 +136,7 @@ public class SubVersionPreferences
     /**
      * Base value for directories.
      */
-    private static final String BASE_DIR = System.getProperty("user.home") + File.pathSeparator;
+    private static final String BASE_DIR = System.getProperty("user.home") + File.separator;
     /**
      * Default value for SubversionWorkSpace.
      */

@@ -169,7 +169,7 @@ public final class GitComponent
 
             /* Build the initial path */
             myBuilder.append(pPath);
-            myBuilder.append(File.pathSeparatorChar);
+            myBuilder.append(File.separatorChar);
 
             /* Build the POM name */
             myBuilder.append(MvnProjectDefinition.POM_NAME);

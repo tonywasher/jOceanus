@@ -294,7 +294,7 @@ public final class JSvnManager {
      */
     private void runCheckOutWC() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.separator;
 
         /* Create and run createWorkingCopy thread */
         SvnBranch myBranch = theRepository.locateBranch(BASE_COMP, "v1.2.0");
@@ -310,7 +310,7 @@ public final class JSvnManager {
      */
     private void runCreateTagExtract() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.separator;
 
         /* Create and run createTagExtract thread */
         SvnTag myTag = theRepository.locateTag(BASE_COMP, BASE_BRANCH, 1);
@@ -346,7 +346,7 @@ public final class JSvnManager {
      */
     private void runCreateBranchTags() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.separator;
 
         /* Create and run createBranchTags thread */
         SvnBranch myBranch = theRepository.locateBranch(BASE_COMP, BASE_BRANCH);
@@ -362,7 +362,7 @@ public final class JSvnManager {
      */
     private void runCreateNewBranch() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.separator;
 
         /* Create and run createBranchTags thread */
         SvnTag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
