@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
@@ -753,60 +752,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         DataErrorList<DataItem<E>> myErrors = validate();
         if (myErrors != null) {
             throw new JPrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
-    }
-
-    /**
-     * Obtain first non-deleted item in the list.
-     * @return the item (or null if no non-deleted item)
-     */
-    public T getFirstItem() {
-        /* Loop through the items */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-
-            /* Return element that is not deleted */
-            if (!myCurr.isDeleted()) {
-                return myCurr;
-            }
-        }
-
-        /* We have no elements */
-        return null;
-    }
-
-    /**
-     * Obtain last non-deleted item in the list.
-     * @return the item (or null if no non-deleted item)
-     */
-    public T getLastItem() {
-        /* Loop through the items */
-        ListIterator<T> myIterator = listIterator();
-        while (myIterator.hasPrevious()) {
-            T myCurr = myIterator.previous();
-
-            /* Return element that is not deleted */
-            if (!myCurr.isDeleted()) {
-                return myCurr;
-            }
-        }
-
-        /* We have no elements */
-        return null;
-    }
-
-    /**
-     * Clear errors.
-     */
-    public void clearErrors() {
-        /* Create an iterator for the list */
-        Iterator<T> myIterator = iterator();
-
-        /* Loop through items clearing validation errors */
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            myCurr.clearErrors();
         }
     }
 

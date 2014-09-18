@@ -29,11 +29,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -448,7 +445,7 @@ public class TaxYearTable
      * Listener class.
      */
     private final class TaxYearListener
-            implements ActionListener, ChangeListener, ListSelectionListener {
+            implements ActionListener, ChangeListener {
         /**
          * Constructor.
          */
@@ -459,9 +456,6 @@ public class TaxYearTable
             theError.addChangeListener(this);
             theActiveYear.addChangeListener(this);
             theActiveYear.addActionListener(this);
-
-            /* Add selection listener */
-            getSelectionModel().addListSelectionListener(this);
         }
 
         @Override
@@ -503,26 +497,6 @@ public class TaxYearTable
 
                 /* Note changes */
                 notifyChanges();
-            }
-        }
-
-        @Override
-        public void valueChanged(final ListSelectionEvent pEvent) {
-            /* If we have finished selecting */
-            if (!pEvent.getValueIsAdjusting()) {
-                /* Access selection model */
-                ListSelectionModel myModel = getSelectionModel();
-                if (!myModel.isSelectionEmpty()) {
-                    /* Loop through the indices */
-                    int iIndex = myModel.getMinSelectionIndex();
-                    iIndex = convertRowIndexToModel(iIndex);
-                    TaxYear myYear = theTaxYears.get(iIndex);
-                    theActiveYear.setItem(myYear);
-                } else {
-                    theActiveYear.setEditable(false);
-                    theActiveYear.setItem(null);
-                    notifyChanges();
-                }
             }
         }
 
@@ -688,6 +662,21 @@ public class TaxYearTable
         }
 
         /**
+         * Is EdgeOfList?
+         * @param pItem the item
+         * @return true/false
+         */
+        private boolean isEdgeOfList(final TaxYear pItem) {
+            TaxYearList myList = pItem.getList();
+            TaxYear myNeighbour = myList.peekPrevious(pItem);
+            if ((myNeighbour == null) || myNeighbour.isDeleted()) {
+                return true;
+            }
+            myNeighbour = myList.peekNext(pItem);
+            return (myNeighbour == null) || myNeighbour.isDeleted();
+        }
+
+        /**
          * Is the cell editable?
          * @param pItem the item
          * @param pColIndex the column index
@@ -701,7 +690,7 @@ public class TaxYearTable
                 case COLUMN_REGIME:
                     return true;
                 case COLUMN_ACTIVE:
-                    return !pItem.isActive();
+                    return !pItem.isActive() && isEdgeOfList(pItem);
                 default:
                     return false;
             }

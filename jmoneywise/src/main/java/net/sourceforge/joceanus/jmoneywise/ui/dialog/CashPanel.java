@@ -369,9 +369,11 @@ public class CashPanel
         TransactionCategory myAutoExpense = myItem.getAutoExpense();
         Payee myAutoPayee = myItem.getAutoPayee();
         AccountCurrency myCurrency = myItem.getCashCurrency();
-        buildGoToEvent(myCategory);
-        buildGoToEvent(myCurrency);
-        buildGoToEvent(myAutoExpense);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myCategory);
+            buildGoToEvent(myCurrency);
+            buildGoToEvent(myAutoExpense);
+        }
         buildGoToEvent(myAutoPayee);
     }
 

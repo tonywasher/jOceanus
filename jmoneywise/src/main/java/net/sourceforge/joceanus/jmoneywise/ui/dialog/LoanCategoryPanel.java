@@ -198,7 +198,9 @@ public class LoanCategoryPanel
         LoanCategory myItem = getItem();
         LoanCategoryType myType = myItem.getCategoryType();
         LoanCategory myParent = myItem.getParentCategory();
-        buildGoToEvent(myType);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myType);
+        }
         buildGoToEvent(myParent);
     }
 

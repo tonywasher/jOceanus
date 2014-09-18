@@ -465,9 +465,11 @@ public class DepositPanel
         DepositCategory myCategory = myItem.getCategory();
         Payee myParent = myItem.getParent();
         AccountCurrency myCurrency = myItem.getDepositCurrency();
-        buildGoToEvent(myCategory);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myCategory);
+            buildGoToEvent(myCurrency);
+        }
         buildGoToEvent(myParent);
-        buildGoToEvent(myCurrency);
     }
 
     @Override

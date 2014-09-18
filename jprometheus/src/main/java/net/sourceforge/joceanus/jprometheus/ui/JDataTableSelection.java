@@ -138,12 +138,13 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
     public void handleSelectionChange() {
         /* Access selection model */
         int iIndex = -1;
+        int iRowCount = theTableModel.getViewRowCount();
         if (!theSelectionModel.isSelectionEmpty()) {
             /* Determine the selected item */
             iIndex = theSelectionModel.getMinSelectionIndex();
 
             /* perform a health check */
-            if (theTableModel.getViewRowCount() == 0) {
+            if (iRowCount == 0) {
                 iIndex = -1;
             }
 
@@ -159,6 +160,11 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
             DataList<T, E> myList = theTable.getList();
             T myCategory = myList.get(iIndex);
             theItemPanel.setItem(myCategory);
+
+            /* Check whether this item is EndOfList */
+            if (iIndex == 0 || iIndex == iRowCount - 1) {
+                theItemPanel.setEdgeOfList();
+            }
 
             /* else clear the item panel */
         } else {

@@ -372,9 +372,11 @@ public class LoanPanel
         LoanCategory myCategory = myItem.getCategory();
         Payee myParent = myItem.getParent();
         AccountCurrency myCurrency = myItem.getLoanCurrency();
-        buildGoToEvent(myCategory);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myCategory);
+            buildGoToEvent(myCurrency);
+        }
         buildGoToEvent(myParent);
-        buildGoToEvent(myCurrency);
     }
 
     /**

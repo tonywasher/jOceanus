@@ -196,7 +196,9 @@ public class TransactionCategoryPanel
         TransactionCategory myItem = getItem();
         TransactionCategoryType myType = myItem.getCategoryType();
         TransactionCategory myParent = myItem.getParentCategory();
-        buildGoToEvent(myType);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myType);
+        }
         buildGoToEvent(myParent);
     }
 

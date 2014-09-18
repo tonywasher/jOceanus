@@ -553,7 +553,15 @@ public class TaxYearPanel
     protected void buildGoToMenu() {
         TaxYear myItem = getItem();
         TaxRegime myRegime = myItem.getTaxRegime();
-        buildGoToEvent(myRegime);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myRegime);
+        }
+    }
+
+    @Override
+    protected boolean isDeletable() {
+        return super.isDeletable()
+               && isEdgeOfList();
     }
 
     /**

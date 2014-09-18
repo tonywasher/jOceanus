@@ -198,7 +198,9 @@ public class CashCategoryPanel
         CashCategory myItem = getItem();
         CashCategoryType myType = myItem.getCategoryType();
         CashCategory myParent = myItem.getParentCategory();
-        buildGoToEvent(myType);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myType);
+        }
         buildGoToEvent(myParent);
     }
 

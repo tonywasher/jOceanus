@@ -374,7 +374,9 @@ public class PayeePanel
     protected void buildGoToMenu() {
         Payee myItem = getItem();
         PayeeType myType = myItem.getPayeeType();
-        buildGoToEvent(myType);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myType);
+        }
     }
 
     /**

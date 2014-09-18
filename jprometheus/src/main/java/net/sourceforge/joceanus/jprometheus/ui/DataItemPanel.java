@@ -134,6 +134,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     private transient boolean isNew = false;
 
     /**
+     * Is this item on the edge of the list.
+     */
+    private transient boolean isEdgeOfList = false;
+
+    /**
      * Obtain the formatter.
      * @return the formatter
      */
@@ -204,6 +209,14 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      */
     public boolean isNew() {
         return isNew;
+    }
+
+    /**
+     * Is the item on the edge of the list?
+     * @return true/false
+     */
+    public boolean isEdgeOfList() {
+        return isEdgeOfList;
     }
 
     /**
@@ -308,6 +321,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         if ((pItem != null) || !isEditing()) {
             /* Store the element */
             theItem = pItem;
+            isEdgeOfList = false;
 
             /* Set readOnly */
             setEditable(false);
@@ -321,6 +335,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     public void setNewItem(final T pItem) {
         /* Store the element */
         theSelectedItem = theItem;
+        isEdgeOfList = false;
         theItem = pItem;
         isNew = true;
 
@@ -329,6 +344,13 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
         /* Note status has changed */
         fireStateChanged();
+    }
+
+    /**
+     * Set edgeOfList indication.
+     */
+    protected void setEdgeOfList() {
+        isEdgeOfList = true;
     }
 
     /**

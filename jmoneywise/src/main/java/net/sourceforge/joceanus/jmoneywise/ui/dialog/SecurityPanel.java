@@ -347,9 +347,11 @@ public class SecurityPanel
         SecurityType myType = myItem.getSecurityType();
         Payee myParent = myItem.getParent();
         AccountCurrency myCurrency = myItem.getSecurityCurrency();
-        buildGoToEvent(myType);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myType);
+            buildGoToEvent(myCurrency);
+        }
         buildGoToEvent(myParent);
-        buildGoToEvent(myCurrency);
     }
 
     @Override

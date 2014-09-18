@@ -203,7 +203,9 @@ public class DepositCategoryPanel
         DepositCategory myItem = getItem();
         DepositCategoryType myType = myItem.getCategoryType();
         DepositCategory myParent = myItem.getParentCategory();
-        buildGoToEvent(myType);
+        if (!getUpdateSet().hasUpdates()) {
+            buildGoToEvent(myType);
+        }
         buildGoToEvent(myParent);
     }
 
