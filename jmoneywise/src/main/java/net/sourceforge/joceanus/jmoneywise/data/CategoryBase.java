@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CategoryInterface;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
@@ -710,6 +711,11 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected CategoryDataMap<T> getDataMap() {
+            return (CategoryDataMap<T>) super.getDataMap();
+        }
+
         /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
@@ -850,6 +856,41 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
                 T myCurr = myIterator.next();
                 myCurr.resolveUpdateSetLinks();
             }
+        }
+
+        @Override
+        protected CategoryDataMap<T> allocateDataMap() {
+            return new CategoryDataMap<T>();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class CategoryDataMap<T extends CategoryBase<T, ?, ?>>
+            extends DataInstanceMap<T, String> {
+        @Override
+        public void adjustForItem(final T pItem) {
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by name.
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public T findItemByName(final String pName) {
+            return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of name.
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+            return validKeyCount(pName);
         }
     }
 }

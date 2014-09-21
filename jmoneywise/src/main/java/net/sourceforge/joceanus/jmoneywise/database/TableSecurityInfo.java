@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -45,11 +44,6 @@ public class TableSecurityInfo
     protected static final String TABLE_NAME = SecurityInfo.LIST_NAME;
 
     /**
-     * Securities data list.
-     */
-    private SecurityList theSecurities = null;
-
-    /**
      * The SecurityInfo list.
      */
     private SecurityInfoList theList = null;
@@ -65,7 +59,6 @@ public class TableSecurityInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theSecurities = myData.getSecurities();
         theList = myData.getSecurityInfo();
         setList(theList);
     }
@@ -74,14 +67,5 @@ public class TableSecurityInfo
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(SecurityInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Validate */
-        theList.validateOnLoad();
-
-        /* Validate the securities */
-        theSecurities.validateOnLoad();
     }
 }

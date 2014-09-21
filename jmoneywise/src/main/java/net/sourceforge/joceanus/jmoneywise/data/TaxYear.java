@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -38,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
@@ -45,6 +47,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
@@ -1005,6 +1008,56 @@ public class TaxYear
 
             /* Return it */
             return myYear;
+        }
+
+        @Override
+        protected TaxYearDataMap allocateDataMap() {
+            return new TaxYearDataMap();
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Calculate the date range */
+            getDataSet().calculateDateRange();
+
+            /* Resolve links and sort the data */
+            resolveDataSetLinks();
+            reSort();
+
+            /* Map the data */
+            mapData();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class TaxYearDataMap
+            extends DataInstanceMap<TaxYear, JDateDay>
+            implements JDataContents {
+        @Override
+        public void adjustForItem(final TaxYear pItem) {
+            /* Adjust year count */
+            adjustForItem(pItem, pItem.getTaxYear());
+        }
+
+        /**
+         * find item by date.
+         * @param pDate the date to look up
+         * @return the matching item
+         */
+        public TaxYear findItemByDate(final JDateDay pDate) {
+            JDateDay myDate = JFiscalYear.UK.normaliseDate(pDate);
+            return findItemByKey(myDate);
+        }
+
+        /**
+         * Check validity of date.
+         * @param pDate the date to look up
+         * @return true/false
+         */
+        public boolean validDateCount(final JDateDay pDate) {
+            return validKeyCount(pDate);
         }
     }
 }

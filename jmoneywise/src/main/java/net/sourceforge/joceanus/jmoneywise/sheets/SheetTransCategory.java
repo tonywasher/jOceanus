@@ -127,16 +127,6 @@ public class SheetTransCategory
         return COL_DESC;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the event categories */
-        theList.validateOnLoad();
-    }
-
     /**
      * Load the EventCategories from an archive.
      * @param pTask the task control
@@ -210,12 +200,8 @@ public class SheetTransCategory
                 }
             }
 
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Validate the categories */
-            myList.validateOnLoad();
+            /* PostProcess on load */
+            myList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {

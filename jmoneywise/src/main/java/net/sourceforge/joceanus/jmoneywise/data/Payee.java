@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -34,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -44,6 +47,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -1100,6 +1105,141 @@ public class Payee
 
             /* Return no payee */
             return null;
+        }
+
+        @Override
+        protected PayeeDataMap allocateDataMap() {
+            return new PayeeDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class PayeeDataMap
+            extends DataInstanceMap<Payee, String> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+
+        /**
+         * CategoryMap Field Id.
+         */
+        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+
+        /**
+         * CategoryCountMap Field Id.
+         */
+        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARCOUNT.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_CATMAP.equals(pField)) {
+                return thePayeeMap;
+            }
+            if (FIELD_CATCOUNT.equals(pField)) {
+                return thePayeeCountMap;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of category counts.
+         */
+        private final Map<Integer, Integer> thePayeeCountMap;
+
+        /**
+         * Map of singular categories.
+         */
+        private final Map<Integer, Payee> thePayeeMap;
+
+        /**
+         * Constructor.
+         */
+        public PayeeDataMap() {
+            /* Create the maps */
+            thePayeeCountMap = new HashMap<Integer, Integer>();
+            thePayeeMap = new HashMap<Integer, Payee>();
+        }
+
+        @Override
+        public void resetMap() {
+            super.resetMap();
+            thePayeeCountMap.clear();
+            thePayeeMap.clear();
+        }
+
+        @Override
+        public void adjustForItem(final Payee pItem) {
+            /* If the class is singular */
+            PayeeTypeClass myClass = pItem.getPayeeTypeClass();
+            if (myClass.isSingular()) {
+                /* Adjust category count */
+                Integer myId = myClass.getClassId();
+                Integer myCount = thePayeeCountMap.get(myId);
+                if (myCount == null) {
+                    thePayeeCountMap.put(myId, ONE);
+                } else {
+                    thePayeeCountMap.put(myId, myCount + 1);
+                }
+
+                /* Adjust payee map */
+                thePayeeMap.put(myId, pItem);
+            }
+
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by name.
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public Payee findItemByName(final String pName) {
+            return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of name.
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+            return validKeyCount(pName);
+        }
+
+        /**
+         * find singular item.
+         * @param pClass the class to look up
+         * @return the matching item
+         */
+        public Payee findSingularItem(final TransactionCategoryClass pClass) {
+            return thePayeeMap.get(pClass.getClassId());
+        }
+
+        /**
+         * Check validity of singular count.
+         * @param pClass the class to look up
+         * @return true/false
+         */
+        public boolean validSingularCount(final TransactionCategoryClass pClass) {
+            Integer myResult = thePayeeCountMap.get(pClass.getClassId());
+            return ONE.equals(myResult);
         }
     }
 }

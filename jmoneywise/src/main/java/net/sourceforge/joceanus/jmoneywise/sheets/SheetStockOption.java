@@ -147,11 +147,4 @@ public class SheetStockOption
         /* Return the last column */
         return COL_CLOSED;
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
 }

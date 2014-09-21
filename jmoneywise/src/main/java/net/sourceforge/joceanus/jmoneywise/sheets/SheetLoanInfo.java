@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -43,11 +42,6 @@ public class SheetLoanInfo
     private static final String AREA_LOANINFO = LoanInfo.LIST_NAME;
 
     /**
-     * Loans data list.
-     */
-    private LoanList theLoans = null;
-
-    /**
      * LoanInfo data list.
      */
     private final LoanInfoList theList;
@@ -62,7 +56,6 @@ public class SheetLoanInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theLoans = myData.getLoans();
         theList = myData.getLoanInfo();
         setDataList(theList);
     }
@@ -85,14 +78,5 @@ public class SheetLoanInfo
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(LoanInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks and validate */
-        theList.validateOnLoad();
-
-        /* Validate the loans */
-        theLoans.validateOnLoad();
     }
 }

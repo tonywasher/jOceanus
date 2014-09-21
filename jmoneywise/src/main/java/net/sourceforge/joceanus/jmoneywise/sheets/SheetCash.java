@@ -136,13 +136,6 @@ public class SheetCash
         return COL_CLOSED;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
-
     /**
      * Process cash row from archive.
      * @param pLoader the archive loader

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -45,11 +44,6 @@ public class TablePayeeInfo
     protected static final String TABLE_NAME = PayeeInfo.LIST_NAME;
 
     /**
-     * Payee data list.
-     */
-    private PayeeList thePayees = null;
-
-    /**
      * The PayeeInfo list.
      */
     private PayeeInfoList theList = null;
@@ -65,7 +59,6 @@ public class TablePayeeInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        thePayees = myData.getPayees();
         theList = myData.getPayeeInfo();
         setList(theList);
     }
@@ -74,14 +67,5 @@ public class TablePayeeInfo
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(PayeeInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Validate */
-        theList.validateOnLoad();
-
-        /* Validate the payees */
-        thePayees.validateOnLoad();
     }
 }

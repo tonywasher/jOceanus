@@ -120,16 +120,6 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Calculate the date range */
-        theData.calculateDateRange();
-    }
-
-    @Override
     protected int getLastColumn() {
         /* Return the last column */
         return COL_REGIME;
@@ -289,12 +279,9 @@ public class SheetTaxYear
                 }
             }
 
-            /* Sort the list */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Validate the tax years */
-            myList.validateOnLoad();
+            /* PostProcess the lists */
+            myList.postProcessOnLoad();
+            myInfoList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {

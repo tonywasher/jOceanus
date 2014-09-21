@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -34,11 +36,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -664,6 +668,11 @@ public class SecurityPrice
             /* return to caller */
             return iCount;
         }
+
+        @Override
+        protected SecurityPriceDataMap<T> allocateDataMap() {
+            return new SecurityPriceDataMap<T>();
+        }
     }
 
     /**
@@ -836,6 +845,107 @@ public class SecurityPrice
 
             /* Return it */
             return myPrice;
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class SecurityPriceDataMap<T extends SecurityPrice>
+            extends DataInstanceMap<T, JDateDay> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+
+        /**
+         * CategoryMap Field Id.
+         */
+        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_MAPOFMAPS.equals(pField)) {
+                return theMapOfMaps;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of Maps.
+         */
+        private final Map<Integer, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Constructor.
+         */
+        public SecurityPriceDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<Integer, Map<JDateDay, Integer>>();
+        }
+
+        @Override
+        public void resetMap() {
+            theMapOfMaps.clear();
+        }
+
+        @Override
+        public void adjustForItem(final T pItem) {
+            /* Access the Security Id */
+            Security mySecurity = pItem.getSecurity();
+            if (mySecurity == null) {
+                return;
+            }
+            Integer myId = mySecurity.getId();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            if (myMap == null) {
+                myMap = new HashMap<JDateDay, Integer>();
+                theMapOfMaps.put(myId, myMap);
+            }
+
+            /* Adjust price count */
+            JDateDay myDate = pItem.getDate();
+            Integer myCount = myMap.get(myDate);
+            if (myCount == null) {
+                myMap.put(myDate, ONE);
+            } else {
+                myMap.put(myDate, myCount + 1);
+            }
+        }
+
+        /**
+         * Check validity of Price.
+         * @param pItem the price
+         * @return true/false
+         */
+        public boolean validPriceCount(final T pItem) {
+            /* Access the Details */
+            Security mySecurity = pItem.getSecurity();
+            Integer myId = mySecurity.getId();
+            JDateDay myDate = pItem.getDate();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            if (myMap != null) {
+                Integer myResult = myMap.get(myDate);
+                return ONE.equals(myResult);
+            }
+            return false;
         }
     }
 }

@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
@@ -385,6 +386,16 @@ public class StockOptionInfo
 
             /* Return it */
             return myInfo;
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Validate the OptionInfo */
+            validateOnLoad();
+
+            /* Validate the Options */
+            StockOptionList myOptions = getDataSet().getStockOptions();
+            myOptions.validateOnLoad();
         }
     }
 }

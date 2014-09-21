@@ -879,6 +879,18 @@ public final class ControlKey
             /* return the cloned key */
             return myControl;
         }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Just sort the list */
+            reSort();
+        }
+
+        @Override
+        protected DataInstanceMap<ControlKey, ?> allocateDataMap() {
+            /* Unused */
+            return null;
+        }
     }
 
     /**

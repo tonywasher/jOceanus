@@ -211,6 +211,26 @@ public enum PrometheusDataResource implements ResourceId {
     DATALIST_SIZE("DataList.Size"),
 
     /**
+     * DataList Maps.
+     */
+    DATALIST_MAPS("DataList.Maps"),
+
+    /**
+     * DataMap Name.
+     */
+    DATAMAP_NAME("DataMap.Name"),
+
+    /**
+     * DataMap Keys.
+     */
+    DATAMAP_KEYS("DataMap.Keys"),
+
+    /**
+     * DataMap KeyCounts.
+     */
+    DATAMAP_KEYCOUNTS("DataMap.KeyCounts"),
+
+    /**
      * EncryptedItem Name.
      */
     ENCRYPTED_NAME("Encrypted.Name"),
@@ -249,6 +269,16 @@ public enum PrometheusDataResource implements ResourceId {
      * StaticData Name Error.
      */
     STATICDATA_ERROR_NAME("Static.Error.BadName"),
+
+    /**
+     * StaticDataMap Name.
+     */
+    STATICDATAMAP_NAME("StaticMap.Name"),
+
+    /**
+     * StaticDataMap OrderCounts.
+     */
+    STATICDATAMAP_ORDERCOUNTS("StaticMap.OrderCounts"),
 
     /**
      * DataInfo Name.

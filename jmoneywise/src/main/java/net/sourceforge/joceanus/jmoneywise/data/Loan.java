@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -1040,6 +1041,41 @@ public class Loan
 
             /* Return it */
             return myLoan;
+        }
+
+        @Override
+        protected LoanDataMap allocateDataMap() {
+            return new LoanDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class LoanDataMap
+            extends DataInstanceMap<Loan, String> {
+        @Override
+        public void adjustForItem(final Loan pItem) {
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by name.
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public Loan findItemByName(final String pName) {
+            return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of name.
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+            return validKeyCount(pName);
         }
     }
 }

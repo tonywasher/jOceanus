@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -43,11 +42,6 @@ public class SheetTransactionInfo
     private static final String AREA_TRANSINFO = TransactionInfo.LIST_NAME;
 
     /**
-     * Transaction data list.
-     */
-    private final TransactionList theTransactions;
-
-    /**
      * TransactionInfo data list.
      */
     private final TransactionInfoList theList;
@@ -62,7 +56,6 @@ public class SheetTransactionInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theTransactions = myData.getTransactions();
         theList = myData.getTransactionInfo();
         setDataList(theList);
     }
@@ -76,7 +69,6 @@ public class SheetTransactionInfo
         super(pWriter, AREA_TRANSINFO);
 
         /* Access the InfoType list */
-        theTransactions = null;
         theList = pWriter.getData().getTransactionInfo();
         setDataList(theList);
     }
@@ -85,15 +77,5 @@ public class SheetTransactionInfo
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TransactionInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks and validate */
-        theList.resolveValueLinks();
-        theList.validateOnLoad();
-
-        /* Validate the transactions */
-        theTransactions.validateOnLoad();
     }
 }

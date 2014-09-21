@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -295,7 +295,7 @@ public class AccountCurrency
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -315,6 +315,11 @@ public class AccountCurrency
         @Override
         protected Class<AccountCurrencyClass> getEnumClass() {
             return AccountCurrencyClass.class;
+        }
+
+        @Override
+        protected CurrencyDataMap getDataMap() {
+            return (CurrencyDataMap) super.getDataMap();
         }
 
         /**
@@ -374,12 +379,6 @@ public class AccountCurrency
             /* Create a new Account Currency */
             AccountCurrency myCurr = new AccountCurrency(this, pCurrency);
 
-            /* Check that this AccountCurrency has not been previously added */
-            if (findItemByName(pCurrency) != null) {
-                myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-            }
-
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -388,14 +387,6 @@ public class AccountCurrency
 
             /* Add the Account Currency to the list */
             append(myCurr);
-
-            /* Validate the Currency */
-            myCurr.validate();
-
-            /* Handle validation failure */
-            if (myCurr.hasErrors()) {
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-            }
         }
 
         @Override
@@ -418,23 +409,6 @@ public class AccountCurrency
 
         @Override
         public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (AccountCurrencyClass myClass : AccountCurrencyClass.values()) {
-                /* Create new element */
-                AccountCurrency myCurr = new AccountCurrency(this, myClass);
-
-                /* Add the AccountCurrency to the list */
-                append(myCurr);
-
-                /* Validate the AccountCurrency */
-                myCurr.validate();
-
-                /* Handle validation failure */
-                if (myCurr.hasErrors()) {
-                    throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-                }
-            }
-
             /* Initialise the default currency */
             initialiseDefault();
 
@@ -472,22 +446,11 @@ public class AccountCurrency
          * @return The currency
          */
         public AccountCurrency findCurrency(final Currency pCurrency) {
-            /* Access the iterator */
-            Iterator<AccountCurrency> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                AccountCurrency myCurr = myIterator.next();
-
-                /* If this is a default value */
-                if (pCurrency.equals(myCurr.getCurrency())) {
-                    /* return the currency */
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
+            /* Look up the currency */
+            AccountCurrencyClass myClass = AccountCurrencyClass.fromCurrency(pCurrency);
+            return myClass == null
+                                  ? null
+                                  : findItemByClass(myClass);
         }
 
         /**
@@ -495,11 +458,9 @@ public class AccountCurrency
          * @return The # of default currencies
          */
         protected int countDefaults() {
-            /* Access the iterator */
-            Iterator<AccountCurrency> myIterator = iterator();
-            int iCount = 0;
-
             /* Loop through the items to find the entry */
+            int iCount = 0;
+            Iterator<AccountCurrency> myIterator = iterator();
             while (myIterator.hasNext()) {
                 AccountCurrency myCurr = myIterator.next();
 
@@ -519,10 +480,8 @@ public class AccountCurrency
          * @return The default currency
          */
         public AccountCurrency findDefault() {
-            /* Access the iterator */
-            Iterator<AccountCurrency> myIterator = iterator();
-
             /* Loop through the items to find the entry */
+            Iterator<AccountCurrency> myIterator = iterator();
             while (myIterator.hasNext()) {
                 AccountCurrency myCurr = myIterator.next();
 
@@ -576,6 +535,101 @@ public class AccountCurrency
                 pCurrency.pushHistory();
                 pCurrency.setDefault(Boolean.TRUE);
             }
+        }
+
+        @Override
+        protected CurrencyDataMap allocateDataMap() {
+            return new CurrencyDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static final class CurrencyDataMap
+            extends StaticDataMap<AccountCurrency> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), StaticDataMap.FIELD_DEFS);
+
+        /**
+         * Default Field Id.
+         */
+        public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_DEFAULT.equals(pField)) {
+                return theDefault;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Default value.
+         */
+        private AccountCurrency theDefault;
+
+        /**
+         * Default count.
+         */
+        private Integer theDefaultCount;
+
+        /**
+         * Constructor.
+         */
+        private CurrencyDataMap() {
+        }
+
+        @Override
+        public void resetMap() {
+            super.resetMap();
+            theDefault = null;
+            theDefaultCount = null;
+        }
+
+        @Override
+        public void adjustForItem(final AccountCurrency pItem) {
+            /* Adjust order count */
+            if (pItem.isDefault()) {
+                theDefault = pItem;
+                theDefaultCount = theDefaultCount == null
+                                                         ? ONE
+                                                         : theDefaultCount + 1;
+            }
+
+            /* Adjust name/order count */
+            super.adjustForItem(pItem);
+        }
+
+        /**
+         * find default currency.
+         * @return the default currency
+         */
+        public AccountCurrency getDefault() {
+            return theDefault;
+        }
+
+        /**
+         * Check validity of default count.
+         * @return true/false
+         */
+        public boolean validDefaultCount() {
+            return ONE.equals(theDefaultCount);
         }
     }
 }

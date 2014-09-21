@@ -112,14 +112,4 @@ public class TableLoanCategory
             super.setFieldValue(pItem, iField);
         }
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and sort the data */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the data */
-        theList.validateOnLoad();
-    }
 }

@@ -415,9 +415,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                 bContinue = readXMLListFromFile(myList, pZipFile);
             }
 
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
+            /* postProcessList after load */
+            myList.postProcessOnLoad();
         }
 
         /* Create the control data */

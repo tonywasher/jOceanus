@@ -315,8 +315,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the list */
-        theList.reSort();
+        /* postProcess the list */
+        theList.postProcessOnLoad();
     }
 
     /**

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -37,17 +36,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
         extends TableEncrypted<T, E> {
-    /**
-     * The list of items for this table.
-     */
-    private DataList<T, E> theList = null;
-
-    @Override
-    protected void setList(final DataList<T, E> pList) {
-        super.setList(pList);
-        theList = pList;
-    }
-
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -98,14 +86,5 @@ public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends E
         myValues.addValue(StaticData.FIELD_ORDER, myTableDef.getIntegerValue(StaticData.FIELD_ORDER));
         myValues.addValue(StaticData.FIELD_ENABLED, myTableDef.getBooleanValue(StaticData.FIELD_ENABLED));
         return myValues;
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
-        theList.reSort();
-
-        /* Validate the data */
-        theList.validateOnLoad();
     }
 }

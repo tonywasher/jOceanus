@@ -962,5 +962,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                                          final O pOwner,
                                          final S pInfoClass,
                                          final Object pValue) throws JOceanusException;
+
+        @Override
+        protected DataInstanceMap<T, ?> allocateDataMap() {
+            /* Unused */
+            return null;
+        }
     }
 }

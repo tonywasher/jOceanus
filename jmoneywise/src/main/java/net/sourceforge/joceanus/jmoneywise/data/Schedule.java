@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Calendar;
+import java.time.Month;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -66,10 +67,15 @@ public class Schedule
     public static final int BASE_TAXYEAR = 2000;
 
     /**
+     * Interesting TaxYear.
+     */
+    public static final int END_OF_MONTH_DAY = 5;
+
+    /**
      * The interesting date range.
      */
-    public static final JDateDayRange RANGE_SCHEDULE = new JDateDayRange(new JDateDay(BASE_TAXYEAR - 1, Calendar.APRIL, TaxYear.END_OF_MONTH_DAY + 1),
-            new JDateDay(BASE_TAXYEAR, Calendar.APRIL, TaxYear.END_OF_MONTH_DAY));
+    public static final JDateDayRange RANGE_SCHEDULE = new JDateDayRange(new JDateDay(BASE_TAXYEAR - 1, Month.APRIL, END_OF_MONTH_DAY + 1),
+            new JDateDay(BASE_TAXYEAR, Month.APRIL, END_OF_MONTH_DAY));
 
     /**
      * Report fields.
@@ -587,6 +593,21 @@ public class Schedule
 
             /* Return it */
             return mySchedule;
+        }
+
+        @Override
+        protected DataInstanceMap<Schedule, ?> allocateDataMap() {
+            return null;
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Resolve links and sort the data */
+            resolveDataSetLinks();
+            reSort();
+
+            /* Validate the schedules */
+            validateOnLoad();
         }
     }
 }

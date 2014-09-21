@@ -43,11 +43,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_RANGE("MoneyWiseData.DateRange"),
 
     /**
-     * MoneyWiseData Default Currency.
-     */
-    MONEYWISEDATA_CURRENCY("MoneyWiseData.DefaultCurrency"),
-
-    /**
      * MoneyWiseData Date.
      */
     MONEYWISEDATA_FIELD_DATE("MoneyWiseData.Field.Date"),
@@ -93,6 +88,21 @@ public enum MoneyWiseDataResource implements ResourceId {
     CATEGORY_NEWCAT("Category.NewCategory"),
 
     /**
+     * Category DataMap.
+     */
+    CATEGORY_DATAMAP("Category.DataMap"),
+
+    /**
+     * Category SingularMap.
+     */
+    CATEGORY_SINGULARMAP("Category.SingularMap"),
+
+    /**
+     * Category SingularCounts.
+     */
+    CATEGORY_SINGULARCOUNT("Category.SingularCounts"),
+
+    /**
      * Category Error BadParent.
      */
     CATEGORY_ERROR_BADPARENT("Category.Error.BadParent"),
@@ -121,11 +131,6 @@ public enum MoneyWiseDataResource implements ResourceId {
      * ExchangeRate Rate.
      */
     XCHGRATE_RATE("ExchangeRate.Rate"),
-
-    /**
-     * ExchangeRate Default.
-     */
-    XCHGRATE_DEFAULT("MoneyWiseData.DefaultCurrency"),
 
     /**
      * ExchangeRate Circular Error.
@@ -261,6 +266,11 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Payee NewAccount.
      */
     PAYEE_NEWACCOUNT("Payee.NewAccount"),
+
+    /**
+     * Payee DataMap.
+     */
+    PAYEE_DATAMAP("Payee.DataMap"),
 
     /**
      * Security Symbol.

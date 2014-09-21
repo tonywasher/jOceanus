@@ -132,8 +132,8 @@ public class SheetTransCategoryType
                 }
             }
 
-            /* Sort the list */
-            myList.reSort();
+            /* PostProcess the list */
+            myList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {

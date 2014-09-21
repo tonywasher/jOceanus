@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -154,7 +153,7 @@ public class TransactionInfoType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -233,12 +232,6 @@ public class TransactionInfoType
             /* Create a new InfoType */
             TransactionInfoType myType = new TransactionInfoType(this, pType);
 
-            /* Check that this InfoType has not been previously added */
-            if (findItemByName(pType) != null) {
-                myType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-            }
-
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -247,14 +240,6 @@ public class TransactionInfoType
 
             /* Add the Type to the list */
             append(myType);
-
-            /* Validate the InfoType */
-            myType.validate();
-
-            /* Handle validation failure */
-            if (myType.hasErrors()) {
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-            }
         }
 
         @Override

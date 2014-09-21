@@ -633,5 +633,17 @@ public class DataKey
             add(myKey);
             return myKey;
         }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Just sort the list */
+            reSort();
+        }
+
+        @Override
+        protected DataInstanceMap<DataKey, ?> allocateDataMap() {
+            /* Unused */
+            return null;
+        }
     }
 }

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -45,16 +44,6 @@ public class TableTaxYearInfo
     protected static final String TABLE_NAME = TaxYearInfo.LIST_NAME;
 
     /**
-     * The DataSet.
-     */
-    private MoneyWiseData theData = null;
-
-    /**
-     * TaxYear data list.
-     */
-    private TaxYearList theTaxYears = null;
-
-    /**
      * The TaxInfo list.
      */
     private TaxInfoList theList = null;
@@ -70,8 +59,6 @@ public class TableTaxYearInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theData = myData;
-        theTaxYears = myData.getTaxYears();
         theList = myData.getTaxInfo();
         setList(theList);
     }
@@ -80,17 +67,5 @@ public class TableTaxYearInfo
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TaxYearInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Calculate the date range */
-        theData.calculateDateRange();
-
-        /* Validate */
-        theList.validateOnLoad();
-
-        /* Validate the tax years */
-        theTaxYears.validateOnLoad();
     }
 }

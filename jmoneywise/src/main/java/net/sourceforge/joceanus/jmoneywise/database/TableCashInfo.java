@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -45,11 +44,6 @@ public class TableCashInfo
     protected static final String TABLE_NAME = CashInfo.LIST_NAME;
 
     /**
-     * Deposits data list.
-     */
-    private CashList theCash = null;
-
-    /**
      * The CashInfo list.
      */
     private CashInfoList theList = null;
@@ -65,7 +59,6 @@ public class TableCashInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theCash = myData.getCash();
         theList = myData.getCashInfo();
         setList(theList);
     }
@@ -74,15 +67,5 @@ public class TableCashInfo
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(CashInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks and validate */
-        theList.resolveValueLinks();
-        theList.validateOnLoad();
-
-        /* Validate the cash */
-        theCash.validateOnLoad();
     }
 }

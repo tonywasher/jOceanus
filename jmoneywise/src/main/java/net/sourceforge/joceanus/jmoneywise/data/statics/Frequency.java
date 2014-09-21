@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -127,7 +126,7 @@ public class Frequency
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -215,12 +214,6 @@ public class Frequency
             /* Create a new Frequency */
             Frequency myFrequency = new Frequency(this, pFrequency);
 
-            /* Check that this Frequency has not been previously added */
-            if (findItemByName(pFrequency) != null) {
-                myFrequency.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
-            }
-
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFrequency.getId())) {
                 myFrequency.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -229,14 +222,6 @@ public class Frequency
 
             /* Add the Frequency to the list */
             append(myFrequency);
-
-            /* Validate the Frequency */
-            myFrequency.validate();
-
-            /* Handle validation failure */
-            if (myFrequency.hasErrors()) {
-                throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
-            }
         }
 
         @Override

@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Schedule;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -508,7 +509,7 @@ public class ArchiveLoader {
             }
 
             /* Create the date */
-            theDate = new JDateDay(myYear, Month.APRIL, TaxYear.END_OF_MONTH_DAY);
+            theDate = new JDateDay(myYear, Month.APRIL, Schedule.END_OF_MONTH_DAY);
         }
     }
 

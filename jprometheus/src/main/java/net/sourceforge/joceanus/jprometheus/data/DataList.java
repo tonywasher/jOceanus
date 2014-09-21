@@ -93,6 +93,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME.getValue());
 
     /**
+     * MapData Field Id.
+     */
+    private static final JDataField FIELD_MAPS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATALIST_MAPS.getValue());
+
+    /**
      * Generation Field Id.
      */
     public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
@@ -155,6 +160,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                                     ? JDataFieldValue.SKIP
                                     : theBase;
         }
+        if (FIELD_MAPS.equals(pField)) {
+            return (theDataMap == null)
+                                       ? JDataFieldValue.SKIP
+                                       : theDataMap;
+        }
         if (FIELD_ERRORS.equals(pField)) {
             return JDataFieldValue.SKIP;
         }
@@ -212,6 +222,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * The base list (for extracts).
      */
     private DataList<? extends DataItem<E>, E> theBase = null;
+
+    /**
+     * DataMap.
+     */
+    private DataInstanceMap<T, ?> theDataMap;
 
     /**
      * The generation.
@@ -309,6 +324,14 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public DataList<?, E> getBaseList() {
         return theBase;
+    }
+
+    /**
+     * Obtain the DataMap.
+     * @return the enumClass
+     */
+    protected DataInstanceMap<T, ?> getDataMap() {
+        return theDataMap;
     }
 
     /**
@@ -502,10 +525,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @throws JOceanusException on error
      */
     public void resolveDataSetLinks() throws JOceanusException {
-        /* Create an iterator for all items in the list */
-        Iterator<? extends DataItem<E>> myIterator = iterator();
-
         /* Loop through the list */
+        Iterator<? extends DataItem<E>> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
             DataItem<E> myCurr = myIterator.next();
@@ -753,6 +774,52 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         if (myErrors != null) {
             throw new JPrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
+    }
+
+    /**
+     * Allocate the dataMap.
+     * @return the dataMap
+     */
+    protected abstract DataInstanceMap<T, ?> allocateDataMap();
+
+    /**
+     * Build map of the data.
+     */
+    protected void mapData() {
+        /* Allocate/Reset the map */
+        if (theDataMap == null) {
+            theDataMap = allocateDataMap();
+        } else {
+            theDataMap.resetMap();
+        }
+
+        /* Loop through the items */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myItem = myIterator.next();
+
+            /* If the item is not deleted */
+            if (!myItem.isDeleted()) {
+                /* Map the item */
+                theDataMap.adjustForItem(myItem);
+            }
+        }
+    }
+
+    /**
+     * PostProcess a loaded list.
+     * @throws JOceanusException on error
+     */
+    public void postProcessOnLoad() throws JOceanusException {
+        /* Default action is to resolve links and then sort */
+        resolveDataSetLinks();
+        reSort();
+
+        /* Map the data */
+        mapData();
+
+        /* Now validate the list */
+        validateOnLoad();
     }
 
     /**

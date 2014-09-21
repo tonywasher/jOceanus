@@ -132,17 +132,4 @@ public class TableSchedule
             super.setFieldValue(pItem, iField);
         }
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and sort the data */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
-        /* Validate the schedules */
-        theList.validateOnLoad();
-    }
 }

@@ -171,13 +171,6 @@ public class SheetTransaction
         return COL_PARENT;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
-
     /**
      * Load the Events from an archive.
      * @param pTask the task control

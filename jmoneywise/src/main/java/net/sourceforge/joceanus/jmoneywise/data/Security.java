@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -1233,6 +1234,41 @@ public class Security
 
             /* Return no security */
             return null;
+        }
+
+        @Override
+        protected SecurityDataMap allocateDataMap() {
+            return new SecurityDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class SecurityDataMap
+            extends DataInstanceMap<Security, String> {
+        @Override
+        public void adjustForItem(final Security pItem) {
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by name.
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public Security findItemByName(final String pName) {
+            return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of name.
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+            return validKeyCount(pName);
         }
     }
 }

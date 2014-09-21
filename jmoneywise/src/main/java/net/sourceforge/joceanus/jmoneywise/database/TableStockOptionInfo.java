@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -45,11 +44,6 @@ public class TableStockOptionInfo
     protected static final String TABLE_NAME = StockOptionInfo.LIST_NAME;
 
     /**
-     * StockOptions data list.
-     */
-    private StockOptionList theOptions = null;
-
-    /**
      * The StockOptionInfo list.
      */
     private StockOptionInfoList theList = null;
@@ -65,7 +59,6 @@ public class TableStockOptionInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theOptions = myData.getStockOptions();
         theList = myData.getStockOptionInfo();
         setList(theList);
     }
@@ -74,14 +67,5 @@ public class TableStockOptionInfo
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(StockOptionInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Validate */
-        theList.validateOnLoad();
-
-        /* Validate the options */
-        theOptions.validateOnLoad();
     }
 }

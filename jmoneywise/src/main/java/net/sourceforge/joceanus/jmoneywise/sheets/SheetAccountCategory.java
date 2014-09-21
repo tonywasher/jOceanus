@@ -199,24 +199,16 @@ public final class SheetAccountCategory {
      * @throws JOceanusException on error
      */
     private static void resolveCategoryLists(final MoneyWiseData pData) throws JOceanusException {
-        /* Access lists */
+        /* Post process the deposit category list */
         DepositCategoryList myDepositList = pData.getDepositCategories();
+        myDepositList.postProcessOnLoad();
+
+        /* Post process the cash category list */
         CashCategoryList myCashList = pData.getCashCategories();
+        myCashList.postProcessOnLoad();
+
+        /* Post process the loan category list */
         LoanCategoryList myLoanList = pData.getLoanCategories();
-
-        /* Sort the deposit category list and validate */
-        myDepositList.resolveDataSetLinks();
-        myDepositList.reSort();
-        myDepositList.validateOnLoad();
-
-        /* Sort the cash category list and validate */
-        myCashList.resolveDataSetLinks();
-        myCashList.reSort();
-        myCashList.validateOnLoad();
-
-        /* Sort the loan category list and validate */
-        myLoanList.resolveDataSetLinks();
-        myLoanList.reSort();
-        myLoanList.validateOnLoad();
+        myLoanList.postProcessOnLoad();
     }
 }

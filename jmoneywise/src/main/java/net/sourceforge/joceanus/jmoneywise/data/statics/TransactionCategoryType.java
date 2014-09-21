@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -132,7 +131,7 @@ public class TransactionCategoryType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -220,12 +219,6 @@ public class TransactionCategoryType
             /* Create a new Category Type */
             TransactionCategoryType myCatType = new TransactionCategoryType(this, pCategoryType);
 
-            /* Check that this CategoryType has not been previously added */
-            if (findItemByName(pCategoryType) != null) {
-                myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
-            }
-
             /* Check that this CategoryTypeId has not been previously added */
             if (!isIdUnique(myCatType.getId())) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -234,14 +227,6 @@ public class TransactionCategoryType
 
             /* Add the Category Type to the list */
             append(myCatType);
-
-            /* Validate the CategoryType */
-            myCatType.validate();
-
-            /* Handle validation failure */
-            if (myCatType.hasErrors()) {
-                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
-            }
         }
 
         @Override

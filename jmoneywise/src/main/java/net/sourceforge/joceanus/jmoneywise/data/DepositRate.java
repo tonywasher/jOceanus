@@ -22,8 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedRate;
@@ -34,7 +36,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -866,6 +870,112 @@ public class DepositRate
 
             /* Return it */
             return myRate;
+        }
+
+        @Override
+        protected DepositRateDataMap allocateDataMap() {
+            return new DepositRateDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class DepositRateDataMap
+            extends DataInstanceMap<DepositRate, JDateDay> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+
+        /**
+         * CategoryMap Field Id.
+         */
+        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_MAPOFMAPS.equals(pField)) {
+                return theMapOfMaps;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of Maps.
+         */
+        private final Map<Integer, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Constructor.
+         */
+        public DepositRateDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<Integer, Map<JDateDay, Integer>>();
+        }
+
+        @Override
+        public void resetMap() {
+            theMapOfMaps.clear();
+        }
+
+        @Override
+        public void adjustForItem(final DepositRate pItem) {
+            /* Access the Deposit Id */
+            Deposit myDeposit = pItem.getDeposit();
+            if (myDeposit == null) {
+                return;
+            }
+            Integer myId = myDeposit.getId();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            if (myMap == null) {
+                myMap = new HashMap<JDateDay, Integer>();
+                theMapOfMaps.put(myId, myMap);
+            }
+
+            /* Adjust rate count */
+            JDateDay myDate = pItem.getEndDate();
+            Integer myCount = myMap.get(myDate);
+            if (myCount == null) {
+                myMap.put(myDate, ONE);
+            } else {
+                myMap.put(myDate, myCount + 1);
+            }
+        }
+
+        /**
+         * Check validity of Rate.
+         * @param pItem the rate
+         * @return true/false
+         */
+        public boolean validRateCount(final DepositRate pItem) {
+            /* Access the Details */
+            Deposit myDeposit = pItem.getDeposit();
+            Integer myId = myDeposit.getId();
+            JDateDay myDate = pItem.getEndDate();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            if (myMap != null) {
+                Integer myResult = myMap.get(myDate);
+                return ONE.equals(myResult);
+            }
+            return false;
         }
     }
 }

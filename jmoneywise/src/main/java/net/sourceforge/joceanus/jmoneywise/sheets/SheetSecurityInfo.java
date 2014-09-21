@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -43,11 +42,6 @@ public class SheetSecurityInfo
     private static final String AREA_SECURITYINFO = SecurityInfo.LIST_NAME;
 
     /**
-     * Securities data list.
-     */
-    private SecurityList theSecurities = null;
-
-    /**
      * SecurityInfo data list.
      */
     private final SecurityInfoList theList;
@@ -62,7 +56,6 @@ public class SheetSecurityInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theSecurities = myData.getSecurities();
         theList = myData.getSecurityInfo();
         setDataList(theList);
     }
@@ -85,14 +78,5 @@ public class SheetSecurityInfo
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(SecurityInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* validate */
-        theList.validateOnLoad();
-
-        /* Validate the securities */
-        theSecurities.validateOnLoad();
     }
 }

@@ -868,4 +868,16 @@ public enum AccountCurrencyClass implements StaticInterface {
         }
         throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.CURRENCY.toString() + ":" + id);
     }
+
+    /**
+     * get value from currency.
+     * @param pCurrency the currency
+     * @return the corresponding enum object
+     */
+    public static AccountCurrencyClass fromCurrency(final Currency pCurrency) {
+        String myCode = pCurrency == null
+                                         ? null
+                                         : pCurrency.getCurrencyCode();
+        return AccountCurrencyClass.valueOf(myCode);
+    }
 }

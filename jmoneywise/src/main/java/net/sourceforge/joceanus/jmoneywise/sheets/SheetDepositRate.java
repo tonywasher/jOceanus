@@ -128,16 +128,6 @@ public class SheetDepositRate
         return COL_ENDDATE;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the rates */
-        theList.validateOnLoad();
-    }
-
     /**
      * Load the DepositRates from an archive.
      * @param pTask the task control
@@ -219,12 +209,8 @@ public class SheetDepositRate
                 }
             }
 
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Validate the rates */
-            myList.validateOnLoad();
+            /* PostProcess the rates */
+            myList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {

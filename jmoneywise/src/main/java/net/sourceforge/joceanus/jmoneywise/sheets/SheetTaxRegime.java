@@ -131,8 +131,8 @@ public class SheetTaxRegime
                 }
             }
 
-            /* Sort the list */
-            myList.reSort();
+            /* PostProcess the list */
+            myList.postProcessOnLoad();
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {

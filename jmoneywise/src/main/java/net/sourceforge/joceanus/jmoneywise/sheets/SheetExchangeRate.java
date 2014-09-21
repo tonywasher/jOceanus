@@ -119,14 +119,4 @@ public class SheetExchangeRate
         /* Return the last column */
         return COL_RATE;
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the exchange Rates */
-        theList.validateOnLoad();
-    }
 }

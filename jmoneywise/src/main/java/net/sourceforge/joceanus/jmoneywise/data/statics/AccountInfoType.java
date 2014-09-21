@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -164,7 +163,7 @@ public class AccountInfoType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -243,12 +242,6 @@ public class AccountInfoType
             /* Create a new Account Info Type */
             AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
 
-            /* Check that this InfoType has not been previously added */
-            if (findItemByName(pInfoType) != null) {
-                myInfoType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
-            }
-
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -257,14 +250,6 @@ public class AccountInfoType
 
             /* Add the Account Info Type to the list */
             append(myInfoType);
-
-            /* Validate the ActType */
-            myInfoType.validate();
-
-            /* Handle validation failure */
-            if (myInfoType.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
-            }
         }
 
         @Override

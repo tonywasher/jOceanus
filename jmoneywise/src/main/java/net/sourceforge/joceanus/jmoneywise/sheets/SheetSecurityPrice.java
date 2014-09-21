@@ -121,16 +121,6 @@ public class SheetSecurityPrice
         return COL_PRICE;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the prices */
-        theList.validateOnLoad();
-    }
-
     /**
      * Load the Prices from an archive.
      * @param pTask the task control
@@ -220,12 +210,8 @@ public class SheetSecurityPrice
                 }
             }
 
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Validate the prices */
-            myList.validateOnLoad();
+            /* Post process the prices */
+            myList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {

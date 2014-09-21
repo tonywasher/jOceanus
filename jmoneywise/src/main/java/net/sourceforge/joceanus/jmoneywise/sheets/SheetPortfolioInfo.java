@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -43,11 +42,6 @@ public class SheetPortfolioInfo
     private static final String AREA_PORTFOLIOINFO = PortfolioInfo.LIST_NAME;
 
     /**
-     * Portfolios data list.
-     */
-    private PortfolioList thePortfolios = null;
-
-    /**
      * PorfolioInfo data list.
      */
     private final PortfolioInfoList theList;
@@ -62,7 +56,6 @@ public class SheetPortfolioInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        thePortfolios = myData.getPortfolios();
         theList = myData.getPortfolioInfo();
         setDataList(theList);
     }
@@ -85,14 +78,5 @@ public class SheetPortfolioInfo
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(PortfolioInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* validate */
-        theList.validateOnLoad();
-
-        /* Validate the portfolios */
-        thePortfolios.validateOnLoad();
     }
 }

@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.time.Month;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
@@ -41,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -54,11 +54,6 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * Object name.
      */
     public static final String OBJECT_NAME = TaxYearBase.class.getSimpleName();
-
-    /**
-     * TaxYear end of month day.
-     */
-    public static final int END_OF_MONTH_DAY = 5;
 
     /**
      * Local Report fields.
@@ -373,8 +368,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
                 addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
             }
 
-            /* The day and month must be 5th April */
-            if ((myDate.getDay() != END_OF_MONTH_DAY) || (myDate.getMonth() != Month.APRIL.getValue())) {
+            /* The day and month must be end of taxYear */
+            if (!myDate.equals(JFiscalYear.UK.normaliseDate(myDate))) {
                 addError(ERROR_BADDATE, FIELD_TAXYEAR);
             }
         }

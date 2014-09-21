@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
@@ -543,6 +544,16 @@ public class TransactionInfo
                     myCurr.resolveLink();
                 }
             }
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Validate the TransactionInfo */
+            validateOnLoad();
+
+            /* Validate the Transactions */
+            TransactionList myTrans = getDataSet().getTransactions();
+            myTrans.validateOnLoad();
         }
     }
 }

@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -136,7 +135,7 @@ public class LoanCategoryType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -215,12 +214,6 @@ public class LoanCategoryType
             /* Create a new Loan Category Type */
             LoanCategoryType myLoanType = new LoanCategoryType(this, pLoanCatType);
 
-            /* Check that this LoanCategoryType has not been previously added */
-            if (findItemByName(pLoanCatType) != null) {
-                myLoanType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myLoanType, ERROR_VALIDATION);
-            }
-
             /* Check that this LoanCategoryTypeId has not been previously added */
             if (!isIdUnique(myLoanType.getId())) {
                 myLoanType.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -229,14 +222,6 @@ public class LoanCategoryType
 
             /* Add the Loan Category to the list */
             append(myLoanType);
-
-            /* Validate the LoanType */
-            myLoanType.validate();
-
-            /* Handle validation failure */
-            if (myLoanType.hasErrors()) {
-                throw new JMoneyWiseDataException(myLoanType, ERROR_VALIDATION);
-            }
         }
 
         @Override

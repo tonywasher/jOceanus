@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
@@ -385,6 +386,16 @@ public class LoanInfo
 
             /* Return it */
             return myInfo;
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Validate the LoanInfo */
+            validateOnLoad();
+
+            /* Validate the Loans */
+            LoanList myLoans = getDataSet().getLoans();
+            myLoans.validateOnLoad();
         }
     }
 }

@@ -709,7 +709,7 @@ public enum StaticDataResource implements ResourceId {
     /**
      * Currency Default.
      */
-    CURRENCY_DEFAULT("MoneyWiseData.DefaultCurrency"),
+    CURRENCY_DEFAULT("Currency.Default"),
 
     /**
      * TaxInfo Allowance.

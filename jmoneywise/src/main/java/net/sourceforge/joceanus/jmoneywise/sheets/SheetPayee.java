@@ -124,13 +124,6 @@ public class SheetPayee
         return COL_CLOSED;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
-
     /**
      * Process payee row from archive.
      * @param pLoader the archive loader

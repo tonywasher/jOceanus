@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -128,7 +127,7 @@ public class PayeeType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -207,12 +206,6 @@ public class PayeeType
             /* Create a new Payee Type */
             PayeeType myPayeeType = new PayeeType(this, pPayeeType);
 
-            /* Check that this PayeeType has not been previously added */
-            if (findItemByName(pPayeeType) != null) {
-                myPayeeType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
-            }
-
             /* Check that this PayeeTypeId has not been previously added */
             if (!isIdUnique(myPayeeType.getId())) {
                 myPayeeType.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -221,14 +214,6 @@ public class PayeeType
 
             /* Add the PayeeType to the list */
             append(myPayeeType);
-
-            /* Validate the PayeeType */
-            myPayeeType.validate();
-
-            /* Handle validation failure */
-            if (myPayeeType.hasErrors()) {
-                throw new JMoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
-            }
         }
 
         @Override

@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -1134,6 +1135,41 @@ public class Portfolio
 
             /* Return no payee */
             return null;
+        }
+
+        @Override
+        protected PortfolioDataMap allocateDataMap() {
+            return new PortfolioDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class PortfolioDataMap
+            extends DataInstanceMap<Portfolio, String> {
+        @Override
+        public void adjustForItem(final Portfolio pItem) {
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by name.
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public Portfolio findItemByName(final String pName) {
+            return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of name.
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+            return validKeyCount(pName);
         }
     }
 }

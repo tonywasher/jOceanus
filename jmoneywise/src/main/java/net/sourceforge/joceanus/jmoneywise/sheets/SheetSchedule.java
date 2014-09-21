@@ -154,17 +154,4 @@ public class SheetSchedule
         /* Return the last column */
         return COL_PARENT;
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
-        /* Validate the schedules */
-        theList.validateOnLoad();
-    }
 }

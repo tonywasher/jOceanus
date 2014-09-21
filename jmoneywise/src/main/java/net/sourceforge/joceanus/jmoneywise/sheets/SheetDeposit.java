@@ -155,13 +155,6 @@ public class SheetDeposit
         return COL_CLOSED;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
-
     /**
      * Process deposit row from archive.
      * @param pLoader the archive loader

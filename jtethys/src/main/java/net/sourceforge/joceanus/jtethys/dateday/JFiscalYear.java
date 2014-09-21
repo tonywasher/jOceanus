@@ -35,7 +35,7 @@ public enum JFiscalYear {
     UK(6, Month.APRIL),
 
     /**
-     * April based start of year.
+     * March based start of year.
      */
     MARCH(Month.MARCH),
 
@@ -132,5 +132,36 @@ public enum JFiscalYear {
             default:
                 return CALENDAR;
         }
+    }
+
+    /**
+     * Normalise date to end of FiscalYear.
+     * @param pDate the date to normalise.
+     * @return the normalised date
+     */
+    public JDateDay normaliseDate(final JDateDay pDate) {
+        /* Access constituent parts */
+        int myDay = pDate.getDay();
+        int myMonth = pDate.getMonth();
+        int myFiscalMonth = theMonth.getValue();
+
+        /* See whether we are earlier in the year */
+        boolean bEarlier = myFiscalMonth == myMonth
+                                                   ? myDay < theDay
+                                                   : myMonth < myFiscalMonth;
+
+        /* Build the basic taxYear */
+        JDateDay myDate = new JDateDay(pDate.getYear(), theMonth, theDay, pDate.getLocale());
+
+        /* Adjust if we are later */
+        if (!bEarlier) {
+            myDate.adjustYear(1);
+        }
+
+        /* Move back a day */
+        myDate.adjustDay(-1);
+
+        /* Return the date */
+        return myDate;
     }
 }

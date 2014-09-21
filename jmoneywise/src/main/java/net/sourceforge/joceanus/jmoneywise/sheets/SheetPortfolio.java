@@ -138,13 +138,6 @@ public class SheetPortfolio
         return COL_CLOSED;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
-
     /**
      * Process portfolio row from archive.
      * @param pLoader the archive loader

@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -162,7 +161,7 @@ public class TaxBasis
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -250,12 +249,6 @@ public class TaxBasis
             /* Create a new Tax Basis */
             TaxBasis myBasis = new TaxBasis(this, pTaxBasis);
 
-            /* Check that this TaxBasis has not been previously added */
-            if (findItemByName(pTaxBasis) != null) {
-                myBasis.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
-            }
-
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -264,14 +257,6 @@ public class TaxBasis
 
             /* Add the Tax Basis to the list */
             append(myBasis);
-
-            /* Validate the Basis */
-            myBasis.validate();
-
-            /* Handle validation failure */
-            if (myBasis.hasErrors()) {
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
-            }
         }
 
         @Override

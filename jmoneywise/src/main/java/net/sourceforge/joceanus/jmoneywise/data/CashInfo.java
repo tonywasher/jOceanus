@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
@@ -200,6 +201,9 @@ public class CashInfo
 
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
+
+            /* Resolve any link value */
+            resolveLink();
 
             /* Access the CashInfoSet and register this data */
             CashInfoSet mySet = getOwner().getInfoSet();
@@ -518,6 +522,16 @@ public class CashInfo
                     myCurr.resolveLink();
                 }
             }
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Validate the CashInfo */
+            validateOnLoad();
+
+            /* Validate the Cash */
+            CashList myCash = getDataSet().getCash();
+            myCash.validateOnLoad();
         }
     }
 }

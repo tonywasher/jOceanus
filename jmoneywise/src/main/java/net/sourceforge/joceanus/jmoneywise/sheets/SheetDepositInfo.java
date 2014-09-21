@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -43,11 +42,6 @@ public class SheetDepositInfo
     private static final String AREA_DEPOSITINFO = DepositInfo.LIST_NAME;
 
     /**
-     * Deposits data list.
-     */
-    private DepositList theDeposits = null;
-
-    /**
      * DepositInfo data list.
      */
     private final DepositInfoList theList;
@@ -62,7 +56,6 @@ public class SheetDepositInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theDeposits = myData.getDeposits();
         theList = myData.getDepositInfo();
         setDataList(theList);
     }
@@ -85,14 +78,5 @@ public class SheetDepositInfo
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(DepositInfo.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* validate */
-        theList.validateOnLoad();
-
-        /* Validate the deposits */
-        theDeposits.validateOnLoad();
     }
 }

@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
@@ -178,7 +180,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Return the sort order of the Static Data.
      * @return the order
      */
-    public final int getOrder() {
+    public final Integer getOrder() {
         return getOrder(getValueSet());
     }
 
@@ -262,7 +264,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the order
      */
-    public static int getOrder(final ValueSet pValueSet) {
+    public static Integer getOrder(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ORDER, Integer.class);
     }
 
@@ -705,6 +707,11 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         protected abstract Class<S> getEnumClass();
 
+        @Override
+        protected StaticDataMap<T> getDataMap() {
+            return (StaticDataMap<T>) super.getDataMap();
+        }
+
         /**
          * Construct a generic static data list.
          * @param pBaseClass the class of the underlying object
@@ -739,10 +746,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
         @Override
         public T findItemByName(final String pName) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-
             /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
@@ -832,11 +837,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @return The # of instances of the name
          */
         protected int countInstances(final String pName) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-            int iCount = 0;
-
             /* Loop through the items to find the entry */
+            int iCount = 0;
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
 
@@ -861,11 +864,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @return The # of instances of the order
          */
         protected int countInstances(final Integer iOrder) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-            int iCount = 0;
-
             /* Loop through the items to find the entry */
+            int iCount = 0;
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
 
@@ -908,6 +909,115 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
             /* Ensure that the list is sorted */
             reSort();
+        }
+
+        @Override
+        protected StaticDataMap<T> allocateDataMap() {
+            return new StaticDataMap<T>();
+        }
+
+        @Override
+        public void resolveDataSetLinks() throws JOceanusException {
+            /* We have no links so disable this */
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class StaticDataMap<T extends StaticData<T, ?, ?>>
+            extends DataInstanceMap<T, String> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
+
+        /**
+         * OrderCountMap Field Id.
+         */
+        public static final JDataField FIELD_ORDERCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_ORDERCOUNTS.equals(pField)) {
+                return theOrderCountMap;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of order counts.
+         */
+        private final Map<Integer, Integer> theOrderCountMap;
+
+        /**
+         * Constructor.
+         */
+        public StaticDataMap() {
+            /* Create the maps */
+            theOrderCountMap = new HashMap<Integer, Integer>();
+        }
+
+        @Override
+        public void resetMap() {
+            super.resetMap();
+            theOrderCountMap.clear();
+        }
+
+        @Override
+        public void adjustForItem(final T pItem) {
+            /* Adjust order count */
+            Integer myOrder = pItem.getOrder();
+            Integer myCount = theOrderCountMap.get(myOrder);
+            if (myCount == null) {
+                theOrderCountMap.put(myOrder, ONE);
+            } else {
+                theOrderCountMap.put(myOrder, myCount + 1);
+            }
+
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by name.
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public T findItemByName(final String pName) {
+            return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of name.
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+            return validKeyCount(pName);
+        }
+
+        /**
+         * Check validity of order.
+         * @param pOrder the order to look up
+         * @return true/false
+         */
+        public boolean validOrderCount(final Integer pOrder) {
+            Integer myResult = theOrderCountMap.get(pOrder);
+            return ONE.equals(myResult);
         }
     }
 }

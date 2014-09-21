@@ -119,14 +119,4 @@ public class SheetDepositCategory
         /* Return the last column */
         return COL_DESC;
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the account categories */
-        theList.validateOnLoad();
-    }
 }

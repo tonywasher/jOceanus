@@ -147,13 +147,6 @@ public class SheetSecurity
         return COL_CLOSED;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
-
     /**
      * Process security row from archive.
      * @param pLoader the archive loader

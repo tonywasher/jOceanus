@@ -75,14 +75,4 @@ public class TableTransactionInfo
         /* Build data values */
         return getRowValues(TransactionInfo.OBJECT_NAME);
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks and validate */
-        theList.resolveValueLinks();
-        theList.validateOnLoad();
-
-        /* Validate the transactions */
-        theTransactions.validateOnLoad();
-    }
 }

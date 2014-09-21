@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -136,7 +135,7 @@ public class DepositCategoryType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -215,12 +214,6 @@ public class DepositCategoryType
             /* Create a new Deposit Category Type */
             DepositCategoryType myDepType = new DepositCategoryType(this, pDepCatType);
 
-            /* Check that this DepositCategoryType has not been previously added */
-            if (findItemByName(pDepCatType) != null) {
-                myDepType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myDepType, ERROR_VALIDATION);
-            }
-
             /* Check that this DepositCategoryTypeId has not been previously added */
             if (!isIdUnique(myDepType.getId())) {
                 myDepType.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -229,14 +222,6 @@ public class DepositCategoryType
 
             /* Add the Deposit Category to the list */
             append(myDepType);
-
-            /* Validate the DepType */
-            myDepType.validate();
-
-            /* Handle validation failure */
-            if (myDepType.hasErrors()) {
-                throw new JMoneyWiseDataException(myDepType, ERROR_VALIDATION);
-            }
         }
 
         @Override

@@ -97,13 +97,4 @@ public class TableTransTag
             super.setFieldValue(pItem, iField);
         }
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
-        theList.reSort();
-
-        /* Validate the tags */
-        theList.validateOnLoad();
-    }
 }

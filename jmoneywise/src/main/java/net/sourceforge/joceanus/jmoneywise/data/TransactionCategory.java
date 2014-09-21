@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -353,7 +355,8 @@ public final class TransactionCategory
                         if (!myParentClass.canParentCategory()) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
-                        if ((myParentClass.isIncome() != myClass.isIncome()) || (myParentClass.isStockTransfer() != myClass.isStockTransfer())) {
+                        if ((myParentClass.isIncome() != myClass.isIncome())
+                            || (myParentClass.isStockTransfer() != myClass.isStockTransfer())) {
                             addError(ERROR_DIFFPARENT, FIELD_PARENT);
                         }
 
@@ -620,6 +623,123 @@ public final class TransactionCategory
 
             /* Return no category */
             return null;
+        }
+
+        @Override
+        protected TransCategoryDataMap allocateDataMap() {
+            return new TransCategoryDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class TransCategoryDataMap
+            extends CategoryDataMap<TransactionCategory> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.CATEGORY_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+
+        /**
+         * CategoryMap Field Id.
+         */
+        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+
+        /**
+         * CategoryCountMap Field Id.
+         */
+        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARCOUNT.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_CATMAP.equals(pField)) {
+                return theCategoryMap;
+            }
+            if (FIELD_CATCOUNT.equals(pField)) {
+                return theCategoryCountMap;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of category counts.
+         */
+        private final Map<Integer, Integer> theCategoryCountMap;
+
+        /**
+         * Map of singular categories.
+         */
+        private final Map<Integer, TransactionCategory> theCategoryMap;
+
+        /**
+         * Constructor.
+         */
+        public TransCategoryDataMap() {
+            /* Create the maps */
+            theCategoryCountMap = new HashMap<Integer, Integer>();
+            theCategoryMap = new HashMap<Integer, TransactionCategory>();
+        }
+
+        @Override
+        public void resetMap() {
+            super.resetMap();
+            theCategoryCountMap.clear();
+            theCategoryMap.clear();
+        }
+
+        @Override
+        public void adjustForItem(final TransactionCategory pItem) {
+            /* If the class is singular */
+            TransactionCategoryClass myClass = pItem.getCategoryTypeClass();
+            if (myClass.isSingular()) {
+                /* Adjust category count */
+                Integer myId = myClass.getClassId();
+                Integer myCount = theCategoryCountMap.get(myId);
+                if (myCount == null) {
+                    theCategoryCountMap.put(myId, ONE);
+                } else {
+                    theCategoryCountMap.put(myId, myCount + 1);
+                }
+
+                /* Adjust category map */
+                theCategoryMap.put(myId, pItem);
+            }
+
+            /* Adjust name count */
+            adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find singular item.
+         * @param pClass the class to look up
+         * @return the matching item
+         */
+        public TransactionCategory findSingularItem(final TransactionCategoryClass pClass) {
+            return theCategoryMap.get(pClass.getClassId());
+        }
+
+        /**
+         * Check validity of singular count.
+         * @param pClass the class to look up
+         * @return true/false
+         */
+        public boolean validSingularCount(final TransactionCategoryClass pClass) {
+            Integer myResult = theCategoryCountMap.get(pClass.getClassId());
+            return ONE.equals(myResult);
         }
     }
 }

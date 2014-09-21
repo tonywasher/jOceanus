@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedUnits;
@@ -33,7 +35,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -706,6 +710,112 @@ public class StockOptionVest
 
             /* return to caller */
             return iCount;
+        }
+
+        @Override
+        protected StockOptionVestDataMap allocateDataMap() {
+            return new StockOptionVestDataMap();
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    protected static class StockOptionVestDataMap
+            extends DataInstanceMap<StockOptionVest, JDateDay> {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+
+        /**
+         * CategoryMap Field Id.
+         */
+        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_MAPOFMAPS.equals(pField)) {
+                return theMapOfMaps;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of Maps.
+         */
+        private final Map<Integer, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Constructor.
+         */
+        public StockOptionVestDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<Integer, Map<JDateDay, Integer>>();
+        }
+
+        @Override
+        public void resetMap() {
+            theMapOfMaps.clear();
+        }
+
+        @Override
+        public void adjustForItem(final StockOptionVest pItem) {
+            /* Access the StockOption Id */
+            StockOption myOption = pItem.getStockOption();
+            if (myOption == null) {
+                return;
+            }
+            Integer myId = myOption.getId();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            if (myMap == null) {
+                myMap = new HashMap<JDateDay, Integer>();
+                theMapOfMaps.put(myId, myMap);
+            }
+
+            /* Adjust vest count */
+            JDateDay myDate = pItem.getDate();
+            Integer myCount = myMap.get(myDate);
+            if (myCount == null) {
+                myMap.put(myDate, ONE);
+            } else {
+                myMap.put(myDate, myCount + 1);
+            }
+        }
+
+        /**
+         * Check validity of Vest.
+         * @param pItem the vest
+         * @return true/false
+         */
+        public boolean validVestCount(final StockOptionVest pItem) {
+            /* Access the Details */
+            StockOption myOption = pItem.getStockOption();
+            Integer myId = myOption.getId();
+            JDateDay myDate = pItem.getDate();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            if (myMap != null) {
+                Integer myResult = myMap.get(myDate);
+                return ONE.equals(myResult);
+            }
+            return false;
         }
     }
 }

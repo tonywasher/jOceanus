@@ -888,5 +888,15 @@ public abstract class AssetBase<T extends AssetBase<T>>
                 myName = pBase.concat(Integer.toString(iNextId++));
             }
         }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Resolve links and sort the data */
+            resolveDataSetLinks();
+            reSort();
+
+            /* Map the data */
+            mapData();
+        }
     }
 }

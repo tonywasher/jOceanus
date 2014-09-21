@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -132,7 +131,7 @@ public class TaxCategory
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -220,12 +219,6 @@ public class TaxCategory
             /* Create a new Tax Category */
             TaxCategory myCategory = new TaxCategory(this, pTaxCategory);
 
-            /* Check that this TaxCategory has not been previously added */
-            if (findItemByName(pTaxCategory) != null) {
-                myCategory.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-            }
-
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
@@ -234,14 +227,6 @@ public class TaxCategory
 
             /* Add the Tax Category to the list */
             append(myCategory);
-
-            /* Validate the Category */
-            myCategory.validate();
-
-            /* Handle validation failure */
-            if (myCategory.hasErrors()) {
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-            }
         }
 
         @Override

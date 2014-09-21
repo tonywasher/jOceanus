@@ -628,5 +628,17 @@ public class DataKeySet
             /* return the cloned keySet */
             return myKeySet;
         }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Just sort the list */
+            reSort();
+        }
+
+        @Override
+        protected DataInstanceMap<DataKeySet, ?> allocateDataMap() {
+            /* Unused */
+            return null;
+        }
     }
 }

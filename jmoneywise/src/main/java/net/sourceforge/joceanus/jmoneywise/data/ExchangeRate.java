@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -621,7 +623,7 @@ public final class ExchangeRate
         /**
          * Default Field Id.
          */
-        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.XCHGRATE_DEFAULT.getValue());
+        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
         @Override
         public JDataFields declareFields() {
@@ -900,6 +902,21 @@ public final class ExchangeRate
 
             /* Set the new default currency */
             theDefault = pCurrency;
+        }
+
+        @Override
+        protected DataInstanceMap<ExchangeRate, ?> allocateDataMap() {
+            return null;
+        }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Resolve links and sort the data */
+            resolveDataSetLinks();
+            reSort();
+
+            /* Validate the exchangeRates */
+            validateOnLoad();
         }
     }
 }

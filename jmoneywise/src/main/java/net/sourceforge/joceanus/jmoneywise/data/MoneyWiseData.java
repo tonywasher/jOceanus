@@ -69,6 +69,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
@@ -104,7 +105,7 @@ public class MoneyWiseData
     /**
      * DefaultCurrency Field Id.
      */
-    public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_CURRENCY.getValue());
+    public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
     @Override
     public JDataFields getDataFields() {

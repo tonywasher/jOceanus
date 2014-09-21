@@ -271,8 +271,8 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the list */
-        theList.reSort();
+        /* PostProcess the list */
+        theList.postProcessOnLoad();
     }
 
     /**

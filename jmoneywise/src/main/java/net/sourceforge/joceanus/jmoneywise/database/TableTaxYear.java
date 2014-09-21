@@ -42,7 +42,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * DatabaseTable extension for TaxYear.
  * @author Tony Washer
  */
-public class TableTaxYear extends DatabaseTable<TaxYear, MoneyWiseDataType> {
+public class TableTaxYear
+        extends DatabaseTable<TaxYear, MoneyWiseDataType> {
     /**
      * The name of the TaxYears table.
      */
@@ -102,12 +103,5 @@ public class TableTaxYear extends DatabaseTable<TaxYear, MoneyWiseDataType> {
         } else {
             super.setFieldValue(pItem, iField);
         }
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and sort the data */
-        theList.resolveDataSetLinks();
-        theList.reSort();
     }
 }

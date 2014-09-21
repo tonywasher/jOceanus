@@ -113,15 +113,6 @@ public class SheetTransTag
         return COL_DESC;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort */
-        theList.reSort();
-
-        /* Validate the tags */
-        theList.validateOnLoad();
-    }
-
     /**
      * Load the TransactionTags from an archive.
      * @param pTask the task control
@@ -182,11 +173,8 @@ public class SheetTransTag
                 }
             }
 
-            /* reSort */
-            myList.reSort();
-
-            /* Validate the tags */
-            myList.validateOnLoad();
+            /* PostProcess on load */
+            myList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {

@@ -379,5 +379,17 @@ public class ControlData
             /* Return it */
             return myControl;
         }
+
+        @Override
+        public void postProcessOnLoad() throws JOceanusException {
+            /* Just sort the list */
+            reSort();
+        }
+
+        @Override
+        protected DataInstanceMap<ControlData, ?> allocateDataMap() {
+            /* Unused */
+            return null;
+        }
     }
 }

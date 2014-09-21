@@ -36,8 +36,11 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -179,46 +182,40 @@ public final class SheetAccount {
      * @throws JOceanusException on error
      */
     private static void resolveAccountLists(final MoneyWiseData pData) throws JOceanusException {
-        /* Sort the payee list and validate */
+        /* PostProcess the Payees */
         PayeeList myPayeeList = pData.getPayees();
-        myPayeeList.resolveDataSetLinks();
-        myPayeeList.reSort();
-        myPayeeList.validateOnLoad();
+        PayeeInfoList myPayeeInfoList = pData.getPayeeInfo();
+        myPayeeList.postProcessOnLoad();
+        myPayeeInfoList.postProcessOnLoad();
 
-        /* Sort the security list and validate */
+        /* PostProcess the securities */
         SecurityList mySecurityList = pData.getSecurities();
-        mySecurityList.resolveDataSetLinks();
-        mySecurityList.reSort();
-        mySecurityList.validateOnLoad();
+        SecurityInfoList mySecInfoList = pData.getSecurityInfo();
+        mySecurityList.postProcessOnLoad();
+        mySecInfoList.postProcessOnLoad();
 
-        /* Sort the deposit list and validate */
+        /* PostProcess the deposits */
         DepositList myDepositList = pData.getDeposits();
         DepositInfoList myDepInfoList = pData.getDepositInfo();
-        myDepositList.resolveDataSetLinks();
-        myDepositList.reSort();
-        myDepInfoList.resolveDataSetLinks();
-        myDepositList.validateOnLoad();
+        myDepositList.postProcessOnLoad();
+        myDepInfoList.postProcessOnLoad();
 
-        /* Sort the cash list and validate */
+        /* PostProcess the cash */
         CashList myCashList = pData.getCash();
         CashInfoList myCashInfoList = pData.getCashInfo();
-        myCashList.resolveDataSetLinks();
-        myCashList.reSort();
-        myCashInfoList.resolveDataSetLinks();
-        myCashList.validateOnLoad();
+        myCashList.postProcessOnLoad();
+        myCashInfoList.postProcessOnLoad();
 
-        /* Sort the loan list and validate */
+        /* PostProcess the loans */
         LoanList myLoanList = pData.getLoans();
         LoanInfoList myLoanInfoList = pData.getLoanInfo();
-        myLoanList.resolveDataSetLinks();
-        myLoanList.reSort();
-        myLoanInfoList.resolveDataSetLinks();
-        myLoanList.validateOnLoad();
+        myLoanList.postProcessOnLoad();
+        myLoanInfoList.postProcessOnLoad();
 
-        /* Sort the portfolio list and validate */
+        /* PostProcess the portfolios */
         PortfolioList myPortfolioList = pData.getPortfolios();
-        myPortfolioList.resolveDataSetLinks();
-        myPortfolioList.reSort();
-        myPortfolioList.validateOnLoad();
+        PortfolioInfoList myPortInfoList = pData.getPortfolioInfo();
+        myPortfolioList.postProcessOnLoad();
+        myPortInfoList.postProcessOnLoad();
     }
 }

@@ -133,11 +133,4 @@ public class TableTransaction
             super.setFieldValue(pItem, iField);
         }
     }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and sort the data */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-    }
 }
