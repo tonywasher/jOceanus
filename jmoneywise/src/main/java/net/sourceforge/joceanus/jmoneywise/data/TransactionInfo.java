@@ -228,6 +228,9 @@ public class TransactionInfo
             TransactionInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
+            /* Resolve any link value */
+            resolveLink();
+
         } catch (JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);

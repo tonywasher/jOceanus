@@ -176,6 +176,16 @@ public class SheetCash
         if (myCell != null) {
             myAutoExpense = myCell.getStringValue();
             myAutoPayee = myName + "Expense";
+
+            /* Build values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+            myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
+            myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
+            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+            /* Add the value into the list */
+            PayeeList myPayeeList = pData.getPayees();
+            myPayeeList.addValuesItem(myValues);
         }
 
         /* Build data values */
@@ -196,18 +206,5 @@ public class SheetCash
 
         /* Declare the cash */
         pLoader.declareAsset(myCash);
-
-        /* If we have an autoPayee */
-        if (myAutoPayee != null) {
-            /* Build values */
-            myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
-            myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
-            myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
-            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
-
-            /* Add the value into the list */
-            PayeeList myPayeeList = pData.getPayees();
-            myPayeeList.addValuesItem(myValues);
-        }
     }
 }

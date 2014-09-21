@@ -162,7 +162,7 @@ public enum PrometheusUIResource implements ResourceId {
     /**
      * StatusBar Cancel Button.
      */
-    STATUSBAR_BUTTON_CANCEL("StatusBar.Button.Clear"),
+    STATUSBAR_BUTTON_CANCEL("StatusBar.Button.Cancel"),
 
     /**
      * StatusBar Clear Button.
