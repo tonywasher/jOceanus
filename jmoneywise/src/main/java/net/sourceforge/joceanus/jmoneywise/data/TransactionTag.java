@@ -666,7 +666,7 @@ public class TransactionTag
      * The dataMap class.
      */
     protected static class TagDataMap
-            extends DataInstanceMap<TransactionTag, String> {
+            extends DataInstanceMap<TransactionTag, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final TransactionTag pItem) {
             /* Adjust name count */

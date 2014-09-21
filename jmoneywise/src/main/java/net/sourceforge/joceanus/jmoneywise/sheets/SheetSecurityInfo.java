@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -42,11 +41,6 @@ public class SheetSecurityInfo
     private static final String AREA_SECURITYINFO = SecurityInfo.LIST_NAME;
 
     /**
-     * SecurityInfo data list.
-     */
-    private final SecurityInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetSecurityInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getSecurityInfo();
-        setDataList(theList);
+        setDataList(myData.getSecurityInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetSecurityInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getSecurityInfo();
-        setDataList(theList);
+        setDataList(myData.getSecurityInfo());
     }
 
     @Override

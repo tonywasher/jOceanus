@@ -796,6 +796,11 @@ public class Payee
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected PayeeDataMap getDataMap() {
+            return (PayeeDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the payeeInfoList.
          * @return the payee info list
@@ -1117,21 +1122,21 @@ public class Payee
      * The dataMap class.
      */
     protected static class PayeeDataMap
-            extends DataInstanceMap<Payee, String> {
+            extends DataInstanceMap<Payee, MoneyWiseDataType, String> {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
 
         /**
          * CategoryMap Field Id.
          */
-        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARCOUNT.getValue());
+        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
         @Override
         public JDataFields getDataFields() {

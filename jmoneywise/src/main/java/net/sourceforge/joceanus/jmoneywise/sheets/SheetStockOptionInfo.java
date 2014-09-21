@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo;
-import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -42,11 +41,6 @@ public class SheetStockOptionInfo
     private static final String AREA_STOCKOPTIONINFO = StockOptionInfo.LIST_NAME;
 
     /**
-     * StockOptionInfo data list.
-     */
-    private final StockOptionInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetStockOptionInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getStockOptionInfo();
-        setDataList(theList);
+        setDataList(myData.getStockOptionInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetStockOptionInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getStockOptionInfo();
-        setDataList(theList);
+        setDataList(myData.getStockOptionInfo());
     }
 
     @Override

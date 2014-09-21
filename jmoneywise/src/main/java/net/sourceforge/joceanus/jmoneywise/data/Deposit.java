@@ -1163,6 +1163,11 @@ public class Deposit
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected DepositDataMap getDataMap() {
+            return (DepositDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the depositInfoList.
          * @return the deposit info list
@@ -1331,7 +1336,7 @@ public class Deposit
      * The dataMap class.
      */
     protected static class DepositDataMap
-            extends DataInstanceMap<Deposit, String> {
+            extends DataInstanceMap<Deposit, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final Deposit pItem) {
             /* Adjust name count */

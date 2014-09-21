@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
-import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -46,11 +45,6 @@ public class TableStockOptionVest
     protected static final String TABLE_NAME = StockOptionVest.LIST_NAME;
 
     /**
-     * The option list.
-     */
-    private StockOptionVestList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -67,8 +61,7 @@ public class TableStockOptionVest
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getStockOptionVests();
-        setList(theList);
+        setList(myData.getStockOptionVests());
     }
 
     @Override

@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.ControlKey;
-import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -56,11 +55,6 @@ public class SheetControlKey
     private static final int COL_ALTKEYDATA = COL_PRIMEKEYDATA + 1;
 
     /**
-     * ControlKey data list.
-     */
-    private ControlKeyList theList = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -70,8 +64,7 @@ public class SheetControlKey
 
         /* Access the Lists */
         DataSet<?, ?> myData = pReader.getData();
-        theList = myData.getControlKeys();
-        setDataList(theList);
+        setDataList(myData.getControlKeys());
     }
 
     /**
@@ -83,8 +76,8 @@ public class SheetControlKey
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        theList = pWriter.getData().getControlKeys();
-        setDataList(theList);
+        DataSet<?, ?> myData = pWriter.getData();
+        setDataList(myData.getControlKeys());
     }
 
     @Override

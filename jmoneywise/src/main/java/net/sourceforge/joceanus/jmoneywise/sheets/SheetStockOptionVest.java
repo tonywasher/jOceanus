@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
-import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -56,11 +56,6 @@ public class SheetStockOptionVest
     private static final int COL_UNITS = COL_DATE + 1;
 
     /**
-     * StockOptionVest data list.
-     */
-    private final StockOptionVestList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -68,9 +63,9 @@ public class SheetStockOptionVest
         /* Call super constructor */
         super(pReader, AREA_STOCKOPTIONVESTS);
 
-        /* Access the Loans list */
-        theList = pReader.getData().getStockOptionVests();
-        setDataList(theList);
+        /* Access the Vest list */
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getStockOptionVests());
     }
 
     /**
@@ -81,9 +76,9 @@ public class SheetStockOptionVest
         /* Call super constructor */
         super(pWriter, AREA_STOCKOPTIONVESTS);
 
-        /* Access the Loans list */
-        theList = pWriter.getData().getStockOptionVests();
-        setDataList(theList);
+        /* Access the Vest list */
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getStockOptionVests());
     }
 
     @Override

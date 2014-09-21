@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
-import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -905,8 +905,9 @@ public final class ExchangeRate
         }
 
         @Override
-        protected DataInstanceMap<ExchangeRate, ?> allocateDataMap() {
-            return null;
+        protected DataMapItem<ExchangeRate, MoneyWiseDataType> allocateDataMap() {
+            /* Unused */
+            throw new UnsupportedOperationException();
         }
 
         @Override

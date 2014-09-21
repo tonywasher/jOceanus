@@ -134,11 +134,6 @@ public class TaxYearTable
     private final transient JDataEntry theDataEntry;
 
     /**
-     * The Table Model.
-     */
-    private final TaxYearTableModel theModel;
-
-    /**
      * The Column Model.
      */
     private final TaxYearColumnModel theColumns;
@@ -209,8 +204,8 @@ public class TaxYearTable
         theActionButtons = new ActionButtons(theUpdateSet, false);
 
         /* Create the table model */
-        theModel = new TaxYearTableModel(this);
-        setModel(theModel);
+        TaxYearTableModel myModel = new TaxYearTableModel(this);
+        setModel(myModel);
 
         /* Create the data column model and declare it */
         theColumns = new TaxYearColumnModel(this);

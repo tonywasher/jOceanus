@@ -82,11 +82,6 @@ public class SheetSecurity
     private static final int COL_CLOSED = COL_CURRENCY + 1;
 
     /**
-     * Security data list.
-     */
-    private final SecurityList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -95,8 +90,8 @@ public class SheetSecurity
         super(pReader, AREA_SECURITIES);
 
         /* Access the Securities list */
-        theList = pReader.getData().getSecurities();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getSecurities());
     }
 
     /**
@@ -108,8 +103,8 @@ public class SheetSecurity
         super(pWriter, AREA_SECURITIES);
 
         /* Access the Securities list */
-        theList = pWriter.getData().getSecurities();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getSecurities());
     }
 
     @Override

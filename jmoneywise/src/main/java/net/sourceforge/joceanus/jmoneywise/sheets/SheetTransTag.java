@@ -58,11 +58,6 @@ public class SheetTransTag
     private static final int COL_DESC = COL_NAME + 1;
 
     /**
-     * Class data list.
-     */
-    private final TransactionTagList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -71,8 +66,8 @@ public class SheetTransTag
         super(pReader, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        theList = pReader.getData().getTransactionTags();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getTransactionTags());
     }
 
     /**
@@ -84,8 +79,8 @@ public class SheetTransTag
         super(pWriter, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        theList = pWriter.getData().getTransactionTags();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getTransactionTags());
     }
 
     @Override

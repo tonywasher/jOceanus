@@ -1070,6 +1070,11 @@ public class Security
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected SecurityDataMap getDataMap() {
+            return (SecurityDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the securityInfoList.
          * @return the security info list
@@ -1246,7 +1251,7 @@ public class Security
      * The dataMap class.
      */
     protected static class SecurityDataMap
-            extends DataInstanceMap<Security, String> {
+            extends DataInstanceMap<Security, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final Security pItem) {
             /* Adjust name count */

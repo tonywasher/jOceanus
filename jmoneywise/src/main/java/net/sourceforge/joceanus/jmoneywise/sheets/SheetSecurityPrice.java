@@ -64,11 +64,6 @@ public class SheetSecurityPrice
     private static final int COL_PRICE = COL_DATE + 1;
 
     /**
-     * Prices data list.
-     */
-    private final SecurityPriceList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -77,8 +72,8 @@ public class SheetSecurityPrice
         super(pReader, AREA_PRICES);
 
         /* Access the Prices list */
-        theList = pReader.getData().getSecurityPrices();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getSecurityPrices());
     }
 
     /**
@@ -90,8 +85,8 @@ public class SheetSecurityPrice
         super(pWriter, AREA_PRICES);
 
         /* Access the Prices list */
-        theList = pWriter.getData().getSecurityPrices();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getSecurityPrices());
     }
 
     @Override

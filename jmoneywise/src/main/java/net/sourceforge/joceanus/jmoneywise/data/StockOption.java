@@ -999,6 +999,11 @@ public class StockOption
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected StockOptionDataMap getDataMap() {
+            return (StockOptionDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the stockOptionInfoList.
          * @return the stockOption info list
@@ -1150,7 +1155,7 @@ public class StockOption
      * The dataMap class.
      */
     protected static class StockOptionDataMap
-            extends DataInstanceMap<StockOption, String> {
+            extends DataInstanceMap<StockOption, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final StockOption pItem) {
             /* Adjust name count */

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo;
-import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -44,11 +43,6 @@ public class TableCashInfo
     protected static final String TABLE_NAME = CashInfo.LIST_NAME;
 
     /**
-     * The CashInfo list.
-     */
-    private CashInfoList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,8 +53,7 @@ public class TableCashInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getCashInfo();
-        setList(theList);
+        setList(myData.getCashInfo());
     }
 
     @Override

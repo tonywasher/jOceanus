@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo;
-import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -44,11 +43,6 @@ public class TableLoanInfo
     protected static final String TABLE_NAME = LoanInfo.LIST_NAME;
 
     /**
-     * The LoanInfo list.
-     */
-    private LoanInfoList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,8 +53,7 @@ public class TableLoanInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getLoanInfo();
-        setList(theList);
+        setList(myData.getLoanInfo());
     }
 
     @Override

@@ -75,11 +75,6 @@ public class SheetPortfolio
     private static final int COL_CLOSED = COL_TAXFREE + 1;
 
     /**
-     * Portfolio data list.
-     */
-    private final PortfolioList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -88,8 +83,8 @@ public class SheetPortfolio
         super(pReader, AREA_PORTFOLIOS);
 
         /* Access the Portfolios list */
-        theList = pReader.getData().getPortfolios();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getPortfolios());
     }
 
     /**
@@ -101,8 +96,8 @@ public class SheetPortfolio
         super(pWriter, AREA_PORTFOLIOS);
 
         /* Access the Portfolios list */
-        theList = pWriter.getData().getPortfolios();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getPortfolios());
     }
 
     @Override

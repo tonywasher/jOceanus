@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
-import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -596,8 +596,9 @@ public class Schedule
         }
 
         @Override
-        protected DataInstanceMap<Schedule, ?> allocateDataMap() {
-            return null;
+        protected DataMapItem<Schedule, MoneyWiseDataType> allocateDataMap() {
+            /* Unused */
+            throw new UnsupportedOperationException();
         }
 
         @Override

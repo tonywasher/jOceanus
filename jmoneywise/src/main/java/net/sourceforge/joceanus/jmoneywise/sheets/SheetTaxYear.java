@@ -63,16 +63,6 @@ public class SheetTaxYear
     private static final int COL_REGIME = COL_TAXYEAR + 1;
 
     /**
-     * The DataSet.
-     */
-    private MoneyWiseData theData = null;
-
-    /**
-     * TaxYear data list.
-     */
-    private final TaxYearList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -81,9 +71,8 @@ public class SheetTaxYear
         super(pReader, AREA_TAXYEARS);
 
         /* Access the Lists */
-        theData = pReader.getData();
-        theList = theData.getTaxYears();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getTaxYears());
     }
 
     /**
@@ -96,8 +85,7 @@ public class SheetTaxYear
 
         /* Access the TaxYears list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getTaxYears();
-        setDataList(theList);
+        setDataList(myData.getTaxYears());
     }
 
     @Override

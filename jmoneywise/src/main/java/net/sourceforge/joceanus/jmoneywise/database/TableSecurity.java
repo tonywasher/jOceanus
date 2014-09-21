@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
-import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
@@ -46,11 +45,6 @@ public class TableSecurity
      * The name of the table.
      */
     protected static final String TABLE_NAME = Security.LIST_NAME;
-
-    /**
-     * The security list.
-     */
-    private SecurityList theList = null;
 
     /**
      * Constructor.
@@ -76,8 +70,7 @@ public class TableSecurity
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getSecurities();
-        setList(theList);
+        setList(myData.getSecurities());
     }
 
     @Override

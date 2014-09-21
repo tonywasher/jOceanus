@@ -69,11 +69,6 @@ public class SheetDepositRate
     private static final int COL_ENDDATE = COL_BONUS + 1;
 
     /**
-     * Rates data list.
-     */
-    private final DepositRateList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -82,8 +77,8 @@ public class SheetDepositRate
         super(pReader, AREA_RATES);
 
         /* Access the Rates list */
-        theList = pReader.getData().getDepositRates();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getDepositRates());
     }
 
     /**
@@ -95,8 +90,8 @@ public class SheetDepositRate
         super(pWriter, AREA_RATES);
 
         /* Access the Rates list */
-        theList = pWriter.getData().getDepositRates();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getDepositRates());
     }
 
     @Override

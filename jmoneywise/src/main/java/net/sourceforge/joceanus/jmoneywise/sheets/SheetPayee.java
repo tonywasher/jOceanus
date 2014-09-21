@@ -65,11 +65,6 @@ public class SheetPayee
     private static final int COL_CLOSED = COL_DESC + 1;
 
     /**
-     * Payee data list.
-     */
-    private final PayeeList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -78,8 +73,8 @@ public class SheetPayee
         super(pReader, AREA_PAYEES);
 
         /* Access the Payees list */
-        theList = pReader.getData().getPayees();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getPayees());
     }
 
     /**
@@ -91,8 +86,8 @@ public class SheetPayee
         super(pWriter, AREA_PAYEES);
 
         /* Access the Payees list */
-        theList = pWriter.getData().getPayees();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getPayees());
     }
 
     @Override

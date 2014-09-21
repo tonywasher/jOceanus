@@ -683,12 +683,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Update the enabled indication if required */
-        if (getEnabled() != pData.getEnabled()) {
+        if (!Difference.isEqual(getEnabled(), pData.getEnabled())) {
             setEnabled(pData.getEnabled());
         }
 
         /* Update the order indication if required */
-        if (getOrder() != pData.getOrder()) {
+        if (!Difference.isEqual(getOrder(), pData.getOrder())) {
             setOrder(pData.getOrder());
         }
     }
@@ -708,8 +708,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         protected abstract Class<S> getEnumClass();
 
         @Override
-        protected StaticDataMap<T> getDataMap() {
-            return (StaticDataMap<T>) super.getDataMap();
+        protected StaticDataMap<T, S, E> getDataMap() {
+            return (StaticDataMap<T, S, E>) super.getDataMap();
         }
 
         /**
@@ -876,7 +876,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
                 }
 
                 /* Adjust count */
-                if (iOrder == myCurr.getOrder()) {
+                if (Difference.isEqual(iOrder, myCurr.getOrder())) {
                     iCount++;
                 }
             }
@@ -912,8 +912,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         @Override
-        protected StaticDataMap<T> allocateDataMap() {
-            return new StaticDataMap<T>();
+        protected DataMapItem<T, E> allocateDataMap() {
+            return new StaticDataMap<T, S, E>();
         }
 
         @Override
@@ -924,9 +924,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     /**
      * The dataMap class.
+     * @param <T> the item type
+     * @param <S> the static data class
+     * @param <E> the data type enum class
      */
-    protected static class StaticDataMap<T extends StaticData<T, ?, ?>>
-            extends DataInstanceMap<T, String> {
+    protected static class StaticDataMap<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
+            extends DataInstanceMap<T, E, String> {
         /**
          * Report fields.
          */

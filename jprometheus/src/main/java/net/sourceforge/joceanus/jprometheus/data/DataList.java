@@ -226,7 +226,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * DataMap.
      */
-    private DataInstanceMap<T, ?> theDataMap;
+    private DataMapItem<T, E> theDataMap;
 
     /**
      * The generation.
@@ -330,7 +330,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Obtain the DataMap.
      * @return the enumClass
      */
-    protected DataInstanceMap<T, ?> getDataMap() {
+    protected DataMapItem<T, E> getDataMap() {
         return theDataMap;
     }
 
@@ -780,7 +780,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Allocate the dataMap.
      * @return the dataMap
      */
-    protected abstract DataInstanceMap<T, ?> allocateDataMap();
+    protected abstract DataMapItem<T, E> allocateDataMap();
 
     /**
      * Build map of the data.

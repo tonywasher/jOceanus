@@ -27,7 +27,6 @@ import javax.swing.SortOrder;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
-import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -46,11 +45,6 @@ public class TableLoan
      * The name of the table.
      */
     protected static final String TABLE_NAME = Loan.LIST_NAME;
-
-    /**
-     * The loan list.
-     */
-    private LoanList theList = null;
 
     /**
      * Constructor.
@@ -75,8 +69,7 @@ public class TableLoan
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getLoans();
-        setList(theList);
+        setList(myData.getLoans());
     }
 
     @Override

@@ -68,11 +68,6 @@ public class SheetTransCategory
     private static final int COL_DESC = COL_PARENT + 1;
 
     /**
-     * Category data list.
-     */
-    private final TransactionCategoryList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -81,8 +76,8 @@ public class SheetTransCategory
         super(pReader, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        theList = pReader.getData().getTransCategories();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getTransCategories());
     }
 
     /**
@@ -94,8 +89,8 @@ public class SheetTransCategory
         super(pWriter, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        theList = pWriter.getData().getTransCategories();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getTransCategories());
     }
 
     @Override

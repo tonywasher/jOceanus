@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -43,11 +42,6 @@ public class TablePortfolio
      * The name of the table.
      */
     protected static final String TABLE_NAME = Portfolio.LIST_NAME;
-
-    /**
-     * The portfolio list.
-     */
-    private PortfolioList theList = null;
 
     /**
      * Constructor.
@@ -69,8 +63,7 @@ public class TablePortfolio
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getPortfolios();
-        setList(theList);
+        setList(myData.getPortfolios());
     }
 
     @Override

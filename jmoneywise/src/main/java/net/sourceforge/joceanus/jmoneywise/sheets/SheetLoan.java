@@ -75,11 +75,6 @@ public class SheetLoan
     private static final int COL_CLOSED = COL_CURRENCY + 1;
 
     /**
-     * Loan data list.
-     */
-    private final LoanList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -88,8 +83,8 @@ public class SheetLoan
         super(pReader, AREA_LOANS);
 
         /* Access the Loans list */
-        theList = pReader.getData().getLoans();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getLoans());
     }
 
     /**
@@ -101,8 +96,8 @@ public class SheetLoan
         super(pWriter, AREA_LOANS);
 
         /* Access the Loans list */
-        theList = pWriter.getData().getLoans();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getLoans());
     }
 
     @Override

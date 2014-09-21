@@ -836,6 +836,11 @@ public class TaxYear
             return theNewYear;
         }
 
+        @Override
+        protected TaxYearDataMap getDataMap() {
+            return (TaxYearDataMap) super.getDataMap();
+        }
+
         /**
          * Construct an empty CORE TaxYear list.
          * @param pData the DataSet for the list
@@ -1033,7 +1038,7 @@ public class TaxYear
      * The dataMap class.
      */
     protected static class TaxYearDataMap
-            extends DataInstanceMap<TaxYear, JDateDay>
+            extends DataInstanceMap<TaxYear, MoneyWiseDataType, JDateDay>
             implements JDataContents {
         @Override
         public void adjustForItem(final TaxYear pItem) {

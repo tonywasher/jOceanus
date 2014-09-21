@@ -34,10 +34,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
  * Template for a Data Instance Map.
  * @author Tony Washer
  * @param <T> the data type
+ * @param <E> the data type enum class
  * @param <K> the instance key
  */
-public abstract class DataInstanceMap<T, K>
-        implements JDataContents {
+public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, K>
+        implements DataMapItem<T, E>, JDataContents {
     /**
      * Report fields.
      */
@@ -56,7 +57,7 @@ public abstract class DataInstanceMap<T, K>
     /**
      * Standard integer ONE.
      */
-    protected static final Integer ONE = Integer.valueOf(1);
+    public static final Integer ONE = Integer.valueOf(1);
 
     @Override
     public JDataFields getDataFields() {
@@ -112,23 +113,15 @@ public abstract class DataInstanceMap<T, K>
     /**
      * adjust maps for item.
      * @param pItem the item to map
-     */
-    protected abstract void adjustForItem(final T pItem);
-
-    /**
-     * adjust maps for item.
-     * @param pItem the item to map
      * @param pKey the key
      */
     protected void adjustForItem(final T pItem,
                                  final K pKey) {
         /* Adjust key count */
         Integer myCount = theKeyCountMap.get(pKey);
-        if (myCount == null) {
-            theKeyCountMap.put(pKey, ONE);
-        } else {
-            theKeyCountMap.put(pKey, myCount + 1);
-        }
+        theKeyCountMap.put(pKey, myCount == null
+                                                ? ONE
+                                                : myCount + 1);
 
         /* Adjust key map */
         theKeyMap.put(pKey, pItem);

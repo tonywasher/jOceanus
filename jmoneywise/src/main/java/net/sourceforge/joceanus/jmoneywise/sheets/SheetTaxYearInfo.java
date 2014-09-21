@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -42,11 +41,6 @@ public class SheetTaxYearInfo
     private static final String AREA_TAXYEARINFO = TaxYearInfo.LIST_NAME;
 
     /**
-     * TaxYearInfo data list.
-     */
-    private final TaxInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetTaxYearInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getTaxInfo();
-        setDataList(theList);
+        setDataList(myData.getTaxInfo());
     }
 
     /**
@@ -69,8 +62,8 @@ public class SheetTaxYearInfo
         super(pWriter, AREA_TAXYEARINFO);
 
         /* Access the InfoType list */
-        theList = pWriter.getData().getTaxInfo();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getTaxInfo());
     }
 
     @Override

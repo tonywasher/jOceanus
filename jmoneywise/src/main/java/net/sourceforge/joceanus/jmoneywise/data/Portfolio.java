@@ -976,6 +976,11 @@ public class Portfolio
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected PortfolioDataMap getDataMap() {
+            return (PortfolioDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the portfolioInfoList.
          * @return the portfolio info list
@@ -1147,7 +1152,7 @@ public class Portfolio
      * The dataMap class.
      */
     protected static class PortfolioDataMap
-            extends DataInstanceMap<Portfolio, String> {
+            extends DataInstanceMap<Portfolio, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final Portfolio pItem) {
             /* Adjust name count */

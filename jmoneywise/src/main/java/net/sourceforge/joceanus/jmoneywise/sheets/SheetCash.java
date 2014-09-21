@@ -75,11 +75,6 @@ public class SheetCash
     private static final int COL_CLOSED = COL_CURRENCY + 1;
 
     /**
-     * Cash data list.
-     */
-    private final CashList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -88,8 +83,8 @@ public class SheetCash
         super(pReader, AREA_CASH);
 
         /* Access the Cash list */
-        theList = pReader.getData().getCash();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getCash());
     }
 
     /**
@@ -101,8 +96,8 @@ public class SheetCash
         super(pWriter, AREA_CASH);
 
         /* Access the Cash list */
-        theList = pWriter.getData().getCash();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getCash());
     }
 
     @Override

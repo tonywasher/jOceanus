@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
-import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -86,11 +86,6 @@ public class SheetSchedule
     private static final int COL_PARENT = COL_SPLIT + 1;
 
     /**
-     * Schedule data list.
-     */
-    private final ScheduleList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -99,8 +94,8 @@ public class SheetSchedule
         super(pReader, AREA_SCHEDULES);
 
         /* Access the Lists */
-        theList = pReader.getData().getSchedules();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getSchedules());
     }
 
     /**
@@ -112,8 +107,8 @@ public class SheetSchedule
         super(pWriter, AREA_SCHEDULES);
 
         /* Access the Schedules list */
-        theList = pWriter.getData().getSchedules();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getSchedules());
     }
 
     @Override

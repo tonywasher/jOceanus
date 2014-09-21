@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,11 +43,6 @@ public class TableTaxYearInfo
     protected static final String TABLE_NAME = TaxYearInfo.LIST_NAME;
 
     /**
-     * The TaxInfo list.
-     */
-    private TaxInfoList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,8 +53,7 @@ public class TableTaxYearInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getTaxInfo();
-        setList(theList);
+        setList(myData.getTaxInfo());
     }
 
     @Override

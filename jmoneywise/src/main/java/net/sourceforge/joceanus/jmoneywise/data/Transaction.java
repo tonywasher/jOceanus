@@ -42,9 +42,9 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoL
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -1252,8 +1252,9 @@ public class Transaction
         }
 
         @Override
-        protected DataInstanceMap<Transaction, ?> allocateDataMap() {
-            return null;
+        protected DataMapItem<Transaction, MoneyWiseDataType> allocateDataMap() {
+            /* Unused */
+            throw new UnsupportedOperationException();
         }
 
         @Override

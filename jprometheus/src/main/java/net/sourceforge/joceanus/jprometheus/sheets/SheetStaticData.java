@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -54,17 +53,6 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
      * Description column.
      */
     protected static final int COL_DESC = COL_NAME + 1;
-
-    /**
-     * The data list.
-     */
-    private DataList<T, E> theList;
-
-    @Override
-    protected void setDataList(final DataList<T, E> pList) {
-        super.setDataList(pList);
-        theList = pList;
-    }
 
     /**
      * Constructor for loading a spreadsheet.
@@ -115,14 +103,5 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
         myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
         myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
         return myValues;
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
     }
 }

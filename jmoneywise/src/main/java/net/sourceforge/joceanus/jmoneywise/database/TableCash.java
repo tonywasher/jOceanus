@@ -27,7 +27,6 @@ import javax.swing.SortOrder;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
-import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -46,11 +45,6 @@ public class TableCash
      * The name of the table.
      */
     protected static final String TABLE_NAME = Cash.LIST_NAME;
-
-    /**
-     * The cash list.
-     */
-    private CashList theList = null;
 
     /**
      * Constructor.
@@ -74,8 +68,7 @@ public class TableCash
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getCash();
-        setList(theList);
+        setList(myData.getCash());
     }
 
     @Override

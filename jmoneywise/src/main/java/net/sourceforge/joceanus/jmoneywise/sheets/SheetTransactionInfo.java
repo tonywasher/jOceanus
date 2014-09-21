@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -42,11 +41,6 @@ public class SheetTransactionInfo
     private static final String AREA_TRANSINFO = TransactionInfo.LIST_NAME;
 
     /**
-     * TransactionInfo data list.
-     */
-    private final TransactionInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetTransactionInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getTransactionInfo();
-        setDataList(theList);
+        setDataList(myData.getTransactionInfo());
     }
 
     /**
@@ -69,8 +62,8 @@ public class SheetTransactionInfo
         super(pWriter, AREA_TRANSINFO);
 
         /* Access the InfoType list */
-        theList = pWriter.getData().getTransactionInfo();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getTransactionInfo());
     }
 
     @Override

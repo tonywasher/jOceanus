@@ -712,8 +712,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
 
         @Override
-        protected CategoryDataMap<T> getDataMap() {
-            return (CategoryDataMap<T>) super.getDataMap();
+        protected CategoryDataMap<T, S, C> getDataMap() {
+            return (CategoryDataMap<T, S, C>) super.getDataMap();
         }
 
         /**
@@ -859,16 +859,19 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
 
         @Override
-        protected CategoryDataMap<T> allocateDataMap() {
-            return new CategoryDataMap<T>();
+        protected CategoryDataMap<T, S, C> allocateDataMap() {
+            return new CategoryDataMap<T, S, C>();
         }
     }
 
     /**
      * The dataMap class.
+     * @param <T> the Category Data type
+     * @param <S> the Static Data type
+     * @param <C> the Static Data class
      */
-    protected static class CategoryDataMap<T extends CategoryBase<T, ?, ?>>
-            extends DataInstanceMap<T, String> {
+    protected static class CategoryDataMap<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
+            extends DataInstanceMap<T, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final T pItem) {
             /* Adjust name count */

@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
-import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -48,11 +47,6 @@ public class TableDepositRate
      * The name of the Rates table.
      */
     protected static final String TABLE_NAME = DepositRate.LIST_NAME;
-
-    /**
-     * The rate list.
-     */
-    private DepositRateList theList = null;
 
     /**
      * Constructor.
@@ -76,8 +70,7 @@ public class TableDepositRate
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getDepositRates();
-        setList(theList);
+        setList(myData.getDepositRates());
     }
 
     @Override

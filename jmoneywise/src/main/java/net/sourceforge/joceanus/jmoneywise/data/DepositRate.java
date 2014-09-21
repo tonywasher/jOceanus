@@ -30,17 +30,19 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedRate;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -725,6 +727,11 @@ public class DepositRate
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected DepositRateDataMap getDataMap() {
+            return (DepositRateDataMap) super.getDataMap();
+        }
+
         /**
          * Construct an empty CORE rate list.
          * @param pData the DataSet for the list
@@ -882,16 +889,16 @@ public class DepositRate
      * The dataMap class.
      */
     protected static class DepositRateDataMap
-            extends DataInstanceMap<DepositRate, JDateDay> {
+            implements DataMapItem<DepositRate, MoneyWiseDataType>, JDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.PAYEE_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * CategoryMap Field Id.
          */
-        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -906,7 +913,7 @@ public class DepositRate
             }
 
             /* Unknown */
-            return super.getFieldValue(pField);
+            return JDataFieldValue.UNKNOWN;
         }
 
         @Override
@@ -952,7 +959,7 @@ public class DepositRate
             JDateDay myDate = pItem.getEndDate();
             Integer myCount = myMap.get(myDate);
             if (myCount == null) {
-                myMap.put(myDate, ONE);
+                myMap.put(myDate, DataInstanceMap.ONE);
             } else {
                 myMap.put(myDate, myCount + 1);
             }
@@ -973,7 +980,7 @@ public class DepositRate
             Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
-                return ONE.equals(myResult);
+                return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
         }

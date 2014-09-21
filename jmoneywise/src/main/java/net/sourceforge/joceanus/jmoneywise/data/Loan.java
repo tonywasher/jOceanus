@@ -911,6 +911,11 @@ public class Loan
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected LoanDataMap getDataMap() {
+            return (LoanDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the depositInfoList.
          * @return the deposit info list
@@ -1053,7 +1058,7 @@ public class Loan
      * The dataMap class.
      */
     protected static class LoanDataMap
-            extends DataInstanceMap<Loan, String> {
+            extends DataInstanceMap<Loan, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final Loan pItem) {
             /* Adjust name count */

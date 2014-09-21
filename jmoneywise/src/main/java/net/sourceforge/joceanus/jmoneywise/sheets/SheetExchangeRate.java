@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -61,11 +61,6 @@ public class SheetExchangeRate
     private static final int COL_RATE = COL_TO + 1;
 
     /**
-     * ExchangeRate list.
-     */
-    private final ExchangeRateList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -74,8 +69,8 @@ public class SheetExchangeRate
         super(pReader, AREA_XCHGRATES);
 
         /* Access the Rates list */
-        theList = pReader.getData().getExchangeRates();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getExchangeRates());
     }
 
     /**
@@ -87,8 +82,8 @@ public class SheetExchangeRate
         super(pWriter, AREA_XCHGRATES);
 
         /* Access the Rates list */
-        theList = pWriter.getData().getExchangeRates();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getExchangeRates());
     }
 
     @Override

@@ -636,9 +636,9 @@ public class DataKeySet
         }
 
         @Override
-        protected DataInstanceMap<DataKeySet, ?> allocateDataMap() {
+        protected DataMapItem<DataKeySet, CryptographyDataType> allocateDataMap() {
             /* Unused */
-            return null;
+            throw new UnsupportedOperationException();
         }
     }
 }

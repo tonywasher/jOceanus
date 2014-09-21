@@ -100,11 +100,6 @@ public class SheetTransaction
     private static final int COL_PARENT = COL_SPLIT + 1;
 
     /**
-     * Transaction data list.
-     */
-    private final TransactionList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -114,8 +109,7 @@ public class SheetTransaction
 
         /* Access the Lists */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getTransactions();
-        setDataList(theList);
+        setDataList(myData.getTransactions());
     }
 
     /**
@@ -128,8 +122,7 @@ public class SheetTransaction
 
         /* Access the Transactions list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getTransactions();
-        setDataList(theList);
+        setDataList(myData.getTransactions());
     }
 
     @Override

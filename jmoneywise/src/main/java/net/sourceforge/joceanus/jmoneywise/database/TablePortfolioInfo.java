@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
-import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,11 +43,6 @@ public class TablePortfolioInfo
     protected static final String TABLE_NAME = PortfolioInfo.LIST_NAME;
 
     /**
-     * The PortfolioInfo list.
-     */
-    private PortfolioInfoList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,8 +53,7 @@ public class TablePortfolioInfo
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getPortfolioInfo();
-        setList(theList);
+        setList(myData.getPortfolioInfo());
     }
 
     @Override

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
-import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -42,11 +41,6 @@ public class SheetPortfolioInfo
     private static final String AREA_PORTFOLIOINFO = PortfolioInfo.LIST_NAME;
 
     /**
-     * PorfolioInfo data list.
-     */
-    private final PortfolioInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetPortfolioInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getPortfolioInfo();
-        setDataList(theList);
+        setDataList(myData.getPortfolioInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetPortfolioInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getPortfolioInfo();
-        setDataList(theList);
+        setDataList(myData.getPortfolioInfo());
     }
 
     @Override

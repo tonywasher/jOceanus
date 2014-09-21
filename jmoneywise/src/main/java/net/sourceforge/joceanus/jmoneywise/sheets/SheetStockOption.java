@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
-import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -81,11 +81,6 @@ public class SheetStockOption
     private static final int COL_CLOSED = COL_PRICE + 1;
 
     /**
-     * StockOption data list.
-     */
-    private final StockOptionList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -93,9 +88,9 @@ public class SheetStockOption
         /* Call super constructor */
         super(pReader, AREA_STOCKOPTIONS);
 
-        /* Access the Loans list */
-        theList = pReader.getData().getStockOptions();
-        setDataList(theList);
+        /* Access the Options list */
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getStockOptions());
     }
 
     /**
@@ -106,9 +101,9 @@ public class SheetStockOption
         /* Call super constructor */
         super(pWriter, AREA_STOCKOPTIONS);
 
-        /* Access the Loans list */
-        theList = pWriter.getData().getStockOptions();
-        setDataList(theList);
+        /* Access the Options list */
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getStockOptions());
     }
 
     @Override

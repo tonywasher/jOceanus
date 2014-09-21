@@ -88,11 +88,6 @@ public class SheetDeposit
     private static final int COL_CLOSED = COL_TAXFREE + 1;
 
     /**
-     * Deposit data list.
-     */
-    private final DepositList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -101,8 +96,8 @@ public class SheetDeposit
         super(pReader, AREA_DEPOSITS);
 
         /* Access the Deposits list */
-        theList = pReader.getData().getDeposits();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getDeposits());
     }
 
     /**
@@ -114,8 +109,8 @@ public class SheetDeposit
         super(pWriter, AREA_DEPOSITS);
 
         /* Access the Deposits list */
-        theList = pWriter.getData().getDeposits();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getDeposits());
     }
 
     @Override

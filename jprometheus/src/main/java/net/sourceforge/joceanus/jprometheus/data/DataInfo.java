@@ -964,9 +964,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                                          final Object pValue) throws JOceanusException;
 
         @Override
-        protected DataInstanceMap<T, ?> allocateDataMap() {
+        protected DataMapItem<T, E> allocateDataMap() {
             /* Unused */
-            return null;
+            throw new UnsupportedOperationException();
         }
     }
 }

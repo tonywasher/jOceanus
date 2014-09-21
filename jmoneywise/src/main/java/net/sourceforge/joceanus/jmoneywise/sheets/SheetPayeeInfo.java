@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo;
-import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -42,11 +41,6 @@ public class SheetPayeeInfo
     private static final String AREA_PAYEEINFO = PayeeInfo.LIST_NAME;
 
     /**
-     * PayeeInfo data list.
-     */
-    private final PayeeInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetPayeeInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getPayeeInfo();
-        setDataList(theList);
+        setDataList(myData.getPayeeInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetPayeeInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getPayeeInfo();
-        setDataList(theList);
+        setDataList(myData.getPayeeInfo());
     }
 
     @Override

@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -48,11 +47,6 @@ public class TableExchangeRate
      * The name of the ExchangeRate table.
      */
     protected static final String TABLE_NAME = ExchangeRate.LIST_NAME;
-
-    /**
-     * The rate list.
-     */
-    private ExchangeRateList theList = null;
 
     /**
      * The formatter.
@@ -81,8 +75,7 @@ public class TableExchangeRate
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getExchangeRates();
-        setList(theList);
+        setList(myData.getExchangeRates());
         theFormatter = myData.getDataFormatter();
     }
 

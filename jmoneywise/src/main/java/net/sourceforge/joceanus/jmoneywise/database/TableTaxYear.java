@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -50,11 +49,6 @@ public class TableTaxYear
     protected static final String TABLE_NAME = TaxYear.LIST_NAME;
 
     /**
-     * The TaxYear list.
-     */
-    private TaxYearList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -73,8 +67,7 @@ public class TableTaxYear
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getTaxYears();
-        setList(theList);
+        setList(myData.getTaxYears());
     }
 
     @Override

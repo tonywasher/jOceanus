@@ -73,6 +73,26 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_ERROR_CURRENCY("MoneyWiseData.Error.Currency"),
 
     /**
+     * MoneyWiseData Map MultiMap.
+     */
+    MONEYWISEDATA_MAP_MULTIMAP("MoneyWiseData.Map.MultiMap"),
+
+    /**
+     * MoneyWiseData Map MultiMap.
+     */
+    MONEYWISEDATA_MAP_MAPOFMAPS("MoneyWiseData.Map.MapOfMaps"),
+
+    /**
+     * MoneyWiseData Map SingularMap.
+     */
+    MONEYWISEDATA_MAP_SINGULARMAP("MoneyWiseData.Map.SingularMap"),
+
+    /**
+     * MoneyWiseData Map SingularCounts.
+     */
+    MONEYWISEDATA_MAP_SINGULARCOUNTS("MoneyWiseData.Map.SingularCounts"),
+
+    /**
      * Category SubCategory.
      */
     CATEGORY_SUBCAT("Category.SubCategory"),
@@ -86,21 +106,6 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Category New Category.
      */
     CATEGORY_NEWCAT("Category.NewCategory"),
-
-    /**
-     * Category DataMap.
-     */
-    CATEGORY_DATAMAP("Category.DataMap"),
-
-    /**
-     * Category SingularMap.
-     */
-    CATEGORY_SINGULARMAP("Category.SingularMap"),
-
-    /**
-     * Category SingularCounts.
-     */
-    CATEGORY_SINGULARCOUNT("Category.SingularCounts"),
 
     /**
      * Category Error BadParent.
@@ -266,11 +271,6 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Payee NewAccount.
      */
     PAYEE_NEWACCOUNT("Payee.NewAccount"),
-
-    /**
-     * Payee DataMap.
-     */
-    PAYEE_DATAMAP("Payee.DataMap"),
 
     /**
      * Security Symbol.

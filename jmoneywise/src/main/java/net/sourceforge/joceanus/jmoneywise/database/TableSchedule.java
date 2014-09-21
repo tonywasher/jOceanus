@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
-import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
@@ -48,11 +47,6 @@ public class TableSchedule
      * The name of the Schedules table.
      */
     protected static final String TABLE_NAME = Schedule.LIST_NAME;
-
-    /**
-     * The schedule list.
-     */
-    private ScheduleList theList = null;
 
     /**
      * Constructor.
@@ -80,8 +74,7 @@ public class TableSchedule
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getSchedules();
-        setList(theList);
+        setList(myData.getSchedules());
     }
 
     @Override

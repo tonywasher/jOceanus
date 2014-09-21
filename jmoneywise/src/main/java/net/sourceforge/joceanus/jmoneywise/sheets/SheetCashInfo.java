@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo;
-import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
@@ -42,11 +41,6 @@ public class SheetCashInfo
     private static final String AREA_CASHINFO = CashInfo.LIST_NAME;
 
     /**
-     * CashInfo data list.
-     */
-    private final CashInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetCashInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getCashInfo();
-        setDataList(theList);
+        setDataList(myData.getCashInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetCashInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getCashInfo();
-        setDataList(theList);
+        setDataList(myData.getCashInfo());
     }
 
     @Override

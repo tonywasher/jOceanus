@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo;
-import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
@@ -42,11 +41,6 @@ public class SheetLoanInfo
     private static final String AREA_LOANINFO = LoanInfo.LIST_NAME;
 
     /**
-     * LoanInfo data list.
-     */
-    private final LoanInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetLoanInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getLoanInfo();
-        setDataList(theList);
+        setDataList(myData.getLoanInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetLoanInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getLoanInfo();
-        setDataList(theList);
+        setDataList(myData.getLoanInfo());
     }
 
     @Override

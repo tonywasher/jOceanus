@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -439,6 +440,11 @@ public final class TransactionCategory
             return TransactionCategory.FIELD_DEFS;
         }
 
+        @Override
+        protected TransCategoryDataMap getDataMap() {
+            return (TransCategoryDataMap) super.getDataMap();
+        }
+
         /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
@@ -635,21 +641,21 @@ public final class TransactionCategory
      * The dataMap class.
      */
     protected static class TransCategoryDataMap
-            extends CategoryDataMap<TransactionCategory> {
+            extends CategoryDataMap<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.CATEGORY_DATAMAP.getValue(), CategoryDataMap.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
 
         /**
          * CategoryMap Field Id.
          */
-        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARMAP.getValue());
+        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.CATEGORY_SINGULARCOUNT.getValue());
+        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
         @Override
         public JDataFields getDataFields() {

@@ -387,9 +387,9 @@ public class ControlData
         }
 
         @Override
-        protected DataInstanceMap<ControlData, ?> allocateDataMap() {
+        protected DataMapItem<ControlData, CryptographyDataType> allocateDataMap() {
             /* Unused */
-            return null;
+            throw new UnsupportedOperationException();
         }
     }
 }

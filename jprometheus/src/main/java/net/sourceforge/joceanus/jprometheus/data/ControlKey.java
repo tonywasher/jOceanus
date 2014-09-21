@@ -887,9 +887,9 @@ public final class ControlKey
         }
 
         @Override
-        protected DataInstanceMap<ControlKey, ?> allocateDataMap() {
+        protected DataMapItem<ControlKey, CryptographyDataType> allocateDataMap() {
             /* Unused */
-            return null;
+            throw new UnsupportedOperationException();
         }
     }
 

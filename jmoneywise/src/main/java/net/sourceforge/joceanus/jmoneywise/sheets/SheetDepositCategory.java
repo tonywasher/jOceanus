@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -61,11 +61,6 @@ public class SheetDepositCategory
     private static final int COL_DESC = COL_PARENT + 1;
 
     /**
-     * Category data list.
-     */
-    private final DepositCategoryList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -74,8 +69,8 @@ public class SheetDepositCategory
         super(pReader, AREA_DEPCATEGORIES);
 
         /* Access the Categories list */
-        theList = pReader.getData().getDepositCategories();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getDepositCategories());
     }
 
     /**
@@ -87,8 +82,8 @@ public class SheetDepositCategory
         super(pWriter, AREA_DEPCATEGORIES);
 
         /* Access the Categories list */
-        theList = pWriter.getData().getDepositCategories();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getDepositCategories());
     }
 
     @Override

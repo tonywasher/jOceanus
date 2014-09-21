@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -48,11 +47,6 @@ public class TableTransCategory
      * The name of the Category table.
      */
     protected static final String TABLE_NAME = TransactionCategory.LIST_NAME;
-
-    /**
-     * The category list.
-     */
-    private TransactionCategoryList theList = null;
 
     /**
      * Constructor.
@@ -76,8 +70,7 @@ public class TableTransCategory
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getTransCategories();
-        setList(theList);
+        setList(myData.getTransCategories());
     }
 
     @Override

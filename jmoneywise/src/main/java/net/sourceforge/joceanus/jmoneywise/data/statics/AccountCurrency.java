@@ -448,9 +448,7 @@ public class AccountCurrency
         public AccountCurrency findCurrency(final Currency pCurrency) {
             /* Look up the currency */
             AccountCurrencyClass myClass = AccountCurrencyClass.fromCurrency(pCurrency);
-            return myClass == null
-                                  ? null
-                                  : findItemByClass(myClass);
+            return findItemByClass(myClass);
         }
 
         /**
@@ -547,7 +545,7 @@ public class AccountCurrency
      * The dataMap class.
      */
     protected static final class CurrencyDataMap
-            extends StaticDataMap<AccountCurrency> {
+            extends StaticDataMap<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
         /**
          * Report fields.
          */

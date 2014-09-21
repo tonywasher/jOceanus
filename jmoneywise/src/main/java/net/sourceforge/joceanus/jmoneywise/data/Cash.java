@@ -797,6 +797,11 @@ public class Cash
             return (MoneyWiseData) super.getDataSet();
         }
 
+        @Override
+        protected CashDataMap getDataMap() {
+            return (CashDataMap) super.getDataMap();
+        }
+
         /**
          * Obtain the depositInfoList.
          * @return the deposit info list
@@ -936,7 +941,7 @@ public class Cash
      * The dataMap class.
      */
     protected static class CashDataMap
-            extends DataInstanceMap<Cash, String> {
+            extends DataInstanceMap<Cash, MoneyWiseDataType, String> {
         @Override
         public void adjustForItem(final Cash pItem) {
             /* Adjust name count */

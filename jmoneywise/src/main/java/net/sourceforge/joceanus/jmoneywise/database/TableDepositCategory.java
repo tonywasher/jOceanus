@@ -27,7 +27,6 @@ import javax.swing.SortOrder;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -47,11 +46,6 @@ public class TableDepositCategory
      * The name of the Category table.
      */
     protected static final String TABLE_NAME = DepositCategory.LIST_NAME;
-
-    /**
-     * The category list.
-     */
-    private DepositCategoryList theList = null;
 
     /**
      * Constructor.
@@ -75,8 +69,7 @@ public class TableDepositCategory
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getDepositCategories();
-        setList(theList);
+        setList(myData.getDepositCategories());
     }
 
     @Override

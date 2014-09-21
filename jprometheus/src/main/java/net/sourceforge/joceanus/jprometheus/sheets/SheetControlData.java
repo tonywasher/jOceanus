@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.ControlData;
-import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -51,11 +50,6 @@ public class SheetControlData
     private static final int COL_CONTROLID = COL_VERSION + 1;
 
     /**
-     * ControlData data list.
-     */
-    private ControlDataList theList = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -65,8 +59,7 @@ public class SheetControlData
 
         /* Access the Lists */
         DataSet<?, ?> myData = pReader.getData();
-        theList = myData.getControlData();
-        setDataList(theList);
+        setDataList(myData.getControlData());
     }
 
     /**
@@ -78,8 +71,8 @@ public class SheetControlData
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        theList = pWriter.getData().getControlData();
-        setDataList(theList);
+        DataSet<?, ?> myData = pWriter.getData();
+        setDataList(myData.getControlData());
     }
 
     @Override

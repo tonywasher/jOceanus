@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
-import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
@@ -42,11 +41,6 @@ public class SheetDepositInfo
     private static final String AREA_DEPOSITINFO = DepositInfo.LIST_NAME;
 
     /**
-     * DepositInfo data list.
-     */
-    private final DepositInfoList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -56,8 +50,7 @@ public class SheetDepositInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        theList = myData.getDepositInfo();
-        setDataList(theList);
+        setDataList(myData.getDepositInfo());
     }
 
     /**
@@ -70,8 +63,7 @@ public class SheetDepositInfo
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        theList = myData.getDepositInfo();
-        setDataList(theList);
+        setDataList(myData.getDepositInfo());
     }
 
     @Override
