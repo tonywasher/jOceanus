@@ -526,8 +526,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
                 /* else this is a standard DataInfo */
             } else {
-                /* Touch the owner TODO */
-                myValue.touchItem(theOwner);
+                /* Touch the owner */
+                theOwner.touchItem(myValue);
 
                 /* Touch the underlying items */
                 myValue.touchUnderlyingItems();

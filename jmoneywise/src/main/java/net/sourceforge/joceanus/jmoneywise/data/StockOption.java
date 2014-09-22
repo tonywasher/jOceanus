@@ -469,6 +469,16 @@ public class StockOption
     }
 
     @Override
+    public StockOption getBase() {
+        return (StockOption) super.getBase();
+    }
+
+    @Override
+    public StockOptionList getList() {
+        return (StockOptionList) super.getList();
+    }
+
+    @Override
     public DataState getState() {
         /* Pop history for self */
         DataState myState = super.getState();
@@ -957,6 +967,13 @@ public class StockOption
 
         /* Check for changes */
         return checkForHistory();
+    }
+
+    @Override
+    public void adjustMapForItem() {
+        StockOptionList myList = getList();
+        StockOptionDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
     }
 
     /**

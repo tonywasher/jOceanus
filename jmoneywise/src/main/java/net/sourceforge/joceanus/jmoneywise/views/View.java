@@ -187,7 +187,6 @@ public class View
         }
 
         /* Complete the analysis */
-        myTask.startTask("CompleteAnalysis");
         pData.completeAnalysis();
 
         /* Complete the task */

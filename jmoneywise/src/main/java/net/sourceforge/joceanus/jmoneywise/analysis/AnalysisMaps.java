@@ -79,12 +79,17 @@ public class AnalysisMaps {
             while (myIterator.hasPrevious()) {
                 SecurityPrice myPrice = myIterator.previous();
 
+                /* Ignore deleted prices */
+                if (myPrice.isDeleted()) {
+                    continue;
+                }
+
                 /* Add to the map */
                 addPriceToMap(myPrice);
 
-                /* Touch underlying items */
-                myPrice.clearActive();
+                /* Touch underlying items and map the data */
                 myPrice.touchUnderlyingItems();
+                myPrice.adjustMapForItem();
             }
         }
 
@@ -272,12 +277,17 @@ public class AnalysisMaps {
             while (myIterator.hasNext()) {
                 DepositRate myRate = myIterator.next();
 
+                /* Ignore deleted rates */
+                if (myRate.isDeleted()) {
+                    continue;
+                }
+
                 /* Add to the map */
                 addRateToMap(myRate);
 
-                /* Touch underlying items */
-                myRate.clearActive();
+                /* Touch underlying items and adjust map */
                 myRate.touchUnderlyingItems();
+                myRate.adjustMapForItem();
             }
         }
 

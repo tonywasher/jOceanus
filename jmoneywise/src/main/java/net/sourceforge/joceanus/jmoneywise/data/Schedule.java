@@ -610,5 +610,10 @@ public class Schedule
             /* Validate the schedules */
             validateOnLoad();
         }
+
+        @Override
+        protected void ensureMap() {
+            /* Null operation */
+        }
     }
 }

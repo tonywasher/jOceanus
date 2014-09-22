@@ -449,6 +449,11 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
     }
 
+    @Override
+    public StaticList<T, S, E> getList() {
+        return (StaticList<T, S, E>) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the Static Data with
@@ -691,6 +696,13 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         if (!Difference.isEqual(getOrder(), pData.getOrder())) {
             setOrder(pData.getOrder());
         }
+    }
+
+    @Override
+    public void adjustMapForItem() {
+        StaticList<T, S, E> myList = getList();
+        StaticDataMap<T, S, E> myMap = myList.getDataMap();
+        myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
     /**

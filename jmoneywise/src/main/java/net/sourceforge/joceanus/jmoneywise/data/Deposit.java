@@ -1123,6 +1123,13 @@ public class Deposit
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        DepositList myList = getList();
+        DepositDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Deposit List class.
      */

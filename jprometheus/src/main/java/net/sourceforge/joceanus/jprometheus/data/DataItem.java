@@ -550,6 +550,24 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
+     * Adjust map for this item.
+     */
+    public void adjustMapForItem() {
+    }
+
+    /**
+     * Prepare for analysis.
+     */
+    public void prepareForAnalysis() {
+        /* Clear active flag and touch underlying items */
+        clearActive();
+        touchUnderlyingItems();
+
+        /* Adjust the map for this item */
+        adjustMapForItem();
+    }
+
+    /**
      * Get the base item for this item.
      * @return the Base item or <code>null</code>
      */

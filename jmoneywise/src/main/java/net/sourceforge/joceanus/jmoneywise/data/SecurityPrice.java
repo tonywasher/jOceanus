@@ -620,6 +620,13 @@ public class SecurityPrice
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
+        SecurityPriceDataMap<SecurityPrice> myMap = (SecurityPriceDataMap<SecurityPrice>) myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * Price List.
      * @param <T> the data type
@@ -852,6 +859,12 @@ public class SecurityPrice
 
             /* Return it */
             return myPrice;
+        }
+
+        @Override
+        public void prepareForAnalysis() {
+            /* Just ensure the map */
+            ensureMap();
         }
     }
 

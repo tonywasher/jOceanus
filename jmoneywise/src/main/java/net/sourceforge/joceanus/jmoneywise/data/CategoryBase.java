@@ -693,6 +693,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
     }
 
+    @Override
+    public void adjustMapForItem() {
+        CategoryBaseList<T, S, C> myList = getList();
+        CategoryDataMap<T, S, C> myMap = myList.getDataMap();
+        myMap.adjustForItem(myList.getBaseClass().cast(this));
+    }
+
     /**
      * The Category Base List class.
      * @param <T> the Category Data type

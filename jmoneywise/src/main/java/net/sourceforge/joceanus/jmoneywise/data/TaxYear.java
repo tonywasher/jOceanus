@@ -766,6 +766,13 @@ public class TaxYear
         theInfoSet.touchUnderlyingItems();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        TaxYearList myList = getList();
+        TaxYearDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Tax Year List class.
      */

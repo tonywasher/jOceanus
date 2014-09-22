@@ -936,6 +936,13 @@ public class Portfolio
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        PortfolioList myList = getList();
+        PortfolioDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Portfolio List class.
      */

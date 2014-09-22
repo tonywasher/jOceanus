@@ -697,6 +697,13 @@ public class DepositRate
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        DepositRateList myList = getList();
+        DepositRateDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * List class.
      */
@@ -882,6 +889,12 @@ public class DepositRate
         @Override
         protected DepositRateDataMap allocateDataMap() {
             return new DepositRateDataMap();
+        }
+
+        @Override
+        public void prepareForAnalysis() {
+            /* Just ensure the map */
+            ensureMap();
         }
     }
 

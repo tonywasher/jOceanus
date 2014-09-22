@@ -694,76 +694,9 @@ public class MoneyWiseData
         while (myIterator.hasNext()) {
             Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>> myEntry = myIterator.next();
 
-            /* Access list and switch on type */
+            /* Prepare list for analysis */
             DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
-            switch (myEntry.getKey()) {
-            /* Ignore lists that are never referenced */
-                case TAXBASIS:
-                case TAXTYPE:
-                    break;
-
-                /* Reset the flags on low-lying data */
-                case DEPOSITTYPE:
-                case CASHTYPE:
-                case LOANTYPE:
-                case PAYEETYPE:
-                case SECURITYTYPE:
-                case TRANSTYPE:
-                case CURRENCY:
-                case TAXREGIME:
-                case FREQUENCY:
-                case TAXINFOTYPE:
-                case ACCOUNTINFOTYPE:
-                case TRANSINFOTYPE:
-                case TRANSTAG:
-                    myList.clearActive();
-                    break;
-
-                /* Reset flags and touch underlying on intermediate data */
-                case DEPOSITCATEGORY:
-                case CASHCATEGORY:
-                case LOANCATEGORY:
-                case TRANSCATEGORY:
-                case TAXYEAR:
-                case PAYEE:
-                case SECURITY:
-                case DEPOSIT:
-                case CASH:
-                case LOAN:
-                case PORTFOLIO:
-                case STOCKOPTION:
-                    myList.clearActive();
-                    myList.touchUnderlyingItems();
-                    break;
-
-                /* Touch underlying data for high level data */
-                case EXCHANGERATE:
-                case SCHEDULE:
-                    myList.touchUnderlyingItems();
-                    break;
-
-                /* Ignore lists that will be handled during analysis */
-                case TRANSACTION:
-                case DEPOSITRATE:
-                case SECURITYPRICE:
-                case STOCKOPTIONVEST:
-                    break;
-
-                /* Ignore info lists that will be handled by their owner */
-                case TRANSACTIONINFO:
-                case TAXYEARINFO:
-                case PAYEEINFO:
-                case SECURITYINFO:
-                case DEPOSITINFO:
-                case CASHINFO:
-                case LOANINFO:
-                case PORTFOLIOINFO:
-                case STOCKOPTIONINFO:
-                    break;
-
-                default:
-                    throw new IllegalArgumentException(myEntry.getKey().toString());
-            }
+            myList.prepareForAnalysis();
         }
     }
 
@@ -772,15 +705,6 @@ public class MoneyWiseData
      * @throws JOceanusException on error
      */
     public void completeAnalysis() throws JOceanusException {
-        /* Note active accounts */
-        getPortfolios().validateOnLoad();
-        getDeposits().validateOnLoad();
-        getCash().validateOnLoad();
-        getLoans().validateOnLoad();
-        getSecurities().validateOnLoad();
-        getPayees().validateOnLoad();
-        getStockOptions().validateOnLoad();
-
         /* Reinstate the lock */
         setLocked(true);
     }

@@ -783,15 +783,23 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     protected abstract DataMapItem<T, E> allocateDataMap();
 
     /**
-     * Build map of the data.
+     * Ensure map.
      */
-    protected void mapData() {
+    protected void ensureMap() {
         /* Allocate/Reset the map */
         if (theDataMap == null) {
             theDataMap = allocateDataMap();
         } else {
             theDataMap.resetMap();
         }
+    }
+
+    /**
+     * Build map of the data.
+     */
+    protected void mapData() {
+        /* Ensure the map */
+        ensureMap();
 
         /* Loop through the items */
         Iterator<T> myIterator = iterator();
@@ -823,16 +831,22 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Reset active.
+     * Prepare for Analysis.
      */
-    public void clearActive() {
-        /* Create an iterator for the list */
-        Iterator<T> myIterator = iterator();
+    public void prepareForAnalysis() {
+        /* Ensure the map */
+        ensureMap();
 
         /* Loop through items clearing active flag */
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            myCurr.clearActive();
+            T myItem = myIterator.next();
+
+            /* If the item is not deleted */
+            if (!myItem.isDeleted()) {
+                /* Prepare item for analysis */
+                myItem.prepareForAnalysis();
+            }
         }
     }
 

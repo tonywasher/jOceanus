@@ -919,5 +919,10 @@ public final class ExchangeRate
             /* Validate the exchangeRates */
             validateOnLoad();
         }
+
+        @Override
+        protected void ensureMap() {
+            /* Null operation */
+        }
     }
 }

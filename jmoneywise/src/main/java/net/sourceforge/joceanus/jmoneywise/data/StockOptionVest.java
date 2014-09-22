@@ -562,6 +562,13 @@ public class StockOptionVest
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        StockOptionVestList myList = getList();
+        StockOptionVestDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The StockOption Vest List class.
      */
@@ -722,6 +729,12 @@ public class StockOptionVest
         @Override
         protected StockOptionVestDataMap allocateDataMap() {
             return new StockOptionVestDataMap();
+        }
+
+        @Override
+        public void prepareForAnalysis() {
+            /* Just ensure the map */
+            ensureMap();
         }
     }
 

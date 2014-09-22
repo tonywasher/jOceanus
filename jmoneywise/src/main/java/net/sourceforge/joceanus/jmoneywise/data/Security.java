@@ -1030,6 +1030,13 @@ public class Security
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        SecurityList myList = getList();
+        SecurityDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Security List class.
      */

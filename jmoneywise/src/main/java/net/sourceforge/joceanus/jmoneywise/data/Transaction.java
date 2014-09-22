@@ -1263,5 +1263,10 @@ public class Transaction
             resolveDataSetLinks();
             reSort();
         }
+
+        @Override
+        public void prepareForAnalysis() {
+            /* Null operation */
+        }
     }
 }

@@ -441,6 +441,13 @@ public class TransactionTag
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        TransactionTagList myList = getList();
+        TagDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Transaction Tag List class.
      */

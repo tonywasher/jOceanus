@@ -871,6 +871,13 @@ public class Loan
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        LoanList myList = getList();
+        LoanDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Loan List class.
      */

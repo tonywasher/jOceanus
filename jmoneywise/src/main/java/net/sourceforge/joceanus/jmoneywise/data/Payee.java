@@ -756,6 +756,13 @@ public class Payee
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        PayeeList myList = getList();
+        PayeeDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Payee List class.
      */

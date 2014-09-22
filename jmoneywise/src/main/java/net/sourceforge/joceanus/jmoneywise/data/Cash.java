@@ -757,6 +757,13 @@ public class Cash
         return checkForHistory();
     }
 
+    @Override
+    public void adjustMapForItem() {
+        CashList myList = getList();
+        CashDataMap myMap = myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * The Cash List class.
      */
