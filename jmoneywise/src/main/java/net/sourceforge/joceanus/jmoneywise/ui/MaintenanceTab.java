@@ -474,7 +474,7 @@ public class MaintenanceTab
             theCategoryTab.determineFocus();
 
             /* If the selected component is TaxYear */
-        } else if (myComponent.equals(theTaxYearTab)) {
+        } else if (myComponent.equals(theTaxYearTab.getPanel())) {
             /* Set the debug focus */
             theTaxYearTab.determineFocus();
 

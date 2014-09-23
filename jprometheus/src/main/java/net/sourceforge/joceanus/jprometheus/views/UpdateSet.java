@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -241,9 +242,15 @@ public class UpdateSet<E extends Enum<E>>
                 /* Note the new step */
                 myTask.startTask(myDataList.listName());
 
-                /* Set the new version and validate the list */
+                /* Set the new version */
                 myDataList.setVersion(theVersion);
-                myDataList.validate();
+
+                /* Validate or postProcess */
+                if (myDataList instanceof DataInfoList) {
+                    myDataList.validate();
+                } else {
+                    myDataList.postProcessOnUpdate();
+                }
             }
         }
 
@@ -258,7 +265,7 @@ public class UpdateSet<E extends Enum<E>>
     private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
         JDataProfile myTask = theControl.getActiveTask();
-        myTask = myTask.startTask("reWindToVersion");
+        JDataProfile mySubTask = myTask.startTask("reWindToVersion");
 
         /* Record the version */
         theVersion = pVersion;
@@ -273,10 +280,32 @@ public class UpdateSet<E extends Enum<E>>
             /* If the list exists */
             if (myDataList != null) {
                 /* Note the new step */
-                myTask.startTask(myDataList.listName());
+                mySubTask.startTask(myDataList.listName());
 
                 /* Rewind the version */
                 myDataList.rewindToVersion(theVersion);
+            }
+        }
+
+        /* Need to validate after full reWind to avoid false errors */
+        mySubTask = myTask.startTask("postProcess");
+        myIterator = theMap.values().iterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            UpdateEntry<?, E> myEntry = myIterator.next();
+            DataList<?, E> myDataList = myEntry.getDataList();
+
+            /* If the list exists */
+            if (myDataList != null) {
+                /* Note the new step */
+                mySubTask.startTask(myDataList.listName());
+
+                /* Validate or postProcess */
+                if (myDataList instanceof DataInfoList) {
+                    myDataList.validate();
+                } else {
+                    myDataList.postProcessOnUpdate();
+                }
             }
         }
 

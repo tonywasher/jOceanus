@@ -859,6 +859,40 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
+     * postProcessOnUpdate.
+     */
+    public void postProcessOnUpdate() {
+        /* Reset the map */
+        theDataMap.resetMap();
+
+        /* Loop through items clearing active flag */
+        Iterator<T> myIterator = iterator();
+        EditState myState = EditState.CLEAN;
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
+            /* Clear errors for the item */
+            myCurr.clearErrors();
+
+            /* Skip deleted items */
+            if (myCurr.isDeleted()) {
+                myCurr.setValidEdit();
+                continue;
+            }
+
+            /* Adjust the map for the item */
+            myCurr.adjustMapForItem();
+
+            /* Validate the item and build up the state */
+            myCurr.validate();
+            myState = myState.combineState(myCurr.getEditState());
+        }
+
+        /* Store the edit state */
+        theEdit = myState;
+    }
+
+    /**
      * Create a new element in the list copied from another element (to be over-written).
      * @param pElement - element to base new item on
      * @return the newly allocated item
@@ -925,9 +959,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         if (theStyle != ListStyle.EDIT) {
             reSort();
         }
-
-        /* Validate the list */
-        validate();
     }
 
     /**
