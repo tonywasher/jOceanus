@@ -303,6 +303,7 @@ public class ViewSecurityPrice
             /* Declare the data and set the style */
             super(pView.getData(), ViewSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
+            ensureMap();
 
             /* Access the base prices */
             SecurityPriceList myPrices = getDataSet().getSecurityPrices();
@@ -320,6 +321,9 @@ public class ViewSecurityPrice
                 ViewSecurityPrice myItem = new ViewSecurityPrice(this, myCurr);
                 myItem.resolveUpdateSetLinks(pUpdateSet);
                 add(myItem);
+
+                /* Adjust the map */
+                myItem.adjustMapForItem();
             }
         }
 

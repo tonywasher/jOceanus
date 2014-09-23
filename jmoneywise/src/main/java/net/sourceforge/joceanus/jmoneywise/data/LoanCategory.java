@@ -374,6 +374,7 @@ public class LoanCategory
         public LoanCategoryList deriveEditList() {
             /* Build an empty List */
             LoanCategoryList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the categories */
             Iterator<LoanCategory> myIterator = iterator();
@@ -388,6 +389,9 @@ public class LoanCategory
                 /* Build the new linked category and add it to the list */
                 LoanCategory myCategory = new LoanCategory(myList, myCurr);
                 myList.append(myCategory);
+
+                /* Adjust the map */
+                myCategory.adjustMapForItem();
             }
 
             /* Return the list */

@@ -513,6 +513,7 @@ public class TransactionTag
         public TransactionTagList deriveEditList() {
             /* Build an empty List */
             TransactionTagList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the tags */
             Iterator<TransactionTag> myIterator = iterator();
@@ -527,6 +528,9 @@ public class TransactionTag
                 /* Build the new linked tag and add it to the list */
                 TransactionTag myTag = new TransactionTag(myList, myCurr);
                 myList.append(myTag);
+
+                /* Adjust the map */
+                myTag.adjustMapForItem();
             }
 
             /* Return the list */
@@ -696,6 +700,15 @@ public class TransactionTag
          */
         public boolean validNameCount(final String pName) {
             return validKeyCount(pName);
+        }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return availableKey(pName);
         }
     }
 }

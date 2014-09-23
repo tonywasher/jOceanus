@@ -30,10 +30,12 @@ import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -41,9 +43,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -977,6 +979,8 @@ public class Loan
         public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             LoanList myList = getEmptyList(ListStyle.EDIT);
+            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            myList.ensureMap(myDeposits);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -999,6 +1003,9 @@ public class Loan
                 Loan myLoan = new Loan(myList, myCurr);
                 myLoan.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myLoan);
+
+                /* Adjust the map */
+                myLoan.adjustMapForItem();
             }
 
             /* Return the list */
@@ -1055,9 +1062,17 @@ public class Loan
             return myLoan;
         }
 
+        /**
+         * Ensure Map based on the deposit list.
+         * @param pDeposits the deposit list
+         */
+        private void ensureMap(final DepositList pDeposits) {
+            setDataMap(new LoanDataMap(pDeposits));
+        }
+
         @Override
         protected LoanDataMap allocateDataMap() {
-            return new LoanDataMap();
+            return new LoanDataMap(getDataSet().getDeposits());
         }
     }
 
@@ -1065,11 +1080,61 @@ public class Loan
      * The dataMap class.
      */
     protected static class LoanDataMap
-            extends DataInstanceMap<Loan, MoneyWiseDataType, String> {
+            implements DataMapItem<Loan, MoneyWiseDataType>, JDataContents {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+
+        /**
+         * UnderlyingMap Field Id.
+         */
+        public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+                .getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_UNDERLYINGMAP.equals(pField)) {
+                return theUnderlyingMap;
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Constructor.
+         * @param pDeposits the deposits list
+         */
+        protected LoanDataMap(final DepositList pDeposits) {
+            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        }
+
+        @Override
+        public void resetMap() {
+            /* No action */
+        }
+
         @Override
         public void adjustForItem(final Loan pItem) {
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            theUnderlyingMap.adjustForItem(pItem);
         }
 
         /**
@@ -1078,7 +1143,10 @@ public class Loan
          * @return the matching item
          */
         public Loan findItemByName(final String pName) {
-            return findItemByKey(pName);
+            AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            return myAsset instanceof Loan
+                                          ? (Loan) myAsset
+                                          : null;
         }
 
         /**
@@ -1087,7 +1155,16 @@ public class Loan
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-            return validKeyCount(pName);
+            return theUnderlyingMap.validNameCount(pName);
+        }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return theUnderlyingMap.availableKey(pName);
         }
     }
 }

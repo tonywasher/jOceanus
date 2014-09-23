@@ -636,6 +636,7 @@ public class StockOptionVest
         public StockOptionVestList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             StockOptionVestList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the vests */
             Iterator<StockOptionVest> myIterator = iterator();
@@ -651,6 +652,9 @@ public class StockOptionVest
                 StockOptionVest myVest = new StockOptionVest(myList, myCurr);
                 myVest.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myVest);
+
+                /* Adjust the map */
+                myVest.adjustMapForItem();
             }
 
             /* Return the list */
@@ -777,14 +781,14 @@ public class StockOptionVest
         /**
          * Map of Maps.
          */
-        private final Map<Integer, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<StockOption, Map<JDateDay, Integer>> theMapOfMaps;
 
         /**
          * Constructor.
          */
         public StockOptionVestDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Integer, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<StockOption, Map<JDateDay, Integer>>();
         }
 
         @Override
@@ -799,13 +803,12 @@ public class StockOptionVest
             if (myOption == null) {
                 return;
             }
-            Integer myId = myOption.getId();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myOption);
             if (myMap == null) {
                 myMap = new HashMap<JDateDay, Integer>();
-                theMapOfMaps.put(myId, myMap);
+                theMapOfMaps.put(myOption, myMap);
             }
 
             /* Adjust vest count */
@@ -826,16 +829,30 @@ public class StockOptionVest
         public boolean validVestCount(final StockOptionVest pItem) {
             /* Access the Details */
             StockOption myOption = pItem.getStockOption();
-            Integer myId = myOption.getId();
             JDateDay myDate = pItem.getDate();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myOption);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
+        }
+
+        /**
+         * Check availability of date for an option.
+         * @param pOption the option
+         * @param pDate the key to look up
+         * @return true/false
+         */
+        public boolean availableDate(final StockOption pOption,
+                                     final JDateDay pDate) {
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pOption);
+            return myMap != null
+                                ? myMap.get(pDate) == null
+                                : true;
         }
     }
 }

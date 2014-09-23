@@ -186,9 +186,6 @@ public class View
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
 
-        /* Complete the analysis */
-        pData.completeAnalysis();
-
         /* Complete the task */
         myTask.end();
 

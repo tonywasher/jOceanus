@@ -878,6 +878,7 @@ public class TaxYear
         public TaxYearList deriveEditList() {
             /* Build an empty List */
             TaxYearList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getTaxInfoTypes();
@@ -899,6 +900,9 @@ public class TaxYear
                 /* Build the new linked taxYear and add it to the list */
                 TaxYear myYear = new TaxYear(myList, myCurr);
                 myList.append(myYear);
+
+                /* Adjust the map */
+                myYear.adjustMapForItem();
             }
 
             /* Return the list */
@@ -1070,6 +1074,15 @@ public class TaxYear
          */
         public boolean validDateCount(final JDateDay pDate) {
             return validKeyCount(pDate);
+        }
+
+        /**
+         * Check availability of date.
+         * @param pDate the key to look up
+         * @return true/false
+         */
+        public boolean availableDate(final JDateDay pDate) {
+            return availableKey(pDate);
         }
     }
 }

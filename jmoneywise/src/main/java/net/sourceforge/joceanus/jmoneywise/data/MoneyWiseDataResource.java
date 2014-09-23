@@ -78,6 +78,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_MAP_MULTIMAP("MoneyWiseData.Map.MultiMap"),
 
     /**
+     * MoneyWiseData Map Underlying.
+     */
+    MONEYWISEDATA_MAP_UNDERLYING("MoneyWiseData.Map.Underlying"),
+
+    /**
      * MoneyWiseData Map MultiMap.
      */
     MONEYWISEDATA_MAP_MAPOFMAPS("MoneyWiseData.Map.MapOfMaps"),

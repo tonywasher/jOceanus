@@ -252,9 +252,10 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         /* Access data */
         DataSet<?, E> myData = theControl.getData();
 
-        /* Access edit list */
-        theStatic = myData.getDataList(theClass);
-        theStatic = theClass.cast(theStatic.deriveList(ListStyle.EDIT));
+        /* Access edit list and map it */
+        StaticList<T, S, E> myStatic = myData.getDataList(theClass);
+        theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
+        theStatic.mapData();
 
         /* Update the Data View */
         setList(theStatic);

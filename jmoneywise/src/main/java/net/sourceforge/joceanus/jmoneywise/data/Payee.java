@@ -860,6 +860,7 @@ public class Payee
         public PayeeList deriveEditList() {
             /* Build an empty List */
             PayeeList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -881,6 +882,9 @@ public class Payee
                 /* Build the new linked payee and add it to the list */
                 Payee myPayee = new Payee(myList, myCurr);
                 myList.append(myPayee);
+
+                /* Adjust the map */
+                myPayee.adjustMapForItem();
             }
 
             /* Return the list */
@@ -1233,6 +1237,15 @@ public class Payee
          */
         public boolean validNameCount(final String pName) {
             return validKeyCount(pName);
+        }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return availableKey(pName);
         }
 
         /**

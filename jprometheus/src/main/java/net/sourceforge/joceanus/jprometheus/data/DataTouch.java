@@ -40,11 +40,6 @@ public class DataTouch<E extends Enum<E>>
      */
     private static final long serialVersionUID = 1766620543307434230L;
 
-    /**
-     * The DataSet.
-     */
-    private final transient DataSet<?, ?> theDataSet;
-
     @Override
     public String formatObject() {
         return getClass().getSimpleName();
@@ -52,14 +47,11 @@ public class DataTouch<E extends Enum<E>>
 
     /**
      * Constructor.
-     * @param pDataSet the DataSet
      * @param pClass the eNum class
      */
-    public DataTouch(final DataSet<?, ?> pDataSet,
-                     final Class<E> pClass) {
+    public DataTouch(final Class<E> pClass) {
         /* Create the map */
         super(pClass);
-        theDataSet = pDataSet;
     }
 
     /**
@@ -72,22 +64,9 @@ public class DataTouch<E extends Enum<E>>
     }
 
     /**
-     * Is the DataSet locked.
-     * @return true/false
-     */
-    private Boolean isLocked() {
-        return theDataSet.isLocked();
-    }
-
-    /**
      * Reset all touches.
      */
     public void resetTouches() {
-        /* Ignore if we are locked */
-        if (isLocked()) {
-            return;
-        }
-
         /* Clear the map if we are not locked */
         clear();
     }
@@ -97,11 +76,6 @@ public class DataTouch<E extends Enum<E>>
      * @param pItemType the item type
      */
     public void touchItem(final E pItemType) {
-        /* Ignore if we are locked */
-        if (isLocked()) {
-            return;
-        }
-
         /* Access the record for the item type */
         TouchCounter<E> myCounter = getCounter(pItemType);
 

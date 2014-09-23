@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
@@ -43,9 +44,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -1042,6 +1043,8 @@ public class Portfolio
         public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             PortfolioList myList = getEmptyList(ListStyle.EDIT);
+            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            myList.ensureMap(myDeposits);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -1064,6 +1067,9 @@ public class Portfolio
                 Portfolio myPortfolio = new Portfolio(myList, myCurr);
                 myPortfolio.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myPortfolio);
+
+                /* Adjust the map */
+                myPortfolio.adjustMapForItem();
             }
 
             /* Return the list */
@@ -1149,9 +1155,17 @@ public class Portfolio
             return null;
         }
 
+        /**
+         * Ensure Map based on the deposit list.
+         * @param pDeposits the deposit list
+         */
+        private void ensureMap(final DepositList pDeposits) {
+            setDataMap(new PortfolioDataMap(pDeposits));
+        }
+
         @Override
         protected PortfolioDataMap allocateDataMap() {
-            return new PortfolioDataMap();
+            return new PortfolioDataMap(getDataSet().getDeposits());
         }
     }
 
@@ -1159,11 +1173,61 @@ public class Portfolio
      * The dataMap class.
      */
     protected static class PortfolioDataMap
-            extends DataInstanceMap<Portfolio, MoneyWiseDataType, String> {
+            implements DataMapItem<Portfolio, MoneyWiseDataType>, JDataContents {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+
+        /**
+         * UnderlyingMap Field Id.
+         */
+        public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+                .getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_UNDERLYINGMAP.equals(pField)) {
+                return theUnderlyingMap;
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Constructor.
+         * @param pDeposits the deposits list
+         */
+        protected PortfolioDataMap(final DepositList pDeposits) {
+            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        }
+
+        @Override
+        public void resetMap() {
+            /* No action */
+        }
+
         @Override
         public void adjustForItem(final Portfolio pItem) {
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            theUnderlyingMap.adjustForItem(pItem);
         }
 
         /**
@@ -1172,7 +1236,10 @@ public class Portfolio
          * @return the matching item
          */
         public Portfolio findItemByName(final String pName) {
-            return findItemByKey(pName);
+            AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            return myAsset instanceof Portfolio
+                                               ? (Portfolio) myAsset
+                                               : null;
         }
 
         /**
@@ -1181,7 +1248,16 @@ public class Portfolio
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-            return validKeyCount(pName);
+            return theUnderlyingMap.validNameCount(pName);
+        }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return theUnderlyingMap.availableKey(pName);
         }
     }
 }

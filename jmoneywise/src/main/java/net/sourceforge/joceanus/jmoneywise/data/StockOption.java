@@ -1075,6 +1075,7 @@ public class StockOption
         public StockOptionList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             StockOptionList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -1097,6 +1098,9 @@ public class StockOption
                 StockOption myOption = new StockOption(myList, myCurr);
                 myOption.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myOption);
+
+                /* Adjust the map */
+                myOption.adjustMapForItem();
             }
 
             /* Return the list */
@@ -1195,6 +1199,15 @@ public class StockOption
          */
         public boolean validNameCount(final String pName) {
             return validKeyCount(pName);
+        }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return availableKey(pName);
         }
     }
 }

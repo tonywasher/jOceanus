@@ -686,9 +686,6 @@ public class MoneyWiseData
      * @throws JOceanusException on error
      */
     public void initialiseAnalysis() throws JOceanusException {
-        /* Release the lock */
-        setLocked(false);
-
         /* Loop through the list types */
         Iterator<Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
@@ -698,14 +695,5 @@ public class MoneyWiseData
             DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
             myList.prepareForAnalysis();
         }
-    }
-
-    /**
-     * Complete the data analysis.
-     * @throws JOceanusException on error
-     */
-    public void completeAnalysis() throws JOceanusException {
-        /* Reinstate the lock */
-        setLocked(true);
     }
 }

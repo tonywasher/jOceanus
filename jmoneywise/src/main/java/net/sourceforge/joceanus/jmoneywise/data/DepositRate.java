@@ -771,6 +771,7 @@ public class DepositRate
         public DepositRateList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             DepositRateList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the list */
             Iterator<DepositRate> myIterator = iterator();
@@ -781,6 +782,9 @@ public class DepositRate
                 DepositRate myItem = new DepositRate(myList, myCurr);
                 myItem.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myItem);
+
+                /* Adjust the map */
+                myItem.adjustMapForItem();
             }
 
             /* Return the List */
@@ -937,14 +941,14 @@ public class DepositRate
         /**
          * Map of Maps.
          */
-        private final Map<Integer, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<Deposit, Map<JDateDay, Integer>> theMapOfMaps;
 
         /**
          * Constructor.
          */
         public DepositRateDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Integer, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<Deposit, Map<JDateDay, Integer>>();
         }
 
         @Override
@@ -959,13 +963,12 @@ public class DepositRate
             if (myDeposit == null) {
                 return;
             }
-            Integer myId = myDeposit.getId();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap == null) {
                 myMap = new HashMap<JDateDay, Integer>();
-                theMapOfMaps.put(myId, myMap);
+                theMapOfMaps.put(myDeposit, myMap);
             }
 
             /* Adjust rate count */
@@ -986,16 +989,30 @@ public class DepositRate
         public boolean validRateCount(final DepositRate pItem) {
             /* Access the Details */
             Deposit myDeposit = pItem.getDeposit();
-            Integer myId = myDeposit.getId();
             JDateDay myDate = pItem.getEndDate();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
+        }
+
+        /**
+         * Check availability of date for a deposit.
+         * @param pDeposit the deposit
+         * @param pDate the key to look up
+         * @return true/false
+         */
+        public boolean availableDate(final Deposit pDeposit,
+                                     final JDateDay pDate) {
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pDeposit);
+            return myMap != null
+                                ? myMap.get(pDate) == null
+                                : true;
         }
     }
 }

@@ -1136,6 +1136,7 @@ public class Security
         public SecurityList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             SecurityList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -1158,6 +1159,9 @@ public class Security
                 Security mySecurity = new Security(myList, myCurr);
                 mySecurity.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(mySecurity);
+
+                /* Adjust the map */
+                mySecurity.adjustMapForItem();
             }
 
             /* Return the list */
@@ -1281,6 +1285,15 @@ public class Security
          */
         public boolean validNameCount(final String pName) {
             return validKeyCount(pName);
+        }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return availableKey(pName);
         }
     }
 }

@@ -1026,6 +1026,15 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return availableKey(pName);
+        }
+
+        /**
          * Check validity of order.
          * @param pOrder the order to look up
          * @return true/false

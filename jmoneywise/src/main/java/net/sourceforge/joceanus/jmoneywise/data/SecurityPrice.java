@@ -907,14 +907,14 @@ public class SecurityPrice
         /**
          * Map of Maps.
          */
-        private final Map<Integer, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<Security, Map<JDateDay, Integer>> theMapOfMaps;
 
         /**
          * Constructor.
          */
         public SecurityPriceDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Integer, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<Security, Map<JDateDay, Integer>>();
         }
 
         @Override
@@ -929,13 +929,12 @@ public class SecurityPrice
             if (mySecurity == null) {
                 return;
             }
-            Integer myId = mySecurity.getId();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap == null) {
                 myMap = new HashMap<JDateDay, Integer>();
-                theMapOfMaps.put(myId, myMap);
+                theMapOfMaps.put(mySecurity, myMap);
             }
 
             /* Adjust price count */
@@ -956,16 +955,30 @@ public class SecurityPrice
         public boolean validPriceCount(final T pItem) {
             /* Access the Details */
             Security mySecurity = pItem.getSecurity();
-            Integer myId = mySecurity.getId();
             JDateDay myDate = pItem.getDate();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myId);
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
+        }
+
+        /**
+         * Check availability of date for a security.
+         * @param pSecurity the security
+         * @param pDate the key to look up
+         * @return true/false
+         */
+        public boolean availableDate(final Security pSecurity,
+                                     final JDateDay pDate) {
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pSecurity);
+            return myMap != null
+                                ? myMap.get(pDate) == null
+                                : true;
         }
     }
 }

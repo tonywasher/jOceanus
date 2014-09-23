@@ -890,7 +890,7 @@ public abstract class DataItem<E extends Enum<E>>
         @SuppressWarnings("unchecked")
         DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
         Class<E> myClass = myData.getEnumClass();
-        theTouchStatus = new DataTouch<E>(myData, myClass);
+        theTouchStatus = new DataTouch<E>(myClass);
     }
 
     /**
@@ -1049,34 +1049,8 @@ public abstract class DataItem<E extends Enum<E>>
 
     @Override
     public int hashCode() {
-        /* Initialise hash code */
-        int myHash = theId;
-
-        /* Loop through the fields */
-        Iterator<JDataField> myIterator = theFields.fieldIterator();
-        while (myIterator.hasNext()) {
-            /* Access Field */
-            JDataField myField = myIterator.next();
-
-            /* Skip if not used in equality */
-            if (!myField.isEqualityField()) {
-                continue;
-            }
-
-            /* Access the values */
-            Object myValue = getFieldValue(myField);
-
-            /* Adjust existing hash */
-            myHash *= DataSet.HASH_PRIME;
-
-            /* Add the hash for the field */
-            if (myValue != null) {
-                myHash += myValue.hashCode();
-            }
-        }
-
-        /* Return the hash */
-        return myHash;
+        /* hash code is Id for simplicity */
+        return theId;
     }
 
     /**

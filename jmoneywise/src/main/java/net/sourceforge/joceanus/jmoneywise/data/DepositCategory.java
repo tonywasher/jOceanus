@@ -374,6 +374,7 @@ public class DepositCategory
         public DepositCategoryList deriveEditList() {
             /* Build an empty List */
             DepositCategoryList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the categories */
             Iterator<DepositCategory> myIterator = iterator();
@@ -388,6 +389,9 @@ public class DepositCategory
                 /* Build the new linked category and add it to the list */
                 DepositCategory myCategory = new DepositCategory(myList, myCurr);
                 myList.append(myCategory);
+
+                /* Adjust the map */
+                myCategory.adjustMapForItem();
             }
 
             /* Return the list */

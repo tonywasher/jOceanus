@@ -57,7 +57,7 @@ public class AnalysisMaps {
      * Map of Security prices indexed by Security Id.
      */
     public static class SecurityPriceMap
-            extends NestedHashMap<Integer, SecurityPrices>
+            extends NestedHashMap<Security, SecurityPrices>
             implements JDataFormat {
         /**
          * Serial Id.
@@ -100,13 +100,13 @@ public class AnalysisMaps {
         private void addPriceToMap(final SecurityPrice pPrice) {
             /* Access security prices */
             Security mySecurity = pPrice.getSecurity();
-            SecurityPrices myList = get(mySecurity.getId());
+            SecurityPrices myList = get(mySecurity);
 
             /* If the list is new */
             if (myList == null) {
                 /* Allocate list and add to map */
                 myList = new SecurityPrices(mySecurity);
-                put(mySecurity.getId(), myList);
+                put(mySecurity, myList);
             }
 
             /* Add the price to the list */
@@ -125,7 +125,7 @@ public class AnalysisMaps {
             Security mySecurity = Security.class.cast(pSecurity);
 
             /* Access list for security */
-            SecurityPrices myList = get(mySecurity.getId());
+            SecurityPrices myList = get(mySecurity);
             if (myList != null) {
                 /* Loop through the prices */
                 ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
@@ -158,7 +158,7 @@ public class AnalysisMaps {
             JPrice myLatest = null;
 
             /* Access list for security */
-            SecurityPrices myList = get(pSecurity.getId());
+            SecurityPrices myList = get(pSecurity);
             if (myList != null) {
                 /* Loop through the prices */
                 Iterator<SecurityPrice> myIterator = myList.iterator();
@@ -255,7 +255,7 @@ public class AnalysisMaps {
      * Map of Deposit Rates indexed by Deposit Id.
      */
     public static class DepositRateMap
-            extends NestedHashMap<Integer, DepositRates>
+            extends NestedHashMap<Deposit, DepositRates>
             implements JDataFormat {
         /**
          * Serial Id.
@@ -298,13 +298,13 @@ public class AnalysisMaps {
         private void addRateToMap(final DepositRate pRate) {
             /* Access deposit rates */
             Deposit myDeposit = pRate.getDeposit();
-            DepositRates myList = get(myDeposit.getId());
+            DepositRates myList = get(myDeposit);
 
             /* If the list is new */
             if (myList == null) {
                 /* Allocate list and add to map */
                 myList = new DepositRates(myDeposit);
-                put(myDeposit.getId(), myList);
+                put(myDeposit, myList);
             }
 
             /* Add the rate to the list */
@@ -319,8 +319,8 @@ public class AnalysisMaps {
          */
         public DepositRate getRateForDate(final Deposit pDeposit,
                                           final JDateDay pDate) {
-            /* Access list for security */
-            DepositRates myList = get(pDeposit.getId());
+            /* Access list for deposit */
+            DepositRates myList = get(pDeposit);
             if (myList != null) {
                 /* Loop through the rates */
                 ListIterator<DepositRate> myIterator = myList.listIterator(myList.size());

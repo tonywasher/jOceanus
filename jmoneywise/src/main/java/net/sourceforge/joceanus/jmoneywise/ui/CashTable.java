@@ -317,7 +317,7 @@ public class CashTable
 
         /* Get the Cash edit list */
         CashList myCash = myData.getCash();
-        theCash = myCash.deriveEditList();
+        theCash = myCash.deriveEditList(theUpdateSet);
         theCashEntry.setDataList(theCash);
         CashInfoList myInfo = theCash.getCashInfo();
         theInfoEntry.setDataList(myInfo);

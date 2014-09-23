@@ -902,5 +902,14 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         public boolean validNameCount(final String pName) {
             return validKeyCount(pName);
         }
+
+        /**
+         * Check availability of name.
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+            return availableKey(pName);
+        }
     }
 }

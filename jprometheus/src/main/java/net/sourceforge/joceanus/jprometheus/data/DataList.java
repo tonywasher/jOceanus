@@ -783,6 +783,14 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     protected abstract DataMapItem<T, E> allocateDataMap();
 
     /**
+     * Set map.
+     * @param pMap the map
+     */
+    protected void setDataMap(final DataMapItem<T, E> pMap) {
+        theDataMap = pMap;
+    }
+
+    /**
      * Ensure map.
      */
     protected void ensureMap() {
@@ -797,7 +805,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Build map of the data.
      */
-    protected void mapData() {
+    public void mapData() {
         /* Ensure the map */
         ensureMap();
 

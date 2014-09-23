@@ -374,6 +374,7 @@ public class CashCategory
         public CashCategoryList deriveEditList() {
             /* Build an empty List */
             CashCategoryList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the categories */
             Iterator<CashCategory> myIterator = iterator();
@@ -388,6 +389,9 @@ public class CashCategory
                 /* Build the new linked cash category and add it to the list */
                 CashCategory myCategory = new CashCategory(myList, myCurr);
                 myList.append(myCategory);
+
+                /* Adjust the map */
+                myCategory.adjustMapForItem();
             }
 
             /* Return the list */

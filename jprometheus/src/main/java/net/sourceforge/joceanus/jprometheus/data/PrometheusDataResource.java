@@ -51,11 +51,6 @@ public enum PrometheusDataResource implements ResourceId {
     DATASET_VERSION("DataSet.Version"),
 
     /**
-     * DataSet Locked.
-     */
-    DATASET_LOCKED("DataSet.Locked"),
-
-    /**
      * DataSet Security.
      */
     DATASET_SECURITY("DataSet.Security"),

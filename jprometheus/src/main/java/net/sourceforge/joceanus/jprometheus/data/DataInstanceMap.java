@@ -145,4 +145,13 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
         Integer myResult = theKeyCountMap.get(pKey);
         return ONE.equals(myResult);
     }
+
+    /**
+     * Check availability of key.
+     * @param pKey the key to look up
+     * @return true/false
+     */
+    public boolean availableKey(final K pKey) {
+        return theKeyCountMap.get(pKey) == null;
+    }
 }

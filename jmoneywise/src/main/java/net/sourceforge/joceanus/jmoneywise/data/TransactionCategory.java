@@ -475,6 +475,7 @@ public final class TransactionCategory
         public TransactionCategoryList deriveEditList() {
             /* Build an empty List */
             TransactionCategoryList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
 
             /* Loop through the categories */
             Iterator<TransactionCategory> myIterator = iterator();
@@ -489,6 +490,9 @@ public final class TransactionCategory
                 /* Build the new linked category and add it to the list */
                 TransactionCategory myCategory = new TransactionCategory(myList, myCurr);
                 myList.append(myCategory);
+
+                /* Adjust the map */
+                myCategory.adjustMapForItem();
             }
 
             /* Return the list */
