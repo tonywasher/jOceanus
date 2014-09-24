@@ -95,7 +95,10 @@ public class SecurityAnalysisSelect
 
     @Override
     public SecurityFilter getFilter() {
-        return new SecurityFilter(theState.getSecurity());
+        SecurityBucket mySecurity = theState.getSecurity();
+        return mySecurity != null
+                                 ? new SecurityFilter(mySecurity)
+                                 : null;
     }
 
     @Override

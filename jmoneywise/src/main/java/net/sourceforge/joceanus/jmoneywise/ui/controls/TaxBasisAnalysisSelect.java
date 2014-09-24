@@ -83,7 +83,10 @@ public class TaxBasisAnalysisSelect
 
     @Override
     public TaxBasisFilter getFilter() {
-        return new TaxBasisFilter(theState.getTaxBasis());
+        TaxBasisBucket myBasis = theState.getTaxBasis();
+        return myBasis != null
+                              ? new TaxBasisFilter(myBasis)
+                              : null;
     }
 
     @Override

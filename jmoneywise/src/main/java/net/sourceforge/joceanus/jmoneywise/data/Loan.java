@@ -772,6 +772,15 @@ public class Loan
 
         /* Touch parent */
         getParent().touchItem(this);
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Touch parent */
+        getParent().touchItem(this);
     }
 
     @Override

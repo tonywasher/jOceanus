@@ -352,6 +352,18 @@ public class CashInfo
         }
     }
 
+    @Override
+    public void touchOnUpdate() {
+        /* Switch on info class */
+        switch (getInfoClass()) {
+            case AUTOPAYEE:
+                getPayee().touchItem(this);
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * CashInfoList.
      */
@@ -397,7 +409,7 @@ public class CashInfo
          * @param pData the DataSet for the list
          */
         protected CashInfoList(final MoneyWiseData pData) {
-            super(CashInfo.class, pData, MoneyWiseDataType.LOANINFO, ListStyle.CORE);
+            super(CashInfo.class, pData, MoneyWiseDataType.CASHINFO, ListStyle.CORE);
         }
 
         /**

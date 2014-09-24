@@ -700,6 +700,18 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
+    @Override
+    public void touchOnUpdate() {
+        /* Reset self-touches TODO parent sort Order!! */
+        clearTouches(getItemType());
+
+        /* Touch parent if it exists */
+        T myParent = getParentCategory();
+        if (myParent != null) {
+            myParent.touchItem(this);
+        }
+    }
+
     /**
      * The Category Base List class.
      * @param <T> the Category Data type

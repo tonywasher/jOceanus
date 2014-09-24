@@ -997,6 +997,19 @@ public class Deposit
 
         /* Touch parent */
         getParent().touchItem(this);
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Reset touches from update set */
+        clearTouches(MoneyWiseDataType.DEPOSITRATE);
+        clearTouches(MoneyWiseDataType.PORTFOLIO);
+
+        /* Touch parent */
+        getParent().touchItem(this);
     }
 
     @Override

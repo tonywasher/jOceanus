@@ -680,6 +680,15 @@ public class Cash
         if (myCurrency != null) {
             myCurrency.touchItem(this);
         }
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Adjust infoSet update touches */
+        theInfoSet.touchOnUpdate();
     }
 
     @Override

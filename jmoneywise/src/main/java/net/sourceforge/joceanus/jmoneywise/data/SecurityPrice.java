@@ -553,6 +553,12 @@ public class SecurityPrice
         getSecurity().touchItem(this);
     }
 
+    @Override
+    public void touchOnUpdate() {
+        /* Touch security */
+        getSecurity().touchItem(this);
+    }
+
     /**
      * Update Price from an item Element.
      * @param pItem the price extract

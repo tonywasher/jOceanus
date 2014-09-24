@@ -835,6 +835,19 @@ public class Portfolio
     public void touchUnderlyingItems() {
         /* touch the holding account */
         getHolding().touchItem(this);
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Reset touches from update set */
+        clearTouches(MoneyWiseDataType.STOCKOPTION);
+
+        /* Touch parent */
+        getParent().touchItem(this);
+        getHolding().touchItem(this);
     }
 
     @Override

@@ -588,12 +588,15 @@ public class AnalysisSelect
 
                 /* Obtain the relevant filter */
                 AnalysisFilter<?> myFilter = myPanel.getFilter();
-                myFilter.setCurrentAttribute(myType.getDefaultValue());
+                BucketAttribute myDefault = myType.getDefaultValue();
+                if (myFilter != null) {
+                    myFilter.setCurrentAttribute(myDefault);
+                }
 
                 /* Set new bucket type and apply state */
                 theState.setAnalysisType(myType);
                 theState.setFilter(myFilter);
-                theState.setBucket(myFilter.getCurrentAttribute());
+                theState.setBucket(myDefault);
                 theState.applyState();
 
                 /* Filter available */

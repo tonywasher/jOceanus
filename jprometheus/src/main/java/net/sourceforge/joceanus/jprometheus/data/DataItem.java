@@ -536,6 +536,14 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
+     * Clear the item touches.
+     * @param pItemType the item type
+     */
+    public void clearTouches(final E pItemType) {
+        theTouchStatus.resetTouches(pItemType);
+    }
+
+    /**
      * Touch the item.
      * @param pObject object that references the item
      */
@@ -547,6 +555,12 @@ public abstract class DataItem<E extends Enum<E>>
      * Touch underlying items that are referenced by this item.
      */
     public void touchUnderlyingItems() {
+    }
+
+    /**
+     * Adjust touches on update.
+     */
+    public void touchOnUpdate() {
     }
 
     /**

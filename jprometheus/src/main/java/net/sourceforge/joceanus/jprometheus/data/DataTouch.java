@@ -67,8 +67,16 @@ public class DataTouch<E extends Enum<E>>
      * Reset all touches.
      */
     public void resetTouches() {
-        /* Clear the map if we are not locked */
+        /* Clear the map */
         clear();
+    }
+
+    /**
+     * Reset touches for a dataType.
+     * @param pItemType the ItemType
+     */
+    public void resetTouches(final E pItemType) {
+        remove(pItemType);
     }
 
     /**

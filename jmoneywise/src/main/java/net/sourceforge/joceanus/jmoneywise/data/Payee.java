@@ -684,6 +684,19 @@ public class Payee
     public void touchUnderlyingItems() {
         /* touch the payee type */
         getPayeeType().touchItem(this);
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Reset touches from update set */
+        clearTouches(MoneyWiseDataType.CASHINFO);
+        clearTouches(MoneyWiseDataType.SECURITY);
+        clearTouches(MoneyWiseDataType.DEPOSIT);
+        clearTouches(MoneyWiseDataType.LOAN);
+        clearTouches(MoneyWiseDataType.PORTFOLIO);
     }
 
     @Override

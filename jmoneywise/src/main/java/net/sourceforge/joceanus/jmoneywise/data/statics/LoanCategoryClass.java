@@ -36,7 +36,7 @@ public enum LoanCategoryClass implements CategoryInterface {
      * This is a Credit Card account, which is a specialised form of a {@link #LOAN} account. It simply differs in reporting treatment in that overall spend is
      * tracked.
      */
-    CREDITCARD(1, 0),
+    CREDITCARD(1, 1),
 
     /**
      * PrivateLoan.
@@ -44,21 +44,21 @@ public enum LoanCategoryClass implements CategoryInterface {
      * This is a PrivateLoan account, which is a specialised form of a {@link #LOAN} account. It represents a loan to/from the client from/to an individual
      * represented by a {@link PayeeTypeClass#INDIVIDUAL} account.
      */
-    PRIVATELOAN(2, 1),
+    PRIVATELOAN(2, 2),
 
     /**
      * Generic Loan.
      * <p>
      * This is a Loan account which represents a loan to/from the client from/to a {@link PayeeTypeClass#INSTITUTION} account.
      */
-    LOAN(3, 2),
+    LOAN(3, 3),
 
     /**
      * Parent category.
      * <p>
      * This is used for the total of all categories and is used purely for reporting purposes.
      */
-    PARENT(4, 3);
+    PARENT(4, 0);
 
     /**
      * The String name.

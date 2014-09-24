@@ -33,258 +33,258 @@ public enum TransactionCategoryClass implements CategoryInterface {
     /**
      * Taxed Salary Income.
      */
-    TAXEDINCOME(1, 0),
+    TAXEDINCOME(1, 4),
 
     /**
      * Rental Income.
      */
-    RENTALINCOME(2, 1),
+    RENTALINCOME(2, 5),
 
     /**
      * RoomRental Income.
      */
-    ROOMRENTALINCOME(3, 2),
+    ROOMRENTALINCOME(3, 6),
 
     /**
      * Interest Income.
      */
-    INTEREST(4, 3),
+    INTEREST(4, 7),
 
     /**
      * Dividend Income.
      */
-    DIVIDEND(5, 4),
+    DIVIDEND(5, 8),
 
     /**
      * Grant Income.
      */
-    GRANTINCOME(6, 5),
+    GRANTINCOME(6, 9),
 
     /**
      * Benefit Income.
      */
-    BENEFITINCOME(7, 6),
+    BENEFITINCOME(7, 10),
 
     /**
      * Gifted Income.
      */
-    GIFTEDINCOME(8, 7),
+    GIFTEDINCOME(8, 11),
 
     /**
      * Inheritance.
      */
-    INHERITED(9, 8),
+    INHERITED(9, 12),
 
     /**
      * Interest earned on Loans.
      */
-    LOANINTERESTEARNED(10, 9),
+    LOANINTERESTEARNED(10, 13),
 
     /**
      * Loyalty Bonus.
      */
-    LOYALTYBONUS(11, 10),
+    LOYALTYBONUS(11, 14),
 
     /**
      * CashBack.
      */
-    CASHBACK(12, 11),
+    CASHBACK(12, 15),
 
     /**
      * Other Income.
      */
-    OTHERINCOME(13, 12),
+    OTHERINCOME(13, 16),
 
     /**
      * Transfer.
      */
-    TRANSFER(14, 13),
+    TRANSFER(14, 17),
 
     /**
      * Stock Adjustment.
      */
-    STOCKADJUST(15, 14),
+    STOCKADJUST(15, 18),
 
     /**
      * Stock Split.
      */
-    STOCKSPLIT(16, 15),
+    STOCKSPLIT(16, 19),
 
     /**
      * Stock DeMerger.
      */
-    STOCKDEMERGER(17, 16),
+    STOCKDEMERGER(17, 20),
 
     /**
      * Stock Takeover.
      */
-    STOCKTAKEOVER(18, 17),
+    STOCKTAKEOVER(18, 21),
 
     /**
      * Stock Rights Taken.
      */
-    STOCKRIGHTSTAKEN(19, 18),
+    STOCKRIGHTSTAKEN(19, 22),
 
     /**
      * Stock Rights Waived.
      */
-    STOCKRIGHTSWAIVED(20, 19),
+    STOCKRIGHTSWAIVED(20, 23),
 
     /**
      * PortfolioXfer.
      */
-    PORTFOLIOXFER(21, 20),
+    PORTFOLIOXFER(21, 24),
 
     /**
      * Stock Options Vested.
      */
-    OPTIONSVEST(22, 21),
+    OPTIONSVEST(22, 25),
 
     /**
      * Stock Options Exercised.
      */
-    OPTIONSEXERCISE(23, 22),
+    OPTIONSEXERCISE(23, 26),
 
     /**
      * Expense.
      */
-    EXPENSE(24, 23),
+    EXPENSE(24, 27),
 
     /**
      * LocalTaxes.
      */
-    LOCALTAXES(25, 24),
+    LOCALTAXES(25, 28),
 
     /**
      * Write Off.
      */
-    WRITEOFF(26, 25),
+    WRITEOFF(26, 29),
 
     /**
      * Interest earned on Loans.
      */
-    LOANINTERESTCHARGED(27, 26),
+    LOANINTERESTCHARGED(27, 30),
 
     /**
      * Tax Relief.
      */
-    TAXRELIEF(28, 27),
+    TAXRELIEF(28, 31),
 
     /**
      * Tax Settlement.
      */
-    TAXSETTLEMENT(29, 28),
+    TAXSETTLEMENT(29, 32),
 
     /**
      * Taxed Interest.
      */
-    TAXEDINTEREST(30, 29),
+    TAXEDINTEREST(30, 33),
 
     /**
      * Gross Interest.
      */
-    GROSSINTEREST(31, 30),
+    GROSSINTEREST(31, 34),
 
     /**
      * Tax Free Interest.
      */
-    TAXFREEINTEREST(32, 31),
+    TAXFREEINTEREST(32, 35),
 
     /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(33, 32),
+    SHAREDIVIDEND(33, 36),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(34, 33),
+    UNITTRUSTDIVIDEND(34, 37),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(35, 34),
+    TAXFREEDIVIDEND(35, 38),
 
     /**
      * Taxable Gain.
      */
-    TAXABLEGAIN(36, 35),
+    TAXABLEGAIN(36, 39),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(37, 36),
+    CAPITALGAIN(37, 40),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(38, 37),
+    TAXFREEGAIN(38, 41),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(39, 38),
+    MARKETGROWTH(39, 42),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(40, 39),
+    CURRENCYFLUCTUATION(40, 43),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TAXCREDIT(41, 40),
+    TAXCREDIT(41, 44),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(42, 41),
+    NATINSURANCE(42, 45),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DEEMEDBENEFIT(43, 42),
+    DEEMEDBENEFIT(43, 46),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CHARITYDONATION(44, 43),
+    CHARITYDONATION(44, 47),
 
     /**
      * Income Totals.
      * <p>
      * This is used for categories which simply own a set of income sub-categories and is used purely for reporting purposes.
      */
-    INCOMETOTALS(45, 44),
+    INCOMETOTALS(45, 1),
 
     /**
      * Expense Totals.
      * <p>
      * This is used for categories which simply own a set of expense sub-categories and is used purely for reporting purposes.
      */
-    EXPENSETOTALS(46, 45),
+    EXPENSETOTALS(46, 2),
 
     /**
      * Stock Parent.
      * <p>
      * This is used for categories which simply own a set of stock transfer sub-categories and is used purely for holding purposes.
      */
-    STOCKPARENT(47, 46),
+    STOCKPARENT(47, 3),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    TOTALS(48, 47);
+    TOTALS(48, 0);
 
     /**
      * The String name.

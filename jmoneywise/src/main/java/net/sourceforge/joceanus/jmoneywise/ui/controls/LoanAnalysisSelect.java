@@ -105,7 +105,10 @@ public class LoanAnalysisSelect
 
     @Override
     public LoanFilter getFilter() {
-        return new LoanFilter(theState.getLoan());
+        LoanBucket myLoan = theState.getLoan();
+        return myLoan != null
+                             ? new LoanFilter(myLoan)
+                             : null;
     }
 
     @Override
@@ -204,15 +207,10 @@ public class LoanAnalysisSelect
                                                                  ? null
                                                                  : theCategories.findItemById(myCategory.getId());
 
-            /* If the category no longer exists */
-            if (myCatBucket == null) {
-                /* Access the first category */
-                myCatBucket = theCategories.peekFirst();
-                myCategory = myCatBucket.getAccountCategory();
-            }
-
-            /* Use the first loan for category */
-            myLoan = getFirstLoan(myCategory);
+            /* Determine the next loan */
+            myLoan = (myCatBucket != null)
+                                          ? getFirstLoan(myCategory)
+                                          : theLoans.peekFirst();
         }
 
         /* Set the loan */

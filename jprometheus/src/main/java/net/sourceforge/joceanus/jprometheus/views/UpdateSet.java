@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -245,12 +244,8 @@ public class UpdateSet<E extends Enum<E>>
                 /* Set the new version */
                 myDataList.setVersion(theVersion);
 
-                /* Validate or postProcess */
-                if (myDataList instanceof DataInfoList) {
-                    myDataList.validate();
-                } else {
-                    myDataList.postProcessOnUpdate();
-                }
+                /* postProcess */
+                myDataList.postProcessOnUpdate();
             }
         }
 
@@ -300,12 +295,8 @@ public class UpdateSet<E extends Enum<E>>
                 /* Note the new step */
                 mySubTask.startTask(myDataList.listName());
 
-                /* Validate or postProcess */
-                if (myDataList instanceof DataInfoList) {
-                    myDataList.validate();
-                } else {
-                    myDataList.postProcessOnUpdate();
-                }
+                /* postProcess */
+                myDataList.postProcessOnUpdate();
             }
         }
 

@@ -513,11 +513,20 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
         while (myIterator.hasNext()) {
             T myLink = myIterator.next();
 
-            /* Touch the owner */
-            theOwner.touchItem(myLink);
-
             /* Touch the underlying items */
             myLink.touchUnderlyingItems();
+        }
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Loop through the list */
+        Iterator<T> myIterator = theLinks.iterator();
+        while (myIterator.hasNext()) {
+            T myLink = myIterator.next();
+
+            /* Touch the underlying items */
+            myLink.touchOnUpdate();
         }
     }
 

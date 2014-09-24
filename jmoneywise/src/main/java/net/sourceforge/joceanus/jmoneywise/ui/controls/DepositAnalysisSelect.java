@@ -105,7 +105,10 @@ public class DepositAnalysisSelect
 
     @Override
     public DepositFilter getFilter() {
-        return new DepositFilter(theState.getDeposit());
+        DepositBucket myDeposit = theState.getDeposit();
+        return myDeposit != null
+                                ? new DepositFilter(myDeposit)
+                                : null;
     }
 
     @Override
@@ -204,15 +207,10 @@ public class DepositAnalysisSelect
                                                                     ? null
                                                                     : theCategories.findItemById(myCategory.getId());
 
-            /* If the category no longer exists */
-            if (myCatBucket == null) {
-                /* Access the first category */
-                myCatBucket = theCategories.peekFirst();
-                myCategory = myCatBucket.getAccountCategory();
-            }
-
-            /* Use the first deposit for category */
-            myDeposit = getFirstDeposit(myCategory);
+            /* Determine the next deposit */
+            myDeposit = (myCatBucket != null)
+                                             ? getFirstDeposit(myCategory)
+                                             : theDeposits.peekFirst();
         }
 
         /* Set the account */

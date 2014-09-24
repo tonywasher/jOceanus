@@ -105,7 +105,10 @@ public class CashAnalysisSelect
 
     @Override
     public CashFilter getFilter() {
-        return new CashFilter(theState.getCash());
+        CashBucket myCash = theState.getCash();
+        return myCash != null
+                             ? new CashFilter(myCash)
+                             : null;
     }
 
     @Override
@@ -204,15 +207,10 @@ public class CashAnalysisSelect
                                                                  ? null
                                                                  : theCategories.findItemById(myCategory.getId());
 
-            /* If the category no longer exists */
-            if (myCatBucket == null) {
-                /* Access the first category */
-                myCatBucket = theCategories.peekFirst();
-                myCategory = myCatBucket.getAccountCategory();
-            }
-
-            /* Use the first cash account for category */
-            myCash = getFirstCash(myCategory);
+            /* Determine the next cash */
+            myCash = (myCatBucket != null)
+                                          ? getFirstCash(myCategory)
+                                          : theCash.peekFirst();
         }
 
         /* Set the cash */

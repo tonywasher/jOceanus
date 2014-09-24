@@ -83,7 +83,10 @@ public class PayeeAnalysisSelect
 
     @Override
     public PayeeFilter getFilter() {
-        return new PayeeFilter(theState.getPayee());
+        PayeeBucket myPayee = theState.getPayee();
+        return myPayee != null
+                              ? new PayeeFilter(myPayee)
+                              : null;
     }
 
     @Override

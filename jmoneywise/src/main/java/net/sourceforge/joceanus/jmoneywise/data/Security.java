@@ -918,6 +918,19 @@ public class Security
         getSecurityType().touchItem(this);
         getSecurityCurrency().touchItem(this);
         getParent().touchItem(this);
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Reset touches from update set */
+        clearTouches(MoneyWiseDataType.SECURITYPRICE);
+        clearTouches(MoneyWiseDataType.STOCKOPTION);
+
+        /* Touch parent */
+        getParent().touchItem(this);
     }
 
     @Override

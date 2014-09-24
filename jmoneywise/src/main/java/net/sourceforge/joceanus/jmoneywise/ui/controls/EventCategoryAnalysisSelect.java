@@ -88,7 +88,10 @@ public class EventCategoryAnalysisSelect
 
     @Override
     public EventCategoryFilter getFilter() {
-        return new EventCategoryFilter(theState.getEventCategory());
+        EventCategoryBucket myCategory = theState.getEventCategory();
+        return myCategory != null
+                                 ? new EventCategoryFilter(myCategory)
+                                 : null;
     }
 
     @Override
@@ -166,8 +169,8 @@ public class EventCategoryAnalysisSelect
 
         /* If we do not have an active bucket and the list is non-empty */
         if ((myCategory == null) && (!theCategories.isEmpty())) {
-            /* Use the first bucket */
-            myCategory = theCategories.peekFirst();
+            /* Use the first non-parent bucket */
+            myCategory = getFirstCategory();
         }
 
         /* Set the payee */
@@ -192,6 +195,26 @@ public class EventCategoryAnalysisSelect
             theState.setEventCategory(myCategory);
             theState.applyState();
         }
+    }
+
+    /**
+     * Obtain first non-parent event category.
+     * @return the first event category
+     */
+    private EventCategoryBucket getFirstCategory() {
+        /* Loop through the available account values */
+        Iterator<EventCategoryBucket> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            EventCategoryBucket myBucket = myIterator.next();
+
+            /* Return if non-parent */
+            if (!myBucket.getEventCategoryType().getCategoryClass().canParentCategory()) {
+                return myBucket;
+            }
+        }
+
+        /* No such account */
+        return null;
     }
 
     /**

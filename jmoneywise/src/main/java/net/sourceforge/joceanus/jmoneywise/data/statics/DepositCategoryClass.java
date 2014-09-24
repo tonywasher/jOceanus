@@ -36,7 +36,7 @@ public enum DepositCategoryClass implements CategoryInterface {
      * These are standard checking deposit accounts that hold money on behalf of the client. Each such account must be owned by a
      * {@link PayeeTypeClass#INSTITUTION} payee.
      */
-    CHECKING(1, 0),
+    CHECKING(1, 1),
 
     /**
      * Savings Deposit.
@@ -44,21 +44,21 @@ public enum DepositCategoryClass implements CategoryInterface {
      * These are standard savings accounts that hold money on behalf of the client. There is no distinction as to whether they are easy access or restricted
      * access. Each such account must be owned by a {@link PayeeTypeClass#INSTITUTION} payee.
      */
-    SAVINGS(2, 1),
+    SAVINGS(2, 2),
 
     /**
      * Bond Deposit.
      * <p>
      * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an associated maturity date for the account.
      */
-    BOND(3, 2),
+    BOND(3, 3),
 
     /**
      * Parent Category.
      * <p>
      * This is used as a sub-total bucket and is used purely for reporting purposes.
      */
-    PARENT(4, 3);
+    PARENT(4, 0);
 
     /**
      * The String name.

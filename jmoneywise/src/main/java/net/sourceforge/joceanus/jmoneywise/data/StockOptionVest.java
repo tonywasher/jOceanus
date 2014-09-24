@@ -479,6 +479,18 @@ public class StockOptionVest
         setValueUnits(pUnits);
     }
 
+    @Override
+    public void touchUnderlyingItems() {
+        /* Touch stockOption */
+        getStockOption().touchItem(this);
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Touch stockOption */
+        getStockOption().touchItem(this);
+    }
+
     /**
      * Validate the vest.
      */

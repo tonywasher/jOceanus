@@ -526,11 +526,28 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
                 /* else this is a standard DataInfo */
             } else {
-                /* Touch the owner */
-                theOwner.touchItem(myValue);
-
                 /* Touch the underlying items */
                 myValue.touchUnderlyingItems();
+            }
+        }
+    }
+
+    /**
+     * touch underlying items after update.
+     */
+    public void touchOnUpdate() {
+        /* Loop through each existing value */
+        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+            /* If this is an instance of a LinkSet */
+            if (myValue instanceof DataInfoLinkSet) {
+                /* Pass call to linkSet */
+                DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                mySet.touchOnUpdate();
+
+                /* else this is a standard DataInfo */
+            } else {
+                /* Touch the underlying items */
+                myValue.touchOnUpdate();
             }
         }
     }

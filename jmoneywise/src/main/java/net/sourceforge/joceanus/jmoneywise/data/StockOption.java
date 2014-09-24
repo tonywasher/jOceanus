@@ -855,6 +855,19 @@ public class StockOption
         /* touch the security and portfolio */
         getSecurity().touchItem(this);
         getPortfolio().touchItem(this);
+
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
+    }
+
+    @Override
+    public void touchOnUpdate() {
+        /* Reset touches from update set */
+        clearTouches(MoneyWiseDataType.STOCKOPTIONVEST);
+
+        /* Touch items */
+        getPortfolio().touchItem(this);
+        getSecurity().touchItem(this);
     }
 
     @Override

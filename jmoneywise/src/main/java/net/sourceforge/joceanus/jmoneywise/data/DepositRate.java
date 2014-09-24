@@ -661,6 +661,12 @@ public class DepositRate
         getDeposit().touchItem(this);
     }
 
+    @Override
+    public void touchOnUpdate() {
+        /* Touch deposit */
+        getDeposit().touchItem(this);
+    }
+
     /**
      * Update Rate from a Rate extract.
      * @param pRate the updated item

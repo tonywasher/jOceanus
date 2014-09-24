@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -862,8 +863,13 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * postProcessOnUpdate.
      */
     public void postProcessOnUpdate() {
+        /* Note whether this is a DataInfoList */
+        boolean isDataInfo = this instanceof DataInfoList;
+
         /* Reset the map */
-        theDataMap.resetMap();
+        if (!isDataInfo) {
+            theDataMap.resetMap();
+        }
 
         /* Loop through items clearing active flag */
         Iterator<T> myIterator = iterator();
@@ -880,8 +886,12 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 continue;
             }
 
-            /* Adjust the map for the item */
-            myCurr.adjustMapForItem();
+            /* If this is not a DataInfo */
+            if (!isDataInfo) {
+                /* Adjust touches and update map */
+                myCurr.touchOnUpdate();
+                myCurr.adjustMapForItem();
+            }
 
             /* Validate the item and build up the state */
             myCurr.validate();
