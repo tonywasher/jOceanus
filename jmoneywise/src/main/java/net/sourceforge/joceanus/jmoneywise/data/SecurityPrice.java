@@ -488,7 +488,8 @@ public class SecurityPrice
             /* else date is non-null */
         } else {
             /* Date must be unique for this security */
-            if (myList.countInstances(myDate, mySecurity) > 1) {
+            SecurityPriceDataMap<? extends SecurityPrice> myMap = myList.getDataMap();
+            if (!myMap.validPriceCount(this)) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
 
@@ -664,29 +665,6 @@ public class SecurityPrice
         @Override
         protected SecurityPriceDataMap<T> getDataMap() {
             return (SecurityPriceDataMap<T>) super.getDataMap();
-        }
-
-        /**
-         * Count the instances of a date.
-         * @param pDate the date
-         * @param pSecurity the security
-         * @return The count
-         */
-        public int countInstances(final JDateDay pDate,
-                                  final Security pSecurity) {
-            /* Loop through the items to find the entry */
-            int iCount = 0;
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-                if (pDate.equals(myCurr.getDate())
-                    && pSecurity.equals(myCurr.getSecurity())) {
-                    iCount++;
-                }
-            }
-
-            /* return to caller */
-            return iCount;
         }
 
         @Override
@@ -876,6 +854,7 @@ public class SecurityPrice
 
     /**
      * The dataMap class.
+     * @param <T> the data type
      */
     protected static class SecurityPriceDataMap<T extends SecurityPrice>
             implements DataMapItem<T, MoneyWiseDataType>, JDataContents {
@@ -958,7 +937,7 @@ public class SecurityPrice
          * @param pItem the price
          * @return true/false
          */
-        public boolean validPriceCount(final T pItem) {
+        public boolean validPriceCount(final SecurityPrice pItem) {
             /* Access the Details */
             Security mySecurity = pItem.getSecurity();
             JDateDay myDate = pItem.getDate();

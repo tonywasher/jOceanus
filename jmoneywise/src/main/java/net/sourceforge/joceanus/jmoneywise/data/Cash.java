@@ -692,12 +692,6 @@ public class Cash
     }
 
     @Override
-    protected MoneyWiseDataType[] getUniqueSet() {
-        return new MoneyWiseDataType[]
-        { MoneyWiseDataType.LOAN, MoneyWiseDataType.DEPOSIT, MoneyWiseDataType.PORTFOLIO };
-    }
-
-    @Override
     public void validate() {
         CashCategory myCategory = getCategory();
         AccountCurrency myCurrency = getCashCurrency();
@@ -900,6 +894,24 @@ public class Cash
 
             /* Return the list */
             return myList;
+        }
+
+        @Override
+        public Cash findItemByName(final String pName) {
+            /* look up the name in the map */
+            return getDataMap().findItemByName(pName);
+        }
+
+        @Override
+        protected boolean checkAvailableName(final String pName) {
+            /* check availability in map */
+            return getDataMap().availableName(pName);
+        }
+
+        @Override
+        protected boolean validNameCount(final String pName) {
+            /* check availability in map */
+            return getDataMap().validNameCount(pName);
         }
 
         @Override

@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -722,8 +721,8 @@ public class Payee
             /* If the PayeeType is singular */
             if (myClass.isSingular()) {
                 /* Count the elements of this class */
-                int myCount = myList.countInstances(myClass);
-                if (myCount > 1) {
+                PayeeDataMap myMap = myList.getDataMap();
+                if (!myMap.validSingularCount(myClass)) {
                     addError(ERROR_MULT, FIELD_PAYEETYPE);
                 }
             }
@@ -904,6 +903,24 @@ public class Payee
             return myList;
         }
 
+        @Override
+        public Payee findItemByName(final String pName) {
+            /* look up the name in the map */
+            return getDataMap().findItemByName(pName);
+        }
+
+        @Override
+        protected boolean checkAvailableName(final String pName) {
+            /* check availability */
+            return findItemByName(pName) == null;
+        }
+
+        @Override
+        protected boolean validNameCount(final String pName) {
+            /* check availability in map */
+            return getDataMap().validNameCount(pName);
+        }
+
         /**
          * Add a new item to the core list.
          * @param pPayee item
@@ -933,53 +950,13 @@ public class Payee
         }
 
         /**
-         * Count the instances of a class.
-         * @param pClass the event category class
-         * @return The # of instances of the class
-         */
-        protected int countInstances(final PayeeTypeClass pClass) {
-            /* Access the iterator */
-            Iterator<Payee> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Payee myCurr = myIterator.next();
-                if (pClass == myCurr.getPayeeTypeClass()) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
          * Obtain the first payee for the specified class.
          * @param pClass the payee class
          * @return the payee
          */
         public Payee getSingularClass(final PayeeTypeClass pClass) {
-            /* Access the iterator */
-            Iterator<Payee> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Payee myCurr = myIterator.next();
-
-                /* Ignore deleted payees */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* If the payee is correct class */
-                if (myCurr.getPayeeTypeClass() == pClass) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
+            /* Lookup in the map */
+            return getDataMap().findSingularItem(pClass);
         }
 
         @Override
@@ -1266,7 +1243,7 @@ public class Payee
          * @param pClass the class to look up
          * @return the matching item
          */
-        public Payee findSingularItem(final TransactionCategoryClass pClass) {
+        public Payee findSingularItem(final PayeeTypeClass pClass) {
             return thePayeeMap.get(pClass.getClassId());
         }
 
@@ -1275,7 +1252,7 @@ public class Payee
          * @param pClass the class to look up
          * @return true/false
          */
-        public boolean validSingularCount(final TransactionCategoryClass pClass) {
+        public boolean validSingularCount(final PayeeTypeClass pClass) {
             Integer myResult = thePayeeCountMap.get(pClass.getClassId());
             return ONE.equals(myResult);
         }

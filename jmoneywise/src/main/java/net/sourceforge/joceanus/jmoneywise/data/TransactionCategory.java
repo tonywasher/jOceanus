@@ -316,8 +316,8 @@ public final class TransactionCategory
             /* If the CategoryType is singular */
             if (myClass.isSingular()) {
                 /* Count the elements of this class */
-                int myCount = myList.countInstances(myClass);
-                if (myCount > 1) {
+                TransCategoryDataMap myMap = myList.getDataMap();
+                if (!myMap.validSingularCount(myClass)) {
                     addError(ERROR_MULT, FIELD_CATTYPE);
                 }
             }
@@ -528,46 +528,13 @@ public final class TransactionCategory
         }
 
         /**
-         * Count the instances of a class.
-         * @param pClass the event category class
-         * @return The # of instances of the class
-         */
-        protected int countInstances(final TransactionCategoryClass pClass) {
-            /* Access the iterator */
-            Iterator<TransactionCategory> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                TransactionCategory myCurr = myIterator.next();
-                if (pClass == myCurr.getCategoryTypeClass()) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
          * Obtain the first category for the specified class.
          * @param pClass the category class
          * @return the category
          */
         public TransactionCategory getSingularClass(final TransactionCategoryClass pClass) {
-            /* Access the iterator */
-            Iterator<TransactionCategory> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                TransactionCategory myCurr = myIterator.next();
-                if (myCurr.getCategoryTypeClass() == pClass) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
+            /* Lookup in the map */
+            return getDataMap().findSingularItem(pClass);
         }
 
         /**

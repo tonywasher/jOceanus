@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
@@ -712,15 +710,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
-     * Check unique set.
-     * @return the set among which the name must be unique
-     */
-    protected MoneyWiseDataType[] getUniqueSet() {
-        return new MoneyWiseDataType[]
-        {};
-    }
-
-    /**
      * Validate the account.
      */
     @Override
@@ -740,19 +729,9 @@ public abstract class AssetBase<T extends AssetBase<T>>
                 addError(ERROR_LENGTH, FIELD_NAME);
             }
 
-            if (myList.countInstances(myName) > 1) {
+            /* Check name count */
+            if (!myList.validNameCount(myName)) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
-            }
-
-            /* Loop through any unique lists */
-            MoneyWiseData myData = getDataSet();
-            for (MoneyWiseDataType myType : getUniqueSet()) {
-                @SuppressWarnings("unchecked")
-                AssetBaseList<?> mySubList = myData.getDataList(myType, AssetBaseList.class);
-                if (mySubList.findItemByName(myName) != null) {
-                    addError(ERROR_DUPLICATE, FIELD_NAME);
-                    break;
-                }
             }
         }
 
@@ -815,58 +794,25 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         /**
-         * Count the instances of a string.
-         * @param pName the string to check for
-         * @return The Item if present (or null)
-         */
-        protected int countInstances(final String pName) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-                /* Ignore deleted items */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* Adjust count */
-                if (pName.equals(myCurr.getName())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
          * Search for a particular item by Name.
          * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public T findItemByName(final String pName) {
-            /* Loop through the items to find the entry */
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
+        public abstract T findItemByName(final String pName);
 
-                /* Ignore deleted items */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
+        /**
+         * Check whether a name is available for use.
+         * @param pName Name of item
+         * @return true/false
+         */
+        protected abstract boolean checkAvailableName(final String pName);
 
-                /* return if we found a name */
-                if (pName.equals(myCurr.getName())) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
-        }
+        /**
+         * Check whether a name is validly used.
+         * @param pName Name of item
+         * @return true/false
+         */
+        protected abstract boolean validNameCount(final String pName);
 
         /**
          * Obtain unique name for new account.
@@ -881,7 +827,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             String myName = pBase;
             for (;;) {
                 /* try out the name */
-                if (findItemByName(myName) == null) {
+                if (checkAvailableName(myName)) {
                     return myName;
                 }
 

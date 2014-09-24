@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import java.text.DecimalFormatSymbols;
 import java.util.Currency;
-import java.util.Iterator;
 import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -240,6 +239,7 @@ public class AccountCurrency
     @Override
     public void validate() {
         AccountCurrencyList myList = getList();
+        CurrencyDataMap myMap = myList.getDataMap();
 
         /* Check that default is non-null */
         if (isDefault() == null) {
@@ -253,7 +253,7 @@ public class AccountCurrency
             }
 
             /* Check for multiple defaults */
-            if (myList.countDefaults() > 1) {
+            if (!myMap.validDefaultCount()) {
                 addError("Multiple default currencies", FIELD_DEFAULT);
             }
         }
@@ -452,46 +452,15 @@ public class AccountCurrency
         }
 
         /**
-         * Count the number of default currencies.
-         * @return The # of default currencies
-         */
-        protected int countDefaults() {
-            /* Loop through the items to find the entry */
-            int iCount = 0;
-            Iterator<AccountCurrency> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                AccountCurrency myCurr = myIterator.next();
-
-                /* If this is a default value */
-                if (myCurr.isDefault()) {
-                    /* Increment count */
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
          * Find the default currency.
          * @return The default currency
          */
         public AccountCurrency findDefault() {
-            /* Loop through the items to find the entry */
-            Iterator<AccountCurrency> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                AccountCurrency myCurr = myIterator.next();
-
-                /* If this is a default value */
-                if (myCurr.isDefault()) {
-                    /* Return the default */
-                    return myCurr;
-                }
-            }
-
-            /* Return to caller */
-            return null;
+            /* look up the default in the map */
+            CurrencyDataMap myMap = getDataMap();
+            return myMap == null
+                                ? null
+                                : myMap.getDefault();
         }
 
         @Override

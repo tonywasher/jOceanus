@@ -407,9 +407,10 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     @Override
     public void validate() {
-        StaticList<?, ?, ?> myList = (StaticList<?, ?, ?>) getList();
+        StaticList<T, S, E> myList = getList();
         String myName = getName();
         String myDesc = getDesc();
+        StaticDataMap<T, S, E> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -423,7 +424,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             }
 
             /* Check that the name is unique */
-            if (myList.countInstances(myName) > 1) {
+            if (!myMap.validNameCount(myName)) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
             }
         }
@@ -439,7 +440,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Cannot have duplicate order */
-        if (myList.countInstances(getOrder()) > 1) {
+        if (!myMap.validOrderCount(getOrder())) {
             addError(ERROR_DUPLICATE, FIELD_ORDER);
         }
 
@@ -758,17 +759,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
         @Override
         public T findItemByName(final String pName) {
-            /* Loop through the items to find the entry */
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-                if (pName.equals(myCurr.getName())) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
+            /* look up the name in the map */
+            return getDataMap().findItemByName(pName);
         }
 
         /**
@@ -842,60 +834,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @throws JOceanusException on error
          */
         protected abstract T newItem(final S pClass) throws JOceanusException;
-
-        /**
-         * Count the instances of a name.
-         * @param pName the name to check for
-         * @return The # of instances of the name
-         */
-        protected int countInstances(final String pName) {
-            /* Loop through the items to find the entry */
-            int iCount = 0;
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-
-                /* Ignore deleted items */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* Adjust count */
-                if (pName.equals(myCurr.getName())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
-         * Count the instances of an Order.
-         * @param iOrder the order to check for
-         * @return The # of instances of the order
-         */
-        protected int countInstances(final Integer iOrder) {
-            /* Loop through the items to find the entry */
-            int iCount = 0;
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-
-                /* Ignore deleted items */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* Adjust count */
-                if (Difference.isEqual(iOrder, myCurr.getOrder())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
 
         /**
          * Populate default values.

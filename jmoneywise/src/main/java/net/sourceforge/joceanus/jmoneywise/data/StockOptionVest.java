@@ -514,7 +514,8 @@ public class StockOptionVest
             /* else date is non-null */
         } else {
             /* Date must be unique for this option */
-            if (myList.countInstances(myDate, myOption) > 1) {
+            StockOptionVestDataMap myMap = myList.getDataMap();
+            if (!myMap.validVestCount(this)) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
 
@@ -717,29 +718,6 @@ public class StockOptionVest
 
             /* Return it */
             return myVest;
-        }
-
-        /**
-         * Count the instances of a date.
-         * @param pDate the date
-         * @param pOption the option
-         * @return The Item if present (or null)
-         */
-        public int countInstances(final JDateDay pDate,
-                                  final StockOption pOption) {
-            /* Loop through the items to find the entry */
-            int iCount = 0;
-            Iterator<StockOptionVest> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                StockOptionVest myCurr = myIterator.next();
-                if (pDate.equals(myCurr.getDate())
-                    && pOption.equals(myCurr.getStockOption())) {
-                    iCount++;
-                }
-            }
-
-            /* return to caller */
-            return iCount;
         }
 
         @Override

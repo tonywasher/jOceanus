@@ -644,6 +644,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         CategoryBaseList<T, S, C> myList = getList();
         String myName = getName();
         String myDesc = getDesc();
+        CategoryDataMap<T, S, C> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -657,7 +658,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             }
 
             /* The name must be unique */
-            if (myList.countInstances(myName) > 1) {
+            if (!myMap.validNameCount(myName)) {
                 String mySubName = getSubCategory();
                 addError(ERROR_DUPLICATE, (mySubName == null)
                                                              ? FIELD_NAME
@@ -756,58 +757,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
 
         /**
-         * Count the instances of a string.
-         * @param pName the string to check for
-         * @return The # of instances of the name
-         */
-        protected int countInstances(final String pName) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-
-                /* Ignore deleted items */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* Adjust count if we found the name */
-                if (pName.equals(myCurr.getName())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
          * Search for a particular item by Name.
          * @param pName Name of item
          * @return The Item if present (or null)
          */
         public T findItemByName(final String pName) {
-            /* Loop through the items to find the entry */
-            Iterator<T> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-
-                /* Ignore deleted items */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* return if we found a name */
-                if (pName.equals(myCurr.getName())) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
+            /* look up the name in the map */
+            return getDataMap().findItemByName(pName);
         }
 
         /**

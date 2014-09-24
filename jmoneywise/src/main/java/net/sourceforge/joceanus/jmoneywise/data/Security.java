@@ -1181,6 +1181,24 @@ public class Security
             return myList;
         }
 
+        @Override
+        public Security findItemByName(final String pName) {
+            /* look up the name in the map */
+            return getDataMap().findItemByName(pName);
+        }
+
+        @Override
+        protected boolean checkAvailableName(final String pName) {
+            /* check availability */
+            return findItemByName(pName) == null;
+        }
+
+        @Override
+        protected boolean validNameCount(final String pName) {
+            /* check availability in map */
+            return getDataMap().validNameCount(pName);
+        }
+
         /**
          * Add a new item to the core list.
          * @param pSecurity item

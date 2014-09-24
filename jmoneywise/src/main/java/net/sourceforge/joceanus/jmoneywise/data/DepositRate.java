@@ -589,8 +589,8 @@ public class DepositRate
         JRate myBonus = getBonus();
 
         /* Count instances of this date for the account */
-        int myCount = myList.countInstances(myDate, getDeposit());
-        if (myCount > 1) {
+        DepositRateDataMap myMap = myList.getDataMap();
+        if (!myMap.validRateCount(this)) {
             /* Each date must be unique for deposit (even null) */
             addError(myDate == null
                                    ? ERROR_NULLDATE
@@ -823,29 +823,6 @@ public class DepositRate
             DepositRate myRate = new DepositRate(this);
             add(myRate);
             return myRate;
-        }
-
-        /**
-         * Count the instances of a date.
-         * @param pDate the date
-         * @param pDeposit the deposit
-         * @return the instance count
-         */
-        protected int countInstances(final JDateDay pDate,
-                                     final Deposit pDeposit) {
-            /* Loop through the items to find the entry */
-            int iCount = 0;
-            Iterator<DepositRate> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                DepositRate myCurr = myIterator.next();
-                if (Difference.isEqual(pDate, myCurr.getEndDate())
-                    && pDeposit.equals(myCurr.getDeposit())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
         }
 
         /**

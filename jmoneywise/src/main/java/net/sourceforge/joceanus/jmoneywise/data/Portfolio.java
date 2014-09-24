@@ -851,12 +851,6 @@ public class Portfolio
     }
 
     @Override
-    protected MoneyWiseDataType[] getUniqueSet() {
-        return new MoneyWiseDataType[]
-        { MoneyWiseDataType.LOAN, MoneyWiseDataType.CASH, MoneyWiseDataType.DEPOSIT };
-    }
-
-    @Override
     public void validate() {
         Payee myParent = getParent();
         Deposit myHolding = getHolding();
@@ -1087,6 +1081,24 @@ public class Portfolio
 
             /* Return the list */
             return myList;
+        }
+
+        @Override
+        public Portfolio findItemByName(final String pName) {
+            /* look up the name in the map */
+            return getDataMap().findItemByName(pName);
+        }
+
+        @Override
+        protected boolean checkAvailableName(final String pName) {
+            /* check availability in map */
+            return getDataMap().availableName(pName);
+        }
+
+        @Override
+        protected boolean validNameCount(final String pName) {
+            /* check availability in map */
+            return getDataMap().validNameCount(pName);
         }
 
         /**
