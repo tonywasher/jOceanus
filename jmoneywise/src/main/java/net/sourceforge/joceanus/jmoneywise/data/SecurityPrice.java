@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedPrice;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
@@ -40,9 +39,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
-import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
-import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -560,67 +556,25 @@ public class SecurityPrice
         getSecurity().touchItem(this);
     }
 
-    /**
-     * Update Price from an item Element.
-     * @param pItem the price extract
-     * @return whether changes have been made
-     */
     @Override
-    public boolean applyChanges(final DataItem<?> pItem) {
-        if (pItem instanceof SpotSecurityPrice) {
-            SpotSecurityPrice mySpot = (SpotSecurityPrice) pItem;
-            return applyChanges(mySpot);
-        } else if (pItem instanceof SecurityPrice) {
-            SecurityPrice myPrice = (SecurityPrice) pItem;
-            return applyChanges(myPrice);
+    public boolean applyChanges(final DataItem<?> pPrice) {
+        /* Can only update from a SecurityPrice */
+        if (!(pPrice instanceof SecurityPrice)) {
+            return false;
         }
-        return false;
-    }
+        SecurityPrice myPrice = (SecurityPrice) pPrice;
 
-    /**
-     * Update Price from a Price extract.
-     * @param pPrice the price extract
-     * @return whether changes have been made
-     */
-    private boolean applyChanges(final SecurityPrice pPrice) {
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the price if required */
-        if (!Difference.isEqual(getPrice(), pPrice.getPrice())) {
-            setValuePrice(pPrice.getPriceField());
+        if (!Difference.isEqual(getPrice(), myPrice.getPrice())) {
+            setValuePrice(myPrice.getPriceField());
         }
 
         /* Update the date if required */
-        if (!Difference.isEqual(getDate(), pPrice.getDate())) {
-            setValueDate(pPrice.getDate());
-        }
-
-        /* Check for changes */
-        return checkForHistory();
-    }
-
-    /**
-     * Update Price from a Price extract.
-     * @param pPrice the price extract
-     * @return whether changes have been made
-     */
-    private boolean applyChanges(final SpotSecurityPrice pPrice) {
-        /* If we are setting a null price */
-        if (pPrice.getPrice() == null) {
-            /* We are actually deleting the price */
-            setDeleted(true);
-            return true;
-
-            /* else we have a price to set */
-        }
-
-        /* Store the current detail into history */
-        pushHistory();
-
-        /* Update the price if required */
-        if (!Difference.isEqual(getPrice(), pPrice.getPrice())) {
-            setValuePrice(pPrice.getPriceField());
+        if (!Difference.isEqual(getDate(), myPrice.getDate())) {
+            setValueDate(myPrice.getDate());
         }
 
         /* Check for changes */
@@ -778,54 +732,6 @@ public class SecurityPrice
 
             /* Return null */
             return null;
-        }
-
-        /**
-         * Apply changes from a Spot Price list.
-         * @param pPrices the spot prices
-         */
-        public void applyChanges(final SpotSecurityPrices pPrices) {
-            /* Access details */
-            JDateDay myDate = pPrices.getDate();
-            SpotSecurityList myList = pPrices.getPrices();
-
-            /* Access the iterator */
-            Iterator<SpotSecurityPrice> myIterator = myList.listIterator();
-
-            /* Loop through the spot prices */
-            while (myIterator.hasNext()) {
-                SpotSecurityPrice mySpot = myIterator.next();
-
-                /* Access the price for this date if it exists */
-                SecurityPrice myPrice = mySpot.getBase();
-                EncryptedPrice myPoint = mySpot.getPriceField();
-
-                /* If the state is not clean */
-                if (mySpot.getState() != DataState.CLEAN) {
-                    /* If we have an underlying price */
-                    if (myPrice != null) {
-                        /* Apply changes to the underlying entry */
-                        myPrice.applyChanges(mySpot);
-
-                        /* else if we have a new price with no underlying */
-                    } else if (myPoint != null) {
-                        /* Create the new Price */
-                        myPrice = new SecurityPrice(this);
-
-                        /* Set the date and price */
-                        myPrice.setSecurity(mySpot.getSecurity());
-                        myPrice.setDate(new JDateDay(myDate));
-                        myPrice.setValuePrice(myPoint);
-
-                        /* Add to the list and link backwards */
-                        mySpot.setBase(myPrice);
-                        add(myPrice);
-                    }
-
-                    /* Clear history and set as a clean item */
-                    mySpot.clearHistory();
-                }
-            }
         }
 
         @Override

@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
@@ -341,6 +342,7 @@ public class SpotSecurityPrices
             /* Build initial list */
             super(pPrices.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
+            ensureMap();
             theDate = pPrices.getDate();
             theView = pPrices.getView();
             thePortfolio = pPrices.getPortfolio();
@@ -353,24 +355,21 @@ public class SpotSecurityPrices
             SecurityBucketList mySecurities = myBucket.getSecurities();
 
             /* Loop through the Securities */
-            MoneyWiseData myData = theView.getData();
-            Iterator<Security> mySecIterator = myData.getSecurities().listIterator();
+            JDateDay myDate = new JDateDay(theDate);
+            Iterator<SecurityBucket> mySecIterator = mySecurities.iterator();
             while (mySecIterator.hasNext()) {
-                Security mySecurity = mySecIterator.next();
-
-                /* Ignore accounts that are wrong portfolio */
-                if (mySecurities.findItemById(mySecurity.getId()) == null) {
-                    continue;
-                }
+                SecurityBucket mySecBucket = mySecIterator.next();
+                Security mySecurity = mySecBucket.getSecurity();
 
                 /* Create a SpotPrice entry */
                 SpotSecurityPrice mySpot = new SpotSecurityPrice(this, mySecurity);
                 mySpot.setId(mySecurity.getId());
-                mySpot.setDate(new JDateDay(theDate));
+                mySpot.setDate(myDate);
                 add(mySpot);
             }
 
             /* Set the base for this list */
+            MoneyWiseData myData = theView.getData();
             SecurityPriceList myPrices = myData.getSecurityPrices();
             setBase(myPrices);
 
@@ -378,6 +377,11 @@ public class SpotSecurityPrices
             ListIterator<SecurityPrice> myIterator = myPrices.listIterator();
             while (myIterator.hasPrevious()) {
                 SecurityPrice myPrice = myIterator.previous();
+
+                /* Ignore deleted prices */
+                if (myPrice.isDeleted()) {
+                    continue;
+                }
 
                 /* Test the Date */
                 int iDiff = theDate.compareTo(myPrice.getDate());
@@ -436,34 +440,6 @@ public class SpotSecurityPrices
         @Override
         public SpotSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean hasUpdates() {
-            /* Access the iterator */
-            Iterator<SpotSecurityPrice> myIterator = listIterator();
-
-            /* Loop through the list */
-            while (myIterator.hasNext()) {
-                SecurityPrice myCurr = myIterator.next();
-
-                /* Switch on state */
-                switch (myCurr.getState()) {
-                    case DELETED:
-                    case DELCHG:
-                    case CHANGED:
-                    case RECOVERED:
-                    case DELNEW:
-                    case NEW:
-                        return true;
-                    case CLEAN:
-                    default:
-                        break;
-                }
-            }
-
-            /* Return no updates */
-            return false;
         }
     }
 
@@ -597,9 +573,6 @@ public class SpotSecurityPrices
                 case RECOVERED:
                 case CLEAN:
                     return super.getPrice();
-                    /*
-                     * case CLEAN: return (getBase().isDeleted()) ? null : getPrice();
-                     */
                 default:
                     return null;
             }
@@ -618,22 +591,15 @@ public class SpotSecurityPrices
             /* If the original price is Null */
             if (getPrice(myBase) == null) {
                 /* Return status */
-                return myCurr.isDeletion()
-                                          ? DataState.DELNEW
-                                          : DataState.NEW;
+                return getPrice(myCurr) == null
+                                               ? DataState.DELNEW
+                                               : DataState.NEW;
             }
 
             /* If we are deleted return so */
-            if (myCurr.isDeletion()) {
-                return myBase.isDeletion()
-                                          ? DataState.CLEAN
-                                          : DataState.DELETED;
-            }
-
-            /* Return RECOVERED or CHANGED depending on whether we started as deleted */
-            return (myBase.isDeletion())
-                                        ? DataState.RECOVERED
-                                        : DataState.CHANGED;
+            return getPrice(myCurr) == null
+                                           ? DataState.DELETED
+                                           : DataState.CHANGED;
         }
     }
 }

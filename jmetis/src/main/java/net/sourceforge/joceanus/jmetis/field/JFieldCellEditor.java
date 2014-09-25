@@ -85,7 +85,7 @@ public final class JFieldCellEditor {
      * String Cell Editor.
      */
     public static class StringCellEditor
-            extends AbstractCellEditor
+            extends JEventCellEditor
             implements TableCellEditor {
         /**
          * Serial Id.
@@ -96,6 +96,19 @@ public final class JFieldCellEditor {
          * The text field.
          */
         private final JTextField theField;
+
+        /**
+         * The point at which the editor is active.
+         */
+        private transient Point thePoint;
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
+        }
 
         /**
          * Constructor.
@@ -111,9 +124,18 @@ public final class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setText(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
-                                                                                     ? STR_EMPTY
-                                                                                     : (String) pValue);
+            /* Store location of box */
+            int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            thePoint = new Point(myCol, myRow);
+
+            /* Enable updates to cellEditor */
+            fireStateChanged();
+
+            theField.setText(((pValue == null)
+                    || (JFieldValue.ERROR.equals(pValue)))
+                                                          ? STR_EMPTY
+                                                          : (String) pValue);
             return theField;
         }
 
@@ -759,7 +781,7 @@ public final class JFieldCellEditor {
             int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
 
-            /* Enable updates to comboBox */
+            /* Enable updates to cellEditor */
             fireStateChanged();
 
             /* Store current value */
@@ -987,7 +1009,7 @@ public final class JFieldCellEditor {
             int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
 
-            /* Enable updates to comboBox */
+            /* Enable updates to cellEditor */
             fireStateChanged();
 
             /* If the value is the date */

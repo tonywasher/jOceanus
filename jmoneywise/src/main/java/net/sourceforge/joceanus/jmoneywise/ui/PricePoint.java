@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,9 +32,11 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -44,7 +47,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
@@ -56,6 +63,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -184,9 +192,9 @@ public class PricePoint
     private static final String TITLE_PREVDATE = SpotSecurityPrice.FIELD_PREVDATE.getName();
 
     /**
-     * The column width.
+     * Action Column Title.
      */
-    private static final int WIDTH_COLUMN = 130;
+    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
 
     /**
      * Constructor.
@@ -232,14 +240,6 @@ public class PricePoint
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataPrice);
 
-        /* Create the listener */
-        SpotViewListener myListener = new SpotViewListener();
-        theSelect.addChangeListener(myListener);
-        theError.addChangeListener(myListener);
-        theActionButtons.addActionListener(myListener);
-        theUpdateSet.addActionListener(myListener);
-        theView.addChangeListener(myListener);
-
         /* Create the header panel */
         JPanel myHeader = new JPanel();
         myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
@@ -257,6 +257,9 @@ public class PricePoint
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
+
+        /* Create the listener */
+        new SpotViewListener();
     }
 
     /**
@@ -360,10 +363,21 @@ public class PricePoint
     }
 
     /**
-     * Extract listener class.
+     * SpotView listener class.
      */
     private final class SpotViewListener
             implements ActionListener, ChangeListener {
+        /**
+         * Constructor.
+         */
+        private SpotViewListener() {
+            /* Listen to correct events */
+            theUpdateSet.addChangeListener(this);
+            theActionButtons.addActionListener(this);
+            theError.addChangeListener(this);
+            theSelect.addChangeListener(this);
+            theView.addChangeListener(this);
+        }
 
         @Override
         public void stateChanged(final ChangeEvent evt) {
@@ -406,6 +420,11 @@ public class PricePoint
                 /* Refresh Data */
                 refreshData();
 
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
+
                 /* If this is the error panel */
             } else if (theError.equals(o)) {
                 /* Determine whether we have an error */
@@ -436,11 +455,6 @@ public class PricePoint
 
                 /* Adjust for changes */
                 notifyChanges();
-
-                /* If we are performing a rewind */
-            } else if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
             }
         }
     }
@@ -562,6 +576,11 @@ public class PricePoint
         private static final int COLUMN_PREVDATE = 3;
 
         /**
+         * The Action column id.
+         */
+        private static final int COLUMN_ACTION = 4;
+
+        /**
          * Date Renderer.
          */
         private final CalendarCellRenderer theDateRenderer;
@@ -582,6 +601,16 @@ public class PricePoint
         private final StringCellRenderer theStringRenderer;
 
         /**
+         * Action Icon Renderer.
+         */
+        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
+
+        /**
+         * Action Icon editor.
+         */
+        private final IconButtonCellEditor<ActionType> theActionIconEditor;
+
+        /**
          * Constructor.
          */
         private SpotViewColumnModel() {
@@ -593,12 +622,21 @@ public class PricePoint
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             thePriceEditor = theFieldMgr.allocatePriceCellEditor();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
+            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
+
+            /* Configure the iconButton */
+            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_COLUMN, theDecimalRenderer, thePriceEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
+            declareColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_PRICE, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_DATE, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor));
+
+            /* Add PriceCell listener */
+            thePriceEditor.addChangeListener(new PriceCellListener());
         }
 
         /**
@@ -616,6 +654,8 @@ public class PricePoint
                     return TITLE_PREVPRICE;
                 case COLUMN_PREVDATE:
                     return TITLE_PREVDATE;
+                case COLUMN_ACTION:
+                    return TITLE_ACTION;
                 default:
                     return null;
             }
@@ -623,22 +663,26 @@ public class PricePoint
 
         /**
          * Obtain the value for the price column.
-         * @param pSpot spot price
+         * @param pItem spot price
          * @param pColIndex column index
          * @return the value
          */
-        public Object getItemValue(final SpotSecurityPrice pSpot,
+        public Object getItemValue(final SpotSecurityPrice pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_ASSET:
-                    return pSpot.getSecurity().getName();
+                    return pItem.getSecurity().getName();
                 case COLUMN_PRICE:
-                    return pSpot.getPrice();
+                    return pItem.getPrice();
                 case COLUMN_PREVPRICE:
-                    return pSpot.getPrevPrice();
+                    return pItem.getPrevPrice();
                 case COLUMN_PREVDATE:
-                    return pSpot.getPrevDate();
+                    return pItem.getPrevDate();
+                case COLUMN_ACTION:
+                    return pItem.getPrice() != null && !pItem.isDisabled()
+                                                                          ? ActionType.DELETE
+                                                                          : ActionType.DO;
                 default:
                     return null;
             }
@@ -659,6 +703,9 @@ public class PricePoint
                 case COLUMN_PRICE:
                     pItem.setPrice((JPrice) pValue);
                     break;
+                case COLUMN_ACTION:
+                    pItem.setPrice(null);
+                    break;
                 default:
                     break;
             }
@@ -674,13 +721,15 @@ public class PricePoint
                                       final int pColIndex) {
             /* switch on column */
             switch (pColIndex) {
+                case COLUMN_PRICE:
+                    return !pItem.isDisabled();
+                case COLUMN_ACTION:
+                    return pItem.getPrice() != null && !pItem.isDisabled();
                 case COLUMN_ASSET:
                 case COLUMN_PREVPRICE:
                 case COLUMN_PREVDATE:
-                    return false;
-                case COLUMN_PRICE:
                 default:
-                    return true;
+                    return false;
             }
         }
 
@@ -702,6 +751,24 @@ public class PricePoint
                     return SpotSecurityPrice.FIELD_PREVDATE;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * PriceCellListener.
+         */
+        private class PriceCellListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                /* Access details */
+                Point myCell = thePriceEditor.getPoint();
+
+                /* Update to allow correct currency */
+                SpotSecurityPrice myPrice = thePrices.get(myCell.y);
+                Security mySecurity = myPrice.getSecurity();
+                AccountCurrency myCurrency = mySecurity.getSecurityCurrency();
+                thePriceEditor.setAssumedCurrency(myCurrency.getCurrency());
             }
         }
     }
