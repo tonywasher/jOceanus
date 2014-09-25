@@ -763,8 +763,28 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          * @return The Item if present (or null)
          */
         public T findItemByName(final String pName) {
-            /* look up the name in the map */
-            return getDataMap().findItemByName(pName);
+            /* Access the dataMap */
+            CategoryDataMap<T, S, C> myMap = getDataMap();
+
+            /* Use it if we have it */
+            if (myMap != null) {
+                return myMap.findItemByName(pName);
+            }
+
+            /* No map so we must do a slow lookUp */
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myItem = myIterator.next();
+
+                /* If this is not deleted and matches */
+                if (!myItem.isDeleted() && Difference.isEqual(pName, myItem.getName())) {
+                    /* found it */
+                    return myItem;
+                }
+            }
+
+            /* Not found */
+            return null;
         }
 
         /**
