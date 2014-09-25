@@ -628,6 +628,7 @@ public class SecurityPrice
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void adjustMapForItem() {
         SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
         SecurityPriceDataMap<SecurityPrice> myMap = (SecurityPriceDataMap<SecurityPrice>) myList.getDataMap();

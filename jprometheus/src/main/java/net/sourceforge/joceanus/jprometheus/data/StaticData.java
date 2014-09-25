@@ -451,6 +451,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public StaticList<T, S, E> getList() {
         return (StaticList<T, S, E>) super.getList();
     }
@@ -721,6 +722,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         protected abstract Class<S> getEnumClass();
 
         @Override
+        @SuppressWarnings("unchecked")
         protected StaticDataMap<T, S, E> getDataMap() {
             return (StaticDataMap<T, S, E>) super.getDataMap();
         }

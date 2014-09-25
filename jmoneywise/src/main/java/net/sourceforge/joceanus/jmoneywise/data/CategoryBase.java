@@ -703,7 +703,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
     @Override
     public void touchOnUpdate() {
-        /* Reset self-touches TODO parent sort Order!! */
+        /* Reset self-touches */
         clearTouches(getItemType());
 
         /* Touch parent if it exists */
@@ -732,6 +732,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected CategoryDataMap<T, S, C> getDataMap() {
             return (CategoryDataMap<T, S, C>) super.getDataMap();
         }
