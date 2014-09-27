@@ -519,6 +519,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
+     * Update after field configuration changes.
+     */
+    protected void updateFieldConfiguration() {
+        /* Store new configuration */
+        theFieldMgr.setConfig(theFieldPreferences.getConfiguration());
+    }
+
+    /**
      * Preference listener class.
      */
     private final class PreferenceListener
@@ -526,8 +534,8 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         @Override
         public void stateChanged(final ChangeEvent evt) {
-            /* Store new configuration */
-            theFieldMgr.setConfig(theFieldPreferences.getConfiguration());
+            /* Update new configuration */
+            updateFieldConfiguration();
         }
     }
 }

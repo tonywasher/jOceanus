@@ -28,8 +28,10 @@ import javax.swing.text.html.StyleSheet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -53,9 +55,19 @@ public class HTMLBuilder {
     private static final String SEP_DOT = ".";
 
     /**
+     * The attribute separator.
+     */
+    private static final String SEP_ENDATTR = ";";
+
+    /**
+     * The start rule separator.
+     */
+    private static final String SEP_STARTRULE = " {";
+
+    /**
      * The end rule separator.
      */
-    private static final String SEP_ENDRULE = "; }";
+    private static final String SEP_ENDRULE = " }";
 
     /**
      * The class attribute.
@@ -243,6 +255,31 @@ public class HTMLBuilder {
     protected static final String REF_DELAY = "delay";
 
     /**
+     * The colour indicator.
+     */
+    private static final String CSS_COLOR = " color: ";
+
+    /**
+     * The background colour indicator.
+     */
+    private static final String CSS_BACKCOLOR = " background-color: ";
+
+    /**
+     * The align centre attribute.
+     */
+    private static final String CSS_ALIGNCENTRE = " text-align: center;";
+
+    /**
+     * The align right attribute.
+     */
+    private static final String CSS_ALIGNRIGHT = " text-align: right;";
+
+    /**
+     * The bold font attribute.
+     */
+    private static final String CSS_FONTBOLD = " font-weight: bold;";
+
+    /**
      * The document builder.
      */
     private final DocumentBuilder theBuilder;
@@ -256,6 +293,11 @@ public class HTMLBuilder {
      * The data formatter.
      */
     private final JDataFormatter theFormatter;
+
+    /**
+     * The field manager.
+     */
+    private final JFieldManager theFieldManager;
 
     /**
      * Obtain the data formatter.
@@ -275,9 +317,13 @@ public class HTMLBuilder {
 
     /**
      * Constructor.
+     * @param pView the view
      * @throws JOceanusException on error
      */
-    public HTMLBuilder() throws JOceanusException {
+    public HTMLBuilder(final View pView) throws JOceanusException {
+        /* Store the field manager */
+        theFieldManager = pView.getFieldMgr();
+
         /* Protect against exceptions */
         try {
             /* Create the formatter */
@@ -296,97 +342,141 @@ public class HTMLBuilder {
      * Build display styleSheet.
      * @param pSheet the styleSheet
      */
-    public static void buildDisplayStyleSheet(final StyleSheet pSheet) {
+    public void buildDisplayStyleSheet(final StyleSheet pSheet) {
+        /* Create builder and access zebra colour */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        Color myZebra = theFieldManager.getZebraColor();
+        String myZebraText = DataConverter.colorToHexString(myZebra);
 
         /* Define standard font for body and table contents */
         myBuilder.append(ELEMENT_BODY);
-        myBuilder.append(" { font-family: Verdana, sans-serif; font-size: 1em; color: black; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(" font-family: Verdana, sans-serif; font-size: 1em; color: black; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define standard alignment for headers */
         myBuilder.append(ELEMENT_TITLE);
-        myBuilder.append(" { text-align: center; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
         myBuilder.append(ELEMENT_SUBTITLE);
-        myBuilder.append(" { text-align: center; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define tables */
         myBuilder.append(ELEMENT_TABLE);
-        myBuilder.append(" { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse;");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(" width: 90%; align: center; border-spacing: 1px; border-collapse: collapse;");
         myBuilder.append(" border-top: solid; border-bottom: solid; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define table headers as bold */
         myBuilder.append(ELEMENT_TOTAL);
-        myBuilder.append(" { font-weight: bold;");
-        myBuilder.append(" border: 1px solid white; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_FONTBOLD);
+        myBuilder.append(" border: 1px solid white;");
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
         myBuilder.append(ELEMENT_CELL);
-        myBuilder.append(" { border: 1px solid white; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(" border: 1px solid white;");
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for title row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_TOTROW);
-        myBuilder.append(" { background-color: #c58917; }"); // Cinnamon
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(myZebraText);
+        myBuilder.append("; border-top: solid;");
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for category row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_SUMMROW);
-        myBuilder.append(" { background-color: #b7ceec; }"); // BlueAngel
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(myZebraText);
+        myBuilder.append(SEP_ENDATTR);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for alternate category row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_ALTSUMMROW);
-        myBuilder.append(" { background-color: #e3e4fa; }"); // Lavender
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(DataConverter.colorToHexString(Color.white));
+        myBuilder.append(SEP_ENDATTR);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for subCategory row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_DTLSUMMROW);
-        myBuilder.append(" { background-color: #89c35c; }"); // GreenPeas
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(myZebraText);
+        myBuilder.append(SEP_ENDATTR);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for alternate subCategory row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_ALTDTLSUMMROW);
-        myBuilder.append(" { background-color: #c3fdb8; }"); // LightJade
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(DataConverter.colorToHexString(Color.white));
+        myBuilder.append(SEP_ENDATTR);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define font size for detail row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_DTLROW);
-        myBuilder.append(" { background-color: #c9be62; }"); // GingerBrown
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(myZebraText);
+        myBuilder.append(SEP_ENDATTR);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define font size for alternate detail row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_ALTDTLROW);
-        myBuilder.append(" { background-color: #f3e5ab; }"); // Vanilla
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_BACKCOLOR);
+        myBuilder.append(DataConverter.colorToHexString(Color.white));
+        myBuilder.append(SEP_ENDATTR);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define colour and alignment for data values */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_DATAVALUE);
-        myBuilder.append(" { text-align: right; color: ");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNRIGHT);
+        myBuilder.append(CSS_COLOR);
         myBuilder.append(DataConverter.colorToHexString(Color.blue));
+        myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -394,8 +484,11 @@ public class HTMLBuilder {
         /* Define colour and alignment for negative values */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_NEGVALUE);
-        myBuilder.append(" { text-align: right; color: ");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNRIGHT);
+        myBuilder.append(CSS_COLOR);
         myBuilder.append(DataConverter.colorToHexString(Color.red));
+        myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -403,16 +496,23 @@ public class HTMLBuilder {
         /* Define colour and alignment for title values */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_TITLEVALUE);
-        myBuilder.append(" { text-align: center; color: ");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(CSS_COLOR);
         myBuilder.append(DataConverter.colorToHexString(Color.black));
+        myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set link definition */
         myBuilder.append(ELEMENT_LINK);
-        myBuilder.append(" { font-weight: bold; text-decoration: none; color: ");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_FONTBOLD);
+        myBuilder.append(" text-decoration: none;");
+        myBuilder.append(CSS_COLOR);
         myBuilder.append(DataConverter.colorToHexString(Color.blue));
+        myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -426,47 +526,71 @@ public class HTMLBuilder {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Define standard font for body and table contents */
-        myBuilder.append("body { font-family: Verdana, sans-serif; font-size: 8px; color: black; }");
+        myBuilder.append(ELEMENT_BODY);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(" font-family: Verdana, sans-serif; font-size: 8px; color: black; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define standard alignment for headers */
-        myBuilder.append("h1 { text-align: center; }");
+        myBuilder.append(ELEMENT_TITLE);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
-        myBuilder.append("h2 { text-align: center; }");
+        myBuilder.append(ELEMENT_SUBTITLE);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define tables */
-        myBuilder.append("table { width: 100%; border-collapse: collapse; }");
+        myBuilder.append(ELEMENT_TABLE);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(" width: 100%; border-collapse: collapse; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
-        myBuilder.append("td { text-align: center; }");
+        myBuilder.append(ELEMENT_CELL);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define table headers */
-        myBuilder.append("th { font-weight:bold; text-align: center; }");
+        myBuilder.append(ELEMENT_TOTAL);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_FONTBOLD);
+        myBuilder.append(CSS_ALIGNCENTRE);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define alignment for data values */
-        myBuilder.append(".");
+        myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_DATAVALUE);
-        myBuilder.append(" { text-align: right; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNRIGHT);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define alignment for negative values */
-        myBuilder.append(".");
+        myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_NEGVALUE);
-        myBuilder.append(" { text-align: right; }");
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNRIGHT);
+        myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set link definition */
-        myBuilder.append("a { font-weight: bold; text-decoration: none; color: black; }");
+        myBuilder.append(ELEMENT_LINK);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_FONTBOLD);
+        myBuilder.append(" text-decoration: none; color: black; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
     }

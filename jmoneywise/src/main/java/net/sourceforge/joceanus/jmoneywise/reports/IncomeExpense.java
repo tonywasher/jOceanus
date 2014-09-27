@@ -130,7 +130,7 @@ public class IncomeExpense
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <HelpContents title="jMoneyWise Help" initial="First" xmlns="http://www.jMoneyWise.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.jMoneyWise.com help.xsd">
-  <HelpElement title="Chapter One" name="StaticData">
-    <HelpElement name="AccountTypes" file="AccountTypes.html" title="AccountTypes"/>	
+  <HelpElement title="Accounts" name="Accounts">
+    <HelpElement name="Deposits" file="Deposits.html" title="Deposits"/>	
+    <HelpElement name="Loans" file="Loans.html" title="Loans"/>	
   </HelpElement>
-  <HelpElement name="SecondHelpChapter" title="Accounts">
+  <HelpElement name="StaticData" title="StaticData">
+    <HelpElement name="AccountTypes" title="AccountTypes" file="AccountTypes.html"/>
     <HelpElement name="TransactionTypes" title="TransactionTypes" file="TransactionTypes.html"/>
   </HelpElement>
 </HelpContents>

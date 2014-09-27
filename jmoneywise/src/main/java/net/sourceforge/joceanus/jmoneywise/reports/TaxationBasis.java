@@ -113,7 +113,7 @@ public class TaxationBasis
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Return the document */

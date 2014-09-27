@@ -145,7 +145,7 @@ public class ReportTab
         theSpotEntry.hideEntry();
 
         /* Create Report Manager */
-        theManager = new ReportManager(theLogger);
+        theManager = new ReportManager(theView);
 
         /* Create the report builder */
         theBuilder = new ReportBuilder(theManager);
@@ -170,7 +170,7 @@ public class ReportTab
         HTMLEditorKit myDisplayKit = new HTMLEditorKit();
         StyleSheet myDisplayStyle = new StyleSheet();
         myDisplayStyle.addStyleSheet(myDisplayKit.getStyleSheet());
-        HTMLBuilder.buildDisplayStyleSheet(myDisplayStyle);
+        theManager.buildDisplayStyleSheet(myDisplayStyle);
 
         /* Create print editorKit and styleSheet */
         HTMLEditorKit myPrintKit = new HTMLEditorKit();

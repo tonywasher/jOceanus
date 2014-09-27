@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JEditorPane;
+import javax.swing.text.html.StyleSheet;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -37,6 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
@@ -106,15 +108,15 @@ public class ReportManager
 
     /**
      * Constructor.
-     * @param pLogger the logger
+     * @param pView the view
      * @throws JOceanusException on error
      */
-    public ReportManager(final Logger pLogger) throws JOceanusException {
+    public ReportManager(final View pView) throws JOceanusException {
         /* Store parameters */
-        theLogger = pLogger;
+        theLogger = pView.getLogger();
 
         /* Create the builder */
-        theBuilder = new HTMLBuilder();
+        theBuilder = new HTMLBuilder(pView);
 
         /* Allocate the hashMaps */
         theHiddenMap = new HashMap<String, HiddenElement>();
@@ -129,6 +131,15 @@ public class ReportManager
         } catch (Exception e) {
             throw new JMoneyWiseIOException("Failed to create", e);
         }
+    }
+
+    /**
+     * Build display styleSheet.
+     * @param pSheet the styleSheet
+     */
+    public void buildDisplayStyleSheet(final StyleSheet pSheet) {
+        /* Pass call to HTML builder */
+        theBuilder.buildDisplayStyleSheet(pSheet);
     }
 
     /**

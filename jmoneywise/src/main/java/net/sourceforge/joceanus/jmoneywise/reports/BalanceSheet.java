@@ -272,7 +272,7 @@ public class BalanceSheet
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotal);
         theBuilder.makeTotalCell(myTable, myBase);
         theBuilder.makeTotalCell(myTable, myDelta);
