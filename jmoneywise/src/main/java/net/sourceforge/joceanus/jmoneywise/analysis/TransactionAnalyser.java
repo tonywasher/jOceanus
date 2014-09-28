@@ -56,6 +56,9 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -334,6 +337,28 @@ public class TransactionAnalyser
         AssetBase<?> myCredit = pTrans.getCredit();
         AssetBase<?> myChild = null;
         JMoney myAmount = pTrans.getAmount();
+
+        /* Look for tags */
+        Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+        if (myIterator != null) {
+            /* Loop through the tags */
+            TransactionTagList myTags = theAnalysis.getTransactionTags();
+            while (myIterator.hasNext()) {
+                TransactionInfo myInfo = myIterator.next();
+
+                /* if the item is not deleted */
+                if (!myInfo.isDeleted()) {
+                    /* Access details */
+                    TransactionTag myTag = myInfo.getTransactionTag();
+
+                    /* If this is a new tag */
+                    if (!myTags.contains(myTag)) {
+                        /* Add the tag */
+                        myTags.add(myTag);
+                    }
+                }
+            }
+        }
 
         /* If the event relates to a security item, split out the workings */
         if ((myDebit instanceof Security)

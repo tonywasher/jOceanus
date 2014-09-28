@@ -59,7 +59,12 @@ public enum AnalysisType {
     /**
      * TaxBasis.
      */
-    TAXBASIS;
+    TAXBASIS,
+
+    /**
+     * TransactionTag.
+     */
+    TRANSTAG;
 
     /**
      * Report Name.
@@ -84,9 +89,9 @@ public enum AnalysisType {
      */
     public BucketAttribute getDefaultValue() {
         BucketAttribute[] myValues = getValues();
-        return (myValues.length > 0)
-                                    ? myValues[0]
-                                    : null;
+        return myValues != null && myValues.length > 0
+                                                      ? myValues[0]
+                                                      : null;
     }
 
     /**
@@ -107,6 +112,8 @@ public enum AnalysisType {
                 return EventAttribute.values();
             case TAXBASIS:
                 return TaxBasisAttribute.values();
+            case TRANSTAG:
+                return null;
             default:
                 throw new IllegalArgumentException("Invalid Attribute type " + toString());
         }

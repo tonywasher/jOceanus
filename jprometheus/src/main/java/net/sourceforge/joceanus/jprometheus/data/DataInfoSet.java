@@ -258,13 +258,10 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         /* Access existing entry */
         DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
 
-        /* If we have no entry, return null */
-        if (mySet == null) {
-            return null;
-        }
-
-        /* Return the iterator */
-        return mySet.iterator();
+        /* Return iterator if it is useful */
+        return (mySet == null)
+                              ? null
+                              : mySet.iterator();
     }
 
     /**

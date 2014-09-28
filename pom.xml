@@ -69,7 +69,7 @@
     <JDateButtonVersion>v1.3.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.51</BouncyCastleVersion>
     <SvnKitVersion>1.8.6</SvnKitVersion>
-    <JGitVersion>3.4.1.201406201815-r</JGitVersion>
+    <JGitVersion>3.5.0.201409260305-r</JGitVersion>
     <JiraRestVersion>2.0.0-m31</JiraRestVersion>
     <ApacheMavenVersion>3.2.3</ApacheMavenVersion>
     <MySQLVersion>5.1.30</MySQLVersion>

@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -150,6 +151,11 @@ public class Analysis
      */
     private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
+    /**
+     * Tags Field Id.
+     */
+    private static final JDataField FIELD_TAGS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListName());
+
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_RANGE.equals(pField)) {
@@ -229,6 +235,11 @@ public class Analysis
             return (theDilutions.isEmpty())
                                            ? JDataFieldValue.SKIP
                                            : theDilutions;
+        }
+        if (FIELD_TAGS.equals(pField)) {
+            return (theTags.isEmpty())
+                                      ? JDataFieldValue.SKIP
+                                      : theTags;
         }
 
         /* Unknown */
@@ -329,6 +340,11 @@ public class Analysis
      * The dilutions.
      */
     private final DilutionEventMap theDilutions;
+
+    /**
+     * The tags.
+     */
+    private final TransactionTagList theTags;
 
     /**
      * Obtain the data.
@@ -483,6 +499,14 @@ public class Analysis
     }
 
     /**
+     * Obtain the tags.
+     * @return the tags
+     */
+    public TransactionTagList getTransactionTags() {
+        return theTags;
+    }
+
+    /**
      * Constructor for a full analysis.
      * @param pData the data to analyse events for
      * @param pPreferenceMgr the preference manager
@@ -512,6 +536,7 @@ public class Analysis
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
         theDilutions = new DilutionEventMap();
+        theTags = new TransactionTagList(theData);
 
         /* Create the security price map */
         thePrices = new SecurityPriceMap(theData);
@@ -540,6 +565,7 @@ public class Analysis
         theRates = pSource.getRates();
         theCharges = pSource.getCharges();
         theDilutions = pSource.getDilutions();
+        theTags = pSource.getTransactionTags();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, pSource.getDeposits(), pDate);
@@ -574,6 +600,7 @@ public class Analysis
         theRates = pSource.getRates();
         theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
         theDilutions = pSource.getDilutions();
+        theTags = pSource.getTransactionTags();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, pSource.getDeposits(), pRange);

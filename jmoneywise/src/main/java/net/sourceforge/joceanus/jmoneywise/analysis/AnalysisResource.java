@@ -554,6 +554,8 @@ public enum AnalysisResource implements ResourceId {
                 return MoneyWiseDataTypeResource.TRANSCAT_NAME;
             case TAXBASIS:
                 return MoneyWiseDataTypeResource.TAXBASIS_NAME;
+            case TRANSTAG:
+                return MoneyWiseDataTypeResource.TRANSTAG_NAME;
             default:
                 return null;
         }

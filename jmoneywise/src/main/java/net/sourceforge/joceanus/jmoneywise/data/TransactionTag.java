@@ -486,9 +486,11 @@ public class TransactionTag
 
         /**
          * Construct an empty CORE Tag list.
+         * <p>
+         * TODO back down to protected
          * @param pData the DataSet for the list
          */
-        protected TransactionTagList(final MoneyWiseData pData) {
+        public TransactionTagList(final MoneyWiseData pData) {
             super(TransactionTag.class, pData, MoneyWiseDataType.TRANSTAG, ListStyle.CORE);
         }
 

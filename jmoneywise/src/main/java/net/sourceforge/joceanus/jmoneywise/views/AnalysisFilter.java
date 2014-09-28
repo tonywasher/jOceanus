@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
@@ -705,7 +706,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     public static class TaxBasisFilter
             extends AnalysisFilter<TaxBasisAttribute> {
         /**
-         * The payee bucket.
+         * The taxBasis bucket.
          */
         private final TaxBasisBucket theTaxBasis;
 
@@ -760,6 +761,75 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return theTaxBasis.getDeltaForTransaction(pTrans, getCurrentAttribute());
+        }
+    }
+
+    /**
+     * TransactionTag filter class.
+     */
+    public static class TagFilter
+            extends AnalysisFilter<AccountAttribute> {
+        /**
+         * The tag.
+         */
+        private final TransactionTag theTransTag;
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return theTransTag;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public TransactionTag getTag() {
+            return theTransTag;
+        }
+
+        @Override
+        public String getName() {
+            return theTransTag.getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.TRANSTAG;
+        }
+
+        /**
+         * Constructor.
+         * @param pTag the transactionTag
+         */
+        public TagFilter(final TransactionTag pTag) {
+            /* Store parameter */
+            super(AccountAttribute.class);
+            theTransTag = pTag;
+            setCurrentAttribute(null);
+        }
+
+        @Override
+        public boolean filterSingleTransaction(final Transaction pTrans) {
+            return pTrans.isHeader() || !pTrans.hasTransactionTag(theTransTag);
+        }
+
+        @Override
+        protected AccountValues getBaseValues() {
+            return null;
+        }
+
+        @Override
+        public AccountValues getValuesForTransaction(final Transaction pTrans) {
+            return null;
+        }
+
+        @Override
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return null;
         }
     }
 }

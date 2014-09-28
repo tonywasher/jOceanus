@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFil
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -195,6 +196,11 @@ public class AnalysisSelect
     private final TaxBasisAnalysisSelect theTaxBasisSelect;
 
     /**
+     * TransactionTag Select Panel.
+     */
+    private final TransactionTagSelect theTagSelect;
+
+    /**
      * The card panel.
      */
     private final JEnablePanel theCardPanel;
@@ -264,6 +270,7 @@ public class AnalysisSelect
         thePayeeSelect = new PayeeAnalysisSelect();
         theEventSelect = new EventCategoryAnalysisSelect();
         theTaxBasisSelect = new TaxBasisAnalysisSelect();
+        theTagSelect = new TransactionTagSelect();
 
         /* Create the card panel */
         theCardPanel = new JEnablePanel();
@@ -308,6 +315,7 @@ public class AnalysisSelect
         thePayeeSelect.addChangeListener(myListener);
         theEventSelect.addChangeListener(myListener);
         theTaxBasisSelect.addChangeListener(myListener);
+        theTagSelect.addChangeListener(myListener);
     }
 
     /**
@@ -384,6 +392,7 @@ public class AnalysisSelect
         theCardPanel.add(thePayeeSelect, AnalysisType.PAYEE.name());
         theCardPanel.add(theEventSelect, AnalysisType.CATEGORY.name());
         theCardPanel.add(theTaxBasisSelect, AnalysisType.TAXBASIS.name());
+        theCardPanel.add(theTagSelect, AnalysisType.TRANSTAG.name());
 
         /* Build the map */
         theMap.put(AnalysisType.DEPOSIT, theDepositSelect);
@@ -393,6 +402,7 @@ public class AnalysisSelect
         theMap.put(AnalysisType.PAYEE, thePayeeSelect);
         theMap.put(AnalysisType.CATEGORY, theEventSelect);
         theMap.put(AnalysisType.TAXBASIS, theTaxBasisSelect);
+        theMap.put(AnalysisType.TRANSTAG, theTagSelect);
 
         /* Create the panel */
         myPanel.setBorder(BorderFactory.createTitledBorder(NLS_FILTERTITLE));
@@ -479,6 +489,7 @@ public class AnalysisSelect
         theEventSelect.setAnalysis(myAnalysis);
         thePayeeSelect.setAnalysis(myAnalysis);
         theTaxBasisSelect.setAnalysis(myAnalysis);
+        theTagSelect.setAnalysis(myAnalysis);
     }
 
     /**
@@ -853,6 +864,18 @@ public class AnalysisSelect
                 /* Create the new filter */
                 TaxBasisFilter myFilter = theTaxBasisSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                fireStateChanged();
+            }
+
+            /* If this is the tag select */
+            if (theTagSelect.equals(o)) {
+                /* Create the new filter */
+                TagFilter myFilter = theTagSelect.getFilter();
+                myFilter.setCurrentAttribute(null);
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);

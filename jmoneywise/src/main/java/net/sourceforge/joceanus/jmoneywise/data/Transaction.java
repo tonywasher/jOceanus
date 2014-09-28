@@ -799,6 +799,33 @@ public class Transaction
     }
 
     /**
+     * Does the transaction have this transaction tag.
+     * @param pTag the tag
+     * @return true/false
+     */
+    public final boolean hasTransactionTag(final TransactionTag pTag) {
+        /* Access iterator and return false if we have none */
+        Iterator<TransactionInfo> myIterator = tagIterator();
+        if (myIterator == null) {
+            return false;
+        }
+
+        /* Loop through the tags */
+        while (myIterator.hasNext()) {
+            TransactionInfo myInfo = myIterator.next();
+
+            /* Check for presence */
+            if (!myInfo.isDeleted()
+                && pTag.equals(myInfo.getTransactionTag())) {
+                return true;
+            }
+        }
+
+        /* We do not have the tag */
+        return false;
+    }
+
+    /**
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
