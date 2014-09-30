@@ -64,7 +64,12 @@ public enum AnalysisType {
     /**
      * TransactionTag.
      */
-    TRANSTAG;
+    TRANSTAG,
+
+    /**
+     * All.
+     */
+    ALL;
 
     /**
      * Report Name.
@@ -95,6 +100,27 @@ public enum AnalysisType {
     }
 
     /**
+     * Does the analysis have balances.
+     * @return true/false
+     */
+    public boolean hasBalances() {
+        switch (this) {
+            case DEPOSIT:
+            case CASH:
+            case LOAN:
+            case PAYEE:
+            case SECURITY:
+            case CATEGORY:
+            case TAXBASIS:
+                return true;
+            case TRANSTAG:
+            case ALL:
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Obtain values.
      * @return values
      */
@@ -103,6 +129,8 @@ public enum AnalysisType {
             case DEPOSIT:
             case CASH:
             case LOAN:
+            case TRANSTAG:
+            case ALL:
                 return AccountAttribute.values();
             case SECURITY:
                 return SecurityAttribute.values();
@@ -112,8 +140,6 @@ public enum AnalysisType {
                 return EventAttribute.values();
             case TAXBASIS:
                 return TaxBasisAttribute.values();
-            case TRANSTAG:
-                return null;
             default:
                 throw new IllegalArgumentException("Invalid Attribute type " + toString());
         }

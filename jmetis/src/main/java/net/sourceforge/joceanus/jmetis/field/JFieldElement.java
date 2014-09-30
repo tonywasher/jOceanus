@@ -47,7 +47,7 @@ public class JFieldElement<T extends JFieldSetItem> {
     /**
      * The colon indicator.
      */
-    private static final String STR_COLON = ":";
+    public static final String STR_COLON = ":";
 
     /**
      * The fieldSet.

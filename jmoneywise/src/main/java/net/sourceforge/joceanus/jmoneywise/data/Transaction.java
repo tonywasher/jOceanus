@@ -303,6 +303,16 @@ public class Transaction
     }
 
     /**
+     * Obtain the nameList for Transaction tags.
+     * @return the list (or null if no tags)
+     */
+    public String getTagNameList() {
+        return hasInfoSet
+                         ? theInfoSet.getNameList(TransactionInfoClass.TRANSTAG)
+                         : null;
+    }
+
+    /**
      * Obtain the iterator for Transaction tags.
      * @return the iterator (or null if no tags)
      */

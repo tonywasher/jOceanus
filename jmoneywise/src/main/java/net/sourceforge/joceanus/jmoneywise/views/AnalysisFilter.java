@@ -832,4 +832,49 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             return null;
         }
     }
+
+    /**
+     * All filter class.
+     */
+    public static class AllFilter
+            extends AnalysisFilter<AccountAttribute> {
+        @Override
+        public String getName() {
+            return AnalysisType.ALL.toString();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.ALL;
+        }
+
+        /**
+         * Constructor.
+         */
+        public AllFilter() {
+            /* Store parameter */
+            super(AccountAttribute.class);
+            setCurrentAttribute(null);
+        }
+
+        @Override
+        public boolean filterSingleTransaction(final Transaction pTrans) {
+            return pTrans.isHeader();
+        }
+
+        @Override
+        protected AccountValues getBaseValues() {
+            return null;
+        }
+
+        @Override
+        public AccountValues getValuesForTransaction(final Transaction pTrans) {
+            return null;
+        }
+
+        @Override
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return null;
+        }
+    }
 }

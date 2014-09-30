@@ -34,6 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldElement;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -102,7 +103,7 @@ public class TaxBasisAnalysisSelect
         theButton = new JScrollButton<TaxBasisBucket>();
 
         /* Create the label */
-        JLabel myLabel = new JLabel(NLS_BASIS);
+        JLabel myLabel = new JLabel(NLS_BASIS + JFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));

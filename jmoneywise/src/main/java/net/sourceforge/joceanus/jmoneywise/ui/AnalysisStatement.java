@@ -21,6 +21,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,11 +31,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -44,7 +51,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
@@ -52,9 +61,11 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
@@ -63,12 +74,16 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -90,11 +105,6 @@ public class AnalysisStatement
      * Category Column Title.
      */
     private static final String TITLE_CAT = Transaction.FIELD_CATEGORY.getName();
-
-    /**
-     * Description Column Title.
-     */
-    private static final String TITLE_DESC = TransactionInfoClass.COMMENTS.toString();
 
     /**
      * Debit Column Title.
@@ -125,6 +135,81 @@ public class AnalysisStatement
      * Balance Column Title.
      */
     private static final String TITLE_BALANCE = MoneyWiseUIResource.STATEMENT_COLUMN_BALANCE.getValue();
+
+    /**
+     * Amount column title.
+     */
+    private static final String TITLE_AMOUNT = Transaction.FIELD_AMOUNT.getName();
+
+    /**
+     * Description Column Title.
+     */
+    private static final String TITLE_DESC = TransactionInfoClass.COMMENTS.toString();
+
+    /**
+     * Tags column title.
+     */
+    private static final String TITLE_TAGS = TransactionInfoClass.TRANSTAG.toString();
+
+    /**
+     * Reference column title.
+     */
+    private static final String TITLE_REF = TransactionInfoClass.REFERENCE.toString();
+
+    /**
+     * CreditUnits Column Title.
+     */
+    private static final String TITLE_CREDUNITS = TransactionInfoClass.CREDITUNITS.toString();
+
+    /**
+     * DebitUnits Column Title.
+     */
+    private static final String TITLE_DEBUNITS = TransactionInfoClass.DEBITUNITS.toString();
+
+    /**
+     * Dilution Column Title.
+     */
+    private static final String TITLE_DILUTION = TransactionInfoClass.DILUTION.toString();
+
+    /**
+     * QualifyYears Column Title.
+     */
+    private static final String TITLE_QUALYEARS = MoneyWiseUIResource.STATEMENT_COLUMN_YEARS.getValue();
+
+    /**
+     * Portfolio Column Title.
+     */
+    private static final String TITLE_PORTFOLIO = TransactionInfoClass.PORTFOLIO.toString();
+
+    /**
+     * ThirdParty Column Title.
+     */
+    private static final String TITLE_3RDPARTY = TransactionInfoClass.THIRDPARTY.toString();
+
+    /**
+     * TaxCredit Column Title.
+     */
+    private static final String TITLE_TAXCREDIT = TransactionInfoClass.TAXCREDIT.toString();
+
+    /**
+     * NatInsurance Column Title.
+     */
+    private static final String TITLE_NATINS = TransactionInfoClass.NATINSURANCE.toString();
+
+    /**
+     * DeemedBenefit Column Title.
+     */
+    private static final String TITLE_BENEFIT = TransactionInfoClass.DEEMEDBENEFIT.toString();
+
+    /**
+     * CharityDonation Column Title.
+     */
+    private static final String TITLE_DONATION = TransactionInfoClass.CHARITYDONATION.toString();
+
+    /**
+     * Action Column Title.
+     */
+    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
 
     /**
      * Opening Balance Text.
@@ -278,6 +363,12 @@ public class AnalysisStatement
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(myHeader);
         thePanel.add(getScrollPane());
+
+        /* Prevent reordering of columns and auto-resizing */
+        getTableHeader().setReorderingAllowed(false);
+
+        /* Set the number of visible rows */
+        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create listener */
         AnalysisListener myListener = new AnalysisListener();
@@ -537,6 +628,11 @@ public class AnalysisStatement
                 /* Set the filter */
                 theFilter = theSelect.getFilter();
 
+                /* Ensure that columns are correct */
+                theColumns.adjustColumns(theSelect.showColumns()
+                                                                ? theSelect.getColumns()
+                                                                : AnalysisColumnSet.BALANCE);
+
                 /* Set the selection */
                 JDateDayRange myRange = theSelect.getRange();
                 if (Difference.isEqual(myRange, theRange)) {
@@ -596,14 +692,14 @@ public class AnalysisStatement
         private static final int COLUMN_CREDIT = 3;
 
         /**
-         * Description column id.
-         */
-        private static final int COLUMN_DESC = 4;
-
-        /**
          * Reconciled column id.
          */
-        private static final int COLUMN_RECONCILED = 5;
+        private static final int COLUMN_RECONCILED = 4;
+
+        /**
+         * Description column id.
+         */
+        private static final int COLUMN_DESC = 5;
 
         /**
          * Debited column id.
@@ -621,6 +717,76 @@ public class AnalysisStatement
         private static final int COLUMN_BALANCE = 8;
 
         /**
+         * Amount column id.
+         */
+        private static final int COLUMN_AMOUNT = 9;
+
+        /**
+         * Tags column id.
+         */
+        private static final int COLUMN_TAGS = 10;
+
+        /**
+         * Reference column id.
+         */
+        private static final int COLUMN_REF = 11;
+
+        /**
+         * CreditUnits column id.
+         */
+        private static final int COLUMN_CREDUNITS = 12;
+
+        /**
+         * DebitUnits column id.
+         */
+        private static final int COLUMN_DEBUNITS = 13;
+
+        /**
+         * Dilution column id.
+         */
+        private static final int COLUMN_DILUTION = 14;
+
+        /**
+         * Portfolio column id.
+         */
+        private static final int COLUMN_PORTFOLIO = 15;
+
+        /**
+         * QualifyYears column id.
+         */
+        private static final int COLUMN_QUALYEARS = 16;
+
+        /**
+         * ThirdParty column id.
+         */
+        private static final int COLUMN_3RDPARTY = 17;
+
+        /**
+         * TaxCredit column id.
+         */
+        private static final int COLUMN_TAXCREDIT = 18;
+
+        /**
+         * NatInsurance column id.
+         */
+        private static final int COLUMN_NATINS = 19;
+
+        /**
+         * DeemedBenefit column id.
+         */
+        private static final int COLUMN_BENEFIT = 20;
+
+        /**
+         * CharityDonation column id.
+         */
+        private static final int COLUMN_DONATION = 21;
+
+        /**
+         * Action column id.
+         */
+        private static final int COLUMN_ACTION = 22;
+
+        /**
          * Date Renderer.
          */
         private final CalendarCellRenderer theDateRenderer;
@@ -636,9 +802,19 @@ public class AnalysisStatement
         private final StringCellRenderer theStringRenderer;
 
         /**
+         * Integer Renderer.
+         */
+        private final IntegerCellRenderer theIntegerRenderer;
+
+        /**
          * Icon Renderer.
          */
-        private final IconButtonCellRenderer<Boolean> theIconRenderer;
+        private final IconButtonCellRenderer<Boolean> theReconciledIconRenderer;
+
+        /**
+         * Icon editor.
+         */
+        private final IconButtonCellEditor<Boolean> theReconciledIconEditor;
 
         /**
          * Date editor.
@@ -646,14 +822,144 @@ public class AnalysisStatement
         private final CalendarCellEditor theDateEditor;
 
         /**
-         * Icon editor.
-         */
-        private final IconButtonCellEditor<Boolean> theIconEditor;
-
-        /**
          * String editor.
          */
         private final StringCellEditor theStringEditor;
+
+        /**
+         * Integer editor.
+         */
+        private final IntegerCellEditor theIntegerEditor;
+
+        /**
+         * Money editor.
+         */
+        private final MoneyCellEditor theMoneyEditor;
+
+        /**
+         * Units editor.
+         */
+        private final UnitsCellEditor theUnitsEditor;
+
+        /**
+         * Dilution editor.
+         */
+        private final DilutionCellEditor theDilutionEditor;
+
+        /**
+         * Action Icon Renderer.
+         */
+        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
+
+        /**
+         * Action Icon editor.
+         */
+        private final IconButtonCellEditor<ActionType> theActionIconEditor;
+
+        /**
+         * ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<Portfolio> thePortfolioEditor;
+
+        /**
+         * ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<Deposit> theDepositEditor;
+
+        /**
+         * Comments column.
+         */
+        private final JDataTableColumn theDescColumn;
+
+        /**
+         * Amount column.
+         */
+        private final JDataTableColumn thePaidColumn;
+
+        /**
+         * Amount column.
+         */
+        private final JDataTableColumn theReceivedColumn;
+
+        /**
+         * Amount column.
+         */
+        private final JDataTableColumn theBalanceColumn;
+
+        /**
+         * Amount column.
+         */
+        private final JDataTableColumn theAmountColumn;
+
+        /**
+         * Reference column.
+         */
+        private final JDataTableColumn theReferenceColumn;
+
+        /**
+         * Tags column.
+         */
+        private final JDataTableColumn theTagsColumn;
+
+        /**
+         * CreditUnits column.
+         */
+        private final JDataTableColumn theCredUnitsColumn;
+
+        /**
+         * DebitUnits column.
+         */
+        private final JDataTableColumn theDebUnitsColumn;
+
+        /**
+         * Dilution column.
+         */
+        private final JDataTableColumn theDilutionColumn;
+
+        /**
+         * Portfolio column.
+         */
+        private final JDataTableColumn thePortfolioColumn;
+
+        /**
+         * QualifyYears column.
+         */
+        private final JDataTableColumn theQualYearsColumn;
+
+        /**
+         * ThirdParty column.
+         */
+        private final JDataTableColumn the3rdPartyColumn;
+
+        /**
+         * TaxCredit column.
+         */
+        private final JDataTableColumn theTaxCreditColumn;
+
+        /**
+         * NatIns column.
+         */
+        private final JDataTableColumn theNatInsColumn;
+
+        /**
+         * Benefit column.
+         */
+        private final JDataTableColumn theBenefitColumn;
+
+        /**
+         * Donation column.
+         */
+        private final JDataTableColumn theDonationColumn;
+
+        /**
+         * Action column.
+         */
+        private final JDataTableColumn theActionColumn;
+
+        /**
+         * ColumnSet.
+         */
+        private AnalysisColumnSet theColumnSet;
 
         /**
          * Constructor.
@@ -665,26 +971,71 @@ public class AnalysisStatement
 
             /* Create the relevant formatters */
             theDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
+            theReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
+            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
+            theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
+            theUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
+            theDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
+            thePortfolioEditor = theFieldMgr.allocateScrollButtonCellEditor(Portfolio.class);
+            theDepositEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
+            theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
+            theReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theReconciledIconEditor);
+            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildReconciledButton(theIconEditor.getComplexState());
+            MoneyWiseIcons.buildReconciledButton(theReconciledIconEditor.getComplexState());
+            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer, theIconEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theReconciledIconRenderer, theReconciledIconEditor));
+            theDescColumn = new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor);
+            declareColumn(theDescColumn);
+            thePaidColumn = new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer);
+            declareColumn(thePaidColumn);
+            theReceivedColumn = new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer);
+            declareColumn(theReceivedColumn);
+            theBalanceColumn = new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer);
+            declareColumn(theBalanceColumn);
+            theAmountColumn = new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theAmountColumn);
+            theReferenceColumn = new JDataTableColumn(COLUMN_REF, WIDTH_NAME, theStringRenderer, theStringEditor);
+            declareColumn(theReferenceColumn);
+            theTagsColumn = new JDataTableColumn(COLUMN_TAGS, WIDTH_NAME, theStringRenderer);
+            declareColumn(theTagsColumn);
+            theCredUnitsColumn = new JDataTableColumn(COLUMN_CREDUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
+            declareColumn(theCredUnitsColumn);
+            theDebUnitsColumn = new JDataTableColumn(COLUMN_DEBUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
+            declareColumn(theDebUnitsColumn);
+            theDilutionColumn = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, theDilutionEditor);
+            declareColumn(theDilutionColumn);
+            thePortfolioColumn = new JDataTableColumn(COLUMN_PORTFOLIO, WIDTH_NAME, theStringRenderer, thePortfolioEditor);
+            declareColumn(thePortfolioColumn);
+            theQualYearsColumn = new JDataTableColumn(COLUMN_QUALYEARS, WIDTH_INT << 1, theIntegerRenderer, theIntegerEditor);
+            declareColumn(theQualYearsColumn);
+            the3rdPartyColumn = new JDataTableColumn(COLUMN_3RDPARTY, WIDTH_NAME, theStringRenderer, theDepositEditor);
+            declareColumn(the3rdPartyColumn);
+            theTaxCreditColumn = new JDataTableColumn(COLUMN_TAXCREDIT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theTaxCreditColumn);
+            theNatInsColumn = new JDataTableColumn(COLUMN_NATINS, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theNatInsColumn);
+            theBenefitColumn = new JDataTableColumn(COLUMN_BENEFIT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theBenefitColumn);
+            theDonationColumn = new JDataTableColumn(COLUMN_DONATION, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theDonationColumn);
+            theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, theActionIconRenderer, theActionIconEditor);
+            declareColumn(theActionColumn);
+
+            /* Set the balance column set */
+            adjustColumns(AnalysisColumnSet.BALANCE);
         }
 
         /**
@@ -712,6 +1063,34 @@ public class AnalysisStatement
                     return TITLE_BALANCE;
                 case COLUMN_RECONCILED:
                     return TITLE_RECONCILED;
+                case COLUMN_AMOUNT:
+                    return TITLE_AMOUNT;
+                case COLUMN_TAGS:
+                    return TITLE_TAGS;
+                case COLUMN_REF:
+                    return TITLE_REF;
+                case COLUMN_CREDUNITS:
+                    return TITLE_CREDUNITS;
+                case COLUMN_DEBUNITS:
+                    return TITLE_DEBUNITS;
+                case COLUMN_DILUTION:
+                    return TITLE_DILUTION;
+                case COLUMN_PORTFOLIO:
+                    return TITLE_PORTFOLIO;
+                case COLUMN_QUALYEARS:
+                    return TITLE_QUALYEARS;
+                case COLUMN_3RDPARTY:
+                    return TITLE_3RDPARTY;
+                case COLUMN_TAXCREDIT:
+                    return TITLE_TAXCREDIT;
+                case COLUMN_NATINS:
+                    return TITLE_NATINS;
+                case COLUMN_BENEFIT:
+                    return TITLE_BENEFIT;
+                case COLUMN_DONATION:
+                    return TITLE_DONATION;
+                case COLUMN_ACTION:
+                    return TITLE_ACTION;
                 default:
                     return null;
             }
@@ -739,12 +1118,42 @@ public class AnalysisStatement
                     return pTrans.getComments();
                 case COLUMN_RECONCILED:
                     return pTrans.isReconciled();
+                case COLUMN_AMOUNT:
+                    return pTrans.getAmount();
+                case COLUMN_REF:
+                    return pTrans.getReference();
+                case COLUMN_TAGS:
+                    return pTrans.getTagNameList();
+                case COLUMN_CREDUNITS:
+                    return pTrans.getCreditUnits();
+                case COLUMN_DEBUNITS:
+                    return pTrans.getDebitUnits();
+                case COLUMN_DILUTION:
+                    return pTrans.getDilution();
+                case COLUMN_PORTFOLIO:
+                    return pTrans.getPortfolio();
+                case COLUMN_QUALYEARS:
+                    return pTrans.getYears();
+                case COLUMN_3RDPARTY:
+                    return pTrans.getThirdParty();
+                case COLUMN_TAXCREDIT:
+                    return pTrans.getTaxCredit();
+                case COLUMN_NATINS:
+                    return pTrans.getNatInsurance();
+                case COLUMN_BENEFIT:
+                    return pTrans.getDeemedBenefit();
+                case COLUMN_DONATION:
+                    return pTrans.getCharityDonation();
                 case COLUMN_DEBITED:
                     return theFilter.getDebitForTransaction(pTrans);
                 case COLUMN_CREDITED:
                     return theFilter.getCreditForTransaction(pTrans);
                 case COLUMN_BALANCE:
                     return theFilter.getBalanceForTransaction(pTrans);
+                case COLUMN_ACTION:
+                    return pTrans.isReconciled()
+                                                ? ActionType.DO
+                                                : ActionType.DELETE;
                 default:
                     return null;
             }
@@ -764,6 +1173,8 @@ public class AnalysisStatement
                     return TEXT_OPENBALANCE;
                 case COLUMN_BALANCE:
                     return theFilter.getStartingBalance();
+                case COLUMN_ACTION:
+                    return ActionType.DO;
                 default:
                     return null;
             }
@@ -796,8 +1207,47 @@ public class AnalysisStatement
                 case COLUMN_DESC:
                     pItem.setComments((String) pValue);
                     break;
+                case COLUMN_AMOUNT:
+                    pItem.setAmount((JMoney) pValue);
+                    break;
+                case COLUMN_REF:
+                    pItem.setReference((String) pValue);
+                    break;
+                case COLUMN_CREDUNITS:
+                    pItem.setCreditUnits((JUnits) pValue);
+                    break;
+                case COLUMN_DEBUNITS:
+                    pItem.setDebitUnits((JUnits) pValue);
+                    break;
+                case COLUMN_DILUTION:
+                    pItem.setDilution((JDilution) pValue);
+                    break;
+                case COLUMN_PORTFOLIO:
+                    pItem.setPortfolio((Portfolio) pValue);
+                    break;
+                case COLUMN_QUALYEARS:
+                    pItem.setYears((Integer) pValue);
+                    break;
+                case COLUMN_3RDPARTY:
+                    pItem.setThirdParty((Deposit) pValue);
+                    break;
+                case COLUMN_TAXCREDIT:
+                    pItem.setTaxCredit((JMoney) pValue);
+                    break;
+                case COLUMN_NATINS:
+                    pItem.setNatInsurance((JMoney) pValue);
+                    break;
+                case COLUMN_BENEFIT:
+                    pItem.setBenefit((JMoney) pValue);
+                    break;
+                case COLUMN_DONATION:
+                    pItem.setDonation((JMoney) pValue);
+                    break;
                 case COLUMN_RECONCILED:
                     pItem.setReconciled((Boolean) pValue);
+                    break;
+                case COLUMN_ACTION:
+                    pItem.setDeleted(true);
                     break;
                 default:
                     break;
@@ -818,6 +1268,8 @@ public class AnalysisStatement
                     return !pItem.isLocked();
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_ACTION:
+                    return !pItem.isReconciled();
                 default:
                     return false;
             }
@@ -841,11 +1293,144 @@ public class AnalysisStatement
                     return Transaction.FIELD_CREDIT;
                 case COLUMN_DEBIT:
                     return Transaction.FIELD_DEBIT;
+                case COLUMN_AMOUNT:
+                    return Transaction.FIELD_AMOUNT;
+                case COLUMN_REF:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE);
+                case COLUMN_TAGS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG);
+                case COLUMN_CREDUNITS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS);
+                case COLUMN_DEBUNITS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS);
+                case COLUMN_DILUTION:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION);
+                case COLUMN_PORTFOLIO:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO);
+                case COLUMN_QUALYEARS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS);
+                case COLUMN_3RDPARTY:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY);
+                case COLUMN_TAXCREDIT:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
+                case COLUMN_NATINS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
+                case COLUMN_BENEFIT:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT);
+                case COLUMN_DONATION:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION);
                 case COLUMN_RECONCILED:
                     return Transaction.FIELD_RECONCILED;
                 default:
                     return null;
             }
+        }
+
+        /**
+         * Hide all columns.
+         */
+        private void hideAllColumns() {
+            hideColumn(thePaidColumn);
+            hideColumn(theReceivedColumn);
+            hideColumn(theBalanceColumn);
+            hideColumn(theDescColumn);
+            hideColumn(theAmountColumn);
+            hideColumn(theTagsColumn);
+            hideColumn(theReferenceColumn);
+            hideColumn(theTaxCreditColumn);
+            hideColumn(theNatInsColumn);
+            hideColumn(theBenefitColumn);
+            hideColumn(theDonationColumn);
+            hideColumn(theCredUnitsColumn);
+            hideColumn(theDebUnitsColumn);
+            hideColumn(thePortfolioColumn);
+            hideColumn(theDilutionColumn);
+            hideColumn(the3rdPartyColumn);
+            hideColumn(theQualYearsColumn);
+        }
+
+        /**
+         * Adjust columns.
+         * @param pSet the set to display.
+         */
+        private void adjustColumns(final AnalysisColumnSet pSet) {
+            /* Ignore if we are already the right set */
+            if (pSet.equals(theColumnSet)) {
+                return;
+            }
+
+            /* Hide all columns */
+            hideAllColumns();
+
+            /* Switch on column set */
+            boolean reSize = true;
+            switch (pSet) {
+                case BALANCE:
+                    revealColumn(theDescColumn);
+                    revealColumn(thePaidColumn);
+                    revealColumn(theReceivedColumn);
+                    revealColumn(theBalanceColumn);
+                    break;
+                case STANDARD:
+                    revealColumn(theDescColumn);
+                    revealColumn(theAmountColumn);
+                    revealColumn(theTagsColumn);
+                    revealColumn(theReferenceColumn);
+                    break;
+                case SALARY:
+                    revealColumn(theAmountColumn);
+                    revealColumn(theTaxCreditColumn);
+                    revealColumn(theNatInsColumn);
+                    revealColumn(theBenefitColumn);
+                    break;
+                case INTEREST:
+                    revealColumn(theAmountColumn);
+                    revealColumn(theTaxCreditColumn);
+                    revealColumn(theDonationColumn);
+                    break;
+                case DIVIDEND:
+                    revealColumn(theAmountColumn);
+                    revealColumn(theTaxCreditColumn);
+                    revealColumn(theCredUnitsColumn);
+                    revealColumn(thePortfolioColumn);
+                    break;
+                case SECURITY:
+                    revealColumn(theAmountColumn);
+                    revealColumn(theCredUnitsColumn);
+                    revealColumn(theDebUnitsColumn);
+                    revealColumn(thePortfolioColumn);
+                    revealColumn(theDilutionColumn);
+                    revealColumn(the3rdPartyColumn);
+                    revealColumn(theQualYearsColumn);
+                    reSize = false;
+                    break;
+                case ALL:
+                default:
+                    revealColumn(theDescColumn);
+                    revealColumn(theAmountColumn);
+                    revealColumn(theTagsColumn);
+                    revealColumn(theReferenceColumn);
+                    revealColumn(theTaxCreditColumn);
+                    revealColumn(theNatInsColumn);
+                    revealColumn(theBenefitColumn);
+                    revealColumn(theDonationColumn);
+                    revealColumn(theCredUnitsColumn);
+                    revealColumn(theDebUnitsColumn);
+                    revealColumn(thePortfolioColumn);
+                    revealColumn(theDilutionColumn);
+                    revealColumn(the3rdPartyColumn);
+                    revealColumn(theQualYearsColumn);
+                    reSize = false;
+                    break;
+            }
+
+            /* Set reSize mode */
+            setAutoResizeMode(reSize
+                                    ? AUTO_RESIZE_ALL_COLUMNS
+                                    : AUTO_RESIZE_OFF);
+
+            /* Store the column set */
+            theColumnSet = pSet;
         }
     }
 

@@ -532,7 +532,6 @@ public class MaintenanceTab
                 ActionDetailEvent evt = (ActionDetailEvent) e;
                 switch (evt.getSubId()) {
                 /* Pass through the event */
-                    case MainTab.ACTION_VIEWREGISTER:
                     case MainTab.ACTION_VIEWSTATEMENT:
                         cascadeActionEvent(evt);
                         break;

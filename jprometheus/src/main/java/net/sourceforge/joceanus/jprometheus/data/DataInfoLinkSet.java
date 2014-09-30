@@ -284,7 +284,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      * Obtain the name list.
      * @return the name list
      */
-    private String getNameList() {
+    protected String getNameList() {
         /* Create the string builder */
         StringBuilder myBuilder = new StringBuilder();
         boolean isFirst = true;

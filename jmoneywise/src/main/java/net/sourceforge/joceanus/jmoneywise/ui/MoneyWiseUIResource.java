@@ -106,6 +106,11 @@ public enum MoneyWiseUIResource implements ResourceId {
     STATEMENT_COLUMN_RECONCILED("Statement.Column.Reconciled"),
 
     /**
+     * Statement Column Years.
+     */
+    STATEMENT_COLUMN_YEARS("Statement.Column.Years"),
+
+    /**
      * Statement Opening Balance Text.
      */
     STATEMENT_OPENINGBALANCE("Statement.Text.OpeningBalance"),
@@ -134,11 +139,6 @@ public enum MoneyWiseUIResource implements ResourceId {
      * Maintenance Settings Tab.
      */
     MAINTENANCE_SETTINGS("Maintenance.Tab.Preference"),
-
-    /**
-     * Main Register Tab.
-     */
-    MAIN_REGISTER("Main.Tab.Register"),
 
     /**
      * Main Statement Tab.

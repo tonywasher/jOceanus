@@ -566,7 +566,6 @@ public class CategoryPanel
                 ActionDetailEvent evt = (ActionDetailEvent) pEvent;
                 switch (evt.getSubId()) {
                 /* Pass through the event */
-                    case MainTab.ACTION_VIEWREGISTER:
                     case MainTab.ACTION_VIEWSTATEMENT:
                     case MainTab.ACTION_VIEWACCOUNT:
                     case MainTab.ACTION_VIEWTAXYEAR:

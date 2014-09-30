@@ -90,6 +90,7 @@ public class JDataTableColumn
                             final TableCellEditor cellEditor) {
         /* Call super-constructor */
         super(modelIndex, width, cellRenderer, cellEditor);
+        setMinWidth(width);
     }
 
     /**
@@ -148,6 +149,11 @@ public class JDataTableColumn
         protected static final int WIDTH_UNITS = 90;
 
         /**
+         * Dilution column standard width.
+         */
+        protected static final int WIDTH_DILUTION = 90;
+
+        /**
          * Name column standard width.
          */
         protected static final int WIDTH_NAME = 130;
@@ -161,6 +167,11 @@ public class JDataTableColumn
          * Icon column width.
          */
         protected static final int WIDTH_ICON = 20;
+
+        /**
+         * Integer column width.
+         */
+        protected static final int WIDTH_INT = 30;
 
         /**
          * Currency column width.

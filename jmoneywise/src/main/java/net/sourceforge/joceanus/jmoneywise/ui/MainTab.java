@@ -69,14 +69,9 @@ public class MainTab
     public static final int ACTION_VIEWSTATEMENT = ActionEvent.ACTION_PERFORMED + 1;
 
     /**
-     * View Register.
-     */
-    public static final int ACTION_VIEWREGISTER = ACTION_VIEWSTATEMENT + 1;
-
-    /**
      * View Account.
      */
-    public static final int ACTION_VIEWACCOUNT = ACTION_VIEWREGISTER + 1;
+    public static final int ACTION_VIEWACCOUNT = ACTION_VIEWSTATEMENT + 1;
 
     /**
      * View Category.
@@ -107,11 +102,6 @@ public class MainTab
      * Statement tab title.
      */
     private static final String TITLE_STATEMENT = MoneyWiseUIResource.MAIN_STATEMENT.getValue();
-
-    /**
-     * Register tab title.
-     */
-    private static final String TITLE_REGISTER = MoneyWiseUIResource.MAIN_REGISTER.getValue();
 
     /**
      * SpotPrices tab title.
@@ -162,11 +152,6 @@ public class MainTab
      * The tabs.
      */
     private JEnableTabbed theTabs = null;
-
-    /**
-     * The Register panel.
-     */
-    private Register theRegister = null;
 
     /**
      * The analysis panel.
@@ -263,11 +248,6 @@ public class MainTab
         theStatement = new AnalysisStatement(theView);
         theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
 
-        /* Create the Register Tab */
-        myTask.startTask("Register");
-        theRegister = new Register(theView);
-        theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
-
         /* Create the SpotView Tab */
         myTask.startTask("SpotPrices");
         theSpotView = new PricePoint(theView);
@@ -282,11 +262,9 @@ public class MainTab
         MainListener myListener = new MainListener();
         theView.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
-        theRegister.addChangeListener(myListener);
         theStatement.addChangeListener(myListener);
         theSpotView.addChangeListener(myListener);
         theMaint.addChangeListener(myListener);
-        theRegister.addActionListener(myListener);
         theStatement.addActionListener(myListener);
         myReportTab.addActionListener(myListener);
         theMaint.addActionListener(myListener);
@@ -335,10 +313,7 @@ public class MainTab
     @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
-        boolean hasUpdates = theRegister.hasUpdates();
-        if (!hasUpdates) {
-            hasUpdates = theStatement.hasUpdates();
-        }
+        boolean hasUpdates = theStatement.hasUpdates();
         if (!hasUpdates) {
             hasUpdates = theSpotView.hasUpdates();
         }
@@ -354,10 +329,7 @@ public class MainTab
      */
     public final boolean hasSession() {
         /* Determine whether we have edit session updates */
-        boolean hasSession = theRegister.hasSession();
-        if (!hasSession) {
-            hasSession = theStatement.hasSession();
-        }
+        boolean hasSession = theStatement.hasSession();
         if (!hasSession) {
             hasSession = theSpotView.hasSession();
         }
@@ -462,18 +434,6 @@ public class MainTab
     }
 
     /**
-     * Select an explicit register period.
-     * @param pSource the range
-     */
-    private void selectRegister(final JDateDayRangeSelect pSource) {
-        /* Pass through to the Register */
-        theRegister.selectPeriod(pSource);
-
-        /* Goto the Register tab */
-        gotoNamedTab(TITLE_REGISTER);
-    }
-
-    /**
      * Select maintenance.
      * @param pEvent the action request
      */
@@ -514,17 +474,8 @@ public class MainTab
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker && hasControl);
 
-        /* Enable/Disable the register tab */
-        int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
-
         /* Enable/Disable the statement tab */
-        iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
+        int iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
         if (iIndex != -1) {
             boolean doEnabled = !hasWorker && (!hasSession || theStatement.hasSession());
             if (doEnabled != theTabs.isEnabledAt(iIndex)) {
@@ -573,13 +524,8 @@ public class MainTab
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
-        /* If the selected component is register */
-        if (myComponent.equals(theRegister.getPanel())) {
-            /* Determine focus of register */
-            theRegister.determineFocus();
-
-            /* If the selected component is Statement */
-        } else if (myComponent.equals(theStatement)) {
+        /* If the selected component is Statement */
+        if (myComponent.equals(theStatement)) {
             /* Determine focus of Statement */
             theStatement.determineFocus();
 
@@ -625,8 +571,7 @@ public class MainTab
                 setVisibility();
 
                 /* else if it is one of the sub-panels */
-            } else if (theRegister.equals(o)
-                       || theStatement.equals(o)
+            } else if (theStatement.equals(o)
                        || theMaint.equals(o)
                        || theSpotView.equals(o)) {
                 /* Set the visibility */
@@ -641,13 +586,7 @@ public class MainTab
                 /* Access event and obtain details */
                 ActionDetailEvent evt = (ActionDetailEvent) e;
                 switch (evt.getSubId()) {
-                /* View the requested register */
-                    case ACTION_VIEWREGISTER:
-                        ActionRequest myReq = evt.getDetails(ActionRequest.class);
-                        selectRegister(myReq.getRange());
-                        break;
-
-                    /* View the requested statement */
+                /* View the requested statement */
                     case ACTION_VIEWSTATEMENT:
                         StatementSelect mySelect = evt.getDetails(StatementSelect.class);
                         selectStatement(mySelect);

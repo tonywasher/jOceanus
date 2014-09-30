@@ -69,7 +69,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * Panel width.
      */
-    public static final int WIDTH_PANEL = 900;
+    public static final int WIDTH_PANEL = 1050;
 
     /**
      * Default row height.

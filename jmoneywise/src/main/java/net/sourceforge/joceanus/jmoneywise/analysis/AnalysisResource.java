@@ -97,6 +97,11 @@ public enum AnalysisResource implements ResourceId {
     BUCKET_PREVIOUS("Bucket.Previous"),
 
     /**
+     * Filter All.
+     */
+    FILTER_ALL("Filter.All"),
+
+    /**
      * Cash Name.
      */
     CASH_NAME("Cash.Name"),
@@ -538,7 +543,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static MoneyWiseDataTypeResource getKeyForAnalysisType(final AnalysisType pValue) {
+    protected static ResourceId getKeyForAnalysisType(final AnalysisType pValue) {
         switch (pValue) {
             case DEPOSIT:
                 return MoneyWiseDataTypeResource.DEPOSIT_NAME;
@@ -556,6 +561,8 @@ public enum AnalysisResource implements ResourceId {
                 return MoneyWiseDataTypeResource.TAXBASIS_NAME;
             case TRANSTAG:
                 return MoneyWiseDataTypeResource.TRANSTAG_NAME;
+            case ALL:
+                return FILTER_ALL;
             default:
                 return null;
         }

@@ -41,6 +41,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldElement;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -81,7 +82,7 @@ public class SpotSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + ":";
+    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + JFieldElement.STR_COLON;
 
     /**
      * Text for Show Closed.

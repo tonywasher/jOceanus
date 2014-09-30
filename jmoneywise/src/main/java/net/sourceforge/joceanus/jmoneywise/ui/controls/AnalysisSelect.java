@@ -81,6 +81,11 @@ public class AnalysisSelect
     protected static final int STRUT_SIZE = 10;
 
     /**
+     * Maximum height.
+     */
+    protected static final int MAX_HEIGHT = 150;
+
+    /**
      * Text for DateRange Label.
      */
     private static final String NLS_RANGE = MoneyWiseUIControlResource.ANALYSIS_PROMPT_RANGE.getValue();
@@ -96,6 +101,11 @@ public class AnalysisSelect
     private static final String NLS_FILTERTYPE = MoneyWiseUIControlResource.ANALYSIS_PROMPT_FILTERTYPE.getValue();
 
     /**
+     * Text for ColumnSet Label.
+     */
+    private static final String NLS_COLUMNS = MoneyWiseUIControlResource.ANALYSIS_PROMPT_COLUMNSET.getValue();
+
+    /**
      * Text for BucketType Label.
      */
     private static final String NLS_BUCKET = MoneyWiseUIControlResource.ANALYSIS_PROMPT_BUCKET.getValue();
@@ -104,6 +114,11 @@ public class AnalysisSelect
      * Text for Title.
      */
     private static final String NLS_TITLE = MoneyWiseUIControlResource.ANALYSIS_TITLE.getValue();
+
+    /**
+     * Text for NoBucket.
+     */
+    private static final String NLS_NONE = MoneyWiseUIControlResource.ANALYSIS_BUCKET_NONE.getValue();
 
     /**
      * Text for Title.
@@ -144,6 +159,21 @@ public class AnalysisSelect
      * Bucket Type Button.
      */
     private final JScrollButton<BucketAttribute> theBucketButton;
+
+    /**
+     * ColumnSet Button.
+     */
+    private final JScrollButton<AnalysisColumnSet> theColumnButton;
+
+    /**
+     * The bucket label.
+     */
+    private final JLabel theBucketLabel;
+
+    /**
+     * The column label.
+     */
+    private final JLabel theColumnLabel;
 
     /**
      * The filter detail panel.
@@ -201,6 +231,11 @@ public class AnalysisSelect
     private final TransactionTagSelect theTagSelect;
 
     /**
+     * All Select Panel.
+     */
+    private final AllSelect theAllSelect;
+
+    /**
      * The card panel.
      */
     private final JEnablePanel theCardPanel;
@@ -237,6 +272,22 @@ public class AnalysisSelect
     }
 
     /**
+     * Obtain the ColumnSet.
+     * @return the columnSet.
+     */
+    public AnalysisColumnSet getColumns() {
+        return theState.getColumns();
+    }
+
+    /**
+     * Are we showing columns?
+     * @return true/false.
+     */
+    public boolean showColumns() {
+        return theState.showColumns();
+    }
+
+    /**
      * Constructor.
      */
     public AnalysisSelect() {
@@ -253,7 +304,12 @@ public class AnalysisSelect
         /* Create the filter type button */
         theFilterTypeButton = new JScrollButton<AnalysisType>();
 
+        /* Create the columnSet button */
+        theColumnLabel = new JLabel(NLS_COLUMNS);
+        theColumnButton = new JScrollButton<AnalysisColumnSet>();
+
         /* Create the bucket button */
+        theBucketLabel = new JLabel(NLS_BUCKET);
         theBucketButton = new JScrollButton<BucketAttribute>();
 
         /* Create the Range Select panel */
@@ -271,6 +327,7 @@ public class AnalysisSelect
         theEventSelect = new EventCategoryAnalysisSelect();
         theTaxBasisSelect = new TaxBasisAnalysisSelect();
         theTagSelect = new TransactionTagSelect();
+        theAllSelect = new AllSelect();
 
         /* Create the card panel */
         theCardPanel = new JEnablePanel();
@@ -300,22 +357,13 @@ public class AnalysisSelect
         theState = new AnalysisState();
         theState.setRange(theRangeSelect);
         theState.applyState();
+        theState.showColumns(false);
+
+        /* set maximum size */
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_HEIGHT));
 
         /* Create the listener */
-        AnalysisListener myListener = new AnalysisListener();
-        theRangeButton.addActionListener(myListener);
-        theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
-        theFilterButton.addActionListener(myListener);
-        theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theDepositSelect.addChangeListener(myListener);
-        theCashSelect.addChangeListener(myListener);
-        theLoanSelect.addChangeListener(myListener);
-        theSecuritySelect.addChangeListener(myListener);
-        thePayeeSelect.addChangeListener(myListener);
-        theEventSelect.addChangeListener(myListener);
-        theTaxBasisSelect.addChangeListener(myListener);
-        theTagSelect.addChangeListener(myListener);
+        new AnalysisListener();
     }
 
     /**
@@ -354,7 +402,6 @@ public class AnalysisSelect
 
         /* Create the labels */
         JLabel myFilterLabel = new JLabel(NLS_FILTER);
-        JLabel myBucketLabel = new JLabel(NLS_BUCKET);
 
         /* Create the panel */
         myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
@@ -364,9 +411,11 @@ public class AnalysisSelect
         myPanel.add(theFilterButton);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(Box.createHorizontalGlue());
-        myPanel.add(myBucketLabel);
+        myPanel.add(theBucketLabel);
+        myPanel.add(theColumnLabel);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(theBucketButton);
+        myPanel.add(theColumnButton);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
 
         /* Return the panel */
@@ -393,6 +442,7 @@ public class AnalysisSelect
         theCardPanel.add(theEventSelect, AnalysisType.CATEGORY.name());
         theCardPanel.add(theTaxBasisSelect, AnalysisType.TAXBASIS.name());
         theCardPanel.add(theTagSelect, AnalysisType.TRANSTAG.name());
+        theCardPanel.add(theAllSelect, AnalysisType.ALL.name());
 
         /* Build the map */
         theMap.put(AnalysisType.DEPOSIT, theDepositSelect);
@@ -403,6 +453,7 @@ public class AnalysisSelect
         theMap.put(AnalysisType.CATEGORY, theEventSelect);
         theMap.put(AnalysisType.TAXBASIS, theTaxBasisSelect);
         theMap.put(AnalysisType.TRANSTAG, theTagSelect);
+        theMap.put(AnalysisType.ALL, theAllSelect);
 
         /* Create the panel */
         myPanel.setBorder(BorderFactory.createTitledBorder(NLS_FILTERTITLE));
@@ -637,14 +688,37 @@ public class AnalysisSelect
         private final JScrollMenuBuilder<BucketAttribute> theBucketMenuBuilder;
 
         /**
+         * Column menu builder.
+         */
+        private final JScrollMenuBuilder<AnalysisColumnSet> theColumnMenuBuilder;
+
+        /**
          * Constructor.
          */
         private AnalysisListener() {
+            /* Listen to the objects */
+            theRangeButton.addActionListener(this);
+            theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, this);
+            theFilterButton.addActionListener(this);
+            theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theColumnButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theDepositSelect.addChangeListener(this);
+            theCashSelect.addChangeListener(this);
+            theLoanSelect.addChangeListener(this);
+            theSecuritySelect.addChangeListener(this);
+            thePayeeSelect.addChangeListener(this);
+            theEventSelect.addChangeListener(this);
+            theTaxBasisSelect.addChangeListener(this);
+            theTagSelect.addChangeListener(this);
+
             /* Access builders */
             theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
             theTypeMenuBuilder.addChangeListener(this);
             theBucketMenuBuilder = theBucketButton.getMenuBuilder();
             theBucketMenuBuilder.addChangeListener(this);
+            theColumnMenuBuilder = theColumnButton.getMenuBuilder();
+            theColumnMenuBuilder.addChangeListener(this);
         }
 
         /**
@@ -680,6 +754,29 @@ public class AnalysisSelect
                 if (myAttr.isCounter()) {
                     /* Create a new JMenuItem and add it to the popUp */
                     theBucketMenuBuilder.addItem(myAttr);
+                }
+            }
+
+            /* Add the entry for null bucket */
+            theBucketMenuBuilder.addNullItem(NLS_NONE);
+        }
+
+        /**
+         * Build Columns menu.
+         */
+        private void buildColumnsMenu() {
+            /* Reset the popUp menu */
+            theColumnMenuBuilder.clearMenu();
+
+            /* Determine whether we have balances */
+            boolean hasBalances = theState.getType().hasBalances();
+
+            /* Loop through the sets */
+            for (AnalysisColumnSet mySet : AnalysisColumnSet.values()) {
+                /* if we have balances or this is not the balance set */
+                if (hasBalances || !mySet.isBalance()) {
+                    /* Add the item */
+                    theColumnMenuBuilder.addItem(mySet);
                 }
             }
         }
@@ -729,13 +826,19 @@ public class AnalysisSelect
                     theState.applyState();
                     fireStateChanged();
                 }
-            }
 
-            /* If this is the filter type button */
-            if (theFilterTypeButton.equals(o)) {
+                /* If this is the filter type button */
+            } else if (theFilterTypeButton.equals(o)) {
                 /* If the type has changed */
                 AnalysisType myType = theFilterTypeButton.getValue();
                 if (theState.setAnalysisType(myType)) {
+                    /* Determine whether we are showing balances */
+                    boolean showingBalances = !theState.showColumns();
+                    if (showingBalances && !myType.hasBalances()) {
+                        /* Move to columns if we have no balances */
+                        theState.showColumns(true);
+                    }
+
                     /* Move correct card to front */
                     theLayout.show(theCardPanel, myType.name());
 
@@ -750,15 +853,25 @@ public class AnalysisSelect
                     theState.applyState();
                     fireStateChanged();
                 }
-            }
 
-            /* If this is the bucket attribute button */
-            if (theBucketButton.equals(o)) {
+                /* If this is the bucket attribute button */
+            } else if (theBucketButton.equals(o)) {
                 /* Record the bucket */
                 BucketAttribute myBucket = theBucketButton.getValue();
                 if (theState.setBucket(myBucket)) {
                     AnalysisFilter<?> myFilter = theState.getFilter();
-                    myFilter.setCurrentAttribute(myBucket);
+                    if (myBucket != null) {
+                        myFilter.setCurrentAttribute(myBucket);
+                    }
+                    theState.applyState();
+                    fireStateChanged();
+                }
+
+                /* If this is the column set button */
+            } else if (theColumnButton.equals(o)) {
+                /* Record the columns */
+                AnalysisColumnSet mySet = theColumnButton.getValue();
+                if (theState.setColumns(mySet)) {
                     theState.applyState();
                     fireStateChanged();
                 }
@@ -779,16 +892,19 @@ public class AnalysisSelect
             if (theTypeMenuBuilder.equals(o)) {
                 /* Build the analysis type menu */
                 buildAnalysisTypeMenu();
-            }
 
-            /* If this is the BucketMenuBuilder */
-            if (theBucketMenuBuilder.equals(o)) {
+                /* If this is the BucketMenuBuilder */
+            } else if (theBucketMenuBuilder.equals(o)) {
                 /* Build the bucket type menu */
                 buildBucketMenu();
-            }
 
-            /* If this is the DepositSelect */
-            if (theDepositSelect.equals(o)) {
+                /* If this is the ColumnSetMenuBuilder */
+            } else if (theColumnMenuBuilder.equals(o)) {
+                /* Build the columns menu */
+                buildColumnsMenu();
+
+                /* If this is the DepositSelect */
+            } else if (theDepositSelect.equals(o)) {
                 /* Create the new filter */
                 DepositFilter myFilter = theDepositSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -797,10 +913,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the CashSelect */
-            if (theCashSelect.equals(o)) {
+                /* If this is the CashSelect */
+            } else if (theCashSelect.equals(o)) {
                 /* Create the new filter */
                 CashFilter myFilter = theCashSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -809,10 +924,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the LoanSelect */
-            if (theLoanSelect.equals(o)) {
+                /* If this is the LoanSelect */
+            } else if (theLoanSelect.equals(o)) {
                 /* Create the new filter */
                 LoanFilter myFilter = theLoanSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -821,10 +935,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the security select */
-            if (theSecuritySelect.equals(o)) {
+                /* If this is the security select */
+            } else if (theSecuritySelect.equals(o)) {
                 /* Create the new filter */
                 SecurityFilter myFilter = theSecuritySelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -833,10 +946,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the Payee select */
-            if (thePayeeSelect.equals(o)) {
+                /* If this is the Payee select */
+            } else if (thePayeeSelect.equals(o)) {
                 /* Create the new filter */
                 PayeeFilter myFilter = thePayeeSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -845,10 +957,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the category select */
-            if (theEventSelect.equals(o)) {
+                /* If this is the category select */
+            } else if (theEventSelect.equals(o)) {
                 /* Create the new filter */
                 EventCategoryFilter myFilter = theEventSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -857,10 +968,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the tax basis select */
-            if (theTaxBasisSelect.equals(o)) {
+                /* If this is the tax basis select */
+            } else if (theTaxBasisSelect.equals(o)) {
                 /* Create the new filter */
                 TaxBasisFilter myFilter = theTaxBasisSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -869,10 +979,9 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
-            }
 
-            /* If this is the tag select */
-            if (theTagSelect.equals(o)) {
+                /* If this is the tag select */
+            } else if (theTagSelect.equals(o)) {
                 /* Create the new filter */
                 TagFilter myFilter = theTagSelect.getFilter();
                 myFilter.setCurrentAttribute(null);
@@ -905,9 +1014,19 @@ public class AnalysisSelect
         private BucketAttribute theBucket;
 
         /**
+         * The ColumnSet.
+         */
+        private AnalysisColumnSet theColumns;
+
+        /**
          * The filter.
          */
         private AnalysisFilter<?> theFilter;
+
+        /**
+         * Are we showing Columns?
+         */
+        private boolean showColumns;
 
         /**
          * Obtain the DateDayRange.
@@ -934,11 +1053,27 @@ public class AnalysisSelect
         }
 
         /**
+         * Obtain the Columns.
+         * @return the columns.
+         */
+        private AnalysisColumnSet getColumns() {
+            return theColumns;
+        }
+
+        /**
          * Obtain the Filter.
          * @return the filter.
          */
         private AnalysisFilter<?> getFilter() {
             return theFilter;
+        }
+
+        /**
+         * Are we showing columns?
+         * @return true/false.
+         */
+        private boolean showColumns() {
+            return showColumns;
         }
 
         /**
@@ -949,6 +1084,8 @@ public class AnalysisSelect
             theFilter = null;
             theType = null;
             theBucket = null;
+            theColumns = AnalysisColumnSet.STANDARD;
+            showColumns = true;
         }
 
         /**
@@ -960,6 +1097,8 @@ public class AnalysisSelect
             theFilter = pState.getFilter();
             theType = pState.getType();
             theBucket = pState.getBucket();
+            theColumns = pState.getColumns();
+            showColumns = pState.showColumns();
         }
 
         /**
@@ -1010,7 +1149,30 @@ public class AnalysisSelect
          */
         private boolean setBucket(final BucketAttribute pBucket) {
             if (!Difference.isEqual(pBucket, theBucket)) {
-                theBucket = pBucket;
+                /* If this is the null bucket */
+                if (pBucket == null) {
+                    showColumns(true);
+                } else {
+                    theBucket = pBucket;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Set new column set.
+         * @param pColumnSet the column set
+         * @return true/false did a change occur
+         */
+        private boolean setColumns(final AnalysisColumnSet pColumnSet) {
+            if (!Difference.isEqual(pColumnSet, theColumns)) {
+                /* If this is the balance bucket */
+                if (pColumnSet.equals(AnalysisColumnSet.BALANCE)) {
+                    showColumns(false);
+                } else {
+                    theColumns = pColumnSet;
+                }
                 return true;
             }
             return false;
@@ -1036,6 +1198,24 @@ public class AnalysisSelect
                                                        : theFilter.getName());
             theFilterTypeButton.setValue(theType);
             theBucketButton.setValue(theBucket);
+            theColumnButton.setValue(theColumns);
+        }
+
+        /**
+         * Show Columns.
+         * @param pShow true/false
+         */
+        private void showColumns(final boolean pShow) {
+            /* Show columns */
+            theColumnLabel.setVisible(pShow);
+            theColumnButton.setVisible(pShow);
+
+            /* Hide buckets */
+            theBucketLabel.setVisible(!pShow);
+            theBucketButton.setVisible(!pShow);
+
+            /* Record details */
+            showColumns = pShow;
         }
     }
 

@@ -130,6 +130,16 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     ANALYSIS_PROMPT_BUCKET("analysisSelect.Prompt.Bucket"),
 
     /**
+     * AnalysisSelect ColumnSet Prompt.
+     */
+    ANALYSIS_PROMPT_COLUMNSET("analysisSelect.Prompt.ColumnSet"),
+
+    /**
+     * AnalysisSelect Bucket Prompt.
+     */
+    ANALYSIS_BUCKET_NONE("analysisSelect.Bucket.None"),
+
+    /**
      * Action Column.
      */
     COLUMN_ACTION("Column.Action"),
@@ -147,7 +157,42 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     /**
      * SecurityPrices Tab.
      */
-    SECURITYPANEL_TAB_PRICES("SecurityPanel.Tab.Prices");
+    SECURITYPANEL_TAB_PRICES("SecurityPanel.Tab.Prices"),
+
+    /**
+     * Balance ColumnSet.
+     */
+    COLUMNSET_BALANCE("analysisColumnSet.Balance"),
+
+    /**
+     * Standard ColumnSet.
+     */
+    COLUMNSET_STANDARD("analysisColumnSet.Standard"),
+
+    /**
+     * Salary ColumnSet.
+     */
+    COLUMNSET_SALARY("analysisColumnSet.Salary"),
+
+    /**
+     * Interest ColumnSet.
+     */
+    COLUMNSET_INTEREST("analysisColumnSet.Interest"),
+
+    /**
+     * Dividend ColumnSet.
+     */
+    COLUMNSET_DIVIDEND("analysisColumnSet.Dividend"),
+
+    /**
+     * Security ColumnSet.
+     */
+    COLUMNSET_SECURITY("analysisColumnSet.Security"),
+
+    /**
+     * All ColumnSet.
+     */
+    COLUMNSET_ALL("analysisColumnSet.All");
 
     /**
      * The Resource Builder.
@@ -192,5 +237,31 @@ public enum MoneyWiseUIControlResource implements ResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    /**
+     * Obtain key for columnSet.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static MoneyWiseUIControlResource getKeyForColumnSet(final AnalysisColumnSet pValue) {
+        switch (pValue) {
+            case BALANCE:
+                return COLUMNSET_BALANCE;
+            case STANDARD:
+                return COLUMNSET_STANDARD;
+            case SALARY:
+                return COLUMNSET_SALARY;
+            case INTEREST:
+                return COLUMNSET_INTEREST;
+            case DIVIDEND:
+                return COLUMNSET_DIVIDEND;
+            case SECURITY:
+                return COLUMNSET_SECURITY;
+            case ALL:
+                return COLUMNSET_ALL;
+            default:
+                return null;
+        }
     }
 }

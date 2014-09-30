@@ -265,6 +265,26 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     }
 
     /**
+     * Obtain the nameList for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the portfolio
+     */
+    public String getNameList(final S pInfoClass) {
+        /* Reject if not called for LinkSet */
+        if (!pInfoClass.isLinkSet()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Access existing entry */
+        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+
+        /* Return iterator if it is useful */
+        return (mySet == null)
+                              ? null
+                              : mySet.getNameList();
+    }
+
+    /**
      * link the value for the the infoClass.
      * @param pInfoClass the Info Class
      * @param pLink the link value
@@ -366,7 +386,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         if (pInfoClass.isLinkSet()) {
             /* Access the info */
             DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
-            return mySet.fieldChanged();
+            return mySet == null
+                                ? Difference.IDENTICAL
+                                : mySet.fieldChanged();
         }
 
         /* Access the info */
