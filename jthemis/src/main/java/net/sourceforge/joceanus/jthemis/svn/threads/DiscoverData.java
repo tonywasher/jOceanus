@@ -135,13 +135,11 @@ public class DiscoverData
 
     /**
      * Constructor.
-     * @param pPreferenceMgr the preference manager
      * @param pReport the report object
      */
-    public DiscoverData(final PreferenceManager pPreferenceMgr,
-                        final ReportTask pReport) {
+    public DiscoverData(final ReportTask pReport) {
         super(pReport);
-        thePreferenceMgr = pPreferenceMgr;
+        thePreferenceMgr = pReport.getPreferenceMgr();
         theReport = pReport;
         theExtractPlanMap = new LinkedHashMap<String, SvnExtract>();
     }

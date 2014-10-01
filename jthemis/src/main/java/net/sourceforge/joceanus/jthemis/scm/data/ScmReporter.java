@@ -22,7 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.scm.data;
 
+import javax.swing.JFrame;
+
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
+
+import org.slf4j.Logger;
 
 /**
  * Report Subversion events.
@@ -75,6 +81,13 @@ public final class ScmReporter {
         boolean setNewStep(final String pStep);
 
         /**
+         * Set number of steps done .
+         * @param pNumSteps the number of steps
+         * @return continue? true/false
+         */
+        boolean setStepsDone(final int pNumSteps);
+
+        /**
          * Is the task cancelled?
          * @return true/false
          */
@@ -85,6 +98,30 @@ public final class ScmReporter {
      * Report Task.
      */
     public interface ReportTask {
+        /**
+         * Obtain preference manager.
+         * @return the preference manager
+         */
+        PreferenceManager getPreferenceMgr();
+
+        /**
+         * Obtain secure manager.
+         * @return the secure manager
+         */
+        SecureManager getSecureMgr();
+
+        /**
+         * Obtain logger.
+         * @return the logger
+         */
+        Logger getLogger();
+
+        /**
+         * Obtain frame.
+         * @return the frame
+         */
+        JFrame getFrame();
+
         /**
          * Set new status for thread.
          * @param pStatus the new status.

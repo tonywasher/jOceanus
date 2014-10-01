@@ -28,37 +28,23 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.FileSelector;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
 /**
  * Thread to handle subVersion backups.
  * @author Tony Washer
- * @param <T> the dataset type
  */
-public class SubversionRestore<T extends DataSet<T, ?>>
-        extends WorkerThread<Void> {
+public class SubversionRestore
+        extends ScmThread {
     /**
-     * Task description.
+     * ReportTask.
      */
-    private static final String TASK_NAME = "Subversion Backup Restoration";
-
-    /**
-     * Data Control.
-     */
-    private final DataControl<?, ?> theControl;
-
-    /**
-     * ThreadStatus.
-     */
-    private final ThreadStatus<?, ?> theStatus;
+    private final ReportTask theStatus;
 
     /**
      * The preference manager.
@@ -66,34 +52,27 @@ public class SubversionRestore<T extends DataSet<T, ?>>
     private final PreferenceManager thePreferenceMgr;
 
     /**
-     * Constructor (Event Thread).
-     * @param pStatus the thread status
-     * @param pPreferenceMgr the preference manager
+     * The secure manager.
      */
-    public SubversionRestore(final ThreadStatus<T, ?> pStatus,
-                             final PreferenceManager pPreferenceMgr) {
+    private final SecureManager theSecureMgr;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pReport the report object
+     */
+    public SubversionRestore(final ReportTask pReport) {
         /* Call super-constructor */
-        super(TASK_NAME, pStatus);
+        super(pReport);
 
         /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-        thePreferenceMgr = pPreferenceMgr;
-
-        /* Show the status window */
-        showStatusBar();
+        theStatus = pReport;
+        thePreferenceMgr = pReport.getPreferenceMgr();
+        theSecureMgr = pReport.getSecureMgr();
     }
 
     @Override
-    public Void performTask() throws JOceanusException {
+    public Void doInBackground() throws JOceanusException {
         Backup myAccess = null;
-
-        /* Initialise the status window */
-        theStatus.initTask("Restoring Subversion Backup");
-
-        /* Create a clone of the security control */
-        DataSet<?, ?> myData = theControl.getData();
-        SecureManager mySecure = myData.getSecurity();
 
         /* Access the BackUp preferences */
         SubVersionPreferences mySVNPreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
@@ -105,7 +84,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         String myPrefix = mySVNPreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
+        FileSelector myDialog = new FileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog(theStatus.getLogger());
         File myFile = myDialog.getSelectedFile();
 
@@ -124,8 +103,8 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         myRepo = new File(myRepo.getPath(), myName);
 
         /* restore the backup */
-        myAccess = new Backup(theStatus, thePreferenceMgr);
-        myAccess.loadRepository(myRepo, mySecure, myFile);
+        myAccess = new Backup(this, thePreferenceMgr);
+        myAccess.loadRepository(myRepo, theSecureMgr, myFile);
 
         /* Return nothing */
         return null;

@@ -22,77 +22,48 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
 /**
  * Thread to handle subVersion backups.
  * @author Tony Washer
- * @param <T> the dataset type
  */
-public class SubversionBackup<T extends DataSet<T, ?>>
-        extends WorkerThread<Void> {
-    /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "Subversion Backup Creation";
-
-    /**
-     * Data Control.
-     */
-    private final DataControl<?, ?> theControl;
-
-    /**
-     * ThreadStatus.
-     */
-    private final ThreadStatus<?, ?> theStatus;
-
+public class SubversionBackup
+        extends ScmThread {
     /**
      * The preference manager.
      */
     private final PreferenceManager thePreferenceMgr;
 
     /**
-     * Constructor (Event Thread).
-     * @param pStatus the thread status
-     * @param pPreferenceMgr the preference manager
+     * The secure manager.
      */
-    public SubversionBackup(final ThreadStatus<T, ?> pStatus,
-                            final PreferenceManager pPreferenceMgr) {
+    private final SecureManager theSecureMgr;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pReport the report object
+     */
+    public SubversionBackup(final ReportTask pReport) {
         /* Call super-constructor */
-        super(TASK_NAME, pStatus);
+        super(pReport);
 
         /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-        thePreferenceMgr = pPreferenceMgr;
-
-        /* Show the status window */
-        showStatusBar();
+        thePreferenceMgr = pReport.getPreferenceMgr();
+        theSecureMgr = pReport.getSecureMgr();
     }
 
     @Override
-    public Void performTask() throws JOceanusException {
+    public Void doInBackground() throws JOceanusException {
         Backup myAccess = null;
 
-        /* Initialise the status window */
-        theStatus.initTask("Creating Subversion Backup");
-
-        /* Create a clone of the security control */
-        DataSet<?, ?> myData = theControl.getData();
-        SecureManager mySecure = myData.getSecurity();
-        PasswordHash myBase = myData.getPasswordHash();
-
         /* Create backup */
-        myAccess = new Backup(theStatus, thePreferenceMgr);
-        myAccess.backUpRepositories(mySecure, myBase);
+        myAccess = new Backup(this, thePreferenceMgr);
+        myAccess.backUpRepositories(theSecureMgr);
 
         /* Return nothing */
         return null;

@@ -62,9 +62,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
-import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
-import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
 /**
  * Maintenance Tab panel.
@@ -232,9 +229,6 @@ public class MaintenanceTab
         /* Add interesting preferences */
         myPrefs.getPreferenceSet(DatabasePreferences.class);
         myPrefs.getPreferenceSet(BackupPreferences.class);
-        myPrefs.getPreferenceSet(JiraPreferences.class);
-        myPrefs.getPreferenceSet(SubVersionPreferences.class);
-        myPrefs.getPreferenceSet(GitPreferences.class);
         myPrefs.getPreferenceSet(QIFPreference.class);
 
         /* Create the layout for the panel */

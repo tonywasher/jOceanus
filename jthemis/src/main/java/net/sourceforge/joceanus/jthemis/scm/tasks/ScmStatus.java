@@ -164,6 +164,14 @@ public class ScmStatus {
     }
 
     /**
+     * Set number of steps done.
+     * @param pDone the value
+     */
+    public void setStepsDone(final int pDone) {
+        theStepsDone = pDone;
+    }
+
+    /**
      * Constructor.
      */
     public ScmStatus() {

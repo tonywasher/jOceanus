@@ -74,7 +74,6 @@ public final class Control {
      */
     private static void createAndShowGUI(final JDataProfile pProfile) {
         try {
-
             /* Configure log4j */
             Properties myLogProp = new Properties();
             myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
@@ -83,6 +82,7 @@ public final class Control {
             myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
             PropertyConfigurator.configure(myLogProp);
 
+            /* Create the window */
             theWindow = new MainTab(pProfile, theLogger);
             theWindow.makeFrame();
 

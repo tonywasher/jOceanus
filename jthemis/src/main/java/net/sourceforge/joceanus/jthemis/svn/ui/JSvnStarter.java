@@ -22,8 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.ui;
 
+import java.util.Properties;
+
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +65,21 @@ public final class JSvnStarter {
      * Create and show the GUI.
      */
     private static void createAndShowGUI() {
-        /* Create the SvnManager program */
-        theManager = new JSvnManager(theLogger);
+        try {
+            /* Configure log4j */
+            Properties myLogProp = new Properties();
+            myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
+            myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
+            myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
+            myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
+            PropertyConfigurator.configure(myLogProp);
+
+            /* Create the SvnManager program */
+            theManager = new JSvnManager(theLogger);
+
+        } catch (JOceanusException e) {
+            theLogger.error("createGUI didn't complete successfully", e);
+        }
     }
 
     /**

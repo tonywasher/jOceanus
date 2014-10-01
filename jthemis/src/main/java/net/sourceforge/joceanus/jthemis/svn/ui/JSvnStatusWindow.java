@@ -30,13 +30,18 @@ import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 import net.sourceforge.joceanus.jthemis.svn.threads.ScmThread;
+
+import org.slf4j.Logger;
 
 /**
  * Status window for SubVersion operations.
@@ -104,6 +109,26 @@ public class JSvnStatusWindow
      * The current status.
      */
     private transient ScmStatus theStatus = new ScmStatus();
+
+    @Override
+    public PreferenceManager getPreferenceMgr() {
+        return theManager.getPreferenceMgr();
+    }
+
+    @Override
+    public SecureManager getSecureMgr() {
+        return theManager.getSecureMgr();
+    }
+
+    @Override
+    public Logger getLogger() {
+        return theManager.getLogger();
+    }
+
+    @Override
+    public JFrame getFrame() {
+        return theManager.getFrame();
+    }
 
     /**
      * Constructor.

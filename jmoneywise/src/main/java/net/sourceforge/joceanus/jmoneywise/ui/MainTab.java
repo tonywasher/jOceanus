@@ -52,8 +52,6 @@ import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.help.HelpException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;
-import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
-import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 
 import org.slf4j.Logger;
 
@@ -124,16 +122,6 @@ public class MainTab
     private static final String MENU_ARCHIVE = MoneyWiseUIResource.MAIN_MENU_LOADARCHIVE.getValue();
 
     /**
-     * SubVersion menu title.
-     */
-    private static final String MENU_BACKUPSVN = MoneyWiseUIResource.MAIN_MENU_BACKUPSVN.getValue();
-
-    /**
-     * SubVersion menu title.
-     */
-    private static final String MENU_RESTORESVN = MoneyWiseUIResource.MAIN_MENU_RESTORESVN.getValue();
-
-    /**
      * Program name.
      */
     private static final String PROGRAM_NAME = ProgramResource.PROGRAM_NAME.getValue();
@@ -172,16 +160,6 @@ public class MainTab
      * The Load Sheet menus.
      */
     private JMenuItem theLoadSheet = null;
-
-    /**
-     * The SubversionBackup menu.
-     */
-    private JMenuItem theSVNBackup = null;
-
-    /**
-     * The SubversionRestore menu.
-     */
-    private JMenuItem theSVNRestore = null;
 
     /**
      * The CreateQIF menu.
@@ -292,16 +270,6 @@ public class MainTab
         pMenu.add(theLoadSheet);
 
         /* Create the file menu items */
-        theSVNBackup = new JMenuItem(MENU_BACKUPSVN);
-        theSVNBackup.addActionListener(this);
-        pMenu.add(theSVNBackup);
-
-        /* Create the file menu items */
-        theSVNRestore = new JMenuItem(MENU_RESTORESVN);
-        theSVNRestore.addActionListener(this);
-        pMenu.add(theSVNRestore);
-
-        /* Create the file menu items */
         theCreateQIF = new JMenuItem(MENU_CREATEQIF);
         theCreateQIF.addActionListener(this);
         pMenu.add(theCreateQIF);
@@ -348,16 +316,6 @@ public class MainTab
             /* Start a write backup operation */
             loadSpreadsheet();
 
-            /* If this event relates to the Subversion backup item */
-        } else if (theSVNBackup.equals(o)) {
-            /* Start a write backup operation */
-            backupSubversion();
-
-            /* If this event relates to the Subversion restore item */
-        } else if (theSVNRestore.equals(o)) {
-            /* Start a restore backup operation */
-            restoreSubversion();
-
             /* If this event relates to the Create QIF item */
         } else if (theCreateQIF.equals(o)) {
             /* Start a createQIF operation */
@@ -378,32 +336,6 @@ public class MainTab
 
         /* Create the worker thread */
         LoadArchive myThread = new LoadArchive(myStatus);
-        myStatus.registerThread(myThread);
-        startThread(myThread);
-    }
-
-    /**
-     * Backup subversion.
-     */
-    public void backupSubversion() {
-        /* Allocate the status */
-        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
-
-        /* Create the worker thread */
-        SubversionBackup<MoneyWiseData> myThread = new SubversionBackup<MoneyWiseData>(myStatus, theView.getPreferenceMgr());
-        myStatus.registerThread(myThread);
-        startThread(myThread);
-    }
-
-    /**
-     * Restore subversion.
-     */
-    public void restoreSubversion() {
-        /* Allocate the status */
-        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
-
-        /* Create the worker thread */
-        SubversionRestore<MoneyWiseData> myThread = new SubversionRestore<MoneyWiseData>(myStatus, theView.getPreferenceMgr());
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

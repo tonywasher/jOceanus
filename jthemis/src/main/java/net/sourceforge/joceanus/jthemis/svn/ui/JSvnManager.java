@@ -34,12 +34,21 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
+import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
@@ -52,6 +61,8 @@ import net.sourceforge.joceanus.jthemis.svn.threads.CreateTagExtract;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateWorkingCopy;
 import net.sourceforge.joceanus.jthemis.svn.threads.DiscoverData;
 import net.sourceforge.joceanus.jthemis.svn.threads.RevertWorkingCopy;
+import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
+import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 import net.sourceforge.joceanus.jthemis.svn.threads.UpdateWorkingCopy;
 
 import org.slf4j.Logger;
@@ -77,9 +88,24 @@ public final class JSvnManager {
     private final JFrame theFrame;
 
     /**
+     * The Preference Manager.
+     */
+    private final PreferenceManager thePrefMgr;
+
+    /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * The Data Manager.
      */
     private final JDataManager theDataMgr;
+
+    /**
+     * The Security Manager.
+     */
+    private final SecureManager theSecureMgr;
 
     /**
      * Preferences.
@@ -127,6 +153,16 @@ public final class JSvnManager {
     private final JMenuItem theCreateNewBrn;
 
     /**
+     * The BackupSvn menuItem.
+     */
+    private final JMenuItem theBackupSvn;
+
+    /**
+     * The RestoreSvn menuItem.
+     */
+    private final JMenuItem theRestoreSvn;
+
+    /**
      * The Started data window.
      */
     private JDataWindow theDataWdw = null;
@@ -152,22 +188,81 @@ public final class JSvnManager {
     private final JSvnStatusWindow theStatusPanel;
 
     /**
+     * Obtain preference manager.
+     * @return the preference manager
+     */
+    protected PreferenceManager getPreferenceMgr() {
+        return thePrefMgr;
+    }
+
+    /**
+     * Obtain secure manager.
+     * @return the secure manager
+     */
+    protected SecureManager getSecureMgr() {
+        return theSecureMgr;
+    }
+
+    /**
+     * Obtain logger.
+     * @return the logger
+     */
+    protected Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
+     * Obtain frame.
+     * @return the frame
+     */
+    protected JFrame getFrame() {
+        return theFrame;
+    }
+
+    /**
      * Constructor.
      * @param pLogger the logger
+     * @throws JOceanusException on error
      */
-    protected JSvnManager(final Logger pLogger) {
+    protected JSvnManager(final Logger pLogger) throws JOceanusException {
+        /* Store parameters */
+        theLogger = pLogger;
+
         /* Create the data manager */
-        theDataMgr = new JDataManager(pLogger);
+        theDataMgr = new JDataManager(theLogger);
+
+        /* Create the Tabbed Pane */
+        JEnableTabbed myTabs = new JEnableTabbed();
 
         /* Create the preference manager */
-        PreferenceManager myPreferenceMgr = new PreferenceManager(pLogger);
-        thePreferences = myPreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+        thePrefMgr = new PreferenceManager(theLogger);
+        thePreferences = thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
+
+        /* Access the Security Preferences */
+        SecurityPreferences mySecurity = thePrefMgr.getPreferenceSet(SecurityPreferences.class);
+
+        /* Create the Secure Manager */
+        theSecureMgr = mySecurity.getSecurity(theLogger);
 
         /* Create the frame */
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
 
         /* Create the panel */
         theStatusPanel = new JSvnStatusWindow(this);
+
+        /* Create the Preferences Tab */
+        JFieldPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(JFieldPreferences.class);
+        JFieldManager myFieldMgr = new JFieldManager(theDataMgr, myFieldPrefs.getConfiguration());
+        JDataEntry myMaintEntry = theDataMgr.new JDataEntry("Maintenance");
+        PreferencesPanel myPrefPanel = new PreferencesPanel(thePrefMgr, myFieldMgr, theDataMgr, myMaintEntry);
+        myTabs.addTab("Status", theStatusPanel);
+        myTabs.addTab("Preferences", myPrefPanel);
+
+        /* Add interesting preferences */
+        thePrefMgr.getPreferenceSet(BackupPreferences.class);
+        thePrefMgr.getPreferenceSet(JiraPreferences.class);
+        thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
+        thePrefMgr.getPreferenceSet(GitPreferences.class);
 
         /* Create the menu bar and listener */
         JMenuBar myMainMenu = new JMenuBar();
@@ -212,12 +307,22 @@ public final class JSvnManager {
         theCreateNewBrn.addActionListener(myMenuListener);
         theTasks.add(theCreateNewBrn);
 
+        /* Create the BackupSvn menuItem */
+        theBackupSvn = new JMenuItem("BackupSubVersion");
+        theBackupSvn.addActionListener(myMenuListener);
+        theTasks.add(theBackupSvn);
+
+        /* Create the RestoreSvn menuItem */
+        theRestoreSvn = new JMenuItem("RestoreSubVersion");
+        theRestoreSvn.addActionListener(myMenuListener);
+        theTasks.add(theRestoreSvn);
+
         /* Add the Menu bar */
         theFrame.setJMenuBar(myMainMenu);
 
         /* Attach the panel to the frame */
         theStatusPanel.setOpaque(true);
-        theFrame.setContentPane(theStatusPanel);
+        theFrame.setContentPane(myTabs);
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         theFrame.addWindowListener(theCloseHandler);
 
@@ -227,7 +332,7 @@ public final class JSvnManager {
         theFrame.setVisible(true);
 
         /* Create and run discoverData thread */
-        DiscoverData myThread = new DiscoverData(myPreferenceMgr, theStatusPanel);
+        DiscoverData myThread = new DiscoverData(theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -374,6 +479,26 @@ public final class JSvnManager {
     }
 
     /**
+     * Backup subversion.
+     */
+    private void backupSubversion() {
+        /* Create the worker thread */
+        SubversionBackup myThread = new SubversionBackup(theStatusPanel);
+        theTasks.setEnabled(false);
+        theStatusPanel.runThread(myThread);
+    }
+
+    /**
+     * Restore subversion.
+     */
+    private void restoreSubversion() {
+        /* Create the worker thread */
+        SubversionRestore myThread = new SubversionRestore(theStatusPanel);
+        theTasks.setEnabled(false);
+        theStatusPanel.runThread(myThread);
+    }
+
+    /**
      * MenuListener class.
      */
     private final class MenuListener
@@ -426,6 +551,16 @@ public final class JSvnManager {
             } else if (theCreateNewBrn.equals(o)) {
                 /* run the thread */
                 runCreateNewBranch();
+
+                /* If this event relates to the Subversion backup item */
+            } else if (theBackupSvn.equals(o)) {
+                /* Start a write backup operation */
+                backupSubversion();
+
+                /* If this event relates to the Subversion restore item */
+            } else if (theRestoreSvn.equals(o)) {
+                /* Start a restore backup operation */
+                restoreSubversion();
             }
         }
     }

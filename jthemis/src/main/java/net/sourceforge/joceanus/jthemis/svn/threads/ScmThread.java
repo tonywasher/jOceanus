@@ -111,6 +111,13 @@ public abstract class ScmThread
     }
 
     @Override
+    public boolean setStepsDone(final int pNumSteps) {
+        theStatus.setStepsDone(pNumSteps);
+        publish(new ScmStatus(theStatus));
+        return !isCancelled();
+    }
+
+    @Override
     public void process(final List<ScmStatus> pStatus) {
         for (ScmStatus myStatus : pStatus) {
             theReport.setNewStatus(myStatus);

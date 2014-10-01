@@ -34,10 +34,10 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
@@ -97,20 +97,20 @@ public class Backup {
     private final SVNAdminClient theAdminClient;
 
     /**
-     * The Task Control.
+     * The Status reporter.
      */
-    private final TaskControl<?> theTask;
+    private final ReportStatus theStatus;
 
     /**
      * Constructor.
-     * @param pTask the task control
-     * @param pPreferenceMgr the preference manager
+     * @param pStatus the status reporter
+     * @param pPrefMgr the preference manager
      */
-    public Backup(final TaskControl<?> pTask,
-                  final PreferenceManager pPreferenceMgr) {
+    public Backup(final ReportStatus pStatus,
+                  final PreferenceManager pPrefMgr) {
         /* Store parameters */
-        theTask = pTask;
-        thePreferenceMgr = pPreferenceMgr;
+        theStatus = pStatus;
+        thePreferenceMgr = pPrefMgr;
 
         /* Access the SubVersion preferences */
         thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
@@ -156,7 +156,7 @@ public class Backup {
             Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
 
             /* Declare the number of revisions */
-            if (!theTask.setNumSteps(myNumRevs.intValue())) {
+            if (!theStatus.setNumSteps(myNumRevs.intValue())) {
                 return;
             }
 
@@ -204,13 +204,11 @@ public class Backup {
     /**
      * Dump a repository to a Backup directory.
      * @param pManager the secure manager
-     * @param pHash the password hash
      * @param pRepository the repository directory
      * @param pBackupDir the backup directory
      * @throws JOceanusException on error
      */
     private void backUpRepository(final SecureManager pManager,
-                                  final PasswordHash pHash,
                                   final File pRepository,
                                   final File pBackupDir) throws JOceanusException {
         /* Access the name of the repository */
@@ -259,15 +257,15 @@ public class Backup {
 
         /* Declare the number of revisions */
         int myNumRevisions = (int) revLast;
-        if (!theTask.setNumSteps(myNumRevisions)) {
+        if (!theStatus.setNumSteps(myNumRevisions)) {
             return;
         }
 
         /* Note presumption of failure */
         boolean doDelete = true;
 
-        /* Create a clone of the password hash */
-        PasswordHash myHash = pManager.clonePasswordHash(pHash);
+        /* Create a new password hash */
+        PasswordHash myHash = pManager.resolvePasswordHash(null, "New Password");
 
         /* Protect against exceptions */
         try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, myZipName);
@@ -303,11 +301,9 @@ public class Backup {
     /**
      * Backup repositories.
      * @param pManager the secure manager
-     * @param pHash the password hash
      * @throws JOceanusException on error
      */
-    public void backUpRepositories(final SecureManager pManager,
-                                   final PasswordHash pHash) throws JOceanusException {
+    public void backUpRepositories(final SecureManager pManager) throws JOceanusException {
         /* Install an event handler */
         theAdminClient.setEventHandler(new SubversionHandler());
 
@@ -328,7 +324,7 @@ public class Backup {
         }
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(iNumStages);
+        boolean bContinue = theStatus.setNumStages(iNumStages);
 
         /* Ignore if cancelled */
         if (!bContinue) {
@@ -343,12 +339,12 @@ public class Backup {
             }
 
             /* Set new stage and break if cancelled */
-            if (!theTask.setNewStage(myRepository.getName())) {
+            if (!theStatus.setNewStage(myRepository.getName())) {
                 break;
             }
 
             /* Backup the repositories */
-            backUpRepository(pManager, pHash, myRepository, myBackup);
+            backUpRepository(pManager, myRepository, myBackup);
         }
     }
 
@@ -360,7 +356,7 @@ public class Backup {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theTask.isCancelled()) {
+            if (theStatus.isCancelled()) {
                 throw new SVNCancelException();
             }
         }
@@ -373,7 +369,7 @@ public class Backup {
             if (myAction.equals(SVNAdminEventAction.REVISION_DUMPED)
                 || myAction.equals(SVNAdminEventAction.REVISION_LOADED)) {
                 /* Set steps done value */
-                theTask.setStepsDone((int) pEvent.getRevision());
+                theStatus.setStepsDone((int) pEvent.getRevision());
             }
         }
 
