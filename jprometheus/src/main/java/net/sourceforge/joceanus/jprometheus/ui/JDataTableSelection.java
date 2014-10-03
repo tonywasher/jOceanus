@@ -156,10 +156,17 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
 
         /* If we have a selected row */
         if (iIndex != -1) {
-            /* Select the correct item */
-            DataList<T, E> myList = theTable.getList();
-            T myCategory = myList.get(iIndex);
-            theItemPanel.setItem(myCategory);
+            /* Access the item */
+            T myItem = theTableModel.getItemAtIndex(iIndex);
+
+            /* If this is a header record */
+            if (myItem.isHeader()) {
+                /* Set item as null */
+                myItem = null;
+            }
+
+            /* Declare item to the panel */
+            theItemPanel.setItem(myItem);
 
             /* Check whether this item is EndOfList */
             if (iIndex == 0 || iIndex == iRowCount - 1) {

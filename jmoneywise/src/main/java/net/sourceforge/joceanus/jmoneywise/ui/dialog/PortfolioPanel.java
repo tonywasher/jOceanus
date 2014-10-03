@@ -76,16 +76,6 @@ public class PortfolioPanel
     private final transient JFieldSet<Portfolio> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
      * Parent Button Field.
      */
     private final JScrollButton<Payee> theParentButton;
@@ -116,10 +106,6 @@ public class PortfolioPanel
                           final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
 
         /* Create the buttons */
         theHoldingButton = new JScrollButton<Deposit>();
@@ -170,17 +156,21 @@ public class PortfolioPanel
         JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
         MoneyWiseIcons.buildOptionButton(theTaxFreeState);
 
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+
         /* restrict the fields */
-        restrictField(theName, Portfolio.NAMELEN);
-        restrictField(theDesc, Portfolio.NAMELEN);
+        restrictField(myName, Portfolio.NAMELEN);
+        restrictField(myDesc, Portfolio.NAMELEN);
         restrictField(theParentButton, Portfolio.NAMELEN);
         restrictField(theHoldingButton, Portfolio.NAMELEN);
         restrictField(myClosedButton, Portfolio.NAMELEN);
         restrictField(myTaxFreeButton, Portfolio.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_HOLDING, Deposit.class, theHoldingButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -219,7 +209,7 @@ public class PortfolioPanel
         JTextField myPassWord = new JTextField();
 
         /* Restrict the fields */
-        int myWidth = Deposit.NAMELEN >> 1;
+        int myWidth = Portfolio.NAMELEN >> 1;
         restrictField(mySortCode, myWidth);
         restrictField(myAccount, myWidth);
         restrictField(myReference, myWidth);
@@ -228,7 +218,7 @@ public class PortfolioPanel
         restrictField(myUserId, myWidth);
         restrictField(myPassWord, myWidth);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
@@ -265,7 +255,7 @@ public class PortfolioPanel
         JTextArea myNotes = new JTextArea();
         JScrollPane myScroll = new JScrollPane(myNotes);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */

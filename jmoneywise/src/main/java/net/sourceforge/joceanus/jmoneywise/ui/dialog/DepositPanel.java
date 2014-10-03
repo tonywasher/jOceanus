@@ -90,16 +90,6 @@ public class DepositPanel
     private final transient JFieldSet<Deposit> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
      * DepositCategory Button Field.
      */
     private final JScrollButton<DepositCategory> theCategoryButton;
@@ -145,10 +135,6 @@ public class DepositPanel
                         final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<DepositCategory>();
@@ -207,9 +193,13 @@ public class DepositPanel
         JIconButton<Boolean> myGrossButton = new JIconButton<Boolean>(theGrossState);
         MoneyWiseIcons.buildOptionButton(theGrossState);
 
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+
         /* restrict the fields */
-        restrictField(theName, Deposit.NAMELEN);
-        restrictField(theDesc, Deposit.NAMELEN);
+        restrictField(myName, Deposit.NAMELEN);
+        restrictField(myDesc, Deposit.NAMELEN);
         restrictField(theCategoryButton, Deposit.NAMELEN);
         restrictField(theCurrencyButton, Deposit.NAMELEN);
         restrictField(theParentButton, Deposit.NAMELEN);
@@ -218,8 +208,8 @@ public class DepositPanel
         restrictField(myGrossButton, Deposit.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Deposit.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(Deposit.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(Deposit.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(Deposit.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Deposit.FIELD_CATEGORY, DepositCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Deposit.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
@@ -267,7 +257,7 @@ public class DepositPanel
         restrictField(myReference, myWidth);
         restrictField(myOpening, myWidth);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), DataType.DATEDAY, myMaturity);
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
@@ -300,7 +290,7 @@ public class DepositPanel
         JTextArea myNotes = new JTextArea();
         JScrollPane myScroll = new JScrollPane(myNotes);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */

@@ -87,21 +87,6 @@ public class SecurityPanel
     private final transient JFieldSet<Security> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
-     * Symbol Text Field.
-     */
-    private final JTextField theSymbol;
-
-    /**
      * Security Type Button Field.
      */
     private final JScrollButton<SecurityType> theTypeButton;
@@ -139,11 +124,6 @@ public class SecurityPanel
                          final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
-        theSymbol = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<SecurityType>();
@@ -192,18 +172,24 @@ public class SecurityPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+        JTextField mySymbol = new JTextField();
+
         /* restrict the fields */
-        restrictField(theName, Security.NAMELEN);
-        restrictField(theDesc, Security.NAMELEN);
-        restrictField(theSymbol, Security.NAMELEN);
+        restrictField(myName, Security.NAMELEN);
+        restrictField(myDesc, Security.NAMELEN);
+        restrictField(mySymbol, Security.NAMELEN);
         restrictField(theTypeButton, Security.NAMELEN);
         restrictField(theCurrencyButton, Security.NAMELEN);
         restrictField(theParentButton, Security.NAMELEN);
         restrictField(myClosedButton, Security.NAMELEN);
 
-        theFieldSet.addFieldElement(Security.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(Security.FIELD_DESC, DataType.STRING, theDesc);
-        theFieldSet.addFieldElement(Security.FIELD_SYMBOL, DataType.STRING, theSymbol);
+        /* Build the FieldSet */
+        theFieldSet.addFieldElement(Security.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(Security.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(Security.FIELD_SYMBOL, DataType.STRING, mySymbol);
         theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, theTypeButton);
         theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
@@ -237,7 +223,7 @@ public class SecurityPanel
         JTextArea myNotes = new JTextArea();
         JScrollPane myScroll = new JScrollPane(myNotes);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */

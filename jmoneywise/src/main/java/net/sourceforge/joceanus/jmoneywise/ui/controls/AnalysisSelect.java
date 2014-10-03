@@ -289,8 +289,9 @@ public class AnalysisSelect
 
     /**
      * Constructor.
+     * @param pNewButton the new button
      */
-    public AnalysisSelect() {
+    public AnalysisSelect(final JButton pNewButton) {
         /* Create the range button */
         theRangeButton = new JButton(ArrowIcon.DOWN);
         theRangeButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -341,7 +342,7 @@ public class AnalysisSelect
         theFilterSelect = buildFilterSelect();
 
         /* Create the control panel */
-        JPanel myPanel = buildControlPanel();
+        JPanel myPanel = buildControlPanel(pNewButton);
 
         /* Create the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -368,9 +369,10 @@ public class AnalysisSelect
 
     /**
      * Create control panel.
+     * @param pNewButton the new button
      * @return the panel
      */
-    private JPanel buildControlPanel() {
+    private JPanel buildControlPanel(final JButton pNewButton) {
         /* Create the control panel */
         JPanel myPanel = new JPanel();
 
@@ -387,6 +389,9 @@ public class AnalysisSelect
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(Box.createHorizontalGlue());
         myPanel.add(theFilterDetail);
+        myPanel.add(Box.createHorizontalGlue());
+        myPanel.add(pNewButton);
+        myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
 
         /* Return the panel */
         return myPanel;

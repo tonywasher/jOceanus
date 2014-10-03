@@ -137,7 +137,7 @@ public class JFieldSet<T extends JFieldSetItem>
 
     /**
      * Add Element to field set.
-     * @param <I> ComboBox element type
+     * @param <I> Scroll button element type
      * @param pField the field id
      * @param pClass the class of the value
      * @param pButton the button
@@ -154,7 +154,7 @@ public class JFieldSet<T extends JFieldSetItem>
 
     /**
      * Add Element to field set.
-     * @param <I> ComboBox element type
+     * @param <I> Icon button element type
      * @param pField the field id
      * @param pClass the class of the value
      * @param pButton the button

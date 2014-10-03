@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -66,6 +67,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
@@ -74,6 +76,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -84,6 +87,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -302,6 +306,21 @@ public class AnalysisStatement
     private transient Transaction theHeader;
 
     /**
+     * The new button.
+     */
+    private final JButton theNewButton;
+
+    /**
+     * The Transaction dialog.
+     */
+    private final TransactionPanel theActiveTrans;
+
+    /**
+     * The List Selection Model.
+     */
+    private final transient JDataTableSelection<Transaction, MoneyWiseDataType> theSelectionModel;
+
+    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -334,8 +353,11 @@ public class AnalysisStatement
         theDataFilter = myDataMgr.new JDataEntry(AnalysisFilter.class.getSimpleName());
         theDataFilter.addAsChildOf(mySection);
 
+        /* Create new button */
+        theNewButton = MoneyWiseIcons.getNewButton();
+
         /* Create the Analysis Selection */
-        theSelect = new AnalysisSelect();
+        theSelect = new AnalysisSelect(theNewButton);
 
         /* Create the action buttons */
         theActionButtons = new ActionButtons(theUpdateSet);
@@ -364,19 +386,21 @@ public class AnalysisStatement
         thePanel.add(myHeader);
         thePanel.add(getScrollPane());
 
+        /* Create a transaction panel */
+        theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theError);
+        thePanel.add(theActiveTrans);
+
         /* Prevent reordering of columns and auto-resizing */
         getTableHeader().setReorderingAllowed(false);
 
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
+        /* Create the selection model */
+        theSelectionModel = new JDataTableSelection<Transaction, MoneyWiseDataType>(this, theActiveTrans);
+
         /* Create listener */
-        AnalysisListener myListener = new AnalysisListener();
-        theError.addChangeListener(myListener);
-        theView.addChangeListener(myListener);
-        theSelect.addChangeListener(myListener);
-        theActionButtons.addActionListener(myListener);
-        theUpdateSet.addChangeListener(myListener);
+        new AnalysisListener();
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -443,11 +467,15 @@ public class AnalysisStatement
     public void notifyChanges() {
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
+        boolean isItemEditing = theActiveTrans.isEditing();
 
         /* Update the table buttons */
         theActionButtons.setEnabled(true);
-        theActionButtons.setVisible(hasUpdates);
-        theSelect.setEnabled(!hasUpdates);
+        theActionButtons.setVisible(hasUpdates && !isItemEditing);
+        theSelect.setEnabled(!hasUpdates && !isItemEditing);
+
+        /* Adjust enable of the table */
+        setEnabled(!isItemEditing);
 
         /* Update the top level tabs */
         fireStateChanged();
@@ -469,6 +497,9 @@ public class AnalysisStatement
             theTransactions = myTransactions.deriveEditList(pRange);
             theHeader = new AnalysisHeader(theTransactions);
             myInfo = theTransactions.getTransactionInfo();
+
+            /* Notify panel of refresh */
+            theActiveTrans.refreshData();
         }
         setList(theTransactions);
         theTransEntry.setDataList(theTransactions);
@@ -496,6 +527,15 @@ public class AnalysisStatement
      */
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    @Override
+    public void cancelEditing() {
+        /* Cancel editing on table */
+        super.cancelEditing();
+
+        /* Stop editing any item */
+        theActiveTrans.setEditable(false);
     }
 
     /**
@@ -593,6 +633,18 @@ public class AnalysisStatement
      */
     private final class AnalysisListener
             implements ChangeListener, ActionListener {
+        /**
+         * Constructor.
+         */
+        private AnalysisListener() {
+            theError.addChangeListener(this);
+            theView.addChangeListener(this);
+            theSelect.addChangeListener(this);
+            theActionButtons.addActionListener(this);
+            theUpdateSet.addChangeListener(this);
+            theActiveTrans.addChangeListener(this);
+            theActiveTrans.addActionListener(this);
+        }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -620,8 +672,25 @@ public class AnalysisStatement
 
                 /* If we are performing a rewind */
             } else if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveTrans.isEditing()) {
+                    /* Handle the reWind */
+                    theSelectionModel.handleReWind();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
+
+                /* If we are noting change of edit state */
+            } else if (theActiveTrans.equals(o)) {
+                /* Only action if we are not editing */
+                if (!theActiveTrans.isEditing()) {
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
+                }
+
+                /* Note changes */
+                notifyChanges();
 
                 /* If this is the Selection */
             } else if (theSelect.equals(o)) {
@@ -644,8 +713,8 @@ public class AnalysisStatement
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            Object o = e.getSource();
+        public void actionPerformed(final ActionEvent pEvent) {
+            Object o = pEvent.getSource();
 
             /* If this event relates to the action buttons */
             if (theActionButtons.equals(o)) {
@@ -653,10 +722,15 @@ public class AnalysisStatement
                 cancelEditing();
 
                 /* Perform the command */
-                theUpdateSet.processCommand(e.getActionCommand(), theError);
+                theUpdateSet.processCommand(pEvent.getActionCommand(), theError);
 
                 /* Notify listeners of changes */
                 notifyChanges();
+            } else if ((theActiveTrans.equals(o))
+                       && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
+            } else if (theNewButton.equals(o)) {
+                // theModel.addNewItem();
             }
         }
     }

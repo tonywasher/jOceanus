@@ -160,6 +160,21 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     SECURITYPANEL_TAB_PRICES("SecurityPanel.Tab.Prices"),
 
     /**
+     * Transaction Info Tab.
+     */
+    TRANSPANEL_TAB_INFO("TransPanel.Tab.Info"),
+
+    /**
+     * Transaction Taxes Tab.
+     */
+    TRANSPANEL_TAB_TAXES("TransPanel.Tab.Taxes"),
+
+    /**
+     * Transaction Securities Tab.
+     */
+    TRANSPANEL_TAB_SECURITIES("TransPanel.Tab.Securities"),
+
+    /**
      * Balance ColumnSet.
      */
     COLUMNSET_BALANCE("analysisColumnSet.Balance"),

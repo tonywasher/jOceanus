@@ -867,7 +867,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         boolean isDataInfo = this instanceof DataInfoList;
 
         /* Reset the map */
-        if (!isDataInfo) {
+        if (theDataMap != null) {
             theDataMap.resetMap();
         }
 

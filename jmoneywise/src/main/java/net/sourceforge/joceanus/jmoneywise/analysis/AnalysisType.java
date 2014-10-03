@@ -116,7 +116,7 @@ public enum AnalysisType {
             case TRANSTAG:
             case ALL:
             default:
-                return true;
+                return false;
         }
     }
 

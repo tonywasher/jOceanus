@@ -85,16 +85,6 @@ public class StockOptionPanel
     private final transient JFieldSet<StockOption> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
      * Portfolio Button Field.
      */
     private final JScrollButton<Portfolio> thePortfolioButton;
@@ -135,10 +125,6 @@ public class StockOptionPanel
                             final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
 
         /* Create the buttons */
         thePortfolioButton = new JScrollButton<Portfolio>();
@@ -191,12 +177,14 @@ public class StockOptionPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
-        /* Build the price text field */
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
         JTextField myPrice = new JTextField();
 
         /* restrict the fields */
-        restrictField(theName, StockOption.NAMELEN);
-        restrictField(theDesc, StockOption.NAMELEN);
+        restrictField(myName, StockOption.NAMELEN);
+        restrictField(myDesc, StockOption.NAMELEN);
         restrictField(thePortfolioButton, StockOption.NAMELEN);
         restrictField(theSecurityButton, StockOption.NAMELEN);
         restrictField(theGrantButton, StockOption.NAMELEN);
@@ -204,8 +192,9 @@ public class StockOptionPanel
         restrictField(myPrice, StockOption.NAMELEN);
         restrictField(myClosedButton, StockOption.NAMELEN);
 
-        theFieldSet.addFieldElement(StockOption.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(StockOption.FIELD_DESC, DataType.STRING, theDesc);
+        /* Build the FieldSet */
+        theFieldSet.addFieldElement(StockOption.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(StockOption.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(StockOption.FIELD_PORTFOLIO, Portfolio.class, thePortfolioButton);
         theFieldSet.addFieldElement(StockOption.FIELD_SECURITY, Security.class, theSecurityButton);
         theFieldSet.addFieldElement(StockOption.FIELD_GRANTDATE, DataType.DATEDAY, theGrantButton);
@@ -242,7 +231,7 @@ public class StockOptionPanel
         JTextArea myNotes = new JTextArea();
         JScrollPane myScroll = new JScrollPane(myNotes);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */

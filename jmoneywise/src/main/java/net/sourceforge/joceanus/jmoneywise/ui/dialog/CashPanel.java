@@ -86,16 +86,6 @@ public class CashPanel
     private final transient JFieldSet<Cash> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
      * CashCategory Button Field.
      */
     private final JScrollButton<CashCategory> theCategoryButton;
@@ -131,10 +121,6 @@ public class CashPanel
                      final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<CashCategory>();
@@ -184,16 +170,20 @@ public class CashPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+
         /* restrict the fields */
-        restrictField(theName, Cash.NAMELEN);
-        restrictField(theDesc, Cash.NAMELEN);
+        restrictField(myName, Cash.NAMELEN);
+        restrictField(myDesc, Cash.NAMELEN);
         restrictField(theCategoryButton, Cash.NAMELEN);
         restrictField(theCurrencyButton, Cash.NAMELEN);
         restrictField(myClosedButton, Cash.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Cash.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(Cash.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(Cash.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(Cash.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Cash.FIELD_CATEGORY, CashCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Cash.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -225,7 +215,7 @@ public class CashPanel
         restrictField(theAutoExpenseButton, myWidth);
         restrictField(theAutoPayeeButton, myWidth);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, theAutoExpenseButton);
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, theAutoPayeeButton);
 
@@ -252,7 +242,7 @@ public class CashPanel
         JTextArea myNotes = new JTextArea();
         JScrollPane myScroll = new JScrollPane(myNotes);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */

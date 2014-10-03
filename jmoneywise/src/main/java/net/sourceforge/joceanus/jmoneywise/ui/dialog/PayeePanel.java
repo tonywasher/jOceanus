@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -77,16 +76,6 @@ public class PayeePanel
     private final transient JFieldSet<Payee> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
      * Payee Type Button Field.
      */
     private final JScrollButton<PayeeType> theTypeButton;
@@ -107,10 +96,6 @@ public class PayeePanel
                       final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<PayeeType>();
@@ -157,14 +142,19 @@ public class PayeePanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+
         /* restrict the fields */
-        restrictField(theName, Payee.NAMELEN);
-        restrictField(theDesc, Payee.NAMELEN);
+        restrictField(myName, Payee.NAMELEN);
+        restrictField(myDesc, Payee.NAMELEN);
         restrictField(theTypeButton, Payee.NAMELEN);
         restrictField(myClosedButton, Payee.NAMELEN);
 
-        theFieldSet.addFieldElement(Payee.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(Payee.FIELD_DESC, DataType.STRING, theDesc);
+        /* Build the FieldSet */
+        theFieldSet.addFieldElement(Payee.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(Payee.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Payee.FIELD_PAYEETYPE, PayeeType.class, theTypeButton);
         theFieldSet.addFieldElement(Payee.FIELD_CLOSED, Boolean.class, myClosedButton);
 
@@ -199,7 +189,7 @@ public class PayeePanel
         JTextField myPassWord = new JTextField();
 
         /* Restrict the fields */
-        int myWidth = Deposit.NAMELEN >> 1;
+        int myWidth = Payee.NAMELEN >> 1;
         restrictField(mySortCode, myWidth);
         restrictField(myAccount, myWidth);
         restrictField(myReference, myWidth);
@@ -208,7 +198,7 @@ public class PayeePanel
         restrictField(myUserId, myWidth);
         restrictField(myPassWord, myWidth);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
@@ -245,7 +235,7 @@ public class PayeePanel
         JTextArea myNotes = new JTextArea();
         JScrollPane myScroll = new JScrollPane(myNotes);
 
-        /* Adjust FieldSet */
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */

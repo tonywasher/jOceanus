@@ -83,16 +83,6 @@ public class LoanPanel
     private final transient JFieldSet<Loan> theFieldSet;
 
     /**
-     * Name Text Field.
-     */
-    private final JTextField theName;
-
-    /**
-     * Description Text Field.
-     */
-    private final JTextField theDesc;
-
-    /**
      * LoanCategory Button Field.
      */
     private final JScrollButton<LoanCategory> theCategoryButton;
@@ -123,10 +113,6 @@ public class LoanPanel
                      final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
-
-        /* Create the text fields */
-        theName = new JTextField();
-        theDesc = new JTextField();
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<LoanCategory>();
@@ -175,16 +161,21 @@ public class LoanPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* Create the text fields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+
         /* restrict the fields */
-        restrictField(theName, Loan.NAMELEN);
-        restrictField(theDesc, Loan.NAMELEN);
+        restrictField(myName, Loan.NAMELEN);
+        restrictField(myDesc, Loan.NAMELEN);
         restrictField(theCategoryButton, Loan.NAMELEN);
         restrictField(theCurrencyButton, Loan.NAMELEN);
         restrictField(theParentButton, Loan.NAMELEN);
         restrictField(myClosedButton, Loan.NAMELEN);
 
-        theFieldSet.addFieldElement(Loan.FIELD_NAME, DataType.STRING, theName);
-        theFieldSet.addFieldElement(Loan.FIELD_DESC, DataType.STRING, theDesc);
+        /* Build the FieldSet */
+        theFieldSet.addFieldElement(Loan.FIELD_NAME, DataType.STRING, myName);
+        theFieldSet.addFieldElement(Loan.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Loan.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);

@@ -113,6 +113,12 @@ public class Transaction
                              : JDataFieldValue.SKIP;
         }
 
+        /* Handle infoSet fields */
+        TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
+        if ((theInfoSet != null) && (myClass != null)) {
+            return theInfoSet.getFieldValue(pField);
+        }
+
         /* Pass onwards */
         return super.getFieldValue(pField);
     }
@@ -549,6 +555,16 @@ public class Transaction
         if (hasInfoSet) {
             theInfoSet.sortLinkSets();
         }
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
+        /* Check the class */
+        return theInfoSet.isClassRequired(pClass);
     }
 
     /**
