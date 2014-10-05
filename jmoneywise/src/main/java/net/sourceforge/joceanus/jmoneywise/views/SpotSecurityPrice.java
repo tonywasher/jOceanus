@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -43,8 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceBaseList;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -52,178 +49,162 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
- * Extension of AccountPrice to cater for spot prices.
+ * Extension of SecurityPrice to cater for spot prices.
  * @author Tony Washer
  */
-public class SpotSecurityPrices
-        implements JDataContents {
+public final class SpotSecurityPrice
+        extends SecurityPrice {
     /**
-     * Local Report fields.
+     * Object name.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseViewResource.SPOTPRICE_NAME.getValue());
+    public static final String OBJECT_NAME = SpotSecurityPrice.class.getSimpleName();
+
+    /**
+     * List name.
+     */
+    public static final String LIST_NAME = OBJECT_NAME + "s";
+
+    /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
     @Override
-    public JDataFields getDataFields() {
+    public JDataFields declareFields() {
         return FIELD_DEFS;
     }
 
     /**
-     * View Field Id.
+     * Previous Date field Id.
      */
-    public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.VIEW_NAME.getValue());
+    public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
     /**
-     * Portfolio Field Id.
+     * Previous Price field Id.
      */
-    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
-
-    /**
-     * Date Field Id.
-     */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
-
-    /**
-     * Next Field Id.
-     */
-    public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTPRICE_NEXTDATE.getValue());
-
-    /**
-     * Previous Field Id.
-     */
-    public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTPRICE_PREVDATE.getValue());
-
-    /**
-     * Prices Field Id.
-     */
-    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTPRICE_NAME.getValue());
+    public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_VIEW.equals(pField)) {
-            return theView;
+        if (FIELD_PREVDATE.equals(pField)) {
+            return thePrevDate;
         }
-        if (FIELD_PORTFOLIO.equals(pField)) {
-            return thePortfolio;
+        if (FIELD_PREVPRICE.equals(pField)) {
+            return thePrevPrice;
         }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_NEXT.equals(pField)) {
-            return getNext();
-        }
-        if (FIELD_PREV.equals(pField)) {
-            return getPrev();
-        }
-        if (FIELD_PRICES.equals(pField)) {
-            return thePrices;
-        }
-        return null;
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
+        return super.getFieldValue(pField);
     }
 
     /**
-     * The view.
+     * the previous date.
      */
-    private final View theView;
+    private JDateDay thePrevDate;
 
     /**
-     * The portfolio.
+     * the previous price.
      */
-    private final Portfolio thePortfolio;
+    private JPrice thePrevPrice;
 
     /**
-     * The date.
+     * Obtain previous price.
+     * @return the price.
      */
-    private final JDateDay theDate;
-
-    /**
-     * The prices.
-     */
-    private final SpotSecurityList thePrices;
-
-    /**
-     * Obtain portfolio.
-     * @return the portfolio
-     */
-    public Portfolio getPortfolio() {
-        return thePortfolio;
-    }
-
-    /**
-     * Obtain view.
-     * @return the view
-     */
-    protected View getView() {
-        return theView;
-    }
-
-    /**
-     * Obtain dataSet.
-     * @return the dataSet
-     */
-    protected MoneyWiseData getData() {
-        return theView.getData();
-    }
-
-    /**
-     * Obtain date.
-     * @return the date
-     */
-    public JDateDay getDate() {
-        return theDate;
-    }
-
-    /**
-     * Obtain next date.
-     * @return the date
-     */
-    public JDateDay getNext() {
-        return thePrices.getNext();
+    public JPrice getPrevPrice() {
+        return thePrevPrice;
     }
 
     /**
      * Obtain previous date.
-     * @return the date
+     * @return the date.
      */
-    public JDateDay getPrev() {
-        return thePrices.getPrev();
+    public JDateDay getPrevDate() {
+        return thePrevDate;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return getSecurity().isClosed();
+    }
+
+    @Override
+    public SecurityPrice getBase() {
+        return (SecurityPrice) super.getBase();
     }
 
     /**
-     * Obtain prices.
-     * @return the prices
+     * Constructor for a new SpotPrice where no price data exists.
+     * @param pList the Spot Price List
+     * @param pSecurity the price for the date
      */
-    public SpotSecurityList getPrices() {
-        return thePrices;
+    private SpotSecurityPrice(final SpotSecurityList pList,
+                              final Security pSecurity) {
+        super(pList);
+
+        /* Store base values */
+        setDate(pList.theDate);
+        setSecurity(pSecurity);
     }
 
     /**
-     * Obtain spotPrice at index.
-     * @param uIndex the index
-     * @return the spotPrice
+     * Validate the line.
      */
-    public SpotSecurityPrice get(final long uIndex) {
-        return (SpotSecurityPrice) thePrices.get((int) uIndex);
+    @Override
+    public void validate() {
+        setValidEdit();
+    }
+
+    /* Is this row locked */
+    @Override
+    public boolean isLocked() {
+        return isDeleted();
     }
 
     /**
-     * Constructor.
-     * @param pView the view
-     * @param pPortfolio the portfolio
-     * @param pDate the date
+     * Note that this item has been validated.
      */
-    public SpotSecurityPrices(final View pView,
-                              final Portfolio pPortfolio,
-                              final JDateDay pDate) {
-        /* Create a copy of the date and initiate the list */
-        theView = pView;
-        theDate = pDate;
-        thePortfolio = pPortfolio;
-        thePrices = new SpotSecurityList(this);
+    @Override
+    public void setValidEdit() {
+        setEditState((hasHistory())
+                                   ? EditState.VALID
+                                   : EditState.CLEAN);
+    }
+
+    @Override
+    public JPrice getPrice() {
+        /* Switch on state */
+        switch (getState()) {
+            case NEW:
+            case CHANGED:
+            case RECOVERED:
+            case CLEAN:
+                return super.getPrice();
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public DataState getState() {
+        EncryptedValueSet myCurr = getValueSet();
+        EncryptedValueSet myBase = getOriginalValues();
+
+        /* If we have no changes we are CLEAN */
+        if (myCurr.getVersion() == 0) {
+            return DataState.CLEAN;
+        }
+
+        /* If the original price is Null */
+        if (getPrice(myBase) == null) {
+            /* Return status */
+            return getPrice(myCurr) == null
+                                           ? DataState.DELNEW
+                                           : DataState.NEW;
+        }
+
+        /* If we are deleted return so */
+        return getPrice(myCurr) == null
+                                       ? DataState.DELETED
+                                       : DataState.CHANGED;
     }
 
     /**
@@ -249,12 +230,12 @@ public class SpotSecurityPrices
         /**
          * The next date field Id.
          */
-        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTPRICE_NEXTDATE.getValue());
+        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE.getValue());
 
         /**
          * The previous date field Id.
          */
-        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTPRICE_PREVDATE.getValue());
+        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
         @Override
         public JDataFields declareFields() {
@@ -336,16 +317,22 @@ public class SpotSecurityPrices
 
         /**
          * Constructor.
-         * @param pPrices the spot price control
+         * @param pView the view
+         * @param pPortfolio the portfolio
+         * @param pDate the date
          */
-        public SpotSecurityList(final SpotSecurityPrices pPrices) {
+        public SpotSecurityList(final View pView,
+                                final Portfolio pPortfolio,
+                                final JDateDay pDate) {
             /* Build initial list */
-            super(pPrices.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
+            super(pView.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
             ensureMap();
-            theDate = pPrices.getDate();
-            theView = pPrices.getView();
-            thePortfolio = pPrices.getPortfolio();
+
+            /* Store parameters */
+            theDate = pDate;
+            theView = pView;
+            thePortfolio = pPortfolio;
 
             /* Obtain the portfolio bucket */
             AnalysisManager myManager = theView.getAnalysisManager();
@@ -440,166 +427,6 @@ public class SpotSecurityPrices
         @Override
         public SpotSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
-     * Spot Price class.
-     * @author Tony Washer
-     */
-    public static final class SpotSecurityPrice
-            extends SecurityPrice {
-        /**
-         * Object name.
-         */
-        public static final String OBJECT_NAME = SpotSecurityPrice.class.getSimpleName();
-
-        /**
-         * List name.
-         */
-        public static final String LIST_NAME = OBJECT_NAME + "s";
-
-        /**
-         * Report fields.
-         */
-        private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
-
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        /**
-         * Previous Date field Id.
-         */
-        public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVDATE.getValue());
-
-        /**
-         * Previous Price field Id.
-         */
-        public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_PREVDATE.equals(pField)) {
-                return thePrevDate;
-            }
-            if (FIELD_PREVPRICE.equals(pField)) {
-                return thePrevPrice;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * the previous date.
-         */
-        private JDateDay thePrevDate;
-
-        /**
-         * the previous price.
-         */
-        private JPrice thePrevPrice;
-
-        /**
-         * Obtain previous price.
-         * @return the price.
-         */
-        public JPrice getPrevPrice() {
-            return thePrevPrice;
-        }
-
-        /**
-         * Obtain previous date.
-         * @return the date.
-         */
-        public JDateDay getPrevDate() {
-            return thePrevDate;
-        }
-
-        @Override
-        public boolean isDisabled() {
-            return getSecurity().isClosed();
-        }
-
-        @Override
-        public SecurityPrice getBase() {
-            return (SecurityPrice) super.getBase();
-        }
-
-        /**
-         * Constructor for a new SpotPrice where no price data exists.
-         * @param pList the Spot Price List
-         * @param pSecurity the price for the date
-         */
-        private SpotSecurityPrice(final SpotSecurityList pList,
-                                  final Security pSecurity) {
-            super(pList);
-
-            /* Store base values */
-            setDate(pList.theDate);
-            setSecurity(pSecurity);
-        }
-
-        /**
-         * Validate the line.
-         */
-        @Override
-        public void validate() {
-            setValidEdit();
-        }
-
-        /* Is this row locked */
-        @Override
-        public boolean isLocked() {
-            return isDeleted();
-        }
-
-        /**
-         * Note that this item has been validated.
-         */
-        @Override
-        public void setValidEdit() {
-            setEditState((hasHistory())
-                                       ? EditState.VALID
-                                       : EditState.CLEAN);
-        }
-
-        @Override
-        public JPrice getPrice() {
-            /* Switch on state */
-            switch (getState()) {
-                case NEW:
-                case CHANGED:
-                case RECOVERED:
-                case CLEAN:
-                    return super.getPrice();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public DataState getState() {
-            EncryptedValueSet myCurr = getValueSet();
-            EncryptedValueSet myBase = getOriginalValues();
-
-            /* If we have no changes we are CLEAN */
-            if (myCurr.getVersion() == 0) {
-                return DataState.CLEAN;
-            }
-
-            /* If the original price is Null */
-            if (getPrice(myBase) == null) {
-                /* Return status */
-                return getPrice(myCurr) == null
-                                               ? DataState.DELNEW
-                                               : DataState.NEW;
-            }
-
-            /* If we are deleted return so */
-            return getPrice(myCurr) == null
-                                           ? DataState.DELETED
-                                           : DataState.CHANGED;
         }
     }
 }

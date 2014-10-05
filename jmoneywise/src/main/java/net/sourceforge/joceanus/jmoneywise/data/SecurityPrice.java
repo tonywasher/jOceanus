@@ -338,7 +338,7 @@ public class SecurityPrice
      * @param pList the list
      * @param pPrice The Price
      */
-    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
+    protected SecurityPrice(final SecurityPriceBaseList<? extends SecurityPrice> pList,
                             final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
@@ -348,7 +348,7 @@ public class SecurityPrice
      * Edit Constructor.
      * @param pList the list
      */
-    public SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList) {
+    public SecurityPrice(final SecurityPriceBaseList<? extends SecurityPrice> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }

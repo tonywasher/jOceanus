@@ -1202,6 +1202,44 @@ public final class JFieldCellEditor {
     }
 
     /**
+     * Ratio Cell Editor.
+     */
+    public static class RatioCellEditor
+            extends DecimalCellEditor {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -2407894758574879133L;
+
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        protected RatioCellEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            Object o = super.getCellEditorValue();
+            if ((o instanceof String)
+                && (!STR_EMPTY.equals(o))) {
+                try {
+                    return theParser.parseRatioValue((String) o);
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
      * Dilutions Cell Editor.
      */
     public static class DilutionCellEditor

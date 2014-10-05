@@ -116,6 +116,11 @@ public enum MoneyWiseUIResource implements ResourceId {
     STATEMENT_OPENINGBALANCE("Statement.Text.OpeningBalance"),
 
     /**
+     * SpotRate Column Symbol.
+     */
+    SPOTRATE_COLUMN_SYMBOL("spotRate.Column.Symbol"),
+
+    /**
      * Maintenance Account Tab.
      */
     MAINTENANCE_ACCOUNT("Maintenance.Tab.Account"),
@@ -141,9 +146,9 @@ public enum MoneyWiseUIResource implements ResourceId {
     MAINTENANCE_SETTINGS("Maintenance.Tab.Preference"),
 
     /**
-     * Main Statement Tab.
+     * Main Register Tab.
      */
-    MAIN_STATEMENT("Main.Tab.Statement"),
+    MAIN_REGISTER("Main.Tab.Register"),
 
     /**
      * Main Report Tab.
@@ -153,7 +158,12 @@ public enum MoneyWiseUIResource implements ResourceId {
     /**
      * Main SpotPrice Tab.
      */
-    MAIN_SPOTPRICE("Main.Tab.SpotPrice"),
+    MAIN_SPOTPRICES("Main.Tab.SpotPrices"),
+
+    /**
+     * Main SpotRates Tab.
+     */
+    MAIN_SPOTRATES("Main.Tab.SpotRates"),
 
     /**
      * Main Maintenance Tab.

@@ -82,22 +82,42 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     /**
      * SpotPrice Date Prompt.
      */
-    SPOTPRICE_DATE("price.Prompt.Date"),
+    SPOTEVENT_DATE("spotEvent.Prompt.Date"),
 
     /**
      * SpotPrice Next Button.
      */
-    SPOTPRICE_NEXT("price.ToolTip.Next"),
+    SPOTPRICE_NEXT("spotPrice.ToolTip.Next"),
 
     /**
      * SpotPrice Previous Button.
      */
-    SPOTPRICE_PREV("price.ToolTip.Prev"),
+    SPOTPRICE_PREV("spotPrice.ToolTip.Prev"),
 
     /**
      * SpotPrice Title.
      */
-    SPOTPRICE_TITLE("price.Title.Select"),
+    SPOTPRICE_TITLE("spotPrice.Title.Select"),
+
+    /**
+     * SpotRate Currency Prompt.
+     */
+    SPOTRATE_PROMPT_CURR("spotRate.Prompt.Currency"),
+
+    /**
+     * SpotRate Next Button.
+     */
+    SPOTRATE_NEXT("spotRate.ToolTip.Next"),
+
+    /**
+     * SpotRate Previous Button.
+     */
+    SPOTRATE_PREV("spotRate.ToolTip.Prev"),
+
+    /**
+     * SpotPrice Title.
+     */
+    SPOTRATE_TITLE("spotRate.Title.Select"),
 
     /**
      * AnalysisSelect Title.

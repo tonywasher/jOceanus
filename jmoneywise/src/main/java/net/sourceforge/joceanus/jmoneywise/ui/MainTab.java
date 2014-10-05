@@ -97,14 +97,19 @@ public class MainTab
     private static final String TITLE_REPORT = MoneyWiseUIResource.MAIN_REPORT.getValue();
 
     /**
-     * Statement tab title.
+     * Register tab title.
      */
-    private static final String TITLE_STATEMENT = MoneyWiseUIResource.MAIN_STATEMENT.getValue();
+    private static final String TITLE_REGISTER = MoneyWiseUIResource.MAIN_REGISTER.getValue();
 
     /**
      * SpotPrices tab title.
      */
-    private static final String TITLE_SPOTVIEW = MoneyWiseUIResource.MAIN_SPOTPRICE.getValue();
+    private static final String TITLE_SPOTPRICES = MoneyWiseUIResource.MAIN_SPOTPRICES.getValue();
+
+    /**
+     * SpotRates tab title.
+     */
+    private static final String TITLE_SPOTRATES = MoneyWiseUIResource.MAIN_SPOTRATES.getValue();
 
     /**
      * Maintenance tab title.
@@ -142,14 +147,24 @@ public class MainTab
     private JEnableTabbed theTabs = null;
 
     /**
-     * The analysis panel.
+     * The register panel.
      */
-    private AnalysisStatement theStatement = null;
+    private AnalysisStatement theRegister = null;
 
     /**
      * The SpotPricesPanel.
      */
-    private PricePoint theSpotView = null;
+    private SpotPricesTable theSpotPrices = null;
+
+    /**
+     * The SpotRatesPanel.
+     */
+    private SpotRatesTable theSpotRates = null;
+
+    /**
+     * The report panel.
+     */
+    private ReportTab theReports = null;
 
     /**
      * The maintenance panel.
@@ -218,34 +233,31 @@ public class MainTab
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        ReportTab myReportTab = new ReportTab(theView);
-        theTabs.addTab(TITLE_REPORT, myReportTab);
+        theReports = new ReportTab(theView);
+        theTabs.addTab(TITLE_REPORT, theReports);
 
-        /* Create the Analysis Tab */
-        myTask.startTask("Analysis");
-        theStatement = new AnalysisStatement(theView);
-        theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
+        /* Create the Register Tab */
+        myTask.startTask("Register");
+        theRegister = new AnalysisStatement(theView);
+        theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
-        /* Create the SpotView Tab */
+        /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
-        theSpotView = new PricePoint(theView);
-        theTabs.addTab(TITLE_SPOTVIEW, theSpotView.getPanel());
+        theSpotPrices = new SpotPricesTable(theView);
+        theTabs.addTab(TITLE_SPOTPRICES, theSpotPrices.getPanel());
+
+        /* Create the SpotRates Tab */
+        myTask.startTask("SpotRates");
+        theSpotRates = new SpotRatesTable(theView);
+        theTabs.addTab(TITLE_SPOTRATES, theSpotRates.getPanel());
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
         theMaint = new MaintenanceTab(this);
         theTabs.addTab(TITLE_MAINT, theMaint);
 
-        /* Add listeners */
-        MainListener myListener = new MainListener();
-        theView.addChangeListener(myListener);
-        theTabs.addChangeListener(myListener);
-        theStatement.addChangeListener(myListener);
-        theSpotView.addChangeListener(myListener);
-        theMaint.addChangeListener(myListener);
-        theStatement.addActionListener(myListener);
-        myReportTab.addActionListener(myListener);
-        theMaint.addActionListener(myListener);
+        /* Create listener and initialise focus */
+        new MainListener();
         determineFocus();
 
         /* Set the icon */
@@ -281,9 +293,12 @@ public class MainTab
     @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
-        boolean hasUpdates = theStatement.hasUpdates();
+        boolean hasUpdates = theRegister.hasUpdates();
         if (!hasUpdates) {
-            hasUpdates = theSpotView.hasUpdates();
+            hasUpdates = theSpotPrices.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theSpotRates.hasUpdates();
         }
         if (!hasUpdates) {
             hasUpdates = theMaint.hasUpdates();
@@ -297,9 +312,12 @@ public class MainTab
      */
     public final boolean hasSession() {
         /* Determine whether we have edit session updates */
-        boolean hasSession = theStatement.hasSession();
+        boolean hasSession = theRegister.hasSession();
         if (!hasSession) {
-            hasSession = theSpotView.hasSession();
+            hasSession = theSpotPrices.hasSession();
+        }
+        if (!hasSession) {
+            hasSession = theSpotRates.hasSession();
         }
         if (!hasSession) {
             hasSession = theMaint.hasSession();
@@ -358,11 +376,11 @@ public class MainTab
      * @param pSelect the statement request
      */
     private void selectStatement(final StatementSelect pSelect) {
-        /* Pass through to the Statement view */
-        theStatement.selectStatement(pSelect);
+        /* Pass through to the Register view */
+        theRegister.selectStatement(pSelect);
 
-        /* Goto the Statement tab */
-        gotoNamedTab(TITLE_STATEMENT);
+        /* Goto the Register tab */
+        gotoNamedTab(TITLE_REGISTER);
     }
 
     /**
@@ -406,10 +424,10 @@ public class MainTab
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker && hasControl);
 
-        /* Enable/Disable the statement tab */
-        int iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
+        /* Enable/Disable the register tab */
+        int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
         if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theStatement.hasSession());
+            boolean doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
             if (doEnabled != theTabs.isEnabledAt(iIndex)) {
                 theTabs.setEnabledAt(iIndex, doEnabled);
             }
@@ -424,10 +442,19 @@ public class MainTab
             }
         }
 
-        /* Enable/Disable the spotView tab */
-        iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
+        /* Enable/Disable the spotPrices tab */
+        iIndex = theTabs.indexOfTab(TITLE_SPOTPRICES);
         if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theSpotView.hasSession());
+            boolean doEnabled = !hasWorker && (!hasSession || theSpotPrices.hasSession());
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
+        }
+
+        /* Enable/Disable the spotRates tab */
+        iIndex = theTabs.indexOfTab(TITLE_SPOTRATES);
+        if (iIndex != -1) {
+            boolean doEnabled = !hasWorker && (!hasSession || theSpotRates.hasSession());
             if (doEnabled != theTabs.isEnabledAt(iIndex)) {
                 theTabs.setEnabledAt(iIndex, doEnabled);
             }
@@ -456,15 +483,20 @@ public class MainTab
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
-        /* If the selected component is Statement */
-        if (myComponent.equals(theStatement)) {
-            /* Determine focus of Statement */
-            theStatement.determineFocus();
+        /* If the selected component is Register */
+        if (myComponent.equals(theRegister)) {
+            /* Determine focus of Register */
+            theRegister.determineFocus();
 
-            /* If the selected component is SpotView */
-        } else if (myComponent.equals(theSpotView.getPanel())) {
-            /* Determine focus of SpotView */
-            theSpotView.determineFocus();
+            /* If the selected component is SpotPrices */
+        } else if (myComponent.equals(theSpotPrices.getPanel())) {
+            /* Determine focus of SpotPrices */
+            theSpotPrices.determineFocus();
+
+            /* If the selected component is SpotRates */
+        } else if (myComponent.equals(theSpotRates.getPanel())) {
+            /* Determine focus of SpotRates */
+            theSpotRates.determineFocus();
 
             /* If the selected component is Maintenance */
         } else if (myComponent.equals(theMaint)) {
@@ -487,6 +519,21 @@ public class MainTab
      */
     private final class MainListener
             implements ActionListener, ChangeListener {
+        /**
+         * Constructor.
+         */
+        private MainListener() {
+            theView.addChangeListener(this);
+            theTabs.addChangeListener(this);
+            theRegister.addChangeListener(this);
+            theSpotPrices.addChangeListener(this);
+            theSpotRates.addChangeListener(this);
+            theMaint.addChangeListener(this);
+            theRegister.addActionListener(this);
+            theReports.addActionListener(this);
+            theMaint.addActionListener(this);
+        }
+
         @Override
         public void stateChanged(final ChangeEvent e) {
             Object o = e.getSource();
@@ -503,9 +550,10 @@ public class MainTab
                 setVisibility();
 
                 /* else if it is one of the sub-panels */
-            } else if (theStatement.equals(o)
+            } else if (theRegister.equals(o)
                        || theMaint.equals(o)
-                       || theSpotView.equals(o)) {
+                       || theSpotPrices.equals(o)
+                       || theSpotRates.equals(o)) {
                 /* Set the visibility */
                 setVisibility();
             }

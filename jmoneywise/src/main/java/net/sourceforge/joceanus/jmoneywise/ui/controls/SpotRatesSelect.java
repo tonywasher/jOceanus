@@ -25,49 +25,35 @@ package net.sourceforge.joceanus.jmoneywise.ui.controls;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldElement;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
- * SpotPrice Date selection panel.
+ * SpotRates selection panel.
  * @author Tony Washer
  */
-public class SpotSelect
+public class SpotRatesSelect
         extends JEventPanel {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = -361214955549174070L;
+    private static final long serialVersionUID = -1576166966674913077L;
 
     /**
      * Strut width.
@@ -75,34 +61,29 @@ public class SpotSelect
     private static final int STRUT_WIDTH = 10;
 
     /**
+     * Text for Currency Prompt.
+     */
+    private static final String NLS_CURRENCY = MoneyWiseUIControlResource.SPOTRATE_PROMPT_CURR.getValue();
+
+    /**
      * Text for Date Label.
      */
-    private static final String NLS_DATE = MoneyWiseUIControlResource.SPOTPRICE_DATE.getValue();
-
-    /**
-     * Text for Portfolio Label.
-     */
-    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + JFieldElement.STR_COLON;
-
-    /**
-     * Text for Show Closed.
-     */
-    private static final String NLS_CLOSED = MoneyWiseUIControlResource.UI_PROMPT_SHOWCLOSED.getValue();
+    private static final String NLS_DATE = MoneyWiseUIControlResource.SPOTEVENT_DATE.getValue();
 
     /**
      * Text for Title.
      */
-    private static final String NLS_TITLE = MoneyWiseUIControlResource.SPOTPRICE_TITLE.getValue();
+    private static final String NLS_TITLE = MoneyWiseUIControlResource.SPOTRATE_TITLE.getValue();
 
     /**
      * Text for Next toolTip.
      */
-    private static final String NLS_NEXTTIP = MoneyWiseUIControlResource.SPOTPRICE_NEXT.getValue();
+    private static final String NLS_NEXTTIP = MoneyWiseUIControlResource.SPOTRATE_NEXT.getValue();
 
     /**
      * Text for Previous toolTip.
      */
-    private static final String NLS_PREVTIP = MoneyWiseUIControlResource.SPOTPRICE_PREV.getValue();
+    private static final String NLS_PREVTIP = MoneyWiseUIControlResource.SPOTRATE_PREV.getValue();
 
     /**
      * The data view.
@@ -110,14 +91,14 @@ public class SpotSelect
     private final transient View theView;
 
     /**
+     * The currency label.
+     */
+    private final JLabel theCurrLabel;
+
+    /**
      * The date button.
      */
     private final JDateDayButton theDateButton;
-
-    /**
-     * The showClosed checkBox.
-     */
-    private final JCheckBox theShowClosed;
 
     /**
      * The next button.
@@ -130,34 +111,14 @@ public class SpotSelect
     private final JButton thePrev;
 
     /**
-     * The portfolio button.
-     */
-    private final JScrollButton<PortfolioBucket> thePortButton;
-
-    /**
-     * The Portfolio list.
-     */
-    private transient PortfolioBucketList thePortfolios = null;
-
-    /**
      * The current state.
      */
-    private transient SpotState theState = null;
+    private transient SpotRatesState theState = null;
 
     /**
      * The saved state.
      */
-    private transient SpotState theSavePoint = null;
-
-    /**
-     * Do we show closed accounts.
-     */
-    private boolean doShowClosed = false;
-
-    /**
-     * Are we refreshing data?
-     */
-    private boolean refreshingData = false;
+    private transient SpotRatesState theSavePoint = null;
 
     /**
      * Get the selected date.
@@ -168,42 +129,22 @@ public class SpotSelect
     }
 
     /**
-     * Get the selected portfolio.
-     * @return the portfolio
-     */
-    public final Portfolio getPortfolio() {
-        PortfolioBucket myBucket = theState.getPortfolio();
-        return (myBucket == null)
-                                 ? null
-                                 : myBucket.getPortfolio();
-    }
-
-    /**
-     * Do we show closed accounts?.
-     * @return the date
-     */
-    public boolean getShowClosed() {
-        return doShowClosed;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
-    public SpotSelect(final View pView) {
+    public SpotRatesSelect(final View pView) {
         /* Store table and view details */
         theView = pView;
 
         /* Create Labels */
+        JLabel myCurr = new JLabel(NLS_CURRENCY);
         JLabel myDate = new JLabel(NLS_DATE);
-        JLabel myPort = new JLabel(NLS_PORT);
-
-        /* Create the check box */
-        theShowClosed = new JCheckBox(NLS_CLOSED);
-        theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
         theDateButton = new JDateDayButton();
+
+        /* Create the Currency indication */
+        theCurrLabel = new JLabel();
 
         /* Create the Buttons */
         theNext = new JButton(ArrowIcon.RIGHT);
@@ -211,17 +152,19 @@ public class SpotSelect
         theNext.setToolTipText(NLS_NEXTTIP);
         thePrev.setToolTipText(NLS_PREVTIP);
 
-        /* Create the portfolio button */
-        thePortButton = new JScrollButton<PortfolioBucket>();
-
         /* Create initial state */
-        theState = new SpotState();
+        theState = new SpotRatesState();
 
         /* Create the panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(myCurr);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theCurrLabel);
+        add(Box.createHorizontalGlue());
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(myDate);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -230,12 +173,6 @@ public class SpotSelect
         add(theDateButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theNext);
-        add(Box.createHorizontalGlue());
-        add(myPort);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(thePortButton);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theShowClosed);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Initialise the data from the view */
@@ -245,12 +182,7 @@ public class SpotSelect
         theState.applyState();
 
         /* Add the listener for item changes */
-        SpotListener myListener = new SpotListener();
-        theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
-        theShowClosed.addItemListener(myListener);
-        theNext.addActionListener(myListener);
-        thePrev.addActionListener(myListener);
-        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new SpotRatesListener();
     }
 
     /**
@@ -263,54 +195,19 @@ public class SpotSelect
         /* Set the range for the Date Button */
         setRange(myRange);
 
-        /* Access portfolio list */
-        AnalysisManager myManager = theView.getAnalysisManager();
-        Analysis myAnalysis = myManager.getAnalysis();
-        thePortfolios = myAnalysis.getPortfolios();
-
-        /* Note that we are refreshing data */
-        refreshingData = true;
-
-        /* Obtain the current portfolio */
-        PortfolioBucket myPortfolio = theState.getPortfolio();
-
-        /* If we have a selected Portfolio */
-        if (myPortfolio != null) {
-            /* Look for the equivalent bucket */
-            myPortfolio = thePortfolios.findItemById(myPortfolio.getOrderedId());
-        }
-
-        /* If we do not have an active portfolio and the list is non-empty */
-        if ((myPortfolio == null) && (!thePortfolios.isEmpty())) {
-            /* Access the first portfolio */
-            myPortfolio = getFirstPortfolio();
-        }
-
-        /* Set the portfolio */
-        theState.setPortfolio(myPortfolio);
-        theState.applyState();
-
-        /* Note that we have finished refreshing data */
-        refreshingData = false;
-    }
-
-    /**
-     * Obtain first portfolio.
-     * @return the first portfolio
-     */
-    private PortfolioBucket getFirstPortfolio() {
-        /* Loop through the available account values */
-        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-        return myIterator.hasNext()
-                                   ? myIterator.next()
-                                   : null;
+        /* Set the currency name */
+        MoneyWiseData myData = theView.getData();
+        AccountCurrency myDefault = myData.getDefaultCurrency();
+        theCurrLabel.setText(myDefault != null
+                                              ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
+                                              : null);
     }
 
     /**
      * Set the range for the date box.
      * @param pRange the Range to set
      */
-    public final void setRange(final JDateDayRange pRange) {
+    private void setRange(final JDateDayRange pRange) {
         JDateDay myStart = (pRange == null)
                                            ? null
                                            : pRange.getStart();
@@ -328,7 +225,6 @@ public class SpotSelect
         theNext.setEnabled(bEnabled && (theState.getNextDate() != null));
         thePrev.setEnabled(bEnabled && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
-        thePortButton.setEnabled(bEnabled);
     }
 
     /**
@@ -336,7 +232,7 @@ public class SpotSelect
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new SpotState(theState);
+        theSavePoint = new SpotRatesState(theState);
     }
 
     /**
@@ -344,7 +240,7 @@ public class SpotSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new SpotState(theSavePoint);
+        theState = new SpotRatesState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -364,20 +260,16 @@ public class SpotSelect
     /**
      * Listener class.
      */
-    private final class SpotListener
-            implements ActionListener, ChangeListener, PropertyChangeListener, ItemListener {
-        /**
-         * The portfolio menu builder.
-         */
-        private final JScrollMenuBuilder<PortfolioBucket> thePortMenuBuilder;
-
+    private final class SpotRatesListener
+            implements ActionListener, PropertyChangeListener {
         /**
          * Constructor.
          */
-        private SpotListener() {
-            /* Access builder */
-            thePortMenuBuilder = thePortButton.getMenuBuilder();
-            thePortMenuBuilder.addChangeListener(this);
+        private SpotRatesListener() {
+            /* Declare listener */
+            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, this);
+            theNext.addActionListener(this);
+            thePrev.addActionListener(this);
         }
 
         @Override
@@ -407,70 +299,13 @@ public class SpotSelect
                 && (theState.setDate(theDateButton))) {
                 fireStateChanged();
             }
-
-            /* if event relates to the Date button */
-            if (thePortButton.equals(o)
-                && (theState.setPortfolio(thePortButton.getValue()))) {
-                theState.applyState();
-                fireStateChanged();
-            }
-        }
-
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            Object o = evt.getSource();
-
-            /* Ignore selection if refreshing data */
-            if (refreshingData) {
-                return;
-            }
-
-            /* If this event relates to the showClosed box */
-            if (theShowClosed.equals(o)) {
-                /* Note the new criteria and re-build lists */
-                doShowClosed = theShowClosed.isSelected();
-                fireStateChanged();
-            }
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent e) {
-            /* Reset the popUp menu */
-            thePortMenuBuilder.clearMenu();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-            PortfolioBucket myCurr = theState.getPortfolio();
-
-            /* Loop through the available portfolio values */
-            Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-            while (myIterator.hasNext()) {
-                PortfolioBucket myBucket = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = thePortMenuBuilder.addItem(myBucket);
-
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            thePortMenuBuilder.showItem(myActive);
         }
     }
 
     /**
      * SavePoint values.
      */
-    private final class SpotState {
-        /**
-         * Portfolio.
-         */
-        private PortfolioBucket thePortfolio = null;
-
+    private final class SpotRatesState {
         /**
          * Selected date.
          */
@@ -485,14 +320,6 @@ public class SpotSelect
          * Previous date.
          */
         private JDateDay thePrevDate = null;
-
-        /**
-         * Get the portfolio.
-         * @return the portfolio
-         */
-        private PortfolioBucket getPortfolio() {
-            return thePortfolio;
-        }
 
         /**
          * Get the selected date.
@@ -521,7 +348,7 @@ public class SpotSelect
         /**
          * Constructor.
          */
-        private SpotState() {
+        private SpotRatesState() {
             theDate = new JDateDay();
         }
 
@@ -529,8 +356,7 @@ public class SpotSelect
          * Constructor.
          * @param pState state to copy from
          */
-        private SpotState(final SpotState pState) {
-            thePortfolio = pState.getPortfolio();
+        private SpotRatesState(final SpotRatesState pState) {
             theDate = new JDateDay(pState.getDate());
             if (pState.getNextDate() != null) {
                 theNextDate = new JDateDay(pState.getNextDate());
@@ -538,20 +364,6 @@ public class SpotSelect
             if (pState.getPrevDate() != null) {
                 thePrevDate = new JDateDay(pState.getPrevDate());
             }
-        }
-
-        /**
-         * Set new Portfolio.
-         * @param pPortfolio the Portfolio
-         * @return true/false did a change occur
-         */
-        private boolean setPortfolio(final PortfolioBucket pPortfolio) {
-            /* Adjust the selected portfolio */
-            if (!Difference.isEqual(pPortfolio, thePortfolio)) {
-                thePortfolio = pPortfolio;
-                return true;
-            }
-            return false;
         }
 
         /**
@@ -609,7 +421,6 @@ public class SpotSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
-            thePortButton.setValue(thePortfolio);
         }
     }
 }

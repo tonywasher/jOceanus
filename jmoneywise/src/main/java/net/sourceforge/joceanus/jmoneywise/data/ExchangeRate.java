@@ -23,18 +23,23 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
@@ -49,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 /**
  * ExchangeRate class.
  */
-public final class ExchangeRate
+public class ExchangeRate
         extends DataItem<MoneyWiseDataType>
         implements Comparable<ExchangeRate> {
     /**
@@ -65,7 +70,7 @@ public final class ExchangeRate
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
 
     /**
      * Date Field Id.
@@ -316,7 +321,7 @@ public final class ExchangeRate
      * Set exchange rate value.
      * @param pValue the value
      */
-    private void setValueExchangeRate(final JRatio pValue) {
+    protected void setValueExchangeRate(final JRatio pValue) {
         getValueSet().setValue(FIELD_RATE, pValue);
     }
 
@@ -348,10 +353,18 @@ public final class ExchangeRate
      * @param pList the list
      * @param pRate The Rate to copy
      */
-    protected ExchangeRate(final ExchangeRateList pList,
+    protected ExchangeRate(final ExchangeRateBaseList<? extends ExchangeRate> pList,
                            final ExchangeRate pRate) {
         /* Set standard values */
         super(pList, pRate);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public ExchangeRate(final ExchangeRateBaseList<? extends ExchangeRate> pList) {
+        super(pList, 0);
     }
 
     /**
@@ -516,9 +529,18 @@ public final class ExchangeRate
         if (myDate == null) {
             addError(ERROR_MISSING, FIELD_DATE);
 
+            /* else date is non-null */
+        } else {
+            /* Date must be unique for this currency */
+            ExchangeRateDataMap<? extends ExchangeRate> myMap = myList.getDataMap();
+            if (!myMap.validRateCount(this)) {
+                addError(ERROR_DUPLICATE, FIELD_DATE);
+            }
+
             /* The date must be in-range */
-        } else if (myRange.compareTo(myDate) != 0) {
-            addError(ERROR_RANGE, FIELD_DATE);
+            if (myRange.compareTo(myDate) != 0) {
+                addError(ERROR_RANGE, FIELD_DATE);
+            }
         }
 
         /* FromCurrency must be non-null and enabled */
@@ -546,11 +568,6 @@ public final class ExchangeRate
             AccountCurrency myDefault = getDataSet().getDefaultCurrency();
             if (!myFrom.equals(myDefault)) {
                 addError(ERROR_DEF, FIELD_FROM);
-            }
-
-            /* Cannot have duplicate rate */
-            if (myList.countInstances(this) > 1) {
-                addError(ERROR_DUPLICATE, FIELD_DATE);
             }
         }
 
@@ -611,10 +628,49 @@ public final class ExchangeRate
     }
 
     /**
+     * Price List.
+     * @param <T> the data type
+     */
+    public abstract static class ExchangeRateBaseList<T extends ExchangeRate>
+            extends DataList<T, MoneyWiseDataType> {
+        /**
+         * Construct an empty CORE Price list.
+         * @param pData the DataSet for the list
+         * @param pClass the class of the item
+         * @param pItemType the item type
+         */
+        protected ExchangeRateBaseList(final MoneyWiseData pData,
+                                       final Class<T> pClass,
+                                       final MoneyWiseDataType pItemType) {
+            /* Call super-constructor */
+            super(pClass, pData, pItemType, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected ExchangeRateBaseList(final ExchangeRateBaseList<T> pSource) {
+            /* Call super-constructor */
+            super(pSource);
+        }
+
+        @Override
+        protected ExchangeRateDataMap<T> getDataMap() {
+            return (ExchangeRateDataMap<T>) super.getDataMap();
+        }
+
+        @Override
+        protected ExchangeRateDataMap<T> allocateDataMap() {
+            return new ExchangeRateDataMap<T>();
+        }
+    }
+
+    /**
      * The ExchangeRate List class.
      */
     public static class ExchangeRateList
-            extends DataList<ExchangeRate, MoneyWiseDataType> {
+            extends ExchangeRateBaseList<ExchangeRate> {
         /**
          * Local Report fields.
          */
@@ -674,7 +730,7 @@ public final class ExchangeRate
          * @param pData the DataSet for the list
          */
         protected ExchangeRateList(final MoneyWiseData pData) {
-            super(ExchangeRate.class, pData, MoneyWiseDataType.EXCHANGERATE, ListStyle.CORE);
+            super(pData, ExchangeRate.class, MoneyWiseDataType.EXCHANGERATE);
         }
 
         @Override
@@ -690,44 +746,6 @@ public final class ExchangeRate
          */
         protected ExchangeRateList(final ExchangeRateList pSource) {
             super(pSource);
-        }
-
-        /**
-         * Count the instances of an exchange rate.
-         * @param pRate the rate to check for
-         * @return The # of instances of the name
-         */
-        protected int countInstances(final ExchangeRate pRate) {
-            /* Access key values */
-            JDateDay myDate = pRate.getDate();
-            AccountCurrency myFrom = pRate.getFromCurrency();
-            AccountCurrency myTo = pRate.getToCurrency();
-
-            /* Access the iterator */
-            Iterator<ExchangeRate> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                ExchangeRate myCurr = myIterator.next();
-
-                /* Ignore different rates */
-                if (!myDate.equals(myCurr.getDate())) {
-                    continue;
-                }
-                if (!myFrom.equals(myCurr.getFromCurrency())) {
-                    continue;
-                }
-                if (!myTo.equals(myCurr.getToCurrency())) {
-                    continue;
-                }
-
-                /* Increment count */
-                iCount++;
-            }
-
-            /* Return to caller */
-            return iCount;
         }
 
         /**
@@ -905,12 +923,6 @@ public final class ExchangeRate
         }
 
         @Override
-        protected DataMapItem<ExchangeRate, MoneyWiseDataType> allocateDataMap() {
-            /* Unused */
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public void postProcessOnLoad() throws JOceanusException {
             /* Resolve links and sort the data */
             resolveDataSetLinks();
@@ -921,8 +933,129 @@ public final class ExchangeRate
         }
 
         @Override
+        public void prepareForAnalysis() {
+            /* Just ensure the map */
+            ensureMap();
+        }
+
+        @Override
         protected void ensureMap() {
             /* Null operation */
+        }
+    }
+
+    /**
+     * The dataMap class.
+     * @param <T> the data type
+     */
+    protected static class ExchangeRateDataMap<T extends ExchangeRate>
+            implements DataMapItem<T, MoneyWiseDataType>, JDataContents {
+        /**
+         * Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+
+        /**
+         * CategoryMap Field Id.
+         */
+        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_MAPOFMAPS.equals(pField)) {
+                return theMapOfMaps;
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Map of Maps.
+         */
+        private final Map<AccountCurrency, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Constructor.
+         */
+        public ExchangeRateDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<AccountCurrency, Map<JDateDay, Integer>>();
+        }
+
+        @Override
+        public void resetMap() {
+            theMapOfMaps.clear();
+        }
+
+        @Override
+        public void adjustForItem(final T pItem) {
+            /* Access the Currency Id */
+            AccountCurrency myCurrency = pItem.getToCurrency();
+            if (myCurrency == null) {
+                return;
+            }
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myCurrency);
+            if (myMap == null) {
+                myMap = new HashMap<JDateDay, Integer>();
+                theMapOfMaps.put(myCurrency, myMap);
+            }
+
+            /* Adjust rate count */
+            JDateDay myDate = pItem.getDate();
+            Integer myCount = myMap.get(myDate);
+            if (myCount == null) {
+                myMap.put(myDate, DataInstanceMap.ONE);
+            } else {
+                myMap.put(myDate, myCount + 1);
+            }
+        }
+
+        /**
+         * Check validity of Rate.
+         * @param pItem the rate
+         * @return true/false
+         */
+        public boolean validRateCount(final ExchangeRate pItem) {
+            /* Access the Details */
+            AccountCurrency myCurrency = pItem.getToCurrency();
+            JDateDay myDate = pItem.getDate();
+
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myCurrency);
+            if (myMap != null) {
+                Integer myResult = myMap.get(myDate);
+                return DataInstanceMap.ONE.equals(myResult);
+            }
+            return false;
+        }
+
+        /**
+         * Check availability of date for a currency.
+         * @param pCurrency the currency
+         * @param pDate the key to look up
+         * @return true/false
+         */
+        public boolean availableDate(final AccountCurrency pCurrency,
+                                     final JDateDay pDate) {
+            /* Access the map */
+            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pCurrency);
+            return myMap != null
+                                ? myMap.get(pDate) == null
+                                : true;
         }
     }
 }

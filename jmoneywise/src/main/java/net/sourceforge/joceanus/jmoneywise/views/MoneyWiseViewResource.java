@@ -41,19 +41,29 @@ public enum MoneyWiseViewResource implements ResourceId {
     SPOTPRICE_NAME("SpotPrice.Name"),
 
     /**
-     * SpotPrice NextDate.
+     * SpotRate Name.
      */
-    SPOTPRICE_NEXTDATE("SpotPrice.NextDate"),
+    SPOTRATE_NAME("SpotRate.Name"),
 
     /**
-     * SpotPrice PrevDate.
+     * SpotEvent NextDate.
      */
-    SPOTPRICE_PREVDATE("SpotPrice.PrevDate"),
+    SPOTEVENT_NEXTDATE("SpotEvent.NextDate"),
 
     /**
-     * SpotPrice PrevDate.
+     * SpotEvent PrevDate.
+     */
+    SPOTEVENT_PREVDATE("SpotEvent.PrevDate"),
+
+    /**
+     * SpotPrice PrevPrice.
      */
     SPOTPRICE_PREVPRICE("SpotPrice.PrevPrice"),
+
+    /**
+     * SpotRate PrevRate.
+     */
+    SPOTRATE_PREVRATE("SpotRate.PrevRate"),
 
     /**
      * ViewPrice Name.

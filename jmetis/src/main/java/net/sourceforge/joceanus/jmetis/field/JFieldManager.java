@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RatioCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
@@ -415,6 +416,15 @@ public class JFieldManager {
     public UnitsCellEditor allocateUnitsCellEditor() {
         /* Return a new UnitsEditor object */
         return new UnitsCellEditor(theFormatter.getDecimalParser());
+    }
+
+    /**
+     * Allocate a RatioEditor object.
+     * @return the ratio editor
+     */
+    public RatioCellEditor allocateRatioCellEditor() {
+        /* Return a new RatioEditor object */
+        return new RatioCellEditor(theFormatter.getDecimalParser());
     }
 
     /**
