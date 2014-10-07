@@ -376,7 +376,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     public abstract void refreshData();
 
     /**
-     * Adjust Fields.
+     * Adjust Editable Fields.
      * @param isEditable is the item editable?
      */
     protected abstract void adjustFields(final boolean isEditable);

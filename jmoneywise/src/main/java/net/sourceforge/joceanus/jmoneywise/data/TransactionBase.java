@@ -1201,10 +1201,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         return myResult;
     }
 
-    /**
-     * Determines whether a line is locked to updates.
-     * @return true/false
-     */
     @Override
     public boolean isLocked() {
         AssetBase<?> myCredit = getCredit();

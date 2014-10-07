@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -387,22 +388,119 @@ public class TransactionPanel
         boolean bIsLocked = myTrans.isLocked();
 
         /* Determine whether the comments field should be visible */
-        boolean bShowComments = isEditable || myTrans.getComments() != null;
-        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), bShowComments);
+        boolean bShowField = isEditable || myTrans.getComments() != null;
+        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), bShowField);
 
         /* Determine whether the reference field should be visible */
-        boolean bShowReference = isEditable || myTrans.getReference() != null;
-        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), bShowReference);
+        bShowField = isEditable || myTrans.getReference() != null;
+        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), bShowField);
 
         /* Determine whether the tags field should be visible */
-        boolean bShowTags = isEditable || myTrans.tagIterator() != null;
-        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowTags);
+        bShowField = isEditable || myTrans.tagIterator() != null;
+        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
+
+        /* Determine whether the taxCredit field should be visible */
+        JDataField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
+        boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
+        bShowField = bEditField || myTrans.getTaxCredit() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the natIns field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.NATINSURANCE);
+        bShowField = bEditField || myTrans.getNatInsurance() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the benefit field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DEEMEDBENEFIT);
+        bShowField = bEditField || myTrans.getDeemedBenefit() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the donation field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.CHARITYDONATION);
+        bShowField = bEditField || myTrans.getCharityDonation() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the portfolio field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PORTFOLIO);
+        bShowField = bEditField || myTrans.getPortfolio() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the creditUnits field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.CREDITUNITS);
+        bShowField = bEditField || myTrans.getCreditUnits() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the debit units field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DEBITUNITS);
+        bShowField = bEditField || myTrans.getDebitUnits() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the dilution field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DILUTION);
+        bShowField = bEditField || myTrans.getDilution() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the thirdParty field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.THIRDPARTY);
+        bShowField = bEditField || myTrans.getThirdParty() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the years field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.QUALIFYYEARS);
+        bShowField = bEditField || myTrans.getYears() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the reconciled field should be visible */
         boolean bShowReconciled = isEditable || bIsReconciled;
         theReconciledState.setState(!bIsLocked);
         theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
+        theFieldSet.setEditable(Transaction.FIELD_AMOUNT, isEditable && !bIsReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_DEBIT, isEditable && !bIsReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_CREDIT, isEditable && !bIsReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_CATEGORY, isEditable && !bIsReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_DATE, isEditable && !bIsReconciled);
+    }
+
+    /**
+     * Is the field editable?
+     * @param pTrans the transaction
+     * @param pField the field class
+     * @return true/false
+     */
+    public static boolean isEditableField(final Transaction pTrans,
+                                          final TransactionInfoClass pField) {
+        /* Access the infoSet */
+        TransactionInfoSet myInfoSet = pTrans.getInfoSet();
+
+        /* If the transaction is reconciled */
+        if (pTrans.isReconciled()) {
+            /* Only allow editing of metaData */
+            return myInfoSet.isMetaData(pField);
+        }
+
+        /* Check whether the field is available */
+        JDataFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        return !isRequired.equals(JDataFieldRequired.NOTALLOWED);
     }
 
     @Override

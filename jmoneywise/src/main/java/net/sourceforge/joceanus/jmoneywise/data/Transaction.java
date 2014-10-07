@@ -438,6 +438,24 @@ public class Transaction
     }
 
     @Override
+    public boolean isLocked() {
+        /* Check credit/debit */
+        if (super.isLocked()) {
+            return true;
+        }
+
+        /* Check Portfolio */
+        Portfolio myPortfolio = getPortfolio();
+        if ((myPortfolio != null) && myPortfolio.isClosed()) {
+            return true;
+        }
+
+        /* Check ThirdParty */
+        Deposit myThirdParty = getThirdParty();
+        return (myThirdParty != null) && myThirdParty.isClosed();
+    }
+
+    @Override
     public Transaction getBase() {
         return (Transaction) super.getBase();
     }

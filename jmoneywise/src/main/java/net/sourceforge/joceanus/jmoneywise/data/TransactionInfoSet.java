@@ -213,7 +213,7 @@ public class TransactionInfoSet
      * @param pClass the infoSet class
      * @return the status
      */
-    protected JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
+    public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
         AssetBase<?> myDebit = myTransaction.getDebit();
@@ -290,6 +290,26 @@ public class TransactionInfoSet
             case CREDITAMOUNT:
             default:
                 return JDataFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if an infoSet class is metaData.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public boolean isMetaData(final TransactionInfoClass pClass) {
+        /* Switch on class */
+        switch (pClass) {
+        /* Can always change reference/comments/tags */
+            case REFERENCE:
+            case COMMENTS:
+            case TRANSTAG:
+                return true;
+
+                /* All others are locked */
+            default:
+                return false;
         }
     }
 

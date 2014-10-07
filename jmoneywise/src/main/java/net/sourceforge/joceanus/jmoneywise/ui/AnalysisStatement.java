@@ -1337,15 +1337,39 @@ public class AnalysisStatement
         private boolean isCellEditable(final Transaction pItem,
                                        final int pColIndex) {
             switch (pColIndex) {
-                case COLUMN_DATE:
                 case COLUMN_RECONCILED:
                     return !pItem.isLocked();
+                case COLUMN_DATE:
+                case COLUMN_CREDIT:
+                case COLUMN_DEBIT:
+                case COLUMN_CATEGORY:
+                case COLUMN_AMOUNT:
+                case COLUMN_ACTION:
+                    return !pItem.isReconciled();
                 case COLUMN_DESC:
                 case COLUMN_REF:
                 case COLUMN_TAGS:
                     return true;
-                case COLUMN_ACTION:
-                    return !pItem.isReconciled();
+                case COLUMN_TAXCREDIT:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
+                case COLUMN_NATINS:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.NATINSURANCE);
+                case COLUMN_BENEFIT:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
+                case COLUMN_DONATION:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.CHARITYDONATION);
+                case COLUMN_CREDUNITS:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.CREDITUNITS);
+                case COLUMN_DEBUNITS:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEBITUNITS);
+                case COLUMN_DILUTION:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
+                case COLUMN_PORTFOLIO:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PORTFOLIO);
+                case COLUMN_3RDPARTY:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.THIRDPARTY);
+                case COLUMN_QUALYEARS:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.QUALIFYYEARS);
                 default:
                     return false;
             }
