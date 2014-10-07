@@ -140,7 +140,7 @@ public class PayeePanel
     private JPanel buildMainPanel() {
         /* Build the closed button state */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -278,6 +278,7 @@ public class PayeePanel
 
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed || !bIsRelevant;
+        theFieldSet.setEditable(Payee.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */

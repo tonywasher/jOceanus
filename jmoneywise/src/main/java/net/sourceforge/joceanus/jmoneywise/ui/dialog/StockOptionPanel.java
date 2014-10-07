@@ -175,7 +175,7 @@ public class StockOptionPanel
     private JPanel buildMainPanel() {
         /* Build the closed button state */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -279,6 +279,7 @@ public class StockOptionPanel
         boolean bEditClosed = bIsClosed
                                        ? false
                                        : !bIsRelevant;
+        theFieldSet.setEditable(StockOption.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */

@@ -117,8 +117,15 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
                                        ? -1
                                        : myList.indexOf(myCurr);
 
-            /* Convert model index to view */
+            /* If we have an active item */
             if (iIndex != -1) {
+                /* Adjust for any header */
+                T myFirst = theTableModel.getItemAtIndex(0);
+                if (myFirst.isHeader() && theTableModel.includeRow(myFirst)) {
+                    iIndex++;
+                }
+
+                /* Convert index to view */
                 iIndex = theTable.convertRowIndexToView(iIndex);
             }
 

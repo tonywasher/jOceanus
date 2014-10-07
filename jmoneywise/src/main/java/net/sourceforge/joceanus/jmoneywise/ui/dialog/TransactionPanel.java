@@ -302,7 +302,7 @@ public class TransactionPanel
         /* Create the Tax panel */
         JEnablePanel myPanel = new JEnablePanel();
 
-        /* Layout the tax panel */
+        /* Layout the Tax panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), myPanel);
@@ -375,10 +375,16 @@ public class TransactionPanel
     }
 
     @Override
+    protected boolean isDeletable() {
+        return !getItem().isReconciled();
+    }
+
+    @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Transaction myTrans = getItem();
-        // boolean bIsReconciled = myTrans.isReconciled();
+        boolean bIsReconciled = myTrans.isReconciled();
+        boolean bIsLocked = myTrans.isLocked();
 
         /* Determine whether the comments field should be visible */
         boolean bShowComments = isEditable || myTrans.getComments() != null;
@@ -387,6 +393,16 @@ public class TransactionPanel
         /* Determine whether the reference field should be visible */
         boolean bShowReference = isEditable || myTrans.getReference() != null;
         theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), bShowReference);
+
+        /* Determine whether the tags field should be visible */
+        boolean bShowTags = isEditable || myTrans.tagIterator() != null;
+        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowTags);
+
+        /* Determine whether the reconciled field should be visible */
+        boolean bShowReconciled = isEditable || bIsReconciled;
+        theReconciledState.setState(!bIsLocked);
+        theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
     }
 
     @Override

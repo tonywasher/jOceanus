@@ -168,7 +168,7 @@ public class CashPanel
     private JPanel buildMainPanel() {
         /* Set states */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -286,6 +286,7 @@ public class CashPanel
 
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed || !bIsRelevant;
+        theFieldSet.setEditable(Cash.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */

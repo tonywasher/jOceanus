@@ -187,7 +187,7 @@ public class DepositPanel
     private JPanel buildMainPanel() {
         /* Set states */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
         JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
         MoneyWiseIcons.buildOptionButton(theTaxFreeState);
         JIconButton<Boolean> myGrossButton = new JIconButton<Boolean>(theGrossState);
@@ -342,16 +342,16 @@ public class DepositPanel
         boolean bEditClosed = bIsClosed
                                        ? !myDeposit.getParent().isClosed()
                                        : !bIsRelevant;
-        theFieldSet.setEditable(Deposit.FIELD_CLOSED, bIsChangeable);
+        theFieldSet.setEditable(Deposit.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the taxFree/Gross buttons should be visible */
         boolean bShowTaxFree = bIsTaxFree || (bIsChangeable && !bIsGross);
         theFieldSet.setVisibility(Deposit.FIELD_TAXFREE, bShowTaxFree);
-        theTaxFreeState.setState(bEditClosed);
+        theTaxFreeState.setState(bIsChangeable);
         boolean bShowGross = bIsGross || (bIsChangeable && !bIsTaxFree);
         theFieldSet.setVisibility(Deposit.FIELD_GROSS, bShowGross);
-        theGrossState.setState(bEditClosed);
+        theGrossState.setState(bIsChangeable);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
@@ -374,7 +374,7 @@ public class DepositPanel
         boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
         JDataField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
         theFieldSet.setVisibility(myMaturityField, bShowMaturity);
-        theFieldSet.setEditable(myMaturityField, !bIsClosed);
+        theFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
 
         /* Category, Currency, Gross and TaxFree status cannot be changed if the item is active */
         boolean canTaxFree = myClass.canTaxFree();
@@ -388,6 +388,9 @@ public class DepositPanel
 
         /* Set currency for opening balance */
         theFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getDepositCurrency().getCurrency());
+
+        /* Set editable value for parent */
+        theFieldSet.setEditable(Deposit.FIELD_PARENT, isEditable && !bIsClosed);
     }
 
     @Override

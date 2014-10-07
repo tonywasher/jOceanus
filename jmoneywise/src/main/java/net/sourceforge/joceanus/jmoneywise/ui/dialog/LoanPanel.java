@@ -159,7 +159,7 @@ public class LoanPanel
     private JPanel buildMainPanel() {
         /* Build the closed button state */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -289,6 +289,7 @@ public class LoanPanel
         boolean bEditClosed = bIsClosed
                                        ? !myLoan.getParent().isClosed()
                                        : !bIsRelevant;
+        theFieldSet.setEditable(Loan.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
@@ -308,6 +309,9 @@ public class LoanPanel
         /* Category/Currency cannot be changed if the item is active */
         theFieldSet.setEditable(Loan.FIELD_CATEGORY, isEditable && !bIsActive);
         theFieldSet.setEditable(Loan.FIELD_CURRENCY, isEditable && !bIsActive);
+
+        /* Set editable value for parent */
+        theFieldSet.setEditable(Loan.FIELD_PARENT, isEditable && !bIsClosed);
     }
 
     @Override

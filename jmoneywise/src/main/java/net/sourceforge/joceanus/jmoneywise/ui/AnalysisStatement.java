@@ -1341,6 +1341,8 @@ public class AnalysisStatement
                 case COLUMN_RECONCILED:
                     return !pItem.isLocked();
                 case COLUMN_DESC:
+                case COLUMN_REF:
+                case COLUMN_TAGS:
                     return true;
                 case COLUMN_ACTION:
                     return !pItem.isReconciled();

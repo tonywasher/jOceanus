@@ -34,6 +34,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -897,7 +898,10 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Display it */
             theComponent.setValue(myValue);
-            getReadOnlyLabel().setIcon(theComponent.getIcon());
+            Icon myIcon = theComponent.getIcon();
+            if (myIcon != null) {
+                getReadOnlyLabel().setIcon(theComponent.getIcon());
+            }
         }
 
         /**

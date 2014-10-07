@@ -414,13 +414,15 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* Calculate the character width */
         int myCharWidth = pComponent.getFontMetrics(pComponent.getFont()).stringWidth("w");
 
-        /* Allocate Dimension */
+        /* Allocate Dimensions */
         Dimension myPrefDims = new Dimension(pWidth * myCharWidth, FIELD_HEIGHT);
         Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, FIELD_HEIGHT);
+        Dimension myMinDims = new Dimension(1, FIELD_HEIGHT);
 
         /* Restrict the field */
         pComponent.setPreferredSize(myPrefDims);
         pComponent.setMaximumSize(myMaxDims);
+        pComponent.setMinimumSize(myMinDims);
     }
 
     /**

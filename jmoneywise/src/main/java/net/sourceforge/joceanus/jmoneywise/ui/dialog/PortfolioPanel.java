@@ -152,7 +152,7 @@ public class PortfolioPanel
     private JPanel buildMainPanel() {
         /* Build the button states */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
         JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
         MoneyWiseIcons.buildOptionButton(theTaxFreeState);
 
@@ -299,6 +299,7 @@ public class PortfolioPanel
 
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed || !bIsRelevant;
+        theFieldSet.setEditable(Portfolio.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the taxFree button should be visible */
@@ -332,6 +333,9 @@ public class PortfolioPanel
         theFieldSet.setEditable(Portfolio.FIELD_HOLDING, bIsChangeable);
         theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, bIsChangeable);
         theTaxFreeState.setState(bIsChangeable);
+
+        /* Set editable value for parent */
+        theFieldSet.setEditable(Portfolio.FIELD_PARENT, isEditable && !bIsClosed);
     }
 
     @Override

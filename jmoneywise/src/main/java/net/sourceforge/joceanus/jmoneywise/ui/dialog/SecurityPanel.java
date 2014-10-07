@@ -170,7 +170,7 @@ public class SecurityPanel
     private JPanel buildMainPanel() {
         /* Build the closed button state */
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
-        MoneyWiseIcons.buildOptionButton(theClosedState);
+        MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -271,6 +271,7 @@ public class SecurityPanel
         boolean bEditClosed = bIsClosed
                                        ? !mySecurity.getParent().isClosed()
                                        : !bIsRelevant;
+        theFieldSet.setEditable(Security.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
         /* Determine whether the description field should be visible */
@@ -284,6 +285,9 @@ public class SecurityPanel
         /* Security type and currency cannot be changed if the item is active */
         theFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
         theFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
+
+        /* Set editable value for parent */
+        theFieldSet.setEditable(Security.FIELD_PARENT, isEditable && !bIsClosed);
     }
 
     @Override
