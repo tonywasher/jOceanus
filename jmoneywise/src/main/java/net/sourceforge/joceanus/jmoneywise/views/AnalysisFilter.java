@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -56,7 +57,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
@@ -772,7 +772,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         /**
          * The tag.
          */
-        private final TransactionTag theTransTag;
+        private final TransactionTagBucket theTransTag;
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -787,7 +787,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          * Obtain bucket.
          * @return theBucket
          */
-        public TransactionTag getTag() {
+        public TransactionTagBucket getTag() {
             return theTransTag;
         }
 
@@ -805,7 +805,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          * Constructor.
          * @param pTag the transactionTag
          */
-        public TagFilter(final TransactionTag pTag) {
+        public TagFilter(final TransactionTagBucket pTag) {
             /* Store parameter */
             super(AccountAttribute.class);
             theTransTag = pTag;
@@ -814,7 +814,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
 
         @Override
         public boolean filterSingleTransaction(final Transaction pTrans) {
-            return pTrans.isHeader() || !pTrans.hasTransactionTag(theTransTag);
+            return pTrans.isHeader() || !theTransTag.hasTransaction(pTrans);
         }
 
         @Override

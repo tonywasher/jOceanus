@@ -174,7 +174,7 @@ public final class DepositBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public DepositBucketList(final Analysis pAnalysis) {
+        protected DepositBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(DepositBucket.class, pAnalysis);
         }
@@ -185,9 +185,9 @@ public final class DepositBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public DepositBucketList(final Analysis pAnalysis,
-                                 final DepositBucketList pBase,
-                                 final JDateDay pDate) {
+        protected DepositBucketList(final Analysis pAnalysis,
+                                    final DepositBucketList pBase,
+                                    final JDateDay pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -201,9 +201,9 @@ public final class DepositBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public DepositBucketList(final Analysis pAnalysis,
-                                 final DepositBucketList pBase,
-                                 final JDateDayRange pRange) {
+        protected DepositBucketList(final Analysis pAnalysis,
+                                    final DepositBucketList pBase,
+                                    final JDateDayRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

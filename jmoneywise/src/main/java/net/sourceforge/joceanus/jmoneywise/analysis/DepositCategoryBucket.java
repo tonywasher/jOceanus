@@ -181,7 +181,7 @@ public final class DepositCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public DepositCategoryBucketList(final Analysis pAnalysis) {
+        protected DepositCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(DepositCategoryBucket.class);
             theAnalysis = pAnalysis;

@@ -591,8 +591,8 @@ public final class TaxCalcBucket
          * @param pAnalysis the analysis
          * @param pYear the TaxYear
          */
-        public TaxCalcBucketList(final Analysis pAnalysis,
-                                 final TaxYear pYear) {
+        protected TaxCalcBucketList(final Analysis pAnalysis,
+                                    final TaxYear pYear) {
             super(TaxCalcBucket.class);
             theAnalysis = pAnalysis;
             theYear = pYear;

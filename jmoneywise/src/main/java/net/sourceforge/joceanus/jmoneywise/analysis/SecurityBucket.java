@@ -784,7 +784,7 @@ public final class SecurityBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public SecurityBucketList(final Analysis pAnalysis) {
+        protected SecurityBucketList(final Analysis pAnalysis) {
             super(SecurityBucket.class);
             theAnalysis = pAnalysis;
         }
@@ -795,9 +795,9 @@ public final class SecurityBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public SecurityBucketList(final Analysis pAnalysis,
-                                  final SecurityBucketList pBase,
-                                  final JDateDay pDate) {
+        protected SecurityBucketList(final Analysis pAnalysis,
+                                     final SecurityBucketList pBase,
+                                     final JDateDay pDate) {
             /* Initialise class */
             super(SecurityBucket.class);
             theAnalysis = pAnalysis;
@@ -824,9 +824,9 @@ public final class SecurityBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public SecurityBucketList(final Analysis pAnalysis,
-                                  final SecurityBucketList pBase,
-                                  final JDateDayRange pRange) {
+        protected SecurityBucketList(final Analysis pAnalysis,
+                                     final SecurityBucketList pBase,
+                                     final JDateDayRange pRange) {
             /* Initialise class */
             super(SecurityBucket.class);
             theAnalysis = pAnalysis;

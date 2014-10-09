@@ -45,12 +45,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -122,6 +122,11 @@ public class Analysis
     private static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListName());
 
     /**
+     * TransactionTagBuckets Field Id.
+     */
+    private static final JDataField FIELD_TRANSTAGS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListName());
+
+    /**
      * TaxBasisBuckets Field Id.
      */
     private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListName());
@@ -150,11 +155,6 @@ public class Analysis
      * Dilutions Field Id.
      */
     private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
-
-    /**
-     * Tags Field Id.
-     */
-    private static final JDataField FIELD_TAGS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListName());
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -206,6 +206,11 @@ public class Analysis
                                                  ? JDataFieldValue.SKIP
                                                  : theEventCategories;
         }
+        if (FIELD_TRANSTAGS.equals(pField)) {
+            return (theTransTags.isEmpty())
+                                           ? JDataFieldValue.SKIP
+                                           : theTransTags;
+        }
         if (FIELD_TAXBASIS.equals(pField)) {
             return (theTaxBasis.isEmpty())
                                           ? JDataFieldValue.SKIP
@@ -235,11 +240,6 @@ public class Analysis
             return (theDilutions.isEmpty())
                                            ? JDataFieldValue.SKIP
                                            : theDilutions;
-        }
-        if (FIELD_TAGS.equals(pField)) {
-            return (theTags.isEmpty())
-                                      ? JDataFieldValue.SKIP
-                                      : theTags;
         }
 
         /* Unknown */
@@ -312,6 +312,11 @@ public class Analysis
     private final EventCategoryBucketList theEventCategories;
 
     /**
+     * The TransactionTag buckets.
+     */
+    private final TransactionTagBucketList theTransTags;
+
+    /**
      * The tax basis buckets.
      */
     private final TaxBasisBucketList theTaxBasis;
@@ -340,11 +345,6 @@ public class Analysis
      * The dilutions.
      */
     private final DilutionEventMap theDilutions;
-
-    /**
-     * The tags.
-     */
-    private final TransactionTagList theTags;
 
     /**
      * Obtain the data.
@@ -451,6 +451,14 @@ public class Analysis
     }
 
     /**
+     * Obtain the transactionTag list.
+     * @return the list
+     */
+    public TransactionTagBucketList getTransactionTags() {
+        return theTransTags;
+    }
+
+    /**
      * Obtain the tax basis list.
      * @return the list
      */
@@ -499,14 +507,6 @@ public class Analysis
     }
 
     /**
-     * Obtain the tags.
-     * @return the tags
-     */
-    public TransactionTagList getTransactionTags() {
-        return theTags;
-    }
-
-    /**
      * Constructor for a full analysis.
      * @param pData the data to analyse events for
      * @param pPreferenceMgr the preference manager
@@ -526,6 +526,7 @@ public class Analysis
         thePayees = new PayeeBucketList(this);
         theTaxBasis = new TaxBasisBucketList(this);
         theEventCategories = new EventCategoryBucketList(this);
+        theTransTags = new TransactionTagBucketList(this);
 
         /* Create totalling buckets */
         theDepositCategories = new DepositCategoryBucketList(this);
@@ -536,7 +537,6 @@ public class Analysis
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
         theDilutions = new DilutionEventMap();
-        theTags = new TransactionTagList(theData);
 
         /* Create the security price map */
         thePrices = new SecurityPriceMap(theData);
@@ -565,7 +565,6 @@ public class Analysis
         theRates = pSource.getRates();
         theCharges = pSource.getCharges();
         theDilutions = pSource.getDilutions();
-        theTags = pSource.getTransactionTags();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, pSource.getDeposits(), pDate);
@@ -574,6 +573,7 @@ public class Analysis
         thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
+        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pDate);
         theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
 
         /* Create totalling buckets */
@@ -600,7 +600,6 @@ public class Analysis
         theRates = pSource.getRates();
         theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
         theDilutions = pSource.getDilutions();
-        theTags = pSource.getTransactionTags();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, pSource.getDeposits(), pRange);
@@ -609,6 +608,7 @@ public class Analysis
         thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
+        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pRange);
         theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
 
         /* Create totalling buckets */

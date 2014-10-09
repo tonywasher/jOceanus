@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -57,8 +58,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -169,6 +168,11 @@ public class TransactionAnalyser
     private final EventCategoryBucketList theCategoryBuckets;
 
     /**
+     * The transactionTag buckets.
+     */
+    private final TransactionTagBucketList theTagBuckets;
+
+    /**
      * The taxBasis buckets.
      */
     private final TaxBasisBucketList theTaxBasisBuckets;
@@ -237,6 +241,7 @@ public class TransactionAnalyser
         thePortfolioBuckets = theAnalysis.getPortfolios();
         thePayeeBuckets = theAnalysis.getPayees();
         theCategoryBuckets = theAnalysis.getEventCategories();
+        theTagBuckets = theAnalysis.getTransactionTags();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
@@ -341,23 +346,8 @@ public class TransactionAnalyser
         /* Look for tags */
         Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
         if (myIterator != null) {
-            /* Loop through the tags */
-            TransactionTagList myTags = theAnalysis.getTransactionTags();
-            while (myIterator.hasNext()) {
-                TransactionInfo myInfo = myIterator.next();
-
-                /* if the item is not deleted */
-                if (!myInfo.isDeleted()) {
-                    /* Access details */
-                    TransactionTag myTag = myInfo.getTransactionTag();
-
-                    /* If this is a new tag */
-                    if (!myTags.contains(myTag)) {
-                        /* Add the tag */
-                        myTags.add(myTag);
-                    }
-                }
-            }
+            /* Process the transaction tags */
+            theTagBuckets.processTransaction(pTrans, myIterator);
         }
 
         /* If the event relates to a security item, split out the workings */

@@ -392,7 +392,7 @@ public final class TaxBasisBucket
             return false;
         }
 
-        /* Compare the Tax Categories */
+        /* Compare the Tax Bases */
         TaxBasisBucket myThat = (TaxBasisBucket) pThat;
         if (!getTaxBasis().equals(myThat.getTaxBasis())) {
             return false;
@@ -671,7 +671,6 @@ public final class TaxBasisBucket
     public static class TaxBasisBucketList
             extends OrderedIdList<Integer, TaxBasisBucket>
             implements JDataContents {
-
         /**
          * Local Report fields.
          */
@@ -743,7 +742,7 @@ public final class TaxBasisBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public TaxBasisBucketList(final Analysis pAnalysis) {
+        protected TaxBasisBucketList(final Analysis pAnalysis) {
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
@@ -756,9 +755,9 @@ public final class TaxBasisBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public TaxBasisBucketList(final Analysis pAnalysis,
-                                  final TaxBasisBucketList pBase,
-                                  final JDateDay pDate) {
+        protected TaxBasisBucketList(final Analysis pAnalysis,
+                                     final TaxBasisBucketList pBase,
+                                     final JDateDay pDate) {
             /* Initialise class */
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
@@ -787,9 +786,9 @@ public final class TaxBasisBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public TaxBasisBucketList(final Analysis pAnalysis,
-                                  final TaxBasisBucketList pBase,
-                                  final JDateDayRange pRange) {
+        protected TaxBasisBucketList(final Analysis pAnalysis,
+                                     final TaxBasisBucketList pBase,
+                                     final JDateDayRange pRange) {
             /* Initialise class */
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
@@ -823,8 +822,8 @@ public final class TaxBasisBucket
         }
 
         /**
-         * Obtain the EventCategoryBucket for a given event category class.
-         * @param pClass the event category class
+         * Obtain the TaxBasisBucket for a given taxBasis.
+         * @param pClass the taxBasis
          * @return the bucket
          */
         public TaxBasisBucket getBucket(final TaxBasisClass pClass) {
@@ -1015,10 +1014,8 @@ public final class TaxBasisBucket
          * Prune the list to remove irrelevant items.
          */
         protected void prune() {
-            /* Access the iterator */
-            Iterator<TaxBasisBucket> myIterator = listIterator();
-
             /* Loop through the buckets */
+            Iterator<TaxBasisBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
                 TaxBasisBucket myCurr = myIterator.next();
 

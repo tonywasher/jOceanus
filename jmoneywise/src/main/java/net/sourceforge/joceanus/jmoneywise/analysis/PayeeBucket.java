@@ -875,7 +875,7 @@ public final class PayeeBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public PayeeBucketList(final Analysis pAnalysis) {
+        protected PayeeBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
@@ -889,9 +889,9 @@ public final class PayeeBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public PayeeBucketList(final Analysis pAnalysis,
-                               final PayeeBucketList pBase,
-                               final JDateDay pDate) {
+        protected PayeeBucketList(final Analysis pAnalysis,
+                                  final PayeeBucketList pBase,
+                                  final JDateDay pDate) {
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
@@ -920,9 +920,9 @@ public final class PayeeBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public PayeeBucketList(final Analysis pAnalysis,
-                               final PayeeBucketList pBase,
-                               final JDateDayRange pRange) {
+        protected PayeeBucketList(final Analysis pAnalysis,
+                                  final PayeeBucketList pBase,
+                                  final JDateDayRange pRange) {
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;

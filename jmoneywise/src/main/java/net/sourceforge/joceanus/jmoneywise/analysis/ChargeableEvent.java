@@ -305,7 +305,7 @@ public final class ChargeableEvent
         /**
          * Constructor.
          */
-        public ChargeableEventList() {
+        protected ChargeableEventList() {
             super(ChargeableEvent.class);
         }
 
@@ -314,8 +314,8 @@ public final class ChargeableEvent
          * @param pSource the source list.
          * @param pRange the range of events to copy
          */
-        public ChargeableEventList(final ChargeableEventList pSource,
-                                   final JDateDayRange pRange) {
+        protected ChargeableEventList(final ChargeableEventList pSource,
+                                      final JDateDayRange pRange) {
             /* Call super class */
             super(ChargeableEvent.class);
 

@@ -286,7 +286,7 @@ public final class DilutionEvent
          * Add Dilution Event to Map.
          * @param pTrans the base transaction
          */
-        public void addDilution(final Transaction pTrans) {
+        protected void addDilution(final Transaction pTrans) {
             /* Create the dilution event */
             DilutionEvent myDilution = new DilutionEvent(theNextId++, pTrans);
 

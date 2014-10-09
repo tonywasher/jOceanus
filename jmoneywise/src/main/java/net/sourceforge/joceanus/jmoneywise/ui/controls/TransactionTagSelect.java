@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jmetis.field.JFieldElement;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
@@ -65,7 +65,7 @@ public class TransactionTagSelect
     /**
      * The active transaction tag list.
      */
-    private TransactionTagList theTags;
+    private TransactionTagBucketList theTags;
 
     /**
      * The state.
@@ -80,11 +80,11 @@ public class TransactionTagSelect
     /**
      * The tag button.
      */
-    private final JScrollButton<TransactionTag> theTagButton;
+    private final JScrollButton<TransactionTagBucket> theTagButton;
 
     @Override
     public TagFilter getFilter() {
-        TransactionTag myTag = theState.getTag();
+        TransactionTagBucket myTag = theState.getTag();
         return myTag != null
                             ? new TagFilter(myTag)
                             : null;
@@ -100,7 +100,7 @@ public class TransactionTagSelect
      */
     public TransactionTagSelect() {
         /* Create the tags button */
-        theTagButton = new JScrollButton<TransactionTag>();
+        theTagButton = new JScrollButton<TransactionTagBucket>();
 
         /* Create the label */
         JLabel myTagLabel = new JLabel(NLS_TAG + JFieldElement.STR_COLON);
@@ -159,7 +159,7 @@ public class TransactionTagSelect
         theTags = pAnalysis.getTransactionTags();
 
         /* Obtain the current tag */
-        TransactionTag myTag = theState.getTag();
+        TransactionTagBucket myTag = theState.getTag();
 
         /* If we have a selected Tag */
         if (myTag != null) {
@@ -186,7 +186,7 @@ public class TransactionTagSelect
             TagFilter myFilter = (TagFilter) pFilter;
 
             /* Obtain the tag */
-            TransactionTag myTag = myFilter.getTag();
+            TransactionTagBucket myTag = myFilter.getTag();
 
             /* Obtain equivalent bucket */
             myTag = theTags.findItemById(myTag.getOrderedId());
@@ -205,7 +205,7 @@ public class TransactionTagSelect
         /**
          * Tag menu builder.
          */
-        private final JScrollMenuBuilder<TransactionTag> theTagMenuBuilder;
+        private final JScrollMenuBuilder<TransactionTagBucket> theTagMenuBuilder;
 
         /**
          * Constructor.
@@ -235,13 +235,13 @@ public class TransactionTagSelect
             theTagMenuBuilder.clearMenu();
 
             /* Record active item */
-            TransactionTag myCurrent = theState.getTag();
+            TransactionTagBucket myCurrent = theState.getTag();
             JMenuItem myActive = null;
 
             /* Loop through the available tag values */
-            Iterator<TransactionTag> myIterator = theTags.iterator();
+            Iterator<TransactionTagBucket> myIterator = theTags.iterator();
             while (myIterator.hasNext()) {
-                TransactionTag myTag = myIterator.next();
+                TransactionTagBucket myTag = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
                 JMenuItem myItem = theTagMenuBuilder.addItem(myTag);
@@ -280,13 +280,13 @@ public class TransactionTagSelect
         /**
          * The active Tag.
          */
-        private TransactionTag theTransTag;
+        private TransactionTagBucket theTransTag;
 
         /**
          * Obtain the TransactionTag.
          * @return the Tag
          */
-        private TransactionTag getTag() {
+        private TransactionTagBucket getTag() {
             return theTransTag;
         }
 
@@ -312,7 +312,7 @@ public class TransactionTagSelect
          * @param pTag the Transaction Tag
          * @return true/false did a change occur
          */
-        private boolean setTag(final TransactionTag pTag) {
+        private boolean setTag(final TransactionTagBucket pTag) {
             /* Adjust the selected tag */
             if (!Difference.isEqual(pTag, theTransTag)) {
                 /* Store the tag */

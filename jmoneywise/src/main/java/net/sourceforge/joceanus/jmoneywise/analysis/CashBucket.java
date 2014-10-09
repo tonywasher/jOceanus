@@ -136,7 +136,7 @@ public final class CashBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public CashBucketList(final Analysis pAnalysis) {
+        protected CashBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(CashBucket.class, pAnalysis);
         }
@@ -147,9 +147,9 @@ public final class CashBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public CashBucketList(final Analysis pAnalysis,
-                              final CashBucketList pBase,
-                              final JDateDay pDate) {
+        protected CashBucketList(final Analysis pAnalysis,
+                                 final CashBucketList pBase,
+                                 final JDateDay pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -163,9 +163,9 @@ public final class CashBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public CashBucketList(final Analysis pAnalysis,
-                              final CashBucketList pBase,
-                              final JDateDayRange pRange) {
+        protected CashBucketList(final Analysis pAnalysis,
+                                 final CashBucketList pBase,
+                                 final JDateDayRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

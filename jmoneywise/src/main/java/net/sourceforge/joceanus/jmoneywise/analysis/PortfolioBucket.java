@@ -530,7 +530,7 @@ public final class PortfolioBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public PortfolioBucketList(final Analysis pAnalysis) {
+        protected PortfolioBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(PortfolioBucket.class);
             theAnalysis = pAnalysis;
@@ -543,9 +543,9 @@ public final class PortfolioBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public PortfolioBucketList(final Analysis pAnalysis,
-                                   final PortfolioBucketList pBase,
-                                   final JDateDay pDate) {
+        protected PortfolioBucketList(final Analysis pAnalysis,
+                                      final PortfolioBucketList pBase,
+                                      final JDateDay pDate) {
             /* Initialise class */
             super(PortfolioBucket.class);
             theAnalysis = pAnalysis;
@@ -574,9 +574,9 @@ public final class PortfolioBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public PortfolioBucketList(final Analysis pAnalysis,
-                                   final PortfolioBucketList pBase,
-                                   final JDateDayRange pRange) {
+        protected PortfolioBucketList(final Analysis pAnalysis,
+                                      final PortfolioBucketList pBase,
+                                      final JDateDayRange pRange) {
             /* Initialise class */
             super(PortfolioBucket.class);
             theAnalysis = pAnalysis;

@@ -872,7 +872,7 @@ public final class EventCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public EventCategoryBucketList(final Analysis pAnalysis) {
+        protected EventCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(EventCategoryBucket.class);
             theAnalysis = pAnalysis;
@@ -900,9 +900,9 @@ public final class EventCategoryBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public EventCategoryBucketList(final Analysis pAnalysis,
-                                       final EventCategoryBucketList pBase,
-                                       final JDateDay pDate) {
+        protected EventCategoryBucketList(final Analysis pAnalysis,
+                                          final EventCategoryBucketList pBase,
+                                          final JDateDay pDate) {
             /* Initialise class */
             super(EventCategoryBucket.class);
             theAnalysis = pAnalysis;
@@ -942,9 +942,9 @@ public final class EventCategoryBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public EventCategoryBucketList(final Analysis pAnalysis,
-                                       final EventCategoryBucketList pBase,
-                                       final JDateDayRange pRange) {
+        protected EventCategoryBucketList(final Analysis pAnalysis,
+                                          final EventCategoryBucketList pBase,
+                                          final JDateDayRange pRange) {
             /* Initialise class */
             super(EventCategoryBucket.class);
             theAnalysis = pAnalysis;

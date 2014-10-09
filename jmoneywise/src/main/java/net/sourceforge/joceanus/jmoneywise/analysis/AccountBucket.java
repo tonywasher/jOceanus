@@ -622,8 +622,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pClass the bucket class
          * @param pAnalysis the analysis
          */
-        public AccountBucketList(final Class<B> pClass,
-                                 final Analysis pAnalysis) {
+        protected AccountBucketList(final Class<B> pClass,
+                                    final Analysis pAnalysis) {
             /* Initialise class */
             super(pClass);
             theAnalysis = pAnalysis;
@@ -635,8 +635,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pBase the base list
          * @param pDate the Date
          */
-        public void constructFromBase(final AccountBucketList<B, T> pBase,
-                                      final JDateDay pDate) {
+        protected void constructFromBase(final AccountBucketList<B, T> pBase,
+                                         final JDateDay pDate) {
             /* Loop through the buckets */
             Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
@@ -675,8 +675,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public void constructFromBase(final AccountBucketList<B, T> pBase,
-                                      final JDateDayRange pRange) {
+        protected void constructFromBase(final AccountBucketList<B, T> pBase,
+                                         final JDateDayRange pRange) {
             /* Loop through the buckets */
             Iterator<B> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {

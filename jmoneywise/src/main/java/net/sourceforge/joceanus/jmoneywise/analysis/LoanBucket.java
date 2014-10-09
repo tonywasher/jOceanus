@@ -196,7 +196,7 @@ public final class LoanBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public LoanBucketList(final Analysis pAnalysis) {
+        protected LoanBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(LoanBucket.class, pAnalysis);
         }
@@ -207,9 +207,9 @@ public final class LoanBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public LoanBucketList(final Analysis pAnalysis,
-                              final LoanBucketList pBase,
-                              final JDateDay pDate) {
+        protected LoanBucketList(final Analysis pAnalysis,
+                                 final LoanBucketList pBase,
+                                 final JDateDay pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -223,9 +223,9 @@ public final class LoanBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public LoanBucketList(final Analysis pAnalysis,
-                              final LoanBucketList pBase,
-                              final JDateDayRange pRange) {
+        protected LoanBucketList(final Analysis pAnalysis,
+                                 final LoanBucketList pBase,
+                                 final JDateDayRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

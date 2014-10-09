@@ -102,6 +102,16 @@ public enum AnalysisResource implements ResourceId {
     FILTER_ALL("Filter.All"),
 
     /**
+     * TransTag Name.
+     */
+    TRANSTAG_NAME("TransTag.Name"),
+
+    /**
+     * TransTag List.
+     */
+    TRANSTAG_LIST("TransTag.List"),
+
+    /**
      * Cash Name.
      */
     CASH_NAME("Cash.Name"),

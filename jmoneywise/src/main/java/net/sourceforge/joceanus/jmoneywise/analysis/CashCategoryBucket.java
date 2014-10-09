@@ -180,7 +180,7 @@ public final class CashCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public CashCategoryBucketList(final Analysis pAnalysis) {
+        protected CashCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             super(CashCategoryBucket.class);
             theAnalysis = pAnalysis;
