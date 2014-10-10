@@ -22,10 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -63,7 +60,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     /**
      * List of items.
      */
-    private final List<T> theLinks;
+    private final DataList<T, E> theLinks;
 
     /**
      * The owner.
@@ -149,7 +146,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
         theInfoList = pList;
 
         /* Allocate the list */
-        theLinks = new ArrayList<T>();
+        theLinks = pList.getEmptyList(pList.getStyle());
     }
 
     /**
@@ -169,7 +166,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
 
             /* Add a copy item */
             T myNew = pList.addCopyItem(myLink);
-            theLinks.add(myNew);
+            theLinks.append(myNew);
             theLocalFields.declareIndexField(theInfoType.getName());
             theNumFields++;
         }
@@ -187,7 +184,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
             splitItem(pItem);
 
             /* Add the item to the list */
-            theLinks.add(pItem);
+            theLinks.append(pItem);
 
             /* If we need an additional field */
             if (theLinks.size() > theNumFields) {
@@ -233,7 +230,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      * @param pItem the item to unlink
      */
     public void unlinkItem(final T pItem) {
-        /* If the item is not already linked */
+        /* If the item is already linked */
         if (isItemLinked(pItem)) {
             /* Remove the item from the list */
             theLinks.remove(pItem);
@@ -277,7 +274,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      */
     protected void sortLinks() {
         /* Sort using natural comparison */
-        Collections.sort(theLinks);
+        theLinks.reSort();
     }
 
     /**

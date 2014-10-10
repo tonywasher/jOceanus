@@ -50,6 +50,7 @@ import javax.swing.border.Border;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelBoolean;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelDateDay;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObject;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObjectList;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -57,6 +58,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
 
 /**
  * Component classes for jFieldSet.
@@ -237,6 +239,27 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         /* Allocate component */
         JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
         return new JFieldScrollButton<I, X>(pButton, myModel);
+    }
+
+    /**
+     * Derive component.
+     * @param <I> ScrollButton element type
+     * @param <X> Data item type
+     * @param pElement the element
+     * @param pButton the button
+     * @param pClass the class of the button elements.
+     * @return the field component
+     */
+    protected static <I, X extends JFieldSetItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
+                                                                                     final JScrollListButton<I> pButton,
+                                                                                     final Class<I> pClass) {
+        /* Obtain FieldSet and Field */
+        JFieldSet<X> mySet = pElement.getFieldSet();
+        JDataField myField = pElement.getField();
+
+        /* Allocate component */
+        JModelObjectList<I, X> myModel = new JModelObjectList<I, X>(mySet, myField, pClass);
+        return new JFieldScrollListButton<I, X>(pButton, myModel);
     }
 
     /**
@@ -842,7 +865,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         }
 
         /**
-         * BooleanListener class.
+         * ButtonListener class.
          */
         private final class ButtonListener
                 implements PropertyChangeListener {
@@ -851,6 +874,60 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             public void propertyChange(final PropertyChangeEvent evt) {
                 /* Record the value */
                 theModel.processValue(theComponent.getValue());
+            }
+        }
+    }
+
+    /**
+     * The JScrollList implementation.
+     * @param <I> Button element type
+     * @param <T> the Data Item type
+     */
+    private static class JFieldScrollListButton<I, T extends JFieldSetItem>
+            extends JFieldComponent<T> {
+        /**
+         * The Component.
+         */
+        private final JScrollListButton<I> theComponent;
+
+        /**
+         * The DataModel.
+         */
+        private final JModelObjectList<I, T> theModel;
+
+        /**
+         * Constructor.
+         * @param pComponent the component.
+         * @param pModel the data model.
+         */
+        protected JFieldScrollListButton(final JScrollListButton<I> pComponent,
+                                         final JModelObjectList<I, T> pModel) {
+            /* Call super-constructor */
+            super(pComponent, pModel);
+
+            /* Store parameters */
+            theComponent = pComponent;
+            theModel = pModel;
+
+            /* Create the listener and attach it */
+            ButtonListener myListener = new ButtonListener();
+            theComponent.getMenuBuilder().addItemListener(myListener);
+        }
+
+        @Override
+        protected void displayField() {
+            getReadOnlyLabel().setText(theComponent.getText());
+        }
+
+        /**
+         * ButtonListener class.
+         */
+        private final class ButtonListener
+                implements ItemListener {
+            @Override
+            public void itemStateChanged(final ItemEvent pEvent) {
+                /* Record the value */
+                theModel.processValue(pEvent);
             }
         }
     }

@@ -266,9 +266,19 @@ public class TransactionInfo
         }
 
         /* Compare the Info Types */
-        iDiff = getInfoType().compareTo(pThat.getInfoType());
+        TransactionInfoType myType = getInfoType();
+        iDiff = myType.compareTo(pThat.getInfoType());
         if (iDiff != 0) {
             return iDiff;
+        }
+
+        /* If this is a linkSet */
+        if (myType.getInfoClass().isLinkSet()) {
+            /* Compare names */
+            iDiff = getLinkName().compareTo(pThat.getLinkName());
+            if (iDiff != 0) {
+                return iDiff;
+            }
         }
 
         /* Compare the underlying id */

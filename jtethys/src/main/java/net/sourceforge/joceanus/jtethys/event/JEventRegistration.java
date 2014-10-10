@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jtethys.event;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -120,6 +122,52 @@ public abstract class JEventRegistration<T> {
 
             /* Cast as Registration */
             ChangeRegistration myReg = (ChangeRegistration) o;
+
+            /* Compare fields */
+            return theListener == myReg.theListener;
+        }
+
+        @Override
+        public int hashCode() {
+            return theListener.hashCode();
+        }
+    }
+
+    /**
+     * ItemRegistration class.
+     */
+    protected static class ItemRegistration
+            extends JEventRegistration<ItemEvent> {
+        /**
+         * Item listener.
+         */
+        private final ItemListener theListener;
+
+        /**
+         * Constructor.
+         * @param pListener the listener
+         */
+        protected ItemRegistration(final ItemListener pListener) {
+            theListener = pListener;
+        }
+
+        @Override
+        protected void processEvent(final ItemEvent pEvent) {
+            theListener.itemStateChanged(pEvent);
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            /* Handle trivial cases */
+            if (o == null) {
+                return false;
+            }
+            if (o.getClass() != this.getClass()) {
+                return false;
+            }
+
+            /* Cast as Registration */
+            ItemRegistration myReg = (ItemRegistration) o;
 
             /* Compare fields */
             return theListener == myReg.theListener;

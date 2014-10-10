@@ -175,6 +175,8 @@ public class UpdateSet<E extends Enum<E>>
 
     /**
      * Obtain the list for a class.
+     * <p>
+     * Will look first for the list in the updateSet and then in the underlying data.
      * @param <L> the list type
      * @param <T> the object type
      * @param pDataType the data type
@@ -190,7 +192,7 @@ public class UpdateSet<E extends Enum<E>>
         /* Cast correctly */
         return myEntry != null
                               ? pClass.cast(myEntry.getDataList())
-                              : null;
+                              : theControl.getData().getDataList(pDataType, pClass);
     }
 
     /**

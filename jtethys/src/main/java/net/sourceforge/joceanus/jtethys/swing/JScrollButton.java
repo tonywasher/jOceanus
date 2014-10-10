@@ -55,7 +55,7 @@ public class JScrollButton<T>
     /**
      * Menu Builder.
      */
-    private JScrollMenuBuilder<T> theMenuBuilder;
+    private final JScrollMenuBuilder<T> theMenuBuilder;
 
     /**
      * Value.

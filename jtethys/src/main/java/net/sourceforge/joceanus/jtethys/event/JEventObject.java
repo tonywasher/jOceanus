@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.event;
 
+import java.awt.ItemSelectable;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 
 import javax.swing.event.ChangeListener;
 
@@ -30,7 +32,8 @@ import javax.swing.event.ChangeListener;
  * Extension of Object with Event Manager to provide support for Action and Change Events.
  * @author Tony Washer
  */
-public class JEventObject {
+public class JEventObject
+        implements ItemSelectable {
     /**
      * The Event Manager.
      */
@@ -54,6 +57,12 @@ public class JEventObject {
         theManager.addActionListener(pListener);
     }
 
+    @Override
+    public void addItemListener(final ItemListener pListener) {
+        /* Add the item listener */
+        theManager.addItemListener(pListener);
+    }
+
     /**
      * Remove Change Listener.
      * @param pListener the listener to remove
@@ -70,6 +79,12 @@ public class JEventObject {
     public void removeActionListener(final ActionListener pListener) {
         /* Remove the action listener */
         theManager.removeActionListener(pListener);
+    }
+
+    @Override
+    public void removeItemListener(final ItemListener pListener) {
+        /* Remove the item listener */
+        theManager.removeItemListener(pListener);
     }
 
     /**
@@ -107,5 +122,24 @@ public class JEventObject {
     protected void cascadeActionEvent(final ActionDetailEvent pEvent) {
         /* Fire action detail event */
         theManager.cascadeActionEvent(this, pEvent);
+    }
+
+    /**
+     * Fire Item Changed Event to all registered listeners.
+     * @param pOwner the owner of the event
+     * @param pItem the item that has changed selection
+     * @param pSelected is the item now selected?
+     */
+    public void fireItemStateChanged(final ItemSelectable pOwner,
+                                     final Object pItem,
+                                     final boolean pSelected) {
+        /* Fire item state changed event */
+        theManager.fireItemStateChanged(pOwner, pItem, pSelected);
+    }
+
+    @Override
+    public Object[] getSelectedObjects() {
+        /* Overridden if ItemSelectable is actually supported */
+        throw new UnsupportedOperationException();
     }
 }

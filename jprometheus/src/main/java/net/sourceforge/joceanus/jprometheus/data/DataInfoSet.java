@@ -288,9 +288,10 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      * link the value for the the infoClass.
      * @param pInfoClass the Info Class
      * @param pLink the link value
+     * @throws JOceanusException on error
      */
     public void linkValue(final S pInfoClass,
-                          final DataItem<E> pLink) {
+                          final DataItem<E> pLink) throws JOceanusException {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
@@ -321,7 +322,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
             /* Create the entry and add to list */
             myItem = theInfoList.addNewItem(theOwner, myInfoType);
+            myItem.setValue(pLink);
             myItem.setNewVersion();
+
+            /* link the item */
+            mySet.linkItem(myItem);
+            mySet.sortLinks();
 
             /* else if this is a deleted link */
         } else if (myItem.isDeleted()) {

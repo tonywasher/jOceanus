@@ -22,8 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.event;
 
+import java.awt.ItemSelectable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -33,6 +36,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jtethys.event.JEventRegistration.ActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JEventRegistration.ChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.JEventRegistration.ItemRegistration;
 
 /**
  * EventManager implementation. This maintains a list of ChangeListeners/ActionListeners and allows the caller to fire ChangeEvents and ActionEvents to these
@@ -87,6 +91,18 @@ public class JEventManager {
     }
 
     /**
+     * Add item Listener to list.
+     * @param pListener the listener to add
+     */
+    public void addItemListener(final ItemListener pListener) {
+        /* Create the registration */
+        JEventRegistration<ItemEvent> myReg = new ItemRegistration(pListener);
+
+        /* Add it to the list */
+        adjustListenerList(myReg, true);
+    }
+
+    /**
      * Remove Change Listener.
      * @param pListener the listener to remove
      */
@@ -105,6 +121,18 @@ public class JEventManager {
     public void removeActionListener(final ActionListener pListener) {
         /* Create the registration */
         JEventRegistration<ActionEvent> myReg = new ActionRegistration(pListener);
+
+        /* Remove it from the list */
+        adjustListenerList(myReg, false);
+    }
+
+    /**
+     * Remove Item Listener.
+     * @param pListener the listener to remove
+     */
+    public void removeItemListener(final ItemListener pListener) {
+        /* Create the registration */
+        JEventRegistration<ItemEvent> myReg = new ItemRegistration(pListener);
 
         /* Remove it from the list */
         adjustListenerList(myReg, false);
@@ -150,7 +178,7 @@ public class JEventManager {
      */
     public void fireStateChanged(final Object pOwner) {
         /* Create the change event */
-        ChangeEvent myEvent = new ChangeEvent(pOwner);
+        ChangeEvent myEvent = null;
 
         /* Obtain a reference to the registrations */
         List<JEventRegistration<?>> myList = theRegistrations;
@@ -163,6 +191,12 @@ public class JEventManager {
 
             /* If this is a change registration */
             if (myReg instanceof ChangeRegistration) {
+                /* If we have not yet created the change event */
+                if (myEvent == null) {
+                    /* Create the change event */
+                    myEvent = new ChangeEvent(pOwner);
+                }
+
                 /* Fire the event */
                 ChangeRegistration myChange = (ChangeRegistration) myReg;
                 myChange.processEvent(myEvent);
@@ -189,7 +223,7 @@ public class JEventManager {
         /* Create the action event */
         ActionEvent myEvent = new ActionDetailEvent(pOwner, pEvent);
 
-        /* Obtain a reference to the registrations */
+        /* Fire the event */
         fireActionEvent(myEvent);
     }
 
@@ -205,7 +239,7 @@ public class JEventManager {
         /* Create the action event */
         ActionEvent myEvent = new ActionDetailEvent(pOwner, ActionEvent.ACTION_PERFORMED, uSubId, pDetails);
 
-        /* Obtain a reference to the registrations */
+        /* Fire the event */
         fireActionEvent(myEvent);
     }
 
@@ -228,6 +262,38 @@ public class JEventManager {
                 /* Fire the event */
                 ActionRegistration myAction = (ActionRegistration) myReg;
                 myAction.processEvent(pEvent);
+            }
+        }
+    }
+
+    /**
+     * Fire Item Changed Event to all registered listeners.
+     * @param pOwner the owner of the event
+     * @param pItem the item that has changed selection
+     * @param pSelected is the item now selected?
+     */
+    public void fireItemStateChanged(final ItemSelectable pOwner,
+                                     final Object pItem,
+                                     final boolean pSelected) {
+        /* Create the item event */
+        ItemEvent myEvent = new ItemEvent(pOwner, ItemEvent.ITEM_STATE_CHANGED, pItem, pSelected
+                                                                                                ? ItemEvent.SELECTED
+                                                                                                : ItemEvent.DESELECTED);
+
+        /* Obtain a reference to the registrations */
+        List<JEventRegistration<?>> myList = theRegistrations;
+
+        /* Loop backwards through the list to notify most recently registered first */
+        ListIterator<JEventRegistration<?>> myIterator = myList.listIterator(myList.size());
+        while (myIterator.hasPrevious()) {
+            /* Access the registration */
+            JEventRegistration<?> myReg = myIterator.previous();
+
+            /* If this is an item registration */
+            if (myReg instanceof ItemRegistration) {
+                /* Fire the event */
+                ItemRegistration myItem = (ItemRegistration) myReg;
+                myItem.processEvent(myEvent);
             }
         }
     }

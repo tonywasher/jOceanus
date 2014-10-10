@@ -300,7 +300,7 @@ public class OrderedListIterator<T extends Comparable<? super T>>
         /* If the last operation was forward */
         if (wasForward) {
             /* Determine next value */
-            OrderedNode<T> myNext = previousNode();
+            OrderedNode<T> myNext = theNodeBefore.getPrev();
 
             /* Remove the item */
             theList.removeNode(theNodeBefore);
@@ -312,7 +312,7 @@ public class OrderedListIterator<T extends Comparable<? super T>>
             /* else the last operation was backwards */
         } else {
             /* Determine next value */
-            OrderedNode<T> myNext = nextNode();
+            OrderedNode<T> myNext = theNodeAfter.getNext();
 
             /* Remove the item */
             theList.removeNode(theNodeAfter);

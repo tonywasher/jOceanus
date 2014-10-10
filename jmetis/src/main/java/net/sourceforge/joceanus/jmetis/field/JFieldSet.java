@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing the data.
@@ -145,6 +147,23 @@ public class JFieldSet<T extends JFieldSetItem>
     public <I> void addFieldElement(final JDataField pField,
                                     final Class<I> pClass,
                                     final JScrollButton<I> pButton) {
+        /* Create the field */
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pButton);
+
+        /* Add to the map */
+        theMap.put(pField, myElement);
+    }
+
+    /**
+     * Add Element to field set.
+     * @param <I> List button element type
+     * @param pField the field id
+     * @param pClass the class of the value
+     * @param pButton the button
+     */
+    public <I> void addFieldElement(final JDataField pField,
+                                    final Class<I> pClass,
+                                    final JScrollListButton<I> pButton) {
         /* Create the field */
         JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pButton);
 
@@ -441,6 +460,15 @@ public class JFieldSet<T extends JFieldSetItem>
          */
         public JDilution getDilution() throws JOceanusException {
             return getValue(JDilution.class);
+        }
+
+        /**
+         * Obtain the value as ItemEvent.
+         * @return the value
+         * @throws JOceanusException on error
+         */
+        public ItemEvent getItemEvent() throws JOceanusException {
+            return getValue(ItemEvent.class);
         }
 
         /**

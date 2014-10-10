@@ -498,9 +498,15 @@ public class AnalysisStatement
             theHeader = new AnalysisHeader(theTransactions);
             myInfo = theTransactions.getTransactionInfo();
 
+            /* Update the column editors */
+            theColumns.refreshData();
+
             /* Notify panel of refresh */
             theActiveTrans.refreshData();
+            theActiveTrans.updateEditors(theRange);
         }
+
+        /* Update lists */
         setList(theTransactions);
         theTransEntry.setDataList(theTransactions);
         theInfoEntry.setDataList(myInfo);
@@ -1110,6 +1116,14 @@ public class AnalysisStatement
 
             /* Set the balance column set */
             adjustColumns(AnalysisColumnSet.BALANCE);
+        }
+
+        /**
+         * RefreshData.
+         */
+        private void refreshData() {
+            /* Update the range for the date editor */
+            theDateEditor.setRange(theRange);
         }
 
         /**

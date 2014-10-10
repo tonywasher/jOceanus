@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.awt.event.ItemEvent;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
@@ -487,7 +488,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
     /**
      * Object model.
-     * @param <I> ComboBox element type
+     * @param <I> element type
      */
     protected static class JModelObject<I, T extends JFieldSetItem>
             extends JFieldModel<T> {
@@ -524,12 +525,43 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
             }
         }
 
-        /**
-         * Obtain Value.
-         * @return the value
-         */
+        @Override
         protected I getValue() {
             return theClass.cast(super.getValue());
+        }
+    }
+
+    /**
+     * Object List model.
+     * @param <I> element type
+     */
+    protected static class JModelObjectList<I, T extends JFieldSetItem>
+            extends JFieldModel<T> {
+        /**
+         * Constructor.
+         * @param pFieldSet the fieldSet
+         * @param pField the field for the model
+         * @param pClass the class of the model
+         */
+        protected JModelObjectList(final JFieldSet<T> pFieldSet,
+                                   final JDataField pField,
+                                   final Class<I> pClass) {
+            /* Pass call onwards */
+            super(pFieldSet, pField, null);
+        }
+
+        /**
+         * Process Object value.
+         * @param pValue the value
+         */
+        protected void processValue(final ItemEvent pValue) {
+            /* Record new value */
+            setValue(pValue);
+        }
+
+        @Override
+        protected I getValue() {
+            return null;
         }
     }
 

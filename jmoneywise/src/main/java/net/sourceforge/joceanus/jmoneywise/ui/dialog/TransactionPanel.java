@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
@@ -49,8 +50,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
@@ -58,11 +61,14 @@ import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
@@ -98,12 +104,7 @@ public class TransactionPanel
     /**
      * Date Button.
      */
-    private final JDateDayButton theDate;
-
-    /**
-     * Tag Button Field.
-     */
-    private final JScrollButton<TransactionTag> theTagButton;
+    private final JDateDayButton theDateButton;
 
     /**
      * Debit Button Field.
@@ -131,6 +132,16 @@ public class TransactionPanel
     private final JScrollButton<Deposit> theThirdPartyButton;
 
     /**
+     * TransactionTag Button Field.
+     */
+    private final JScrollListButton<TransactionTag> theTagButton;
+
+    /**
+     * The Tag Menu Builder.
+     */
+    private final transient JScrollListMenuBuilder<TransactionTag> theTagMenuBuilder;
+
+    /**
      * Reconciled Button Field.
      */
     private final transient ComplexIconButtonState<Boolean, Boolean> theReconciledState;
@@ -148,15 +159,18 @@ public class TransactionPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theDate = new JDateDayButton();
+        theDateButton = new JDateDayButton();
 
         /* Create the buttons */
         theDebitButton = new JScrollButton<Object>();
         theCreditButton = new JScrollButton<Object>();
         theCategoryButton = new JScrollButton<TransactionCategory>();
-        theTagButton = new JScrollButton<TransactionTag>();
+        theTagButton = new JScrollListButton<TransactionTag>();
         thePortfolioButton = new JScrollButton<Portfolio>();
         theThirdPartyButton = new JScrollButton<Deposit>();
+
+        /* Access tag menu builder */
+        theTagMenuBuilder = theTagButton.getMenuBuilder();
 
         /* Set closed button */
         theReconciledState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
@@ -208,7 +222,7 @@ public class TransactionPanel
         JTextField myAmount = new JTextField();
 
         /* restrict the fields */
-        restrictField(theDate, Transaction.DESCLEN);
+        restrictField(theDateButton, Transaction.DESCLEN);
         restrictField(theDebitButton, Transaction.DESCLEN);
         restrictField(theCreditButton, Transaction.DESCLEN);
         restrictField(theCategoryButton, Transaction.DESCLEN);
@@ -216,7 +230,7 @@ public class TransactionPanel
         restrictField(myReconciledButton, Transaction.DESCLEN);
 
         /* Declare fields */
-        theFieldSet.addFieldElement(Transaction.FIELD_DATE, DataType.DATEDAY, theDate);
+        theFieldSet.addFieldElement(Transaction.FIELD_DATE, DataType.DATEDAY, theDateButton);
         theFieldSet.addFieldElement(Transaction.FIELD_DEBIT, Object.class, theDebitButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CREDIT, Object.class, theCreditButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
@@ -375,6 +389,36 @@ public class TransactionPanel
         setEditable(false);
     }
 
+    /**
+     * Update editors.
+     * @param pRange the date range.
+     */
+    public void updateEditors(final JDateDayRange pRange) {
+        /* Update Date button */
+        theDateButton.setEarliestDateDay(pRange != null
+                                                       ? pRange.getStart()
+                                                       : null);
+        theDateButton.setLatestDateDay(pRange != null
+                                                     ? pRange.getEnd()
+                                                     : null);
+
+        /* Access TransactionTags */
+        TransactionTagList myTags = findDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+        theTagMenuBuilder.clearAvailableItems();
+
+        /* Loop through the tags */
+        Iterator<TransactionTag> myIterator = myTags.iterator();
+        while (myIterator.hasNext()) {
+            TransactionTag myTag = myIterator.next();
+
+            /* If the tag is not deleted */
+            if (!myTag.isDeleted()) {
+                /* Add item to the tag list */
+                theTagMenuBuilder.setAvailableItem(myTag);
+            }
+        }
+    }
+
     @Override
     protected boolean isDeletable() {
         return !getItem().isReconciled();
@@ -398,6 +442,11 @@ public class TransactionPanel
         /* Determine whether the tags field should be visible */
         bShowField = isEditable || myTrans.tagIterator() != null;
         theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
+
+        /* Update text for tag button */
+        if (bShowField) {
+            theTagButton.setText(myTrans.getTagNameList());
+        }
 
         /* Determine whether the taxCredit field should be visible */
         JDataField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
@@ -536,6 +585,9 @@ public class TransactionPanel
                     break;
                 case REFERENCE:
                     myTrans.setReference(pUpdate.getString());
+                    break;
+                case TRANSTAG:
+                    updateTag(myTrans, pUpdate.getItemEvent());
                     break;
                 case CREDITUNITS:
                     myTrans.setCreditUnits(pUpdate.getUnits());
@@ -678,6 +730,55 @@ public class TransactionPanel
     }
 
     /**
+     * Build the active Tag list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pTrans the transaction to build for
+     */
+    public void buildTagMenu(final JScrollListMenuBuilder<TransactionTag> pMenuBuilder,
+                             final Transaction pTrans) {
+        /* Clear the menu of selected items */
+        pMenuBuilder.clearAllSelected();
+
+        /* Loop through the TransactionTags */
+        Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+        while (myIterator.hasNext()) {
+            TransactionInfo myInfo = myIterator.next();
+
+            /* If the item is not deleted */
+            if (!myInfo.isDeleted()) {
+                /* Access the tag and set as active */
+                TransactionTag myTag = myInfo.getTransactionTag();
+                pMenuBuilder.setSelectedItem(myTag);
+            }
+        }
+    }
+
+    /**
+     * Update the Tag list for an item.
+     * @param pTrans the transaction to build for
+     * @param pEvent the item event
+     * @throws JOceanusException on error
+     */
+    public void updateTag(final Transaction pTrans,
+                          final ItemEvent pEvent) throws JOceanusException {
+        /* Determine whether this is a select or not */
+        boolean bSelected = pEvent.getStateChange() == ItemEvent.SELECTED;
+
+        /* Access the TransactionTag */
+        Object myItem = pEvent.getItem();
+        if (myItem instanceof TransactionTag) {
+            TransactionTag myTag = (TransactionTag) myItem;
+
+            /* Update transaction tag status */
+            if (bSelected) {
+                pTrans.setTransactionTag(myTag);
+            } else {
+                pTrans.clearTransactionTag(myTag);
+            }
+        }
+    }
+
+    /**
      * Transaction Listener.
      */
     private final class TransactionListener
@@ -701,6 +802,7 @@ public class TransactionPanel
             thePortMenuBuilder.addChangeListener(this);
             theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
             theThirdPartyMenuBuilder.addChangeListener(this);
+            theTagMenuBuilder.addChangeListener(this);
         }
 
         @Override
@@ -712,6 +814,8 @@ public class TransactionPanel
                 buildPortfolioMenu(thePortMenuBuilder, getItem());
             } else if (theThirdPartyMenuBuilder.equals(o)) {
                 buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem());
+            } else if (theTagMenuBuilder.equals(o)) {
+                buildTagMenu(theTagMenuBuilder, getItem());
             }
         }
     }

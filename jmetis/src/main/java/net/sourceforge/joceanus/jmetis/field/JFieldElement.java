@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
 
 /**
  * Field Set. This handles a fields for an item, populating the field, rendering and parsing the data.
@@ -192,6 +193,36 @@ public class JFieldElement<T extends JFieldSetItem> {
                                 final JDataField pField,
                                 final Class<I> pClass,
                                 final JScrollButton<I> pButton) {
+        /* Store parameters */
+        theFieldSet = pFieldSet;
+        theField = pField;
+
+        /* Create the label */
+        String myName = pField.getName();
+        theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
+
+        /* Create the component */
+        theComponent = JFieldComponent.deriveComponent(this, pButton, pClass);
+
+        /* Access the model */
+        theModel = theComponent.getModel();
+
+        /* Create card panel */
+        theCardPanel = new JFieldCardPanel();
+    }
+
+    /**
+     * Constructor.
+     * @param <I> ScrollButton element type
+     * @param pFieldSet the field set
+     * @param pField the field id
+     * @param pClass the class of the button elements
+     * @param pButton the scroll button
+     */
+    protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
+                                final JDataField pField,
+                                final Class<I> pClass,
+                                final JScrollListButton<I> pButton) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;
