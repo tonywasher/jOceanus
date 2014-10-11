@@ -100,6 +100,24 @@ public final class SheetAccount {
                 /* Access the row by reference */
                 DataRow myRow = myView.getRowByIndex(i);
 
+                /* Process payee account */
+                processPayee(pLoader, pData, myView, myRow);
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                    return false;
+                }
+            }
+
+            /* Resolve Payee lists */
+            resolvePayeeLists(pData);
+
+            /* Loop through the rows of the table */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the row by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+
                 /* Process account */
                 processAccount(pLoader, pData, myView, myRow);
 
@@ -120,6 +138,38 @@ public final class SheetAccount {
 
         /* Return to caller */
         return true;
+    }
+
+    /**
+     * Process account row.
+     * @param pLoader the archive loader
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @throws JOceanusException on error
+     */
+    private static void processPayee(final ArchiveLoader pLoader,
+                                     final MoneyWiseData pData,
+                                     final DataView pView,
+                                     final DataRow pRow) throws JOceanusException {
+        /* Skip name and type column */
+        int iAdjust = 0;
+        iAdjust++;
+        iAdjust++;
+
+        /* Access account class */
+        String myClass = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* If this is a Payee */
+        if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
+            /* Process as a payee */
+            SheetPayee.processPayee(pLoader, pData, pView, pRow);
+
+            /* If this is a cash */
+        } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
+            /* Process as a cash payee */
+            SheetCash.processCashPayee(pLoader, pData, pView, pRow);
+        }
     }
 
     /**
@@ -162,32 +212,36 @@ public final class SheetAccount {
             /* Process as a security */
             SheetSecurity.processSecurity(pLoader, pData, pView, pRow);
 
-            /* If this is a payee */
-        } else if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
-            /* Process as a payee */
-            SheetPayee.processPayee(pLoader, pData, pView, pRow);
-
             /* If this is a portfolio */
         } else if (myClass.equals(MoneyWiseDataType.PORTFOLIO.toString())) {
             /* Process as a portfolio */
             SheetPortfolio.processPortfolio(pLoader, pData, pView, pRow);
-        } else {
+
+            /* else reject if not payee */
+        } else if (!myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
             throw new JMoneyWiseLogicException("Unexpected Account Class " + myClass);
         }
     }
 
     /**
-     * Resolve account lists.
+     * Resolve payee account lists.
      * @param pData the DataSet
      * @throws JOceanusException on error
      */
-    private static void resolveAccountLists(final MoneyWiseData pData) throws JOceanusException {
+    private static void resolvePayeeLists(final MoneyWiseData pData) throws JOceanusException {
         /* PostProcess the Payees */
         PayeeList myPayeeList = pData.getPayees();
         PayeeInfoList myPayeeInfoList = pData.getPayeeInfo();
         myPayeeList.postProcessOnLoad();
         myPayeeInfoList.postProcessOnLoad();
+    }
 
+    /**
+     * Resolve non-payee account lists.
+     * @param pData the DataSet
+     * @throws JOceanusException on error
+     */
+    private static void resolveAccountLists(final MoneyWiseData pData) throws JOceanusException {
         /* PostProcess the securities */
         SecurityList mySecurityList = pData.getSecurities();
         SecurityInfoList mySecInfoList = pData.getSecurityInfo();

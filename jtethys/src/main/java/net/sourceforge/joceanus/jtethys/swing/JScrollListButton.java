@@ -39,6 +39,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.event.PopupMenuListener;
 
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
@@ -105,6 +106,22 @@ public class JScrollListButton<T>
             theButton = pButton;
             theMenu = new JScrollListMenu<X>(this);
             theButton.addActionListener(this);
+        }
+
+        /**
+         * Add menu listener.
+         * @param pListener the listener
+         */
+        public void addPopupMenuListener(final PopupMenuListener pListener) {
+            theMenu.addPopupMenuListener(pListener);
+        }
+
+        /**
+         * Remove menu listener.
+         * @param pListener the listener
+         */
+        public void removePopupMenuListener(final PopupMenuListener pListener) {
+            theMenu.removePopupMenuListener(pListener);
         }
 
         /**

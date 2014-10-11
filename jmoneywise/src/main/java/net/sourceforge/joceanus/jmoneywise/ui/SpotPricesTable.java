@@ -627,8 +627,8 @@ public class SpotPricesTable
             declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_DATE, theDateRenderer));
             declareColumn(new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor));
 
-            /* Add PriceCell listener */
-            thePriceEditor.addChangeListener(new PriceCellListener());
+            /* Add listeners */
+            new EditorListener();
         }
 
         /**
@@ -747,10 +747,17 @@ public class SpotPricesTable
         }
 
         /**
-         * PriceCellListener.
+         * EditorListener.
          */
-        private class PriceCellListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                thePriceEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 /* Access details */

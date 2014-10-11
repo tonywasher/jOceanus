@@ -176,16 +176,6 @@ public class SheetCash
         if (myCell != null) {
             myAutoExpense = myCell.getStringValue();
             myAutoPayee = myName + "Expense";
-
-            /* Build values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
-            myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
-            myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
-            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
-
-            /* Add the value into the list */
-            PayeeList myPayeeList = pData.getPayees();
-            myPayeeList.addValuesItem(myValues);
         }
 
         /* Build data values */
@@ -206,5 +196,61 @@ public class SheetCash
 
         /* Declare the cash */
         pLoader.declareAsset(myCash);
+    }
+
+    /**
+     * Process cashPayee row from archive.
+     * @param pLoader the archive loader
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @throws JOceanusException on error
+     */
+    protected static void processCashPayee(final ArchiveLoader pLoader,
+                                           final MoneyWiseData pData,
+                                           final DataView pView,
+                                           final DataRow pRow) throws JOceanusException {
+        /* Access name */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Skip type, class, taxFree and gross */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle closed which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
+        }
+
+        /* Skip parent, alias, portfolio, holding, maturity, openingBalance and symbol columns */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle autoExpense which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myAutoPayee = null;
+        if (myCell != null) {
+            myAutoPayee = myName + "Expense";
+
+            /* Build values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+            myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
+            myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
+            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+            /* Add the value into the list */
+            PayeeList myPayeeList = pData.getPayees();
+            myPayeeList.addValuesItem(myValues);
+        }
     }
 }

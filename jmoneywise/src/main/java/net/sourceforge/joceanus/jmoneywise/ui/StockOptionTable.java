@@ -715,9 +715,7 @@ public class StockOptionTable
             setColumns();
 
             /* Add listeners */
-            ScrollEditorListener myListener = new ScrollEditorListener();
-            thePortfolioEditor.addChangeListener(myListener);
-            theSecurityEditor.addChangeListener(myListener);
+            new EditorListener();
         }
 
         /**
@@ -876,10 +874,18 @@ public class StockOptionTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                thePortfolioEditor.addChangeListener(this);
+                theSecurityEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();

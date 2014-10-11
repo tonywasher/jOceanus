@@ -738,10 +738,7 @@ public class SecurityTable
             setColumns();
 
             /* Add listeners */
-            ScrollEditorListener myListener = new ScrollEditorListener();
-            theTypeEditor.addChangeListener(myListener);
-            theParentEditor.addChangeListener(myListener);
-            theCurrencyEditor.addChangeListener(myListener);
+            new EditorListener();
         }
 
         /**
@@ -917,10 +914,19 @@ public class SecurityTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theTypeEditor.addChangeListener(this);
+                theParentEditor.addChangeListener(this);
+                theCurrencyEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();

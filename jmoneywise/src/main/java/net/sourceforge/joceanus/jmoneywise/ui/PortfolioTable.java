@@ -712,8 +712,7 @@ public class PortfolioTable
             setColumns();
 
             /* Add listeners */
-            ScrollEditorListener myListener = new ScrollEditorListener();
-            theHoldingEditor.addChangeListener(myListener);
+            new EditorListener();
         }
 
         /**
@@ -873,10 +872,17 @@ public class PortfolioTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theHoldingEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();

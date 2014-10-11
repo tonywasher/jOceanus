@@ -36,6 +36,28 @@ import javax.swing.event.ChangeListener;
  */
 public abstract class JEventRegistration<T> {
     /**
+     * registrationType.
+     */
+    private final RegistrationType theType;
+
+    /**
+     * Constructor.
+     * @param pType the registration type
+     */
+    private JEventRegistration(final RegistrationType pType) {
+        theType = pType;
+    }
+
+    /**
+     * Is this the required registration type?
+     * @param pType the registrationType
+     * @return true/false
+     */
+    protected boolean isRegistrationType(final RegistrationType pType) {
+        return theType.equals(pType);
+    }
+
+    /**
      * Process the relevant event.
      * @param pEvent the event.
      */
@@ -56,6 +78,7 @@ public abstract class JEventRegistration<T> {
          * @param pListener the listener
          */
         protected ActionRegistration(final ActionListener pListener) {
+            super(RegistrationType.ACTION);
             theListener = pListener;
         }
 
@@ -102,6 +125,7 @@ public abstract class JEventRegistration<T> {
          * @param pListener the listener
          */
         protected ChangeRegistration(final ChangeListener pListener) {
+            super(RegistrationType.CHANGE);
             theListener = pListener;
         }
 
@@ -148,6 +172,7 @@ public abstract class JEventRegistration<T> {
          * @param pListener the listener
          */
         protected ItemRegistration(final ItemListener pListener) {
+            super(RegistrationType.ITEM);
             theListener = pListener;
         }
 
@@ -177,5 +202,25 @@ public abstract class JEventRegistration<T> {
         public int hashCode() {
             return theListener.hashCode();
         }
+    }
+
+    /**
+     * Registration Type.
+     */
+    protected enum RegistrationType {
+        /**
+         * Action.
+         */
+        ACTION,
+
+        /**
+         * Change.
+         */
+        CHANGE,
+
+        /**
+         * Item.
+         */
+        ITEM;
     }
 }

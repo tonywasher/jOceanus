@@ -37,6 +37,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jtethys.event.JEventRegistration.ActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JEventRegistration.ChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.JEventRegistration.ItemRegistration;
+import net.sourceforge.joceanus.jtethys.event.JEventRegistration.RegistrationType;
 
 /**
  * EventManager implementation. This maintains a list of ChangeListeners/ActionListeners and allows the caller to fire ChangeEvents and ActionEvents to these
@@ -190,7 +191,7 @@ public class JEventManager {
             JEventRegistration<?> myReg = myIterator.previous();
 
             /* If this is a change registration */
-            if (myReg instanceof ChangeRegistration) {
+            if (myReg.isRegistrationType(RegistrationType.CHANGE)) {
                 /* If we have not yet created the change event */
                 if (myEvent == null) {
                     /* Create the change event */
@@ -258,7 +259,7 @@ public class JEventManager {
             JEventRegistration<?> myReg = myIterator.previous();
 
             /* If this is an action registration */
-            if (myReg instanceof ActionRegistration) {
+            if (myReg.isRegistrationType(RegistrationType.ACTION)) {
                 /* Fire the event */
                 ActionRegistration myAction = (ActionRegistration) myReg;
                 myAction.processEvent(pEvent);
@@ -290,7 +291,7 @@ public class JEventManager {
             JEventRegistration<?> myReg = myIterator.previous();
 
             /* If this is an item registration */
-            if (myReg instanceof ItemRegistration) {
+            if (myReg.isRegistrationType(RegistrationType.ITEM)) {
                 /* Fire the event */
                 ItemRegistration myItem = (ItemRegistration) myReg;
                 myItem.processEvent(myEvent);

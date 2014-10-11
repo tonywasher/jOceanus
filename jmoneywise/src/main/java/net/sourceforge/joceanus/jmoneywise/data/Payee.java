@@ -905,7 +905,7 @@ public class Payee
 
         @Override
         public Payee findItemByName(final String pName) {
-            /* look up the name in the map */
+            /* Look up in map */
             return getDataMap().findItemByName(pName);
         }
 

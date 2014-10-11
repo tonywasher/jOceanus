@@ -460,6 +460,27 @@ public class ArchiveLoader {
     }
 
     /**
+     * Declare security holding.
+     * @param pName the security holding name
+     * @param pAlias the alias name.
+     * @param pPortfolio the portfolio
+     * @throws JOceanusException on error
+     */
+    protected void declareAliasHolding(final String pName,
+                                       final String pAlias,
+                                       final String pPortfolio) throws JOceanusException {
+        /* Check for name already exists */
+        Object myHolding = theNameMap.get(pAlias);
+        if (!(myHolding instanceof SecurityHolding)) {
+            throw new JPrometheusDataException(pAlias, "Aliased security not found");
+        }
+
+        /* Store the asset */
+        SecurityHolding myAliased = (SecurityHolding) myHolding;
+        theNameMap.put(pName, new SecurityHolding(myAliased.getSecurity(), pPortfolio));
+    }
+
+    /**
      * Simple class to define an archive year.
      */
     protected static final class ArchiveYear {

@@ -773,7 +773,7 @@ public class CashCategoryTable
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
 
             /* Add listener */
-            theScrollEditor.addChangeListener(new ScrollEditorListener());
+            new EditorListener();
         }
 
         /**
@@ -916,10 +916,17 @@ public class CashCategoryTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theScrollEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 buildCategoryTypeMenu();

@@ -486,8 +486,8 @@ public class DepositRateTable
             /* Initialise the columns */
             setColumns();
 
-            /* Add DateCell listener */
-            theDateEditor.addChangeListener(new DateCellListener());
+            /* Add listener */
+            new EditorListener();
         }
 
         /**
@@ -641,10 +641,17 @@ public class DepositRateTable
         }
 
         /**
-         * DateCellListener.
+         * EditorListener.
          */
-        private class DateCellListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theDateEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 /* Access details */

@@ -48,6 +48,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
 
 import net.sourceforge.jdatebutton.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -64,6 +65,8 @@ import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
 
 /**
  * Cell editors.
@@ -661,6 +664,201 @@ public final class JFieldCellEditor {
                     fireStateChanged();
                 } else {
                     cancelCellEditing();
+                }
+            }
+        }
+
+        /**
+         * Mouse Adapter class.
+         * <p>
+         * Required to handle button clicked, dragged, and released in different place
+         */
+        private class MouseListener
+                extends MouseAdapter {
+            @Override
+            public void mouseReleased(final MouseEvent e) {
+                Rectangle myRect = theButton.getBounds();
+                if (!myRect.contains(e.getPoint())) {
+                    cancelCellEditing();
+                }
+            }
+        }
+
+        /**
+         * PopUp listener class.
+         * <p>
+         * Required to handle popUp menu cancelled without selection
+         */
+        private class PopUpListener
+                implements PopupMenuListener {
+            @Override
+            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
+                /* Ignore */
+            }
+
+            @Override
+            public void popupMenuCanceled(final PopupMenuEvent e) {
+                cancelCellEditing();
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
+                /* Ignore */
+            }
+        }
+    }
+
+    /**
+     * ScrollListButton Cell Editor.
+     * @param <T> the object type
+     */
+    public static class ScrollListButtonCellEditor<T>
+            extends JEventCellEditor
+            implements TableCellEditor {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -154317476142054387L;
+
+        /**
+         * The button.
+         */
+        private final JScrollListButton<T> theButton;
+
+        /**
+         * The menu Builder.
+         */
+        private final transient JScrollListMenuBuilder<T> theMenuBuilder;
+
+        /**
+         * The point at which the editor is active.
+         */
+        private transient Point thePoint;
+
+        /**
+         * The selection Listener.
+         */
+        private final transient ButtonListener theButtonListener = new ButtonListener();
+
+        /**
+         * The popUp Listener.
+         */
+        private final transient PopUpListener thePopUpListener = new PopUpListener();
+
+        /**
+         * The mouse Listener.
+         */
+        private final transient MouseListener theMouseListener = new MouseListener();
+
+        /**
+         * The active table.
+         */
+        private JTable theTable;
+
+        /**
+         * Obtain the menu Builder.
+         * @return the menuBuilder
+         */
+        public JScrollListMenuBuilder<T> getMenuBuilder() {
+            return theMenuBuilder;
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
+        }
+
+        /**
+         * Constructor.
+         */
+        protected ScrollListButtonCellEditor() {
+            /* Create button and menu builder */
+            theButton = new JScrollListButton<T>();
+            theMenuBuilder = theButton.getMenuBuilder();
+
+            /* Add popupListener */
+            theMenuBuilder.addPopupMenuListener(thePopUpListener);
+
+            /* sort out listeners */
+            theButton.setFocusPainted(false);
+            theMenuBuilder.addItemListener(theButtonListener);
+            theMenuBuilder.addChangeListener(theButtonListener);
+        }
+
+        @Override
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
+                                                      final boolean isSelected,
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            /* Store location of button */
+            int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            thePoint = new Point(myCol, myRow);
+            theTable = pTable;
+
+            /* If we have text */
+            if (pValue instanceof String) {
+                /* Use it for button text */
+                theButton.setText((String) pValue);
+            } else {
+                theButton.setText(null);
+            }
+
+            /* Declare the mouse listener */
+            theTable.addMouseListener(theMouseListener);
+
+            /* Return the button */
+            return theButton;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return null;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            if (super.stopCellEditing()) {
+                theTable.removeMouseListener(theMouseListener);
+                thePoint = null;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void cancelCellEditing() {
+            super.cancelCellEditing();
+            theTable.removeMouseListener(theMouseListener);
+            thePoint = null;
+        }
+
+        /**
+         * Button Listener class.
+         */
+        private class ButtonListener
+                implements ItemListener, ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                fireStateChanged();
+            }
+
+            @Override
+            public void itemStateChanged(final ItemEvent pEvent) {
+                /* Access the table model */
+                TableModel myModel = theTable.getModel();
+
+                /* Pass the event as a value to set */
+                myModel.setValueAt(pEvent, thePoint.y, thePoint.x);
+
+                /* Obtain new text value */
+                Object myValue = myModel.getValueAt(thePoint.y, thePoint.x);
+                if (myValue instanceof String) {
+                    theButton.setText((String) myValue);
                 }
             }
         }

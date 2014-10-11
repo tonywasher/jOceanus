@@ -587,8 +587,7 @@ public class TaxYearTable
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
 
             /* Add listeners */
-            ScrollEditorListener myListener = new ScrollEditorListener();
-            theRegimeEditor.addChangeListener(myListener);
+            new EditorListener();
         }
 
         /**
@@ -711,10 +710,17 @@ public class TaxYearTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theRegimeEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();

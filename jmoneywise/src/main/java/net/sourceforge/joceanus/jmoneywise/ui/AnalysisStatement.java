@@ -22,8 +22,10 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -37,6 +39,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEdit
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollListButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
@@ -61,6 +64,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
@@ -89,6 +93,8 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
 
 /**
  * Analysis Statement.
@@ -947,6 +953,11 @@ public class AnalysisStatement
         private final ScrollButtonCellEditor<Deposit> theDepositEditor;
 
         /**
+         * ScrollListButton Menu Editor.
+         */
+        private final ScrollListButtonCellEditor<TransactionTag> theTagEditor;
+
+        /**
          * Comments column.
          */
         private final JDataTableColumn theDescColumn;
@@ -1053,6 +1064,7 @@ public class AnalysisStatement
             theDateEditor = theFieldMgr.allocateCalendarCellEditor();
             theReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
             theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
+            theTagEditor = theFieldMgr.allocateScrollListButtonCellEditor();
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
             theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
@@ -1089,7 +1101,7 @@ public class AnalysisStatement
             declareColumn(theAmountColumn);
             theReferenceColumn = new JDataTableColumn(COLUMN_REF, WIDTH_NAME, theStringRenderer, theStringEditor);
             declareColumn(theReferenceColumn);
-            theTagsColumn = new JDataTableColumn(COLUMN_TAGS, WIDTH_NAME, theStringRenderer);
+            theTagsColumn = new JDataTableColumn(COLUMN_TAGS, WIDTH_NAME, theStringRenderer, theTagEditor);
             declareColumn(theTagsColumn);
             theCredUnitsColumn = new JDataTableColumn(COLUMN_CREDUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
             declareColumn(theCredUnitsColumn);
@@ -1116,6 +1128,9 @@ public class AnalysisStatement
 
             /* Set the balance column set */
             adjustColumns(AnalysisColumnSet.BALANCE);
+
+            /* Add listeners */
+            new EditorListener();
         }
 
         /**
@@ -1124,6 +1139,9 @@ public class AnalysisStatement
         private void refreshData() {
             /* Update the range for the date editor */
             theDateEditor.setRange(theRange);
+
+            /* Update details for the tag menu */
+            theActiveTrans.updateTagMenuBuilder(theTagEditor.getMenuBuilder());
         }
 
         /**
@@ -1337,6 +1355,9 @@ public class AnalysisStatement
                 case COLUMN_ACTION:
                     pItem.setDeleted(true);
                     break;
+                case COLUMN_TAGS:
+                    theActiveTrans.updateTag(pItem, (ItemEvent) pValue);
+                    break;
                 default:
                     break;
             }
@@ -1545,6 +1566,79 @@ public class AnalysisStatement
 
             /* Store the column set */
             theColumnSet = pSet;
+        }
+
+        /**
+         * EditorListener.
+         */
+        private final class EditorListener
+                implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                thePortfolioEditor.addChangeListener(this);
+                theDepositEditor.addChangeListener(this);
+                theTagEditor.addChangeListener(this);
+            }
+
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                Object o = pEvent.getSource();
+
+                if (thePortfolioEditor.equals(o)) {
+                    buildPortfolioMenu();
+                } else if (theDepositEditor.equals(o)) {
+                    buildThirdPartyMenu();
+                } else if (theTagEditor.equals(o)) {
+                    buildTagMenu();
+                }
+            }
+
+            /**
+             * Build the popUpMenu for portfolios.
+             */
+            private void buildPortfolioMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Portfolio> myBuilder = thePortfolioEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = thePortfolioEditor.getPoint();
+                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+
+                /* Build the menu */
+                theActiveTrans.buildPortfolioMenu(myBuilder, myTrans);
+            }
+
+            /**
+             * Obtain the popUpMenu for thirdParty deposits.
+             */
+            private void buildThirdPartyMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Deposit> myBuilder = theDepositEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theDepositEditor.getPoint();
+                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+
+                /* Build the menu */
+                theActiveTrans.buildThirdPartyMenu(myBuilder, myTrans);
+            }
+
+            /**
+             * Build the popUpMenu for tags.
+             */
+            private void buildTagMenu() {
+                /* Access details */
+                JScrollListMenuBuilder<TransactionTag> myBuilder = theTagEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theTagEditor.getPoint();
+                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+
+                /* Build the menu */
+                theActiveTrans.buildTagMenu(myBuilder, myTrans);
+            }
         }
     }
 

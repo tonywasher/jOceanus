@@ -694,8 +694,7 @@ public class PayeeTable
             setColumns();
 
             /* Add listeners */
-            ScrollEditorListener myListener = new ScrollEditorListener();
-            theTypeEditor.addChangeListener(myListener);
+            new EditorListener();
         }
 
         /**
@@ -844,10 +843,17 @@ public class PayeeTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theTypeEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();

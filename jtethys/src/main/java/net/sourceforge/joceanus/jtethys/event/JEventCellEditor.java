@@ -41,7 +41,7 @@ public abstract class JEventCellEditor
     /**
      * The Event Manager.
      */
-    private final transient JEventManager thePanelManager = new JEventManager(this);
+    private final transient JEventManager theCellManager = new JEventManager(this);
 
     /**
      * Add change Listener to list.
@@ -49,7 +49,7 @@ public abstract class JEventCellEditor
      */
     public void addChangeListener(final ChangeListener pListener) {
         /* Add the change listener */
-        thePanelManager.addChangeListener(pListener);
+        theCellManager.addChangeListener(pListener);
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class JEventCellEditor
      */
     public void addActionListener(final ActionListener pListener) {
         /* Add the action listener */
-        thePanelManager.addActionListener(pListener);
+        theCellManager.addActionListener(pListener);
     }
 
     /**
@@ -67,7 +67,7 @@ public abstract class JEventCellEditor
      */
     public void removeChangeListener(final ChangeListener pListener) {
         /* Remove the change listener */
-        thePanelManager.removeChangeListener(pListener);
+        theCellManager.removeChangeListener(pListener);
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class JEventCellEditor
      */
     public void removeActionListener(final ActionListener pListener) {
         /* Remove the action listener */
-        thePanelManager.removeActionListener(pListener);
+        theCellManager.removeActionListener(pListener);
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class JEventCellEditor
      */
     protected void fireStateChanged() {
         /* Fire the standard event */
-        thePanelManager.fireStateChanged();
+        theCellManager.fireStateChanged();
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class JEventCellEditor
      */
     protected void fireActionPerformed(final String pCommand) {
         /* Fire standard action performed event */
-        thePanelManager.fireActionPerformed(pCommand);
+        theCellManager.fireActionPerformed(pCommand);
     }
 
     /**
@@ -104,7 +104,7 @@ public abstract class JEventCellEditor
     protected void fireActionEvent(final int pSubId,
                                    final Object pDetails) {
         /* Fire action detail event */
-        thePanelManager.fireActionEvent(this, pSubId, pDetails);
+        theCellManager.fireActionEvent(this, pSubId, pDetails);
     }
 
     /**
@@ -113,6 +113,6 @@ public abstract class JEventCellEditor
      */
     protected void cascadeActionEvent(final ActionDetailEvent pEvent) {
         /* Fire action detail event */
-        thePanelManager.cascadeActionEvent(this, pEvent);
+        theCellManager.cascadeActionEvent(this, pEvent);
     }
 }

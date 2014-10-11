@@ -402,9 +402,18 @@ public class TransactionPanel
                                                      ? pRange.getEnd()
                                                      : null);
 
+        /* update the tagMenuBuilder */
+        updateTagMenuBuilder(theTagMenuBuilder);
+    }
+
+    /**
+     * Update tag menuBuilder.
+     * @param pBuilder the menu builder
+     */
+    public void updateTagMenuBuilder(final JScrollListMenuBuilder<TransactionTag> pBuilder) {
         /* Access TransactionTags */
         TransactionTagList myTags = findDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
-        theTagMenuBuilder.clearAvailableItems();
+        pBuilder.clearAvailableItems();
 
         /* Loop through the tags */
         Iterator<TransactionTag> myIterator = myTags.iterator();
@@ -414,7 +423,7 @@ public class TransactionPanel
             /* If the tag is not deleted */
             if (!myTag.isDeleted()) {
                 /* Add item to the tag list */
-                theTagMenuBuilder.setAvailableItem(myTag);
+                pBuilder.setAvailableItem(myTag);
             }
         }
     }
@@ -739,16 +748,19 @@ public class TransactionPanel
         /* Clear the menu of selected items */
         pMenuBuilder.clearAllSelected();
 
-        /* Loop through the TransactionTags */
+        /* Access tag iterator */
         Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
-        while (myIterator.hasNext()) {
-            TransactionInfo myInfo = myIterator.next();
+        if (myIterator != null) {
+            /* Loop through the TransactionTags */
+            while (myIterator.hasNext()) {
+                TransactionInfo myInfo = myIterator.next();
 
-            /* If the item is not deleted */
-            if (!myInfo.isDeleted()) {
-                /* Access the tag and set as active */
-                TransactionTag myTag = myInfo.getTransactionTag();
-                pMenuBuilder.setSelectedItem(myTag);
+                /* If the item is not deleted */
+                if (!myInfo.isDeleted()) {
+                    /* Access the tag and set as active */
+                    TransactionTag myTag = myInfo.getTransactionTag();
+                    pMenuBuilder.setSelectedItem(myTag);
+                }
             }
         }
     }

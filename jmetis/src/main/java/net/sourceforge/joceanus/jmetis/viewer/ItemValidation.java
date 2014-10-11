@@ -186,7 +186,7 @@ public class ItemValidation
             boolean bFound = false;
             for (JDataField field : aFields) {
                 /* If we have found the field note it and break loop */
-                if (field.equals(myField)) {
+                if ((field != null) && field.equals(myField)) {
                     bFound = true;
                     break;
                 }

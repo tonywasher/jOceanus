@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RatioCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollListButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
@@ -389,6 +390,16 @@ public class JFieldManager {
     public <T> ScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClass) {
         /* Return a new ScrollButtonEditor object */
         return new ScrollButtonCellEditor<T>(pClass);
+    }
+
+    /**
+     * Allocate a ScrollListButtonEditor object.
+     * @param <T> the type of the object
+     * @return the ScrollListButton editor
+     */
+    public <T> ScrollListButtonCellEditor<T> allocateScrollListButtonCellEditor() {
+        /* Return a new ScrollListButtonEditor object */
+        return new ScrollListButtonCellEditor<T>();
     }
 
     /**

@@ -712,9 +712,7 @@ public class CashTable
             setColumns();
 
             /* Add listeners */
-            ScrollEditorListener myListener = new ScrollEditorListener();
-            theCategoryEditor.addChangeListener(myListener);
-            theCurrencyEditor.addChangeListener(myListener);
+            new EditorListener();
         }
 
         /**
@@ -874,10 +872,18 @@ public class CashTable
         }
 
         /**
-         * ScrollEditorListener.
+         * EditorListener.
          */
-        private class ScrollEditorListener
+        private final class EditorListener
                 implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theCategoryEditor.addChangeListener(this);
+                theCurrencyEditor.addChangeListener(this);
+            }
+
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();

@@ -198,11 +198,8 @@ public class SheetSecurity
 
         /* If we have an alias */
         if (myAlias != null) {
-            /* Locate the target security */
-            Security myTarget = myList.findItemByName(myAlias);
-
             /* Declare the security alias */
-            pLoader.declareSecurityHolding(myName, myTarget, myPortfolio);
+            pLoader.declareAliasHolding(myName, myAlias, myPortfolio);
 
             /* return */
             return;
