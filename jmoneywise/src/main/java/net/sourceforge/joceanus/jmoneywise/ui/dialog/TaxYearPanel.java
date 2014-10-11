@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -579,8 +578,7 @@ public class TaxYearPanel
         JMenuItem myActive = null;
 
         /* Access TaxRegimes */
-        MoneyWiseData myData = pTaxYear.getDataSet();
-        TaxRegimeList myRegimes = myData.getTaxRegimes();
+        TaxRegimeList myRegimes = findDataList(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);
 
         /* Loop through the panels */
         Iterator<TaxRegime> myIterator = myRegimes.iterator();

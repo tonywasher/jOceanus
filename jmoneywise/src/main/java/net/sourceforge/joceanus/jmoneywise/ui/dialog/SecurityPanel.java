@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -405,8 +404,7 @@ public class SecurityPanel
         JMenuItem myActive = null;
 
         /* Access SecurityTypes */
-        MoneyWiseData myData = pSecurity.getDataSet();
-        SecurityTypeList myTypes = myData.getSecurityTypes();
+        SecurityTypeList myTypes = findDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
 
         /* Loop through the SecurityTypes */
         Iterator<SecurityType> myIterator = myTypes.iterator();
@@ -492,8 +490,7 @@ public class SecurityPanel
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        MoneyWiseData myData = pSecurity.getDataSet();
-        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

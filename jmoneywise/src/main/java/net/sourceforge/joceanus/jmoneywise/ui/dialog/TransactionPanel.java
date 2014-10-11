@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -653,6 +652,39 @@ public class TransactionPanel
     }
 
     /**
+     * Build the debit list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pTrans the transaction to build for
+     */
+    public void buildDebitMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+                               final Transaction pTrans) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+    }
+
+    /**
+     * Build the credit list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pTrans the transaction to build for
+     */
+    public void buildCreditMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+                                final Transaction pTrans) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+    }
+
+    /**
+     * Build the category list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pTrans the transaction to build for
+     */
+    public void buildCategoryMenu(final JScrollMenuBuilder<TransactionCategory> pMenuBuilder,
+                                  final Transaction pTrans) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+    }
+
+    /**
      * Build the portfolio list for an item.
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
@@ -667,8 +699,7 @@ public class TransactionPanel
         JMenuItem myActive = null;
 
         /* Access Portfolios */
-        MoneyWiseData myData = pTrans.getDataSet();
-        PortfolioList myPortfolios = myData.getPortfolios();
+        PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
 
         /* Loop through the Portfolios */
         Iterator<Portfolio> myIterator = myPortfolios.iterator();
@@ -710,8 +741,7 @@ public class TransactionPanel
         JMenuItem myActive = null;
 
         /* Access Deposits */
-        MoneyWiseData myData = pTrans.getDataSet();
-        DepositList myDeposits = myData.getDeposits();
+        DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
         /* Loop through the Portfolios */
         Iterator<Deposit> myIterator = myDeposits.iterator();
@@ -796,6 +826,21 @@ public class TransactionPanel
     private final class TransactionListener
             implements ChangeListener {
         /**
+         * The Debit Menu Builder.
+         */
+        private final JScrollMenuBuilder<Object> theDebitMenuBuilder;
+
+        /**
+         * The Credit Menu Builder.
+         */
+        private final JScrollMenuBuilder<Object> theCreditMenuBuilder;
+
+        /**
+         * The Category Menu Builder.
+         */
+        private final JScrollMenuBuilder<TransactionCategory> theCategoryMenuBuilder;
+
+        /**
          * The Portfolio Menu Builder.
          */
         private final JScrollMenuBuilder<Portfolio> thePortMenuBuilder;
@@ -810,6 +855,12 @@ public class TransactionPanel
          */
         private TransactionListener() {
             /* Access the MenuBuilders */
+            theDebitMenuBuilder = theDebitButton.getMenuBuilder();
+            theDebitMenuBuilder.addChangeListener(this);
+            theCreditMenuBuilder = theCreditButton.getMenuBuilder();
+            theCreditMenuBuilder.addChangeListener(this);
+            theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
+            theCategoryMenuBuilder.addChangeListener(this);
             thePortMenuBuilder = thePortfolioButton.getMenuBuilder();
             thePortMenuBuilder.addChangeListener(this);
             theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
@@ -822,7 +873,13 @@ public class TransactionPanel
             Object o = pEvent.getSource();
 
             /* Handle menu type */
-            if (thePortMenuBuilder.equals(o)) {
+            if (theDebitMenuBuilder.equals(o)) {
+                buildDebitMenu(theDebitMenuBuilder, getItem());
+            } else if (theCreditMenuBuilder.equals(o)) {
+                buildCreditMenu(theCreditMenuBuilder, getItem());
+            } else if (theCategoryMenuBuilder.equals(o)) {
+                buildCategoryMenu(theCategoryMenuBuilder, getItem());
+            } else if (thePortMenuBuilder.equals(o)) {
                 buildPortfolioMenu(thePortMenuBuilder, getItem());
             } else if (theThirdPartyMenuBuilder.equals(o)) {
                 buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem());

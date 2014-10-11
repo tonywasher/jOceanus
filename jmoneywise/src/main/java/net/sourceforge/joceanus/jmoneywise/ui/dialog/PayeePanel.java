@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfoSet;
@@ -386,8 +385,7 @@ public class PayeePanel
         JMenuItem myActive = null;
 
         /* Access PayeeTypes */
-        MoneyWiseData myData = pPayee.getDataSet();
-        PayeeTypeList myTypes = myData.getPayeeTypes();
+        PayeeTypeList myTypes = findDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
 
         /* Loop through the PayeeTypes */
         Iterator<PayeeType> myIterator = myTypes.iterator();

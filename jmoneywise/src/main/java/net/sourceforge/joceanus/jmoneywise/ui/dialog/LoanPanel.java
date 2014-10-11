@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -389,31 +388,13 @@ public class LoanPanel
         JMenuItem myActive = null;
 
         /* Access Loan Categories */
-        MoneyWiseData myData = pLoan.getDataSet();
-        LoanCategoryList myCategories = myData.getLoanCategories();
+        LoanCategoryList myCategories = findDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
         /* Loop through the available category values */
         Iterator<LoanCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            LoanCategory myCategory = myIterator.next();
-
-            /* Ignore deleted or non-parent */
-            boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(LoanCategoryClass.PARENT);
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new JMenu and add it to the popUp */
-            String myName = myCategory.getName();
-            JScrollMenu myMenu = pMenuBuilder.addSubMenu(myName);
-            myMap.put(myName, myMenu);
-        }
-
-        /* Re-Loop through the available category values */
-        myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             LoanCategory myCategory = myIterator.next();
 
@@ -426,6 +407,14 @@ public class LoanPanel
             /* Determine menu to add to */
             LoanCategory myParent = myCategory.getParentCategory();
             JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                String myName = myCategory.getName();
+                myMenu = pMenuBuilder.addSubMenu(myName);
+                myMap.put(myName, myMenu);
+            }
 
             /* Create a new JMenuItem and add it to the popUp */
             JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
@@ -500,8 +489,7 @@ public class LoanPanel
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        MoneyWiseData myData = pLoan.getDataSet();
-        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

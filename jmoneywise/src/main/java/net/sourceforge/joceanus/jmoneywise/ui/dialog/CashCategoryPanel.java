@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
@@ -219,8 +218,7 @@ public class CashCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Cash Category types */
-        MoneyWiseData myData = pCategory.getDataSet();
-        CashCategoryTypeList myCategoryTypes = myData.getCashCategoryTypes();
+        CashCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
 
         /* Loop through the CashCategoryTypes */
         Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();

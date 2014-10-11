@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
@@ -219,8 +218,7 @@ public class LoanCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Loan Category types */
-        MoneyWiseData myData = pCategory.getDataSet();
-        LoanCategoryTypeList myCategoryTypes = myData.getLoanCategoryTypes();
+        LoanCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
 
         /* Loop through the LoanCategoryTypes */
         Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();

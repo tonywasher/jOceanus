@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
@@ -224,8 +223,7 @@ public class DepositCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Deposit Category types */
-        MoneyWiseData myData = pCategory.getDataSet();
-        DepositCategoryTypeList myCategoryTypes = myData.getDepositCategoryTypes();
+        DepositCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
 
         /* Loop through the DepositCategoryTypes */
         Iterator<DepositCategoryType> myIterator = myCategoryTypes.iterator();

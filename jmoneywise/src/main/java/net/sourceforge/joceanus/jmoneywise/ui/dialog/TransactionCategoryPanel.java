@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -218,8 +217,7 @@ public class TransactionCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Transaction Category types */
-        MoneyWiseData myData = pCategory.getDataSet();
-        TransactionCategoryTypeList myCategoryTypes = myData.getTransCategoryTypes();
+        TransactionCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
 
         /* Loop through the TransCategoryTypes */
         Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();

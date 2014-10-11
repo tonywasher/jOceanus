@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -516,31 +515,13 @@ public class DepositPanel
         JMenuItem myActive = null;
 
         /* Access Deposit Categories */
-        MoneyWiseData myData = pDeposit.getDataSet();
-        DepositCategoryList myCategories = myData.getDepositCategories();
+        DepositCategoryList myCategories = findDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
 
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
         /* Loop through the available category values */
         Iterator<DepositCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            DepositCategory myCategory = myIterator.next();
-
-            /* Ignore deleted or non-parent */
-            boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(DepositCategoryClass.PARENT);
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new JMenu and add it to the popUp */
-            String myName = myCategory.getName();
-            JScrollMenu myMenu = pMenuBuilder.addSubMenu(myName);
-            myMap.put(myName, myMenu);
-        }
-
-        /* Re-Loop through the available category values */
-        myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             DepositCategory myCategory = myIterator.next();
 
@@ -553,6 +534,14 @@ public class DepositPanel
             /* Determine menu to add to */
             DepositCategory myParent = myCategory.getParentCategory();
             JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                String myName = myCategory.getName();
+                myMenu = pMenuBuilder.addSubMenu(myName);
+                myMap.put(myName, myMenu);
+            }
 
             /* Create a new JMenuItem and add it to the popUp */
             JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
@@ -623,13 +612,11 @@ public class DepositPanel
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        Deposit myDeposit = getItem();
-        AccountCurrency myCurr = myDeposit.getDepositCurrency();
+        AccountCurrency myCurr = pDeposit.getDepositCurrency();
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        MoneyWiseData myData = myDeposit.getDataSet();
-        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

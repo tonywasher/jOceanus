@@ -149,7 +149,7 @@ public class MainTab
     /**
      * The register panel.
      */
-    private AnalysisStatement theRegister = null;
+    private TransactionTable theRegister = null;
 
     /**
      * The SpotPricesPanel.
@@ -238,7 +238,7 @@ public class MainTab
 
         /* Create the Register Tab */
         myTask.startTask("Register");
-        theRegister = new AnalysisStatement(theView);
+        theRegister = new TransactionTable(theView);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotPrices Tab */

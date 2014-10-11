@@ -99,7 +99,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuB
 /**
  * Analysis Statement.
  */
-public class AnalysisStatement
+public class TransactionTable
         extends JDataTable<Transaction, MoneyWiseDataType> {
     /**
      * Serial Id.
@@ -338,7 +338,7 @@ public class AnalysisStatement
      * Constructor.
      * @param pView the data view
      */
-    public AnalysisStatement(final View pView) {
+    public TransactionTable(final View pView) {
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
@@ -353,7 +353,7 @@ public class AnalysisStatement
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataAnalysis = myDataMgr.new JDataEntry(AnalysisStatement.class.getSimpleName());
+        theDataAnalysis = myDataMgr.new JDataEntry(TransactionTable.class.getSimpleName());
         theDataAnalysis.addAsChildOf(mySection);
         theDataAnalysis.setObject(theUpdateSet);
         theDataFilter = myDataMgr.new JDataEntry(AnalysisFilter.class.getSimpleName());
@@ -564,7 +564,7 @@ public class AnalysisStatement
          * Constructor.
          * @param pTable the table
          */
-        private AnalysisTableModel(final AnalysisStatement pTable) {
+        private AnalysisTableModel(final TransactionTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -943,12 +943,22 @@ public class AnalysisStatement
         private final IconButtonCellEditor<ActionType> theActionIconEditor;
 
         /**
-         * ScrollButton Menu Editor.
+         * Account ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<Object> theAccountEditor;
+
+        /**
+         * Category ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<TransactionCategory> theCategoryEditor;
+
+        /**
+         * Portfolio ScrollButton Menu Editor.
          */
         private final ScrollButtonCellEditor<Portfolio> thePortfolioEditor;
 
         /**
-         * ScrollButton Menu Editor.
+         * Deposit ScrollButton Menu Editor.
          */
         private final ScrollButtonCellEditor<Deposit> theDepositEditor;
 
@@ -1056,7 +1066,7 @@ public class AnalysisStatement
          * Constructor.
          * @param pTable the table
          */
-        private AnalysisColumnModel(final AnalysisStatement pTable) {
+        private AnalysisColumnModel(final TransactionTable pTable) {
             /* call constructor */
             super(pTable);
 
@@ -1070,6 +1080,8 @@ public class AnalysisStatement
             theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
             theUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
             theDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
+            theAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(Object.class);
+            theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
             thePortfolioEditor = theFieldMgr.allocateScrollButtonCellEditor(Portfolio.class);
             theDepositEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -1085,9 +1097,9 @@ public class AnalysisStatement
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
+            declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer, theAccountEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer, theAccountEditor));
             declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theReconciledIconRenderer, theReconciledIconEditor));
             theDescColumn = new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor);
             declareColumn(theDescColumn);
@@ -1577,6 +1589,8 @@ public class AnalysisStatement
              * Constructor.
              */
             private EditorListener() {
+                theCategoryEditor.addChangeListener(this);
+                theAccountEditor.addChangeListener(this);
                 thePortfolioEditor.addChangeListener(this);
                 theDepositEditor.addChangeListener(this);
                 theTagEditor.addChangeListener(this);
@@ -1586,13 +1600,54 @@ public class AnalysisStatement
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();
 
-                if (thePortfolioEditor.equals(o)) {
+                if (theCategoryEditor.equals(o)) {
+                    buildCategoryMenu();
+                } else if (theAccountEditor.equals(o)) {
+                    buildAccountMenu();
+                } else if (thePortfolioEditor.equals(o)) {
                     buildPortfolioMenu();
                 } else if (theDepositEditor.equals(o)) {
                     buildThirdPartyMenu();
                 } else if (theTagEditor.equals(o)) {
                     buildTagMenu();
                 }
+            }
+
+            /**
+             * Build the popUpMenu for accounts.
+             */
+            private void buildAccountMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Object> myBuilder = theAccountEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theAccountEditor.getPoint();
+                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+
+                /* Build the menu */
+                switch (myCell.x) {
+                    case COLUMN_DEBIT:
+                        theActiveTrans.buildDebitMenu(myBuilder, myTrans);
+                        break;
+                    default:
+                        theActiveTrans.buildCreditMenu(myBuilder, myTrans);
+                        break;
+                }
+            }
+
+            /**
+             * Build the popUpMenu for categories.
+             */
+            private void buildCategoryMenu() {
+                /* Access details */
+                JScrollMenuBuilder<TransactionCategory> myBuilder = theCategoryEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theCategoryEditor.getPoint();
+                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+
+                /* Build the menu */
+                theActiveTrans.buildCategoryMenu(myBuilder, myTrans);
             }
 
             /**

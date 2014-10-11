@@ -462,6 +462,8 @@ public class JScrollButton<T>
                 /* Show the Select menu in the correct place */
                 Rectangle myLoc = theButton.getBounds();
                 theMenu.show(theButton, 0, myLoc.height);
+            } else if (theButton.fireOnClose) {
+                notifyClosed();
             }
         }
 
