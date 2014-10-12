@@ -533,14 +533,14 @@ public class DepositPanel
 
             /* Determine menu to add to */
             DepositCategory myParent = myCategory.getParentCategory();
-            JScrollMenu myMenu = myMap.get(myParent.getName());
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                String myName = myCategory.getName();
-                myMenu = pMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
+                myMenu = pMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
             }
 
             /* Create a new JMenuItem and add it to the popUp */

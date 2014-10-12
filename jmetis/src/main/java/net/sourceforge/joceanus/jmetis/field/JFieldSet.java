@@ -158,14 +158,12 @@ public class JFieldSet<T extends JFieldSetItem>
      * Add Element to field set.
      * @param <I> List button element type
      * @param pField the field id
-     * @param pClass the class of the value
      * @param pButton the button
      */
     public <I> void addFieldElement(final JDataField pField,
-                                    final Class<I> pClass,
                                     final JScrollListButton<I> pButton) {
         /* Create the field */
-        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pButton);
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);

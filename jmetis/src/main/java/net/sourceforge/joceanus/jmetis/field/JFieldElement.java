@@ -216,12 +216,10 @@ public class JFieldElement<T extends JFieldSetItem> {
      * @param <I> ScrollButton element type
      * @param pFieldSet the field set
      * @param pField the field id
-     * @param pClass the class of the button elements
      * @param pButton the scroll button
      */
     protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
                                 final JDataField pField,
-                                final Class<I> pClass,
                                 final JScrollListButton<I> pButton) {
         /* Store parameters */
         theFieldSet = pFieldSet;
@@ -232,7 +230,7 @@ public class JFieldElement<T extends JFieldSetItem> {
         theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
 
         /* Create the component */
-        theComponent = JFieldComponent.deriveComponent(this, pButton, pClass);
+        theComponent = JFieldComponent.deriveComponent(this, pButton);
 
         /* Access the model */
         theModel = theComponent.getModel();

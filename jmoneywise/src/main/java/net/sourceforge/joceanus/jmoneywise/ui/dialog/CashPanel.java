@@ -400,14 +400,14 @@ public class CashPanel
 
             /* Determine menu to add to */
             CashCategory myParent = myCategory.getParentCategory();
-            JScrollMenu myMenu = myMap.get(myParent.getName());
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                String myName = myCategory.getName();
-                myMenu = pMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
+                myMenu = pMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
             }
 
             /* Create a new JMenuItem and add it to the popUp */
@@ -444,7 +444,7 @@ public class CashPanel
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
-        /* Re-Loop through the available category values */
+        /* Loop through the available category values */
         Iterator<TransactionCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             TransactionCategory myCategory = myIterator.next();
@@ -459,14 +459,14 @@ public class CashPanel
 
             /* Determine menu to add to */
             TransactionCategory myParent = myCategory.getParentCategory();
-            JScrollMenu myMenu = myMap.get(myParent.getName());
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                String myName = myCategory.getName();
-                myMenu = pMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
+                myMenu = pMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
             }
 
             /* Create a new JMenuItem and add it to the popUp */

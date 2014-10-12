@@ -312,24 +312,8 @@ public class LoanAnalysisSelect
             LoanCategory myCurrent = theState.getCategory();
             JMenuItem myActive = null;
 
-            /* Loop through the available category values */
-            Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                LoanCategoryBucket myBucket = myIterator.next();
-
-                /* Only process parent items */
-                if (!myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
-                    continue;
-                }
-
-                /* Create a new JMenu and add it to the popUp */
-                String myName = myBucket.getName();
-                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
-            }
-
             /* Re-Loop through the available category values */
-            myIterator = theCategories.iterator();
+            Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
                 LoanCategoryBucket myBucket = myIterator.next();
 
@@ -340,7 +324,15 @@ public class LoanAnalysisSelect
 
                 /* Determine menu to add to */
                 LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
+                String myParentName = myParent.getName();
                 JScrollMenu myMenu = myMap.get(myParent.getName());
+
+                /* If this is a new menu */
+                if (myMenu == null) {
+                    /* Create a new JMenu and add it to the popUp */
+                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                    myMap.put(myParentName, myMenu);
+                }
 
                 /* Create a new JMenuItem and add it to the popUp */
                 LoanCategory myCategory = myBucket.getAccountCategory();

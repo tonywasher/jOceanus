@@ -267,23 +267,6 @@ public class EventCategoryAnalysisSelect
             while (myIterator.hasNext()) {
                 EventCategoryBucket myBucket = myIterator.next();
 
-                /* Only process subTotal items */
-                TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
-                if (!myClass.isSubTotal()) {
-                    continue;
-                }
-
-                /* Create a new JMenu and add it to the popUp */
-                String myName = myBucket.getName();
-                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
-            }
-
-            /* Re-Loop through the available category values */
-            myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                EventCategoryBucket myBucket = myIterator.next();
-
                 /* Only process low-level items */
                 TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
                 if (myClass.canParentCategory()) {
@@ -293,7 +276,15 @@ public class EventCategoryAnalysisSelect
                 /* Determine menu to add to */
                 TransactionCategory myCategory = myBucket.getEventCategory();
                 TransactionCategory myParent = myCategory.getParentCategory();
-                JScrollMenu myMenu = myMap.get(myParent.getName());
+                String myParentName = myParent.getName();
+                JScrollMenu myMenu = myMap.get(myParentName);
+
+                /* If this is a new menu */
+                if (myMenu == null) {
+                    /* Create a new JMenu and add it to the popUp */
+                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                    myMap.put(myParentName, myMenu);
+                }
 
                 /* Create a new JMenuItem and add it to the popUp */
                 JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myBucket, myCategory.getSubCategory());

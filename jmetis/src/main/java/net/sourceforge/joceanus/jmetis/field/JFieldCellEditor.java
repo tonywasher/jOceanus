@@ -633,7 +633,6 @@ public final class JFieldCellEditor {
         public boolean stopCellEditing() {
             if (super.stopCellEditing()) {
                 theTable.removeMouseListener(theMouseListener);
-                thePoint = null;
                 return true;
             }
             return false;
@@ -643,7 +642,6 @@ public final class JFieldCellEditor {
         public void cancelCellEditing() {
             super.cancelCellEditing();
             theTable.removeMouseListener(theMouseListener);
-            thePoint = null;
         }
 
         /**
@@ -655,7 +653,12 @@ public final class JFieldCellEditor {
             public void propertyChange(final PropertyChangeEvent pEvent) {
                 /* Store value and stop editing */
                 theValue = theButton.getValue();
-                stopCellEditing();
+
+                /* Access the table model */
+                TableModel myModel = theTable.getModel();
+
+                /* Pass the event as a value to set */
+                myModel.setValueAt(theValue, thePoint.y, thePoint.x);
             }
 
             @Override
@@ -703,7 +706,7 @@ public final class JFieldCellEditor {
 
             @Override
             public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
-                /* Ignore */
+                cancelCellEditing();
             }
         }
     }
@@ -824,7 +827,6 @@ public final class JFieldCellEditor {
         public boolean stopCellEditing() {
             if (super.stopCellEditing()) {
                 theTable.removeMouseListener(theMouseListener);
-                thePoint = null;
                 return true;
             }
             return false;
@@ -834,7 +836,6 @@ public final class JFieldCellEditor {
         public void cancelCellEditing() {
             super.cancelCellEditing();
             theTable.removeMouseListener(theMouseListener);
-            thePoint = null;
         }
 
         /**
@@ -898,7 +899,7 @@ public final class JFieldCellEditor {
 
             @Override
             public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
-                /* Ignore */
+                cancelCellEditing();
             }
         }
     }

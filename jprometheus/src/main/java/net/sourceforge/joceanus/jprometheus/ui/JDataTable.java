@@ -378,16 +378,25 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     }
 
     /**
-     * Select a row and ensure that it is visible.
-     * @param row the row to select
+     * Ensure that a row is visible.
+     * @param row the row to view
      */
-    protected void selectRowWithScroll(final int row) {
-        /* Shift display to line */
+    protected void scrollRowToView(final int row) {
+        /* Shift display to row */
         Rectangle rect = getCellRect(row, 0, true);
         JViewport viewport = (JViewport) getParent();
         Point pt = viewport.getViewPosition();
         rect.setLocation(rect.x - pt.x, rect.y - pt.y);
         viewport.scrollRectToVisible(rect);
+    }
+
+    /**
+     * Select a row and ensure that it is visible.
+     * @param row the row to select
+     */
+    protected void selectRowWithScroll(final int row) {
+        /* Shift display to row */
+        scrollRowToView(row);
 
         /* clear existing selection and select the row */
         selectRow(row);

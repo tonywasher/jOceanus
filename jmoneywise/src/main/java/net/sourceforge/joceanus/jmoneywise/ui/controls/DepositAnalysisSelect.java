@@ -312,24 +312,8 @@ public class DepositAnalysisSelect
             DepositCategory myCurrent = theState.getCategory();
             JMenuItem myActive = null;
 
-            /* Loop through the available category values */
-            Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                DepositCategoryBucket myBucket = myIterator.next();
-
-                /* Only process parent items */
-                if (!myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
-                    continue;
-                }
-
-                /* Create a new JMenu and add it to the popUp */
-                String myName = myBucket.getName();
-                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
-                myMap.put(myName, myMenu);
-            }
-
             /* Re-Loop through the available category values */
-            myIterator = theCategories.iterator();
+            Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
                 DepositCategoryBucket myBucket = myIterator.next();
 
@@ -340,7 +324,15 @@ public class DepositAnalysisSelect
 
                 /* Determine menu to add to */
                 DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
-                JScrollMenu myMenu = myMap.get(myParent.getName());
+                String myParentName = myParent.getName();
+                JScrollMenu myMenu = myMap.get(myParentName);
+
+                /* If this is a new menu */
+                if (myMenu == null) {
+                    /* Create a new JMenu and add it to the popUp */
+                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                    myMap.put(myParentName, myMenu);
+                }
 
                 /* Create a new JMenuItem and add it to the popUp */
                 DepositCategory myCategory = myBucket.getAccountCategory();

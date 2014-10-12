@@ -437,6 +437,7 @@ public class TransactionTable
         /* Set the selection */
         theRange = null;
         setSelection(theSelect.getRange());
+        theSelectionModel.handleNewFilter();
     }
 
     /**
@@ -523,6 +524,9 @@ public class TransactionTable
         /* Touch the filter and updateSet */
         theDataFilter.setObject(theFilter);
         theDataAnalysis.setObject(theUpdateSet);
+
+        /* Adjust the filter */
+        theSelectionModel.handleNewFilter();
     }
 
     /**
@@ -717,8 +721,11 @@ public class TransactionTable
                 /* Set the selection */
                 JDateDayRange myRange = theSelect.getRange();
                 if (Difference.isEqual(myRange, theRange)) {
+                    /* Handle a simple filter change */
                     theModel.fireNewDataEvents();
+                    theSelectionModel.handleNewFilter();
                 } else {
+                    /* Select a new date range */
                     setSelection(myRange);
                 }
             }

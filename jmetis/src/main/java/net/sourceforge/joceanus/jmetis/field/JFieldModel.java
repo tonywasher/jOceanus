@@ -541,11 +541,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
-         * @param pClass the class of the model
          */
         protected JModelObjectList(final JFieldSet<T> pFieldSet,
-                                   final JDataField pField,
-                                   final Class<I> pClass) {
+                                   final JDataField pField) {
             /* Pass call onwards */
             super(pFieldSet, pField, null);
         }

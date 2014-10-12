@@ -81,8 +81,10 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         /* Notify new data */
         theTableModel.fireNewDataEvents();
 
+        /* TODO Look to retain current selection if still visible */
+
         /* Set default selection */
-        theTable.selectRowWithScroll(0);
+        theTable.selectRowWithScroll(defaultSelectIndex());
     }
 
     /**
@@ -95,8 +97,8 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         /* If we have no data, but we have data to view */
         if ((theTable.getSelectedRow() == -1)
             && (theTableModel.getViewRowCount() > 0)) {
-            /* Set default selection */
-            theTable.selectRowWithScroll(0);
+            /* Recover the selected item */
+            recoverSelectedItem();
         }
     }
 
@@ -110,33 +112,64 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         /* If we have no data, but we have data to view */
         if ((theTable.getSelectedRow() == -1)
             && (theTableModel.getViewRowCount() > 0)) {
-            /* Obtain the model index of the selected item */
-            DataList<T, E> myList = theTable.getList();
-            T myCurr = theItemPanel.getSelectedItem();
-            int iIndex = myCurr == null
-                                       ? -1
-                                       : myList.indexOf(myCurr);
-
-            /* If we have an active item */
-            if (iIndex != -1) {
-                /* Adjust for any header */
-                T myFirst = theTableModel.getItemAtIndex(0);
-                if (myFirst.isHeader() && theTableModel.includeRow(myFirst)) {
-                    iIndex++;
-                }
-
-                /* Convert index to view */
-                iIndex = theTable.convertRowIndexToView(iIndex);
-            }
-
-            /* Reset no selection to default selection */
-            if (iIndex == -1) {
-                iIndex = 0;
-            }
-
-            /* Set selection */
-            theTable.selectRowWithScroll(iIndex);
+            /* Recover the selected item */
+            recoverSelectedItem();
         }
+    }
+
+    /**
+     * recover selected item.
+     */
+    private void recoverSelectedItem() {
+        /* Obtain the model index of the selected item */
+        DataList<T, E> myList = theTable.getList();
+        T myCurr = theItemPanel.getSelectedItem();
+        int iIndex = myCurr == null
+                                   ? -1
+                                   : myList.indexOf(myCurr);
+
+        /* If we have an active item */
+        if (iIndex != -1) {
+            /* Determine whether we have a header */
+            T myFirst = theTableModel.getItemAtIndex(0);
+            if (myFirst.isHeader()) {
+                iIndex++;
+            }
+
+            /* Convert index to view */
+            iIndex = theTable.convertRowIndexToView(iIndex);
+        }
+
+        /* Reset no selection to default selection */
+        if (iIndex == -1) {
+            iIndex = defaultSelectIndex();
+        }
+
+        /* Set selection */
+        theTable.selectRowWithScroll(iIndex);
+    }
+
+    /**
+     * obtain the default selection index.
+     * @return the default selection
+     */
+    private int defaultSelectIndex() {
+        /* Access the number of viewable rows */
+        int iNumRows = theTableModel.getViewRowCount();
+
+        /* If we do not have any rows, say so */
+        if (iNumRows == 0) {
+            return -1;
+        }
+
+        /* Access first row */
+        int iIndex = theTable.convertRowIndexToModel(0);
+        T myFirst = theTableModel.getItemAtIndex(iIndex);
+        return myFirst.isHeader()
+                                 ? iNumRows > 1
+                                               ? 1
+                                               : -1
+                                 : 0;
     }
 
     /**
@@ -168,7 +201,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
 
             /* If this is a header record */
             if (myItem.isHeader()) {
-                /* Set item as null */
+                /* Not allowed to select header */
                 myItem = null;
             }
 

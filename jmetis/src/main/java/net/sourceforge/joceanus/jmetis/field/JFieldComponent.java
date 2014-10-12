@@ -247,18 +247,16 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * @param <X> Data item type
      * @param pElement the element
      * @param pButton the button
-     * @param pClass the class of the button elements.
      * @return the field component
      */
     protected static <I, X extends JFieldSetItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
-                                                                                     final JScrollListButton<I> pButton,
-                                                                                     final Class<I> pClass) {
+                                                                                     final JScrollListButton<I> pButton) {
         /* Obtain FieldSet and Field */
         JFieldSet<X> mySet = pElement.getFieldSet();
         JDataField myField = pElement.getField();
 
         /* Allocate component */
-        JModelObjectList<I, X> myModel = new JModelObjectList<I, X>(mySet, myField, pClass);
+        JModelObjectList<I, X> myModel = new JModelObjectList<I, X>(mySet, myField);
         return new JFieldScrollListButton<I, X>(pButton, myModel);
     }
 

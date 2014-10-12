@@ -24,7 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -42,17 +44,24 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
+import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
@@ -68,6 +77,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
@@ -272,7 +282,7 @@ public class TransactionPanel
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), DataType.STRING, myComments);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), DataType.STRING, myReference);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), TransactionTag.class, theTagButton);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
 
         /* Create the Tax panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -660,6 +670,14 @@ public class TransactionPanel
                                final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
+
+        /* Add possible items */
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), true, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), true, pTrans);
     }
 
     /**
@@ -671,6 +689,65 @@ public class TransactionPanel
                                 final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
+
+        /* Add possible items */
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), false, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
+        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
+    }
+
+    /**
+     * Build the asset list for an item.
+     * @param <T> the Asset type
+     * @param pMenuBuilder the menu builder
+     * @param pDebit is this item the debit
+     * @param pList the asset list
+     * @param pTrans the transaction to build for
+     */
+    private <T extends AssetBase<T>> void buildDebitAssetMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+                                                              final AssetBaseList<T> pList,
+                                                              final boolean pDebit,
+                                                              final Transaction pTrans) {
+        /* Record active item */
+        AssetBase<?> myCurr = pDebit
+                                    ? pTrans.getDebit()
+                                    : pTrans.getCredit();
+        JMenuItem myActive = null;
+        JScrollMenu myMenu = null;
+
+        /* Loop through the available values */
+        Iterator<T> myIterator = pList.iterator();
+        while (myIterator.hasNext()) {
+            T myAsset = myIterator.next();
+
+            /* Only process non-deleted/non-closed items */
+            if (myAsset.isDeleted() || myAsset.isClosed()) {
+                continue;
+            }
+
+            /* TODO Check whether the asset is allowable for the owner */
+
+            /* If this the first item */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = pMenuBuilder.addSubMenu(pList.getItemType().getItemName());
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myAsset);
+
+            /* If this is the active category */
+            if (myAsset.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
     }
 
     /**
@@ -682,6 +759,63 @@ public class TransactionPanel
                                   final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        TransactionCategory myCurr = pTrans.getCategory();
+        JMenuItem myActive = null;
+        JMenuItem myItem;
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Access Categories */
+        TransactionCategoryList myCategories = findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+
+        /* Loop through the available category values */
+        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategory myCategory = myIterator.next();
+
+            /* Only process non-deleted low-level items */
+            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            if (myCategory.isDeleted() || myClass.canParentCategory()) {
+                continue;
+            }
+
+            /* TODO Check whether the category is allowable for the owner */
+
+            /* Determine parent */
+            TransactionCategory myParent = myCategory.getParentCategory();
+
+            /* If we have a parent */
+            if (myParent != null) {
+                String myParentName = myParent.getName();
+                JScrollMenu myMenu = myMap.get(myParentName);
+
+                /* If this is a new menu */
+                if (myMenu == null) {
+                    /* Create a new JMenu and add it to the popUp */
+                    myMenu = pMenuBuilder.addSubMenu(myParentName);
+                    myMap.put(myParentName, myMenu);
+                }
+
+                /* Create a new JMenuItem and add it to the subMenu */
+                myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            } else {
+                /* Create a new JMenuItem and add it to the popUp */
+                myItem = pMenuBuilder.addItem(myCategory);
+            }
+
+            /* If this is the active category */
+            if (myCategory.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
     }
 
     /**
