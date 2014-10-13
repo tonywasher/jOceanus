@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
+import java.time.LocalTime;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -87,9 +88,10 @@ public class CreateGitRepo
 
         /* Create a new Git repository */
         BuildGit myBuild = new BuildGit(theSource, theGitRepo);
-        Long myStart = System.currentTimeMillis();
+        Long myStart = System.nanoTime();
         myBuild.buildRepository(this);
-        Long myDuration = System.currentTimeMillis() - myStart;
+        Long myEnd = System.nanoTime();
+        LocalTime myDuration = LocalTime.ofNanoOfDay(myEnd - myStart);
         setNewStage("Elapsed: " + myDuration);
 
         /* Return null */

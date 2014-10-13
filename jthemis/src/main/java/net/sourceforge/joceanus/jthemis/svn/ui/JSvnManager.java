@@ -549,6 +549,7 @@ public final class JSvnManager {
 
     /**
      * Run create GitRepo.
+     * @param pSource the source component
      */
     private void createGitRepo(final SvnComponent pSource) {
         /* Create the worker thread */

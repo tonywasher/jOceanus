@@ -162,21 +162,6 @@ public class DiscoverData
                 deriveExtractPlans();
             }
 
-            /* Discover git repository details */
-            // if (!isCancelled()) {
-            // theGitRepo = new GitRepository(thePreferenceMgr, this);
-            // }
-
-            /* Create a new JDateButton repository */
-            // if (!isCancelled()) {
-            // SvnComponent myComp = theRepository.locateComponent("jOceanus");
-            // BuildGit myBuild = new BuildGit(myComp, theGitRepo);
-            // Long myStart = System.currentTimeMillis();
-            // myBuild.buildRepository(this);
-            // Long myDuration = System.currentTimeMillis() - myStart;
-            // setNewStage("Elapsed: " + myDuration);
-            // }
-
             /* Return null */
             return null;
 
