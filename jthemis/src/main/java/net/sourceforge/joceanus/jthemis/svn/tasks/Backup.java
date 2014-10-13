@@ -265,7 +265,7 @@ public class Backup {
         boolean doDelete = true;
 
         /* Create a new password hash */
-        PasswordHash myHash = pManager.resolvePasswordHash(null, "New Password");
+        PasswordHash myHash = pManager.resolvePasswordHash(null, myName);
 
         /* Protect against exceptions */
         try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, myZipName);
@@ -368,8 +368,8 @@ public class Backup {
             SVNAdminEventAction myAction = pEvent.getAction();
             if (myAction.equals(SVNAdminEventAction.REVISION_DUMPED)
                 || myAction.equals(SVNAdminEventAction.REVISION_LOADED)) {
-                /* Set steps done value */
-                theStatus.setStepsDone((int) pEvent.getRevision());
+                /* Set new step */
+                theStatus.setNewStep("Revision");
             }
         }
 

@@ -489,7 +489,7 @@ public class JScrollButton<T>
         private static final long serialVersionUID = -8505257662931197112L;
 
         /**
-         * Item.
+         * Button.
          */
         private final JScrollButton<T> theButton;
 

@@ -27,7 +27,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Iterator;
 
+import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -52,10 +54,12 @@ import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateBranchTags;
+import net.sourceforge.joceanus.jthemis.svn.threads.CreateGitRepo;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateNewBranch;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateTagExtract;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateWorkingCopy;
@@ -151,6 +155,11 @@ public final class JSvnManager {
      * The CreateNewBranch menuItem.
      */
     private final JMenuItem theCreateNewBrn;
+
+    /**
+     * The createGit menu.
+     */
+    private final JMenu theCreateGit;
 
     /**
      * The BackupSvn menuItem.
@@ -307,6 +316,11 @@ public final class JSvnManager {
         theCreateNewBrn.addActionListener(myMenuListener);
         theTasks.add(theCreateNewBrn);
 
+        /* Create the GitRepository */
+        theCreateGit = new JMenu("CreateGitRepo");
+        theCreateGit.setEnabled(false);
+        theTasks.add(theCreateGit);
+
         /* Create the BackupSvn menuItem */
         theBackupSvn = new JMenuItem("BackupSubVersion");
         theBackupSvn.addActionListener(myMenuListener);
@@ -338,33 +352,46 @@ public final class JSvnManager {
     }
 
     /**
-     * Make Panel.
+     * Declare subversuion data.
      * @param pData the discover thread
      */
-    protected void setData(final DiscoverData pData) {
-        /* Create Data Entries */
+    protected void setSubversionData(final DiscoverData pData) {
+        /* Declare repository to data manager */
         JDataEntry myRepEntry = theDataMgr.new JDataEntry("SvnRepository");
         myRepEntry.addAsRootChild();
-        JDataEntry mySetEntry = theDataMgr.new JDataEntry("WorkingSet");
-        mySetEntry.addAsRootChild();
-        JDataEntry myGitEntry = theDataMgr.new JDataEntry("GitRepository");
-        myGitEntry.addAsRootChild();
-
-        /* Access the repository and declare to data manager */
         theRepository = pData.getRepository();
         myRepEntry.setObject(theRepository);
         myRepEntry.setFocus();
 
-        /* Build the WorkingCopySet */
+        /* Declare WorkingCopySet to data manager */
+        JDataEntry mySetEntry = theDataMgr.new JDataEntry("WorkingSet");
+        mySetEntry.addAsRootChild();
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
 
-        /* Declare the Extract Plans */
-        pData.declareExtractPlans(theDataMgr);
+        /* Declare Extract Plans to data manager */
+        JDataEntry myPlanEntry = theDataMgr.new JDataEntry("ExtractPlans");
+        myPlanEntry.addAsRootChild();
+        pData.declareExtractPlans(theDataMgr, myPlanEntry);
 
-        /* Build the GitRepo */
-        GitRepository myGitRepo = pData.getGitRepo();
-        myGitEntry.setObject(myGitRepo);
+        /* Enable the git menu */
+        theCreateGit.setEnabled(true);
+
+        /* Loop through the components */
+        Iterator<SvnComponent> myIterator = theRepository.getComponents().iterator();
+        while (myIterator.hasNext()) {
+            SvnComponent myComp = myIterator.next();
+
+            /* Create a new menu item for the component */
+            ItemAction myAction = new ItemAction(myComp);
+            JMenuItem myItem = new JMenuItem(myAction);
+            theCreateGit.add(myItem);
+        }
+
+        /* Enable the git menu if we have components */
+        if (theCreateGit.getItemCount() > 0) {
+            theCreateGit.setEnabled(true);
+        }
 
         /* If we have an error */
         JOceanusException myError = pData.getError();
@@ -374,6 +401,19 @@ public final class JSvnManager {
             myErrorEntry.setObject(myError);
             myErrorEntry.setFocus();
         }
+    }
+
+    /**
+     * Declare git data.
+     * @param pGit the git thread
+     */
+    protected void setGitData(final CreateGitRepo pGit) {
+        /* Declare repository to data manager */
+        JDataEntry myRepEntry = theDataMgr.new JDataEntry("GitRepo");
+        myRepEntry.addAsRootChild();
+        GitRepository myRepo = pGit.getGitRepo();
+        myRepEntry.setObject(myRepo);
+        myRepEntry.setFocus();
     }
 
     /**
@@ -387,7 +427,16 @@ public final class JSvnManager {
             DiscoverData myThread = (DiscoverData) pTask;
 
             /* Report data to manager */
-            setData(myThread);
+            setSubversionData(myThread);
+        }
+
+        /* If this is the discoverData thread */
+        if (pTask instanceof CreateGitRepo) {
+            /* Access correctly */
+            CreateGitRepo myThread = (CreateGitRepo) pTask;
+
+            /* Report data to manager */
+            setGitData(myThread);
         }
 
         /* Enable other tasks */
@@ -499,6 +548,16 @@ public final class JSvnManager {
     }
 
     /**
+     * Run create GitRepo.
+     */
+    private void createGitRepo(final SvnComponent pSource) {
+        /* Create the worker thread */
+        CreateGitRepo myThread = new CreateGitRepo(theStatusPanel, pSource);
+        theTasks.setEnabled(false);
+        theStatusPanel.runThread(myThread);
+    }
+
+    /**
      * MenuListener class.
      */
     private final class MenuListener
@@ -562,6 +621,37 @@ public final class JSvnManager {
                 /* Start a restore backup operation */
                 restoreSubversion();
             }
+        }
+    }
+
+    /**
+     * Item action class.
+     */
+    private final class ItemAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 1093025312352957763L;
+
+        /**
+         * Item.
+         */
+        private final SvnComponent theSource;
+
+        /**
+         * Constructor.
+         * @param pSource the source component
+         */
+        private ItemAction(final SvnComponent pSource) {
+            super(pSource.getName());
+            theSource = pSource;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* run the thread */
+            createGitRepo(theSource);
         }
     }
 

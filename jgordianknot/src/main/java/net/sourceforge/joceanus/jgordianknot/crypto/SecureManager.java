@@ -144,10 +144,10 @@ public class SecureManager {
         /* Create the title for the window */
         if (needConfirm) {
             myTitle = NLS_TITLENEWPASS
-                      + pSource;
+                      + " " + pSource;
         } else {
             myTitle = NLS_TITLEPASS
-                      + pSource;
+                      + " " + pSource;
         }
 
         /* Create a new password dialog */

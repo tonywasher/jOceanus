@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.svn.tasks.BuildGit;
 
 /**
  * Thread to handle analysis of repository.
@@ -117,10 +116,12 @@ public class DiscoverData
     }
 
     /**
-     * Declare extract plan.
+     * Declare extract plans.
      * @param pDataMgr the data manager
+     * @param pParent the parent entry
      */
-    public void declareExtractPlans(final JDataManager pDataMgr) {
+    public void declareExtractPlans(final JDataManager pDataMgr,
+                                    final JDataEntry pParent) {
         /* Loop through the plans */
         Iterator<SvnExtract> myIterator = theExtractPlanMap.values().iterator();
         while (myIterator.hasNext()) {
@@ -128,7 +129,7 @@ public class DiscoverData
 
             /* Create the data entry */
             JDataEntry myEntry = pDataMgr.new JDataEntry(myPlan.getName());
-            myEntry.addAsRootChild();
+            myEntry.addAsChildOf(pParent);
             myEntry.setObject(myPlan);
         }
     }
@@ -162,19 +163,19 @@ public class DiscoverData
             }
 
             /* Discover git repository details */
-            if (!isCancelled()) {
-                theGitRepo = new GitRepository(thePreferenceMgr, this);
-            }
+            // if (!isCancelled()) {
+            // theGitRepo = new GitRepository(thePreferenceMgr, this);
+            // }
 
             /* Create a new JDateButton repository */
-            if (!isCancelled()) {
-                SvnComponent myComp = theRepository.locateComponent("jOceanus");
-                BuildGit myBuild = new BuildGit(myComp, theGitRepo);
-                Long myStart = System.currentTimeMillis();
-                myBuild.buildRepository(this);
-                Long myDuration = System.currentTimeMillis() - myStart;
-                setNewStage("Elapsed: " + myDuration);
-            }
+            // if (!isCancelled()) {
+            // SvnComponent myComp = theRepository.locateComponent("jOceanus");
+            // BuildGit myBuild = new BuildGit(myComp, theGitRepo);
+            // Long myStart = System.currentTimeMillis();
+            // myBuild.buildRepository(this);
+            // Long myDuration = System.currentTimeMillis() - myStart;
+            // setNewStage("Elapsed: " + myDuration);
+            // }
 
             /* Return null */
             return null;
