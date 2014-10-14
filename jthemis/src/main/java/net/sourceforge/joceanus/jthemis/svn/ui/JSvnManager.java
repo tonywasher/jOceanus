@@ -352,7 +352,7 @@ public final class JSvnManager {
     }
 
     /**
-     * Declare subversuion data.
+     * Declare subversion data.
      * @param pData the discover thread
      */
     protected void setSubversionData(final DiscoverData pData) {

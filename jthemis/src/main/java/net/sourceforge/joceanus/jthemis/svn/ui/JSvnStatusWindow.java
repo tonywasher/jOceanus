@@ -272,6 +272,7 @@ public class JSvnStatusWindow
                 /* Clear contents */
                 theText.setText(null);
                 thePosition = 0;
+                theStatusPosition = 0;
 
                 /* If this is the cancel button */
             } else if (theCancelButton.equals(o)) {

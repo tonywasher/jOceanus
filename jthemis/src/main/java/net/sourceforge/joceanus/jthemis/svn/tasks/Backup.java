@@ -314,6 +314,11 @@ public class Backup {
         File myRepo = new File(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_DIR));
         File myBackup = new File(myBUPreferences.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
 
+        /* Report start of backup */
+        if (!theStatus.initTask("Backing up subVersion")) {
+            return;
+        }
+
         /* Loop through the repository directories */
         int iNumStages = 0;
         for (File myRepository : myRepo.listFiles()) {
@@ -345,6 +350,11 @@ public class Backup {
 
             /* Backup the repositories */
             backUpRepository(pManager, myRepository, myBackup);
+        }
+
+        /* Report end of backup */
+        if (!theStatus.isCancelled()) {
+            theStatus.initTask("Backup completed");
         }
     }
 

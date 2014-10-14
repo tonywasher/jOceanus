@@ -123,6 +123,8 @@ public class ScmStatus {
      */
     public void setTask(final String pValue) {
         theTask = pValue;
+        theStagesDone = -1;
+        theStepsDone = -1;
     }
 
     /**
