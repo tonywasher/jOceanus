@@ -116,14 +116,14 @@ public class TransactionPanel
     private final JDateDayButton theDateButton;
 
     /**
-     * Debit Button Field.
+     * Account Button Field.
      */
-    private final JScrollButton<Object> theDebitButton;
+    private final JScrollButton<Object> theAccountButton;
 
     /**
-     * Credit Button Field.
+     * Partner Button Field.
      */
-    private final JScrollButton<Object> theCreditButton;
+    private final JScrollButton<Object> thePartnerButton;
 
     /**
      * Category Button Field.
@@ -171,8 +171,8 @@ public class TransactionPanel
         theDateButton = new JDateDayButton();
 
         /* Create the buttons */
-        theDebitButton = new JScrollButton<Object>();
-        theCreditButton = new JScrollButton<Object>();
+        theAccountButton = new JScrollButton<Object>();
+        thePartnerButton = new JScrollButton<Object>();
         theCategoryButton = new JScrollButton<TransactionCategory>();
         theTagButton = new JScrollListButton<TransactionTag>();
         thePortfolioButton = new JScrollButton<Portfolio>();
@@ -232,16 +232,16 @@ public class TransactionPanel
 
         /* restrict the fields */
         restrictField(theDateButton, Transaction.DESCLEN);
-        restrictField(theDebitButton, Transaction.DESCLEN);
-        restrictField(theCreditButton, Transaction.DESCLEN);
+        restrictField(theAccountButton, Transaction.DESCLEN);
+        restrictField(thePartnerButton, Transaction.DESCLEN);
         restrictField(theCategoryButton, Transaction.DESCLEN);
         restrictField(myAmount, Transaction.DESCLEN);
         restrictField(myReconciledButton, Transaction.DESCLEN);
 
         /* Declare fields */
         theFieldSet.addFieldElement(Transaction.FIELD_DATE, DataType.DATEDAY, theDateButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_DEBIT, Object.class, theDebitButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_CREDIT, Object.class, theCreditButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, Object.class, theAccountButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, Object.class, thePartnerButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, DataType.MONEY, myAmount);
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
@@ -253,8 +253,8 @@ public class TransactionPanel
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Transaction.FIELD_DATE, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_DEBIT, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_CREDIT, myPanel);
+        theFieldSet.addFieldToPanel(Transaction.FIELD_ACCOUNT, myPanel);
+        theFieldSet.addFieldToPanel(Transaction.FIELD_PARTNER, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_CATEGORY, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_AMOUNT, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_RECONCILED, myPanel);
@@ -542,8 +542,8 @@ public class TransactionPanel
         theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
         theFieldSet.setEditable(Transaction.FIELD_AMOUNT, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_DEBIT, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_CREDIT, isEditable && !bIsReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, isEditable && !bIsReconciled);
+        theFieldSet.setEditable(Transaction.FIELD_PARTNER, isEditable && !bIsReconciled);
         theFieldSet.setEditable(Transaction.FIELD_CATEGORY, isEditable && !bIsReconciled);
         theFieldSet.setEditable(Transaction.FIELD_DATE, isEditable && !bIsReconciled);
     }
@@ -583,12 +583,15 @@ public class TransactionPanel
         } else if (myField.equals(Transaction.FIELD_AMOUNT)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getMoney());
-        } else if (myField.equals(Transaction.FIELD_DEBIT)) {
-            /* Update the Debit */
-            myTrans.setDebit(pUpdate.getValue(AssetBase.class));
-        } else if (myField.equals(Transaction.FIELD_CREDIT)) {
-            /* Update the Credit */
-            myTrans.setCredit(pUpdate.getValue(AssetBase.class));
+        } else if (myField.equals(Transaction.FIELD_ACCOUNT)) {
+            /* Update the Account */
+            myTrans.setAccount(pUpdate.getValue(AssetBase.class));
+        } else if (myField.equals(Transaction.FIELD_DIRECTION)) {
+            /* Update the Direction */
+            myTrans.switchDirection();
+        } else if (myField.equals(Transaction.FIELD_PARTNER)) {
+            /* Update the Partner */
+            myTrans.setPartner(pUpdate.getValue(AssetBase.class));
         } else if (myField.equals(Transaction.FIELD_CATEGORY)) {
             /* Update the Category */
             myTrans.setCategory(pUpdate.getValue(TransactionCategory.class));
@@ -647,8 +650,8 @@ public class TransactionPanel
     protected void buildGoToMenu() {
         Transaction myItem = getItem();
         if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myItem.getDebit());
-            buildGoToEvent(myItem.getCredit());
+            buildGoToEvent(myItem.getAccount());
+            buildGoToEvent(myItem.getPartner());
             buildGoToEvent(myItem.getCategory());
             Portfolio myPortfolio = myItem.getPortfolio();
             if (myPortfolio != null) {
@@ -662,12 +665,12 @@ public class TransactionPanel
     }
 
     /**
-     * Build the debit list for an item.
+     * Build the account list for an item.
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
      */
-    public void buildDebitMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
-                               final Transaction pTrans) {
+    public void buildAccountMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+                                 final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
@@ -677,16 +680,15 @@ public class TransactionPanel
         buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
         buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), true, pTrans);
         buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), true, pTrans);
     }
 
     /**
-     * Build the credit list for an item.
+     * Build the partner list for an item.
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
      */
-    public void buildCreditMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
-                                final Transaction pTrans) {
+    public void buildPartnerMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+                                 final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
@@ -703,18 +705,18 @@ public class TransactionPanel
      * Build the asset list for an item.
      * @param <T> the Asset type
      * @param pMenuBuilder the menu builder
-     * @param pDebit is this item the debit
+     * @param pAccount is this item the account
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
     private <T extends AssetBase<T>> void buildDebitAssetMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
                                                               final AssetBaseList<T> pList,
-                                                              final boolean pDebit,
+                                                              final boolean pAccount,
                                                               final Transaction pTrans) {
         /* Record active item */
-        AssetBase<?> myCurr = pDebit
-                                    ? pTrans.getDebit()
-                                    : pTrans.getCredit();
+        AssetBase<?> myCurr = pAccount
+                                      ? pTrans.getAccount()
+                                      : pTrans.getPartner();
         JMenuItem myActive = null;
         JScrollMenu myMenu = null;
 
@@ -960,14 +962,14 @@ public class TransactionPanel
     private final class TransactionListener
             implements ChangeListener {
         /**
-         * The Debit Menu Builder.
+         * The Account Menu Builder.
          */
-        private final JScrollMenuBuilder<Object> theDebitMenuBuilder;
+        private final JScrollMenuBuilder<Object> theAccountMenuBuilder;
 
         /**
-         * The Credit Menu Builder.
+         * The Partner Menu Builder.
          */
-        private final JScrollMenuBuilder<Object> theCreditMenuBuilder;
+        private final JScrollMenuBuilder<Object> thePartnerMenuBuilder;
 
         /**
          * The Category Menu Builder.
@@ -989,10 +991,10 @@ public class TransactionPanel
          */
         private TransactionListener() {
             /* Access the MenuBuilders */
-            theDebitMenuBuilder = theDebitButton.getMenuBuilder();
-            theDebitMenuBuilder.addChangeListener(this);
-            theCreditMenuBuilder = theCreditButton.getMenuBuilder();
-            theCreditMenuBuilder.addChangeListener(this);
+            theAccountMenuBuilder = theAccountButton.getMenuBuilder();
+            theAccountMenuBuilder.addChangeListener(this);
+            thePartnerMenuBuilder = thePartnerButton.getMenuBuilder();
+            thePartnerMenuBuilder.addChangeListener(this);
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
             thePortMenuBuilder = thePortfolioButton.getMenuBuilder();
@@ -1007,10 +1009,10 @@ public class TransactionPanel
             Object o = pEvent.getSource();
 
             /* Handle menu type */
-            if (theDebitMenuBuilder.equals(o)) {
-                buildDebitMenu(theDebitMenuBuilder, getItem());
-            } else if (theCreditMenuBuilder.equals(o)) {
-                buildCreditMenu(theCreditMenuBuilder, getItem());
+            if (theAccountMenuBuilder.equals(o)) {
+                buildAccountMenu(theAccountMenuBuilder, getItem());
+            } else if (thePartnerMenuBuilder.equals(o)) {
+                buildPartnerMenu(thePartnerMenuBuilder, getItem());
             } else if (theCategoryMenuBuilder.equals(o)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());
             } else if (thePortMenuBuilder.equals(o)) {

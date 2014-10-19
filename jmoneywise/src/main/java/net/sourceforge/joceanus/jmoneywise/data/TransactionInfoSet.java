@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -216,8 +217,9 @@ public class TransactionInfoSet
     public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
-        AssetBase<?> myDebit = myTransaction.getDebit();
-        AssetBase<?> myCredit = myTransaction.getCredit();
+        AssetBase<?> myAccount = myTransaction.getAccount();
+        AssetBase<?> myPartner = myTransaction.getPartner();
+        AssetDirection myDir = myTransaction.getDirection();
         TransactionCategory myCategory = myTransaction.getCategory();
 
         /* If we have no Category, no class is allowed */
@@ -255,15 +257,19 @@ public class TransactionInfoSet
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
-                return isTaxCreditClassRequired(myDebit, getPortfolio(TransactionInfoClass.PORTFOLIO), myClass);
+                return isTaxCreditClassRequired(myAccount, getPortfolio(TransactionInfoClass.PORTFOLIO), myClass);
 
                 /* Handle debit units separately */
             case DEBITUNITS:
-                return isDebitUnitsClassRequired(myDebit, myClass);
+                return isDebitUnitsClassRequired(AssetDirection.FROM.equals(myDir)
+                                                                                  ? myPartner
+                                                                                  : myAccount, myClass);
 
                 /* Handle CreditUnits separately */
             case CREDITUNITS:
-                return isCreditUnitsClassRequired(myCredit, myClass);
+                return isCreditUnitsClassRequired(AssetDirection.FROM.equals(myDir)
+                                                                                   ? myAccount
+                                                                                   : myPartner, myClass);
 
                 /* Handle Dilution separately */
             case DILUTION:
@@ -272,19 +278,19 @@ public class TransactionInfoSet
                 /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
                 return ((myClass == TransactionCategoryClass.TRANSFER)
-                        && (myDebit instanceof Security)
-                        && (((Security) myDebit).isSecurityClass(SecurityTypeClass.LIFEBOND)))
-                                                                                              ? JDataFieldRequired.MUSTEXIST
-                                                                                              : JDataFieldRequired.NOTALLOWED;
+                        && (myAccount instanceof Security)
+                        && (((Security) myAccount).isSecurityClass(SecurityTypeClass.LIFEBOND)))
+                                                                                                ? JDataFieldRequired.MUSTEXIST
+                                                                                                : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle ThirdParty separately */
             case THIRDPARTY:
                 return isThirdPartyClassRequired(myTransaction, myClass);
 
             case PORTFOLIO:
-                return ((myDebit instanceof Security) || (myCredit instanceof Security))
-                                                                                        ? JDataFieldRequired.MUSTEXIST
-                                                                                        : JDataFieldRequired.NOTALLOWED;
+                return ((myAccount instanceof Security) || (myPartner instanceof Security))
+                                                                                           ? JDataFieldRequired.MUSTEXIST
+                                                                                           : JDataFieldRequired.NOTALLOWED;
 
             case PENSION:
             case CREDITAMOUNT:

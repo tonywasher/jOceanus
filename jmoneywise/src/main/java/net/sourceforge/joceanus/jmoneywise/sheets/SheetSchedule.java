@@ -53,17 +53,17 @@ public class SheetSchedule
     /**
      * Debit column.
      */
-    private static final int COL_DEBIT = COL_PAIR + 1;
+    private static final int COL_ACCOUNT = COL_PAIR + 1;
 
     /**
-     * Credit column.
+     * Account column.
      */
-    private static final int COL_CREDIT = COL_DEBIT + 1;
+    private static final int COL_PARTNER = COL_ACCOUNT + 1;
 
     /**
-     * Amount column.
+     * Partner column.
      */
-    private static final int COL_AMOUNT = COL_CREDIT + 1;
+    private static final int COL_AMOUNT = COL_PARTNER + 1;
 
     /**
      * Category column.
@@ -118,8 +118,8 @@ public class SheetSchedule
         myValues.addValue(Schedule.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Schedule.FIELD_PAIR, loadInteger(COL_PAIR));
         myValues.addValue(Schedule.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
-        myValues.addValue(Schedule.FIELD_DEBIT, loadInteger(COL_DEBIT));
-        myValues.addValue(Schedule.FIELD_CREDIT, loadInteger(COL_CREDIT));
+        myValues.addValue(Schedule.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
+        myValues.addValue(Schedule.FIELD_PARTNER, loadInteger(COL_PARTNER));
         myValues.addValue(Schedule.FIELD_AMOUNT, loadBytes(COL_AMOUNT));
         myValues.addValue(Schedule.FIELD_SPLIT, loadBoolean(COL_SPLIT));
         myValues.addValue(Schedule.FIELD_PARENT, loadInteger(COL_PARENT));
@@ -135,8 +135,8 @@ public class SheetSchedule
         super.insertSecureItem(pItem);
         writeDate(COL_DATE, pItem.getDate());
         writeInteger(COL_PAIR, pItem.getAssetPairId());
-        writeInteger(COL_DEBIT, pItem.getDebitId());
-        writeInteger(COL_CREDIT, pItem.getCreditId());
+        writeInteger(COL_ACCOUNT, pItem.getAccountId());
+        writeInteger(COL_PARTNER, pItem.getPartnerId());
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());

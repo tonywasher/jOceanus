@@ -45,6 +45,9 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
+import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
@@ -592,6 +595,11 @@ public class ArchiveLoader {
         private final TransactionInfoList theInfoList;
 
         /**
+         * AssetPair manager.
+         */
+        private final AssetPairManager theAssetPairManager;
+
+        /**
          * Last Parent.
          */
         private Transaction theLastParent;
@@ -624,17 +632,17 @@ public class ArchiveLoader {
         /**
          * AssetPair Id.
          */
-        private Integer thePairId;
+        private AssetPair thePair;
 
         /**
-         * Resolved Debit.
+         * Resolved Account.
          */
-        private AssetBase<?> theDebit;
+        private AssetBase<?> theAccount;
 
         /**
-         * Resolved Credit.
+         * Resolved Partner.
          */
-        private AssetBase<?> theCredit;
+        private AssetBase<?> thePartner;
 
         /**
          * Resolved Portfolio.
@@ -649,6 +657,7 @@ public class ArchiveLoader {
             /* Store lists */
             theList = pData.getTransactions();
             theInfoList = pData.getTransactionInfo();
+            theAssetPairManager = theList.getAssetPairManager();
         }
 
         /**
@@ -666,9 +675,9 @@ public class ArchiveLoader {
             DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Transaction.OBJECT_NAME);
             myValues.addValue(Transaction.FIELD_DATE, theDate);
             myValues.addValue(Transaction.FIELD_CATEGORY, pCategory);
-            myValues.addValue(Transaction.FIELD_PAIR, thePairId);
-            myValues.addValue(Transaction.FIELD_DEBIT, theDebit.getName());
-            myValues.addValue(Transaction.FIELD_CREDIT, theCredit.getName());
+            myValues.addValue(Transaction.FIELD_PAIR, thePair);
+            myValues.addValue(Transaction.FIELD_ACCOUNT, theAccount);
+            myValues.addValue(Transaction.FIELD_PARTNER, thePartner);
             myValues.addValue(Transaction.FIELD_AMOUNT, pAmount);
             myValues.addValue(Transaction.FIELD_RECONCILED, pReconciled);
             myValues.addValue(Transaction.FIELD_SPLIT, isSplit);
@@ -772,16 +781,78 @@ public class ArchiveLoader {
             boolean isCreditHolding = theLastCredit instanceof SecurityHolding;
 
             /* Resolve debit */
-            theDebit = isDebitHolding
-                                     ? ((SecurityHolding) theLastDebit).getSecurity()
-                                     : AssetBase.class.cast(theLastDebit);
+            AssetBase<?> myDebit = isDebitHolding
+                                                 ? ((SecurityHolding) theLastDebit).getSecurity()
+                                                 : AssetBase.class.cast(theLastDebit);
             /* Resolve credit */
-            theCredit = isCreditHolding
-                                       ? ((SecurityHolding) theLastCredit).getSecurity()
-                                       : AssetBase.class.cast(theLastCredit);
+            AssetBase<?> myCredit = isCreditHolding
+                                                   ? ((SecurityHolding) theLastCredit).getSecurity()
+                                                   : AssetBase.class.cast(theLastCredit);
 
-            /* Resolve the pair */
-            thePairId = AssetPair.getEncodedId(theDebit.getAssetType(), theCredit.getAssetType());
+            /* Access asset types */
+            AssetType myDebitType = myDebit.getAssetType();
+            AssetType myCreditType = myCredit.getAssetType();
+            boolean bDebitIsAccount;
+
+            /* Handle non-Asset debit */
+            if (!myDebitType.isAsset()) {
+                /* Use credit as account */
+                bDebitIsAccount = false;
+
+                /* Handle non-Asset credit and non-child transfer */
+            } else if (!myCreditType.isAsset() || !isSplit) {
+                /* Use debit as account */
+                bDebitIsAccount = true;
+
+                /* handle child transfer */
+            } else {
+                /* Access parent assets */
+                AssetBase<?> myParAccount = theParent.getAccount();
+                AssetBase<?> myParPartner = theParent.getPartner();
+
+                /* If we match the parent on debit */
+                if (myDebit.equals(myParAccount)) {
+                    /* Use debit as account */
+                    bDebitIsAccount = true;
+
+                    /* else if we match credit account */
+                } else if (myCredit.equals(myParAccount)) {
+                    /* Use credit as account */
+                    bDebitIsAccount = false;
+
+                    /* else don't match the parent account, so parent must be wrong */
+                } else {
+                    /* Flip parent assets */
+                    theParent.flipAssets();
+
+                    /* If we match the partner on debit */
+                    if (myDebit.equals(myParPartner)) {
+                        /* Use debit as account */
+                        bDebitIsAccount = true;
+
+                    } else {
+                        /* Use credit as account */
+                        bDebitIsAccount = false;
+                    }
+                }
+            }
+
+            /* Set up values */
+            if (bDebitIsAccount) {
+                /* Use debit as account */
+                theAccount = myDebit;
+                thePartner = myCredit;
+                Integer myPairId = AssetPair.getEncodedId(myDebitType, myCreditType, AssetDirection.TO);
+                thePair = theAssetPairManager.lookUpPair(myPairId);
+
+                /* Handle non-Asset credit and non-child transfer */
+            } else if (!myCreditType.isAsset() || !isSplit) {
+                /* Use credit as account */
+                theAccount = myCredit;
+                thePartner = myDebit;
+                Integer myPairId = AssetPair.getEncodedId(myCreditType, myDebitType, AssetDirection.FROM);
+                thePair = theAssetPairManager.lookUpPair(myPairId);
+            }
 
             /* Resolve portfolio */
             thePortfolio = null;

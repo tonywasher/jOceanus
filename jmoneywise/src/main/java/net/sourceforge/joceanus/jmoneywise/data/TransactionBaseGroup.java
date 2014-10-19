@@ -24,13 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataGroup;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Event group type.
@@ -159,20 +157,16 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
         /* Access parent details */
         T myParent = getParent();
         theDate = myParent.getDate();
-        AssetBase<?> myDebit = myParent.getDebit();
-        AssetBase<?> myCredit = myParent.getCredit();
+        AssetBase<?> myAccount = myParent.getAccount();
+        AssetBase<?> myPartner = myParent.getPartner();
+
+        /* Store owner */
+        theOwner = myAccount;
 
         /* Handle if we are dealing with a payee */
-        if (myDebit instanceof Payee) {
-            /* Store payee and owner */
-            theOwner = myCredit;
-            thePayee = (Payee) myDebit;
-        } else if (myCredit instanceof Payee) {
-            /* Store payee and owner */
-            theOwner = myDebit;
-            thePayee = (Payee) myCredit;
-        } else if (myDebit.equals(myCredit)) {
-            theOwner = myDebit;
+        if (myPartner instanceof Payee) {
+            /* Store payee */
+            thePayee = (Payee) myPartner;
         }
     }
 
@@ -183,231 +177,33 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
     protected void validateChild(final T pTrans) {
         /* Access details */
         JDateDay myDate = pTrans.getDate();
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
+        AssetBase<?> myAccount = pTrans.getAccount();
+        AssetBase<?> myPartner = pTrans.getPartner();
 
         /* If the date differs */
         if (!myDate.equals(theDate)) {
             pTrans.addError(ERROR_DATE, Transaction.FIELD_DATE);
         }
 
-        /* If we have a debit Payee */
-        if (myDebit instanceof Payee) {
+        /* If the Account differs */
+        if (!myAccount.equals(theOwner)) {
+            pTrans.addError(ERROR_OWNER, Transaction.FIELD_ACCOUNT);
+        }
+
+        /* If we have a Payee Partner */
+        if (myPartner instanceof Payee) {
             /* If this is the first payee */
             if (thePayee == null) {
                 /* Store it */
-                thePayee = (Payee) myDebit;
+                thePayee = (Payee) myPartner;
 
                 /* else check that it is the same payee */
-            } else if (!thePayee.equals(myDebit)) {
+            } else if (!thePayee.equals(myPartner)) {
                 /* We do allow a cashRecovery from alternate payee */
-                if (!(myCredit instanceof Cash)) {
-                    pTrans.addError(ERROR_PAYEE, Transaction.FIELD_DEBIT);
-                }
-            }
-
-            /* If we have no owner */
-            if (theOwner == null) {
-                /* Must match one of parents elements */
-                T myParent = getParent();
-                if (myCredit.equals(myParent.getDebit())
-                    || myCredit.equals(myParent.getCredit())) {
-                    /* Store the owner */
-                    theOwner = myCredit;
-                } else {
-                    pTrans.addError(ERROR_OWNER, Transaction.FIELD_CREDIT);
-                }
-
-                /* else check that it is the same owner */
-            } else if (!theOwner.equals(myCredit)) {
-                /* We do allow a cashPayment to alternate payee */
-                if (!(myCredit instanceof Cash)) {
-                    pTrans.addError(ERROR_OWNER, Transaction.FIELD_CREDIT);
-                }
-            }
-
-            /* If we have a credit Payee */
-        } else if (myCredit instanceof Payee) {
-            /* If this is the first payee */
-            if (thePayee == null) {
-                /* Store it */
-                thePayee = (Payee) myCredit;
-
-                /* else check that it is the same payee */
-            } else if (!thePayee.equals(myCredit)) {
-                /* We do allow a cashPayment to alternate payee */
-                if (!(myDebit instanceof Cash)) {
-                    pTrans.addError(ERROR_PAYEE, Transaction.FIELD_CREDIT);
-                }
-            }
-
-            /* If we have no owner */
-            if (theOwner == null) {
-                /* Must match one of parents elements */
-                T myParent = getParent();
-                if (myDebit.equals(myParent.getDebit())
-                    || myDebit.equals(myParent.getCredit())) {
-                    /* Store the owner */
-                    theOwner = myDebit;
-                } else {
-                    pTrans.addError(ERROR_OWNER, Transaction.FIELD_DEBIT);
-                }
-
-                /* else check that it is the same owner */
-            } else if (!theOwner.equals(myDebit)) {
-                /* We do allow a cashPayment to alternate payee */
-                if (!(myDebit instanceof Cash)) {
-                    pTrans.addError(ERROR_OWNER, Transaction.FIELD_DEBIT);
-                }
-            }
-
-            /* else this is a transfer. If we have no current owner */
-        } else if (theOwner == null) {
-            /* Must match one of parents elements */
-            T myParent = getParent();
-            if (myDebit.equals(myParent.getDebit())
-                || myDebit.equals(myParent.getCredit())) {
-                /* Store the owner */
-                theOwner = myDebit;
-            } else if (myCredit.equals(myParent.getDebit())
-                       || myCredit.equals(myParent.getCredit())) {
-                /* Store the owner */
-                theOwner = myCredit;
-
-                /* must match one of the initial elements */
-            } else {
-                pTrans.addError(ERROR_OWNER, Transaction.FIELD_DEBIT);
-                pTrans.addError(ERROR_OWNER, Transaction.FIELD_CREDIT);
-            }
-
-            /* Credit or debit must match the owner */
-        } else if (!myDebit.equals(theOwner)
-                   && !myCredit.equals(theOwner)) {
-            pTrans.addError(ERROR_OWNER, Transaction.FIELD_DEBIT);
-            pTrans.addError(ERROR_OWNER, Transaction.FIELD_CREDIT);
-        }
-    }
-
-    /**
-     * Get display partner for asset.
-     * @param pAsset the asset
-     * @return the display text for partner
-     */
-    public String getPartner(final AssetBase<?> pAsset) {
-        /* If the asset is not the owner */
-        if (!theOwner.equals(pAsset)) {
-            /* Partner is always the owner */
-            return theOwner.getName();
-        }
-
-        /* If we have a Payee */
-        if (thePayee != null) {
-            /* Partner is the payee */
-            return thePayee.getName();
-        }
-
-        /* Access iterator and loop through transactions */
-        String myPartner = null;
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* If the transaction relates to the asset */
-            if (myTrans.relatesTo(pAsset)) {
-                /* Access partner name */
-                String myName = (pAsset.equals(myTrans.getDebit()))
-                                                                   ? myTrans.getCreditName()
-                                                                   : myTrans.getDebitName();
-
-                /* Determine differences in partners */
-                if (myPartner == null) {
-                    myPartner = myName;
-                } else if (!Difference.isEqual(myName, myPartner)) {
-                    return NAME_SPLIT;
+                if (!(myAccount instanceof Cash)) {
+                    pTrans.addError(ERROR_PAYEE, Transaction.FIELD_PARTNER);
                 }
             }
         }
-
-        /* Return the standard partner name */
-        return myPartner;
-    }
-
-    /**
-     * Get display category for asset.
-     * @param pAsset the asset
-     * @return the display text for category
-     */
-    public String getCategory(final AssetBase<?> pAsset) {
-        /* Initialise category name */
-        String myCategory = null;
-
-        /* Access iterator and loop through transactions */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* If the transaction relates to the asset */
-            if (myTrans.relatesTo(pAsset)) {
-                /* Access category name */
-                String myName = myTrans.getCategoryName();
-
-                /* Determine differences in partners */
-                if (myCategory == null) {
-                    myCategory = myName;
-                } else if (!Difference.isEqual(myName, myCategory)) {
-                    return NAME_SPLIT;
-                }
-            }
-        }
-
-        /* Return the standard category name */
-        return myCategory;
-    }
-
-    /**
-     * Get display amount for asset.
-     * @param pAsset the asset
-     * @return the display amount
-     */
-    public JMoney getAmount(final AssetBase<?> pAsset) {
-        /* Initialise category name */
-        JMoney myAmount = new JMoney();
-
-        /* Access iterator and loop through transactions */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* If the transaction relates to the asset */
-            if (myTrans.relatesTo(pAsset)) {
-                /* Access amount */
-                JMoney myValue = myTrans.getAmount();
-
-                /* Handle deltas to the asset */
-                if (pAsset.equals(myTrans.getCredit())) {
-                    myAmount.addAmount(myValue);
-                } else if ((!myTrans.isDividend()) && (!myTrans.isInterest())) {
-                    myAmount.subtractAmount(myValue);
-                }
-            }
-        }
-
-        /* Return the amount */
-        return myAmount;
     }
 }

@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -201,23 +202,28 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processSingleEvent(final Transaction pTrans) {
-        /* Access debit and credit */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
+        /* Access account and partner */
+        AssetBase<?> myAccount = pTrans.getAccount();
+        AssetBase<?> myPartner = pTrans.getPartner();
+        boolean bFrom = AssetDirection.FROM.equals(pTrans.getDirection());
 
-        /* If this is income from a payee */
-        if (myDebit instanceof Payee) {
-            /* Process Debit Payee */
-            processDebitPayee((Payee) myDebit, pTrans);
+        /* If this deals with a payee */
+        if (myPartner instanceof Payee) {
+            /* If this is expense */
+            if (bFrom) {
+                /* Process Debit Payee */
+                processDebitPayee((Payee) myPartner, myAccount, pTrans);
+            } else {
+                /* Process Credit Payee */
+                processCreditPayee((Payee) myPartner, myAccount, pTrans);
+            }
 
-            /* If this is expense to a payee */
-        } else if (myCredit instanceof Payee) {
-            /* Process Credit Payee */
-            processCreditPayee((Payee) myCredit, pTrans);
-
+        } else if (bFrom) {
+            /* else process Transfer Partner -> Account */
+            processTransfer(myPartner, myAccount, pTrans);
         } else {
-            /* else process Transfer */
-            processTransfer(pTrans);
+            /* else process Transfer Account -> Partner */
+            processTransfer(myAccount, myPartner, pTrans);
         }
     }
 
@@ -256,134 +262,134 @@ public class QIFBuilder {
     /**
      * Process debit payee event.
      * @param pPayee the payee
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     protected void processDebitPayee(final Payee pPayee,
+                                     final AssetBase<?> pCredit,
                                      final Transaction pTrans) {
-        /* Access credit */
-        AssetBase<?> myCredit = pTrans.getCredit();
-
         /* If this is a cash recovery */
-        if ((myCredit instanceof Cash)
-            && ((Cash) myCredit).isAutoExpense()) {
+        if ((pCredit instanceof Cash)
+            && ((Cash) pCredit).isAutoExpense()) {
             /* process as cash recovery */
-            processCashRecovery(pPayee, (Cash) myCredit, pTrans);
+            processCashRecovery(pPayee, (Cash) pCredit, pTrans);
 
             /* If this is a income to a security */
-        } else if (myCredit instanceof Security) {
+        } else if (pCredit instanceof Security) {
             /* process as income to security */
-            thePortBuilder.processIncomeToSecurity(pPayee, (Security) myCredit, pTrans);
+            thePortBuilder.processIncomeToSecurity(pPayee, (Security) pCredit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
             /* process as detailed income */
-            processDetailedIncome(pPayee, pTrans);
+            processDetailedIncome(pPayee, pCredit, pTrans);
 
         } else {
             /* process as standard income */
-            processStandardIncome(pPayee, pTrans);
+            processStandardIncome(pPayee, pCredit, pTrans);
         }
     }
 
     /**
      * Process credit payee event.
      * @param pPayee the payee
+     * @param pDebit the debit account
      * @param pTrans the transaction
      */
     protected void processCreditPayee(final Payee pPayee,
+                                      final AssetBase<?> pDebit,
                                       final Transaction pTrans) {
-        /* Access debit */
-        AssetBase<?> myDebit = pTrans.getDebit();
-
         /* If this is a cash payment */
-        if ((myDebit instanceof Cash)
-            && ((Cash) myDebit).isAutoExpense()) {
+        if ((pDebit instanceof Cash)
+            && ((Cash) pDebit).isAutoExpense()) {
             /* process as cash payment */
-            processCashPayment(pPayee, (Cash) myDebit, pTrans);
+            processCashPayment(pPayee, (Cash) pDebit, pTrans);
 
             /* If this is a income to a security */
-        } else if (myDebit instanceof Security) {
+        } else if (pDebit instanceof Security) {
             /* process as expense from security */
-            thePortBuilder.processExpenseFromSecurity(pPayee, (Security) myDebit, pTrans);
+            thePortBuilder.processExpenseFromSecurity(pPayee, (Security) pDebit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
             /* process as detailed income */
-            processDetailedExpense(pPayee, pTrans);
+            processDetailedExpense(pPayee, pDebit, pTrans);
 
         } else {
             /* process as standard expense */
-            processStandardExpense(pPayee, pTrans);
+            processStandardExpense(pPayee, pDebit, pTrans);
         }
     }
 
     /**
      * Process transfer event.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processTransfer(final Transaction pTrans) {
+    protected void processTransfer(final AssetBase<?> pDebit,
+                                   final AssetBase<?> pCredit,
+                                   final Transaction pTrans) {
         /* Access details */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
         TransactionCategory myCat = pTrans.getCategory();
 
         /* If this is a loyaltyBonus */
-        if (myDebit instanceof Portfolio) {
+        if (pDebit instanceof Portfolio) {
             /* Process as loyaltyBonus */
-            processLoyaltyBonus((Portfolio) myDebit, pTrans);
+            processLoyaltyBonus((Portfolio) pDebit, pCredit, pTrans);
 
             /* If this is a cash AutoExpense */
-        } else if ((myCredit instanceof Cash)
-                   && ((Cash) myCredit).isAutoExpense()) {
+        } else if ((pCredit instanceof Cash)
+                   && ((Cash) pCredit).isAutoExpense()) {
             /* Process as standard expense */
-            processCashExpense((Cash) myCredit, pTrans);
+            processCashExpense((Cash) pCredit, pDebit, pTrans);
 
             /* If this is a cash AutoReceipt */
-        } else if ((myDebit instanceof Cash)
-                   && ((Cash) myDebit).isAutoExpense()) {
+        } else if ((pDebit instanceof Cash)
+                   && ((Cash) pDebit).isAutoExpense()) {
             /* Process as standard expense */
-            processCashReceipt((Cash) myDebit, pTrans);
+            processCashReceipt((Cash) pDebit, pCredit, pTrans);
 
             /* If this is a transfer from a security */
-        } else if (myDebit instanceof Security) {
+        } else if (pDebit instanceof Security) {
             /* Handle transfer between securities */
-            if (myCredit instanceof Security) {
+            if (pCredit instanceof Security) {
                 /* process as transfer between securities */
-                thePortBuilder.processTransferBetweenSecurities((Security) myDebit, (Security) myCredit, pTrans);
+                thePortBuilder.processTransferBetweenSecurities((Security) pDebit, (Security) pCredit, pTrans);
             } else {
                 /* process as transfer from security */
-                thePortBuilder.processTransferFromSecurity((Security) myDebit, pTrans);
+                thePortBuilder.processTransferFromSecurity((Security) pDebit, pCredit, pTrans);
             }
             /* If this is a transfer to a security */
-        } else if (myCredit instanceof Security) {
+        } else if (pCredit instanceof Security) {
             /* process as transfer to security */
-            thePortBuilder.processTransferToSecurity((Security) myCredit, pTrans);
+            thePortBuilder.processTransferToSecurity((Security) pCredit, pDebit, pTrans);
 
         } else {
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
                 case CASHBACK:
                     /* Process as cashBack payment */
-                    processCashBack(pTrans);
+                    processCashBack(pDebit, pCredit, pTrans);
                     break;
                 case INTEREST:
                     /* Process as interest payment */
-                    processInterest(pTrans);
+                    processInterest(pDebit, pCredit, pTrans);
                     break;
                 case LOANINTERESTEARNED:
                 case RENTALINCOME:
                 case ROOMRENTALINCOME:
                     /* Process as income from parent of the credit */
-                    processStandardIncome((Payee) myCredit.getParent(), pTrans);
+                    processStandardIncome((Payee) pCredit.getParent(), pCredit, pTrans);
                     break;
                 case WRITEOFF:
                 case LOANINTERESTCHARGED:
                     /* Process as expense to parent of the credit (recursive) */
-                    processStandardExpense((Payee) myCredit.getParent(), pTrans);
+                    processStandardExpense((Payee) pCredit.getParent(), pDebit, pTrans);
                     break;
                 default:
                     /* Process as standard expense */
-                    processStandardTransfer(pTrans);
+                    processStandardTransfer(pDebit, pCredit, pTrans);
                     break;
             }
         }
@@ -413,13 +419,12 @@ public class QIFBuilder {
     /**
      * Process standard income.
      * @param pPayee the payee
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     protected void processStandardIncome(final Payee pPayee,
+                                         final AssetBase<?> pCredit,
                                          final Transaction pTrans) {
-        /* Access credit */
-        AssetBase<?> myCredit = pTrans.getCredit();
-
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
 
@@ -427,7 +432,7 @@ public class QIFBuilder {
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+        QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
         List<QIFClass> myList = getTransactionClasses(pTrans);
@@ -445,13 +450,12 @@ public class QIFBuilder {
     /**
      * Process detailed income.
      * @param pPayee the payee
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     protected void processDetailedIncome(final Payee pPayee,
+                                         final AssetBase<?> pCredit,
                                          final Transaction pTrans) {
-        /* Access credit */
-        AssetBase<?> myCredit = pTrans.getCredit();
-
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
         QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
@@ -460,7 +464,7 @@ public class QIFBuilder {
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+        QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
         List<QIFClass> myList = getTransactionClasses(pTrans);
@@ -529,13 +533,12 @@ public class QIFBuilder {
     /**
      * Process standard expense.
      * @param pPayee the payee
+     * @param pDebit the debit account
      * @param pTrans the transaction
      */
     protected void processStandardExpense(final Payee pPayee,
+                                          final AssetBase<?> pDebit,
                                           final Transaction pTrans) {
-        /* Access debit */
-        AssetBase<?> myDebit = pTrans.getDebit();
-
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
 
@@ -543,7 +546,7 @@ public class QIFBuilder {
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(myDebit);
+        QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Obtain classes */
         List<QIFClass> myList = getTransactionClasses(pTrans);
@@ -565,13 +568,12 @@ public class QIFBuilder {
     /**
      * Process detailed expense.
      * @param pPayee the payee
+     * @param pDebit the debit account
      * @param pTrans the expense
      */
     protected void processDetailedExpense(final Payee pPayee,
+                                          final AssetBase<?> pDebit,
                                           final Transaction pTrans) {
-        /* Access credit */
-        AssetBase<?> myDebit = pTrans.getDebit();
-
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
         QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
@@ -580,7 +582,7 @@ public class QIFBuilder {
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(myDebit);
+        QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Obtain classes */
         List<QIFClass> myList = getTransactionClasses(pTrans);
@@ -643,17 +645,19 @@ public class QIFBuilder {
 
     /**
      * Process standard transfer.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processStandardTransfer(final Transaction pTrans) {
+    protected void processStandardTransfer(final AssetBase<?> pDebit,
+                                           final AssetBase<?> pCredit,
+                                           final Transaction pTrans) {
         /* Access details */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
         JMoney myAmount = pTrans.getAmount();
 
         /* Access the Account details */
-        QIFAccountEvents myDebitAccount = theFile.registerAccount(myDebit);
-        QIFAccountEvents myCreditAccount = theFile.registerAccount(myCredit);
+        QIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);
+        QIFAccountEvents myCreditAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
         List<QIFClass> myList = getTransactionClasses(pTrans);
@@ -664,7 +668,7 @@ public class QIFBuilder {
         myEvent.recordAccount(myDebitAccount.getAccount(), myList);
 
         /* Build payee description */
-        myEvent.recordPayee(buildXferFromPayee(myDebit));
+        myEvent.recordPayee(buildXferFromPayee(pDebit));
 
         /* Add event to event list */
         myCreditAccount.addEvent(myEvent);
@@ -679,7 +683,7 @@ public class QIFBuilder {
         myEvent.recordAccount(myCreditAccount.getAccount(), myList);
 
         /* Build payee description */
-        myEvent.recordPayee(buildXferToPayee(myCredit));
+        myEvent.recordPayee(buildXferToPayee(pCredit));
 
         /* Add event to event list */
         myDebitAccount.addEvent(myEvent);
@@ -729,24 +733,26 @@ public class QIFBuilder {
 
     /**
      * Process interest.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processInterest(final Transaction pTrans) {
+    protected void processInterest(final AssetBase<?> pDebit,
+                                   final AssetBase<?> pCredit,
+                                   final Transaction pTrans) {
         /* Access details */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
         JMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
-        boolean isRecursive = myDebit.equals(myCredit);
+        boolean isRecursive = pDebit.equals(pCredit);
         boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
         boolean hasXtraDetail = hasXtraDetail(pTrans);
 
         /* Access the Account details */
-        QIFAccountEvents myIntAccount = theFile.registerAccount(myDebit);
+        QIFAccountEvents myIntAccount = theFile.registerAccount(pDebit);
 
         /* Access the payee */
-        QIFPayee myPayee = theFile.registerPayee((Payee) myDebit.getParent());
+        QIFPayee myPayee = theFile.registerPayee((Payee) pDebit.getParent());
 
         /* Access the category */
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
@@ -822,7 +828,7 @@ public class QIFBuilder {
                 myOutAmount.negate();
 
                 /* Access the Account details */
-                QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+                QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
@@ -835,7 +841,7 @@ public class QIFBuilder {
         /* If we need a balancing transfer */
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
-            QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+            QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
             /* Create a new event */
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
@@ -845,7 +851,7 @@ public class QIFBuilder {
             myEvent.recordAccount(myIntAccount.getAccount(), myList);
 
             /* Build payee description */
-            myEvent.recordPayee(buildXferFromPayee(myDebit));
+            myEvent.recordPayee(buildXferFromPayee(pDebit));
 
             /* Add event to event list */
             myAccount.addEvent(myEvent);
@@ -854,23 +860,25 @@ public class QIFBuilder {
 
     /**
      * Process cashBack.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processCashBack(final Transaction pTrans) {
+    protected void processCashBack(final AssetBase<?> pDebit,
+                                   final AssetBase<?> pCredit,
+                                   final Transaction pTrans) {
         /* Access details */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
         JMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
-        boolean isRecursive = myDebit.equals(myCredit);
+        boolean isRecursive = pDebit.equals(pCredit);
         boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
 
         /* Access the Account details */
-        QIFAccountEvents myBaseAccount = theFile.registerAccount(myDebit);
+        QIFAccountEvents myBaseAccount = theFile.registerAccount(pDebit);
 
         /* Access the payee */
-        QIFPayee myPayee = theFile.registerPayee((Payee) myDebit.getParent());
+        QIFPayee myPayee = theFile.registerPayee((Payee) pDebit.getParent());
 
         /* Access the category */
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
@@ -911,7 +919,7 @@ public class QIFBuilder {
             myOutAmount.negate();
 
             /* Access the Account details */
-            QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+            QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
@@ -923,7 +931,7 @@ public class QIFBuilder {
         /* If we need a balancing transfer */
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
-            QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
+            QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
             /* Create a new event */
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
@@ -933,7 +941,7 @@ public class QIFBuilder {
             myEvent.recordAccount(myBaseAccount.getAccount(), myList);
 
             /* Build payee description */
-            myEvent.recordPayee(buildXferFromPayee(myDebit));
+            myEvent.recordPayee(buildXferFromPayee(pDebit));
 
             /* Add event to event list */
             myAccount.addEvent(myEvent);
@@ -943,9 +951,11 @@ public class QIFBuilder {
     /**
      * Process loyaltyBonus.
      * @param pPortfolio the portfolio
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     protected void processLoyaltyBonus(final Portfolio pPortfolio,
+                                       final AssetBase<?> pCredit,
                                        final Transaction pTrans) {
         /* Access details */
         Payee myPayee = pPortfolio.getParent();
@@ -953,11 +963,11 @@ public class QIFBuilder {
         /* if we have additional detail */
         if (hasXtraDetail(pTrans)) {
             /* process as detailed income */
-            processDetailedIncome(myPayee, pTrans);
+            processDetailedIncome(myPayee, pCredit, pTrans);
 
         } else {
             /* process as standard income */
-            processStandardIncome(myPayee, pTrans);
+            processStandardIncome(myPayee, pCredit, pTrans);
         }
     }
 
@@ -1040,9 +1050,11 @@ public class QIFBuilder {
     /**
      * Process cash expense.
      * @param pCash the cash account
+     * @param pDebit the debit account
      * @param pTrans the transaction
      */
     protected void processCashExpense(final Cash pCash,
+                                      final AssetBase<?> pDebit,
                                       final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
@@ -1054,7 +1066,7 @@ public class QIFBuilder {
         List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pTrans.getDebit());
+        QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Access the amount */
         JMoney myAmount = new JMoney(pTrans.getAmount());
@@ -1073,9 +1085,11 @@ public class QIFBuilder {
     /**
      * Process cash receipt.
      * @param pCash the cash account
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     protected void processCashReceipt(final Cash pCash,
+                                      final AssetBase<?> pCredit,
                                       final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
@@ -1084,7 +1098,7 @@ public class QIFBuilder {
         QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pTrans.getCredit());
+        QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
         List<QIFClass> myList = getTransactionClasses(pTrans);

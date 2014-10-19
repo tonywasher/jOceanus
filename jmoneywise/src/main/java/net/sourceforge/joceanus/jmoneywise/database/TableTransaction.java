@@ -59,8 +59,8 @@ public class TableTransaction
         /* Define the columns */
         ColumnDefinition myDateCol = myTableDef.addDateColumn(Transaction.FIELD_DATE);
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
-        myTableDef.addIntegerColumn(Transaction.FIELD_DEBIT);
-        myTableDef.addIntegerColumn(Transaction.FIELD_CREDIT);
+        myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
+        myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
         myTableDef.addEncryptedColumn(Transaction.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
@@ -88,8 +88,8 @@ public class TableTransaction
         myValues.addValue(Transaction.FIELD_DATE, myTableDef.getDateValue(Transaction.FIELD_DATE));
         myValues.addValue(Transaction.FIELD_PAIR, myTableDef.getIntegerValue(Transaction.FIELD_PAIR));
         myValues.addValue(Transaction.FIELD_CATEGORY, myTableDef.getIntegerValue(Transaction.FIELD_CATEGORY));
-        myValues.addValue(Transaction.FIELD_DEBIT, myTableDef.getIntegerValue(Transaction.FIELD_DEBIT));
-        myValues.addValue(Transaction.FIELD_CREDIT, myTableDef.getIntegerValue(Transaction.FIELD_CREDIT));
+        myValues.addValue(Transaction.FIELD_ACCOUNT, myTableDef.getIntegerValue(Transaction.FIELD_ACCOUNT));
+        myValues.addValue(Transaction.FIELD_PARTNER, myTableDef.getIntegerValue(Transaction.FIELD_PARTNER));
         myValues.addValue(Transaction.FIELD_AMOUNT, myTableDef.getBinaryValue(Transaction.FIELD_AMOUNT));
         myValues.addValue(Transaction.FIELD_RECONCILED, myTableDef.getBooleanValue(Transaction.FIELD_RECONCILED));
         myValues.addValue(Transaction.FIELD_SPLIT, myTableDef.getBooleanValue(Transaction.FIELD_SPLIT));
@@ -110,10 +110,10 @@ public class TableTransaction
             myTableDef.setIntegerValue(iField, pItem.getAssetPairId());
         } else if (Transaction.FIELD_AMOUNT.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getAmountBytes());
-        } else if (Transaction.FIELD_DEBIT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getDebitId());
-        } else if (Transaction.FIELD_CREDIT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getCreditId());
+        } else if (Transaction.FIELD_ACCOUNT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getAccountId());
+        } else if (Transaction.FIELD_PARTNER.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getPartnerId());
         } else if (Transaction.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Transaction.FIELD_RECONCILED.equals(iField)) {

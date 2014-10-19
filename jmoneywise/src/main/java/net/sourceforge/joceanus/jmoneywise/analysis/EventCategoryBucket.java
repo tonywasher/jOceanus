@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -551,12 +550,8 @@ public final class EventCategoryBucket
      */
     private boolean adjustValues(final Transaction pTrans) {
         /* Analyse the event */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
-        AssetType myDebitType = myDebit.getAssetType();
-        AssetType myCreditType = myCredit.getAssetType();
-        TransactionType myCatTran = TransactionType.deriveType(pTrans.getCategory());
-        TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
+        TransactionType myCatTran = pTrans.deriveCategoryTranType();
+        TransactionType myActTran = pTrans.deriveAccountTranType();
         JMoney myAmount = pTrans.getAmount();
         boolean isIncome = true;
 
@@ -1086,8 +1081,8 @@ public final class EventCategoryBucket
         protected void adjustStandardGain(final Transaction pTrans,
                                           final JMoney pGains) {
             /* Access debit account */
-            AssetBase<?> myDebit = pTrans.getDebit();
-            Security mySecurity = Security.class.cast(myDebit);
+            AssetBase<?> myAccount = pTrans.getAccount();
+            Security mySecurity = Security.class.cast(myAccount);
             Portfolio myPortfolio = pTrans.getPortfolio();
 
             /* If this is subject to capital gains */

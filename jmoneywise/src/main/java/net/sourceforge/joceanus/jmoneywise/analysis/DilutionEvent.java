@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -234,24 +233,8 @@ public final class DilutionEvent
      */
     protected DilutionEvent(final int pId,
                             final Transaction pTrans) {
-        /* Local variables */
-        AssetBase<?> myAsset;
-
-        /* Access the category */
-        TransactionCategory myCategory = pTrans.getCategory();
-
-        /* Switch on the category type */
-        switch (myCategory.getCategoryTypeClass()) {
-            case STOCKRIGHTSTAKEN:
-                myAsset = pTrans.getCredit();
-                break;
-            case STOCKSPLIT:
-            case STOCKRIGHTSWAIVED:
-            case STOCKDEMERGER:
-            default:
-                myAsset = pTrans.getDebit();
-                break;
-        }
+        /* Access the account TODO */
+        AssetBase<?> myAsset = pTrans.getAccount();
 
         /* Store the values */
         theId = pId;

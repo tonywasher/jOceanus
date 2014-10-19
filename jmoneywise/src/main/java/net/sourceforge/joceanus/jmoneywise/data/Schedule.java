@@ -229,8 +229,8 @@ public class Schedule
 
         /* Copy underlying values */
         setValueAssetPair(pTrans.getAssetPair());
-        setValueDebit(pTrans.getDebit());
-        setValueCredit(pTrans.getCredit());
+        setValueAccount(pTrans.getAccount());
+        setValuePartner(pTrans.getPartner());
         setCategory(pTrans.getCategory());
         setReconciled(Boolean.FALSE);
         setSplit(Boolean.FALSE);
@@ -284,7 +284,7 @@ public class Schedule
         } else if (!getFrequency().getEnabled()) {
             addError("Frequency must be enabled", FIELD_FREQ);
         } else if (myFrequency.getFrequency() == FrequencyClass.MATURITY) {
-            AssetBase<?> myDebit = getDebit();
+            AssetBase<?> myDebit = getAccount();
             if ((!(myDebit instanceof Deposit))
                 || (!((Deposit) myDebit).isDepositClass(DepositCategoryClass.BOND))) {
                 addError("Maturity only allowed for Bonds", FIELD_FREQ);
@@ -320,7 +320,7 @@ public class Schedule
             /* If the frequency is maturity */
             if (myFreq == FrequencyClass.MATURITY) {
                 /* Access the maturity date */
-                AssetBase<?> myDebit = getDebit();
+                AssetBase<?> myDebit = getAccount();
                 if (myDebit instanceof Deposit) {
                     myDate = ((Deposit) myDebit).getMaturity();
                 }
@@ -579,12 +579,7 @@ public class Schedule
 
                     /* Copy missing values from parent */
                     myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
-                    if (myValues.getValue(FIELD_DEBIT) == null) {
-                        myValues.addValue(FIELD_DEBIT, pValues.getValue(FIELD_DEBIT));
-                    }
-                    if (myValues.getValue(FIELD_CREDIT) == null) {
-                        myValues.addValue(FIELD_CREDIT, pValues.getValue(FIELD_CREDIT));
-                    }
+                    myValues.addValue(FIELD_ACCOUNT, pValues.getValue(FIELD_ACCOUNT));
 
                     /* Build item */
                     addValuesItem(myValues);

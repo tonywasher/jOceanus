@@ -59,8 +59,8 @@ public class TableSchedule
         /* Declare the columns */
         ColumnDefinition myDateCol = myTableDef.addDateColumn(Schedule.FIELD_DATE);
         myTableDef.addIntegerColumn(Schedule.FIELD_PAIR);
-        myTableDef.addIntegerColumn(Schedule.FIELD_DEBIT);
-        myTableDef.addIntegerColumn(Schedule.FIELD_CREDIT);
+        myTableDef.addIntegerColumn(Schedule.FIELD_ACCOUNT);
+        myTableDef.addIntegerColumn(Schedule.FIELD_PARTNER);
         myTableDef.addEncryptedColumn(Schedule.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Schedule.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Schedule.FIELD_FREQ, TableFrequency.TABLE_NAME);
@@ -87,8 +87,8 @@ public class TableSchedule
         myValues.addValue(Schedule.FIELD_DATE, myTableDef.getDateValue(Schedule.FIELD_DATE));
         myValues.addValue(Schedule.FIELD_PAIR, myTableDef.getIntegerValue(Schedule.FIELD_PAIR));
         myValues.addValue(Schedule.FIELD_CATEGORY, myTableDef.getIntegerValue(Schedule.FIELD_CATEGORY));
-        myValues.addValue(Schedule.FIELD_DEBIT, myTableDef.getIntegerValue(Schedule.FIELD_DEBIT));
-        myValues.addValue(Schedule.FIELD_CREDIT, myTableDef.getIntegerValue(Schedule.FIELD_CREDIT));
+        myValues.addValue(Schedule.FIELD_ACCOUNT, myTableDef.getIntegerValue(Schedule.FIELD_ACCOUNT));
+        myValues.addValue(Schedule.FIELD_PARTNER, myTableDef.getIntegerValue(Schedule.FIELD_PARTNER));
         myValues.addValue(Schedule.FIELD_AMOUNT, myTableDef.getBinaryValue(Schedule.FIELD_AMOUNT));
         myValues.addValue(Schedule.FIELD_SPLIT, myTableDef.getBooleanValue(Schedule.FIELD_SPLIT));
         myValues.addValue(Schedule.FIELD_PARENT, myTableDef.getIntegerValue(Schedule.FIELD_PARENT));
@@ -109,10 +109,10 @@ public class TableSchedule
             myTableDef.setIntegerValue(iField, pItem.getAssetPairId());
         } else if (Schedule.FIELD_AMOUNT.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getAmountBytes());
-        } else if (Schedule.FIELD_DEBIT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getDebitId());
-        } else if (Schedule.FIELD_CREDIT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getCreditId());
+        } else if (Schedule.FIELD_ACCOUNT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getAccountId());
+        } else if (Schedule.FIELD_PARTNER.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getPartnerId());
         } else if (Schedule.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Schedule.FIELD_FREQ.equals(iField)) {

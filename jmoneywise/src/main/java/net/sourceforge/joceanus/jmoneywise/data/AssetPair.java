@@ -49,14 +49,24 @@ public final class AssetPair
     private static final String SEP_NAME = "-";
 
     /**
-     * Debit type.
+     * Account type.
      */
-    private final AssetType theDebit;
+    private final AssetType theAccount;
 
     /**
-     * Credit type.
+     * Partner type.
      */
-    private final AssetType theCredit;
+    private final AssetType thePartner;
+
+    /**
+     * Asset direction.
+     */
+    private final AssetDirection theDirection;
+
+    /**
+     * AssetPair name.
+     */
+    private String theName;
 
     @Override
     public String formatObject() {
@@ -64,19 +74,27 @@ public final class AssetPair
     }
 
     /**
-     * Obtain debit class.
-     * @return the debit class.
+     * Obtain asset type.
+     * @return the asset type.
      */
-    public AssetType getDebitClass() {
-        return theDebit;
+    public AssetType getAccountType() {
+        return theAccount;
     }
 
     /**
-     * Obtain credit class.
-     * @return the debit class.
+     * Obtain partner type.
+     * @return the partner type.
      */
-    public AssetType getCreditClass() {
-        return theCredit;
+    public AssetType getPartnerType() {
+        return thePartner;
+    }
+
+    /**
+     * Obtain asset direction.
+     * @return the asset direction.
+     */
+    public AssetDirection getDirection() {
+        return theDirection;
     }
 
     /**
@@ -84,34 +102,56 @@ public final class AssetPair
      * @return the id
      */
     public Integer getEncodedId() {
-        return getEncodedId(theDebit, theCredit);
+        return getEncodedId(theAccount, thePartner, theDirection);
     }
 
     /**
      * Obtain encoded id for AssetPair.
-     * @param pDebit the debit class
-     * @param pCredit the credit class
+     * @param pAsset the asset type
+     * @param pPartner the partner type
+     * @param pDirection the direction
      * @return the id
      */
-    public static Integer getEncodedId(final AssetType pDebit,
-                                       final AssetType pCredit) {
-        return (pDebit.getId() << ID_SHIFT) + pCredit.getId();
+    public static Integer getEncodedId(final AssetType pAsset,
+                                       final AssetType pPartner,
+                                       final AssetDirection pDirection) {
+        int myId = pAsset.getId();
+        myId <<= ID_SHIFT;
+        myId += pPartner.getId();
+        myId <<= ID_SHIFT;
+        return myId + pDirection.getId();
     }
 
     /**
      * Constructor.
-     * @param pDebit the debit class
-     * @param pCredit the credit class
+     * @param pAccount the account type
+     * @param pPartner the partner type
+     * @param pDirection the direction
      */
-    private AssetPair(final AssetType pDebit,
-                      final AssetType pCredit) {
-        theDebit = pDebit;
-        theCredit = pCredit;
+    private AssetPair(final AssetType pAccount,
+                      final AssetType pPartner,
+                      final AssetDirection pDirection) {
+        theAccount = pAccount;
+        thePartner = pPartner;
+        theDirection = pDirection;
     }
 
     @Override
     public String toString() {
-        return theDebit + SEP_NAME + theCredit;
+        /* If we have not yet built the name */
+        if (theName == null) {
+            /* Build it */
+            StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(theAccount);
+            myBuilder.append(SEP_NAME);
+            myBuilder.append(theDirection);
+            myBuilder.append(SEP_NAME);
+            myBuilder.append(thePartner);
+            theName = myBuilder.toString();
+        }
+
+        /* return the name */
+        return theName;
     }
 
     /**
@@ -125,15 +165,15 @@ public final class AssetPair
                                    final TransactionBase<?> pOwner,
                                    final JDataField pField) throws JOceanusException {
         /* Access the values */
-        if (pField.equals(Transaction.FIELD_DEBIT)) {
-            resolveDataLink(pOwner, getListForClass(pData, theDebit), pField);
-        } else if (pField.equals(Transaction.FIELD_CREDIT)) {
-            resolveDataLink(pOwner, getListForClass(pData, theCredit), pField);
+        if (pField.equals(Transaction.FIELD_ACCOUNT)) {
+            resolveDataLink(pOwner, getListForClass(pData, theAccount), pField);
+        } else if (pField.equals(Transaction.FIELD_PARTNER)) {
+            resolveDataLink(pOwner, getListForClass(pData, thePartner), pField);
         }
     }
 
     /**
-     * Resolve Debit DataLink.
+     * Access list for dataType.
      * @param pData the dataSet
      * @param pClass the Asset type class
      * @return the list
@@ -202,6 +242,21 @@ public final class AssetPair
     }
 
     /**
+     * Determine transaction Type according to accounts.
+     * @return transaction type
+     */
+    public TransactionType deriveAccountTranType() {
+        /* Analyse the components */
+        switch (theDirection) {
+            case FROM:
+                return thePartner.getTransactionType(theAccount);
+            case TO:
+            default:
+                return theAccount.getTransactionType(thePartner);
+        }
+    }
+
+    /**
      * AssetPairManager.
      */
     public static final class AssetPairManager {
@@ -218,15 +273,20 @@ public final class AssetPair
             /* Create the new map */
             Map<Integer, AssetPair> myMap = new HashMap<Integer, AssetPair>();
 
-            /* Loop through the Debit AssetTypes */
-            for (AssetType myDebit : AssetType.values()) {
-                /* Loop through the Credit AssetTypes */
-                for (AssetType myCredit : AssetType.values()) {
-                    /* Create the new AssetPair */
-                    AssetPair myPair = new AssetPair(myDebit, myCredit);
+            /* Loop through the Account AssetTypes */
+            for (AssetType myAccount : AssetType.values()) {
+                /* Only allowed as Account if it is an asset */
+                if (myAccount.isAsset()) {
+                    /* Loop through the Partner AssetTypes */
+                    for (AssetType myPartner : AssetType.values()) {
+                        /* Create the new To AssetPair and store */
+                        AssetPair myPair = new AssetPair(myAccount, myPartner, AssetDirection.TO);
+                        myMap.put(myPair.getEncodedId(), myPair);
 
-                    /* Store it in the map */
-                    myMap.put(myPair.getEncodedId(), myPair);
+                        /* Create the new From AssetPair and store */
+                        myPair = new AssetPair(myAccount, myPartner, AssetDirection.FROM);
+                        myMap.put(myPair.getEncodedId(), myPair);
+                    }
                 }
             }
 
@@ -250,21 +310,33 @@ public final class AssetPair
          * @return the assetPair
          */
         public AssetPair lookUpName(final String pName) {
-            /* Locate the separator in the name */
+            /* Locate the first separator in the name */
             int iIndex = pName.indexOf(SEP_NAME);
             if (iIndex == -1) {
                 return null;
             }
 
-            /* Look up the AssetTypeClasses */
-            AssetType myDebit = checkName(pName.substring(0, iIndex));
-            AssetType myCredit = checkName(pName.substring(iIndex + 1));
-            if ((myDebit == null) || (myCredit == null)) {
+            /* Look up the AccountType */
+            AssetType myAccount = checkName(pName.substring(0, iIndex));
+            String myRemainder = pName.substring(iIndex + 1);
+
+            /* Locate the second separator in the name */
+            iIndex = myRemainder.indexOf(SEP_NAME);
+            if (iIndex == -1) {
+                return null;
+            }
+
+            /* Look up the partnerType and direction */
+            AssetDirection myDirection = AssetDirection.fromName(pName.substring(0, iIndex));
+            AssetType myPartner = checkName(pName.substring(iIndex + 1));
+            if ((myAccount == null)
+                || (myPartner == null)
+                || (myDirection == null)) {
                 return null;
             }
 
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(myDebit, myCredit);
+            Integer myId = getEncodedId(myAccount, myPartner, myDirection);
             return MAP_PAIR.get(myId);
         }
 
@@ -284,56 +356,155 @@ public final class AssetPair
         }
 
         /**
-         * Adjust Debit class.
+         * Adjust Account type.
          * @param pCurr the current pair
-         * @param pDebit the debit asset
+         * @param pAccount the account asset
          * @return the updated assetPair
          */
-        public AssetPair adjustDebit(final AssetPair pCurr,
-                                     final AssetBase<?> pDebit) {
-            /* Access new Asset class */
-            AssetType myClass = getAssetClass(pDebit);
+        public AssetPair adjustAccount(final AssetPair pCurr,
+                                       final AssetBase<?> pAccount) {
+            /* Access new Asset type */
+            AssetType myType = getAssetType(pAccount);
 
             /* Handle no change */
-            if (pCurr.getDebitClass() == myClass) {
+            if (myType.equals(pCurr.getAccountType())) {
                 return pCurr;
             }
 
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(myClass, pCurr.getCreditClass());
+            Integer myId = getEncodedId(myType, pCurr.getPartnerType(), pCurr.getDirection());
             return MAP_PAIR.get(myId);
         }
 
         /**
-         * Adjust Credit class.
+         * Adjust Partner class.
          * @param pCurr the current pair
-         * @param pCredit the credit asset
+         * @param pPartner the partner asset
          * @return the updated assetPair
          */
-        public AssetPair adjustCredit(final AssetPair pCurr,
-                                      final AssetBase<?> pCredit) {
-            /* Access new Asset class */
-            AssetType myClass = getAssetClass(pCredit);
+        public AssetPair adjustPartner(final AssetPair pCurr,
+                                       final AssetBase<?> pPartner) {
+            /* Access new Asset type */
+            AssetType myType = getAssetType(pPartner);
 
             /* Handle no change */
-            if (pCurr.getCreditClass() == myClass) {
+            if (myType.equals(pCurr.getPartnerType())) {
                 return pCurr;
             }
 
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(pCurr.getDebitClass(), myClass);
+            Integer myId = getEncodedId(pCurr.getAccountType(), myType, pCurr.getDirection());
             return MAP_PAIR.get(myId);
         }
 
         /**
-         * Obtain class for asset.
+         * Switch direction.
+         * @param pCurr the current pair
+         * @return the updated assetPair
+         */
+        public AssetPair switchDirection(final AssetPair pCurr) {
+            /* LookUp the relevant pair */
+            Integer myId = getEncodedId(pCurr.getAccountType(), pCurr.getPartnerType(), pCurr.getDirection().reverse());
+            return MAP_PAIR.get(myId);
+        }
+
+        /**
+         * Flip Assets.
+         * @param pCurr the current pair
+         * @return the updated assetPair
+         */
+        public AssetPair flipAssets(final AssetPair pCurr) {
+            /* LookUp the relevant pair */
+            Integer myId = getEncodedId(pCurr.getPartnerType(), pCurr.getAccountType(), pCurr.getDirection().reverse());
+            return MAP_PAIR.get(myId);
+        }
+
+        /**
+         * Obtain type for asset.
          * @param pAsset the asset
          * @return the class
          */
-        private static AssetType getAssetClass(final AssetBase<?> pAsset) {
+        private static AssetType getAssetType(final AssetBase<?> pAsset) {
             return (pAsset == null)
                                    ? AssetType.CASH
                                    : pAsset.getAssetType();
+        }
+    }
+
+    /**
+     * Asset Direction.
+     */
+    public enum AssetDirection {
+        /**
+         * Payment.
+         */
+        TO(1),
+
+        /**
+         * From.
+         */
+        FROM(2);
+
+        /**
+         * The String name.
+         */
+        private String theName;
+
+        /**
+         * Class Id.
+         */
+        private final int theId;
+
+        /**
+         * Obtain class Id.
+         * @return the Id
+         */
+        public int getId() {
+            return theId;
+        }
+
+        @Override
+        public String toString() {
+            /* If we have not yet loaded the name */
+            if (theName == null) {
+                /* Load the name */
+                theName = MoneyWiseDataResource.getKeyForAssetDirection(this).getValue();
+            }
+
+            /* return the name */
+            return theName;
+        }
+
+        /**
+         * Constructor.
+         * @param uId the Id
+         */
+        private AssetDirection(final int uId) {
+            theId = uId;
+        }
+
+        /**
+         * Reverse.
+         * @return the reversed direction
+         */
+        private AssetDirection reverse() {
+            return this == TO
+                             ? FROM
+                             : TO;
+        }
+
+        /**
+         * get value from name.
+         * @param pName the name value
+         * @return the corresponding enum object
+         */
+        private static AssetDirection fromName(final String pName) {
+            for (AssetDirection myDir : values()) {
+                if (pName.equals(myDir.toString())) {
+                    return myDir;
+                }
+            }
+            return null;
         }
     }
 }

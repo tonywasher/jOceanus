@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.ResourceId;
@@ -268,6 +269,16 @@ public enum MoneyWiseDataResource implements ResourceId {
     ASSETTYPE_PORTFOLIO(MoneyWiseDataTypeResource.PORTFOLIO_NAME),
 
     /**
+     * AssetDirection To.
+     */
+    ASSETDIRECTION_TO("AssetDirection.To"),
+
+    /**
+     * AssetType Portfolio.
+     */
+    ASSETDIRECTION_FROM("AssetDirection.From"),
+
+    /**
      * Payee InfoSet.
      */
     PAYEE_INFOSET("Payee.InfoSet"),
@@ -433,22 +444,27 @@ public enum MoneyWiseDataResource implements ResourceId {
     TRANSACTION_ASSETPAIR("Transaction.AssetPair"),
 
     /**
-     * Transaction Debit.
+     * Transaction Account.
      */
-    TRANSACTION_DEBIT("Transaction.Debit"),
+    TRANSACTION_ACCOUNT("Transaction.Account"),
 
     /**
-     * Transaction Credit.
+     * Transaction Partner.
      */
-    TRANSACTION_CREDIT("Transaction.Credit"),
+    TRANSACTION_PARTNER("Transaction.Partner"),
 
     /**
-     * Transaction Credit.
+     * Transaction Direction.
+     */
+    TRANSACTION_DIRECTION("Transaction.Direction"),
+
+    /**
+     * Transaction Amount.
      */
     TRANSACTION_AMOUNT("Transaction.Amount"),
 
     /**
-     * Transaction reconciled.
+     * Transaction Reconciled.
      */
     TRANSACTION_RECONCILED("Transaction.Reconciled"),
 
@@ -607,6 +623,22 @@ public enum MoneyWiseDataResource implements ResourceId {
                 return ASSETTYPE_LOAN;
             case PORTFOLIO:
                 return ASSETTYPE_PORTFOLIO;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain key for asset direction.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static MoneyWiseDataResource getKeyForAssetDirection(final AssetDirection pValue) {
+        switch (pValue) {
+            case TO:
+                return ASSETDIRECTION_TO;
+            case FROM:
+                return ASSETDIRECTION_FROM;
             default:
                 return null;
         }

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
@@ -322,16 +323,18 @@ public class QIFPortfolioBuilder {
      * <p>
      * Note that the source cannot be a Security, since that case is handled by {@link #processTransferFromSecurity}
      * @param pSecurity the security
+     * @param pDebit the debit account
      * @param pTrans the transaction
      */
     protected void processTransferToSecurity(final Security pSecurity,
+                                             final AssetBase<?> pDebit,
                                              final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();
         QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
 
         /* Access Transaction details */
-        QIFAccountEvents mySource = theFile.registerAccount(pTrans.getDebit());
+        QIFAccountEvents mySource = theFile.registerAccount(pDebit);
         QIFSecurity mySecurity = theFile.registerSecurity(pSecurity);
 
         /* Determine various flags */
@@ -428,7 +431,7 @@ public class QIFPortfolioBuilder {
                 processReinvestDividend(pSource, pTrans);
                 break;
             case STOCKDEMERGER:
-                processStockDeMerger(pSource, pTrans);
+                processStockDeMerger(pSource, pTarget, pTrans);
                 break;
             case STOCKTAKEOVER:
                 processStockTakeOver(pSource, pTarget, pTrans);
@@ -443,19 +446,21 @@ public class QIFPortfolioBuilder {
     /**
      * Process transfer from a security.
      * @param pSecurity the security
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     protected void processTransferFromSecurity(final Security pSecurity,
+                                               final AssetBase<?> pCredit,
                                                final Transaction pTrans) {
         /* Switch on transaction type */
         switch (pTrans.getCategoryClass()) {
             case DIVIDEND:
-                processStockDividend(pSecurity, pTrans);
+                processStockDividend(pSecurity, pCredit, pTrans);
                 break;
             case TRANSFER:
             case STOCKRIGHTSWAIVED:
             default:
-                processTransferOut(pSecurity, pTrans);
+                processTransferOut(pSecurity, pCredit, pTrans);
                 break;
         }
     }
@@ -537,9 +542,11 @@ public class QIFPortfolioBuilder {
     /**
      * Process stock dividend.
      * @param pSecurity the security
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     private void processStockDividend(final Security pSecurity,
+                                      final AssetBase<?> pCredit,
                                       final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();
@@ -550,7 +557,7 @@ public class QIFPortfolioBuilder {
 
         /* Access Transaction details */
         QIFSecurity mySecurity = theFile.registerSecurity(pSecurity);
-        QIFAccountEvents myTarget = theFile.registerAccount(pTrans.getCredit());
+        QIFAccountEvents myTarget = theFile.registerAccount(pCredit);
         JMoney myAmount = pTrans.getAmount();
         JMoney myTaxCredit = pTrans.getTaxCredit();
         JMoney myFullAmount = new JMoney(myAmount);
@@ -765,9 +772,11 @@ public class QIFPortfolioBuilder {
     /**
      * Process stock deMerger.
      * @param pSecurity the security
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     private void processStockDeMerger(final Security pSecurity,
+                                      final Security pCredit,
                                       final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();
@@ -778,15 +787,14 @@ public class QIFPortfolioBuilder {
         boolean canTradeZeroShares = theFileType.canTradeZeroShares();
 
         /* Access Transaction details */
-        Security myCredit = (Security) pTrans.getCredit();
         QIFSecurity myDebitSecurity = theFile.registerSecurity(pSecurity);
-        QIFSecurity myCreditSecurity = theFile.registerSecurity(myCredit);
+        QIFSecurity myCreditSecurity = theFile.registerSecurity(pCredit);
 
         /* Access details */
         JDateDay myDate = pTrans.getDate();
         JUnits myUnits = pTrans.getDebitUnits();
         JPrice myDebitPrice = getPriceForDate(pSecurity, myDate);
-        JPrice myCreditPrice = getPriceForDate(myCredit, myDate);
+        JPrice myCreditPrice = getPriceForDate(pCredit, myDate);
 
         /* Obtain the delta cost (i.e. value transferred) */
         JMoney myValue = getDeltaCostForHolding(myPort, pSecurity, pTrans);
@@ -933,16 +941,18 @@ public class QIFPortfolioBuilder {
     /**
      * Process standard transfer out from a security.
      * @param pSecurity the security
+     * @param pCredit the credit account
      * @param pTrans the transaction
      */
     private void processTransferOut(final Security pSecurity,
+                                    final AssetBase<?> pCredit,
                                     final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();
         QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
 
         /* Access Transaction details */
-        QIFAccountEvents myTarget = theFile.registerAccount(pTrans.getCredit());
+        QIFAccountEvents myTarget = theFile.registerAccount(pCredit);
         QIFSecurity mySecurity = theFile.registerSecurity(pSecurity);
 
         /* Determine various flags */

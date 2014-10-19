@@ -511,8 +511,8 @@ public class Transaction
         /* Copy underlying values */
         setDate(pSchedule.getDate());
         setValueAssetPair(pSchedule.getAssetPair());
-        setValueDebit(pSchedule.getDebit());
-        setValueCredit(pSchedule.getCredit());
+        setValueAccount(pSchedule.getAccount());
+        setValuePartner(pSchedule.getPartner());
         setCategory(pSchedule.getCategory());
         setReconciled(Boolean.FALSE);
         setSplit(Boolean.FALSE);
@@ -524,7 +524,7 @@ public class Transaction
         useInfoSet = true;
 
         /* If we need a tax Credit */
-        if (TransactionInfoSet.isTaxCreditClassRequired(getDebit(),
+        if (TransactionInfoSet.isTaxCreditClassRequired(getAccount(),
                 null, getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
             /* Calculate the tax credit */
             setTaxCredit(calculateTaxCredit());
@@ -590,8 +590,8 @@ public class Transaction
      */
     @Override
     public void validate() {
-        AssetBase<?> myDebit = getDebit();
-        AssetBase<?> myCredit = getCredit();
+        AssetBase<?> myAccount = getAccount();
+        AssetBase<?> myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();
@@ -612,26 +612,26 @@ public class Transaction
             getList().registerChild(this);
         }
 
-        /* Check for valid credit security */
-        if ((myCredit != null) && (myCredit instanceof Security)) {
+        /* Check for valid account security */
+        if ((myAccount != null) && (myAccount instanceof Security)) {
             /* If the date of this transaction is prior to the first price */
-            SecurityPrice myPrice = ((Security) myCredit).getInitialPrice();
+            SecurityPrice myPrice = ((Security) myAccount).getInitialPrice();
             if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
-                addError(ERROR_BADDATE, FIELD_CREDIT);
+                addError(ERROR_BADDATE, FIELD_ACCOUNT);
             }
         }
 
-        /* Check for valid debit security */
-        if ((myDebit != null) && (myDebit instanceof Security) && (!Difference.isEqual(myCredit, myDebit))) {
+        /* Check for valid partner security */
+        if ((myPartner != null) && (myPartner instanceof Security) && (!Difference.isEqual(myAccount, myPartner))) {
             /* If the date of this transaction is prior to the first price */
-            SecurityPrice myPrice = ((Security) myDebit).getInitialPrice();
+            SecurityPrice myPrice = ((Security) myPartner).getInitialPrice();
             if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
-                addError(ERROR_BADDATE, FIELD_DEBIT);
+                addError(ERROR_BADDATE, FIELD_PARTNER);
             }
         }
 
         /* Cannot have Credit and Debit if securities are identical */
-        if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myCredit, myDebit))) {
+        if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myAccount, myPartner))) {
             addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS));
         }
 
@@ -1306,12 +1306,7 @@ public class Transaction
 
                     /* Copy missing values from parent */
                     myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
-                    if (myValues.getValue(FIELD_DEBIT) == null) {
-                        myValues.addValue(FIELD_DEBIT, pValues.getValue(FIELD_DEBIT));
-                    }
-                    if (myValues.getValue(FIELD_CREDIT) == null) {
-                        myValues.addValue(FIELD_CREDIT, pValues.getValue(FIELD_CREDIT));
-                    }
+                    myValues.addValue(FIELD_ACCOUNT, pValues.getValue(FIELD_ACCOUNT));
 
                     /* Build item */
                     addValuesItem(myValues);

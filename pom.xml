@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.3.0-SNAPSHOT</version>
+  <version>v1.3.1-SNAPSHOT</version>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
@@ -60,7 +60,7 @@
     <svnRepository>Finance</svnRepository>
     <svnParent>jOceanus</svnParent>
     <svnComponent>${svnParent}</svnComponent>
-    <svnBranch>v1.3.0</svnBranch>
+    <svnBranch>v1.3.1</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnBase>${svnParent}/trunk</svnBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
@@ -69,12 +69,12 @@
     <JDateButtonVersion>v1.3.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.51</BouncyCastleVersion>
     <SvnKitVersion>1.8.6</SvnKitVersion>
-    <JGitVersion>3.5.0.201409260305-r</JGitVersion>
+    <JGitVersion>3.5.1.201410131835-r</JGitVersion>
     <JiraRestVersion>2.0.0-m31</JiraRestVersion>
     <ApacheMavenVersion>3.2.3</ApacheMavenVersion>
-    <MySQLVersion>5.1.30</MySQLVersion>
-    <PostGreSQLVersion>9.2-1003-jdbc4</PostGreSQLVersion>
-    <ApachePOIVersion>3.10-FINAL</ApachePOIVersion>
+    <MySQLVersion>5.1.33</MySQLVersion>
+    <PostGreSQLVersion>9.3-1102-jdbc41</PostGreSQLVersion>
+    <ApachePOIVersion>3.10.1</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.9.1</XercesVersion>
     <SLF4JVersion>1.7.7</SLF4JVersion>

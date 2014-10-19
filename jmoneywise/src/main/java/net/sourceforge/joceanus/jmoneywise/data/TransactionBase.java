@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
@@ -81,14 +82,19 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public static final JDataField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
 
     /**
-     * Debit Field Id.
+     * Account Field Id.
      */
-    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_DEBIT.getValue());
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
 
     /**
-     * Credit Field Id.
+     * Partner Field Id.
      */
-    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_CREDIT.getValue());
+    public static final JDataField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue());
+
+    /**
+     * Direction Field Id.
+     */
+    public static final JDataField FIELD_DIRECTION = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.TRANSACTION_DIRECTION.getValue());
 
     /**
      * Amount Field Id.
@@ -163,11 +169,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (FIELD_CATEGORY.equals(pField)) {
             return true;
         }
-        if (FIELD_DEBIT.equals(pField)) {
-            return !isChild() || !Difference.isEqual(getDebit(), getParent().getDebit());
+        if (FIELD_ACCOUNT.equals(pField)) {
+            return !isChild();
         }
-        if (FIELD_CREDIT.equals(pField)) {
-            return !isChild() || !Difference.isEqual(getCredit(), getParent().getCredit());
+        if (FIELD_PARTNER.equals(pField)) {
+            return true;
         }
         if (FIELD_AMOUNT.equals(pField)) {
             return true;
@@ -189,8 +195,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public String formatObject() {
         /* Access Key Values */
         EncryptedValueSet myValues = getValueSet();
-        Object myDebit = myValues.getValue(FIELD_DEBIT, Object.class);
-        Object myCredit = myValues.getValue(FIELD_CREDIT, Object.class);
+        Object myAccount = myValues.getValue(FIELD_ACCOUNT, Object.class);
+        Object myPartner = myValues.getValue(FIELD_PARTNER, Object.class);
+        AssetPair myPair = myValues.getValue(FIELD_PAIR, AssetPair.class);
+        AssetDirection myDir = myPair == null
+                                             ? null
+                                             : myPair.getDirection();
         Object myCategory = myValues.getValue(FIELD_CATEGORY, Object.class);
         Object myAmount = myValues.getValue(FIELD_AMOUNT, Object.class);
 
@@ -203,9 +213,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(myFormatter.formatObject(myAmount));
         myBuilder.append(CHAR_BLANK);
-        myBuilder.append(myFormatter.formatObject(myDebit));
-        myBuilder.append("->");
-        myBuilder.append(myFormatter.formatObject(myCredit));
+        myBuilder.append(myFormatter.formatObject(myAccount));
+        myBuilder.append(AssetDirection.FROM.equals(myDir)
+                                                          ? "<-"
+                                                          : "->");
+        myBuilder.append(myFormatter.formatObject(myPartner));
 
         /* return it */
         return myBuilder.toString();
@@ -312,63 +324,74 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Obtain Debit asset.
-     * @return the debit
+     * Obtain Account asset.
+     * @return the account
      */
-    public AssetBase<?> getDebit() {
-        return getDebit(getValueSet());
+    public AssetBase<?> getAccount() {
+        return getAccount(getValueSet());
     }
 
     /**
-     * Obtain DebitId.
-     * @return the debitId
+     * Obtain AccountId.
+     * @return the accountId
      */
-    public Integer getDebitId() {
-        AssetBase<?> myDebit = getDebit();
-        return (myDebit == null)
-                                ? null
-                                : myDebit.getId();
+    public Integer getAccountId() {
+        AssetBase<?> myAccount = getAccount();
+        return (myAccount == null)
+                                  ? null
+                                  : myAccount.getId();
     }
 
     /**
-     * Obtain DebitName.
-     * @return the debitName
+     * Obtain AccountName.
+     * @return the accountName
      */
-    public String getDebitName() {
-        AssetBase<?> myDebit = getDebit();
-        return (myDebit == null)
-                                ? null
-                                : myDebit.getName();
+    public String getAccountName() {
+        AssetBase<?> myAccount = getAccount();
+        return (myAccount == null)
+                                  ? null
+                                  : myAccount.getName();
     }
 
     /**
-     * Obtain Credit asset.
-     * @return the credit
+     * Obtain Partner asset.
+     * @return the partner
      */
-    public AssetBase<?> getCredit() {
-        return getCredit(getValueSet());
+    public AssetBase<?> getPartner() {
+        return getPartner(getValueSet());
     }
 
     /**
-     * Obtain CreditId.
-     * @return the creditId
+     * Obtain PartnerId.
+     * @return the partnerId
      */
-    public Integer getCreditId() {
-        AssetBase<?> myCredit = getCredit();
-        return (myCredit == null)
-                                 ? null
-                                 : myCredit.getId();
+    public Integer getPartnerId() {
+        AssetBase<?> myPartner = getPartner();
+        return (myPartner == null)
+                                  ? null
+                                  : myPartner.getId();
     }
 
     /**
-     * Obtain CreditName.
-     * @return the creditName
+     * Obtain PartnerName.
+     * @return the partnerName
      */
-    public String getCreditName() {
-        AssetBase<?> myCredit = getCredit();
-        return (myCredit == null)
-                                 ? null
-                                 : myCredit.getName();
+    public String getPartnerName() {
+        AssetBase<?> myPartner = getPartner();
+        return (myPartner == null)
+                                  ? null
+                                  : myPartner.getName();
+    }
+
+    /**
+     * Obtain Direction.
+     * @return the direction
+     */
+    public AssetDirection getDirection() {
+        AssetPair myPair = getAssetPair();
+        return myPair == null
+                             ? null
+                             : myPair.getDirection();
     }
 
     /**
@@ -489,21 +512,21 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Obtain Debit Asset.
+     * Obtain Account Asset.
      * @param pValueSet the valueSet
-     * @return the Debit Asset
+     * @return the Account Asset
      */
-    public static AssetBase<?> getDebit(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DEBIT, AssetBase.class);
+    public static AssetBase<?> getAccount(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ACCOUNT, AssetBase.class);
     }
 
     /**
-     * Obtain Credit Asset.
+     * Obtain Partner Asset.
      * @param pValueSet the valueSet
-     * @return the Credit Asset
+     * @return the Partner Asset
      */
-    public static AssetBase<?> getCredit(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CREDIT, AssetBase.class);
+    public static AssetBase<?> getPartner(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARTNER, AssetBase.class);
     }
 
     /**
@@ -624,51 +647,51 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Set debit value.
+     * Set account value.
      * @param pValue the value
      */
-    protected final void setValueDebit(final AssetBase<?> pValue) {
-        getValueSet().setValue(FIELD_DEBIT, pValue);
+    protected final void setValueAccount(final AssetBase<?> pValue) {
+        getValueSet().setValue(FIELD_ACCOUNT, pValue);
     }
 
     /**
      * Set debit name.
      * @param pName the name
      */
-    private void setValueDebit(final String pName) {
-        getValueSet().setValue(FIELD_DEBIT, pName);
+    private void setValueAccount(final String pName) {
+        getValueSet().setValue(FIELD_ACCOUNT, pName);
     }
 
     /**
      * Set debit id.
      * @param pId the value
      */
-    private void setValueDebit(final Integer pId) {
-        getValueSet().setValue(FIELD_DEBIT, pId);
+    private void setValueAccount(final Integer pId) {
+        getValueSet().setValue(FIELD_ACCOUNT, pId);
     }
 
     /**
-     * Set credit value.
+     * Set partner value.
      * @param pValue the value
      */
-    protected final void setValueCredit(final AssetBase<?> pValue) {
-        getValueSet().setValue(FIELD_CREDIT, pValue);
+    protected final void setValuePartner(final AssetBase<?> pValue) {
+        getValueSet().setValue(FIELD_PARTNER, pValue);
     }
 
     /**
-     * Set credit id.
+     * Set partner id.
      * @param pId the id
      */
-    private void setValueCredit(final Integer pId) {
-        getValueSet().setValue(FIELD_CREDIT, pId);
+    private void setValuePartner(final Integer pId) {
+        getValueSet().setValue(FIELD_PARTNER, pId);
     }
 
     /**
-     * Set credit name.
+     * Set partner name.
      * @param pName the name
      */
-    private void setValueCredit(final String pName) {
-        getValueSet().setValue(FIELD_CREDIT, pName);
+    private void setValuePartner(final String pName) {
+        getValueSet().setValue(FIELD_PARTNER, pName);
     }
 
     /**
@@ -750,22 +773,28 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 setValueAssetPair((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueAssetPair((String) myValue);
+            } else if (myValue instanceof AssetPair) {
+                setValueAssetPair((AssetPair) myValue);
             }
 
-            /* Store the Debit */
-            myValue = pValues.getValue(FIELD_DEBIT);
+            /* Store the Account */
+            myValue = pValues.getValue(FIELD_ACCOUNT);
             if (myValue instanceof Integer) {
-                setValueDebit((Integer) myValue);
+                setValueAccount((Integer) myValue);
             } else if (myValue instanceof String) {
-                setValueDebit((String) myValue);
+                setValueAccount((String) myValue);
+            } else if (myValue instanceof AssetBase) {
+                setValueAccount((AssetBase<?>) myValue);
             }
 
-            /* Store the Credit */
-            myValue = pValues.getValue(FIELD_CREDIT);
+            /* Store the Partner */
+            myValue = pValues.getValue(FIELD_PARTNER);
             if (myValue instanceof Integer) {
-                setValueCredit((Integer) myValue);
+                setValuePartner((Integer) myValue);
             } else if (myValue instanceof String) {
-                setValueCredit((String) myValue);
+                setValuePartner((String) myValue);
+            } else if (myValue instanceof AssetBase) {
+                setValuePartner((AssetBase<?>) myValue);
             }
 
             /* Store the Category */
@@ -941,8 +970,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         AssetPair myPair = (AssetPair) myValue;
 
         /* Resolve data links */
-        myPair.resolveDataLink(myData, this, FIELD_DEBIT);
-        myPair.resolveDataLink(myData, this, FIELD_CREDIT);
+        myPair.resolveDataLink(myData, this, FIELD_ACCOUNT);
+        myPair.resolveDataLink(myData, this, FIELD_PARTNER);
         resolveDataLink(FIELD_CATEGORY, myData.getTransCategories());
     }
 
@@ -960,10 +989,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return transaction type
      */
     public TransactionType deriveAccountTranType() {
-        /* Analyse the components */
-        AssetType myDebitType = getDebit().getAssetType();
-        AssetType myCreditType = getCredit().getAssetType();
-        return myDebitType.getTransactionType(myCreditType);
+        return getAssetPair().deriveAccountTranType();
     }
 
     /**
@@ -1190,10 +1216,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public boolean relatesTo(final AssetBase<?> pAsset) {
         boolean myResult = false;
 
-        /* Check credit and debit accounts */
-        if (getCredit().equals(pAsset)) {
+        /* Check account and partner accounts */
+        if (getAccount().equals(pAsset)) {
             myResult = true;
-        } else if (getDebit().equals(pAsset)) {
+        } else if (getPartner().equals(pAsset)) {
             myResult = true;
         }
 
@@ -1203,12 +1229,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
     @Override
     public boolean isLocked() {
-        AssetBase<?> myCredit = getCredit();
-        AssetBase<?> myDebit = getDebit();
+        AssetBase<?> myAccount = getAccount();
+        AssetBase<?> myPartner = getPartner();
 
         /* Check credit and debit accounts */
-        return ((myCredit != null) && myCredit.isClosed())
-               || ((myDebit != null) && myDebit.isClosed());
+        return ((myAccount != null) && myAccount.isClosed())
+               || ((myPartner != null) && myPartner.isClosed());
     }
 
     /**
@@ -1230,7 +1256,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (!isDividend()) {
             return false;
         }
-        return (getCredit() != null) && Difference.isEqual(getDebit(), getCredit());
+        return (getAccount() != null) && Difference.isEqual(getAccount(), getPartner());
     }
 
     /**
@@ -1252,31 +1278,57 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Set a new debit account.
-     * @param pDebit the debit account
+     * Set a new account.
+     * @param pAccount the account
      */
-    public void setDebit(final AssetBase<?> pDebit) {
+    public void setAccount(final AssetBase<?> pAccount) {
         /* Adjust pair */
         AssetPair myPair = getAssetPair();
-        getAssetPairManager().adjustDebit(myPair, pDebit);
+        myPair = getAssetPairManager().adjustAccount(myPair, pAccount);
         setValueAssetPair(myPair);
 
-        /* Set credit value */
-        setValueDebit(pDebit);
+        /* Set account value */
+        setValueAccount(pAccount);
     }
 
     /**
-     * Set a new credit account.
-     * @param pCredit the credit account
+     * Set a new partner.
+     * @param pPartner the partner
      */
-    public void setCredit(final AssetBase<?> pCredit) {
+    public void setPartner(final AssetBase<?> pPartner) {
         /* Adjust pair */
         AssetPair myPair = getAssetPair();
-        getAssetPairManager().adjustCredit(myPair, pCredit);
+        myPair = getAssetPairManager().adjustPartner(myPair, pPartner);
         setValueAssetPair(myPair);
 
-        /* Set credit value */
-        setValueCredit(pCredit);
+        /* Set partner value */
+        setValuePartner(pPartner);
+    }
+
+    /**
+     * Switch direction.
+     */
+    public void switchDirection() {
+        /* Adjust pair */
+        AssetPair myPair = getAssetPair();
+        myPair = getAssetPairManager().switchDirection(myPair);
+        setValueAssetPair(myPair);
+    }
+
+    /**
+     * Flip assets.
+     */
+    public void flipAssets() {
+        /* Adjust pair */
+        AssetPair myPair = getAssetPair();
+        myPair = getAssetPairManager().flipAssets(myPair);
+        setValueAssetPair(myPair);
+
+        /* Flip details */
+        AssetBase<?> myAccount = getAccount();
+        AssetBase<?> myPartner = getPartner();
+        setValueAccount(myPartner);
+        setValuePartner(myAccount);
     }
 
     /**
@@ -1335,9 +1387,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* touch the event category referred to */
         getCategory().touchItem(this);
 
-        /* Touch the credit and debit accounts */
-        getDebit().touchItem(this);
-        getCredit().touchItem(this);
+        /* Touch the account and partner */
+        getAccount().touchItem(this);
+        getPartner().touchItem(this);
 
         /* Touch parent */
         T myParent = getParent();
@@ -1352,8 +1404,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     @Override
     public void validate() {
         JDateDay myDate = getDate();
-        AssetBase<?> myDebit = getDebit();
-        AssetBase<?> myCredit = getCredit();
+        AssetBase<?> myAccount = getAccount();
+        AssetBase<?> myPartner = getPartner();
         JMoney myAmount = getAmount();
         T myParent = getParent();
         TransactionCategory myCategory = getCategory();
@@ -1380,22 +1432,22 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             addError(ERROR_HIDDEN, FIELD_CATEGORY);
         }
 
-        /* Credit account must be non-null */
-        if (myCredit == null) {
-            addError(ERROR_MISSING, FIELD_CREDIT);
+        /* Account must be non-null */
+        if (myAccount == null) {
+            addError(ERROR_MISSING, FIELD_ACCOUNT);
             doCheckCombo = false;
         }
 
-        /* Debit account must be non-null */
-        if (myDebit == null) {
-            addError(ERROR_MISSING, FIELD_DEBIT);
+        /* Partner must be non-null */
+        if (myPartner == null) {
+            addError(ERROR_MISSING, FIELD_PARTNER);
             doCheckCombo = false;
         }
 
         /* Check combinations */
-        if ((doCheckCombo) && (!isValidEvent(myCategory, myDebit, myCredit))) {
-            addError(ERROR_COMBO, FIELD_DEBIT);
-            addError(ERROR_COMBO, FIELD_CREDIT);
+        if ((doCheckCombo) && (!isValidEvent(myCategory, myAccount, myPartner))) {
+            addError(ERROR_COMBO, FIELD_ACCOUNT);
+            addError(ERROR_COMBO, FIELD_PARTNER);
         }
 
         /* If we have a parent */
@@ -1419,7 +1471,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         /* Money must be zero for stock split/adjust/deMerger */
-        if ((myAmount != null) && (myAmount.isNonZero()) && (myCategory != null) && (myCategory.getCategoryTypeClass().needsZeroAmount())) {
+        if ((myAmount != null) && (myAmount.isNonZero())
+            && (myCategory != null) && (myCategory.getCategoryTypeClass().needsZeroAmount())) {
             addError(ERROR_ZEROAMOUNT, FIELD_AMOUNT);
         }
     }
@@ -1444,14 +1497,14 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             setValueCategory(pTrans.getCategory());
         }
 
-        /* Update the debit account if required */
-        if (!Difference.isEqual(getDebit(), pTrans.getDebit())) {
-            setValueDebit(pTrans.getDebit());
+        /* Update the account if required */
+        if (!Difference.isEqual(getAccount(), pTrans.getAccount())) {
+            setValueAccount(pTrans.getAccount());
         }
 
-        /* Update the credit account if required */
-        if (!Difference.isEqual(getCredit(), pTrans.getCredit())) {
-            setValueCredit(pTrans.getCredit());
+        /* Update the partner if required */
+        if (!Difference.isEqual(getPartner(), pTrans.getPartner())) {
+            setValuePartner(pTrans.getPartner());
         }
 
         /* Update the parent transaction if required */
@@ -1526,7 +1579,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          * Obtain assetPair Manager.
          * @return the manager
          */
-        protected AssetPairManager getAssetPairManager() {
+        public AssetPairManager getAssetPairManager() {
             return theManager;
         }
 

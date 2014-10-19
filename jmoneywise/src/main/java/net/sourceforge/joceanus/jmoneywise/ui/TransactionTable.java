@@ -117,14 +117,19 @@ public class TransactionTable
     private static final String TITLE_CAT = Transaction.FIELD_CATEGORY.getName();
 
     /**
-     * Debit Column Title.
+     * Account Column Title.
      */
-    private static final String TITLE_DEBIT = Transaction.FIELD_DEBIT.getName();
+    private static final String TITLE_ACCOUNT = Transaction.FIELD_ACCOUNT.getName();
 
     /**
-     * Credit Column Title.
+     * Direction Column Title.
      */
-    private static final String TITLE_CREDIT = Transaction.FIELD_CREDIT.getName();
+    private static final String TITLE_DIRECTION = Transaction.FIELD_DIRECTION.getName();
+
+    /**
+     * Partner Column Title.
+     */
+    private static final String TITLE_PARTNER = Transaction.FIELD_PARTNER.getName();
 
     /**
      * Reconciled Column Title.
@@ -775,109 +780,114 @@ public class TransactionTable
         private static final int COLUMN_CATEGORY = 1;
 
         /**
-         * Debit column id.
+         * Account column id.
          */
-        private static final int COLUMN_DEBIT = 2;
+        private static final int COLUMN_ACCOUNT = 2;
 
         /**
-         * Credit column id.
+         * Direction column id.
          */
-        private static final int COLUMN_CREDIT = 3;
+        private static final int COLUMN_DIRECTION = 3;
+
+        /**
+         * Partner column id.
+         */
+        private static final int COLUMN_PARTNER = 4;
 
         /**
          * Reconciled column id.
          */
-        private static final int COLUMN_RECONCILED = 4;
+        private static final int COLUMN_RECONCILED = 5;
 
         /**
          * Description column id.
          */
-        private static final int COLUMN_DESC = 5;
+        private static final int COLUMN_DESC = 6;
 
         /**
          * Debited column id.
          */
-        private static final int COLUMN_DEBITED = 6;
+        private static final int COLUMN_DEBITED = 7;
 
         /**
          * Credited column id.
          */
-        private static final int COLUMN_CREDITED = 7;
+        private static final int COLUMN_CREDITED = 8;
 
         /**
          * Balance column id.
          */
-        private static final int COLUMN_BALANCE = 8;
+        private static final int COLUMN_BALANCE = 9;
 
         /**
          * Amount column id.
          */
-        private static final int COLUMN_AMOUNT = 9;
+        private static final int COLUMN_AMOUNT = 10;
 
         /**
          * Tags column id.
          */
-        private static final int COLUMN_TAGS = 10;
+        private static final int COLUMN_TAGS = 11;
 
         /**
          * Reference column id.
          */
-        private static final int COLUMN_REF = 11;
+        private static final int COLUMN_REF = 12;
 
         /**
          * CreditUnits column id.
          */
-        private static final int COLUMN_CREDUNITS = 12;
+        private static final int COLUMN_CREDUNITS = 13;
 
         /**
          * DebitUnits column id.
          */
-        private static final int COLUMN_DEBUNITS = 13;
+        private static final int COLUMN_DEBUNITS = 14;
 
         /**
          * Dilution column id.
          */
-        private static final int COLUMN_DILUTION = 14;
+        private static final int COLUMN_DILUTION = 15;
 
         /**
          * Portfolio column id.
          */
-        private static final int COLUMN_PORTFOLIO = 15;
+        private static final int COLUMN_PORTFOLIO = 16;
 
         /**
          * QualifyYears column id.
          */
-        private static final int COLUMN_QUALYEARS = 16;
+        private static final int COLUMN_QUALYEARS = 17;
 
         /**
          * ThirdParty column id.
          */
-        private static final int COLUMN_3RDPARTY = 17;
+        private static final int COLUMN_3RDPARTY = 18;
 
         /**
          * TaxCredit column id.
          */
-        private static final int COLUMN_TAXCREDIT = 18;
+        private static final int COLUMN_TAXCREDIT = 19;
 
         /**
          * NatInsurance column id.
          */
-        private static final int COLUMN_NATINS = 19;
+        private static final int COLUMN_NATINS = 20;
 
         /**
          * DeemedBenefit column id.
          */
-        private static final int COLUMN_BENEFIT = 20;
+        private static final int COLUMN_BENEFIT = 21;
 
         /**
          * CharityDonation column id.
          */
-        private static final int COLUMN_DONATION = 21;
+        private static final int COLUMN_DONATION = 22;
 
         /**
          * Action column id.
          */
-        private static final int COLUMN_ACTION = 22;
+        private static final int COLUMN_ACTION = 23;
 
         /**
          * Date Renderer.
@@ -1105,8 +1115,8 @@ public class TransactionTable
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer, theAccountEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer, theAccountEditor));
+            declareColumn(new JDataTableColumn(COLUMN_ACCOUNT, WIDTH_NAME, theStringRenderer, theAccountEditor));
+            declareColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_NAME, theStringRenderer, theAccountEditor));
             declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theReconciledIconRenderer, theReconciledIconEditor));
             theDescColumn = new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor);
             declareColumn(theDescColumn);
@@ -1176,10 +1186,12 @@ public class TransactionTable
                     return TITLE_DESC;
                 case COLUMN_CATEGORY:
                     return TITLE_CAT;
-                case COLUMN_DEBIT:
-                    return TITLE_DEBIT;
-                case COLUMN_CREDIT:
-                    return TITLE_CREDIT;
+                case COLUMN_ACCOUNT:
+                    return TITLE_ACCOUNT;
+                case COLUMN_DIRECTION:
+                    return TITLE_DIRECTION;
+                case COLUMN_PARTNER:
+                    return TITLE_PARTNER;
                 case COLUMN_DEBITED:
                     return TITLE_DEBITED;
                 case COLUMN_CREDITED:
@@ -1235,10 +1247,12 @@ public class TransactionTable
                     return pTrans.getDate();
                 case COLUMN_CATEGORY:
                     return pTrans.getCategory();
-                case COLUMN_CREDIT:
-                    return pTrans.getCredit();
-                case COLUMN_DEBIT:
-                    return pTrans.getDebit();
+                case COLUMN_ACCOUNT:
+                    return pTrans.getAccount();
+                case COLUMN_DIRECTION:
+                    return pTrans.getDirection();
+                case COLUMN_PARTNER:
+                    return pTrans.getPartner();
                 case COLUMN_DESC:
                     return pTrans.getComments();
                 case COLUMN_RECONCILED:
@@ -1323,11 +1337,14 @@ public class TransactionTable
                 case COLUMN_CATEGORY:
                     pItem.setCategory((TransactionCategory) pValue);
                     break;
-                case COLUMN_DEBIT:
-                    pItem.setDebit((AssetBase<?>) pValue);
+                case COLUMN_ACCOUNT:
+                    pItem.setAccount((AssetBase<?>) pValue);
                     break;
-                case COLUMN_CREDIT:
-                    pItem.setCredit((AssetBase<?>) pValue);
+                case COLUMN_DIRECTION:
+                    pItem.switchDirection();
+                    break;
+                case COLUMN_PARTNER:
+                    pItem.setPartner((AssetBase<?>) pValue);
                     break;
                 case COLUMN_DESC:
                     pItem.setComments((String) pValue);
@@ -1394,8 +1411,9 @@ public class TransactionTable
                 case COLUMN_RECONCILED:
                     return !pItem.isLocked();
                 case COLUMN_DATE:
-                case COLUMN_CREDIT:
-                case COLUMN_DEBIT:
+                case COLUMN_ACCOUNT:
+                case COLUMN_DIRECTION:
+                case COLUMN_PARTNER:
                 case COLUMN_CATEGORY:
                 case COLUMN_AMOUNT:
                 case COLUMN_ACTION:
@@ -1443,10 +1461,12 @@ public class TransactionTable
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS);
                 case COLUMN_CATEGORY:
                     return Transaction.FIELD_CATEGORY;
-                case COLUMN_CREDIT:
-                    return Transaction.FIELD_CREDIT;
-                case COLUMN_DEBIT:
-                    return Transaction.FIELD_DEBIT;
+                case COLUMN_ACCOUNT:
+                    return Transaction.FIELD_ACCOUNT;
+                case COLUMN_DIRECTION:
+                    return Transaction.FIELD_DIRECTION;
+                case COLUMN_PARTNER:
+                    return Transaction.FIELD_PARTNER;
                 case COLUMN_AMOUNT:
                     return Transaction.FIELD_AMOUNT;
                 case COLUMN_REF:
@@ -1633,11 +1653,11 @@ public class TransactionTable
 
                 /* Build the menu */
                 switch (myCell.x) {
-                    case COLUMN_DEBIT:
-                        theActiveTrans.buildDebitMenu(myBuilder, myTrans);
+                    case COLUMN_ACCOUNT:
+                        theActiveTrans.buildAccountMenu(myBuilder, myTrans);
                         break;
                     default:
-                        theActiveTrans.buildCreditMenu(myBuilder, myTrans);
+                        theActiveTrans.buildPartnerMenu(myBuilder, myTrans);
                         break;
                 }
             }

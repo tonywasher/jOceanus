@@ -32,8 +32,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
@@ -420,11 +418,7 @@ public final class TaxBasisBucket
         JMoney myDonation = pTrans.getCharityDonation();
 
         /* Determine style of transaction */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
-        AssetType myDebitType = myDebit.getAssetType();
-        AssetType myCreditType = myCredit.getAssetType();
-        TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
+        TransactionType myActTran = pTrans.deriveAccountTranType();
 
         /* Access the counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
@@ -491,11 +485,7 @@ public final class TaxBasisBucket
         JMoney myTaxCredit = pTrans.getTaxCredit();
 
         /* Determine style of event */
-        AssetBase<?> myDebit = pTrans.getDebit();
-        AssetBase<?> myCredit = pTrans.getCredit();
-        AssetType myDebitType = myDebit.getAssetType();
-        AssetType myCreditType = myCredit.getAssetType();
-        TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
+        TransactionType myActTran = pTrans.deriveAccountTranType();
 
         /* Access the counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
