@@ -113,6 +113,11 @@ public class ArchiveLoader {
     private static final String AREA_YEARRANGE = "AssetsYears";
 
     /**
+     * The last event.
+     */
+    private JDateDay theLastEvent;
+
+    /**
      * The list of years.
      */
     private final List<ArchiveYear> theYears;
@@ -169,6 +174,15 @@ public class ArchiveLoader {
     }
 
     /**
+     * Check whether date is in range.
+     * @param pDate the date to check
+     * @return in range true/false
+     */
+    protected boolean checkDate(final JDateDay pDate) {
+        return theLastEvent.compareTo(pDate) >= 0;
+    }
+
+    /**
      * Constructor.
      */
     public ArchiveLoader() {
@@ -190,7 +204,7 @@ public class ArchiveLoader {
                                      final BackupPreferences pPreferences) throws JOceanusException {
         /* Determine the archive name */
         String myName = pPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE);
-        JDateDay myLastEvent = pPreferences.getDateValue(BackupPreferences.NAME_LAST_EVENT);
+        theLastEvent = pPreferences.getDateValue(BackupPreferences.NAME_LAST_EVENT);
         File myArchive = new File(myName);
 
         /* Protect the workbook retrieval */
@@ -200,7 +214,7 @@ public class ArchiveLoader {
             WorkBookType myType = WorkBookType.determineType(myName);
 
             /* Load the data from the stream */
-            MoneyWiseData myData = loadArchiveStream(pTask, myStream, myType, myLastEvent);
+            MoneyWiseData myData = loadArchiveStream(pTask, myStream, myType);
 
             /* Close the Stream to force out errors */
             myStream.close();
@@ -251,14 +265,12 @@ public class ArchiveLoader {
      * @param pTask Task Control for task
      * @param pStream Input stream to load from
      * @param pType the workBookType
-     * @param pLastEvent the last event
      * @return the newly loaded data
      * @throws JOceanusException on error
      */
     private MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
                                             final InputStream pStream,
-                                            final WorkBookType pType,
-                                            final JDateDay pLastEvent) throws JOceanusException {
+                                            final WorkBookType pType) throws JOceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
@@ -368,12 +380,12 @@ public class ArchiveLoader {
             }
             if (bContinue) {
                 myStage.startTask(SecurityPrice.LIST_NAME);
-                bContinue = SheetSecurityPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
+                bContinue = SheetSecurityPrice.loadArchive(pTask, myWorkbook, myData, this);
             }
 
             if (bContinue) {
                 myStage.startTask(Transaction.LIST_NAME);
-                bContinue = SheetTransaction.loadArchive(pTask, myWorkbook, myData, this, pLastEvent);
+                bContinue = SheetTransaction.loadArchive(pTask, myWorkbook, myData, this);
             }
 
             /* Close the stream */
@@ -707,16 +719,23 @@ public class ArchiveLoader {
          * @param pDate the date of the transaction
          * @param pDebit the name of the debit object
          * @param pCredit the name of the credit object
+         * @return continue true/false
          * @throws JOceanusException on error
          */
-        protected void resolveValues(final JDateDay pDate,
-                                     final String pDebit,
-                                     final String pCredit) throws JOceanusException {
+        protected boolean resolveValues(final JDateDay pDate,
+                                        final String pDebit,
+                                        final String pCredit) throws JOceanusException {
             /* If the Date is null */
             if (pDate == null) {
                 /* Resolve child values */
                 resolveChildValues(pDebit, pCredit);
-                return;
+                return true;
+            }
+
+            /* If the price is too late */
+            if (!checkDate(pDate)) {
+                /* reject the transaction */
+                return false;
             }
 
             /* Note that there is no split */
@@ -736,6 +755,7 @@ public class ArchiveLoader {
 
             /* Resolve assets */
             resolveAssets();
+            return true;
         }
 
         /**
@@ -844,9 +864,7 @@ public class ArchiveLoader {
                 thePartner = myCredit;
                 Integer myPairId = AssetPair.getEncodedId(myDebitType, myCreditType, AssetDirection.TO);
                 thePair = theAssetPairManager.lookUpPair(myPairId);
-
-                /* Handle non-Asset credit and non-child transfer */
-            } else if (!myCreditType.isAsset() || !isSplit) {
+            } else {
                 /* Use credit as account */
                 theAccount = myCredit;
                 thePartner = myDebit;

@@ -179,14 +179,15 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
         JDateDay myDate = pTrans.getDate();
         AssetBase<?> myAccount = pTrans.getAccount();
         AssetBase<?> myPartner = pTrans.getPartner();
+        boolean isCash = myAccount instanceof Cash;
 
         /* If the date differs */
         if (!myDate.equals(theDate)) {
             pTrans.addError(ERROR_DATE, Transaction.FIELD_DATE);
         }
 
-        /* If the Account differs */
-        if (!myAccount.equals(theOwner)) {
+        /* If the Account differs it must be cash */
+        if (!myAccount.equals(theOwner) && !isCash) {
             pTrans.addError(ERROR_OWNER, Transaction.FIELD_ACCOUNT);
         }
 
@@ -197,12 +198,9 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
                 /* Store it */
                 thePayee = (Payee) myPartner;
 
-                /* else check that it is the same payee */
-            } else if (!thePayee.equals(myPartner)) {
-                /* We do allow a cashRecovery from alternate payee */
-                if (!(myAccount instanceof Cash)) {
-                    pTrans.addError(ERROR_PAYEE, Transaction.FIELD_PARTNER);
-                }
+                /* else check that it is the same payee (Cash allows alternate payee) */
+            } else if (!thePayee.equals(myPartner) && !isCash) {
+                pTrans.addError(ERROR_PAYEE, Transaction.FIELD_PARTNER);
             }
         }
     }

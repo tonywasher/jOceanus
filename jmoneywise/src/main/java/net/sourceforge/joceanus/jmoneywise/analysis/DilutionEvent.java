@@ -235,6 +235,9 @@ public final class DilutionEvent
                             final Transaction pTrans) {
         /* Access the account TODO */
         AssetBase<?> myAsset = pTrans.getAccount();
+        if (!(myAsset instanceof Security)) {
+            myAsset = pTrans.getPartner();
+        }
 
         /* Store the values */
         theId = pId;

@@ -553,7 +553,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValue the value
      */
     protected final void setValueAssetPair(final AssetPair pValue) {
-        getValueSet().setValue(FIELD_PAIR, pValue);
+        EncryptedValueSet myValues = getValueSet();
+        myValues.setValue(FIELD_PAIR, pValue);
+        myValues.setValue(FIELD_DIRECTION, pValue.getDirection());
     }
 
     /**
@@ -1444,11 +1446,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             doCheckCombo = false;
         }
 
-        /* Check combinations */
-        if ((doCheckCombo) && (!isValidEvent(myCategory, myAccount, myPartner))) {
-            addError(ERROR_COMBO, FIELD_ACCOUNT);
-            addError(ERROR_COMBO, FIELD_PARTNER);
-        }
+        /* Check combinations TODO */
+        // if ((doCheckCombo) && (!isValidEvent(myCategory, myAccount, myPartner))) {
+        // addError(ERROR_COMBO, FIELD_ACCOUNT);
+        // addError(ERROR_COMBO, FIELD_PARTNER);
+        // }
 
         /* If we have a parent */
         if (myParent != null) {
@@ -1457,7 +1459,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 addError(ERROR_BADPARENT, FIELD_PARENT);
             }
 
-            /* Parent must not be child */
+            /* Parent must have same date */
             if (!Difference.isEqual(myDate, myParent.getDate())) {
                 addError(ERROR_PARENTDATE, FIELD_PARENT);
             }

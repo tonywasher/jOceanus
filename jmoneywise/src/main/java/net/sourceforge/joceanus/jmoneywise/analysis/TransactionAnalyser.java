@@ -816,7 +816,7 @@ public class TransactionAnalyser
             myAsset.adjustGains(myDeltaGains);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(pTrans, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(pTrans, pDebit, myDeltaGains);
         }
 
         /* Register the transaction */
@@ -1013,7 +1013,7 @@ public class TransactionAnalyser
             myAsset.adjustGains(myDeltaGains);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(pTrans, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(pTrans, pDebit, myDeltaGains);
         }
 
         /* Register the event */
@@ -1255,7 +1255,7 @@ public class TransactionAnalyser
             myDebitAsset.adjustGains(myDeltaGains);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(pTrans, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(pTrans, pDebit, myDeltaGains);
         }
 
         /* Adjust cost/units/invested of the credit account */

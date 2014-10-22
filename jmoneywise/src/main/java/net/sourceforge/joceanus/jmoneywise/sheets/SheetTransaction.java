@@ -170,15 +170,13 @@ public class SheetTransaction
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pLoader the archive loader
-     * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader,
-                                         final JDateDay pLastEvent) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws JOceanusException {
         /* Access the list of transactions */
         TransactionList myList = pData.getTransactions();
         TransactionInfoList myInfoList = pData.getTransactionInfo();
@@ -218,8 +216,10 @@ public class SheetTransaction
                     /* Access the row */
                     DataRow myRow = myView.getRowByIndex(i);
 
-                    /* Process transaction */
-                    processTransaction(pLoader, pData, myView, myRow);
+                    /* Process transaction and break loop if requested */
+                    if (!processTransaction(pLoader, pData, myView, myRow)) {
+                        break;
+                    }
 
                     /* Report the progress */
                     myCount++;
@@ -228,8 +228,8 @@ public class SheetTransaction
                     }
                 }
 
-                /* If the year is too late */
-                if (pLastEvent.compareTo(myYear.getDate()) < 0) {
+                /* If we have finished */
+                if (!pLoader.checkDate(myYear.getDate())) {
                     /* Break the loop */
                     break;
                 }
@@ -260,12 +260,13 @@ public class SheetTransaction
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
+     * @return continue true/false
      * @throws JOceanusException on error
      */
-    protected static void processTransaction(final ArchiveLoader pLoader,
-                                             final MoneyWiseData pData,
-                                             final DataView pView,
-                                             final DataRow pRow) throws JOceanusException {
+    private static boolean processTransaction(final ArchiveLoader pLoader,
+                                              final MoneyWiseData pData,
+                                              final DataView pView,
+                                              final DataRow pRow) throws JOceanusException {
         /* Access parent cache */
         ParentCache myCache = pLoader.getParentCache();
         int iAdjust = 0;
@@ -296,7 +297,9 @@ public class SheetTransaction
         }
 
         /* Set defaults */
-        myCache.resolveValues(myDate, myDebit, myCredit);
+        if (!myCache.resolveValues(myDate, myDebit, myCredit)) {
+            return false;
+        }
 
         /* Build transaction */
         Transaction myTrans = myCache.buildTransaction(myCategory, myAmount, myReconciled);
@@ -402,5 +405,8 @@ public class SheetTransaction
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.CHARITYDONATION, myDonation);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTY, myThirdParty);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
+
+        /* Continue */
+        return true;
     }
 }

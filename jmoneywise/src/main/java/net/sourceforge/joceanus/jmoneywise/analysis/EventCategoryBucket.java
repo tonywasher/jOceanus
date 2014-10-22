@@ -1076,13 +1076,14 @@ public final class EventCategoryBucket
         /**
          * Adjust for Standard Gains.
          * @param pTrans the transaction
+         * @param pSource the source security
          * @param pGains the gains
          */
         protected void adjustStandardGain(final Transaction pTrans,
+                                          final AssetBase<?> pSource,
                                           final JMoney pGains) {
-            /* Access debit account */
-            AssetBase<?> myAccount = pTrans.getAccount();
-            Security mySecurity = Security.class.cast(myAccount);
+            /* Access security and portfolio */
+            Security mySecurity = Security.class.cast(pSource);
             Portfolio myPortfolio = pTrans.getPortfolio();
 
             /* If this is subject to capital gains */

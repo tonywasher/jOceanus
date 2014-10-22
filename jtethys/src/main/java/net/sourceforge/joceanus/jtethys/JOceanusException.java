@@ -48,7 +48,7 @@ public abstract class JOceanusException
 
     /**
      * Create a wrapped Exception object based on an underlying exception.
-     * @param c the underlying exception TODO
+     * @param c the underlying exception
      */
     protected JOceanusException(final Throwable c) {
         super(c);

@@ -120,15 +120,15 @@ public class SheetSecurityPrice
      * Load the Prices from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
+     * @param pLoader the archive loader
      * @param pData the data set to load into
-     * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final JDateDay pLastEvent) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws JOceanusException {
         /* Access the list of prices */
         SecurityPriceList myList = pData.getSecurityPrices();
 
@@ -167,7 +167,7 @@ public class SheetSecurityPrice
                 JDateDay myDate = myCell.getDateValue();
 
                 /* If the price is too late */
-                if (pLastEvent.compareTo(myDate) < 0) {
+                if (!pLoader.checkDate(myDate)) {
                     /* Skip the row */
                     continue;
                 }
