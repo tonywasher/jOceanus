@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -205,7 +204,7 @@ public class QIFBuilder {
         /* Access account and partner */
         AssetBase<?> myAccount = pTrans.getAccount();
         AssetBase<?> myPartner = pTrans.getPartner();
-        boolean bFrom = AssetDirection.FROM.equals(pTrans.getDirection());
+        boolean bFrom = pTrans.getDirection().isFrom();
 
         /* If this deals with a payee */
         if (myPartner instanceof Payee) {

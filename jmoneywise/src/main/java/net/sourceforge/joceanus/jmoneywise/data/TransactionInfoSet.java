@@ -261,15 +261,15 @@ public class TransactionInfoSet
 
                 /* Handle debit units separately */
             case DEBITUNITS:
-                return isDebitUnitsClassRequired(AssetDirection.FROM.equals(myDir)
-                                                                                  ? myPartner
-                                                                                  : myAccount, myClass);
+                return isDebitUnitsClassRequired(myDir.isFrom()
+                                                               ? myPartner
+                                                               : myAccount, myClass);
 
                 /* Handle CreditUnits separately */
             case CREDITUNITS:
-                return isCreditUnitsClassRequired(AssetDirection.FROM.equals(myDir)
-                                                                                   ? myAccount
-                                                                                   : myPartner, myClass);
+                return isCreditUnitsClassRequired(myDir.isFrom()
+                                                                ? myAccount
+                                                                : myPartner, myClass);
 
                 /* Handle Dilution separately */
             case DILUTION:

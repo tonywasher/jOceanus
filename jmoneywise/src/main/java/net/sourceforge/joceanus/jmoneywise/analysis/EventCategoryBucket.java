@@ -34,13 +34,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
@@ -550,17 +550,17 @@ public final class EventCategoryBucket
      */
     private boolean adjustValues(final Transaction pTrans) {
         /* Analyse the event */
-        TransactionType myCatTran = pTrans.deriveCategoryTranType();
-        TransactionType myActTran = pTrans.deriveAccountTranType();
+        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        AssetDirection myDir = pTrans.getDirection();
+        boolean isIncome = myClass.isIncome();
         JMoney myAmount = pTrans.getAmount();
-        boolean isIncome = true;
 
         /* If this is an expense */
-        if (myCatTran.isExpense()) {
+        if (!isIncome) {
             /* if we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* If this is a recovered expense */
-                if (myActTran.isIncome()) {
+                if (myDir.isFrom()) {
                     JMoney myIncome = getNewIncome();
                     myIncome.addAmount(myAmount);
                     setValue(EventAttribute.INCOME, myIncome);
@@ -583,7 +583,7 @@ public final class EventCategoryBucket
             /* if we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* If this is a returned income */
-                if (myActTran.isExpense()) {
+                if (myDir.isTo()) {
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
                     setValue(EventAttribute.EXPENSE, myExpense);

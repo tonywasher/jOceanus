@@ -206,35 +206,4 @@ public enum AssetType {
                 return false;
         }
     }
-
-    /**
-     * Obtain transaction type.
-     * @param pPartner the partner account type.
-     * @return transaction type
-     */
-    public TransactionType getTransactionType(final AssetType pPartner) {
-        boolean toAsset = pPartner.isAsset();
-        if (isAsset()) {
-            if (isAutoExpense()) {
-                if (pPartner.isAutoExpense()) {
-                    return TransactionType.ILLEGAL;
-                }
-                return (toAsset)
-                                ? TransactionType.CASHDEPOSIT
-                                : TransactionType.CASHPAYMENT;
-            }
-            return (toAsset)
-                            ? pPartner.isAutoExpense()
-                                                      ? TransactionType.CASHWITHDRAWAL
-                                                      : TransactionType.TRANSFER
-                            : TransactionType.EXPENSE;
-        } else {
-            if (!toAsset) {
-                return TransactionType.ILLEGAL;
-            }
-            return pPartner.isAutoExpense()
-                                           ? TransactionType.CASHRECOVERY
-                                           : TransactionType.INCOME;
-        }
-    }
 }

@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -341,7 +340,7 @@ public class TransactionAnalyser
         /* Access key details */
         AssetBase<?> myAccount = pTrans.getAccount();
         AssetBase<?> myPartner = pTrans.getPartner();
-        boolean bFrom = AssetDirection.FROM.equals(pTrans.getDirection());
+        boolean bFrom = pTrans.getDirection().isFrom();
         AssetBase<?> myDebit = bFrom
                                     ? myPartner
                                     : myAccount;

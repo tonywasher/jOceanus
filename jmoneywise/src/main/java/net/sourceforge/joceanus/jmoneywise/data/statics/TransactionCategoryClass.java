@@ -483,6 +483,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case INHERITED:
             case RENTALINCOME:
             case ROOMRENTALINCOME:
+            case OPTIONSEXERCISE:
             case INCOMETOTALS:
                 return true;
             default:
@@ -639,7 +640,6 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case STOCKRIGHTSTAKEN:
             case PORTFOLIOXFER:
             case OPTIONSVEST:
-            case OPTIONSEXERCISE:
             case STOCKPARENT:
                 return true;
             default:

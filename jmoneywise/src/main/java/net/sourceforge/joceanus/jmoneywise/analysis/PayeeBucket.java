@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -435,25 +435,26 @@ public final class PayeeBucket
      * @param pTrans the transaction causing the debit
      */
     protected void adjustForDebit(final Transaction pTrans) {
-        /* Analyse the transaction */
-        TransactionType myCatTran = pTrans.deriveCategoryTranType();
+        /* Access the class */
+        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        boolean isIncome = myClass.isIncome();
         JMoney myIncome = null;
         JMoney myExpense = null;
 
         /* Access amount */
         JMoney myAmount = pTrans.getAmount();
         if (myAmount.isNonZero()) {
-            /* If this is a refunded expense */
-            if (myCatTran.isExpense()) {
-                /* Update the expense */
-                myExpense = getNewExpense();
-                myExpense.subtractAmount(myAmount);
-
-                /* else this is an income */
-            } else {
+            /* If this is an income */
+            if (isIncome) {
                 /* Update the income */
                 myIncome = getNewIncome();
                 myIncome.addAmount(myAmount);
+
+                /* else this is a refunded expense */
+            } else {
+                /* Update the expense */
+                myExpense = getNewExpense();
+                myExpense.subtractAmount(myAmount);
             }
         }
 
@@ -461,20 +462,34 @@ public final class PayeeBucket
         JMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
-            if (myIncome == null) {
-                myIncome = getNewIncome();
+            if (isIncome) {
+                if (myIncome == null) {
+                    myIncome = getNewIncome();
+                }
+                myIncome.addAmount(myTaxCred);
+            } else {
+                if (myExpense == null) {
+                    myExpense = getNewIncome();
+                }
+                myExpense.subtractAmount(myTaxCred);
             }
-            myIncome.addAmount(myTaxCred);
         }
 
         /* If there is National Insurance */
         JMoney myNatIns = pTrans.getNatInsurance();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
-            if (myIncome == null) {
-                myIncome = getNewIncome();
+            if (isIncome) {
+                if (myIncome == null) {
+                    myIncome = getNewIncome();
+                }
+                myIncome.addAmount(myNatIns);
+            } else {
+                if (myExpense == null) {
+                    myExpense = getNewIncome();
+                }
+                myExpense.subtractAmount(myNatIns);
             }
-            myIncome.addAmount(myNatIns);
         }
 
         /* If there is Charity Donation */
@@ -487,8 +502,13 @@ public final class PayeeBucket
             if (myExpense == null) {
                 myExpense = getNewExpense();
             }
-            myIncome.addAmount(myDonation);
-            myExpense.addAmount(myDonation);
+            if (isIncome) {
+                myIncome.addAmount(myDonation);
+                myExpense.addAmount(myDonation);
+            } else {
+                myIncome.subtractAmount(myDonation);
+                myExpense.subtractAmount(myDonation);
+            }
         }
 
         /* Set new values */
@@ -509,27 +529,40 @@ public final class PayeeBucket
      */
     protected void adjustForCredit(final Transaction pTrans) {
         /* Analyse the transaction */
-        TransactionType myCatTran = pTrans.deriveCategoryTranType();
+        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        boolean isExpense = !myClass.isIncome();
         JMoney myExpense = null;
+        JMoney myIncome = null;
 
         /* Access amount */
         JMoney myAmount = pTrans.getAmount();
         if (myAmount.isNonZero()) {
-            /* Update the expense */
-            myExpense = getNewExpense();
-            myExpense.addAmount(myAmount);
+            /* If this is an expense */
+            if (isExpense) {
+                /* Update the expense */
+                myExpense = getNewExpense();
+                myExpense.addAmount(myAmount);
+            } else {
+                /* Update the income */
+                myIncome = getNewIncome();
+                myIncome.subtractAmount(myAmount);
+            }
         }
 
-        /* If this is an expense */
-        if (myCatTran.isExpense()) {
-            /* If there is a non-zero TaxCredit */
-            JMoney myTaxCred = pTrans.getTaxCredit();
-            if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
-                /* Adjust for Tax Credit */
+        /* If there is a non-zero TaxCredit */
+        JMoney myTaxCred = pTrans.getTaxCredit();
+        if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
+            /* Adjust for Tax Credit */
+            if (isExpense) {
                 if (myExpense == null) {
                     myExpense = getNewExpense();
                 }
                 myExpense.addAmount(myTaxCred);
+            } else {
+                if (myIncome == null) {
+                    myIncome = getNewIncome();
+                }
+                myIncome.subtractAmount(myTaxCred);
             }
         }
 
@@ -537,6 +570,10 @@ public final class PayeeBucket
         if (myExpense != null) {
             /* Record it */
             setValue(PayeeAttribute.EXPENSE, myExpense);
+        }
+        if (myIncome != null) {
+            /* Record it */
+            setValue(PayeeAttribute.INCOME, myIncome);
         }
 
         /* Register the transaction in the history */
@@ -551,10 +588,18 @@ public final class PayeeBucket
         /* Access amount */
         JMoney myAmount = pTrans.getTaxCredit();
         if (myAmount.isNonZero()) {
-            /* Update the expense */
-            JMoney myIncome = getNewIncome();
-            myIncome.addAmount(myAmount);
-            setValue(PayeeAttribute.INCOME, myIncome);
+            TransactionCategoryClass myClass = pTrans.getCategoryClass();
+            if (myClass.isIncome()) {
+                /* Update the income */
+                JMoney myIncome = getNewIncome();
+                myIncome.addAmount(myAmount);
+                setValue(PayeeAttribute.INCOME, myIncome);
+            } else {
+                /* Update the expense */
+                JMoney myExpense = getNewExpense();
+                myExpense.addAmount(myAmount);
+                setValue(PayeeAttribute.EXPENSE, myExpense);
+            }
         }
 
         /* Register the transaction in the history */
@@ -567,7 +612,7 @@ public final class PayeeBucket
      */
     protected void adjustForTaxPayments(final Transaction pTrans) {
         /* Determine transaction type */
-        TransactionType myType = pTrans.deriveCategoryTranType();
+        TransactionCategoryClass myClass = pTrans.getCategoryClass();
         JMoney myValue = null;
 
         /* Adjust for Tax credit */
@@ -589,7 +634,7 @@ public final class PayeeBucket
         /* If we have payments */
         if (myValue != null) {
             /* Adjust correct bucket */
-            if (myType.isExpense()) {
+            if (myClass.isExpense()) {
                 myValue.addAmount(theValues.getMoneyValue(PayeeAttribute.INCOME));
                 setValue(PayeeAttribute.INCOME, myValue);
             } else {

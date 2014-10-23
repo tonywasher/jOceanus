@@ -242,21 +242,6 @@ public final class AssetPair
     }
 
     /**
-     * Determine transaction Type according to accounts.
-     * @return transaction type
-     */
-    public TransactionType deriveAccountTranType() {
-        /* Analyse the components */
-        switch (theDirection) {
-            case FROM:
-                return thePartner.getTransactionType(theAccount);
-            case TO:
-            default:
-                return theAccount.getTransactionType(thePartner);
-        }
-    }
-
-    /**
      * AssetPairManager.
      */
     public static final class AssetPairManager {
@@ -491,6 +476,22 @@ public final class AssetPair
             return this == TO
                              ? FROM
                              : TO;
+        }
+
+        /**
+         * Is this the from direction?
+         * @return true/false
+         */
+        public boolean isFrom() {
+            return this == FROM;
+        }
+
+        /**
+         * Is this the to direction?
+         * @return true/false
+         */
+        public boolean isTo() {
+            return this == TO;
         }
 
         /**

@@ -27,7 +27,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
@@ -56,7 +55,7 @@ public class QIFEventCategory
     /**
      * The Category Type.
      */
-    private final TransactionType theType;
+    private final boolean isIncome;
 
     @Override
     public String toString() {
@@ -84,7 +83,7 @@ public class QIFEventCategory
      * @return true/false
      */
     public boolean isIncome() {
-        return theType.isIncome();
+        return isIncome;
     }
 
     /**
@@ -92,7 +91,7 @@ public class QIFEventCategory
      * @return true/false
      */
     public boolean isExpense() {
-        return theType.isExpense();
+        return !isIncome;
     }
 
     /**
@@ -109,22 +108,16 @@ public class QIFEventCategory
         theName = pCategory.getName();
         theDesc = pCategory.getDesc();
 
-        /* Handle parent categories specially */
+        /* Determine whether this is an income category */
         TransactionCategoryClass myClass = pCategory.getCategoryTypeClass();
-        if (myClass.canParentCategory()) {
-            theType = myClass.isIncome()
-                                        ? TransactionType.INCOME
-                                        : TransactionType.EXPENSE;
-        } else {
-            theType = TransactionType.deriveType(pCategory);
-        }
+        isIncome = myClass.isIncome();
 
         /* Build lines */
         addLine(new QIFCategoryNameLine(theName));
         if (theDesc != null) {
             addLine(new QIFCategoryDescLine(theDesc));
         }
-        if (theType.isIncome()) {
+        if (isIncome) {
             addLine(new QIFCategoryIncomeLine());
         } else {
             addLine(new QIFCategoryExpenseLine());
@@ -144,7 +137,7 @@ public class QIFEventCategory
         /* Determine details */
         String myName = null;
         String myDesc = null;
-        TransactionType myTType = null;
+        boolean bIsIncome = false;
 
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
@@ -169,11 +162,11 @@ public class QIFEventCategory
                         break;
                     case INCOME:
                         addLine(new QIFCategoryIncomeLine());
-                        myTType = TransactionType.INCOME;
+                        bIsIncome = true;
                         break;
                     case EXPENSE:
                         addLine(new QIFCategoryExpenseLine());
-                        myTType = TransactionType.EXPENSE;
+                        bIsIncome = false;
                         break;
                     case TAX:
                     default:
@@ -185,7 +178,7 @@ public class QIFEventCategory
         /* Build details */
         theName = myName;
         theDesc = myDesc;
-        theType = myTType;
+        isIncome = bIsIncome;
     }
 
     @Override
