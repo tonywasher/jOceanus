@@ -297,12 +297,12 @@ public class SheetTransaction
         }
 
         /* Set defaults */
-        if (!myCache.resolveValues(myDate, myDebit, myCredit)) {
+        if (!myCache.resolveValues(myDate, myDebit, myCredit, myCategory)) {
             return false;
         }
 
         /* Build transaction */
-        Transaction myTrans = myCache.buildTransaction(myCategory, myAmount, myReconciled);
+        Transaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
 
         /* Handle Description which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);

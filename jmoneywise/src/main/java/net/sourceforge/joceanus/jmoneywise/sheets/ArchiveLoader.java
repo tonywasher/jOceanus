@@ -128,6 +128,11 @@ public class ArchiveLoader {
     private final Map<String, Object> theNameMap;
 
     /**
+     * The map of names to categories.
+     */
+    private final Map<String, TransactionCategory> theCategoryMap;
+
+    /**
      * The ParentCache.
      */
     private ParentCache theParentCache;
@@ -189,8 +194,9 @@ public class ArchiveLoader {
         /* Create the Years Array */
         theYears = new ArrayList<ArchiveYear>();
 
-        /* Create the names map */
+        /* Create the maps */
         theNameMap = new HashMap<String, Object>();
+        theCategoryMap = new HashMap<String, TransactionCategory>();
     }
 
     /**
@@ -359,7 +365,7 @@ public class ArchiveLoader {
             }
             if (bContinue) {
                 myStage.startTask(TransactionCategory.LIST_NAME);
-                bContinue = SheetTransCategory.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransCategory.loadArchive(pTask, myWorkbook, myData, this);
             }
 
             if (bContinue) {
@@ -428,6 +434,24 @@ public class ArchiveLoader {
 
         /* Store the asset */
         theNameMap.put(myName, pAsset);
+    }
+
+    /**
+     * Declare category.
+     * @param pCategory the category to declare.
+     * @throws JOceanusException on error
+     */
+    protected void declareAsset(final TransactionCategory pCategory) throws JOceanusException {
+        /* Access the asset name */
+        String myName = pCategory.getName();
+
+        /* Check for name already exists */
+        if (theCategoryMap.get(myName) != null) {
+            throw new JPrometheusDataException(pCategory, DataItem.ERROR_DUPLICATE);
+        }
+
+        /* Store the category */
+        theCategoryMap.put(myName, pCategory);
     }
 
     /**
@@ -657,6 +681,11 @@ public class ArchiveLoader {
         private AssetBase<?> thePartner;
 
         /**
+         * Resolved Transaction Category.
+         */
+        private TransactionCategory theCategory;
+
+        /**
          * Resolved Portfolio.
          */
         private String thePortfolio;
@@ -674,19 +703,17 @@ public class ArchiveLoader {
 
         /**
          * Build transaction.
-         * @param pCategory the category
          * @param pAmount the amount
          * @param pReconciled is the transaction reconciled?
          * @return the new transaction
          * @throws JOceanusException on error
          */
-        protected Transaction buildTransaction(final String pCategory,
-                                               final String pAmount,
+        protected Transaction buildTransaction(final String pAmount,
                                                final boolean pReconciled) throws JOceanusException {
             /* Build data values */
             DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Transaction.OBJECT_NAME);
             myValues.addValue(Transaction.FIELD_DATE, theDate);
-            myValues.addValue(Transaction.FIELD_CATEGORY, pCategory);
+            myValues.addValue(Transaction.FIELD_CATEGORY, theCategory);
             myValues.addValue(Transaction.FIELD_PAIR, thePair);
             myValues.addValue(Transaction.FIELD_ACCOUNT, theAccount);
             myValues.addValue(Transaction.FIELD_PARTNER, thePartner);
@@ -719,16 +746,18 @@ public class ArchiveLoader {
          * @param pDate the date of the transaction
          * @param pDebit the name of the debit object
          * @param pCredit the name of the credit object
+         * @param pCategory the name of the category object
          * @return continue true/false
          * @throws JOceanusException on error
          */
         protected boolean resolveValues(final JDateDay pDate,
                                         final String pDebit,
-                                        final String pCredit) throws JOceanusException {
+                                        final String pCredit,
+                                        final String pCategory) throws JOceanusException {
             /* If the Date is null */
             if (pDate == null) {
                 /* Resolve child values */
-                resolveChildValues(pDebit, pCredit);
+                resolveChildValues(pDebit, pCredit, pCategory);
                 return true;
             }
 
@@ -745,13 +774,10 @@ public class ArchiveLoader {
             /* Store the Date */
             theDate = pDate;
 
-            /* Resolve the debit and credit */
-            Object myDebit = theNameMap.get(pDebit);
-            Object myCredit = theNameMap.get(pCredit);
-
-            /* Store last credit and debit */
-            theLastDebit = myDebit;
-            theLastCredit = myCredit;
+            /* Resolve the names */
+            theLastDebit = theNameMap.get(pDebit);
+            theLastCredit = theNameMap.get(pCredit);
+            theCategory = theCategoryMap.get(pCategory);
 
             /* Resolve assets */
             resolveAssets();
@@ -762,10 +788,12 @@ public class ArchiveLoader {
          * Resolve Child Values.
          * @param pDebit the name of the debit object
          * @param pCredit the name of the credit object
+         * @param pCategory the name of the category object
          * @throws JOceanusException on error
          */
         private void resolveChildValues(final String pDebit,
-                                        final String pCredit) throws JOceanusException {
+                                        final String pCredit,
+                                        final String pCategory) throws JOceanusException {
             /* Handle no LastParent */
             if (theLastParent == null) {
                 throw new JMoneyWiseDataException(theDate, "Missing parent transaction");
@@ -787,6 +815,9 @@ public class ArchiveLoader {
             /* Store last credit and debit */
             theLastDebit = myDebit;
             theLastCredit = myCredit;
+
+            /* Resolve the category */
+            theCategory = theCategoryMap.get(pCategory);
 
             /* Resolve assets */
             resolveAssets();
@@ -815,16 +846,29 @@ public class ArchiveLoader {
             boolean bDebitIsAccount;
 
             /* Handle non-Asset debit */
-            if (!myDebitType.isAsset()) {
+            if (!myDebitType.isBaseAccount()) {
                 /* Use credit as account */
                 bDebitIsAccount = false;
 
-                /* Handle non-Asset credit and non-child transfer */
-            } else if (!myCreditType.isAsset() || !isSplit) {
+                /* Handle non-Asset credit */
+            } else if (!myCreditType.isBaseAccount()) {
                 /* Use debit as account */
                 bDebitIsAccount = true;
 
-                /* handle child transfer */
+                /* Handle non-child transfer */
+            } else if (!isSplit) {
+                /* Flip values for StockRightsTaken and LoanInterest */
+                switch (theCategory.getCategoryTypeClass()) {
+                    case STOCKRIGHTSTAKEN:
+                    case LOANINTERESTEARNED:
+                        /* Use credit as account */
+                        bDebitIsAccount = false;
+                        break;
+                    default:
+                        /* Use debit as account */
+                        bDebitIsAccount = true;
+                        break;
+                }
             } else {
                 /* Access parent assets */
                 AssetBase<?> myParAccount = theParent.getAccount();

@@ -137,6 +137,25 @@ public enum AssetType {
     }
 
     /**
+     * Determine whether this is a base account.
+     * @return true/false
+     */
+    public boolean isBaseAccount() {
+        switch (this) {
+            case DEPOSIT:
+            case AUTOEXPENSE:
+            case SECURITY:
+            case CASH:
+            case LOAN:
+            case PORTFOLIO:
+                return true;
+            case PAYEE:
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether this is an asset.
      * @return true/false
      */
@@ -175,6 +194,19 @@ public enum AssetType {
     public boolean isLoan() {
         switch (this) {
             case LOAN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether this is a security.
+     * @return true/false
+     */
+    public boolean isSecurity() {
+        switch (this) {
+            case SECURITY:
                 return true;
             default:
                 return false;

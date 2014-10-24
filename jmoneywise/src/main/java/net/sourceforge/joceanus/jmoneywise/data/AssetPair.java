@@ -260,8 +260,8 @@ public final class AssetPair
 
             /* Loop through the Account AssetTypes */
             for (AssetType myAccount : AssetType.values()) {
-                /* Only allowed as Account if it is an asset */
-                if (myAccount.isAsset()) {
+                /* Check asset is allowed as base account */
+                if (myAccount.isBaseAccount()) {
                     /* Loop through the Partner AssetTypes */
                     for (AssetType myPartner : AssetType.values()) {
                         /* Create the new To AssetPair and store */

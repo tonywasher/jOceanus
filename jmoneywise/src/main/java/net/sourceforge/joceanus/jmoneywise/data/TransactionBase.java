@@ -119,11 +119,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
     /**
-     * Hidden Category Error Text.
-     */
-    private static final String ERROR_HIDDEN = MoneyWiseDataResource.TRANSACTION_ERROR_HIDDEN.getValue();
-
-    /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
     private static final String ERROR_COMBO = MoneyWiseDataResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
@@ -804,6 +799,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 setValueCategory((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCategory((String) myValue);
+            } else if (myValue instanceof TransactionCategory) {
+                setValueCategory((TransactionCategory) myValue);
             }
 
             /* Store the Amount */
@@ -974,290 +971,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         myPair.resolveDataLink(myData, this, FIELD_ACCOUNT);
         myPair.resolveDataLink(myData, this, FIELD_PARTNER);
         resolveDataLink(FIELD_CATEGORY, myData.getTransCategories());
-    }
-
-    /**
-     * Determine validity of an account in a transaction.
-     * @param pAccount the account
-     * @return true/false
-     */
-    public static boolean isValidEvent(final AssetBase<?> pAccount) {
-        /* Check type of account */
-        AssetType myType = pAccount.getAssetType();
-        return myType.isAsset();
-    }
-
-    /**
-     * Determine validity of an event between the two assets, for the given category.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @return true/false
-     */
-    public static boolean isValidEvent(final AssetBase<?> pAccount,
-                                       final TransactionCategory pCategory) {
-        /* Access account category classes */
-        AssetType myType = pAccount.getAssetType();
-        TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
-
-        /* Switch on the CategoryClass */
-        switch (myCatClass) {
-            case TAXEDINCOME:
-            case OTHERINCOME:
-                /* Taxed/Other income must be to deposit/cash/loan */
-                return myType.isValued();
-
-            case GRANTINCOME:
-            case BENEFITINCOME:
-                /* Grant/Benefit income must be to deposit account */
-                return myType.isDeposit();
-
-            case GIFTEDINCOME:
-            case INHERITED:
-                /* Inheritance/Gifted must be to asset */
-                return myType.isAsset();
-
-            case INTEREST:
-                /* Account must be deposit */
-                return myType.isDeposit();
-            default:
-                return false;
-        }
-    }
-
-    // /**
-    // * Determine validity of an event between the two assets, for the given category.
-    // * @param pCategory The category of the event
-    // * @param pAccount the account
-    // * @param pPartner the partner
-    // * @param pDir the direction
-    // * @return true/false
-    // */
-    // public static boolean isValidEvent(final TransactionCategory pCategory,
-    // final AssetBase<?> pAccount,
-    // final AssetBase<?> pPartner) {
-    /* Analyse the components */
-    // boolean isRecursive = Difference.isEqual(pDebit, pCredit);
-    // AssetBase<?> myDebit = pDebit;
-    // AssetBase<?> myCredit = pCredit;
-    // AssetType myDebitType = pDebit.getAssetType();
-    // AssetType myCreditType = pCredit.getAssetType();
-    // TransactionType myCatTran = TransactionType.deriveType(pCategory);
-    // TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
-
-    /* Handle illegal setups */
-    // if (myCatTran.isIllegal() || myActTran.isIllegal()) {
-    // return false;
-    // }
-
-    /* Access account category classes */
-    // TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
-
-    /* If the transaction involves autoExpense */
-    // if (myActTran.isAutoExpense()) {
-    // /* Special processing */
-    // switch (myCatClass) {
-    // case TRANSFER:
-    // /* Transfer must be to/from deposit/cash/loan */
-    // return (myDebitType.isAutoExpense())
-    // ? myCreditType.isValued()
-    // : myDebitType.isValued();
-    // case EXPENSE:
-    // /* Transfer must be to/from payee */
-    // return (myDebitType.isAutoExpense())
-    // ? myCreditType.isPayee()
-    // : myDebitType.isPayee();
-
-    /* Auto Expense cannot be used for other categories */
-    // default:
-    // return false;
-    // }
-    // }
-
-    /* If this is an non-recursive expense (i.e. decreases the value of assets) */
-    // if (myActTran.isExpense() && !isRecursive) {
-    // /* Switch Debit and Credit so that this look like an income */
-    // AssetBase<?> myAsset = myDebit;
-    // myDebit = myCredit;
-    // myCredit = myAsset;
-
-    /* Switch debit and credit types */
-    // AssetType myType = myDebitType;
-    // myDebitType = myCreditType;
-    // myCreditType = myType;
-    // }
-
-    /* Switch on the CategoryClass */
-    // switch (myCatClass) {
-    // case TAXEDINCOME:
-    /* Cannot refund Taxed Income */
-    // if (myActTran.isExpense()) {
-    // return false;
-    // }
-
-    /* Taxed income must be from employer to deposit/cash/loan (as expense) */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.EMPLOYER)
-    // && myCreditType.isValued();
-
-    // case GRANTINCOME:
-    // /* Cannot refund Grant Income */
-    // if (myActTran.isExpense()) {
-    // return false;
-    // }
-
-    /* Grant income must be from grant-able to deposit account */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).getPayeeTypeClass().canGrant()
-    // && myCreditType.isDeposit();
-
-    // case BENEFITINCOME:
-    // /* Cannot refund Benefit Income */
-    // if (myActTran.isExpense()) {
-    // return false;
-    // }
-
-    /* Benefit income must be from government to deposit account */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.GOVERNMENT)
-    // && myCreditType.isDeposit();
-
-    // case OTHERINCOME:
-    // /* Other income is from payee to deposit/cash/loan */
-    // return myDebitType.isPayee() && myCreditType.isValued();
-
-    // case GIFTEDINCOME:
-    // case INHERITED:
-    // /* Cannot refund Gifted Income/Inheritance */
-    // if (myActTran.isExpense()) {
-    // return false;
-    // }
-
-    /* Inheritance must be from individual to asset */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.INDIVIDUAL)
-    // && myCreditType.isAsset();
-
-    // case INTEREST:
-    // /* Debit must be able to generate interest */
-    // if (!myDebitType.isDeposit()) {
-    // return false;
-    // }
-
-    /* Interest must be paid to valued account */
-    // return myCreditType.isValued();
-
-    // case DIVIDEND:
-    /* Debit must be able to generate dividend */
-    // if (!myDebit.canDividend()) {
-    // return false;
-    // }
-
-    /* Dividend must be paid to valued account or else re-invested into capital */
-    // return myCreditType.isValued() || (isRecursive && myDebit.isCapital());
-
-    // case CASHBACK:
-    /* CashBack must be from creditCard to Asset */
-    // return (myDebit instanceof Loan)
-    // && ((Loan) myDebit).isLoanClass(LoanCategoryClass.CREDITCARD)
-    // && myCreditType.isAsset();
-
-    // case LOYALTYBONUS:
-    /* LoyaltyBonus must be from portfolio to Security/Deposit */
-    // return (myDebit instanceof Portfolio)
-    // && ((myCredit instanceof Security) || (myCredit instanceof Deposit));
-
-    // case STOCKRIGHTSTAKEN:
-    /* Stock rights taken is a transfer from a valued account to shares */
-    // return myDebitType.isValued() && myCredit.isShares();
-
-    // case STOCKRIGHTSWAIVED:
-    /* Stock rights taken is a transfer to a valued account from shares */
-    // return myCreditType.isValued() && myDebit.isShares();
-
-    // case STOCKSPLIT:
-    /* Stock adjust is only valid for shares and must be recursive */
-    // return isRecursive && myDebit.isShares();
-
-    // case STOCKADJUST:
-    /* Stock adjust is only valid for capital and must be recursive */
-    // return isRecursive && myDebit.isCapital();
-
-    // case STOCKDEMERGER:
-    // case STOCKTAKEOVER:
-    /* Stock DeMerger/TakeOver must be between different capital shares */
-    // return !isRecursive && myDebit.isShares() && myCredit.isShares();
-
-    // case RENTALINCOME:
-    // case ROOMRENTALINCOME:
-    /* Rental Income must be from property to loan */
-    // return (myDebit instanceof Security)
-    // && ((Security) myDebit).isSecurityClass(SecurityTypeClass.PROPERTY)
-    // && myCreditType.isLoan();
-
-    // case WRITEOFF:
-    // case LOANINTERESTEARNED:
-    // case LOANINTERESTCHARGED:
-    // /* Must be recursive on loan */
-    // return myDebitType.isLoan() && isRecursive;
-
-    // case LOCALTAXES:
-    // /* Local taxes must be from government to valued account */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.GOVERNMENT)
-    // && myCreditType.isValued();
-
-    // case CHARITYDONATION:
-    // /* CharityDonation is from payee to Valued */
-    // return myDebitType.isPayee() && myCreditType.isValued();
-
-    // case TAXRELIEF:
-    // /* Tax Relief is from TaxMan to loan */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.TAXMAN)
-    // && myCreditType.isLoan();
-
-    // case TAXSETTLEMENT:
-    // /* Settlement income is from TaxMan to valued */
-    // return (myDebit instanceof Payee)
-    // && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.TAXMAN)
-    // && myCreditType.isValued();
-
-    // case TRANSFER:
-    // /* transfer is nonRecursive and from Asset to Asset */
-    // return !isRecursive && myDebitType.isAsset() && myCreditType.isAsset();
-
-    // case EXPENSE:
-    // /* Recovered expense is from nonAsset to Asset */
-    // return !myDebitType.isValued() && myCreditType.isValued();
-
-    // case PORTFOLIOXFER:
-    // /* portfolioXfer is nonRecursive and from Portfolio/Security to Portfolio */
-    // return !isRecursive
-    // && (myCredit instanceof Portfolio)
-    // && ((myDebit instanceof Security) || (myDebit instanceof Portfolio));
-
-    // default:
-    // return false;
-    // }
-    // }
-
-    /**
-     * Determines whether an event relates to an asset.
-     * @param pAsset The asset to check relations with
-     * @return related to the account true/false
-     */
-    public boolean relatesTo(final AssetBase<?> pAsset) {
-        boolean myResult = false;
-
-        /* Check account and partner accounts */
-        if (getAccount().equals(pAsset)) {
-            myResult = true;
-        } else if (getPartner().equals(pAsset)) {
-            myResult = true;
-        }
-
-        /* Return the result */
-        return myResult;
     }
 
     @Override
@@ -1439,6 +1152,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         JDateDay myDate = getDate();
         AssetBase<?> myAccount = getAccount();
         AssetBase<?> myPartner = getPartner();
+        AssetDirection myDir = getDirection();
         JMoney myAmount = getAmount();
         T myParent = getParent();
         TransactionCategory myCategory = getCategory();
@@ -1456,18 +1170,36 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             addError(ERROR_RANGE, FIELD_DATE);
         }
 
+        /* Account must be non-null */
+        if (myAccount == null) {
+            addError(ERROR_MISSING, FIELD_ACCOUNT);
+            doCheckCombo = false;
+
+            /* Account must be valid */
+        } else if (!TransactionValidator.isValidAccount(myAccount)) {
+            addError(ERROR_COMBO, FIELD_ACCOUNT);
+            doCheckCombo = false;
+        }
+
         /* Category must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
             doCheckCombo = false;
-            /* Must not be hidden */
-        } else if (myCategory.getCategoryTypeClass().isHiddenType()) {
-            addError(ERROR_HIDDEN, FIELD_CATEGORY);
+
+            /* Category must be valid for Account */
+        } else if (doCheckCombo && !TransactionValidator.isValidCategory(myAccount, myCategory)) {
+            addError(ERROR_COMBO, FIELD_CATEGORY);
+            doCheckCombo = false;
         }
 
-        /* Account must be non-null */
-        if (myAccount == null) {
-            addError(ERROR_MISSING, FIELD_ACCOUNT);
+        /* Direction must be non-null */
+        if (myDir == null) {
+            addError(ERROR_MISSING, FIELD_DIRECTION);
+            doCheckCombo = false;
+
+            /* Direction must be valid for Account */
+        } else if (doCheckCombo && !TransactionValidator.isValidDirection(myAccount, myCategory, myDir)) {
+            addError(ERROR_COMBO, FIELD_DIRECTION);
             doCheckCombo = false;
         }
 
@@ -1475,13 +1207,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (myPartner == null) {
             addError(ERROR_MISSING, FIELD_PARTNER);
             doCheckCombo = false;
-        }
 
-        /* Check combinations TODO */
-        // if ((doCheckCombo) && (!isValidEvent(myCategory, myAccount, myPartner))) {
-        // addError(ERROR_COMBO, FIELD_ACCOUNT);
-        // addError(ERROR_COMBO, FIELD_PARTNER);
-        // }
+            /* Partner must be valid for Account */
+        } else if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
+            addError(ERROR_COMBO, FIELD_PARTNER);
+            doCheckCombo = false;
+        }
 
         /* If we have a parent */
         if (myParent != null) {

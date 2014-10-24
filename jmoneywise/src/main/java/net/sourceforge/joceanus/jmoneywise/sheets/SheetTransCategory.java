@@ -127,12 +127,14 @@ public class SheetTransCategory
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData,
+                                         final ArchiveLoader pLoader) throws JOceanusException {
         /* Access the list of categories */
         TransactionCategoryList myList = pData.getTransCategories();
 
@@ -186,7 +188,10 @@ public class SheetTransCategory
                 myValues.addValue(TransactionCategory.FIELD_NAME, myName);
 
                 /* Add the value into the list */
-                myList.addValuesItem(myValues);
+                TransactionCategory myCategory = myList.addValuesItem(myValues);
+
+                /* Declare the category */
+                pLoader.declareAsset(myCategory);
 
                 /* Report the progress */
                 myCount++;

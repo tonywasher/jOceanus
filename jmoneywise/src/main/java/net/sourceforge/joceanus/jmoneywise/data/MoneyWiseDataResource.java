@@ -499,11 +499,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     TRANSACTION_ERROR_CIRCLE("Transaction.Error.Circular"),
 
     /**
-     * Transaction Hidden Category Error.
-     */
-    TRANSACTION_ERROR_HIDDEN("Transaction.Error.Hidden"),
-
-    /**
      * Transaction AssetPair Error.
      */
     TRANSACTION_ERROR_ASSETPAIR("Transaction.Error.AssetPair"),

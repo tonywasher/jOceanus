@@ -895,20 +895,6 @@ public class Transaction
         theInfoSet.touchUnderlyingItems();
     }
 
-    @Override
-    public boolean relatesTo(final AssetBase<?> pAccount) {
-        /* Determine standard relations */
-        boolean myResult = super.relatesTo(pAccount);
-
-        /* If not currently related, check thirdParty */
-        if (!myResult) {
-            myResult = Difference.isEqual(pAccount, getThirdParty());
-        }
-
-        /* Return the result */
-        return myResult;
-    }
-
     /**
      * Update base transaction from an edited transaction.
      * @param pTrans the edited transaction
