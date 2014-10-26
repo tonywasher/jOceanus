@@ -60,6 +60,16 @@ public enum MoneyWiseUIControlResource implements ResourceId {
     ICON_UNLOCK("icons.Tip.UnLock"),
 
     /**
+     * DirectionTo ToolTip.
+     */
+    ICON_DIRTO("icons.Tip.DirectionTo"),
+
+    /**
+     * DirectionFrom ToolTip.
+     */
+    ICON_DIRFROM("icons.Tip.DirectionFrom"),
+
+    /**
      * Report Prompt.
      */
     REPORT_PROMPT("report.Prompt.Select"),

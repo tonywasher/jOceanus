@@ -44,17 +44,17 @@ public abstract class PrometheusIcons {
     /**
      * The active icon.
      */
-    private static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/Active.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/GreenJellySymbolActive.png")));
 
     /**
      * The delete icon.
      */
-    private static final Icon ICON_DELETE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/RedDelete.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_DELETE = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/OrangeJellyAlphaDelete.png")), ICON_XTRA_SIZE);
 
     /**
      * The disabled icon.
      */
-    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/Disabled.png")));
+    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/OrangeJellyAlphaDisabled.png")));
 
     /**
      * The new icon.
@@ -80,7 +80,7 @@ public abstract class PrometheusIcons {
     /**
      * The edit arrow.
      */
-    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/ItemEdit.png")), ICON_XTRA_SIZE);
+    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(PrometheusIcons.class.getResource("icons/GreenJellyBusinessEdit.png")), ICON_XTRA_SIZE);
 
     /**
      * The goto arrow.

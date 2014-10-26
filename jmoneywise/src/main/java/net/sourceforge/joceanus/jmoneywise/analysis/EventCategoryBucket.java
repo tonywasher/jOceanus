@@ -553,68 +553,82 @@ public final class EventCategoryBucket
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         AssetDirection myDir = pTrans.getDirection();
         boolean isIncome = myClass.isIncome();
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = new JMoney(pTrans.getAmount());
 
         /* If this is an expense */
         if (!isIncome) {
+            /* Adjust for TaxCredit */
+            JMoney myTaxCredit = pTrans.getTaxCredit();
+            if (myTaxCredit != null) {
+                myAmount.addAmount(myTaxCredit);
+            }
+
             /* if we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* If this is a recovered expense */
                 if (myDir.isFrom()) {
+                    /* Add as income */
                     JMoney myIncome = getNewIncome();
                     myIncome.addAmount(myAmount);
                     setValue(EventAttribute.INCOME, myIncome);
+
+                    /* else its standard expense */
                 } else {
+                    /* Add as expense */
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
                     setValue(EventAttribute.EXPENSE, myExpense);
                     isIncome = false;
-
-                    /* Adjust for TaxCredit(Relief) */
-                    JMoney myTaxCredit = pTrans.getTaxCredit();
-                    if (myTaxCredit != null) {
-                        myExpense.addAmount(myTaxCredit);
-                    }
                 }
             }
 
             /* else this is an income */
         } else {
+            /* Adjust for TaxCredit */
+            JMoney myTaxCredit = pTrans.getTaxCredit();
+            if (myTaxCredit != null) {
+                myAmount.addAmount(myTaxCredit);
+            }
+
+            /* Adjust for NatInsurance */
+            JMoney myNatIns = pTrans.getNatInsurance();
+            if (myNatIns != null) {
+                myAmount.addAmount(myNatIns);
+            }
+
+            /* Adjust for DeemedBenefit */
+            JMoney myBenefit = pTrans.getDeemedBenefit();
+            if (myBenefit != null) {
+                myAmount.addAmount(myBenefit);
+            }
+
+            /* Adjust for CharityDonation */
+            JMoney myDonation = pTrans.getCharityDonation();
+            if (myDonation != null) {
+                myAmount.addAmount(myDonation);
+            }
+
+            /* If the account is special */
+            if (myClass.isSecretPayee()) {
+                /* switch the direction */
+                myDir = myDir.reverse();
+            }
+
             /* if we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* If this is a returned income */
                 if (myDir.isTo()) {
+                    /* Add as expense */
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
                     setValue(EventAttribute.EXPENSE, myExpense);
                     isIncome = false;
+
+                    /* else standard income */
                 } else {
+                    /* Add as income */
                     JMoney myIncome = getNewIncome();
                     myIncome.addAmount(myAmount);
-
-                    /* Adjust for TaxCredit */
-                    JMoney myTaxCredit = pTrans.getTaxCredit();
-                    if (myTaxCredit != null) {
-                        myIncome.addAmount(myTaxCredit);
-                    }
-
-                    /* Adjust for NatInsurance */
-                    JMoney myNatIns = pTrans.getNatInsurance();
-                    if (myNatIns != null) {
-                        myIncome.addAmount(myNatIns);
-                    }
-
-                    /* Adjust for DeemedBenefit */
-                    JMoney myBenefit = pTrans.getDeemedBenefit();
-                    if (myBenefit != null) {
-                        myIncome.addAmount(myBenefit);
-                    }
-
-                    /* Adjust for CharityDonation */
-                    JMoney myDonation = pTrans.getCharityDonation();
-                    if (myDonation != null) {
-                        myIncome.addAmount(myDonation);
-                    }
 
                     /* Store the value */
                     setValue(EventAttribute.INCOME, myIncome);

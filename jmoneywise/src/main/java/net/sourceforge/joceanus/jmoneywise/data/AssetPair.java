@@ -472,7 +472,7 @@ public final class AssetPair
          * Reverse.
          * @return the reversed direction
          */
-        private AssetDirection reverse() {
+        public AssetDirection reverse() {
             return this == TO
                              ? FROM
                              : TO;

@@ -85,8 +85,8 @@ public final class TransactionValidator {
                 return myType.isDeposit();
 
             case DIVIDEND:
-                /* Account must be deposit or Security */
-                return myType.isDeposit() || myType.isSecurity();
+                /* Account must be Security */
+                return myType.isSecurity();
 
             case CASHBACK:
                 /* Account must be creditCard */
@@ -187,9 +187,7 @@ public final class TransactionValidator {
 
             case DIVIDEND:
                 /* Cannot refund Dividend yet */
-                return pAccount instanceof Security
-                                                   ? pDirection.isTo()
-                                                   : pDirection.isFrom();
+                return pDirection.isTo();
 
             case LOYALTYBONUS:
                 /* Cannot refund loyaltyBonus yet */
@@ -306,12 +304,8 @@ public final class TransactionValidator {
                 return myPartnerType.isValued();
 
             case DIVIDEND:
-                /* Dividend is from Security to Self or valued/from employer */
-                if (pAccount instanceof Security) {
-                    return isRecursive || myPartnerType.isValued();
-                }
-                return (pPartner instanceof Payee)
-                       && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.EMPLOYER);
+                /* Dividend is from Security to Self or valued */
+                return isRecursive || myPartnerType.isValued();
 
             case LOYALTYBONUS:
                 return myPartnerType.isSecurity() || myPartnerType.isDeposit();

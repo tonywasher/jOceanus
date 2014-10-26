@@ -966,6 +966,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* Store value and access as pair */
         myValues.setValue(FIELD_PAIR, myValue);
         AssetPair myPair = (AssetPair) myValue;
+        myValues.setValue(FIELD_DIRECTION, myPair.getDirection());
 
         /* Resolve data links */
         myPair.resolveDataLink(myData, this, FIELD_ACCOUNT);

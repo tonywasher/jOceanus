@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -124,7 +125,7 @@ public class TransactionTable
     /**
      * Direction Column Title.
      */
-    private static final String TITLE_DIRECTION = Transaction.FIELD_DIRECTION.getName();
+    private static final String TITLE_DIRECTION = MoneyWiseUIResource.STATEMENT_COLUMN_DIRECTION.getValue();
 
     /**
      * Partner Column Title.
@@ -775,14 +776,14 @@ public class TransactionTable
         private static final int COLUMN_DATE = 0;
 
         /**
-         * Category column id.
-         */
-        private static final int COLUMN_CATEGORY = 1;
-
-        /**
          * Account column id.
          */
-        private static final int COLUMN_ACCOUNT = 2;
+        private static final int COLUMN_ACCOUNT = 1;
+
+        /**
+         * Category column id.
+         */
+        private static final int COLUMN_CATEGORY = 2;
 
         /**
          * Direction column id.
@@ -908,6 +909,16 @@ public class TransactionTable
          * Integer Renderer.
          */
         private final IntegerCellRenderer theIntegerRenderer;
+
+        /**
+         * Icon Renderer.
+         */
+        private final IconButtonCellRenderer<AssetDirection> theDirectionIconRenderer;
+
+        /**
+         * Icon editor.
+         */
+        private final IconButtonCellEditor<AssetDirection> theDirectionIconEditor;
 
         /**
          * Icon Renderer.
@@ -1089,6 +1100,7 @@ public class TransactionTable
 
             /* Create the relevant formatters */
             theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theDirectionIconEditor = theFieldMgr.allocateIconButtonCellEditor(AssetDirection.class, true);
             theReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
             theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theTagEditor = theFieldMgr.allocateScrollListButtonCellEditor();
@@ -1105,17 +1117,20 @@ public class TransactionTable
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
+            theDirectionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theDirectionIconEditor);
             theReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theReconciledIconEditor);
             theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
 
-            /* Configure the iconButton */
+            /* Configure the iconButtons */
+            MoneyWiseIcons.buildDirectionButton(theDirectionIconEditor.getComplexState());
             MoneyWiseIcons.buildReconciledButton(theReconciledIconEditor.getComplexState());
             MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
             declareColumn(new JDataTableColumn(COLUMN_ACCOUNT, WIDTH_NAME, theStringRenderer, theAccountEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
+            declareColumn(new JDataTableColumn(COLUMN_DIRECTION, WIDTH_ICON, theDirectionIconRenderer, theDirectionIconEditor));
             declareColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_NAME, theStringRenderer, theAccountEditor));
             declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theReconciledIconRenderer, theReconciledIconEditor));
             theDescColumn = new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor);
@@ -1155,8 +1170,8 @@ public class TransactionTable
             theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, theActionIconRenderer, theActionIconEditor);
             declareColumn(theActionColumn);
 
-            /* Set the balance column set */
-            adjustColumns(AnalysisColumnSet.BALANCE);
+            /* Set the ALL column set */
+            adjustColumns(AnalysisColumnSet.ALL);
 
             /* Add listeners */
             new EditorListener();

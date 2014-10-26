@@ -86,6 +86,11 @@ public enum MoneyWiseUIResource implements ResourceId {
     CATEGORY_FILTER_SHOWALL("Category.Filter.All"),
 
     /**
+     * Statement Column Direction.
+     */
+    STATEMENT_COLUMN_DIRECTION("Statement.Column.Direction"),
+
+    /**
      * Statement Column Debit.
      */
     STATEMENT_COLUMN_DEBIT("Statement.Column.Debit"),

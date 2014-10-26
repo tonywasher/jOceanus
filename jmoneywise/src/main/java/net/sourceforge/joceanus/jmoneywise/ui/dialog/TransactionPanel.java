@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
@@ -61,6 +62,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionValidator;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
@@ -151,6 +153,11 @@ public class TransactionPanel
     private final transient JScrollListMenuBuilder<TransactionTag> theTagMenuBuilder;
 
     /**
+     * Direction Button Field.
+     */
+    private final transient ComplexIconButtonState<AssetDirection, Boolean> theDirectionState;
+
+    /**
      * Reconciled Button Field.
      */
     private final transient ComplexIconButtonState<Boolean, Boolean> theReconciledState;
@@ -181,7 +188,8 @@ public class TransactionPanel
         /* Access tag menu builder */
         theTagMenuBuilder = theTagButton.getMenuBuilder();
 
-        /* Set closed button */
+        /* Create states */
+        theDirectionState = new ComplexIconButtonState<AssetDirection, Boolean>(Boolean.FALSE);
         theReconciledState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
 
         /* Build the FieldSet */
@@ -223,7 +231,11 @@ public class TransactionPanel
      * @return the panel
      */
     private JPanel buildMainPanel() {
-        /* Set states */
+        /* Create direction button */
+        JIconButton<AssetDirection> myDirectionButton = new JIconButton<AssetDirection>(theDirectionState);
+        MoneyWiseIcons.buildDirectionButton(theDirectionState);
+
+        /* Create reconciled button */
         JIconButton<Boolean> myReconciledButton = new JIconButton<Boolean>(theReconciledState);
         MoneyWiseIcons.buildReconciledButton(theReconciledState);
 
@@ -233,16 +245,18 @@ public class TransactionPanel
         /* restrict the fields */
         restrictField(theDateButton, Transaction.DESCLEN);
         restrictField(theAccountButton, Transaction.DESCLEN);
-        restrictField(thePartnerButton, Transaction.DESCLEN);
         restrictField(theCategoryButton, Transaction.DESCLEN);
+        restrictField(myDirectionButton, Transaction.DESCLEN);
+        restrictField(thePartnerButton, Transaction.DESCLEN);
         restrictField(myAmount, Transaction.DESCLEN);
         restrictField(myReconciledButton, Transaction.DESCLEN);
 
         /* Declare fields */
         theFieldSet.addFieldElement(Transaction.FIELD_DATE, DataType.DATEDAY, theDateButton);
         theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, Object.class, theAccountButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, Object.class, thePartnerButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, Object.class, thePartnerButton);
         theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, DataType.MONEY, myAmount);
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
@@ -254,8 +268,9 @@ public class TransactionPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Transaction.FIELD_DATE, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_ACCOUNT, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_PARTNER, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_CATEGORY, myPanel);
+        theFieldSet.addFieldToPanel(Transaction.FIELD_DIRECTION, myPanel);
+        theFieldSet.addFieldToPanel(Transaction.FIELD_PARTNER, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_AMOUNT, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_RECONCILED, myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -539,8 +554,10 @@ public class TransactionPanel
         /* Determine whether the reconciled field should be visible */
         boolean bShowReconciled = isEditable || bIsReconciled;
         theReconciledState.setState(!bIsLocked);
+        theDirectionState.setState(!bIsReconciled);
         theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
+        theFieldSet.setEditable(Transaction.FIELD_DIRECTION, isEditable && !bIsReconciled);
         theFieldSet.setEditable(Transaction.FIELD_AMOUNT, isEditable && !bIsReconciled);
         theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, isEditable && !bIsReconciled);
         theFieldSet.setEditable(Transaction.FIELD_PARTNER, isEditable && !bIsReconciled);
@@ -675,11 +692,11 @@ public class TransactionPanel
         pMenuBuilder.clearMenu();
 
         /* Add possible items */
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), true, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
     }
 
     /**
@@ -693,30 +710,32 @@ public class TransactionPanel
         pMenuBuilder.clearMenu();
 
         /* Add possible items */
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), false, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
-        buildDebitAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
     }
 
     /**
      * Build the asset list for an item.
      * @param <T> the Asset type
      * @param pMenuBuilder the menu builder
-     * @param pAccount is this item the account
+     * @param pIsAccount is this item the account rather than partner
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private <T extends AssetBase<T>> void buildDebitAssetMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
-                                                              final AssetBaseList<T> pList,
-                                                              final boolean pAccount,
-                                                              final Transaction pTrans) {
+    private <T extends AssetBase<T>> void buildAssetMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+                                                         final AssetBaseList<T> pList,
+                                                         final boolean pIsAccount,
+                                                         final Transaction pTrans) {
         /* Record active item */
-        AssetBase<?> myCurr = pAccount
-                                      ? pTrans.getAccount()
-                                      : pTrans.getPartner();
+        AssetBase<?> myAccount = pTrans.getAccount();
+        TransactionCategory myCategory = pTrans.getCategory();
+        AssetBase<?> myCurr = pIsAccount
+                                        ? myAccount
+                                        : pTrans.getPartner();
         JMenuItem myActive = null;
         JScrollMenu myMenu = null;
 
@@ -726,11 +745,16 @@ public class TransactionPanel
             T myAsset = myIterator.next();
 
             /* Only process non-deleted/non-closed items */
-            if (myAsset.isDeleted() || myAsset.isClosed()) {
+            boolean bIgnore = myAsset.isDeleted() || myAsset.isClosed();
+
+            /* Check whether the asset is allowable for the owner */
+            bIgnore |= !(pIsAccount
+                                   ? TransactionValidator.isValidAccount(myAsset)
+                                   :
+                                   TransactionValidator.isValidPartner(myAccount, myCategory, myAsset));
+            if (bIgnore) {
                 continue;
             }
-
-            /* TODO Check whether the asset is allowable for the owner */
 
             /* If this the first item */
             if (myMenu == null) {
@@ -763,6 +787,7 @@ public class TransactionPanel
         pMenuBuilder.clearMenu();
 
         /* Record active item */
+        AssetBase<?> myAccount = pTrans.getAccount();
         TransactionCategory myCurr = pTrans.getCategory();
         JMenuItem myActive = null;
         JMenuItem myItem;
@@ -780,11 +805,13 @@ public class TransactionPanel
 
             /* Only process non-deleted low-level items */
             TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
-            if (myCategory.isDeleted() || myClass.canParentCategory()) {
+            boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
+
+            /* Check whether the category is allowable for the owner */
+            bIgnore |= !TransactionValidator.isValidCategory(myAccount, myCategory);
+            if (bIgnore) {
                 continue;
             }
-
-            /* TODO Check whether the category is allowable for the owner */
 
             /* Determine parent */
             TransactionCategory myParent = myCategory.getParentCategory();

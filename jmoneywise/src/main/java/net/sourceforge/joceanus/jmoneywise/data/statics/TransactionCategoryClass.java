@@ -378,28 +378,16 @@ public enum TransactionCategoryClass implements CategoryInterface {
     }
 
     /**
-     * Determine whether the CategoryType uses debit parent as payee.
+     * Determine whether the Account is a secret payee.
      * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
      */
-    public boolean isDebitParentPayee() {
+    public boolean isSecretPayee() {
         switch (this) {
             case INTEREST:
             case DIVIDEND:
             case CASHBACK:
             case LOYALTYBONUS:
             case LOANINTERESTEARNED:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the CategoryType uses credit parent as payee.
-     * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
-     */
-    public boolean isCreditParentPayee() {
-        switch (this) {
             case RENTALINCOME:
             case ROOMRENTALINCOME:
             case WRITEOFF:

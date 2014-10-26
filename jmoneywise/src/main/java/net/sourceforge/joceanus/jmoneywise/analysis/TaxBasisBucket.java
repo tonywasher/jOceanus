@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -420,6 +421,13 @@ public final class TaxBasisBucket
         /* Determine style of transaction */
         AssetDirection myDir = pTrans.getDirection();
 
+        /* If the account is special */
+        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        if (myClass.isSecretPayee()) {
+            /* switch the direction */
+            myDir = myDir.reverse();
+        }
+
         /* Access the counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
@@ -441,7 +449,7 @@ public final class TaxBasisBucket
                 setValue(TaxBasisAttribute.TAXCREDIT, myTax);
 
                 /* Adjust the gross */
-                myGross.addAmount(myTaxCredit);
+                myGross.subtractAmount(myTaxCredit);
             }
 
             /* If we have a natInsurance payment */
@@ -458,8 +466,9 @@ public final class TaxBasisBucket
 
             /* If we have a Charity donation */
             if ((myDonation != null) && (myDonation.isNonZero())) {
-                /* Adjust the gross */
+                /* Adjust the gross and net */
                 myGross.subtractAmount(myDonation);
+                myNet.subtractAmount(myDonation);
             }
 
         } else {
@@ -493,8 +502,9 @@ public final class TaxBasisBucket
 
             /* If we have a Charity donation */
             if ((myDonation != null) && (myDonation.isNonZero())) {
-                /* Adjust the gross */
+                /* Adjust the gross and net */
                 myGross.addAmount(myDonation);
+                myNet.addAmount(myDonation);
             }
         }
 
@@ -532,6 +542,12 @@ public final class TaxBasisBucket
 
             /* If we have a tax relief */
             if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+                /* Adjust the tax */
+                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
+                myTax = new JMoney(myTax);
+                myTax.subtractAmount(myTaxCredit);
+                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
+
                 /* Adjust the gross and net */
                 myGross.subtractAmount(myTaxCredit);
                 myNet.subtractAmount(myTaxCredit);
@@ -544,6 +560,12 @@ public final class TaxBasisBucket
 
             /* If we have a tax relief */
             if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+                /* Adjust the tax */
+                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
+                myTax = new JMoney(myTax);
+                myTax.addAmount(myTaxCredit);
+                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
+
                 /* Adjust the gross and net */
                 myGross.addAmount(myTaxCredit);
                 myNet.addAmount(myTaxCredit);
