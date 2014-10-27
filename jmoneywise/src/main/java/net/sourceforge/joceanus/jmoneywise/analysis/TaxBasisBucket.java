@@ -423,7 +423,7 @@ public final class TaxBasisBucket
 
         /* If the account is special */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
-        if (myClass.isSecretPayee()) {
+        if (myClass.isSwitchDirection()) {
             /* switch the direction */
             myDir = myDir.reverse();
         }

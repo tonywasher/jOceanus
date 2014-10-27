@@ -399,6 +399,27 @@ public enum TransactionCategoryClass implements CategoryInterface {
     }
 
     /**
+     * Determine whether the Account is a secret payee.
+     * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
+     */
+    public boolean isSwitchDirection() {
+        switch (this) {
+            case INTEREST:
+            case DIVIDEND:
+            case CASHBACK:
+            case LOYALTYBONUS:
+            case RENTALINCOME:
+            case ROOMRENTALINCOME:
+            case WRITEOFF:
+            case LOANINTERESTCHARGED:
+            case TRANSFER:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether the category type is singular.
      * @return <code>true</code> if the event category type is singular, <code>false</code> otherwise.
      */
@@ -469,6 +490,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case UNITTRUSTDIVIDEND:
             case TAXFREEDIVIDEND:
             case INHERITED:
+            case LOANINTERESTEARNED:
             case RENTALINCOME:
             case ROOMRENTALINCOME:
             case OPTIONSEXERCISE:

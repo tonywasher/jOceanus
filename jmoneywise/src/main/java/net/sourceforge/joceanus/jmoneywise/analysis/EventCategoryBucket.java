@@ -552,11 +552,11 @@ public final class EventCategoryBucket
         /* Analyse the event */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         AssetDirection myDir = pTrans.getDirection();
-        boolean isIncome = myClass.isIncome();
+        boolean isExpense = myClass.isExpense();
         JMoney myAmount = new JMoney(pTrans.getAmount());
 
         /* If this is an expense */
-        if (!isIncome) {
+        if (isExpense) {
             /* Adjust for TaxCredit */
             JMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
@@ -571,6 +571,7 @@ public final class EventCategoryBucket
                     JMoney myIncome = getNewIncome();
                     myIncome.addAmount(myAmount);
                     setValue(EventAttribute.INCOME, myIncome);
+                    isExpense = false;
 
                     /* else its standard expense */
                 } else {
@@ -578,7 +579,6 @@ public final class EventCategoryBucket
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
                     setValue(EventAttribute.EXPENSE, myExpense);
-                    isIncome = false;
                 }
             }
 
@@ -608,8 +608,8 @@ public final class EventCategoryBucket
                 myAmount.addAmount(myDonation);
             }
 
-            /* If the account is special */
-            if (myClass.isSecretPayee()) {
+            /* If we need to switch direction */
+            if (myClass.isSwitchDirection()) {
                 /* switch the direction */
                 myDir = myDir.reverse();
             }
@@ -622,7 +622,6 @@ public final class EventCategoryBucket
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
                     setValue(EventAttribute.EXPENSE, myExpense);
-                    isIncome = false;
 
                     /* else standard income */
                 } else {
@@ -632,6 +631,7 @@ public final class EventCategoryBucket
 
                     /* Store the value */
                     setValue(EventAttribute.INCOME, myIncome);
+                    isExpense = false;
                 }
             }
         }
@@ -640,7 +640,7 @@ public final class EventCategoryBucket
         theHistory.registerTransaction(pTrans, theValues);
 
         /* Return the income flag */
-        return isIncome;
+        return !isExpense;
     }
 
     /**

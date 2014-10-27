@@ -589,16 +589,16 @@ public final class PayeeBucket
         JMoney myAmount = pTrans.getTaxCredit();
         if (myAmount.isNonZero()) {
             TransactionCategoryClass myClass = pTrans.getCategoryClass();
-            if (myClass.isIncome()) {
-                /* Update the income */
-                JMoney myIncome = getNewIncome();
-                myIncome.addAmount(myAmount);
-                setValue(PayeeAttribute.INCOME, myIncome);
-            } else {
+            if (myClass.isExpense()) {
                 /* Update the expense */
                 JMoney myExpense = getNewExpense();
                 myExpense.addAmount(myAmount);
                 setValue(PayeeAttribute.EXPENSE, myExpense);
+            } else {
+                /* Update the income */
+                JMoney myIncome = getNewIncome();
+                myIncome.addAmount(myAmount);
+                setValue(PayeeAttribute.INCOME, myIncome);
             }
         }
 
