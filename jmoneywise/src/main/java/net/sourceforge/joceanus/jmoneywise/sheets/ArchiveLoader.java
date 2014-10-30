@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
@@ -871,8 +872,8 @@ public class ArchiveLoader {
                 }
             } else {
                 /* Access parent assets */
-                AssetBase<?> myParAccount = theParent.getAccount();
-                AssetBase<?> myParPartner = theParent.getPartner();
+                TransactionAsset myParAccount = theParent.getAccount();
+                TransactionAsset myParPartner = theParent.getPartner();
 
                 /* If we match the parent on debit */
                 if (myDebit.equals(myParAccount)) {

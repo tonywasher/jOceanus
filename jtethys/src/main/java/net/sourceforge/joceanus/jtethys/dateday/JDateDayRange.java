@@ -109,44 +109,58 @@ public class JDateDayRange
     }
 
     @Override
-    public int compareTo(final JDateDayRange that) {
+    public int compareTo(final JDateDayRange pThat) {
         /* Handle the trivial cases */
-        if (this.equals(that)) {
+        if (this.equals(pThat)) {
             return 0;
         }
-        if (that == null) {
+        if (pThat == null) {
             return -1;
         }
 
-        /* If start dates differ */
-        if (this.getStart() != that.getStart()) {
-            /* Handle nulls */
-            if (this.getStart() == null) {
+        /* Access target start date */
+        JDateDay myStart = pThat.getStart();
+
+        /* If our start is null */
+        if (theStart == null) {
+            /* Handle non-null target start */
+            if (myStart != null) {
                 return 1;
             }
-            if (that.getStart() == null) {
+
+            /* else start is non-null */
+        } else {
+            /* Handle null target start */
+            if (myStart == null) {
                 return -1;
             }
 
             /* Compare the start dates */
-            int result = theStart.compareTo(that.theStart);
+            int result = theStart.compareTo(myStart);
             if (result != 0) {
                 return result;
             }
         }
 
-        /* If end dates differ */
-        if (this.getEnd() != that.getEnd()) {
-            /* Handle nulls */
-            if (this.getEnd() == null) {
+        /* Access target end date */
+        JDateDay myEnd = pThat.getEnd();
+
+        /* If our end is null */
+        if (theEnd == null) {
+            /* Handle non-null target end */
+            if (myEnd != null) {
                 return 1;
             }
-            if (that.getEnd() == null) {
+
+            /* else start is non-null */
+        } else {
+            /* Handle null target end */
+            if (myStart == null) {
                 return -1;
             }
 
             /* Compare the end dates */
-            int result = theEnd.compareTo(that.theEnd);
+            int result = theEnd.compareTo(myEnd);
             if (result != 0) {
                 return result;
             }

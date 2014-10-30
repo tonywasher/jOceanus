@@ -284,7 +284,7 @@ public class Schedule
         } else if (!getFrequency().getEnabled()) {
             addError("Frequency must be enabled", FIELD_FREQ);
         } else if (myFrequency.getFrequency() == FrequencyClass.MATURITY) {
-            AssetBase<?> myDebit = getAccount();
+            TransactionAsset myDebit = getAccount();
             if ((!(myDebit instanceof Deposit))
                 || (!((Deposit) myDebit).isDepositClass(DepositCategoryClass.BOND))) {
                 addError("Maturity only allowed for Bonds", FIELD_FREQ);
@@ -320,7 +320,7 @@ public class Schedule
             /* If the frequency is maturity */
             if (myFreq == FrequencyClass.MATURITY) {
                 /* Access the maturity date */
-                AssetBase<?> myDebit = getAccount();
+                TransactionAsset myDebit = getAccount();
                 if (myDebit instanceof Deposit) {
                     myDate = ((Deposit) myDebit).getMaturity();
                 }

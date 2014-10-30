@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 
 /**
  * Class representing an account and its events.
@@ -74,7 +74,7 @@ public class QIFAccountEvents
      * @param pAccount the account.
      */
     protected QIFAccountEvents(final QIFFile pFile,
-                               final AssetBase<?> pAccount) {
+                               final TransactionAsset pAccount) {
         /* Store parameters */
         theAccount = new QIFAccount(pFile, pAccount);
 

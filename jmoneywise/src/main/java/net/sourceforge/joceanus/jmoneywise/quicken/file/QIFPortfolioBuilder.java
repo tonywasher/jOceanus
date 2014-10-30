@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -327,7 +327,7 @@ public class QIFPortfolioBuilder {
      * @param pTrans the transaction
      */
     protected void processTransferToSecurity(final Security pSecurity,
-                                             final AssetBase<?> pDebit,
+                                             final TransactionAsset pDebit,
                                              final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();
@@ -450,7 +450,7 @@ public class QIFPortfolioBuilder {
      * @param pTrans the transaction
      */
     protected void processTransferFromSecurity(final Security pSecurity,
-                                               final AssetBase<?> pCredit,
+                                               final TransactionAsset pCredit,
                                                final Transaction pTrans) {
         /* Switch on transaction type */
         switch (pTrans.getCategoryClass()) {
@@ -546,7 +546,7 @@ public class QIFPortfolioBuilder {
      * @param pTrans the transaction
      */
     private void processStockDividend(final Security pSecurity,
-                                      final AssetBase<?> pCredit,
+                                      final TransactionAsset pCredit,
                                       final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();
@@ -945,7 +945,7 @@ public class QIFPortfolioBuilder {
      * @param pTrans the transaction
      */
     private void processTransferOut(final Security pSecurity,
-                                    final AssetBase<?> pCredit,
+                                    final TransactionAsset pCredit,
                                     final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPort = pTrans.getPortfolio();

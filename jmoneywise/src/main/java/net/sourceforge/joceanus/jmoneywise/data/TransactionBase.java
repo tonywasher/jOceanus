@@ -321,7 +321,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain Account asset.
      * @return the account
      */
-    public AssetBase<?> getAccount() {
+    public TransactionAsset getAccount() {
         return getAccount(getValueSet());
     }
 
@@ -330,7 +330,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the accountId
      */
     public Integer getAccountId() {
-        AssetBase<?> myAccount = getAccount();
+        TransactionAsset myAccount = getAccount();
         return (myAccount == null)
                                   ? null
                                   : myAccount.getId();
@@ -341,7 +341,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the accountName
      */
     public String getAccountName() {
-        AssetBase<?> myAccount = getAccount();
+        TransactionAsset myAccount = getAccount();
         return (myAccount == null)
                                   ? null
                                   : myAccount.getName();
@@ -351,7 +351,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain Partner asset.
      * @return the partner
      */
-    public AssetBase<?> getPartner() {
+    public TransactionAsset getPartner() {
         return getPartner(getValueSet());
     }
 
@@ -360,7 +360,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the partnerId
      */
     public Integer getPartnerId() {
-        AssetBase<?> myPartner = getPartner();
+        TransactionAsset myPartner = getPartner();
         return (myPartner == null)
                                   ? null
                                   : myPartner.getId();
@@ -371,7 +371,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the partnerName
      */
     public String getPartnerName() {
-        AssetBase<?> myPartner = getPartner();
+        TransactionAsset myPartner = getPartner();
         return (myPartner == null)
                                   ? null
                                   : myPartner.getName();
@@ -510,8 +510,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Account Asset
      */
-    public static AssetBase<?> getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, AssetBase.class);
+    public static TransactionAsset getAccount(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ACCOUNT, TransactionAsset.class);
     }
 
     /**
@@ -519,8 +519,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Partner Asset
      */
-    public static AssetBase<?> getPartner(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARTNER, AssetBase.class);
+    public static TransactionAsset getPartner(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARTNER, TransactionAsset.class);
     }
 
     /**
@@ -646,7 +646,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set account value.
      * @param pValue the value
      */
-    protected final void setValueAccount(final AssetBase<?> pValue) {
+    protected final void setValueAccount(final TransactionAsset pValue) {
         getValueSet().setValue(FIELD_ACCOUNT, pValue);
     }
 
@@ -670,7 +670,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set partner value.
      * @param pValue the value
      */
-    protected final void setValuePartner(final AssetBase<?> pValue) {
+    protected final void setValuePartner(final TransactionAsset pValue) {
         getValueSet().setValue(FIELD_PARTNER, pValue);
     }
 
@@ -779,8 +779,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 setValueAccount((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueAccount((String) myValue);
-            } else if (myValue instanceof AssetBase) {
-                setValueAccount((AssetBase<?>) myValue);
+            } else if (myValue instanceof TransactionAsset) {
+                setValueAccount((TransactionAsset) myValue);
             }
 
             /* Store the Partner */
@@ -789,8 +789,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 setValuePartner((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValuePartner((String) myValue);
-            } else if (myValue instanceof AssetBase) {
-                setValuePartner((AssetBase<?>) myValue);
+            } else if (myValue instanceof TransactionAsset) {
+                setValuePartner((TransactionAsset) myValue);
             }
 
             /* Store the Category */
@@ -976,8 +976,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
     @Override
     public boolean isLocked() {
-        AssetBase<?> myAccount = getAccount();
-        AssetBase<?> myPartner = getPartner();
+        TransactionAsset myAccount = getAccount();
+        TransactionAsset myPartner = getPartner();
 
         /* Check credit and debit accounts */
         return ((myAccount != null) && myAccount.isClosed())
@@ -1028,7 +1028,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set a new account.
      * @param pAccount the account
      */
-    public void setAccount(final AssetBase<?> pAccount) {
+    public void setAccount(final TransactionAsset pAccount) {
         /* Adjust pair */
         AssetPair myPair = getAssetPair();
         myPair = getAssetPairManager().adjustAccount(myPair, pAccount);
@@ -1042,7 +1042,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set a new partner.
      * @param pPartner the partner
      */
-    public void setPartner(final AssetBase<?> pPartner) {
+    public void setPartner(final TransactionAsset pPartner) {
         /* Adjust pair */
         AssetPair myPair = getAssetPair();
         myPair = getAssetPairManager().adjustPartner(myPair, pPartner);
@@ -1072,8 +1072,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         setValueAssetPair(myPair);
 
         /* Flip details */
-        AssetBase<?> myAccount = getAccount();
-        AssetBase<?> myPartner = getPartner();
+        TransactionAsset myAccount = getAccount();
+        TransactionAsset myPartner = getPartner();
         setValueAccount(myPartner);
         setValuePartner(myAccount);
     }
@@ -1151,8 +1151,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     @Override
     public void validate() {
         JDateDay myDate = getDate();
-        AssetBase<?> myAccount = getAccount();
-        AssetBase<?> myPartner = getPartner();
+        TransactionAsset myAccount = getAccount();
+        TransactionAsset myPartner = getPartner();
         AssetDirection myDir = getDirection();
         JMoney myAmount = getAmount();
         T myParent = getParent();

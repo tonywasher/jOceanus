@@ -84,8 +84,8 @@ public final class EncryptedData {
      */
     public static <T> T getValue(final EncryptedField<T> pField) {
         return (pField == null)
-                ? null
-                : pField.getValue();
+                               ? null
+                               : pField.getValue();
     }
 
     /**
@@ -95,8 +95,8 @@ public final class EncryptedData {
      */
     public static byte[] getBytes(final EncryptedField<?> pField) {
         return (pField == null)
-                ? null
-                : pField.getBytes();
+                               ? null
+                               : pField.getBytes();
     }
 
     /**
@@ -249,8 +249,8 @@ public final class EncryptedData {
          */
         public byte[] getBytes() {
             return (theEncrypted == null)
-                    ? null
-                    : Arrays.copyOf(theEncrypted, theEncrypted.length);
+                                         ? null
+                                         : Arrays.copyOf(theEncrypted, theEncrypted.length);
         }
 
         /**
@@ -374,7 +374,7 @@ public final class EncryptedData {
             }
 
             /* Reject if wrong class */
-            if (getClass() != pThat.getClass()) {
+            if (!getClass().equals(pThat.getClass())) {
                 return Difference.DIFFERENT;
             }
 

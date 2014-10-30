@@ -28,8 +28,9 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -166,9 +167,29 @@ public final class AssetPair
                                    final JDataField pField) throws JOceanusException {
         /* Access the values */
         if (pField.equals(Transaction.FIELD_ACCOUNT)) {
-            resolveDataLink(pOwner, getListForClass(pData, theAccount), pField);
+            resolveDataLink(pData, pOwner, theAccount, pField);
         } else if (pField.equals(Transaction.FIELD_PARTNER)) {
-            resolveDataLink(pOwner, getListForClass(pData, thePartner), pField);
+            resolveDataLink(pData, pOwner, thePartner, pField);
+        }
+    }
+
+    /**
+     * Resolve DataLink.
+     * @param pData the dataSet
+     * @param pOwner the owning Transaction
+     * @param pAssetType the asset type
+     * @param pField the field to resolve
+     * @throws JOceanusException on error
+     */
+    private static void resolveDataLink(final MoneyWiseData pData,
+                                        final TransactionBase<?> pOwner,
+                                        final AssetType pAssetType,
+                                        final JDataField pField) throws JOceanusException {
+        /* Handle security holding differently */
+        if (pAssetType.isSecurityHolding()) {
+            resolveDataLink(pOwner, pData.getSecurityHoldingsMap(), pField);
+        } else {
+            resolveDataLink(pOwner, getListForClass(pData, pAssetType), pField);
         }
     }
 
@@ -178,8 +199,8 @@ public final class AssetPair
      * @param pClass the Asset type class
      * @return the list
      */
-    private AssetBaseList<?> getListForClass(final MoneyWiseData pData,
-                                             final AssetType pClass) {
+    private static AssetBaseList<?> getListForClass(final MoneyWiseData pData,
+                                                    final AssetType pClass) {
         /* Switch on the class */
         switch (pClass) {
             case DEPOSIT:
@@ -207,9 +228,9 @@ public final class AssetPair
      * @param pField the field
      * @throws JOceanusException on error
      */
-    private void resolveDataLink(final TransactionBase<?> pOwner,
-                                 final AssetBaseList<?> pList,
-                                 final JDataField pField) throws JOceanusException {
+    private static void resolveDataLink(final TransactionBase<?> pOwner,
+                                        final AssetBaseList<?> pList,
+                                        final JDataField pField) throws JOceanusException {
         /* Access the values */
         ValueSet myValues = pOwner.getValueSet();
 
@@ -226,7 +247,7 @@ public final class AssetPair
             AssetBase<?> myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
-                throw new JPrometheusDataException(pOwner, Transaction.ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
 
@@ -235,7 +256,48 @@ public final class AssetPair
             AssetBase<?> myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
-                throw new JPrometheusDataException(pOwner, Transaction.ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
+            }
+            myValues.setValue(pField, myItem);
+        }
+    }
+
+    /**
+     * Resolve Security Holding link.
+     * @param pOwner the owning Transaction
+     * @param pMap the security holding map
+     * @param pField the field
+     * @throws JOceanusException on error
+     */
+    private static void resolveDataLink(final TransactionBase<?> pOwner,
+                                        final SecurityHoldingMap pMap,
+                                        final JDataField pField) throws JOceanusException {
+        /* Access the values */
+        ValueSet myValues = pOwner.getValueSet();
+
+        /* Access value for field */
+        Object myValue = myValues.getValue(pField);
+
+        /* Convert SecurityHolding reference to Id */
+        if (myValue instanceof SecurityHolding) {
+            myValue = ((SecurityHolding) myValue).getId();
+        }
+
+        /* Lookup Id reference */
+        if (myValue instanceof Integer) {
+            SecurityHolding myItem = pMap.findHoldingById((Integer) myValue);
+            if (myItem == null) {
+                pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
+                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
+            }
+            myValues.setValue(pField, myItem);
+
+            /* Lookup Name reference */
+        } else if (myValue instanceof String) {
+            SecurityHolding myItem = pMap.findHoldingByName((String) myValue);
+            if (myItem == null) {
+                pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
+                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
         }
@@ -347,7 +409,7 @@ public final class AssetPair
          * @return the updated assetPair
          */
         public AssetPair adjustAccount(final AssetPair pCurr,
-                                       final AssetBase<?> pAccount) {
+                                       final TransactionAsset pAccount) {
             /* Access new Asset type */
             AssetType myType = getAssetType(pAccount);
 
@@ -368,7 +430,7 @@ public final class AssetPair
          * @return the updated assetPair
          */
         public AssetPair adjustPartner(final AssetPair pCurr,
-                                       final AssetBase<?> pPartner) {
+                                       final TransactionAsset pPartner) {
             /* Access new Asset type */
             AssetType myType = getAssetType(pPartner);
 
@@ -409,7 +471,7 @@ public final class AssetPair
          * @param pAsset the asset
          * @return the class
          */
-        private static AssetType getAssetType(final AssetBase<?> pAsset) {
+        private static AssetType getAssetType(final TransactionAsset pAsset) {
             return (pAsset == null)
                                    ? AssetType.CASH
                                    : pAsset.getAssetType();

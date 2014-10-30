@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
@@ -425,7 +425,7 @@ public class QIFFile {
      * @param pAccount the account
      * @return the QIFAccount representation
      */
-    public QIFAccountEvents registerAccount(final AssetBase<?> pAccount) {
+    public QIFAccountEvents registerAccount(final TransactionAsset pAccount) {
         /* Locate an existing account */
         String myName = pAccount.getName();
         QIFAccountEvents myAccount = theAccountMap.get(myName);

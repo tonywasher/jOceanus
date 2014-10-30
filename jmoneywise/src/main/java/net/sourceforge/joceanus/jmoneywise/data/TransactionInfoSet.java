@@ -217,8 +217,8 @@ public class TransactionInfoSet
     public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
-        AssetBase<?> myAccount = myTransaction.getAccount();
-        AssetBase<?> myPartner = myTransaction.getPartner();
+        TransactionAsset myAccount = myTransaction.getAccount();
+        TransactionAsset myPartner = myTransaction.getPartner();
         AssetDirection myDir = myTransaction.getDirection();
         TransactionCategory myCategory = myTransaction.getCategory();
 
@@ -326,7 +326,7 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isTaxCreditClassRequired(final AssetBase<?> pDebit,
+    protected static JDataFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
                                                                  final Portfolio pPortfolio,
                                                                  final TransactionCategoryClass pClass) {
         /* Switch on class */
@@ -374,7 +374,7 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isDebitUnitsClassRequired(final AssetBase<?> pDebit,
+    protected static JDataFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
                                                                   final TransactionCategoryClass pClass) {
         /* Debit Asset must be security */
         if (!(pDebit instanceof Security)) {
@@ -396,7 +396,7 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isCreditUnitsClassRequired(final AssetBase<?> pCredit,
+    protected static JDataFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
                                                                    final TransactionCategoryClass pClass) {
         /* Credit Asset must be security */
         if (!(pCredit instanceof Security)) {

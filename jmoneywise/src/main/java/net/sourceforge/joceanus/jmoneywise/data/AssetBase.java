@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  */
 public abstract class AssetBase<T extends AssetBase<T>>
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<T> {
+        implements Comparable<T>, TransactionAsset {
     /**
      * Local Report fields.
      */
@@ -182,10 +182,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return super.includeXmlField(pField);
     }
 
-    /**
-     * Obtain the parent.
-     * @return the parent
-     */
+    @Override
     public AssetBase<?> getParent() {
         return null;
     }
@@ -222,26 +219,17 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return isRelevant;
     }
 
-    /**
-     * Is the account autoExpense?
-     * @return true/false
-     */
+    @Override
     public boolean isAutoExpense() {
         return false;
     }
 
-    /**
-     * Is the account shares?
-     * @return true/false
-     */
+    @Override
     public boolean isShares() {
         return false;
     }
 
-    /**
-     * Is the account capital?
-     * @return true/false
-     */
+    @Override
     public boolean isCapital() {
         return false;
     }
@@ -254,10 +242,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return false;
     }
 
-    /**
-     * Obtain assetTypeClass.
-     * @return the Asset type
-     */
+    @Override
     public AssetType getAssetType() {
         switch (getItemType()) {
             case DEPOSIT:
@@ -277,10 +262,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
     }
 
-    /**
-     * Obtain Name.
-     * @return the name
-     */
+    @Override
     public String getName() {
         return getName(getValueSet());
     }

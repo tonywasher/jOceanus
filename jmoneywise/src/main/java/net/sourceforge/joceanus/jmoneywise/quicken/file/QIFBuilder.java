@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -35,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
@@ -202,8 +202,8 @@ public class QIFBuilder {
      */
     protected void processSingleEvent(final Transaction pTrans) {
         /* Access account and partner */
-        AssetBase<?> myAccount = pTrans.getAccount();
-        AssetBase<?> myPartner = pTrans.getPartner();
+        TransactionAsset myAccount = pTrans.getAccount();
+        TransactionAsset myPartner = pTrans.getPartner();
         boolean bFrom = pTrans.getDirection().isFrom();
 
         /* If this deals with a payee */
@@ -265,7 +265,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processDebitPayee(final Payee pPayee,
-                                     final AssetBase<?> pCredit,
+                                     final TransactionAsset pCredit,
                                      final Transaction pTrans) {
         /* If this is a cash recovery */
         if ((pCredit instanceof Cash)
@@ -296,7 +296,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processCreditPayee(final Payee pPayee,
-                                      final AssetBase<?> pDebit,
+                                      final TransactionAsset pDebit,
                                       final Transaction pTrans) {
         /* If this is a cash payment */
         if ((pDebit instanceof Cash)
@@ -326,8 +326,8 @@ public class QIFBuilder {
      * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processTransfer(final AssetBase<?> pDebit,
-                                   final AssetBase<?> pCredit,
+    protected void processTransfer(final TransactionAsset pDebit,
+                                   final TransactionAsset pCredit,
                                    final Transaction pTrans) {
         /* Access details */
         TransactionCategory myCat = pTrans.getCategory();
@@ -422,7 +422,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processStandardIncome(final Payee pPayee,
-                                         final AssetBase<?> pCredit,
+                                         final TransactionAsset pCredit,
                                          final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
@@ -453,7 +453,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processDetailedIncome(final Payee pPayee,
-                                         final AssetBase<?> pCredit,
+                                         final TransactionAsset pCredit,
                                          final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
@@ -536,7 +536,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processStandardExpense(final Payee pPayee,
-                                          final AssetBase<?> pDebit,
+                                          final TransactionAsset pDebit,
                                           final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
@@ -571,7 +571,7 @@ public class QIFBuilder {
      * @param pTrans the expense
      */
     protected void processDetailedExpense(final Payee pPayee,
-                                          final AssetBase<?> pDebit,
+                                          final TransactionAsset pDebit,
                                           final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pPayee);
@@ -648,8 +648,8 @@ public class QIFBuilder {
      * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processStandardTransfer(final AssetBase<?> pDebit,
-                                           final AssetBase<?> pCredit,
+    protected void processStandardTransfer(final TransactionAsset pDebit,
+                                           final TransactionAsset pCredit,
                                            final Transaction pTrans) {
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
@@ -693,7 +693,7 @@ public class QIFBuilder {
      * @param pPartner the Transfer Partner
      * @return the line
      */
-    protected String buildXferFromPayee(final AssetBase<?> pPartner) {
+    protected String buildXferFromPayee(final TransactionAsset pPartner) {
         /* Determine mode */
         boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
@@ -714,7 +714,7 @@ public class QIFBuilder {
      * @param pPartner the Transfer Partner
      * @return the line
      */
-    protected String buildXferToPayee(final AssetBase<?> pPartner) {
+    protected String buildXferToPayee(final TransactionAsset pPartner) {
         /* Determine mode */
         boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
@@ -736,8 +736,8 @@ public class QIFBuilder {
      * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processInterest(final AssetBase<?> pDebit,
-                                   final AssetBase<?> pCredit,
+    protected void processInterest(final TransactionAsset pDebit,
+                                   final TransactionAsset pCredit,
                                    final Transaction pTrans) {
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
@@ -863,8 +863,8 @@ public class QIFBuilder {
      * @param pCredit the credit account
      * @param pTrans the transaction
      */
-    protected void processCashBack(final AssetBase<?> pDebit,
-                                   final AssetBase<?> pCredit,
+    protected void processCashBack(final TransactionAsset pDebit,
+                                   final TransactionAsset pCredit,
                                    final Transaction pTrans) {
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
@@ -954,7 +954,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processLoyaltyBonus(final Portfolio pPortfolio,
-                                       final AssetBase<?> pCredit,
+                                       final TransactionAsset pCredit,
                                        final Transaction pTrans) {
         /* Access details */
         Payee myPayee = pPortfolio.getParent();
@@ -1053,7 +1053,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processCashExpense(final Cash pCash,
-                                      final AssetBase<?> pDebit,
+                                      final TransactionAsset pDebit,
                                       final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
@@ -1088,7 +1088,7 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processCashReceipt(final Cash pCash,
-                                      final AssetBase<?> pCredit,
+                                      final TransactionAsset pCredit,
                                       final Transaction pTrans) {
         /* Access the Payee details */
         QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());

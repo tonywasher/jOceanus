@@ -590,8 +590,8 @@ public class Transaction
      */
     @Override
     public void validate() {
-        AssetBase<?> myAccount = getAccount();
-        AssetBase<?> myPartner = getPartner();
+        TransactionAsset myAccount = getAccount();
+        TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();

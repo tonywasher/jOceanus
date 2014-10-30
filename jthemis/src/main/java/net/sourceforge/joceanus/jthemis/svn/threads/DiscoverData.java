@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnExtract;
@@ -67,11 +66,6 @@ public class DiscoverData
     private SvnWorkingCopySet theWorkingCopySet;
 
     /**
-     * The Git Repository.
-     */
-    private GitRepository theGitRepo;
-
-    /**
      * The extract plan map.
      */
     private final Map<String, SvnExtract> theExtractPlanMap;
@@ -90,14 +84,6 @@ public class DiscoverData
      */
     public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
-    }
-
-    /**
-     * Obtain the git repository.
-     * @return the git repository
-     */
-    public GitRepository getGitRepo() {
-        return theGitRepo;
     }
 
     /**

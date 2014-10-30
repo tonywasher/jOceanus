@@ -44,6 +44,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     MONEYWISEDATA_RANGE("MoneyWiseData.DateRange"),
 
     /**
+     * MoneyWiseData Holdings Map.
+     */
+    MONEYWISEDATA_HOLDINGSMAP("MoneyWiseData.SecurityHoldingsMap"),
+
+    /**
      * MoneyWiseData Date.
      */
     MONEYWISEDATA_FIELD_DATE("MoneyWiseData.Field.Date"),
@@ -267,6 +272,11 @@ public enum MoneyWiseDataResource implements ResourceId {
      * AssetType Portfolio.
      */
     ASSETTYPE_PORTFOLIO(MoneyWiseDataTypeResource.PORTFOLIO_NAME),
+
+    /**
+     * AssetType SecurityHolding.
+     */
+    ASSETTYPE_SECURITYHOLDING("AssetType.SecurityHolding"),
 
     /**
      * AssetDirection To.
@@ -618,6 +628,8 @@ public enum MoneyWiseDataResource implements ResourceId {
                 return ASSETTYPE_LOAN;
             case PORTFOLIO:
                 return ASSETTYPE_PORTFOLIO;
+            case SECURITYHOLDING:
+                return ASSETTYPE_SECURITYHOLDING;
             default:
                 return null;
         }

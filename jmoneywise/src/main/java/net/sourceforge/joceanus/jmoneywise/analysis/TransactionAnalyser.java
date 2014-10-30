@@ -338,8 +338,8 @@ public class TransactionAnalyser
      */
     private void processTransaction(final Transaction pTrans) throws JOceanusException {
         /* Access key details */
-        AssetBase<?> myAccount = pTrans.getAccount();
-        AssetBase<?> myPartner = pTrans.getPartner();
+        AssetBase<?> myAccount = (AssetBase<?>) pTrans.getAccount();
+        AssetBase<?> myPartner = (AssetBase<?>) pTrans.getPartner();
         boolean bFrom = pTrans.getDirection().isFrom();
         AssetBase<?> myDebit = bFrom
                                     ? myPartner

@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
@@ -667,8 +668,8 @@ public class TransactionPanel
     protected void buildGoToMenu() {
         Transaction myItem = getItem();
         if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myItem.getAccount());
-            buildGoToEvent(myItem.getPartner());
+            buildGoToEvent((AssetBase<?>) myItem.getAccount());
+            buildGoToEvent((AssetBase<?>) myItem.getPartner());
             buildGoToEvent(myItem.getCategory());
             Portfolio myPortfolio = myItem.getPortfolio();
             if (myPortfolio != null) {
@@ -731,11 +732,11 @@ public class TransactionPanel
                                                          final boolean pIsAccount,
                                                          final Transaction pTrans) {
         /* Record active item */
-        AssetBase<?> myAccount = pTrans.getAccount();
+        TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCategory = pTrans.getCategory();
-        AssetBase<?> myCurr = pIsAccount
-                                        ? myAccount
-                                        : pTrans.getPartner();
+        TransactionAsset myCurr = pIsAccount
+                                            ? myAccount
+                                            : pTrans.getPartner();
         JMenuItem myActive = null;
         JScrollMenu myMenu = null;
 
@@ -787,7 +788,7 @@ public class TransactionPanel
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        AssetBase<?> myAccount = pTrans.getAccount();
+        TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCurr = pTrans.getCategory();
         JMenuItem myActive = null;
         JMenuItem myItem;

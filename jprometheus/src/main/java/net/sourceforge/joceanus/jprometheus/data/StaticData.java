@@ -384,8 +384,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Make sure that the object is the same enumeration class */
-        if (pThat.getEnumClass() != getEnumClass()) {
-            /* Compare the classes */
+        if (!Difference.isEqual(getEnumClass(), pThat.getEnumClass())) {
+            /* Order the classes by canonical name */
             return getEnumClass().getCanonicalName().compareTo(pThat.getEnumClass().getCanonicalName());
         }
 

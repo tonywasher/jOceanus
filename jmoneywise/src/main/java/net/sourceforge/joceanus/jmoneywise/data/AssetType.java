@@ -62,7 +62,12 @@ public enum AssetType {
     /**
      * Payee.
      */
-    PAYEE(7);
+    PAYEE(7),
+
+    /**
+     * SecurityHolding.
+     */
+    SECURITYHOLDING(8);
 
     /**
      * The String name.
@@ -131,6 +136,7 @@ public enum AssetType {
             case SECURITY:
             case PORTFOLIO:
             case PAYEE:
+            case SECURITYHOLDING:
             default:
                 return false;
         }
@@ -150,6 +156,7 @@ public enum AssetType {
             case PORTFOLIO:
                 return true;
             case PAYEE:
+            case SECURITYHOLDING:
             default:
                 return false;
         }
@@ -166,6 +173,7 @@ public enum AssetType {
             case SECURITY:
             case CASH:
             case LOAN:
+            case SECURITYHOLDING:
                 return true;
             case PORTFOLIO:
             case PAYEE:
@@ -207,6 +215,19 @@ public enum AssetType {
     public boolean isSecurity() {
         switch (this) {
             case SECURITY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether this is a securityHolding.
+     * @return true/false
+     */
+    public boolean isSecurityHolding() {
+        switch (this) {
+            case SECURITYHOLDING:
                 return true;
             default:
                 return false;

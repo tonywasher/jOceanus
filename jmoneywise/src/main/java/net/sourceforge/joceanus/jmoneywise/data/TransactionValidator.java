@@ -45,7 +45,7 @@ public final class TransactionValidator {
      * @param pAccount the account
      * @return true/false
      */
-    public static boolean isValidAccount(final AssetBase<?> pAccount) {
+    public static boolean isValidAccount(final TransactionAsset pAccount) {
         /* Check type of account */
         AssetType myType = pAccount.getAssetType();
         return myType.isBaseAccount();
@@ -57,7 +57,7 @@ public final class TransactionValidator {
      * @param pCategory The category of the event
      * @return true/false
      */
-    public static boolean isValidCategory(final AssetBase<?> pAccount,
+    public static boolean isValidCategory(final TransactionAsset pAccount,
                                           final TransactionCategory pCategory) {
         /* Access details */
         AssetType myType = pAccount.getAssetType();
@@ -149,7 +149,7 @@ public final class TransactionValidator {
      * @param pDirection the direction
      * @return true/false
      */
-    public static boolean isValidDirection(final AssetBase<?> pAccount,
+    public static boolean isValidDirection(final TransactionAsset pAccount,
                                            final TransactionCategory pCategory,
                                            final AssetDirection pDirection) {
         /* TODO relax some of these rules */
@@ -227,9 +227,9 @@ public final class TransactionValidator {
      * @param pPartner the partner
      * @return true/false
      */
-    public static boolean isValidPartner(final AssetBase<?> pAccount,
+    public static boolean isValidPartner(final TransactionAsset pAccount,
                                          final TransactionCategory pCategory,
-                                         final AssetBase<?> pPartner) {
+                                         final TransactionAsset pPartner) {
         /* Access details */
         boolean isRecursive = Difference.isEqual(pAccount, pPartner);
         AssetType myPartnerType = pPartner.getAssetType();

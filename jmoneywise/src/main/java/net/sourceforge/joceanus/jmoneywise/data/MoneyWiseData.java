@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
@@ -107,6 +108,11 @@ public class MoneyWiseData
      */
     public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
+    /**
+     * SecurityHoldings Field Id.
+     */
+    public static final JDataField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -119,6 +125,9 @@ public class MoneyWiseData
         }
         if (FIELD_DEFCURR.equals(pField)) {
             return theDefaultCurrency;
+        }
+        if (FIELD_HOLDINGSMAP.equals(pField)) {
+            return theSecurityHoldings;
         }
 
         /* Handle List fields */
@@ -146,6 +155,11 @@ public class MoneyWiseData
      * Default Currency.
      */
     private AccountCurrency theDefaultCurrency = null;
+
+    /**
+     * SecurityHoldings Map.
+     */
+    private SecurityHoldingMap theSecurityHoldings = null;
 
     /**
      * Obtain DepositCategoryTypes.
@@ -497,6 +511,14 @@ public class MoneyWiseData
      */
     public AccountCurrency getDefaultCurrency() {
         return theDefaultCurrency;
+    }
+
+    /**
+     * Obtain security holdings map.
+     * @return the holdings map
+     */
+    public SecurityHoldingMap getSecurityHoldingsMap() {
+        return theSecurityHoldings;
     }
 
     /**

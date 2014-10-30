@@ -31,7 +31,7 @@ import java.io.InputStreamReader;
  * Help Page class. This class maps between the name of a help page and the HTML that the name represents.
  */
 public class HelpPage
-        implements Comparable<Object> {
+        implements Comparable<HelpPage> {
     /**
      * Byte encoding.
      */
@@ -175,7 +175,7 @@ public class HelpPage
     }
 
     @Override
-    public int compareTo(final Object pThat) {
+    public int compareTo(final HelpPage pThat) {
         int result;
 
         /* Handle the trivial cases */
@@ -186,16 +186,8 @@ public class HelpPage
             return -1;
         }
 
-        /* Make sure that the object is a Help Page */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a HelpPage */
-        HelpPage myThat = (HelpPage) pThat;
-
         /* Compare the name */
-        result = theName.compareTo(myThat.theName);
+        result = getName().compareTo(pThat.getName());
         if (result == 0) {
             return 0;
         } else if (result < 0) {

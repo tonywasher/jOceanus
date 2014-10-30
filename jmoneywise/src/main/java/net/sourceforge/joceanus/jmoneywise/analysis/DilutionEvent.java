@@ -35,10 +35,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -234,7 +234,7 @@ public final class DilutionEvent
     protected DilutionEvent(final int pId,
                             final Transaction pTrans) {
         /* Access the account TODO */
-        AssetBase<?> myAsset = pTrans.getAccount();
+        TransactionAsset myAsset = pTrans.getAccount();
         if (!(myAsset instanceof Security)) {
             myAsset = pTrans.getPartner();
         }

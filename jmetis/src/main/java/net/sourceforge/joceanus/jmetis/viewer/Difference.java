@@ -148,7 +148,7 @@ public enum Difference {
         }
 
         /* Handle class differences */
-        if (pCurr.getClass() != pNew.getClass()) {
+        if (!pCurr.getClass().equals(pNew.getClass())) {
             return DIFFERENT;
         }
 
@@ -183,7 +183,7 @@ public enum Difference {
         }
 
         /* Handle class differences */
-        if (pCurr.getClass() != pNew.getClass()) {
+        if (!pCurr.getClass().equals(pNew.getClass())) {
             return false;
         }
 

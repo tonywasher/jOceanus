@@ -75,7 +75,7 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
     /**
      * Active Owner.
      */
-    private AssetBase<?> theOwner;
+    private TransactionAsset theOwner;
 
     /**
      * Active Payee.
@@ -86,7 +86,7 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
      * Obtain Owner.
      * @return the owner account if it exists
      */
-    public AssetBase<?> getOwner() {
+    public TransactionAsset getOwner() {
         return theOwner;
     }
 
@@ -157,8 +157,8 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
         /* Access parent details */
         T myParent = getParent();
         theDate = myParent.getDate();
-        AssetBase<?> myAccount = myParent.getAccount();
-        AssetBase<?> myPartner = myParent.getPartner();
+        TransactionAsset myAccount = myParent.getAccount();
+        TransactionAsset myPartner = myParent.getPartner();
 
         /* Store owner */
         theOwner = myAccount;
@@ -177,8 +177,8 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
     protected void validateChild(final T pTrans) {
         /* Access details */
         JDateDay myDate = pTrans.getDate();
-        AssetBase<?> myAccount = pTrans.getAccount();
-        AssetBase<?> myPartner = pTrans.getPartner();
+        TransactionAsset myAccount = pTrans.getAccount();
+        TransactionAsset myPartner = pTrans.getPartner();
         boolean isCash = myAccount instanceof Cash;
 
         /* If the date differs */
