@@ -129,7 +129,7 @@ public final class SheetAccount {
             }
 
             /* Resolve Account lists */
-            resolveAccountLists(pData);
+            resolveAccountLists(pLoader, pData);
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
@@ -238,10 +238,12 @@ public final class SheetAccount {
 
     /**
      * Resolve non-payee account lists.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @throws JOceanusException on error
      */
-    private static void resolveAccountLists(final MoneyWiseData pData) throws JOceanusException {
+    private static void resolveAccountLists(final ArchiveLoader pLoader,
+                                            final MoneyWiseData pData) throws JOceanusException {
         /* PostProcess the securities */
         SecurityList mySecurityList = pData.getSecurities();
         SecurityInfoList mySecInfoList = pData.getSecurityInfo();
@@ -271,5 +273,8 @@ public final class SheetAccount {
         PortfolioInfoList myPortInfoList = pData.getPortfolioInfo();
         myPortfolioList.postProcessOnLoad();
         myPortInfoList.postProcessOnLoad();
+
+        /* Resolve Security Holdings */
+        pLoader.resolveSecurityHoldings(pData);
     }
 }

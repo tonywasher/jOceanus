@@ -132,9 +132,9 @@ public class DepositRate
     public String formatObject() {
         /* Access Key Values */
         EncryptedValueSet myValues = getValueSet();
-        Object myDeposit = myValues.getValue(FIELD_DEPOSIT, Object.class);
-        Object myRate = myValues.getValue(FIELD_RATE, Object.class);
-        Object myEndDate = myValues.getValue(FIELD_ENDDATE, Object.class);
+        Object myDeposit = myValues.getValue(FIELD_DEPOSIT);
+        Object myRate = myValues.getValue(FIELD_RATE);
+        Object myEndDate = myValues.getValue(FIELD_ENDDATE);
 
         /* Access formatter */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();

@@ -99,10 +99,6 @@ public class TransactionInfoSet
                 /* Access deposit of object */
                 myValue = getDeposit(pInfoClass);
                 break;
-            case PORTFOLIO:
-                /* Access portfolio of object */
-                myValue = getPortfolio(pInfoClass);
-                break;
             case TRANSTAG:
                 /* Access InfoSetList */
                 myValue = getInfoLinkSet(pInfoClass);
@@ -180,24 +176,6 @@ public class TransactionInfoSet
     }
 
     /**
-     * Obtain the portfolio for the infoClass.
-     * @param pInfoClass the Info Class
-     * @return the portfolio
-     */
-    public Portfolio getPortfolio(final TransactionInfoClass pInfoClass) {
-        /* Access existing entry */
-        TransactionInfo myValue = getInfo(pInfoClass);
-
-        /* If we have no entry, return null */
-        if (myValue == null) {
-            return null;
-        }
-
-        /* Return the portfolio */
-        return myValue.getPortfolio();
-    }
-
-    /**
      * Determine if a field is required.
      * @param pField the infoSet field
      * @return the status
@@ -257,7 +235,7 @@ public class TransactionInfoSet
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
-                return isTaxCreditClassRequired(myAccount, getPortfolio(TransactionInfoClass.PORTFOLIO), myClass);
+                return isTaxCreditClassRequired(myAccount, myClass);
 
                 /* Handle debit units separately */
             case DEBITUNITS:
@@ -278,19 +256,14 @@ public class TransactionInfoSet
                 /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
                 return ((myClass == TransactionCategoryClass.TRANSFER)
-                        && (myAccount instanceof Security)
-                        && (((Security) myAccount).isSecurityClass(SecurityTypeClass.LIFEBOND)))
-                                                                                                ? JDataFieldRequired.MUSTEXIST
-                                                                                                : JDataFieldRequired.NOTALLOWED;
+                        && (myAccount instanceof SecurityHolding)
+                        && (((SecurityHolding) myAccount).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)))
+                                                                                                                     ? JDataFieldRequired.MUSTEXIST
+                                                                                                                     : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle ThirdParty separately */
             case THIRDPARTY:
                 return isThirdPartyClassRequired(myTransaction, myClass);
-
-            case PORTFOLIO:
-                return ((myAccount instanceof Security) || (myPartner instanceof Security))
-                                                                                           ? JDataFieldRequired.MUSTEXIST
-                                                                                           : JDataFieldRequired.NOTALLOWED;
 
             case PENSION:
             case CREDITAMOUNT:
@@ -322,12 +295,10 @@ public class TransactionInfoSet
     /**
      * Determine if a TaxCredit infoSet class is required.
      * @param pDebit the debit account
-     * @param pPortfolio the portfolio
      * @param pClass the category class
      * @return the status
      */
     protected static JDataFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
-                                                                 final Portfolio pPortfolio,
                                                                  final TransactionCategoryClass pClass) {
         /* Switch on class */
         switch (pClass) {
@@ -346,19 +317,20 @@ public class TransactionInfoSet
                                                                          ? JDataFieldRequired.NOTALLOWED
                                                                          : JDataFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                if (!(pDebit instanceof Security)) {
-                    return JDataFieldRequired.MUSTEXIST;
+                if (!(pDebit instanceof SecurityHolding)) {
+                    return JDataFieldRequired.NOTALLOWED;
                 }
 
                 /* Check portfolio tax status */
-                return ((pPortfolio != null) && !pPortfolio.isTaxFree())
-                                                                        ? JDataFieldRequired.MUSTEXIST
-                                                                        : JDataFieldRequired.NOTALLOWED;
+                Portfolio myPortfolio = ((SecurityHolding) pDebit).getPortfolio();
+                return myPortfolio.isTaxFree()
+                                              ? JDataFieldRequired.NOTALLOWED
+                                              : JDataFieldRequired.MUSTEXIST;
             case TRANSFER:
-                return (pDebit instanceof Security)
-                       && (((Security) pDebit).isSecurityClass(SecurityTypeClass.LIFEBOND))
-                                                                                           ? JDataFieldRequired.MUSTEXIST
-                                                                                           : JDataFieldRequired.NOTALLOWED;
+                return (pDebit instanceof SecurityHolding)
+                       && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))
+                                                                                                                ? JDataFieldRequired.MUSTEXIST
+                                                                                                                : JDataFieldRequired.NOTALLOWED;
             case LOYALTYBONUS:
                 return (pDebit instanceof Portfolio) && (!((Portfolio) pDebit).isTaxFree())
                                                                                            ? JDataFieldRequired.MUSTEXIST
@@ -376,8 +348,8 @@ public class TransactionInfoSet
      */
     protected static JDataFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
                                                                   final TransactionCategoryClass pClass) {
-        /* Debit Asset must be security */
-        if (!(pDebit instanceof Security)) {
+        /* Debit Asset must be security holding */
+        if (!(pDebit instanceof SecurityHolding)) {
             return JDataFieldRequired.NOTALLOWED;
         }
         switch (pClass) {
@@ -398,8 +370,8 @@ public class TransactionInfoSet
      */
     protected static JDataFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
                                                                    final TransactionCategoryClass pClass) {
-        /* Credit Asset must be security */
-        if (!(pCredit instanceof Security)) {
+        /* Credit Asset must be security holding */
+        if (!(pCredit instanceof SecurityHolding)) {
             return JDataFieldRequired.NOTALLOWED;
         }
         switch (pClass) {
@@ -550,7 +522,6 @@ public class TransactionInfoSet
                     }
                     break;
                 case THIRDPARTY:
-                case PORTFOLIO:
                 case CREDITAMOUNT:
                 case PENSION:
                 case TRANSTAG:

@@ -374,8 +374,8 @@ public final class AssetPair
             }
 
             /* Look up the partnerType and direction */
-            AssetDirection myDirection = AssetDirection.fromName(pName.substring(0, iIndex));
-            AssetType myPartner = checkName(pName.substring(iIndex + 1));
+            AssetDirection myDirection = AssetDirection.fromName(myRemainder.substring(0, iIndex));
+            AssetType myPartner = checkName(myRemainder.substring(iIndex + 1));
             if ((myAccount == null)
                 || (myPartner == null)
                 || (myDirection == null)) {

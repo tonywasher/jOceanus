@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
@@ -235,13 +236,13 @@ public final class DilutionEvent
                             final Transaction pTrans) {
         /* Access the account TODO */
         TransactionAsset myAsset = pTrans.getAccount();
-        if (!(myAsset instanceof Security)) {
+        if (!(myAsset instanceof SecurityHolding)) {
             myAsset = pTrans.getPartner();
         }
 
         /* Store the values */
         theId = pId;
-        theSecurity = Security.class.cast(myAsset);
+        theSecurity = SecurityHolding.class.cast(myAsset).getSecurity();
         theDate = pTrans.getDate();
         theDilution = pTrans.getDilution();
         theTransaction = pTrans;

@@ -150,13 +150,13 @@ public enum AssetType {
         switch (this) {
             case DEPOSIT:
             case AUTOEXPENSE:
-            case SECURITY:
             case CASH:
             case LOAN:
             case PORTFOLIO:
-                return true;
-            case PAYEE:
             case SECURITYHOLDING:
+                return true;
+            case SECURITY:
+            case PAYEE:
             default:
                 return false;
         }

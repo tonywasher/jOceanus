@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 
 /**
  * Transaction group type.
@@ -82,7 +81,7 @@ public class TransactionGroup
 
                 /* else check that it is the same portfolio */
             } else if (!thePortfolio.equals(myPortfolio)) {
-                pTrans.addError(ERROR_PORTFOLIO, TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO));
+                pTrans.addError(ERROR_PORTFOLIO, Transaction.FIELD_PARENT);
             }
         }
     }

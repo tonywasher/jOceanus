@@ -120,12 +120,7 @@ public enum TransactionInfoClass implements DataInfoClass {
     /**
      * TransactionTag.
      */
-    TRANSTAG(18, 17, DataType.LINKSET),
-
-    /**
-     * Portfolio.
-     */
-    PORTFOLIO(19, 18, DataType.LINK);
+    TRANSTAG(18, 17, DataType.LINKSET);
 
     /**
      * The String name.

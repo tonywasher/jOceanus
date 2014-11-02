@@ -192,6 +192,34 @@ public class StockOption
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access Key Values */
+        EncryptedValueSet myValues = getValueSet();
+        Object myPortfolio = myValues.getValue(FIELD_PORTFOLIO);
+        Object mySecurity = myValues.getValue(FIELD_SECURITY);
+        Object myPrice = myValues.getValue(FIELD_PRICE);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Create string builder */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myFormatter.formatObject(myPortfolio));
+        myBuilder.append(":");
+        myBuilder.append(myFormatter.formatObject(mySecurity));
+        myBuilder.append('@');
+        myBuilder.append(myFormatter.formatObject(myPrice));
+
+        /* return it */
+        return myBuilder.toString();
+    }
+
+    @Override
     public StockOptionInfoSet getInfoSet() {
         return theInfoSet;
     }

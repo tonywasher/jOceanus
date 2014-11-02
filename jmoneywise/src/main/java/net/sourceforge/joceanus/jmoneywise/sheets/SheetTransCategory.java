@@ -191,7 +191,7 @@ public class SheetTransCategory
                 TransactionCategory myCategory = myList.addValuesItem(myValues);
 
                 /* Declare the category */
-                pLoader.declareAsset(myCategory);
+                pLoader.declareCategory(myCategory);
 
                 /* Report the progress */
                 myCount++;

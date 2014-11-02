@@ -117,9 +117,9 @@ public class StockOptionVest
     public String formatObject() {
         /* Access Key Values */
         EncryptedValueSet myValues = getValueSet();
-        Object myOption = myValues.getValue(FIELD_OPTION, Object.class);
-        Object myDate = myValues.getValue(FIELD_DATE, Object.class);
-        Object myUnits = myValues.getValue(FIELD_UNITS, Object.class);
+        Object myOption = myValues.getValue(FIELD_OPTION);
+        Object myDate = myValues.getValue(FIELD_DATE);
+        Object myUnits = myValues.getValue(FIELD_UNITS);
 
         /* Access formatter */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();

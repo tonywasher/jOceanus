@@ -162,10 +162,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             return true;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
-            return !isChild();
+            return !isChild()
+                   || !Difference.isEqual(getAccount(), getParent().getAccount());
         }
         if (FIELD_PARTNER.equals(pField)) {
-            return true;
+            return !isChild()
+                   || !Difference.isEqual(getPartner(), getParent().getPartner());
         }
         if (FIELD_AMOUNT.equals(pField)) {
             return true;
@@ -187,14 +189,14 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public String formatObject() {
         /* Access Key Values */
         EncryptedValueSet myValues = getValueSet();
-        Object myAccount = myValues.getValue(FIELD_ACCOUNT, Object.class);
-        Object myPartner = myValues.getValue(FIELD_PARTNER, Object.class);
-        AssetPair myPair = myValues.getValue(FIELD_PAIR, AssetPair.class);
-        AssetDirection myDir = myPair == null
-                                             ? null
-                                             : myPair.getDirection();
-        Object myCategory = myValues.getValue(FIELD_CATEGORY, Object.class);
-        Object myAmount = myValues.getValue(FIELD_AMOUNT, Object.class);
+        Object myAccount = myValues.getValue(FIELD_ACCOUNT);
+        Object myPartner = myValues.getValue(FIELD_PARTNER);
+        Object myPair = myValues.getValue(FIELD_PAIR);
+        AssetDirection myDir = myPair instanceof AssetPair
+                                                          ? ((AssetPair) myPair).getDirection()
+                                                          : null;
+        Object myCategory = myValues.getValue(FIELD_CATEGORY);
+        Object myAmount = myValues.getValue(FIELD_AMOUNT);
 
         /* Access formatter */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();
@@ -229,7 +231,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain AssetPair.
      * @return the pair
      */
-    protected AssetPair getAssetPair() {
+    public AssetPair getAssetPair() {
         return getAssetPair(getValueSet());
     }
 
@@ -715,6 +717,27 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     @SuppressWarnings("unchecked")
     public TransactionBaseList<T> getList() {
         return (TransactionBaseList<T>) super.getList();
+    }
+
+    /**
+     * Obtain portfolio for transaction
+     * @return the portfolio (or null)
+     */
+    public Portfolio getPortfolio() {
+        /* Access account portfolio if it is a security holding */
+        TransactionAsset myAsset = getAccount();
+        if (myAsset instanceof SecurityHolding) {
+            return ((SecurityHolding) myAsset).getPortfolio();
+        }
+
+        /* Access partner portfolio if it is a security holding */
+        myAsset = getPartner();
+        if (myAsset instanceof SecurityHolding) {
+            return ((SecurityHolding) myAsset).getPortfolio();
+        }
+
+        /* No portfolio */
+        return null;
     }
 
     /**

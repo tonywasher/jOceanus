@@ -124,9 +124,9 @@ public class SecurityPrice
     public String formatObject() {
         /* Access Key Values */
         EncryptedValueSet myValues = getValueSet();
-        Object mySecurity = myValues.getValue(FIELD_SECURITY, Object.class);
-        Object myDate = myValues.getValue(FIELD_DATE, Object.class);
-        Object myPrice = myValues.getValue(FIELD_PRICE, Object.class);
+        Object mySecurity = myValues.getValue(FIELD_SECURITY);
+        Object myDate = myValues.getValue(FIELD_DATE);
+        Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();

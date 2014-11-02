@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
@@ -274,9 +274,9 @@ public class QIFBuilder {
             processCashRecovery(pPayee, (Cash) pCredit, pTrans);
 
             /* If this is a income to a security */
-        } else if (pCredit instanceof Security) {
+        } else if (pCredit instanceof SecurityHolding) {
             /* process as income to security */
-            thePortBuilder.processIncomeToSecurity(pPayee, (Security) pCredit, pTrans);
+            thePortBuilder.processIncomeToSecurity(pPayee, (SecurityHolding) pCredit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -305,9 +305,9 @@ public class QIFBuilder {
             processCashPayment(pPayee, (Cash) pDebit, pTrans);
 
             /* If this is a income to a security */
-        } else if (pDebit instanceof Security) {
+        } else if (pDebit instanceof SecurityHolding) {
             /* process as expense from security */
-            thePortBuilder.processExpenseFromSecurity(pPayee, (Security) pDebit, pTrans);
+            thePortBuilder.processExpenseFromSecurity(pPayee, (SecurityHolding) pDebit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -350,19 +350,19 @@ public class QIFBuilder {
             processCashReceipt((Cash) pDebit, pCredit, pTrans);
 
             /* If this is a transfer from a security */
-        } else if (pDebit instanceof Security) {
+        } else if (pDebit instanceof SecurityHolding) {
             /* Handle transfer between securities */
-            if (pCredit instanceof Security) {
+            if (pCredit instanceof SecurityHolding) {
                 /* process as transfer between securities */
-                thePortBuilder.processTransferBetweenSecurities((Security) pDebit, (Security) pCredit, pTrans);
+                thePortBuilder.processTransferBetweenSecurities((SecurityHolding) pDebit, (SecurityHolding) pCredit, pTrans);
             } else {
                 /* process as transfer from security */
-                thePortBuilder.processTransferFromSecurity((Security) pDebit, pCredit, pTrans);
+                thePortBuilder.processTransferFromSecurity((SecurityHolding) pDebit, pCredit, pTrans);
             }
             /* If this is a transfer to a security */
-        } else if (pCredit instanceof Security) {
+        } else if (pCredit instanceof SecurityHolding) {
             /* process as transfer to security */
-            thePortBuilder.processTransferToSecurity((Security) pCredit, pDebit, pTrans);
+            thePortBuilder.processTransferToSecurity((SecurityHolding) pCredit, pDebit, pTrans);
 
         } else {
             /* Switch on category class */

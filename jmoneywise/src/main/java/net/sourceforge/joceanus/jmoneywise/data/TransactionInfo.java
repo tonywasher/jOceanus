@@ -87,14 +87,6 @@ public class TransactionInfo
     }
 
     /**
-     * Obtain Portfolio.
-     * @return the Portfolio
-     */
-    public Portfolio getPortfolio() {
-        return getPortfolio(getValueSet());
-    }
-
-    /**
      * Obtain Transaction Tag.
      * @return the Transaction Tag
      */
@@ -120,17 +112,6 @@ public class TransactionInfo
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, Deposit.class);
-    }
-
-    /**
-     * Obtain Linked Portfolio.
-     * @param pValueSet the valueSet
-     * @return the Portfolio
-     */
-    public static Portfolio getPortfolio(final ValueSet pValueSet) {
-        return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, Portfolio.class);
     }
 
     /**
@@ -324,12 +305,6 @@ public class TransactionInfo
                         setValueValue(getDeposit().getId());
                     }
                     break;
-                case PORTFOLIO:
-                    resolveDataLink(FIELD_LINK, myData.getPortfolios());
-                    if (myLinkId == null) {
-                        setValueValue(getPortfolio().getId());
-                    }
-                    break;
                 case TRANSTAG:
                     resolveDataLink(FIELD_LINK, myData.getTransactionTags());
                     if (myLinkId == null) {
@@ -381,9 +356,6 @@ public class TransactionInfo
         switch (getInfoClass()) {
             case THIRDPARTY:
                 getDeposit().touchItem(getOwner());
-                break;
-            case PORTFOLIO:
-                getPortfolio().touchItem(getOwner());
                 break;
             case TRANSTAG:
                 getTransactionTag().touchItem(getOwner());

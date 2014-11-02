@@ -85,8 +85,8 @@ public final class TransactionValidator {
                 return myType.isDeposit();
 
             case DIVIDEND:
-                /* Account must be Security */
-                return myType.isSecurity();
+                /* Account must be SecurityHolding */
+                return myType.isSecurityHolding();
 
             case CASHBACK:
                 /* Account must be creditCard */
@@ -100,8 +100,8 @@ public final class TransactionValidator {
             case RENTALINCOME:
             case ROOMRENTALINCOME:
                 /* Account must be property */
-                return (pAccount instanceof Security)
-                       && ((Security) pAccount).isSecurityClass(SecurityTypeClass.PROPERTY);
+                return (pAccount instanceof SecurityHolding)
+                       && ((SecurityHolding) pAccount).getSecurity().isSecurityClass(SecurityTypeClass.PROPERTY);
 
             case STOCKADJUST:
                 /* Account must be capital */
@@ -130,7 +130,7 @@ public final class TransactionValidator {
                 return myType.isValued() || myType.isAutoExpense();
 
             case PORTFOLIOXFER:
-                return (pAccount instanceof Security)
+                return (pAccount instanceof SecurityHolding)
                        || (pAccount instanceof Portfolio);
 
             case TRANSFER:

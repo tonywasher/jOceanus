@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -50,15 +51,18 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -73,7 +77,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
@@ -442,7 +445,7 @@ public class ArchiveLoader {
      * @param pCategory the category to declare.
      * @throws JOceanusException on error
      */
-    protected void declareAsset(final TransactionCategory pCategory) throws JOceanusException {
+    protected void declareCategory(final TransactionCategory pCategory) throws JOceanusException {
         /* Access the asset name */
         String myName = pCategory.getName();
 
@@ -472,31 +475,7 @@ public class ArchiveLoader {
         }
 
         /* Store the asset */
-        theNameMap.put(myName, new SecurityHolding(pSecurity, pPortfolio));
-    }
-
-    /**
-     * Declare security holding.
-     * @param pName the security holding name
-     * @param pSecurity the security.
-     * @param pPortfolio the portfolio
-     * @throws JOceanusException on error
-     */
-    protected void declareSecurityHolding(final String pName,
-                                          final Security pSecurity,
-                                          final String pPortfolio) throws JOceanusException {
-        /* Check for name already exists */
-        if (theNameMap.get(pName) != null) {
-            throw new JPrometheusDataException(pName, DataItem.ERROR_DUPLICATE);
-        }
-
-        /* Handle invalid security */
-        if (pSecurity == null) {
-            throw new JPrometheusDataException(pName, "Aliased security not found");
-        }
-
-        /* Store the asset */
-        theNameMap.put(pName, new SecurityHolding(pSecurity, pPortfolio));
+        theNameMap.put(myName, new SecurityHoldingDef(pSecurity, pPortfolio));
     }
 
     /**
@@ -511,13 +490,42 @@ public class ArchiveLoader {
                                        final String pPortfolio) throws JOceanusException {
         /* Check for name already exists */
         Object myHolding = theNameMap.get(pAlias);
-        if (!(myHolding instanceof SecurityHolding)) {
+        if (!(myHolding instanceof SecurityHoldingDef)) {
             throw new JPrometheusDataException(pAlias, "Aliased security not found");
         }
 
         /* Store the asset */
-        SecurityHolding myAliased = (SecurityHolding) myHolding;
-        theNameMap.put(pName, new SecurityHolding(myAliased.getSecurity(), pPortfolio));
+        SecurityHoldingDef myAliased = (SecurityHoldingDef) myHolding;
+        theNameMap.put(pName, new SecurityHoldingDef(myAliased.getSecurity(), pPortfolio));
+    }
+
+    /**
+     * Resolve security holdings.
+     * @param pData the dataSet
+     */
+    protected void resolveSecurityHoldings(final MoneyWiseData pData) {
+        /* Access securityHoldingsMap and Portfolio list */
+        SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+        PortfolioList myPortfolios = pData.getPortfolios();
+
+        /* Loop through the name map */
+        Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<String, Object> myEntry = myIterator.next();
+
+            /* If this is a security holding definition */
+            Object myValue = myEntry.getValue();
+            if (myValue instanceof SecurityHoldingDef) {
+                SecurityHoldingDef myDef = (SecurityHoldingDef) myValue;
+
+                /* Access security holding */
+                Portfolio myPortfolio = myPortfolios.findItemByName(myDef.getPortfolio());
+                SecurityHolding myHolding = myMap.declareHolding(myPortfolio, myDef.getSecurity());
+
+                /* Replace definition in map */
+                myEntry.setValue(myHolding);
+            }
+        }
     }
 
     /**
@@ -575,9 +583,9 @@ public class ArchiveLoader {
     }
 
     /**
-     * Security Holding.
+     * Security Holding Definition.
      */
-    public static final class SecurityHolding {
+    public static final class SecurityHoldingDef {
         /**
          * Security.
          */
@@ -609,8 +617,8 @@ public class ArchiveLoader {
          * @param pSecurity the security
          * @param pPortfolio the portfolio
          */
-        private SecurityHolding(final Security pSecurity,
-                                final String pPortfolio) {
+        private SecurityHoldingDef(final Security pSecurity,
+                                   final String pPortfolio) {
             /* Store parameters */
             theSecurity = pSecurity;
             thePortfolio = pPortfolio;
@@ -625,11 +633,6 @@ public class ArchiveLoader {
          * TransactionList.
          */
         private final TransactionList theList;
-
-        /**
-         * TransactionInfoList.
-         */
-        private final TransactionInfoList theInfoList;
 
         /**
          * AssetPair manager.
@@ -674,12 +677,12 @@ public class ArchiveLoader {
         /**
          * Resolved Account.
          */
-        private AssetBase<?> theAccount;
+        private TransactionAsset theAccount;
 
         /**
          * Resolved Partner.
          */
-        private AssetBase<?> thePartner;
+        private TransactionAsset thePartner;
 
         /**
          * Resolved Transaction Category.
@@ -689,7 +692,7 @@ public class ArchiveLoader {
         /**
          * Resolved Portfolio.
          */
-        private String thePortfolio;
+        private Portfolio thePortfolio;
 
         /**
          * Constructor.
@@ -698,7 +701,6 @@ public class ArchiveLoader {
         protected ParentCache(final MoneyWiseData pData) {
             /* Store lists */
             theList = pData.getTransactions();
-            theInfoList = pData.getTransactionInfo();
             theAssetPairManager = theList.getAssetPairManager();
         }
 
@@ -733,10 +735,10 @@ public class ArchiveLoader {
             }
 
             /* If we have a portfolio */
-            if (thePortfolio != null) {
-                /* Add the item */
-                theInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PORTFOLIO, thePortfolio);
-            }
+            // if (thePortfolio != null) {
+            /* Add the item */
+            // theInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PORTFOLIO, thePortfolio);
+            // }
 
             /* return the new transaction */
             return myTrans;
@@ -832,14 +834,9 @@ public class ArchiveLoader {
             boolean isDebitHolding = theLastDebit instanceof SecurityHolding;
             boolean isCreditHolding = theLastCredit instanceof SecurityHolding;
 
-            /* Resolve debit */
-            AssetBase<?> myDebit = isDebitHolding
-                                                 ? ((SecurityHolding) theLastDebit).getSecurity()
-                                                 : AssetBase.class.cast(theLastDebit);
-            /* Resolve credit */
-            AssetBase<?> myCredit = isCreditHolding
-                                                   ? ((SecurityHolding) theLastCredit).getSecurity()
-                                                   : AssetBase.class.cast(theLastCredit);
+            /* Resolve debit and credit */
+            TransactionAsset myDebit = TransactionAsset.class.cast(theLastDebit);
+            TransactionAsset myCredit = TransactionAsset.class.cast(theLastCredit);
 
             /* Access asset types */
             AssetType myDebitType = myDebit.getAssetType();
@@ -922,7 +919,7 @@ public class ArchiveLoader {
             if (isDebitHolding) {
                 thePortfolio = ((SecurityHolding) theLastDebit).getPortfolio();
                 if (isCreditHolding) {
-                    String myPortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
+                    Portfolio myPortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
                     if (!thePortfolio.equals(myPortfolio)) {
                         throw new JMoneyWiseDataException(theDate, "Inconsistent portfolios");
                     }

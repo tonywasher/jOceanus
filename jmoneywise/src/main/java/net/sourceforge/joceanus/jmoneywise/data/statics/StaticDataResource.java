@@ -939,12 +939,7 @@ public enum StaticDataResource implements ResourceId {
     /**
      * TransInfo TransactionTag.
      */
-    TRANSINFO_TRANSTAG(MoneyWiseDataTypeResource.TRANSTAG_NAME),
-
-    /**
-     * TransInfo Portfolio.
-     */
-    TRANSINFO_PORTFOLIO(MoneyWiseDataTypeResource.PORTFOLIO_NAME);
+    TRANSINFO_TRANSTAG(MoneyWiseDataTypeResource.TRANSTAG_NAME);
 
     /**
      * The Resource Builder.
@@ -1525,8 +1520,6 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSINFO_OPTIONS;
             case TRANSTAG:
                 return TRANSINFO_TRANSTAG;
-            case PORTFOLIO:
-                return TRANSINFO_PORTFOLIO;
             default:
                 return null;
         }

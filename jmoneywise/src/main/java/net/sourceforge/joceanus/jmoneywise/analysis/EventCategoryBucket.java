@@ -33,11 +33,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
@@ -1090,15 +1090,15 @@ public final class EventCategoryBucket
         /**
          * Adjust for Standard Gains.
          * @param pTrans the transaction
-         * @param pSource the source security
+         * @param pSource the source security holding
          * @param pGains the gains
          */
         protected void adjustStandardGain(final Transaction pTrans,
-                                          final AssetBase<?> pSource,
+                                          final SecurityHolding pSource,
                                           final JMoney pGains) {
             /* Access security and portfolio */
-            Security mySecurity = Security.class.cast(pSource);
-            Portfolio myPortfolio = pTrans.getPortfolio();
+            Security mySecurity = pSource.getSecurity();
+            Portfolio myPortfolio = pSource.getPortfolio();
 
             /* If this is subject to capital gains */
             if (mySecurity.getSecurityTypeClass().isCapitalGains()) {

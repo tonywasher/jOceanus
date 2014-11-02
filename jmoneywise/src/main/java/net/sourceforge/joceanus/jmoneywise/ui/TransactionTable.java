@@ -58,7 +58,6 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
@@ -191,11 +190,6 @@ public class TransactionTable
      * QualifyYears Column Title.
      */
     private static final String TITLE_QUALYEARS = MoneyWiseUIResource.STATEMENT_COLUMN_YEARS.getValue();
-
-    /**
-     * Portfolio Column Title.
-     */
-    private static final String TITLE_PORTFOLIO = TransactionInfoClass.PORTFOLIO.toString();
 
     /**
      * ThirdParty Column Title.
@@ -851,44 +845,39 @@ public class TransactionTable
         private static final int COLUMN_DILUTION = 15;
 
         /**
-         * Portfolio column id.
-         */
-        private static final int COLUMN_PORTFOLIO = 16;
-
-        /**
          * QualifyYears column id.
          */
-        private static final int COLUMN_QUALYEARS = 17;
+        private static final int COLUMN_QUALYEARS = 16;
 
         /**
          * ThirdParty column id.
          */
-        private static final int COLUMN_3RDPARTY = 18;
+        private static final int COLUMN_3RDPARTY = 17;
 
         /**
          * TaxCredit column id.
          */
-        private static final int COLUMN_TAXCREDIT = 19;
+        private static final int COLUMN_TAXCREDIT = 18;
 
         /**
          * NatInsurance column id.
          */
-        private static final int COLUMN_NATINS = 20;
+        private static final int COLUMN_NATINS = 19;
 
         /**
          * DeemedBenefit column id.
          */
-        private static final int COLUMN_BENEFIT = 21;
+        private static final int COLUMN_BENEFIT = 20;
 
         /**
          * CharityDonation column id.
          */
-        private static final int COLUMN_DONATION = 22;
+        private static final int COLUMN_DONATION = 21;
 
         /**
          * Action column id.
          */
-        private static final int COLUMN_ACTION = 23;
+        private static final int COLUMN_ACTION = 22;
 
         /**
          * Date Renderer.
@@ -981,11 +970,6 @@ public class TransactionTable
         private final ScrollButtonCellEditor<TransactionCategory> theCategoryEditor;
 
         /**
-         * Portfolio ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<Portfolio> thePortfolioEditor;
-
-        /**
          * Deposit ScrollButton Menu Editor.
          */
         private final ScrollButtonCellEditor<Deposit> theDepositEditor;
@@ -1044,11 +1028,6 @@ public class TransactionTable
          * Dilution column.
          */
         private final JDataTableColumn theDilutionColumn;
-
-        /**
-         * Portfolio column.
-         */
-        private final JDataTableColumn thePortfolioColumn;
 
         /**
          * QualifyYears column.
@@ -1111,7 +1090,6 @@ public class TransactionTable
             theDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
             theAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(Object.class);
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
-            thePortfolioEditor = theFieldMgr.allocateScrollButtonCellEditor(Portfolio.class);
             theDepositEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
@@ -1153,8 +1131,6 @@ public class TransactionTable
             declareColumn(theDebUnitsColumn);
             theDilutionColumn = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, theDilutionEditor);
             declareColumn(theDilutionColumn);
-            thePortfolioColumn = new JDataTableColumn(COLUMN_PORTFOLIO, WIDTH_NAME, theStringRenderer, thePortfolioEditor);
-            declareColumn(thePortfolioColumn);
             theQualYearsColumn = new JDataTableColumn(COLUMN_QUALYEARS, WIDTH_INT << 1, theIntegerRenderer, theIntegerEditor);
             declareColumn(theQualYearsColumn);
             the3rdPartyColumn = new JDataTableColumn(COLUMN_3RDPARTY, WIDTH_NAME, theStringRenderer, theDepositEditor);
@@ -1227,8 +1203,6 @@ public class TransactionTable
                     return TITLE_DEBUNITS;
                 case COLUMN_DILUTION:
                     return TITLE_DILUTION;
-                case COLUMN_PORTFOLIO:
-                    return TITLE_PORTFOLIO;
                 case COLUMN_QUALYEARS:
                     return TITLE_QUALYEARS;
                 case COLUMN_3RDPARTY:
@@ -1284,8 +1258,6 @@ public class TransactionTable
                     return pTrans.getDebitUnits();
                 case COLUMN_DILUTION:
                     return pTrans.getDilution();
-                case COLUMN_PORTFOLIO:
-                    return pTrans.getPortfolio();
                 case COLUMN_QUALYEARS:
                     return pTrans.getYears();
                 case COLUMN_3RDPARTY:
@@ -1379,9 +1351,6 @@ public class TransactionTable
                 case COLUMN_DILUTION:
                     pItem.setDilution((JDilution) pValue);
                     break;
-                case COLUMN_PORTFOLIO:
-                    pItem.setPortfolio((Portfolio) pValue);
-                    break;
                 case COLUMN_QUALYEARS:
                     pItem.setYears((Integer) pValue);
                     break;
@@ -1451,8 +1420,6 @@ public class TransactionTable
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEBITUNITS);
                 case COLUMN_DILUTION:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
-                case COLUMN_PORTFOLIO:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PORTFOLIO);
                 case COLUMN_3RDPARTY:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.THIRDPARTY);
                 case COLUMN_QUALYEARS:
@@ -1494,8 +1461,6 @@ public class TransactionTable
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS);
                 case COLUMN_DILUTION:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION);
-                case COLUMN_PORTFOLIO:
-                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO);
                 case COLUMN_QUALYEARS:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS);
                 case COLUMN_3RDPARTY:
@@ -1532,7 +1497,6 @@ public class TransactionTable
             hideColumn(theDonationColumn);
             hideColumn(theCredUnitsColumn);
             hideColumn(theDebUnitsColumn);
-            hideColumn(thePortfolioColumn);
             hideColumn(theDilutionColumn);
             hideColumn(the3rdPartyColumn);
             hideColumn(theQualYearsColumn);
@@ -1581,13 +1545,11 @@ public class TransactionTable
                     revealColumn(theAmountColumn);
                     revealColumn(theTaxCreditColumn);
                     revealColumn(theCredUnitsColumn);
-                    revealColumn(thePortfolioColumn);
                     break;
                 case SECURITY:
                     revealColumn(theAmountColumn);
                     revealColumn(theCredUnitsColumn);
                     revealColumn(theDebUnitsColumn);
-                    revealColumn(thePortfolioColumn);
                     revealColumn(theDilutionColumn);
                     revealColumn(the3rdPartyColumn);
                     revealColumn(theQualYearsColumn);
@@ -1605,7 +1567,6 @@ public class TransactionTable
                     revealColumn(theDonationColumn);
                     revealColumn(theCredUnitsColumn);
                     revealColumn(theDebUnitsColumn);
-                    revealColumn(thePortfolioColumn);
                     revealColumn(theDilutionColumn);
                     revealColumn(the3rdPartyColumn);
                     revealColumn(theQualYearsColumn);
@@ -1633,7 +1594,6 @@ public class TransactionTable
             private EditorListener() {
                 theCategoryEditor.addChangeListener(this);
                 theAccountEditor.addChangeListener(this);
-                thePortfolioEditor.addChangeListener(this);
                 theDepositEditor.addChangeListener(this);
                 theTagEditor.addChangeListener(this);
             }
@@ -1646,8 +1606,6 @@ public class TransactionTable
                     buildCategoryMenu();
                 } else if (theAccountEditor.equals(o)) {
                     buildAccountMenu();
-                } else if (thePortfolioEditor.equals(o)) {
-                    buildPortfolioMenu();
                 } else if (theDepositEditor.equals(o)) {
                     buildThirdPartyMenu();
                 } else if (theTagEditor.equals(o)) {
@@ -1690,21 +1648,6 @@ public class TransactionTable
 
                 /* Build the menu */
                 theActiveTrans.buildCategoryMenu(myBuilder, myTrans);
-            }
-
-            /**
-             * Build the popUpMenu for portfolios.
-             */
-            private void buildPortfolioMenu() {
-                /* Access details */
-                JScrollMenuBuilder<Portfolio> myBuilder = thePortfolioEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = thePortfolioEditor.getPoint();
-                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
-
-                /* Build the menu */
-                theActiveTrans.buildPortfolioMenu(myBuilder, myTrans);
             }
 
             /**

@@ -28,6 +28,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
  * Portfolio/Security combination.
  */
 public final class SecurityHolding
-        implements JDataContents, TransactionAsset {
+        implements JDataContents, TransactionAsset, Comparable<SecurityHolding> {
     /**
      * Name separator.
      */
@@ -285,6 +286,47 @@ public final class SecurityHolding
         theSecurity.touchItem(pSource);
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+        if (!(pThat instanceof SecurityHolding)) {
+            return false;
+        }
+
+        /* Compare the Portfolios */
+        SecurityHolding myThat = (SecurityHolding) pThat;
+        if (!getPortfolio().equals(myThat.getPortfolio())) {
+            return false;
+        }
+
+        /* Compare securities */
+        return getSecurity().equals(myThat.getSecurity());
+    }
+
+    @Override
+    public int hashCode() {
+        int myHash = JDataManager.HASH_PRIME * getPortfolio().hashCode();
+        return myHash + getSecurity().hashCode();
+    }
+
+    @Override
+    public int compareTo(final SecurityHolding pThat) {
+        /* Compare portfolios */
+        int myResult = getPortfolio().compareTo(pThat.getPortfolio());
+        if (myResult != 0) {
+            return myResult;
+        }
+
+        /* Compare securities */
+        return getSecurity().compareTo(pThat.getSecurity());
+    }
+
     /**
      * SecurityHolding Map.
      */
@@ -340,6 +382,32 @@ public final class SecurityHolding
             return myMap == null
                                 ? null
                                 : myMap.getHoldingForSecurity(mySecName);
+        }
+
+        /**
+         * Declare holding.
+         * @param pPortfolio the portfolio
+         * @param pSecurity the security
+         * @return the holding
+         */
+        public SecurityHolding declareHolding(final Portfolio pPortfolio,
+                                              final Security pSecurity) {
+            /* Access the portfolio map */
+            PortfolioHoldingsMap myMap = getMapForPortfolio(pPortfolio.getId());
+
+            /* Look up existing holding */
+            Integer myId = pSecurity.getId();
+            SecurityHolding myHolding = myMap.get(myId);
+
+            /* If the holding does not currently exist */
+            if (myHolding == null) {
+                /* Create the holding */
+                myHolding = new SecurityHolding(pPortfolio, pSecurity);
+                myMap.put(myId, myHolding);
+            }
+
+            /* Return the holding */
+            return myHolding;
         }
 
         /**

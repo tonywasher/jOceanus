@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -134,11 +133,6 @@ public class TransactionPanel
     private final JScrollButton<TransactionCategory> theCategoryButton;
 
     /**
-     * Portfolio Button Field.
-     */
-    private final JScrollButton<Portfolio> thePortfolioButton;
-
-    /**
      * ThirdParty Button Field.
      */
     private final JScrollButton<Deposit> theThirdPartyButton;
@@ -183,7 +177,6 @@ public class TransactionPanel
         thePartnerButton = new JScrollButton<Object>();
         theCategoryButton = new JScrollButton<TransactionCategory>();
         theTagButton = new JScrollListButton<TransactionTag>();
-        thePortfolioButton = new JScrollButton<Portfolio>();
         theThirdPartyButton = new JScrollButton<Deposit>();
 
         /* Access tag menu builder */
@@ -368,7 +361,6 @@ public class TransactionPanel
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
-        restrictField(thePortfolioButton, myWidth);
         restrictField(myCredUnits, myWidth);
         restrictField(myDebUnits, myWidth);
         restrictField(myDilution, myWidth);
@@ -376,7 +368,6 @@ public class TransactionPanel
         restrictField(myYears, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO), Portfolio.class, thePortfolioButton);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), DataType.UNITS, myCredUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), DataType.UNITS, myDebUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), DataType.DILUTION, myDilution);
@@ -389,7 +380,6 @@ public class TransactionPanel
         /* Layout the tax panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
@@ -507,13 +497,6 @@ public class TransactionPanel
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.CHARITYDONATION);
         bShowField = bEditField || myTrans.getCharityDonation() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-
-        /* Determine whether the portfolio field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PORTFOLIO);
-        bShowField = bEditField || myTrans.getPortfolio() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
@@ -640,9 +623,6 @@ public class TransactionPanel
                 case QUALIFYYEARS:
                     myTrans.setYears(pUpdate.getInteger());
                     break;
-                case PORTFOLIO:
-                    myTrans.setPortfolio(pUpdate.getValue(Portfolio.class));
-                    break;
                 case THIRDPARTY:
                     myTrans.setThirdParty(pUpdate.getValue(Deposit.class));
                     break;
@@ -671,10 +651,6 @@ public class TransactionPanel
             buildGoToEvent((AssetBase<?>) myItem.getAccount());
             buildGoToEvent((AssetBase<?>) myItem.getPartner());
             buildGoToEvent(myItem.getCategory());
-            Portfolio myPortfolio = myItem.getPortfolio();
-            if (myPortfolio != null) {
-                buildGoToEvent(myPortfolio);
-            }
             Deposit myThirdParty = myItem.getThirdParty();
             if (myThirdParty != null) {
                 buildGoToEvent(myThirdParty);
@@ -849,48 +825,6 @@ public class TransactionPanel
     }
 
     /**
-     * Build the portfolio list for an item.
-     * @param pMenuBuilder the menu builder
-     * @param pTrans the transaction to build for
-     */
-    public void buildPortfolioMenu(final JScrollMenuBuilder<Portfolio> pMenuBuilder,
-                                   final Transaction pTrans) {
-        /* Clear the menu */
-        pMenuBuilder.clearMenu();
-
-        /* Record active item */
-        Portfolio myCurr = pTrans.getPortfolio();
-        JMenuItem myActive = null;
-
-        /* Access Portfolios */
-        PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-
-        /* Loop through the Portfolios */
-        Iterator<Portfolio> myIterator = myPortfolios.iterator();
-        while (myIterator.hasNext()) {
-            Portfolio myPortfolio = myIterator.next();
-
-            /* Ignore deleted or closed */
-            boolean bIgnore = myPortfolio.isDeleted() || myPortfolio.isClosed();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the portfolio */
-            JMenuItem myItem = pMenuBuilder.addItem(myPortfolio);
-
-            /* If this is the active portfolio */
-            if (myPortfolio.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
-    }
-
-    /**
      * Build the ThirdParty list for an item.
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
@@ -1005,11 +939,6 @@ public class TransactionPanel
         private final JScrollMenuBuilder<TransactionCategory> theCategoryMenuBuilder;
 
         /**
-         * The Portfolio Menu Builder.
-         */
-        private final JScrollMenuBuilder<Portfolio> thePortMenuBuilder;
-
-        /**
          * The ThirdParty Menu Builder.
          */
         private final JScrollMenuBuilder<Deposit> theThirdPartyMenuBuilder;
@@ -1025,8 +954,6 @@ public class TransactionPanel
             thePartnerMenuBuilder.addChangeListener(this);
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
-            thePortMenuBuilder = thePortfolioButton.getMenuBuilder();
-            thePortMenuBuilder.addChangeListener(this);
             theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
             theThirdPartyMenuBuilder.addChangeListener(this);
             theTagMenuBuilder.addChangeListener(this);
@@ -1043,8 +970,6 @@ public class TransactionPanel
                 buildPartnerMenu(thePartnerMenuBuilder, getItem());
             } else if (theCategoryMenuBuilder.equals(o)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (thePortMenuBuilder.equals(o)) {
-                buildPortfolioMenu(thePortMenuBuilder, getItem());
             } else if (theThirdPartyMenuBuilder.equals(o)) {
                 buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem());
             } else if (theTagMenuBuilder.equals(o)) {

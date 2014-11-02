@@ -538,6 +538,9 @@ public class MoneyWiseData
             /* Create the empty list */
             addList(myType, newList(myType));
         }
+
+        /* Create a security holdings map */
+        theSecurityHoldings = new SecurityHoldingMap(this);
     }
 
     /**

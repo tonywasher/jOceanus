@@ -289,16 +289,6 @@ public class Transaction
     }
 
     /**
-     * Obtain Portfolio.
-     * @return the Portfolio
-     */
-    public final Portfolio getPortfolio() {
-        return hasInfoSet
-                         ? theInfoSet.getPortfolio(TransactionInfoClass.PORTFOLIO)
-                         : null;
-    }
-
-    /**
      * Obtain Credit Amount.
      * @return the Credit Amount
      */
@@ -444,12 +434,6 @@ public class Transaction
             return true;
         }
 
-        /* Check Portfolio */
-        Portfolio myPortfolio = getPortfolio();
-        if ((myPortfolio != null) && myPortfolio.isClosed()) {
-            return true;
-        }
-
         /* Check ThirdParty */
         Deposit myThirdParty = getThirdParty();
         return (myThirdParty != null) && myThirdParty.isClosed();
@@ -525,7 +509,7 @@ public class Transaction
 
         /* If we need a tax Credit */
         if (TransactionInfoSet.isTaxCreditClassRequired(getAccount(),
-                null, getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
+                getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
             /* Calculate the tax credit */
             setTaxCredit(calculateTaxCredit());
         }
@@ -801,15 +785,6 @@ public class Transaction
      */
     public final void setThirdParty(final Deposit pParty) throws JOceanusException {
         setInfoSetValue(TransactionInfoClass.THIRDPARTY, pParty);
-    }
-
-    /**
-     * Set a new Portfolio.
-     * @param pPortfolio the new portfolio
-     * @throws JOceanusException on error
-     */
-    public final void setPortfolio(final Portfolio pPortfolio) throws JOceanusException {
-        setInfoSetValue(TransactionInfoClass.PORTFOLIO, pPortfolio);
     }
 
     /**
@@ -1292,7 +1267,12 @@ public class Transaction
 
                     /* Copy missing values from parent */
                     myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
-                    myValues.addValue(FIELD_ACCOUNT, pValues.getValue(FIELD_ACCOUNT));
+                    if (myValues.getValue(FIELD_ACCOUNT) == null) {
+                        myValues.addValue(FIELD_ACCOUNT, pValues.getValue(FIELD_ACCOUNT));
+                    }
+                    if (myValues.getValue(FIELD_PARTNER) == null) {
+                        myValues.addValue(FIELD_PARTNER, pValues.getValue(FIELD_PARTNER));
+                    }
 
                     /* Build item */
                     addValuesItem(myValues);
