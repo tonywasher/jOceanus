@@ -720,7 +720,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Obtain portfolio for transaction
+     * Obtain portfolio for transaction.
      * @return the portfolio (or null)
      */
     public Portfolio getPortfolio() {

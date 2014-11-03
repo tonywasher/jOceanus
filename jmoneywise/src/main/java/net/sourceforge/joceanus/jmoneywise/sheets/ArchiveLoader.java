@@ -734,12 +734,6 @@ public class ArchiveLoader {
                 theLastParent = myTrans;
             }
 
-            /* If we have a portfolio */
-            // if (thePortfolio != null) {
-            /* Add the item */
-            // theInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PORTFOLIO, thePortfolio);
-            // }
-
             /* return the new transaction */
             return myTrans;
         }

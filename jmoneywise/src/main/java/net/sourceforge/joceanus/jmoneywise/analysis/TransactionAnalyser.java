@@ -79,6 +79,11 @@ public class TransactionAnalyser
     /**
      * Local Report fields.
      */
+    private static final String ERROR_CATEGORY = "Unexpected Category Type: ";
+
+    /**
+     * Local Report fields.
+     */
     private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.ANALYSIS_ANALYSER.getValue());
 
     /**
@@ -368,8 +373,8 @@ public class TransactionAnalyser
             processCreditSecurityTransaction(myDebitAsset, (SecurityHolding) myCreditAsset, pTrans);
 
             /* Else handle the event normally */
-        } else if ((myDebitAsset instanceof AssetBase) &&
-                   (myCreditAsset instanceof AssetBase)) {
+        } else if ((myDebitAsset instanceof AssetBase)
+                   && (myCreditAsset instanceof AssetBase)) {
             /* Access correctly */
             AssetBase<?> myDebit = (AssetBase<?>) myDebitAsset;
             AssetBase<?> myCredit = (AssetBase<?>) myCreditAsset;
@@ -540,7 +545,7 @@ public class TransactionAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JMoneyWiseLogicException("Unexpected category type: "
+                throw new JMoneyWiseLogicException(ERROR_CATEGORY
                                                    + myCat.getCategoryTypeClass());
         }
     }
@@ -584,7 +589,7 @@ public class TransactionAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JMoneyWiseLogicException("Unexpected category type: "
+                throw new JMoneyWiseLogicException(ERROR_CATEGORY
                                                    + myCat.getCategoryTypeClass());
         }
     }
@@ -619,7 +624,7 @@ public class TransactionAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JMoneyWiseLogicException("Unexpected category type: "
+                throw new JMoneyWiseLogicException(ERROR_CATEGORY
                                                    + myCat.getCategoryTypeClass());
         }
     }
@@ -927,7 +932,7 @@ public class TransactionAnalyser
      * Process a transaction that is a taxable gain.
      * <p>
      * This capital event relates only to the Debit Asset
-     * @param pDebit the debit security holding
+     * @param pHolding the debit security holding
      * @param pCredit the credit account
      * @param pTrans the transaction
      */

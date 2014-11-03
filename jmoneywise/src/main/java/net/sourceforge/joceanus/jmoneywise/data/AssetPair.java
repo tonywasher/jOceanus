@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -269,9 +270,9 @@ public final class AssetPair
      * @param pField the field
      * @throws JOceanusException on error
      */
-    private static void resolveDataLink(final TransactionBase<?> pOwner,
-                                        final SecurityHoldingMap pMap,
-                                        final JDataField pField) throws JOceanusException {
+    public static void resolveDataLink(final DataItem<?> pOwner,
+                                       final SecurityHoldingMap pMap,
+                                       final JDataField pField) throws JOceanusException {
         /* Access the values */
         ValueSet myValues = pOwner.getValueSet();
 
@@ -287,8 +288,8 @@ public final class AssetPair
         if (myValue instanceof Integer) {
             SecurityHolding myItem = pMap.findHoldingById((Integer) myValue);
             if (myItem == null) {
-                pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
-                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
+                pOwner.addError(DataItem.ERROR_UNKNOWN, pField);
+                throw new JMoneyWiseDataException(pOwner, DataItem.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
 
@@ -296,8 +297,8 @@ public final class AssetPair
         } else if (myValue instanceof String) {
             SecurityHolding myItem = pMap.findHoldingByName((String) myValue);
             if (myItem == null) {
-                pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
-                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
+                pOwner.addError(DataItem.ERROR_UNKNOWN, pField);
+                throw new JMoneyWiseDataException(pOwner, DataItem.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
         }

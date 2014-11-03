@@ -404,6 +404,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     PORTFOLIO_NEWACCOUNT("Portfolio.NewAccount"),
 
     /**
+     * StockOption StockHolding.
+     */
+    STOCKOPTION_STOCKHOLDING("StockOption.StockHolding"),
+
+    /**
      * StockOption Grant Date.
      */
     STOCKOPTION_GRANTDATE("StockOption.GrantDate"),

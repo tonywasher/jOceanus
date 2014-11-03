@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -80,14 +81,9 @@ public class StockOption
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
-     * Security Field Id.
+     * StockHolding Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITY.getItemName());
-
-    /**
-     * Portfolio Field Id.
-     */
-    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.PORTFOLIO.getItemName());
+    public static final JDataField FIELD_STOCKHOLDING = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue());
 
     /**
      * GrantDate Field Id.
@@ -152,10 +148,7 @@ public class StockOption
     @Override
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
-        if (FIELD_SECURITY.equals(pField)) {
-            return true;
-        }
-        if (FIELD_PORTFOLIO.equals(pField)) {
+        if (FIELD_STOCKHOLDING.equals(pField)) {
             return true;
         }
         if (FIELD_GRANTDATE.equals(pField)) {
@@ -200,8 +193,7 @@ public class StockOption
     public String formatObject() {
         /* Access Key Values */
         EncryptedValueSet myValues = getValueSet();
-        Object myPortfolio = myValues.getValue(FIELD_PORTFOLIO);
-        Object mySecurity = myValues.getValue(FIELD_SECURITY);
+        Object myHolding = myValues.getValue(FIELD_STOCKHOLDING);
         Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
@@ -209,9 +201,7 @@ public class StockOption
 
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myFormatter.formatObject(myPortfolio));
-        myBuilder.append(":");
-        myBuilder.append(myFormatter.formatObject(mySecurity));
+        myBuilder.append(myFormatter.formatObject(myHolding));
         myBuilder.append('@');
         myBuilder.append(myFormatter.formatObject(myPrice));
 
@@ -235,63 +225,33 @@ public class StockOption
     }
 
     /**
-     * Obtain Portfolio.
+     * Obtain Holding.
      * @return the portfolio
      */
-    public Portfolio getPortfolio() {
-        return getPortfolio(getValueSet());
+    public SecurityHolding getStockHolding() {
+        return getStockHolding(getValueSet());
     }
 
     /**
      * Obtain PortfolioId.
      * @return the portfolioId
      */
-    public Integer getPortfolioId() {
-        Portfolio myPortfolio = getPortfolio();
-        return (myPortfolio == null)
-                                    ? null
-                                    : myPortfolio.getId();
+    public Integer getStockHoldingId() {
+        SecurityHolding myHolding = getStockHolding();
+        return (myHolding == null)
+                                  ? null
+                                  : myHolding.getId();
     }
 
     /**
      * Obtain PortfolioName.
      * @return the portfolioName
      */
-    public String getPortfolioName() {
-        Portfolio myPortfolio = getPortfolio();
-        return (myPortfolio == null)
-                                    ? null
-                                    : myPortfolio.getName();
-    }
-
-    /**
-     * Obtain Security.
-     * @return the security
-     */
-    public Security getSecurity() {
-        return getSecurity(getValueSet());
-    }
-
-    /**
-     * Obtain SecurityId.
-     * @return the securityId
-     */
-    public Integer getSecurityId() {
-        Security mySecurity = getSecurity();
-        return (mySecurity == null)
-                                   ? null
-                                   : mySecurity.getId();
-    }
-
-    /**
-     * Obtain SecurityName.
-     * @return the securityName
-     */
-    public String getSecurityName() {
-        Security mySecurity = getSecurity();
-        return (mySecurity == null)
-                                   ? null
-                                   : mySecurity.getName();
+    public String getStockHoldingName() {
+        SecurityHolding myHolding = getStockHolding();
+        return (myHolding == null)
+                                  ? null
+                                  : myHolding.getName();
     }
 
     /**
@@ -335,21 +295,12 @@ public class StockOption
     }
 
     /**
-     * Obtain Portfolio.
+     * Obtain StockHolding.
      * @param pValueSet the valueSet
-     * @return the portfolio
+     * @return the stockHolding
      */
-    public static Portfolio getPortfolio(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PORTFOLIO, Portfolio.class);
-    }
-
-    /**
-     * Obtain Security.
-     * @param pValueSet the valueSet
-     * @return the security
-     */
-    public static Security getSecurity(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_SECURITY, Security.class);
+    public static SecurityHolding getStockHolding(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_STOCKHOLDING, SecurityHolding.class);
     }
 
     /**
@@ -398,51 +349,27 @@ public class StockOption
     }
 
     /**
-     * Set portfolio value.
+     * Set stockHolding value.
      * @param pValue the value
      */
-    private void setValuePortfolio(final Portfolio pValue) {
-        getValueSet().setValue(FIELD_PORTFOLIO, pValue);
+    private void setValueStockHolding(final SecurityHolding pValue) {
+        getValueSet().setValue(FIELD_STOCKHOLDING, pValue);
     }
 
     /**
-     * Set portfolio id.
+     * Set stockHolding id.
      * @param pValue the value
      */
-    private void setValuePortfolio(final Integer pValue) {
-        getValueSet().setValue(FIELD_PORTFOLIO, pValue);
+    private void setValueStockHolding(final Integer pValue) {
+        getValueSet().setValue(FIELD_STOCKHOLDING, pValue);
     }
 
     /**
-     * Set portfolio name.
+     * Set stockHolding name.
      * @param pValue the value
      */
-    private void setValuePortfolio(final String pValue) {
-        getValueSet().setValue(FIELD_PORTFOLIO, pValue);
-    }
-
-    /**
-     * Set security value.
-     * @param pValue the value
-     */
-    private void setValueSecurity(final Security pValue) {
-        getValueSet().setValue(FIELD_SECURITY, pValue);
-    }
-
-    /**
-     * Set security id.
-     * @param pValue the value
-     */
-    private void setValueSecurity(final Integer pValue) {
-        getValueSet().setValue(FIELD_SECURITY, pValue);
-    }
-
-    /**
-     * Set security name.
-     * @param pValue the value
-     */
-    private void setValueSecurity(final String pValue) {
-        getValueSet().setValue(FIELD_SECURITY, pValue);
+    private void setValueStockHolding(final String pValue) {
+        getValueSet().setValue(FIELD_STOCKHOLDING, pValue);
     }
 
     /**
@@ -663,20 +590,12 @@ public class StockOption
 
         /* Protect against exceptions */
         try {
-            /* Store the Security */
-            Object myValue = pValues.getValue(FIELD_SECURITY);
+            /* Store the StockHolding */
+            Object myValue = pValues.getValue(FIELD_STOCKHOLDING);
             if (myValue instanceof Integer) {
-                setValueSecurity((Integer) myValue);
+                setValueStockHolding((Integer) myValue);
             } else if (myValue instanceof String) {
-                setValueSecurity((String) myValue);
-            }
-
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PORTFOLIO);
-            if (myValue instanceof Integer) {
-                setValuePortfolio((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValuePortfolio((String) myValue);
+                setValueStockHolding((String) myValue);
             }
 
             /* Store GrantDate */
@@ -744,14 +663,8 @@ public class StockOption
             return -1;
         }
 
-        /* Check the portfolio */
-        int iDiff = Difference.compareObject(getPortfolio(), pThat.getPortfolio());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Check the security */
-        iDiff = Difference.compareObject(getSecurity(), pThat.getSecurity());
+        /* Check the stock holding */
+        int iDiff = Difference.compareObject(getStockHolding(), pThat.getStockHolding());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -772,17 +685,26 @@ public class StockOption
      * @throws JOceanusException on error
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Set values */
+        /* Determine default holding */
         SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         PortfolioList myPortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-        setPortfolio(myPortfolios.getDefaultPortfolio());
-        setSecurity(mySecurities.getDefaultStockOption());
+        Portfolio myPortfolio = myPortfolios.getDefaultPortfolio();
+        Security mySecurity = mySecurities.getDefaultStockOption();
+        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        SecurityHolding myHolding = myMap.declareHolding(myPortfolio, mySecurity);
+        setStockHolding(myHolding);
+
+        /* Determine dates */
         JDateDay myDate = new JDateDay();
         setGrantDate(myDate);
         myDate = new JDateDay(myDate);
         myDate.adjustYear(1);
         setExpiryDate(myDate);
-        setPrice(JPrice.getWholeUnits(1, getSecurity().getSecurityCurrency().getCurrency()));
+
+        /* Set default price */
+        setPrice(JPrice.getWholeUnits(1, mySecurity.getSecurityCurrency().getCurrency()));
+
+        /* Set name */
         setName(getList().getUniqueName(NAME_NEWOPTION));
         setClosed(Boolean.FALSE);
     }
@@ -793,36 +715,24 @@ public class StockOption
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_SECURITY, myData.getSecurities());
-        resolveDataLink(FIELD_PORTFOLIO, myData.getPortfolios());
+        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        AssetPair.resolveDataLink(this, myMap, FIELD_STOCKHOLDING);
     }
 
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Resolve details */
-        SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
-        PortfolioList myPortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-        resolveDataLink(FIELD_SECURITY, mySecurities);
-        resolveDataLink(FIELD_PORTFOLIO, myPortfolios);
+        /* Resolve data links */
+        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        AssetPair.resolveDataLink(this, myMap, FIELD_STOCKHOLDING);
     }
 
     /**
-     * Set a new portfolio.
-     * @param pPortfolio the portfolio
+     * Set a new stock Holding.
+     * @param pHolding the stockHolding
      * @throws JOceanusException on error
      */
-    public void setPortfolio(final Portfolio pPortfolio) throws JOceanusException {
-        setValuePortfolio(pPortfolio);
-    }
-
-    /**
-     * Set a new security.
-     * @param pSecurity the security
-     * @throws JOceanusException on error
-     */
-    public void setSecurity(final Security pSecurity) throws JOceanusException {
-        setValueSecurity(pSecurity);
+    public void setStockHolding(final SecurityHolding pHolding) throws JOceanusException {
+        setValueStockHolding(pHolding);
     }
 
     /**
@@ -880,9 +790,8 @@ public class StockOption
 
     @Override
     public void touchUnderlyingItems() {
-        /* touch the security and portfolio */
-        getSecurity().touchItem(this);
-        getPortfolio().touchItem(this);
+        /* touch the stockHolding */
+        getStockHolding().touchItem(this);
 
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
@@ -894,14 +803,15 @@ public class StockOption
         clearTouches(MoneyWiseDataType.STOCKOPTIONVEST);
 
         /* Touch items */
-        getPortfolio().touchItem(this);
-        getSecurity().touchItem(this);
+        getStockHolding().touchItem(this);
     }
 
     @Override
     public void validate() {
-        Portfolio myPortfolio = getPortfolio();
-        Security mySecurity = getSecurity();
+        SecurityHolding myHolding = getStockHolding();
+        Security mySecurity = myHolding == null
+                                               ? null
+                                               : myHolding.getSecurity();
         JDateDay myGrant = getGrantDate();
         JDateDay myExpiry = getExpiryDate();
         JPrice myPrice = getPrice();
@@ -911,15 +821,10 @@ public class StockOption
         super.validate();
 
         /* Security must be non-null */
-        if (mySecurity == null) {
-            addError(ERROR_MISSING, FIELD_SECURITY);
+        if (myHolding == null) {
+            addError(ERROR_MISSING, FIELD_STOCKHOLDING);
         } else if (!mySecurity.isSecurityClass(SecurityTypeClass.SHARES)) {
-            addError(ERROR_BADSECURITY, FIELD_SECURITY);
-        }
-
-        /* Portfolio must be non-null */
-        if (myPortfolio == null) {
-            addError(ERROR_MISSING, FIELD_PORTFOLIO);
+            addError(ERROR_BADSECURITY, FIELD_STOCKHOLDING);
         }
 
         /* GrantDate must be non-null and within range */
@@ -981,14 +886,9 @@ public class StockOption
         /* Apply basic changes */
         applyBasicChanges(myOption);
 
-        /* Update the security if required */
-        if (!Difference.isEqual(getSecurity(), myOption.getSecurity())) {
-            setValueSecurity(myOption.getSecurity());
-        }
-
-        /* Update the portfolio if required */
-        if (!Difference.isEqual(getPortfolio(), myOption.getPortfolio())) {
-            setValuePortfolio(myOption.getPortfolio());
+        /* Update the stockHolding if required */
+        if (!Difference.isEqual(getStockHolding(), myOption.getStockHolding())) {
+            setValueStockHolding(myOption.getStockHolding());
         }
 
         /* Update the grantDate if required */

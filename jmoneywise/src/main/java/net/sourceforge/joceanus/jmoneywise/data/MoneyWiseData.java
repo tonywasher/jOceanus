@@ -159,7 +159,7 @@ public class MoneyWiseData
     /**
      * SecurityHoldings Map.
      */
-    private SecurityHoldingMap theSecurityHoldings = null;
+    private final SecurityHoldingMap theSecurityHoldings;
 
     /**
      * Obtain DepositCategoryTypes.
@@ -549,6 +549,9 @@ public class MoneyWiseData
      */
     private MoneyWiseData(final MoneyWiseData pSource) {
         super(pSource);
+
+        /* Create a security holdings map */
+        theSecurityHoldings = new SecurityHoldingMap(this);
     }
 
     /**

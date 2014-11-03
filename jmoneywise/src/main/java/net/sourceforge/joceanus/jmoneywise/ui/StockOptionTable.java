@@ -50,8 +50,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
@@ -97,14 +96,9 @@ public class StockOptionTable
     private static final String TITLE_DESC = StockOption.FIELD_DESC.getName();
 
     /**
-     * Portfolio Column Title.
+     * StockHolding Column Title.
      */
-    private static final String TITLE_PORTFOLIO = StockOption.FIELD_PORTFOLIO.getName();
-
-    /**
-     * Security Column Title.
-     */
-    private static final String TITLE_SECURITY = StockOption.FIELD_SECURITY.getName();
+    private static final String TITLE_STOCKHOLDING = StockOption.FIELD_STOCKHOLDING.getName();
 
     /**
      * Closed Column Title.
@@ -604,29 +598,24 @@ public class StockOptionTable
         private static final int COLUMN_DESC = 1;
 
         /**
-         * Portfolio column id.
+         * StockHolding column id.
          */
-        private static final int COLUMN_PORTFOLIO = 2;
-
-        /**
-         * Security column id.
-         */
-        private static final int COLUMN_SECURITY = 3;
+        private static final int COLUMN_STOCKHOLDING = 2;
 
         /**
          * Closed column id.
          */
-        private static final int COLUMN_CLOSED = 4;
+        private static final int COLUMN_CLOSED = 3;
 
         /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 5;
+        private static final int COLUMN_ACTIVE = 4;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 6;
+        private static final int COLUMN_LASTTRAN = 5;
 
         /**
          * Closed Icon Renderer.
@@ -664,14 +653,9 @@ public class StockOptionTable
         private final IconButtonCellEditor<ActionType> theStatusIconEditor;
 
         /**
-         * Portfolio ScrollButton Menu Editor.
+         * Holding ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<Portfolio> thePortfolioEditor;
-
-        /**
-         * Security ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<Security> theSecurityEditor;
+        private final ScrollButtonCellEditor<SecurityHolding> theHoldingEditor;
 
         /**
          * Closed column.
@@ -690,8 +674,7 @@ public class StockOptionTable
             theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            thePortfolioEditor = theFieldMgr.allocateScrollButtonCellEditor(Portfolio.class);
-            theSecurityEditor = theFieldMgr.allocateScrollButtonCellEditor(Security.class);
+            theHoldingEditor = theFieldMgr.allocateScrollButtonCellEditor(SecurityHolding.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -704,8 +687,7 @@ public class StockOptionTable
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PORTFOLIO, WIDTH_NAME, theStringRenderer, thePortfolioEditor));
-            declareColumn(new JDataTableColumn(COLUMN_SECURITY, WIDTH_NAME, theStringRenderer, theSecurityEditor));
+            declareColumn(new JDataTableColumn(COLUMN_STOCKHOLDING, WIDTH_NAME, theStringRenderer, theHoldingEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
@@ -741,10 +723,8 @@ public class StockOptionTable
                     return TITLE_NAME;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_PORTFOLIO:
-                    return TITLE_PORTFOLIO;
-                case COLUMN_SECURITY:
-                    return TITLE_SECURITY;
+                case COLUMN_STOCKHOLDING:
+                    return TITLE_STOCKHOLDING;
                 case COLUMN_CLOSED:
                     return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
@@ -768,10 +748,8 @@ public class StockOptionTable
             switch (pColIndex) {
                 case COLUMN_NAME:
                     return pOption.getName();
-                case COLUMN_PORTFOLIO:
-                    return pOption.getPortfolio();
-                case COLUMN_SECURITY:
-                    return pOption.getSecurity();
+                case COLUMN_STOCKHOLDING:
+                    return pOption.getStockHolding();
                 case COLUMN_DESC:
                     return pOption.getDesc();
                 case COLUMN_CLOSED:
@@ -808,11 +786,8 @@ public class StockOptionTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
-                case COLUMN_PORTFOLIO:
-                    pItem.setPortfolio((Portfolio) pValue);
-                    break;
-                case COLUMN_SECURITY:
-                    pItem.setSecurity((Security) pValue);
+                case COLUMN_STOCKHOLDING:
+                    pItem.setStockHolding((SecurityHolding) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -837,8 +812,7 @@ public class StockOptionTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
-                case COLUMN_PORTFOLIO:
-                case COLUMN_SECURITY:
+                case COLUMN_STOCKHOLDING:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
@@ -860,10 +834,8 @@ public class StockOptionTable
                     return StockOption.FIELD_NAME;
                 case COLUMN_DESC:
                     return StockOption.FIELD_DESC;
-                case COLUMN_PORTFOLIO:
-                    return StockOption.FIELD_PORTFOLIO;
-                case COLUMN_SECURITY:
-                    return StockOption.FIELD_SECURITY;
+                case COLUMN_STOCKHOLDING:
+                    return StockOption.FIELD_STOCKHOLDING;
                 case COLUMN_CLOSED:
                     return StockOption.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
@@ -882,50 +854,33 @@ public class StockOptionTable
              * Constructor.
              */
             private EditorListener() {
-                thePortfolioEditor.addChangeListener(this);
-                theSecurityEditor.addChangeListener(this);
+                theHoldingEditor.addChangeListener(this);
             }
 
             @Override
             public void stateChanged(final ChangeEvent pEvent) {
                 Object o = pEvent.getSource();
 
-                if (thePortfolioEditor.equals(o)) {
-                    buildPortfolioMenu();
-                } else if (theSecurityEditor.equals(o)) {
-                    buildSecurityMenu();
+                if (theHoldingEditor.equals(o)) {
+                    buildHoldingMenu();
                 }
             }
 
             /**
-             * Build the popUpMenu for portfolio.
+             * Build the popUpMenu for security holding.
              */
-            private void buildPortfolioMenu() {
+            private void buildHoldingMenu() {
                 /* Access details */
-                JScrollMenuBuilder<Portfolio> myBuilder = thePortfolioEditor.getMenuBuilder();
+                JScrollMenuBuilder<SecurityHolding> myBuilder = theHoldingEditor.getMenuBuilder();
 
                 /* Record active item */
-                Point myCell = thePortfolioEditor.getPoint();
+                Point myCell = theHoldingEditor.getPoint();
                 StockOption myOption = theOptions.get(myCell.y);
 
                 /* Build the menu */
-                theActiveAccount.buildPortfolioMenu(myBuilder, myOption);
+                theActiveAccount.buildHoldingMenu(myBuilder, myOption);
             }
 
-            /**
-             * Build the popUpMenu for security.
-             */
-            private void buildSecurityMenu() {
-                /* Access details */
-                JScrollMenuBuilder<Security> myBuilder = theSecurityEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theSecurityEditor.getPoint();
-                StockOption myOption = theOptions.get(myCell.y);
-
-                /* Build the menu */
-                theActiveAccount.buildSecurityMenu(myBuilder, myOption);
-            }
         }
     }
 }

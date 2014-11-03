@@ -53,8 +53,7 @@ public class TableStockOption
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        myTableDef.addReferenceColumn(StockOption.FIELD_PORTFOLIO, TablePortfolio.TABLE_NAME);
-        myTableDef.addReferenceColumn(StockOption.FIELD_SECURITY, TableSecurity.TABLE_NAME);
+        myTableDef.addIntegerColumn(StockOption.FIELD_STOCKHOLDING);
         myTableDef.addDateColumn(StockOption.FIELD_GRANTDATE);
         myTableDef.addDateColumn(StockOption.FIELD_EXPIREDATE);
         myTableDef.addEncryptedColumn(StockOption.FIELD_PRICE, EncryptedData.PRICELEN);
@@ -78,8 +77,7 @@ public class TableStockOption
         DataValues<MoneyWiseDataType> myValues = getRowValues(StockOption.OBJECT_NAME);
         myValues.addValue(StockOption.FIELD_NAME, myTableDef.getBinaryValue(StockOption.FIELD_NAME));
         myValues.addValue(StockOption.FIELD_DESC, myTableDef.getBinaryValue(StockOption.FIELD_DESC));
-        myValues.addValue(StockOption.FIELD_PORTFOLIO, myTableDef.getIntegerValue(StockOption.FIELD_PORTFOLIO));
-        myValues.addValue(StockOption.FIELD_SECURITY, myTableDef.getIntegerValue(StockOption.FIELD_SECURITY));
+        myValues.addValue(StockOption.FIELD_STOCKHOLDING, myTableDef.getIntegerValue(StockOption.FIELD_STOCKHOLDING));
         myValues.addValue(StockOption.FIELD_GRANTDATE, myTableDef.getDateValue(StockOption.FIELD_GRANTDATE));
         myValues.addValue(StockOption.FIELD_EXPIREDATE, myTableDef.getDateValue(StockOption.FIELD_EXPIREDATE));
         myValues.addValue(StockOption.FIELD_PRICE, myTableDef.getBinaryValue(StockOption.FIELD_PRICE));
@@ -94,10 +92,8 @@ public class TableStockOption
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (StockOption.FIELD_PORTFOLIO.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getPortfolioId());
-        } else if (StockOption.FIELD_SECURITY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getSecurityId());
+        if (StockOption.FIELD_STOCKHOLDING.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getStockHoldingId());
         } else if (StockOption.FIELD_GRANTDATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getGrantDate());
         } else if (StockOption.FIELD_EXPIREDATE.equals(iField)) {

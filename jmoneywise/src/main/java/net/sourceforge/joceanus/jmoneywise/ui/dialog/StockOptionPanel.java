@@ -42,9 +42,9 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfoSet;
@@ -85,14 +85,9 @@ public class StockOptionPanel
     private final transient JFieldSet<StockOption> theFieldSet;
 
     /**
-     * Portfolio Button Field.
+     * StockHolding Button Field.
      */
-    private final JScrollButton<Portfolio> thePortfolioButton;
-
-    /**
-     * Security Button Field.
-     */
-    private final JScrollButton<Security> theSecurityButton;
+    private final JScrollButton<SecurityHolding> theHoldingButton;
 
     /**
      * GrantDate Button Field.
@@ -127,8 +122,7 @@ public class StockOptionPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        thePortfolioButton = new JScrollButton<Portfolio>();
-        theSecurityButton = new JScrollButton<Security>();
+        theHoldingButton = new JScrollButton<SecurityHolding>();
 
         /* Create date buttons */
         JDateDayFormatter myFormatter = getFormatter().getDateFormatter();
@@ -185,8 +179,7 @@ public class StockOptionPanel
         /* restrict the fields */
         restrictField(myName, StockOption.NAMELEN);
         restrictField(myDesc, StockOption.NAMELEN);
-        restrictField(thePortfolioButton, StockOption.NAMELEN);
-        restrictField(theSecurityButton, StockOption.NAMELEN);
+        restrictField(theHoldingButton, StockOption.NAMELEN);
         restrictField(theGrantButton, StockOption.NAMELEN);
         restrictField(theExpiryButton, StockOption.NAMELEN);
         restrictField(myPrice, StockOption.NAMELEN);
@@ -195,8 +188,7 @@ public class StockOptionPanel
         /* Build the FieldSet */
         theFieldSet.addFieldElement(StockOption.FIELD_NAME, DataType.STRING, myName);
         theFieldSet.addFieldElement(StockOption.FIELD_DESC, DataType.STRING, myDesc);
-        theFieldSet.addFieldElement(StockOption.FIELD_PORTFOLIO, Portfolio.class, thePortfolioButton);
-        theFieldSet.addFieldElement(StockOption.FIELD_SECURITY, Security.class, theSecurityButton);
+        theFieldSet.addFieldElement(StockOption.FIELD_STOCKHOLDING, SecurityHolding.class, theHoldingButton);
         theFieldSet.addFieldElement(StockOption.FIELD_GRANTDATE, DataType.DATEDAY, theGrantButton);
         theFieldSet.addFieldElement(StockOption.FIELD_EXPIREDATE, DataType.DATEDAY, theExpiryButton);
         theFieldSet.addFieldElement(StockOption.FIELD_PRICE, DataType.PRICE, myPrice);
@@ -210,8 +202,7 @@ public class StockOptionPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(StockOption.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(StockOption.FIELD_PORTFOLIO, myPanel);
-        theFieldSet.addFieldToPanel(StockOption.FIELD_SECURITY, myPanel);
+        theFieldSet.addFieldToPanel(StockOption.FIELD_STOCKHOLDING, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_GRANTDATE, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_EXPIREDATE, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_PRICE, myPanel);
@@ -291,14 +282,13 @@ public class StockOptionPanel
         theFieldSet.setVisibility(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Portfolio/Security/Dates/Units cannot be changed if the item is active */
-        theFieldSet.setEditable(StockOption.FIELD_PORTFOLIO, isEditable && !bIsActive);
-        theFieldSet.setEditable(StockOption.FIELD_SECURITY, isEditable && !bIsActive);
+        theFieldSet.setEditable(StockOption.FIELD_STOCKHOLDING, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_GRANTDATE, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_EXPIREDATE, isEditable && !bIsActive);
         theFieldSet.setEditable(StockOption.FIELD_PRICE, isEditable && !bIsActive);
 
         /* Set currency for price */
-        theFieldSet.setAssumedCurrency(StockOption.FIELD_PRICE, myOption.getSecurity().getSecurityCurrency().getCurrency());
+        theFieldSet.setAssumedCurrency(StockOption.FIELD_PRICE, myOption.getStockHolding().getSecurity().getSecurityCurrency().getCurrency());
     }
 
     @Override
@@ -314,12 +304,9 @@ public class StockOptionPanel
         } else if (myField.equals(StockOption.FIELD_DESC)) {
             /* Update the Description */
             myOption.setDescription(pUpdate.getString());
-        } else if (myField.equals(StockOption.FIELD_PORTFOLIO)) {
-            /* Update the Portfolio */
-            myOption.setPortfolio(pUpdate.getValue(Portfolio.class));
-        } else if (myField.equals(StockOption.FIELD_SECURITY)) {
-            /* Update the Security */
-            myOption.setSecurity(pUpdate.getValue(Security.class));
+        } else if (myField.equals(StockOption.FIELD_STOCKHOLDING)) {
+            /* Update the Holding */
+            myOption.setStockHolding(pUpdate.getValue(SecurityHolding.class));
         } else if (myField.equals(StockOption.FIELD_GRANTDATE)) {
             /* Update the GrantDate */
             myOption.setGrantDate(pUpdate.getDateDay());
@@ -347,8 +334,9 @@ public class StockOptionPanel
     @Override
     protected void buildGoToMenu() {
         StockOption myItem = getItem();
-        Portfolio myPortfolio = myItem.getPortfolio();
-        Security mySecurity = myItem.getSecurity();
+        SecurityHolding myHolding = myItem.getStockHolding();
+        Portfolio myPortfolio = myHolding.getPortfolio();
+        Security mySecurity = myHolding.getSecurity();
         buildGoToEvent(myPortfolio);
         buildGoToEvent(mySecurity);
     }
@@ -385,13 +373,13 @@ public class StockOptionPanel
      * @param pMenuBuilder the menu builder
      * @param pOption the option to build for
      */
-    public void buildSecurityMenu(final JScrollMenuBuilder<Security> pMenuBuilder,
-                                  final StockOption pOption) {
+    public void buildHoldingMenu(final JScrollMenuBuilder<SecurityHolding> pMenuBuilder,
+                                 final StockOption pOption) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        Security myCurr = pOption.getSecurity();
+        // SecurityHolding myCurr = pOption.getStockHolding();
         JMenuItem myActive = null;
 
         /* Access Securities */
@@ -410,55 +398,13 @@ public class StockOptionPanel
             }
 
             /* Create a new action for the security */
-            JMenuItem myItem = pMenuBuilder.addItem(mySecurity);
+            // JMenuItem myItem = pMenuBuilder.addItem(mySecurity);
 
             /* If this is the active security */
-            if (mySecurity.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Build the portfolio list for an item.
-     * @param pMenuBuilder the menu builder
-     * @param pOption the option to build for
-     */
-    public void buildPortfolioMenu(final JScrollMenuBuilder<Portfolio> pMenuBuilder,
-                                   final StockOption pOption) {
-        /* Clear the menu */
-        pMenuBuilder.clearMenu();
-
-        /* Record active item */
-        Portfolio myCurr = pOption.getPortfolio();
-        JMenuItem myActive = null;
-
-        /* Access Portfolios */
-        PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-
-        /* Loop through the Portfolios */
-        Iterator<Portfolio> myIterator = myPortfolios.iterator();
-        while (myIterator.hasNext()) {
-            Portfolio myPortfolio = myIterator.next();
-
-            /* Ignore deleted or closed */
-            boolean bIgnore = myPortfolio.isDeleted() || myPortfolio.isClosed();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the portfolio */
-            JMenuItem myItem = pMenuBuilder.addItem(myPortfolio);
-
-            /* If this is the active portfolio */
-            if (myPortfolio.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
+            // if (mySecurity.equals(myCurr)) {
+            /* Record it */
+            // myActive = myItem;
+            // }
         }
 
         /* Ensure active item is visible */
@@ -480,24 +426,17 @@ public class StockOptionPanel
     private final class StockOptionListener
             implements ChangeListener {
         /**
-         * The Portfolio Menu Builder.
+         * The Holding Menu Builder.
          */
-        private final JScrollMenuBuilder<Portfolio> thePortfolioMenuBuilder;
-
-        /**
-         * The Security Menu Builder.
-         */
-        private final JScrollMenuBuilder<Security> theSecurityMenuBuilder;
+        private final JScrollMenuBuilder<SecurityHolding> theHoldingMenuBuilder;
 
         /**
          * Constructor.
          */
         private StockOptionListener() {
             /* Access the MenuBuilders */
-            theSecurityMenuBuilder = theSecurityButton.getMenuBuilder();
-            theSecurityMenuBuilder.addChangeListener(this);
-            thePortfolioMenuBuilder = thePortfolioButton.getMenuBuilder();
-            thePortfolioMenuBuilder.addChangeListener(this);
+            theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
+            theHoldingMenuBuilder.addChangeListener(this);
             theVests.addChangeListener(this);
         }
 
@@ -506,10 +445,8 @@ public class StockOptionPanel
             Object o = pEvent.getSource();
 
             /* Handle menu type */
-            if (theSecurityMenuBuilder.equals(o)) {
-                buildSecurityMenu(theSecurityMenuBuilder, getItem());
-            } else if (thePortfolioMenuBuilder.equals(o)) {
-                buildPortfolioMenu(thePortfolioMenuBuilder, getItem());
+            if (theHoldingMenuBuilder.equals(o)) {
+                buildHoldingMenu(theHoldingMenuBuilder, getItem());
             } else if (theVests.equals(o)) {
                 updateActions();
                 fireStateChanged();

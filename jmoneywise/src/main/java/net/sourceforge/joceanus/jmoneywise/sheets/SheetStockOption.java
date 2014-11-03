@@ -46,19 +46,14 @@ public class SheetStockOption
     private static final int COL_NAME = COL_KEYSETID + 1;
 
     /**
-     * Portfolio column.
+     * Holding column.
      */
-    private static final int COL_PORTFOLIO = COL_NAME + 1;
-
-    /**
-     * Security column.
-     */
-    private static final int COL_SECURITY = COL_PORTFOLIO + 1;
+    private static final int COL_HOLDING = COL_NAME + 1;
 
     /**
      * Description column.
      */
-    private static final int COL_DESC = COL_SECURITY + 1;
+    private static final int COL_DESC = COL_HOLDING + 1;
 
     /**
      * GrantDate column.
@@ -110,8 +105,7 @@ public class SheetStockOption
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(StockOption.OBJECT_NAME);
-        myValues.addValue(StockOption.FIELD_PORTFOLIO, loadInteger(COL_PORTFOLIO));
-        myValues.addValue(StockOption.FIELD_SECURITY, loadInteger(COL_SECURITY));
+        myValues.addValue(StockOption.FIELD_STOCKHOLDING, loadInteger(COL_HOLDING));
         myValues.addValue(StockOption.FIELD_GRANTDATE, loadDate(COL_GRANT));
         myValues.addValue(StockOption.FIELD_EXPIREDATE, loadDate(COL_EXPIRE));
         myValues.addValue(StockOption.FIELD_PRICE, loadBytes(COL_PRICE));
@@ -127,8 +121,7 @@ public class SheetStockOption
     protected void insertSecureItem(final StockOption pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_PORTFOLIO, pItem.getPortfolioId());
-        writeInteger(COL_SECURITY, pItem.getSecurityId());
+        writeInteger(COL_HOLDING, pItem.getStockHoldingId());
         writeDate(COL_GRANT, pItem.getGrantDate());
         writeDate(COL_EXPIRE, pItem.getExpiryDate());
         writeBytes(COL_PRICE, pItem.getPriceBytes());

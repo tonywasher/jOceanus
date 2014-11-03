@@ -48,6 +48,16 @@ public final class SecurityHolding
     private static final String NAME_SEP = ":";
 
     /**
+     * Portfolio shift -> 20 bits giving 1M securities and 4K portfolios.
+     */
+    private static final int PORTFOLIO_SHIFT = 20;
+
+    /**
+     * Id mask -> 20 bits giving 1M securities and 4K portfolios.
+     */
+    private static final int ID_MASK = 0xFFFFF;
+
+    /**
      * Local Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(SecurityHolding.class.getSimpleName());
@@ -242,7 +252,7 @@ public final class SecurityHolding
      */
     private Integer generateId() {
         return theSecurity.getId()
-               | (thePortfolio.getId() << Short.SIZE);
+               | (thePortfolio.getId() << PORTFOLIO_SHIFT);
     }
 
     /**
@@ -251,7 +261,7 @@ public final class SecurityHolding
      * @return the portfolio id
      */
     private static Integer getPortfolioId(final Integer pId) {
-        return (pId >> Short.SIZE) & Short.MAX_VALUE;
+        return (pId >>> PORTFOLIO_SHIFT) & ID_MASK;
     }
 
     /**
@@ -260,7 +270,7 @@ public final class SecurityHolding
      * @return the security id
      */
     private static Integer getSecurityId(final Integer pId) {
-        return pId & Short.MAX_VALUE;
+        return pId & ID_MASK;
     }
 
     /**
