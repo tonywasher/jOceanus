@@ -327,6 +327,11 @@ public final class AssetPair
                 if (myAccount.isBaseAccount()) {
                     /* Loop through the Partner AssetTypes */
                     for (AssetType myPartner : AssetType.values()) {
+                        /* Ignore securities */
+                        if (myPartner.isSecurity()) {
+                            continue;
+                        }
+
                         /* Create the new To AssetPair and store */
                         AssetPair myPair = new AssetPair(myAccount, myPartner, AssetDirection.TO);
                         myMap.put(myPair.getEncodedId(), myPair);

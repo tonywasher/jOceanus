@@ -724,4 +724,12 @@ public class MoneyWiseData
             myList.prepareForAnalysis();
         }
     }
+
+    /**
+     * Adjust security map.
+     */
+    public void adjustSecurityMap() {
+        /* Reset security map names */
+        theSecurityHoldings.resetNames();
+    }
 }

@@ -23,8 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -34,8 +35,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 
 /**
  * Portfolio/Security combination.
@@ -45,7 +48,12 @@ public final class SecurityHolding
     /**
      * Name separator.
      */
-    private static final String NAME_SEP = ":";
+    public static final String SECURITYHOLDING_SEP = ":";
+
+    /**
+     * New Security Holding text.
+     */
+    public static final String SECURITYHOLDING_NEW = MoneyWiseDataResource.SECURITYHOLDING_NEW.getValue();
 
     /**
      * Portfolio shift -> 20 bits giving 1M securities and 4K portfolios.
@@ -104,7 +112,7 @@ public final class SecurityHolding
             return theId;
         }
         if (FIELD_NAME.equals(pField)) {
-            return theName;
+            return getName();
         }
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
@@ -165,7 +173,17 @@ public final class SecurityHolding
 
     @Override
     public String getName() {
+        if (theName == null) {
+            theName = generateName();
+        }
         return theName;
+    }
+
+    /**
+     * Reset the name.
+     */
+    private void resetName() {
+        theName = null;
     }
 
     @Override
@@ -217,7 +235,7 @@ public final class SecurityHolding
         /* Build and return the name */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(thePortfolio.getName());
-        myBuilder.append(NAME_SEP);
+        myBuilder.append(SECURITYHOLDING_SEP);
         myBuilder.append(theSecurity.getName());
         return myBuilder.toString();
     }
@@ -228,7 +246,7 @@ public final class SecurityHolding
      * @return the portfolio name
      */
     private static String getPortfolioName(final String pName) {
-        int iIndex = pName.indexOf(NAME_SEP);
+        int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
         return (iIndex == -1)
                              ? pName
                              : pName.substring(0, iIndex);
@@ -240,7 +258,7 @@ public final class SecurityHolding
      * @return the security name
      */
     private static String getSecurityName(final String pName) {
-        int iIndex = pName.indexOf(NAME_SEP);
+        int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
         return (iIndex == -1)
                              ? ""
                              : pName.substring(iIndex + 1);
@@ -284,9 +302,8 @@ public final class SecurityHolding
         thePortfolio = pPortfolio;
         theSecurity = pSecurity;
 
-        /* Generate the id and name */
+        /* Generate the id */
         theId = generateId();
-        theName = generateName();
     }
 
     @Override
@@ -341,23 +358,40 @@ public final class SecurityHolding
      * SecurityHolding Map.
      */
     public static class SecurityHoldingMap
-            extends HashMap<Integer, Map<Integer, SecurityHolding>> {
+            extends HashMap<Integer, PortfolioHoldingsMap> {
         /**
          * SerialId.
          */
         private static final long serialVersionUID = -4221855114560425582L;
 
         /**
-         * Underlying data.
+         * Underlying portfolio list.
          */
-        private final transient MoneyWiseData theData;
+        private final transient PortfolioList thePortfolios;
+
+        /**
+         * Underlying security list.
+         */
+        private final transient SecurityList theSecurities;
 
         /**
          * Constructor.
          * @param pData the dataSet
          */
         public SecurityHoldingMap(final MoneyWiseData pData) {
-            theData = pData;
+            /* Access lists */
+            thePortfolios = pData.getPortfolios();
+            theSecurities = pData.getSecurities();
+        }
+
+        /**
+         * Constructor.
+         * @param pUpdateSet the updateSet
+         */
+        public SecurityHoldingMap(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+            /* Access lists */
+            thePortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+            theSecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         }
 
         /**
@@ -427,21 +461,20 @@ public final class SecurityHolding
          */
         private PortfolioHoldingsMap getMapForPortfolio(final Integer pId) {
             /* Look up in the map */
-            Map<Integer, SecurityHolding> myMap = get(pId);
+            PortfolioHoldingsMap myMap = get(pId);
 
             /* If the Id is not found */
             if (myMap == null) {
                 /* Look up the portfolio as a double check */
-                PortfolioList myList = theData.getPortfolios();
-                Portfolio myPortfolio = myList.findItemById(pId);
+                Portfolio myPortfolio = thePortfolios.findItemById(pId);
 
                 /* Reject if no such portfolio */
-                if (myPortfolio == null) {
+                if ((myPortfolio == null) || (myPortfolio.isDeleted())) {
                     return null;
                 }
 
                 /* Allocate and store the map */
-                myMap = new PortfolioHoldingsMap(myPortfolio);
+                myMap = new PortfolioHoldingsMap(myPortfolio, theSecurities);
                 put(pId, myMap);
             }
 
@@ -456,8 +489,7 @@ public final class SecurityHolding
          */
         private PortfolioHoldingsMap getMapForPortfolio(final String pName) {
             /* Look up the portfolio */
-            PortfolioList myList = theData.getPortfolios();
-            Portfolio myPortfolio = myList.findItemByName(pName);
+            Portfolio myPortfolio = thePortfolios.findItemByName(pName);
 
             /* Reject if no such portfolio */
             if (myPortfolio == null) {
@@ -466,12 +498,12 @@ public final class SecurityHolding
 
             /* Look up in the map */
             Integer myId = myPortfolio.getId();
-            Map<Integer, SecurityHolding> myMap = get(myId);
+            PortfolioHoldingsMap myMap = get(myId);
 
             /* If the Id is not found */
             if (myMap == null) {
                 /* Allocate and store the map */
-                myMap = new PortfolioHoldingsMap(myPortfolio);
+                myMap = new PortfolioHoldingsMap(myPortfolio, theSecurities);
                 put(myId, myMap);
             }
 
@@ -480,97 +512,338 @@ public final class SecurityHolding
         }
 
         /**
-         * PortfolioHoldings Map.
+         * Reset names.
          */
-        private final class PortfolioHoldingsMap
-                extends HashMap<Integer, SecurityHolding>
-                implements JDataFormat {
-            /**
-             * Serial Id.
-             */
-            private static final long serialVersionUID = -5532168973693014505L;
+        public void resetNames() {
+            /* Iterate through the portfolio maps */
+            Iterator<PortfolioHoldingsMap> myIterator = values().iterator();
+            while (myIterator.hasNext()) {
+                PortfolioHoldingsMap myMap = myIterator.next();
 
-            @Override
-            public String formatObject() {
-                return thePortfolio.formatObject();
+                /* If the portfolio is not deleted */
+                if (!myMap.thePortfolio.isDeleted()) {
+                    /* Reset names for the portfolio */
+                    myMap.resetNames();
+                }
+            }
+        }
+
+        /**
+         * DeRegister Portfolio.
+         * @param pPortfolio the portfolio
+         */
+        public void deRegister(final Portfolio pPortfolio) {
+            /* Ensure that we do not reference this portfolio */
+            Integer myId = pPortfolio.getId();
+            remove(myId);
+        }
+
+        /**
+         * DeRegister Security.
+         * @param pSecurity the security
+         */
+        public void deRegister(final Security pSecurity) {
+            /* Access the id */
+            Integer myId = pSecurity.getId();
+
+            /* Iterate through the portfolio maps */
+            Iterator<PortfolioHoldingsMap> myIterator = values().iterator();
+            while (myIterator.hasNext()) {
+                PortfolioHoldingsMap myMap = myIterator.next();
+
+                /* Ensure that we do not reference this security */
+                myMap.remove(myId);
+            }
+        }
+
+        /**
+         * Obtain existing holding list for Portfolio.
+         * @param pPortfolio the portfolio
+         * @return the iterator
+         */
+        public Iterator<SecurityHolding> existingIterator(final Portfolio pPortfolio) {
+            /* Look up in the map */
+            PortfolioHoldingsMap myMap = get(pPortfolio.getId());
+
+            /* return the iterator */
+            return myMap == null
+                                ? null
+                                : myMap.existingIterator();
+        }
+
+        /**
+         * Obtain new holding list for Portfolio.
+         * @param pPortfolio the portfolio
+         * @return the iterator
+         */
+        public Iterator<SecurityHolding> newIterator(final Portfolio pPortfolio) {
+            return fullIterator(pPortfolio, null);
+        }
+
+        /**
+         * Obtain new holding list for Portfolio.
+         * @param pPortfolio the portfolio
+         * @param pClass the class of holdings or null for all
+         * @return the iterator
+         */
+        public Iterator<SecurityHolding> newIterator(final Portfolio pPortfolio,
+                                                     final SecurityTypeClass pClass) {
+            /* Look up in the map */
+            PortfolioHoldingsMap myMap = get(pPortfolio.getId());
+
+            /* return the iterator */
+            return myMap == null
+                                ? fullIterator(pPortfolio, pClass)
+                                : myMap.newIterator(pClass);
+        }
+
+        /**
+         * Obtain new holding list for Portfolio.
+         * @param pPortfolio the portfolio
+         * @param pClass the class of holdings or null for all
+         * @return the iterator
+         */
+        private Iterator<SecurityHolding> fullIterator(final Portfolio pPortfolio,
+                                                       final SecurityTypeClass pClass) {
+            /* If the portfolio is closed/deleted */
+            if (pPortfolio.isClosed() || pPortfolio.isDeleted()) {
+                /* No iterator */
+                return null;
             }
 
-            @Override
-            public String toString() {
-                return formatObject();
-            }
+            /* Create an empty list */
+            OrderedList<SecurityHolding> myList = new OrderedList<SecurityHolding>(SecurityHolding.class);
 
-            /**
-             * Portfolio.
-             */
-            private final Portfolio thePortfolio;
+            /* Loop through the securities */
+            Iterator<Security> myIterator = theSecurities.iterator();
+            while (myIterator.hasNext()) {
+                Security mySecurity = myIterator.next();
 
-            /**
-             * Constructor.
-             * @param pPortfolio the portfolio
-             */
-            private PortfolioHoldingsMap(final Portfolio pPortfolio) {
-                thePortfolio = pPortfolio;
-            }
-
-            /**
-             * Obtain or allocate the holding for the security.
-             * @param pId the id of the security
-             * @return the holding
-             */
-            private SecurityHolding getHoldingForSecurity(final Integer pId) {
-                /* Look up in the map */
-                SecurityHolding myHolding = get(pId);
-
-                /* If the Id is not found */
-                if (myHolding == null) {
-                    /* Look up the security as a double check */
-                    SecurityList myList = theData.getSecurities();
-                    Security mySecurity = myList.findItemById(pId);
-
-                    /* Reject if no such security */
-                    if (mySecurity == null) {
-                        return null;
-                    }
-
-                    /* Allocate and store the map */
-                    myHolding = new SecurityHolding(thePortfolio, mySecurity);
-                    put(pId, myHolding);
+                /* Ignore closed/deleted and wrong class */
+                boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
+                bIgnore |= pClass != null && !pClass.equals(mySecurity.getSecurityTypeClass());
+                if (bIgnore) {
+                    continue;
                 }
 
-                /* Return the holding */
-                return myHolding;
+                /* Create a new holding and add to the list */
+                SecurityHolding myHolding = new SecurityHolding(pPortfolio, mySecurity);
+                myList.append(myHolding);
             }
 
-            /**
-             * Obtain or allocate the holding for the security.
-             * @param pName the name of the security
-             * @return the holding
-             */
-            private SecurityHolding getHoldingForSecurity(final String pName) {
-                /* Look up the security */
-                SecurityList myList = theData.getSecurities();
-                Security mySecurity = myList.findItemByName(pName);
+            /* Sort list or delete if empty */
+            if (myList.isEmpty()) {
+                myList = null;
+            } else {
+                myList.reSort();
+            }
+
+            /* return iterator */
+            return myList == null
+                                 ? null
+                                 : myList.iterator();
+        }
+    }
+
+    /**
+     * PortfolioHoldings Map.
+     */
+    private static final class PortfolioHoldingsMap
+            extends HashMap<Integer, SecurityHolding>
+            implements JDataFormat {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -5532168973693014505L;
+
+        @Override
+        public String formatObject() {
+            return thePortfolio.formatObject();
+        }
+
+        @Override
+        public String toString() {
+            return formatObject();
+        }
+
+        /**
+         * Portfolio.
+         */
+        private final transient Portfolio thePortfolio;
+
+        /**
+         * Underlying security list.
+         */
+        private final transient SecurityList theSecurities;
+
+        /**
+         * Constructor.
+         * @param pPortfolio the portfolio
+         * @param pSecurities the security list
+         */
+        private PortfolioHoldingsMap(final Portfolio pPortfolio,
+                                     final SecurityList pSecurities) {
+            thePortfolio = pPortfolio;
+            theSecurities = pSecurities;
+        }
+
+        /**
+         * Obtain or allocate the holding for the security.
+         * @param pId the id of the security
+         * @return the holding
+         */
+        private SecurityHolding getHoldingForSecurity(final Integer pId) {
+            /* Look up in the map */
+            SecurityHolding myHolding = get(pId);
+
+            /* If the Id is not found */
+            if (myHolding == null) {
+                /* Look up the security as a double check */
+                Security mySecurity = theSecurities.findItemById(pId);
 
                 /* Reject if no such security */
-                if (mySecurity == null) {
+                if ((mySecurity == null) || (mySecurity.isDeleted())) {
                     return null;
                 }
 
-                /* Look up in the map */
-                Integer myId = mySecurity.getId();
-                SecurityHolding myHolding = get(myId);
+                /* Allocate and store the map */
+                myHolding = new SecurityHolding(thePortfolio, mySecurity);
+                put(pId, myHolding);
+            }
 
-                /* If the Id is not found */
-                if (myHolding == null) {
-                    /* Allocate and store the map */
-                    myHolding = new SecurityHolding(thePortfolio, mySecurity);
-                    put(myId, myHolding);
+            /* Return the holding */
+            return myHolding;
+        }
+
+        /**
+         * Obtain or allocate the holding for the security.
+         * @param pName the name of the security
+         * @return the holding
+         */
+        private SecurityHolding getHoldingForSecurity(final String pName) {
+            /* Look up the security */
+            Security mySecurity = theSecurities.findItemByName(pName);
+
+            /* Reject if no such security */
+            if (mySecurity == null) {
+                return null;
+            }
+
+            /* Look up in the map */
+            Integer myId = mySecurity.getId();
+            SecurityHolding myHolding = get(myId);
+
+            /* If the Id is not found */
+            if (myHolding == null) {
+                /* Allocate and store the map */
+                myHolding = new SecurityHolding(thePortfolio, mySecurity);
+                put(myId, myHolding);
+            }
+
+            /* Return the holding */
+            return myHolding;
+        }
+
+        /**
+         * Reset names.
+         */
+        private void resetNames() {
+            /* Iterate through the security holdings */
+            Iterator<SecurityHolding> myIterator = values().iterator();
+            while (myIterator.hasNext()) {
+                SecurityHolding myHolding = myIterator.next();
+
+                /* Reset the name */
+                myHolding.resetName();
+            }
+        }
+
+        /**
+         * Obtain existing holding list for Portfolio.
+         * @return the iterator
+         */
+        private Iterator<SecurityHolding> existingIterator() {
+            /* If the portfolio is closed/deleted */
+            if (thePortfolio.isClosed() || thePortfolio.isDeleted()) {
+                /* No iterator */
+                return null;
+            }
+
+            /* Create an empty list */
+            OrderedList<SecurityHolding> myList = new OrderedList<SecurityHolding>(SecurityHolding.class);
+
+            /* Loop through the holdings */
+            Iterator<SecurityHolding> myIterator = values().iterator();
+            while (myIterator.hasNext()) {
+                SecurityHolding myHolding = myIterator.next();
+                Security mySecurity = myHolding.getSecurity();
+
+                /* Ignore closed/deleted */
+                if (!mySecurity.isClosed() && !mySecurity.isDeleted()) {
+                    /* Add to the list */
+                    myList.append(myHolding);
+                }
+            }
+
+            /* Sort list or delete if empty */
+            if (myList.isEmpty()) {
+                myList = null;
+            } else {
+                myList.reSort();
+            }
+
+            /* return iterator */
+            return myList == null
+                                 ? null
+                                 : myList.iterator();
+        }
+
+        /**
+         * Obtain new holding list for Portfolio.
+         * @param pClass the class of holdings or null for all
+         * @return the iterator
+         */
+        private Iterator<SecurityHolding> newIterator(final SecurityTypeClass pClass) {
+            /* If the portfolio is closed/deleted */
+            if (thePortfolio.isClosed() || thePortfolio.isDeleted()) {
+                /* No iterator */
+                return null;
+            }
+
+            /* Create an empty list */
+            OrderedList<SecurityHolding> myList = new OrderedList<SecurityHolding>(SecurityHolding.class);
+
+            /* Loop through the securities */
+            Iterator<Security> myIterator = theSecurities.iterator();
+            while (myIterator.hasNext()) {
+                Security mySecurity = myIterator.next();
+
+                /* Ignore closed/deleted and wrong class */
+                boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
+                bIgnore |= pClass != null && pClass.equals(mySecurity.getSecurityTypeClass());
+                if (bIgnore) {
+                    continue;
                 }
 
-                /* Return the holding */
-                return myHolding;
+                /* Only add if not currently present */
+                if (get(mySecurity.getId()) == null) {
+                    /* Create a new holding and add to the list */
+                    SecurityHolding myHolding = new SecurityHolding(thePortfolio, mySecurity);
+                    myList.append(myHolding);
+                }
             }
+
+            /* Sort list or delete if empty */
+            if (myList.isEmpty()) {
+                myList = null;
+            } else {
+                myList.reSort();
+            }
+
+            /* return iterator */
+            return myList == null
+                                 ? null
+                                 : myList.iterator();
         }
     }
 }

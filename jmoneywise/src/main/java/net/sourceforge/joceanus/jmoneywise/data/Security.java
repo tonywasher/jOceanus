@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -763,6 +764,12 @@ public class Security
         theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    @Override
+    public void deRegister() {
+        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        myMap.deRegister(this);
     }
 
     /**

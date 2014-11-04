@@ -722,7 +722,7 @@ public class StockOption
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve data links */
-        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        SecurityHoldingMap myMap = getList().getSecurityHoldings();
         AssetPair.resolveDataLink(this, myMap, FIELD_STOCKHOLDING);
     }
 
@@ -942,6 +942,11 @@ public class StockOption
          */
         private AccountInfoTypeList theInfoTypeList = null;
 
+        /**
+         * The UpdateSet StockHoldingsMap.
+         */
+        private SecurityHoldingMap theHoldingsMap = null;
+
         @Override
         public String listName() {
             return LIST_NAME;
@@ -960,6 +965,23 @@ public class StockOption
         @Override
         protected StockOptionDataMap getDataMap() {
             return (StockOptionDataMap) super.getDataMap();
+        }
+
+        /**
+         * Obtain the securityHoldings Map.
+         * @return the map
+         */
+        public SecurityHoldingMap getSecurityHoldings() {
+            return theHoldingsMap;
+        }
+
+        /**
+         * Declare stockHolding.
+         * @param pHolding the holding
+         * @return the declared holding
+         */
+        public SecurityHolding declareStockHolding(final SecurityHolding pHolding) {
+            return theHoldingsMap.declareHolding(pHolding.getPortfolio(), pHolding.getSecurity());
         }
 
         /**
@@ -1024,6 +1046,9 @@ public class StockOption
             /* Create info List */
             StockOptionInfoList myOptionInfo = getStockOptionInfo();
             myList.theInfoList = myOptionInfo.getEmptyList(ListStyle.EDIT);
+
+            /* Create the security holdings map */
+            myList.theHoldingsMap = new SecurityHoldingMap(pUpdateSet);
 
             /* Loop through the options */
             Iterator<StockOption> myIterator = iterator();
@@ -1128,6 +1153,15 @@ public class StockOption
         @Override
         protected StockOptionDataMap allocateDataMap() {
             return new StockOptionDataMap();
+        }
+
+        @Override
+        public void postProcessOnUpdate() {
+            /* Perform standard updates */
+            super.postProcessOnUpdate();
+
+            /* reset names in map */
+            theHoldingsMap.resetNames();
         }
     }
 

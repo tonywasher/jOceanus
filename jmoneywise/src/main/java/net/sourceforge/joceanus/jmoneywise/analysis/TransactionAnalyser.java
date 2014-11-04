@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -62,6 +63,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -322,9 +325,10 @@ public class TransactionAnalyser
      * Mark active accounts.
      * @throws JOceanusException on error
      */
-    public void markActiveAccounts() throws JOceanusException {
+    public void postProcessAnalysis() throws JOceanusException {
         /* Start a new task */
-        JDataProfile myTask = theProfile.startTask("AnalyseAccounts");
+        JDataProfile myTask = theProfile.startTask("postProcessAnalysis");
+        myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */
         theDepositBuckets.markActiveAccounts();
@@ -333,6 +337,13 @@ public class TransactionAnalyser
 
         /* Mark relevant securities */
         thePortfolioBuckets.markActiveSecurities();
+
+        /* Validate transaction groups */
+        myTask.startTask("AnalyseGroups");
+        DataErrorList<Transaction> myErrors = theData.getTransactions().validateGroups();
+        if (myErrors != null) {
+            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
+        }
 
         /* Complete the task */
         myTask.end();

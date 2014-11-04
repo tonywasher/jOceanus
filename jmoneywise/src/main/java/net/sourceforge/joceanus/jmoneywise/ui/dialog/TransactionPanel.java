@@ -46,13 +46,18 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
+import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
-import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
@@ -120,12 +125,12 @@ public class TransactionPanel
     /**
      * Account Button Field.
      */
-    private final JScrollButton<Object> theAccountButton;
+    private final JScrollButton<TransactionAsset> theAccountButton;
 
     /**
      * Partner Button Field.
      */
-    private final JScrollButton<Object> thePartnerButton;
+    private final JScrollButton<TransactionAsset> thePartnerButton;
 
     /**
      * Category Button Field.
@@ -173,8 +178,8 @@ public class TransactionPanel
         theDateButton = new JDateDayButton();
 
         /* Create the buttons */
-        theAccountButton = new JScrollButton<Object>();
-        thePartnerButton = new JScrollButton<Object>();
+        theAccountButton = new JScrollButton<TransactionAsset>();
+        thePartnerButton = new JScrollButton<TransactionAsset>();
         theCategoryButton = new JScrollButton<TransactionCategory>();
         theTagButton = new JScrollListButton<TransactionTag>();
         theThirdPartyButton = new JScrollButton<Deposit>();
@@ -247,10 +252,10 @@ public class TransactionPanel
 
         /* Declare fields */
         theFieldSet.addFieldElement(Transaction.FIELD_DATE, DataType.DATEDAY, theDateButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, Object.class, theAccountButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, TransactionAsset.class, theAccountButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, Object.class, thePartnerButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, TransactionAsset.class, thePartnerButton);
         theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, DataType.MONEY, myAmount);
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
@@ -586,13 +591,13 @@ public class TransactionPanel
             myTrans.setAmount(pUpdate.getMoney());
         } else if (myField.equals(Transaction.FIELD_ACCOUNT)) {
             /* Update the Account */
-            myTrans.setAccount(pUpdate.getValue(AssetBase.class));
+            myTrans.setAccount(resolveAsset(pUpdate.getValue(AssetBase.class)));
         } else if (myField.equals(Transaction.FIELD_DIRECTION)) {
             /* Update the Direction */
             myTrans.switchDirection();
         } else if (myField.equals(Transaction.FIELD_PARTNER)) {
             /* Update the Partner */
-            myTrans.setPartner(pUpdate.getValue(AssetBase.class));
+            myTrans.setPartner(resolveAsset(pUpdate.getValue(AssetBase.class)));
         } else if (myField.equals(Transaction.FIELD_CATEGORY)) {
             /* Update the Category */
             myTrans.setCategory(pUpdate.getValue(TransactionCategory.class));
@@ -659,11 +664,32 @@ public class TransactionPanel
     }
 
     /**
+     * Resolve Asset.
+     * @param pAsset the asset to resolve
+     * @return the resolved asset
+     */
+    public static TransactionAsset resolveAsset(final TransactionAsset pAsset) {
+        /* If this is a security holding */
+        if (pAsset instanceof SecurityHolding) {
+            /* declare holding via map */
+            SecurityHolding myHolding = (SecurityHolding) pAsset;
+            Portfolio myPortfolio = myHolding.getPortfolio();
+            Security mySecurity = myHolding.getSecurity();
+            MoneyWiseData myData = myPortfolio.getDataSet();
+            SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+            return myMap.declareHolding(myPortfolio, mySecurity);
+        }
+
+        /* Just return the asset */
+        return pAsset;
+    }
+
+    /**
      * Build the account list for an item.
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
      */
-    public void buildAccountMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+    public void buildAccountMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
                                  final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
@@ -672,7 +698,7 @@ public class TransactionPanel
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), true, pTrans);
+        buildHoldingMenu(pMenuBuilder, true, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
     }
 
@@ -681,7 +707,7 @@ public class TransactionPanel
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
      */
-    public void buildPartnerMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+    public void buildPartnerMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
                                  final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
@@ -690,7 +716,7 @@ public class TransactionPanel
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.SECURITY, SecurityList.class), false, pTrans);
+        buildHoldingMenu(pMenuBuilder, false, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
         buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
     }
@@ -703,7 +729,7 @@ public class TransactionPanel
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private <T extends AssetBase<T>> void buildAssetMenu(final JScrollMenuBuilder<Object> pMenuBuilder,
+    private <T extends AssetBase<T>> void buildAssetMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
                                                          final AssetBaseList<T> pList,
                                                          final boolean pIsAccount,
                                                          final Transaction pTrans) {
@@ -727,8 +753,7 @@ public class TransactionPanel
             /* Check whether the asset is allowable for the owner */
             bIgnore |= !(pIsAccount
                                    ? TransactionValidator.isValidAccount(myAsset)
-                                   :
-                                   TransactionValidator.isValidPartner(myAccount, myCategory, myAsset));
+                                   : TransactionValidator.isValidPartner(myAccount, myCategory, myAsset));
             if (bIgnore) {
                 continue;
             }
@@ -746,6 +771,123 @@ public class TransactionPanel
             if (myAsset.equals(myCurr)) {
                 /* Record it */
                 myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the asset list for an item.
+     * @param <T> the Asset type
+     * @param pMenuBuilder the menu builder
+     * @param pIsAccount is this item the account rather than partner
+     * @param pTrans the transaction to build for
+     */
+    private <T extends AssetBase<T>> void buildHoldingMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+                                                           final boolean pIsAccount,
+                                                           final Transaction pTrans) {
+        /* Record active item */
+        TransactionAsset myAccount = pTrans.getAccount();
+        TransactionCategory myCategory = pTrans.getCategory();
+        TransactionAsset myCurr = pIsAccount
+                                            ? myAccount
+                                            : pTrans.getPartner();
+        JMenuItem myActive = null;
+        JScrollMenu myMenu = null;
+
+        /* Access Portfolios and Holdings Map */
+        MoneyWiseData myData = pTrans.getDataSet();
+        PortfolioList myPortfolios = myData.getPortfolios();
+        SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+
+        /* Loop through the Portfolios */
+        Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            Portfolio myPortfolio = myPortIterator.next();
+            JScrollMenu myCoreMenu = null;
+
+            /* Ignore deleted or closed */
+            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
+                continue;
+            }
+
+            /* Look for existing and new holdings */
+            Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            Iterator<SecurityHolding> myNewIterator = myMap.newIterator(myPortfolio);
+            if ((myExistIterator != null) || (myNewIterator != null)) {
+                /* Create a new JMenu and add it to the popUp */
+                myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
+
+                /* If there are existing elements */
+                if (myExistIterator != null) {
+                    /* Loop through them */
+                    while (myExistIterator.hasNext()) {
+                        SecurityHolding myHolding = myExistIterator.next();
+                        Security mySecurity = myHolding.getSecurity();
+
+                        /* Check whether the asset is allowable for the owner */
+                        boolean bIgnore = !(pIsAccount
+                                                      ? TransactionValidator.isValidAccount(myHolding)
+                                                      : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                        if (bIgnore) {
+                            continue;
+                        }
+
+                        /* If this the first item */
+                        if (myMenu == null) {
+                            /* Create a new JMenu and add it to the popUp */
+                            myMenu = pMenuBuilder.addSubMenu(AssetType.SECURITYHOLDING.toString());
+                        }
+                        if (myCoreMenu == null) {
+                            /* Create a new JMenu and add it to the popUp */
+                            myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
+                        }
+
+                        /* Add the item to the menu */
+                        JMenuItem myItem = pMenuBuilder.addItem(myCoreMenu, myHolding, mySecurity.getName());
+
+                        /* If this is the active holding */
+                        if (mySecurity.equals(myCurr)) {
+                            /* Record it */
+                            myActive = myItem;
+                        }
+                    }
+                }
+
+                /* If there are new elements */
+                if (myNewIterator != null) {
+                    /* Create a new subMenu */
+                    JScrollMenu mySubMenu = pMenuBuilder.addSubMenu(myCoreMenu, SecurityHolding.SECURITYHOLDING_NEW);
+
+                    /* Loop through them */
+                    while (myNewIterator.hasNext()) {
+                        SecurityHolding myHolding = myNewIterator.next();
+                        Security mySecurity = myHolding.getSecurity();
+
+                        /* Check whether the asset is allowable for the owner */
+                        boolean bIgnore = !(pIsAccount
+                                                      ? TransactionValidator.isValidAccount(myHolding)
+                                                      : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                        if (bIgnore) {
+                            continue;
+                        }
+
+                        /* If this the first item */
+                        if (myMenu == null) {
+                            /* Create a new JMenu and add it to the popUp */
+                            myMenu = pMenuBuilder.addSubMenu(AssetType.SECURITYHOLDING.toString());
+                        }
+                        if (myCoreMenu == null) {
+                            /* Create a new JMenu and add it to the popUp */
+                            myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
+                        }
+
+                        /* Add the item to the menu */
+                        pMenuBuilder.addItem(mySubMenu, myHolding, mySecurity.getName());
+                    }
+                }
             }
         }
 
@@ -926,12 +1068,12 @@ public class TransactionPanel
         /**
          * The Account Menu Builder.
          */
-        private final JScrollMenuBuilder<Object> theAccountMenuBuilder;
+        private final JScrollMenuBuilder<TransactionAsset> theAccountMenuBuilder;
 
         /**
          * The Partner Menu Builder.
          */
-        private final JScrollMenuBuilder<Object> thePartnerMenuBuilder;
+        private final JScrollMenuBuilder<TransactionAsset> thePartnerMenuBuilder;
 
         /**
          * The Category Menu Builder.

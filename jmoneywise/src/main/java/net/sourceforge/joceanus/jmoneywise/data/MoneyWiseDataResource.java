@@ -454,6 +454,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     PORTFOLIO_ERROR_HOLDPARENT("Portfolio.Error.HoldParent"),
 
     /**
+     * SecurityHolding New Menu.
+     */
+    SECURITYHOLDING_NEW("SecurityHolding.Menu.New"),
+
+    /**
      * Transaction AssetPair.
      */
     TRANSACTION_ASSETPAIR("Transaction.AssetPair"),

@@ -25,18 +25,14 @@ package net.sourceforge.joceanus.jmoneywise.views;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
@@ -176,15 +172,9 @@ public class View
         JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
         mySection.setObject(myAnalyser);
 
-        /* Mark active accounts */
-        myAnalyser.markActiveAccounts();
-
-        /* Validate transaction groups */
-        myTask.startTask("AnalyseGroups");
-        DataErrorList<Transaction> myErrors = pData.getTransactions().validateGroups();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Post process the analysis */
+        myAnalyser.postProcessAnalysis();
+        pData.adjustSecurityMap();
 
         /* Complete the task */
         myTask.end();

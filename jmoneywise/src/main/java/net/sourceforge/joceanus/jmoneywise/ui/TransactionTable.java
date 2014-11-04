@@ -54,12 +54,12 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
@@ -962,7 +962,7 @@ public class TransactionTable
         /**
          * Account ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<Object> theAccountEditor;
+        private final ScrollButtonCellEditor<TransactionAsset> theAccountEditor;
 
         /**
          * Category ScrollButton Menu Editor.
@@ -1088,7 +1088,7 @@ public class TransactionTable
             theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
             theUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
             theDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
-            theAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(Object.class);
+            theAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
             theDepositEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -1325,13 +1325,13 @@ public class TransactionTable
                     pItem.setCategory((TransactionCategory) pValue);
                     break;
                 case COLUMN_ACCOUNT:
-                    pItem.setAccount((AssetBase<?>) pValue);
+                    pItem.setAccount(TransactionPanel.resolveAsset((TransactionAsset) pValue));
                     break;
                 case COLUMN_DIRECTION:
                     pItem.switchDirection();
                     break;
                 case COLUMN_PARTNER:
-                    pItem.setPartner((AssetBase<?>) pValue);
+                    pItem.setPartner(TransactionPanel.resolveAsset((TransactionAsset) pValue));
                     break;
                 case COLUMN_DESC:
                     pItem.setComments((String) pValue);
@@ -1618,7 +1618,7 @@ public class TransactionTable
              */
             private void buildAccountMenu() {
                 /* Access details */
-                JScrollMenuBuilder<Object> myBuilder = theAccountEditor.getMenuBuilder();
+                JScrollMenuBuilder<TransactionAsset> myBuilder = theAccountEditor.getMenuBuilder();
 
                 /* Record active item */
                 Point myCell = theAccountEditor.getPoint();

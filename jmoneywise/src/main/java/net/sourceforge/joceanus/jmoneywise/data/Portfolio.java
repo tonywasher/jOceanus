@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -618,6 +619,12 @@ public class Portfolio
         theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
         hasInfoSet = true;
         useInfoSet = true;
+    }
+
+    @Override
+    public void deRegister() {
+        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        myMap.deRegister(this);
     }
 
     /**

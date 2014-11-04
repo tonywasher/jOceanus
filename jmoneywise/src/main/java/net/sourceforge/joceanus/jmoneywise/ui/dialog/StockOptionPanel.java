@@ -42,9 +42,10 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
-import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfoSet;
@@ -62,6 +63,7 @@ import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
@@ -306,7 +308,9 @@ public class StockOptionPanel
             myOption.setDescription(pUpdate.getString());
         } else if (myField.equals(StockOption.FIELD_STOCKHOLDING)) {
             /* Update the Holding */
-            myOption.setStockHolding(pUpdate.getValue(SecurityHolding.class));
+            SecurityHolding myHolding = pUpdate.getValue(SecurityHolding.class);
+            StockOptionList myList = myOption.getList();
+            myOption.setStockHolding(myList.declareStockHolding(myHolding));
         } else if (myField.equals(StockOption.FIELD_GRANTDATE)) {
             /* Update the GrantDate */
             myOption.setGrantDate(pUpdate.getDateDay());
@@ -379,32 +383,68 @@ public class StockOptionPanel
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        // SecurityHolding myCurr = pOption.getStockHolding();
+        SecurityHolding myCurr = pOption.getStockHolding();
         JMenuItem myActive = null;
 
-        /* Access Securities */
-        SecurityList mySecurities = findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        /* Access Portfolios and Holdings Map */
+        PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        SecurityHoldingMap myMap = pOption.getList().getSecurityHoldings();
 
-        /* Loop through the Securities */
-        Iterator<Security> myIterator = mySecurities.iterator();
-        while (myIterator.hasNext()) {
-            Security mySecurity = myIterator.next();
+        /* Loop through the Portfolios */
+        Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            Portfolio myPortfolio = myPortIterator.next();
 
-            /* Ignore deleted or closed or non-Shares */
-            boolean bIgnore = mySecurity.isDeleted() || mySecurity.isClosed();
-            bIgnore |= !mySecurity.isSecurityClass(SecurityTypeClass.SHARES);
-            if (bIgnore) {
+            /* Ignore deleted or closed */
+            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
                 continue;
             }
 
-            /* Create a new action for the security */
-            // JMenuItem myItem = pMenuBuilder.addItem(mySecurity);
+            /* Look for existing and new holdings */
+            Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            Iterator<SecurityHolding> myNewIterator = myMap.newIterator(myPortfolio, SecurityTypeClass.SHARES);
+            if ((myExistIterator != null) || (myNewIterator != null)) {
+                /* Create a new JMenu and add it to the popUp */
+                JScrollMenu myMenu = pMenuBuilder.addSubMenu(myPortfolio.getName());
 
-            /* If this is the active security */
-            // if (mySecurity.equals(myCurr)) {
-            /* Record it */
-            // myActive = myItem;
-            // }
+                /* If there are existing elements */
+                if (myExistIterator != null) {
+                    /* Loop through them */
+                    while (myExistIterator.hasNext()) {
+                        SecurityHolding myHolding = myExistIterator.next();
+                        Security mySecurity = myHolding.getSecurity();
+
+                        /* Ignore non-Shares */
+                        if (!mySecurity.isSecurityClass(SecurityTypeClass.SHARES)) {
+                            continue;
+                        }
+
+                        /* Add the item to the menu */
+                        JMenuItem myItem = pMenuBuilder.addItem(myMenu, myHolding, mySecurity.getName());
+
+                        /* If this is the active holding */
+                        if (myHolding.equals(myCurr)) {
+                            /* Record it */
+                            myActive = myItem;
+                        }
+                    }
+                }
+
+                /* If there are new elements */
+                if (myNewIterator != null) {
+                    /* Create a new subMenu */
+                    JScrollMenu mySubMenu = pMenuBuilder.addSubMenu(myMenu, SecurityHolding.SECURITYHOLDING_NEW);
+
+                    /* Loop through them */
+                    while (myNewIterator.hasNext()) {
+                        SecurityHolding myHolding = myNewIterator.next();
+                        Security mySecurity = myHolding.getSecurity();
+
+                        /* Add the item to the menu */
+                        pMenuBuilder.addItem(mySubMenu, myHolding, mySecurity.getName());
+                    }
+                }
+            }
         }
 
         /* Ensure active item is visible */

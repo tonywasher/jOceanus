@@ -787,7 +787,7 @@ public class StockOptionTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_STOCKHOLDING:
-                    pItem.setStockHolding((SecurityHolding) pValue);
+                    pItem.setStockHolding(theOptions.declareStockHolding((SecurityHolding) pValue));
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -880,7 +880,6 @@ public class StockOptionTable
                 /* Build the menu */
                 theActiveAccount.buildHoldingMenu(myBuilder, myOption);
             }
-
         }
     }
 }
