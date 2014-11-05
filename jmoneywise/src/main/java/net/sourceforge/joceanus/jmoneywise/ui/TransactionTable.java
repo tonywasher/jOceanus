@@ -1146,8 +1146,8 @@ public class TransactionTable
             theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, theActionIconRenderer, theActionIconEditor);
             declareColumn(theActionColumn);
 
-            /* Set the ALL column set */
-            adjustColumns(AnalysisColumnSet.ALL);
+            /* Set the Balance column set */
+            adjustColumns(AnalysisColumnSet.BALANCE);
 
             /* Add listeners */
             new EditorListener();

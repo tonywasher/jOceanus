@@ -126,12 +126,12 @@ public class JDataTableColumn
         /**
          * Date column standard width.
          */
-        protected static final int WIDTH_DATE = 90;
+        protected static final int WIDTH_DATE = 100;
 
         /**
          * Money column standard width.
          */
-        protected static final int WIDTH_MONEY = 90;
+        protected static final int WIDTH_MONEY = 100;
 
         /**
          * Rate column standard width.

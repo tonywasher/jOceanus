@@ -817,9 +817,6 @@ public class TransactionPanel
             Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
             Iterator<SecurityHolding> myNewIterator = myMap.newIterator(myPortfolio);
             if ((myExistIterator != null) || (myNewIterator != null)) {
-                /* Create a new JMenu and add it to the popUp */
-                myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
-
                 /* If there are existing elements */
                 if (myExistIterator != null) {
                     /* Loop through them */
@@ -835,7 +832,7 @@ public class TransactionPanel
                             continue;
                         }
 
-                        /* If this the first item */
+                        /* Ensure that hierarchy is created */
                         if (myMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
                             myMenu = pMenuBuilder.addSubMenu(AssetType.SECURITYHOLDING.toString());
@@ -858,10 +855,8 @@ public class TransactionPanel
 
                 /* If there are new elements */
                 if (myNewIterator != null) {
-                    /* Create a new subMenu */
-                    JScrollMenu mySubMenu = pMenuBuilder.addSubMenu(myCoreMenu, SecurityHolding.SECURITYHOLDING_NEW);
-
                     /* Loop through them */
+                    JScrollMenu mySubMenu = null;
                     while (myNewIterator.hasNext()) {
                         SecurityHolding myHolding = myNewIterator.next();
                         Security mySecurity = myHolding.getSecurity();
@@ -874,7 +869,7 @@ public class TransactionPanel
                             continue;
                         }
 
-                        /* If this the first item */
+                        /* Ensure that hierarchy is created */
                         if (myMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
                             myMenu = pMenuBuilder.addSubMenu(AssetType.SECURITYHOLDING.toString());
@@ -882,6 +877,10 @@ public class TransactionPanel
                         if (myCoreMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
                             myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
+                        }
+                        if (mySubMenu == null) {
+                            /* Create a new subMenu */
+                            mySubMenu = pMenuBuilder.addSubMenu(myCoreMenu, SecurityHolding.SECURITYHOLDING_NEW);
                         }
 
                         /* Add the item to the menu */
