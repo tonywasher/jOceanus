@@ -207,6 +207,11 @@ public enum AnalysisResource implements ResourceId {
     PORTFOLIO_LIST("Portfolio.List"),
 
     /**
+     * Portfolio Cash Name.
+     */
+    PORTFOLIOCASH_NAME("Portfolio.Cash.Name"),
+
+    /**
      * Security Name.
      */
     SECURITY_NAME("Security.Name"),

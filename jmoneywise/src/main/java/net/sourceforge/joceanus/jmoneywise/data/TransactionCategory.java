@@ -332,7 +332,7 @@ public final class TransactionCategory
                     break;
                 case INCOMETOTALS:
                 case EXPENSETOTALS:
-                case STOCKPARENT:
+                case SECURITYPARENT:
                     /* Check parent */
                     if (myParent == null) {
                         addError(ERROR_MISSING, FIELD_PARENT);
@@ -357,7 +357,7 @@ public final class TransactionCategory
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
                         if ((myParentClass.isIncome() != myClass.isIncome())
-                            || (myParentClass.isStockTransfer() != myClass.isStockTransfer())) {
+                            || (myParentClass.isSecurityTransfer() != myClass.isSecurityTransfer())) {
                             addError(ERROR_DIFFPARENT, FIELD_PARENT);
                         }
 

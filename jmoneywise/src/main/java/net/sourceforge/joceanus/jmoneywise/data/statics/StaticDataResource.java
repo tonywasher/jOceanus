@@ -217,9 +217,9 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_TRANSFER("TransType.Transfer"),
 
     /**
-     * TransType StockAdjust.
+     * TransType Security UnitsAdjust.
      */
-    TRANSTYPE_STOCKADJUST("TransType.StockAdjust"),
+    TRANSTYPE_UNITSADJUST("TransType.UnitsAdjust"),
 
     /**
      * TransType StockSplit.
@@ -232,7 +232,12 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_STOCKDEMERGER("TransType.StockDeMerger"),
 
     /**
-     * TransType StockTakeOver.
+     * TransType Security Replace.
+     */
+    TRANSTYPE_SECURITYREPLACE("TransType.SecurityReplace"),
+
+    /**
+     * TransType Stock TakeOver.
      */
     TRANSTYPE_STOCKTAKEOVER("TransType.StockTakeOver"),
 
@@ -377,9 +382,9 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_EXPENSETOTALS("TransType.ExpenseTotals"),
 
     /**
-     * TransType StockParent.
+     * TransType SecurityParent.
      */
-    TRANSTYPE_STOCKPARENT("TransType.StockParent"),
+    TRANSTYPE_SECURITYPARENT("TransType.SecurityParent"),
 
     /**
      * TransType Totals.
@@ -1140,14 +1145,16 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_OTHERINCOME;
             case TRANSFER:
                 return TRANSTYPE_TRANSFER;
-            case STOCKADJUST:
-                return TRANSTYPE_STOCKADJUST;
+            case UNITSADJUST:
+                return TRANSTYPE_UNITSADJUST;
             case STOCKSPLIT:
                 return TRANSTYPE_STOCKSPLIT;
             case STOCKDEMERGER:
                 return TRANSTYPE_STOCKDEMERGER;
             case STOCKTAKEOVER:
                 return TRANSTYPE_STOCKTAKEOVER;
+            case SECURITYREPLACE:
+                return TRANSTYPE_SECURITYREPLACE;
             case STOCKRIGHTSTAKEN:
                 return TRANSTYPE_STOCKRIGHTTAKE;
             case STOCKRIGHTSWAIVED:
@@ -1204,8 +1211,8 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_INCOMETOTALS;
             case EXPENSETOTALS:
                 return TRANSTYPE_EXPENSETOTALS;
-            case STOCKPARENT:
-                return TRANSTYPE_STOCKPARENT;
+            case SECURITYPARENT:
+                return TRANSTYPE_SECURITYPARENT;
             case TOTALS:
                 return TRANSTYPE_TOTALS;
             default:

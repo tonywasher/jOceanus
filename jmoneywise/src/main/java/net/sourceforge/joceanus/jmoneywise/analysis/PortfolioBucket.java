@@ -61,6 +61,11 @@ public final class PortfolioBucket
     private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
+     * CashBucket Field Id.
+     */
+    private static final JDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemName());
+
+    /**
      * Securities Field Id.
      */
     private static final JDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
@@ -86,6 +91,11 @@ public final class PortfolioBucket
     private final Portfolio thePortfolio;
 
     /**
+     * The cash bucket.
+     */
+    private final PortfolioCashBucket theCash;
+
+    /**
      * The security bucket list.
      */
     private final SecurityBucketList theSecurities;
@@ -109,6 +119,9 @@ public final class PortfolioBucket
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
+        }
+        if (FIELD_CASH.equals(pField)) {
+            return theCash;
         }
         if (FIELD_SECURITIES.equals(pField)) {
             return theSecurities;
@@ -163,6 +176,14 @@ public final class PortfolioBucket
      */
     public Portfolio getPortfolio() {
         return thePortfolio;
+    }
+
+    /**
+     * Obtain the portfolio cash bucket.
+     * @return the bucket
+     */
+    public PortfolioCashBucket getPortfolioCash() {
+        return theCash;
     }
 
     /**
@@ -253,6 +274,9 @@ public final class PortfolioBucket
         /* Store the category */
         thePortfolio = pPortfolio;
 
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pPortfolio);
+
         /* Create the securities list */
         theSecurities = (pPortfolio != null)
                                             ? new SecurityBucketList(pAnalysis)
@@ -276,6 +300,9 @@ public final class PortfolioBucket
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
 
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);
+
         /* Create the securities list */
         theSecurities = (thePortfolio != null)
                                               ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)
@@ -298,6 +325,9 @@ public final class PortfolioBucket
                             final JDateDayRange pRange) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
+
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);
 
         /* Create the securities list */
         theSecurities = (thePortfolio != null)
@@ -459,6 +489,56 @@ public final class PortfolioBucket
     }
 
     /**
+     * Is the portfolio bucket active?
+     * @return true/false
+     */
+    public boolean isActive() {
+        /* Look for active cash */
+        if (theCash.isActive()) {
+            return true;
+        }
+
+        /* Loop through securities */
+        Iterator<SecurityBucket> myIterator = securityIterator();
+        while (myIterator.hasNext()) {
+            SecurityBucket mySecurity = myIterator.next();
+
+            /* Look for active security */
+            if (mySecurity.isActive()) {
+                return true;
+            }
+        }
+
+        /* Inactive */
+        return false;
+    }
+
+    /**
+     * Is the portfolio bucket idle?
+     * @return true/false
+     */
+    public boolean isIdle() {
+        /* Look for non-idle cash */
+        if (!theCash.isIdle()) {
+            return false;
+        }
+
+        /* Loop through securities */
+        Iterator<SecurityBucket> myIterator = securityIterator();
+        while (myIterator.hasNext()) {
+            SecurityBucket mySecurity = myIterator.next();
+
+            /* Look for active security */
+            if (!mySecurity.isIdle()) {
+                return false;
+            }
+        }
+
+        /* Idle */
+        return true;
+    }
+
+    /**
      * PortfolioBucket list class.
      */
     public static final class PortfolioBucketList
@@ -559,9 +639,8 @@ public final class PortfolioBucket
                 /* Access the bucket for this date */
                 PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pDate);
 
-                /* Ignore if no active securities */
-                SecurityBucketList mySecurities = myBucket.getSecurities();
-                if (!mySecurities.isEmpty()) {
+                /* Ignore if portfolio is inactive */
+                if (myBucket.isActive()) {
                     /* Add to the list */
                     append(myBucket);
                 }
@@ -590,8 +669,8 @@ public final class PortfolioBucket
                 /* Access the bucket for this range */
                 PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pRange);
 
-                /* If the portfolio is relevant */
-                if (!myBucket.getSecurities().isEmpty()) {
+                /* If the bucket is non-idle or active */
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Add to the list */
                     append(myBucket);
                 }
@@ -618,6 +697,19 @@ public final class PortfolioBucket
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Obtain the PortfolioBucket for a given portfolio.
+         * @param pPortfolio the portfolio
+         * @return the bucket
+         */
+        protected PortfolioCashBucket getCashBucket(final Portfolio pPortfolio) {
+            /* Locate the bucket in the list */
+            PortfolioBucket myItem = getBucket(pPortfolio);
+
+            /* Return the bucket */
+            return myItem.getPortfolioCash();
         }
 
         /**

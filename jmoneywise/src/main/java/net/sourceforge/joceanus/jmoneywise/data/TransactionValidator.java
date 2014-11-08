@@ -103,11 +103,12 @@ public final class TransactionValidator {
                 return (pAccount instanceof SecurityHolding)
                        && ((SecurityHolding) pAccount).getSecurity().isSecurityClass(SecurityTypeClass.PROPERTY);
 
-            case STOCKADJUST:
+            case UNITSADJUST:
                 /* Account must be capital */
                 return pAccount.isCapital();
 
             case STOCKSPLIT:
+            case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKDEMERGER:
             case STOCKRIGHTSWAIVED:
@@ -202,10 +203,11 @@ public final class TransactionValidator {
                 /* All need to be FROM */
                 return pDirection.isFrom();
 
-            case STOCKADJUST:
+            case UNITSADJUST:
             case STOCKSPLIT:
             case STOCKDEMERGER:
             case STOCKTAKEOVER:
+            case SECURITYREPLACE:
             case STOCKRIGHTSWAIVED:
             case PORTFOLIOXFER:
                 /* All need to be To */
@@ -310,11 +312,12 @@ public final class TransactionValidator {
             case LOYALTYBONUS:
                 return myPartnerType.isSecurity() || myPartnerType.isDeposit();
 
-            case STOCKADJUST:
+            case UNITSADJUST:
             case STOCKSPLIT:
                 /* Must be recursive */
                 return isRecursive;
 
+            case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKDEMERGER:
                 /* Must be shares and non-recursive */

@@ -963,7 +963,8 @@ public final class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.EXPENSE);
                     myBucket.addExpenseTransaction(pTrans);
                     break;
-                case STOCKADJUST:
+                case UNITSADJUST:
+                case SECURITYREPLACE:
                 case STOCKTAKEOVER:
                 case STOCKSPLIT:
                 case STOCKDEMERGER:

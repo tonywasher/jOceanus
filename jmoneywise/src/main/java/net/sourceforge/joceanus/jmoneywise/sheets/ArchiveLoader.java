@@ -76,6 +76,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
@@ -529,6 +530,46 @@ public class ArchiveLoader {
     }
 
     /**
+     * Process portfolio transfer.
+     * @param pData the dataSet
+     * @param pSource the source asset
+     * @param pTarget the target asset
+     * @throws JOceanusException on error
+     */
+    protected void resolvePortfolioXfer(final MoneyWiseData pData,
+                                        final Object pSource,
+                                        final Object pTarget) throws JOceanusException {
+        /* Target must be portfolio */
+        if (!(pTarget instanceof Portfolio)) {
+            throw new JMoneyWiseDataException(pTarget, "Inconsistent portfolios");
+        }
+        Portfolio myPortfolio = (Portfolio) pTarget;
+
+        SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+
+        /* Loop through the name map */
+        Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<String, Object> myEntry = myIterator.next();
+
+            /* If this is a security holding definition */
+            Object myValue = myEntry.getValue();
+            if (myValue instanceof SecurityHolding) {
+                SecurityHolding myHolding = (SecurityHolding) myValue;
+
+                /* If this holding needs updating */
+                if (pSource.equals(myHolding) || pSource.equals(myHolding.getPortfolio())) {
+                    /* Change the holding */
+                    myHolding = myMap.declareHolding(myPortfolio, myHolding.getSecurity());
+
+                    /* Replace definition in map */
+                    myEntry.setValue(myHolding);
+                }
+            }
+        }
+    }
+
+    /**
      * Simple class to define an archive year.
      */
     protected static final class ArchiveYear {
@@ -630,6 +671,11 @@ public class ArchiveLoader {
      */
     public class ParentCache {
         /**
+         * DataSet.
+         */
+        private final MoneyWiseData theData;
+
+        /**
          * TransactionList.
          */
         private final TransactionList theList;
@@ -700,7 +746,8 @@ public class ArchiveLoader {
          */
         protected ParentCache(final MoneyWiseData pData) {
             /* Store lists */
-            theList = pData.getTransactions();
+            theData = pData;
+            theList = theData.getTransactions();
             theAssetPairManager = theList.getAssetPairManager();
         }
 
@@ -758,7 +805,7 @@ public class ArchiveLoader {
                 return true;
             }
 
-            /* If the price is too late */
+            /* If the date is too late */
             if (!checkDate(pDate)) {
                 /* reject the transaction */
                 return false;
@@ -775,6 +822,12 @@ public class ArchiveLoader {
             theLastDebit = theNameMap.get(pDebit);
             theLastCredit = theNameMap.get(pCredit);
             theCategory = theCategoryMap.get(pCategory);
+
+            /* If the category is portfolio transfer */
+            if (theCategory.isCategoryClass(TransactionCategoryClass.PORTFOLIOXFER)) {
+                /* Adjust maps to reflect the transfer */
+                resolvePortfolioXfer(theData, theLastDebit, theLastCredit);
+            }
 
             /* Resolve assets */
             resolveAssets();

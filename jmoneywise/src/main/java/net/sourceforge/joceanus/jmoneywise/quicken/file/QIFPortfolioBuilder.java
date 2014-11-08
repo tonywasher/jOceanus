@@ -425,11 +425,11 @@ public class QIFPortfolioBuilder {
                 if (theFileType.useStockSplit()) {
                     processStockSplit(pSource, pTrans);
                 } else {
-                    processStockAdjust(pSource, pTrans);
+                    processSecurityAdjust(pSource, pTrans);
                 }
                 break;
-            case STOCKADJUST:
-                processStockAdjust(pSource, pTrans);
+            case UNITSADJUST:
+                processSecurityAdjust(pSource, pTrans);
                 break;
             case DIVIDEND:
                 processReinvestDividend(pSource, pTrans);
@@ -438,6 +438,7 @@ public class QIFPortfolioBuilder {
                 processStockDeMerger(pSource, pTarget, pTrans);
                 break;
             case STOCKTAKEOVER:
+            case SECURITYREPLACE:
                 processStockTakeOver(pSource, pTarget, pTrans);
                 break;
             case TRANSFER:
@@ -516,8 +517,8 @@ public class QIFPortfolioBuilder {
      * @param pHolding the security holding
      * @param pTrans the transaction
      */
-    private void processStockAdjust(final SecurityHolding pHolding,
-                                    final Transaction pTrans) {
+    private void processSecurityAdjust(final SecurityHolding pHolding,
+                                       final Transaction pTrans) {
         /* Access Portfolio Account */
         Portfolio myPortfolio = pHolding.getPortfolio();
         Security mySecurity = pHolding.getSecurity();
@@ -862,7 +863,7 @@ public class QIFPortfolioBuilder {
     }
 
     /**
-     * Process stock TakeOver.
+     * Process security Exchange/TakeOver.
      * @param pSource the source security
      * @param pTarget the target security
      * @param pTrans the transaction

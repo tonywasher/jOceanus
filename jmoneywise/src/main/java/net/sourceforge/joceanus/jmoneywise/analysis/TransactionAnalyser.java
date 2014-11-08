@@ -384,6 +384,12 @@ public class TransactionAnalyser
             processCreditSecurityTransaction(myDebitAsset, (SecurityHolding) myCreditAsset, pTrans);
 
             /* Else handle the event normally */
+        } else if ((myDebitAsset instanceof Portfolio)
+                   && (myCreditAsset instanceof Portfolio)) {
+            /* Process portfolio transfer */
+            processPortfolioXfer((Portfolio) myDebitAsset, (Portfolio) myCreditAsset, pTrans);
+
+            /* Else handle the event normally */
         } else if ((myDebitAsset instanceof AssetBase)
                    && (myCreditAsset instanceof AssetBase)) {
             /* Access correctly */
@@ -576,14 +582,15 @@ public class TransactionAnalyser
         switch (myCat.getCategoryTypeClass()) {
         /* Process a stock split */
             case STOCKSPLIT:
-            case STOCKADJUST:
-                processStockSplit(pDebit, pTrans);
+            case UNITSADJUST:
+                processUnitsAdjust(pDebit, pTrans);
                 break;
             /* Process a stock DeMerger */
             case STOCKDEMERGER:
                 processStockDeMerger(pDebit, pCredit, pTrans);
                 break;
             /* Process a Stock TakeOver */
+            case SECURITYREPLACE:
             case STOCKTAKEOVER:
                 processStockTakeover(pDebit, pCredit, pTrans);
                 break;
@@ -641,14 +648,65 @@ public class TransactionAnalyser
     }
 
     /**
+     * Process a transaction that is a portfolio transfer.
+     * <p>
+     * This capital event relates only to both Debit and credit accounts.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    private void processPortfolioXfer(final Portfolio pSource,
+                                      final Portfolio pTarget,
+                                      final Transaction pTrans) {
+        /* Access the portfolio buckets */
+        PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
+        PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
+
+        /* Access source cash bucket */
+        PortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
+        if (mySourceCash.isActive()) {
+            /* Transfer any cash element */
+            PortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();
+            myTargetCash.adjustForXfer(mySourceCash, pTrans);
+        }
+
+        /* Loop through the source portfolio */
+        Iterator<SecurityBucket> myIterator = mySource.securityIterator();
+        while (myIterator.hasNext()) {
+            SecurityBucket myBucket = myIterator.next();
+
+            /* If the bucket is active */
+            if (myBucket.isActive()) {
+                /* Access number of units */
+                SecurityValues myValues = myBucket.getValues();
+                JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+                myUnits = new JUnits(myUnits);
+
+                /* Adjust the Target Units */
+                SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myBucket.getSecurity());
+                myTargetBucket.adjustUnits(myUnits);
+                myTargetBucket.registerTransaction(pTrans);
+
+                /* Adjust the Source Units */
+                myUnits = new JUnits(myUnits);
+                myUnits.negate();
+                myBucket.adjustUnits(myUnits);
+                myBucket.registerTransaction(pTrans);
+            }
+        }
+
+        /* PortfolioXfer is a transfer, so no need to update the categories */
+    }
+
+    /**
      * Process a transaction that is a stock split.
      * <p>
      * This capital event relates only to the Debit Account since the credit account is the same.
      * @param pHolding the security holding
      * @param pTrans the transaction
      */
-    private void processStockSplit(final SecurityHolding pHolding,
-                                   final Transaction pTrans) {
+    private void processUnitsAdjust(final SecurityHolding pHolding,
+                                    final Transaction pTrans) {
         /* Access the details of the holding */
         Portfolio myPortfolio = pHolding.getPortfolio();
         Security mySecurity = pHolding.getSecurity();
@@ -1416,6 +1474,8 @@ public class TransactionAnalyser
                 return theCashBuckets.getBucket((Cash) pAsset);
             case LOAN:
                 return theLoanBuckets.getBucket((Loan) pAsset);
+            case PORTFOLIO:
+                return thePortfolioBuckets.getCashBucket((Portfolio) pAsset);
             default:
                 return null;
         }

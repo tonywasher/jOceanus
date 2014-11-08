@@ -354,7 +354,7 @@ public class TransactionInfoSet
         }
         switch (pClass) {
             case TRANSFER:
-            case STOCKADJUST:
+            case UNITSADJUST:
             case STOCKDEMERGER:
                 return JDataFieldRequired.CANEXIST;
             default:
@@ -377,12 +377,13 @@ public class TransactionInfoSet
         switch (pClass) {
             case STOCKRIGHTSTAKEN:
             case STOCKDEMERGER:
+            case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKSPLIT:
                 return JDataFieldRequired.MUSTEXIST;
             case TRANSFER:
             case INHERITED:
-            case STOCKADJUST:
+            case UNITSADJUST:
             case DIVIDEND:
                 return JDataFieldRequired.CANEXIST;
             default:

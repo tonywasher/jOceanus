@@ -360,9 +360,9 @@ public class TransactionCategoryPanel
         SINGULAR,
 
         /**
-         * StockXfer.
+         * SecurityXfer.
          */
-        STOCKXFER,
+        SECURITYXFER,
 
         /**
          * Transfer.
@@ -409,9 +409,9 @@ public class TransactionCategoryPanel
 
             /* Handle Transfer */
             if (myClass.isTransfer()) {
-                return myClass.isStockTransfer()
-                                                ? STOCKXFER
-                                                : XFER;
+                return myClass.isSecurityTransfer()
+                                                   ? SECURITYXFER
+                                                   : XFER;
             }
 
             /* Must be expense */
@@ -458,8 +458,8 @@ public class TransactionCategoryPanel
                     return pClass.isIncome();
                 case EXPENSE:
                     return pClass.isExpense();
-                case STOCKXFER:
-                    return pClass.isStockTransfer();
+                case SECURITYXFER:
+                    return pClass.isSecurityTransfer();
                 default:
                     return false;
             }

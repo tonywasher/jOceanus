@@ -101,9 +101,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
     TRANSFER(14, 17),
 
     /**
-     * Stock Adjustment.
+     * Stock Units Adjustment.
      */
-    STOCKADJUST(15, 18),
+    UNITSADJUST(15, 18),
 
     /**
      * Stock Split.
@@ -116,175 +116,180 @@ public enum TransactionCategoryClass implements CategoryInterface {
     STOCKDEMERGER(17, 20),
 
     /**
-     * Stock Takeover.
+     * Security Replacement.
      */
-    STOCKTAKEOVER(18, 21),
+    SECURITYREPLACE(18, 21),
+
+    /**
+     * Stock TakeOver.
+     */
+    STOCKTAKEOVER(19, 22),
 
     /**
      * Stock Rights Taken.
      */
-    STOCKRIGHTSTAKEN(19, 22),
+    STOCKRIGHTSTAKEN(20, 23),
 
     /**
      * Stock Rights Waived.
      */
-    STOCKRIGHTSWAIVED(20, 23),
+    STOCKRIGHTSWAIVED(21, 24),
 
     /**
      * PortfolioXfer.
      */
-    PORTFOLIOXFER(21, 24),
+    PORTFOLIOXFER(22, 25),
 
     /**
      * Stock Options Vested.
      */
-    OPTIONSVEST(22, 25),
+    OPTIONSVEST(23, 26),
 
     /**
      * Stock Options Exercised.
      */
-    OPTIONSEXERCISE(23, 26),
+    OPTIONSEXERCISE(24, 27),
 
     /**
      * Expense.
      */
-    EXPENSE(24, 27),
+    EXPENSE(25, 28),
 
     /**
      * LocalTaxes.
      */
-    LOCALTAXES(25, 28),
+    LOCALTAXES(26, 29),
 
     /**
      * Write Off.
      */
-    WRITEOFF(26, 29),
+    WRITEOFF(27, 30),
 
     /**
      * Interest earned on Loans.
      */
-    LOANINTERESTCHARGED(27, 30),
+    LOANINTERESTCHARGED(28, 31),
 
     /**
      * Tax Relief.
      */
-    TAXRELIEF(28, 31),
+    TAXRELIEF(29, 32),
 
     /**
      * Tax Settlement.
      */
-    TAXSETTLEMENT(29, 32),
+    TAXSETTLEMENT(30, 33),
 
     /**
      * Taxed Interest.
      */
-    TAXEDINTEREST(30, 33),
+    TAXEDINTEREST(31, 34),
 
     /**
      * Gross Interest.
      */
-    GROSSINTEREST(31, 34),
+    GROSSINTEREST(32, 35),
 
     /**
      * Tax Free Interest.
      */
-    TAXFREEINTEREST(32, 35),
+    TAXFREEINTEREST(33, 36),
 
     /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(33, 36),
+    SHAREDIVIDEND(34, 37),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(34, 37),
+    UNITTRUSTDIVIDEND(35, 38),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(35, 38),
+    TAXFREEDIVIDEND(36, 39),
 
     /**
      * Taxable Gain.
      */
-    TAXABLEGAIN(36, 39),
+    TAXABLEGAIN(37, 40),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(37, 40),
+    CAPITALGAIN(38, 41),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(38, 41),
+    TAXFREEGAIN(39, 42),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(39, 42),
+    MARKETGROWTH(40, 43),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(40, 43),
+    CURRENCYFLUCTUATION(41, 44),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TAXCREDIT(41, 44),
+    TAXCREDIT(42, 45),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(42, 45),
+    NATINSURANCE(43, 46),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DEEMEDBENEFIT(43, 46),
+    DEEMEDBENEFIT(44, 47),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CHARITYDONATION(44, 47),
+    CHARITYDONATION(45, 48),
 
     /**
      * Income Totals.
      * <p>
      * This is used for categories which simply own a set of income sub-categories and is used purely for reporting purposes.
      */
-    INCOMETOTALS(45, 1),
+    INCOMETOTALS(46, 1),
 
     /**
      * Expense Totals.
      * <p>
      * This is used for categories which simply own a set of expense sub-categories and is used purely for reporting purposes.
      */
-    EXPENSETOTALS(46, 2),
+    EXPENSETOTALS(47, 2),
 
     /**
-     * Stock Parent.
+     * Security Parent.
      * <p>
-     * This is used for categories which simply own a set of stock transfer sub-categories and is used purely for holding purposes.
+     * This is used for categories which simply own a set of security transfer sub-categories and is used purely for holding purposes.
      */
-    STOCKPARENT(47, 3),
+    SECURITYPARENT(48, 3),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    TOTALS(48, 0);
+    TOTALS(49, 0);
 
     /**
      * The String name.
@@ -564,8 +569,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
     public boolean isStockAdjustment() {
         switch (this) {
             case STOCKSPLIT:
-            case STOCKADJUST:
+            case UNITSADJUST:
             case STOCKDEMERGER:
+            case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case PORTFOLIOXFER:
             case OPTIONSVEST:
@@ -582,10 +588,11 @@ public enum TransactionCategoryClass implements CategoryInterface {
     public boolean needsZeroAmount() {
         switch (this) {
             case STOCKSPLIT:
-            case STOCKADJUST:
+            case UNITSADJUST:
             case STOCKDEMERGER:
             case PORTFOLIOXFER:
             case OPTIONSVEST:
+            case SECURITYREPLACE:
                 return true;
             default:
                 return false;
@@ -600,7 +607,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
         switch (this) {
             case INCOMETOTALS:
             case EXPENSETOTALS:
-            case STOCKPARENT:
+            case SECURITYPARENT:
             case TOTALS:
                 return true;
             default:
@@ -616,7 +623,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
         switch (this) {
             case INCOMETOTALS:
             case EXPENSETOTALS:
-            case STOCKPARENT:
+            case SECURITYPARENT:
                 return true;
             default:
                 return false;
@@ -632,25 +639,26 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TRANSFER:
                 return true;
             default:
-                return isStockTransfer();
+                return isSecurityTransfer();
         }
     }
 
     /**
-     * Is this event category a stock transfer?
+     * Is this event category a security transfer?
      * @return true/false
      */
-    public boolean isStockTransfer() {
+    public boolean isSecurityTransfer() {
         switch (this) {
-            case STOCKADJUST:
+            case UNITSADJUST:
             case STOCKSPLIT:
             case STOCKDEMERGER:
+            case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKRIGHTSWAIVED:
             case STOCKRIGHTSTAKEN:
             case PORTFOLIOXFER:
             case OPTIONSVEST:
-            case STOCKPARENT:
+            case SECURITYPARENT:
                 return true;
             default:
                 return false;
