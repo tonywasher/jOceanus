@@ -109,6 +109,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected static final String ERROR_PARCLOSED = MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED.getValue();
 
+    /**
+     * Reserved name error.
+     */
+    protected static final String ERROR_RESERVED = MoneyWiseDataResource.ASSET_ERROR_RESERVED.getValue();
+
     @Override
     public String formatObject() {
         return getName();
@@ -698,7 +703,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public void validate() {
         String myName = getName();
         String myDesc = getDesc();
-        AssetBaseList<T> myList = getList();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -706,20 +710,32 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
             /* Check that the name is unique */
         } else {
-            /* The name must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError(ERROR_LENGTH, FIELD_NAME);
-            }
-
-            /* Check name count */
-            if (!myList.validNameCount(myName)) {
-                addError(ERROR_DUPLICATE, FIELD_NAME);
-            }
+            /* Validate the name */
+            validateName(myName);
         }
 
         /* Check description length */
         if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
+        }
+    }
+
+    /**
+     * Validate the name.
+     * @param pName the name
+     */
+    protected void validateName(final String pName) {
+        /* Access the list */
+        AssetBaseList<T> myList = getList();
+
+        /* The name must not be too long */
+        if (pName.length() > NAMELEN) {
+            addError(ERROR_LENGTH, FIELD_NAME);
+        }
+
+        /* Check name count */
+        if (!myList.validNameCount(pName)) {
+            addError(ERROR_DUPLICATE, FIELD_NAME);
         }
     }
 

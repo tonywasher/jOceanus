@@ -383,9 +383,10 @@ public class TransactionAnalyser
             /* Process as a Security transaction */
             processCreditSecurityTransaction(myDebitAsset, (SecurityHolding) myCreditAsset, pTrans);
 
-            /* Else handle the event normally */
+            /* Else handle the portfolio xfer */
         } else if ((myDebitAsset instanceof Portfolio)
-                   && (myCreditAsset instanceof Portfolio)) {
+                   && (myCreditAsset instanceof Portfolio)
+                   && !myAccount.equals(myPartner)) {
             /* Process portfolio transfer */
             processPortfolioXfer((Portfolio) myDebitAsset, (Portfolio) myCreditAsset, pTrans);
 
@@ -549,6 +550,9 @@ public class TransactionAnalyser
             case DIVIDEND:
                 processDividend(pDebit, pCredit, pTrans);
                 break;
+            case PORTFOLIOXFER:
+                processPortfolioXfer(pDebit, (Portfolio) pCredit, pTrans);
+                break;
             /* Process standard transfer in/out */
             case TRANSFER:
             case EXPENSE:
@@ -693,6 +697,46 @@ public class TransactionAnalyser
                 myBucket.adjustUnits(myUnits);
                 myBucket.registerTransaction(pTrans);
             }
+        }
+
+        /* PortfolioXfer is a transfer, so no need to update the categories */
+    }
+
+    /**
+     * Process a transaction that is a portfolio transfer.
+     * <p>
+     * This capital event relates only to both Debit and credit accounts.
+     * @param pSource the source holding
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    private void processPortfolioXfer(final SecurityHolding pSource,
+                                      final Portfolio pTarget,
+                                      final Transaction pTrans) {
+        /* Access the portfolio buckets */
+        PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource.getPortfolio());
+        PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
+
+        /* Access source security bucket */
+        SecurityBucket myBucket = mySource.getSecurityBucket(pSource.getSecurity());
+
+        /* If the bucket is active */
+        if (myBucket.isActive()) {
+            /* Access number of units */
+            SecurityValues myValues = myBucket.getValues();
+            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+            myUnits = new JUnits(myUnits);
+
+            /* Adjust the Target Units */
+            SecurityBucket myTargetBucket = myTarget.getSecurityBucket(pSource.getSecurity());
+            myTargetBucket.adjustUnits(myUnits);
+            myTargetBucket.registerTransaction(pTrans);
+
+            /* Adjust the Source Units */
+            myUnits = new JUnits(myUnits);
+            myUnits.negate();
+            myBucket.adjustUnits(myUnits);
+            myBucket.registerTransaction(pTrans);
         }
 
         /* PortfolioXfer is a transfer, so no need to update the categories */

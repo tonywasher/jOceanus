@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -443,6 +444,31 @@ public final class PortfolioBucket
 
     /**
      * Add bucket to totals.
+     * @param pBucket the underlying bucket
+     */
+    protected void addValues(final PortfolioCashBucket pBucket) {
+        /* Add values */
+        addValues(theValues, pBucket.getValues());
+
+        /* Add base values */
+        addValues(theBaseValues, pBucket.getBaseValues());
+    }
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final SecurityValues pTotals,
+                                  final AccountValues pSource) {
+        /* Add valuation values */
+        JMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
+        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        myValue.addAmount(mySrcValue);
+    }
+
+    /**
+     * Add bucket to totals.
      * @param pTotals the totals
      * @param pSource the values to add
      */
@@ -639,8 +665,8 @@ public final class PortfolioBucket
                 /* Access the bucket for this date */
                 PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pDate);
 
-                /* Ignore if portfolio is inactive */
-                if (myBucket.isActive()) {
+                /* Ignore if portfolio is idle */
+                if (!myBucket.isIdle()) {
                     /* Add to the list */
                     append(myBucket);
                 }
@@ -752,6 +778,11 @@ public final class PortfolioBucket
             while (myIterator.hasNext()) {
                 PortfolioBucket myPortfolio = myIterator.next();
 
+                /* Add the cash bucket */
+                PortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
+                myPortfolio.addValues(myCash);
+                theTotals.addValues(myCash);
+
                 /* Loop through the buckets */
                 Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();
                 while (mySecIterator.hasNext()) {
@@ -795,7 +826,7 @@ public final class PortfolioBucket
                 if (mySecurities.markActiveSecurities()) {
                     /* Check closed state */
                     Portfolio myPortfolio = myCurr.getPortfolio();
-                    if (myPortfolio.isClosed()) {
+                    if (myPortfolio.isClosed() && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
                         throw new JMoneyWiseDataException(myCurr, "Illegally closed portfolio");
                     }

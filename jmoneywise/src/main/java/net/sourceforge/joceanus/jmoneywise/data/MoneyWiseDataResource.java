@@ -239,6 +239,16 @@ public enum MoneyWiseDataResource implements ResourceId {
     ASSET_ERROR_PARENTCLOSED("Asset.Error.ParentClosed"),
 
     /**
+     * Asset Reserved valueParentClosed Error.
+     */
+    ASSET_ERROR_RESERVED("Asset.Error.Reserved"),
+
+    /**
+     * Asset Invalid Characters Error.
+     */
+    ASSET_ERROR_INVALIDCHAR("Asset.Error.InvalidChar"),
+
+    /**
      * AssetType Payee.
      */
     ASSETTYPE_PAYEE(MoneyWiseDataTypeResource.PAYEE_NAME),
@@ -402,6 +412,11 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Portfolio NewAccount.
      */
     PORTFOLIO_NEWACCOUNT("Portfolio.NewAccount"),
+
+    /**
+     * Portfolio CashAccount.
+     */
+    PORTFOLIO_CASHACCOUNT("Portfolio.CashAccount"),
 
     /**
      * StockOption StockHolding.

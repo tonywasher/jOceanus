@@ -27,6 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -44,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
@@ -59,6 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -75,6 +78,11 @@ public class BalanceSheet
      * The Title text.
      */
     private static final String TEXT_TITLE = ReportResource.BALANCESHEET_TITLE.getValue();
+
+    /**
+     * The Portfolio cash account name.
+     */
+    protected static final String TEXT_CASH = MoneyWiseDataTypeResource.CASH_NAME.getValue();
 
     /**
      * HTML builder.
@@ -632,10 +640,30 @@ public class BalanceSheet
     private HTMLTable createDelayedPortfolio(final HTMLTable pParent,
                                              final PortfolioBucket pSource) {
         /* Access the securities */
+        PortfolioCashBucket myCash = pSource.getPortfolioCash();
         SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create an embedded table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* If the portfolio cash is not idle */
+        if (!myCash.isIdle()) {
+            /* Access values */
+            AccountValues myValues = myCash.getValues();
+
+            /* Access bucket name */
+            String myName = pSource.getName();
+
+            /* Create the detail row */
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myName, TEXT_CASH);
+            theBuilder.makeValueCell(myTable);
+            theBuilder.makeValueCell(myTable);
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+
+            /* Record the filter */
+            setFilterForId(myName, pSource);
+        }
 
         /* Loop through the Security Buckets */
         Iterator<SecurityBucket> myIterator = mySecurities.iterator();
@@ -685,6 +713,11 @@ public class BalanceSheet
         if (pSource instanceof SecurityBucket) {
             /* Create the new filter */
             return new SecurityFilter((SecurityBucket) pSource);
+        }
+        /* If this is a PortfolioBucket */
+        if (pSource instanceof PortfolioBucket) {
+            /* Create the new filter */
+            return new PortfolioFilter((PortfolioBucket) pSource);
         }
         return null;
     }

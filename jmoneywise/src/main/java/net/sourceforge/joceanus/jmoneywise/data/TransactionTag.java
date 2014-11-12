@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoLinkSet;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -398,6 +399,11 @@ public class TransactionTag
             /* Check that the name is unique */
             if (!myMap.validNameCount(myName)) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
+            }
+
+            /* Check that the name does not contain invalid characters */
+            if (myName.contains(DataInfoLinkSet.ITEM_SEP)) {
+                addError(ERROR_INVALIDCHAR, FIELD_NAME);
             }
         }
 

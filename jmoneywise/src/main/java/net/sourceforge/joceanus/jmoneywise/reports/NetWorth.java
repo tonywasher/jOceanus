@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
@@ -61,6 +62,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -430,6 +432,11 @@ public class NetWorth
         while (myIterator.hasNext()) {
             PortfolioBucket myBucket = myIterator.next();
 
+            /* Skip inactive portfolios */
+            if (!myBucket.isActive()) {
+                continue;
+            }
+
             /* Access bucket name */
             String myName = myBucket.getName();
 
@@ -621,6 +628,7 @@ public class NetWorth
     private HTMLTable createDelayedPortfolio(final HTMLTable pParent,
                                              final PortfolioBucket pSource) {
         /* Access the securities */
+        PortfolioCashBucket myCash = pSource.getPortfolioCash();
         SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
@@ -632,6 +640,25 @@ public class NetWorth
         theBuilder.makeTitleCell(myTable, TEXT_UNITS);
         theBuilder.makeTitleCell(myTable, TEXT_PRICE);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
+
+        /* If the portfolio cash is active */
+        if (myCash.isActive()) {
+            /* Access values */
+            AccountValues myValues = myCash.getValues();
+
+            /* Access bucket name */
+            String myName = pSource.getName();
+
+            /* Create the detail row */
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myName, BalanceSheet.TEXT_CASH);
+            theBuilder.makeValueCell(myTable);
+            theBuilder.makeValueCell(myTable);
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+
+            /* Record the filter */
+            setFilterForId(myName, pSource);
+        }
 
         /* Loop through the Security Buckets */
         Iterator<SecurityBucket> myIterator = mySecurities.iterator();
@@ -685,6 +712,11 @@ public class NetWorth
         if (pSource instanceof SecurityBucket) {
             /* Create the new filter */
             return new SecurityFilter((SecurityBucket) pSource);
+        }
+        /* If this is a PortfolioBucket */
+        if (pSource instanceof PortfolioBucket) {
+            /* Create the new filter */
+            return new PortfolioFilter((PortfolioBucket) pSource);
         }
         return null;
     }

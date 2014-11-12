@@ -43,6 +43,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
@@ -569,6 +571,76 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return theSecurity.getDeltaForTransaction(pTrans, getCurrentAttribute());
+        }
+    }
+
+    /**
+     * Portfolio Bucket filter class.
+     */
+    public static class PortfolioFilter
+            extends AnalysisFilter<AccountAttribute> {
+        /**
+         * The portfolio bucket.
+         */
+        private final PortfolioBucket thePortfolio;
+
+        /**
+         * The portfolio cash bucket.
+         */
+        private final PortfolioCashBucket theCash;
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return thePortfolio;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public PortfolioBucket getBucket() {
+            return thePortfolio;
+        }
+
+        @Override
+        public String getName() {
+            return thePortfolio.getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.PORTFOLIO;
+        }
+
+        /**
+         * Constructor.
+         * @param pPortfolio the portfolio bucket
+         */
+        public PortfolioFilter(final PortfolioBucket pPortfolio) {
+            /* Store parameter */
+            super(AccountAttribute.class);
+            thePortfolio = pPortfolio;
+            theCash = thePortfolio.getPortfolioCash();
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        @Override
+        protected AccountValues getBaseValues() {
+            return theCash.getBaseValues();
+        }
+
+        @Override
+        public AccountValues getValuesForTransaction(final Transaction pTrans) {
+            return theCash.getValuesForTransaction(pTrans);
+        }
+
+        @Override
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return theCash.getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 

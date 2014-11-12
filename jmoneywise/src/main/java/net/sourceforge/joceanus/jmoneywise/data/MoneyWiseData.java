@@ -162,6 +162,11 @@ public class MoneyWiseData
     private final SecurityHoldingMap theSecurityHoldings;
 
     /**
+     * Check Closed Accounts.
+     */
+    private boolean doCheckClosedAccounts = true;
+
+    /**
      * Obtain DepositCategoryTypes.
      * @return the Deposit category types
      */
@@ -519,6 +524,14 @@ public class MoneyWiseData
      */
     public SecurityHoldingMap getSecurityHoldingsMap() {
         return theSecurityHoldings;
+    }
+
+    /**
+     * Should we check closed accounts?
+     * @return true/false
+     */
+    public boolean checkClosedAccounts() {
+        return doCheckClosedAccounts;
     }
 
     /**

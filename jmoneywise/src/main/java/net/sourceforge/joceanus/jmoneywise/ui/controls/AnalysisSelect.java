@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
@@ -211,6 +212,11 @@ public class AnalysisSelect
     private final SecurityAnalysisSelect theSecuritySelect;
 
     /**
+     * Portfolio Select Panel.
+     */
+    private final PortfolioAnalysisSelect thePortfolioSelect;
+
+    /**
      * Payee Select Panel.
      */
     private final PayeeAnalysisSelect thePayeeSelect;
@@ -324,6 +330,7 @@ public class AnalysisSelect
         theCashSelect = new CashAnalysisSelect();
         theLoanSelect = new LoanAnalysisSelect();
         theSecuritySelect = new SecurityAnalysisSelect();
+        thePortfolioSelect = new PortfolioAnalysisSelect();
         thePayeeSelect = new PayeeAnalysisSelect();
         theEventSelect = new EventCategoryAnalysisSelect();
         theTaxBasisSelect = new TaxBasisAnalysisSelect();
@@ -443,6 +450,7 @@ public class AnalysisSelect
         theCardPanel.add(theCashSelect, AnalysisType.CASH.name());
         theCardPanel.add(theLoanSelect, AnalysisType.LOAN.name());
         theCardPanel.add(theSecuritySelect, AnalysisType.SECURITY.name());
+        theCardPanel.add(thePortfolioSelect, AnalysisType.PORTFOLIO.name());
         theCardPanel.add(thePayeeSelect, AnalysisType.PAYEE.name());
         theCardPanel.add(theEventSelect, AnalysisType.CATEGORY.name());
         theCardPanel.add(theTaxBasisSelect, AnalysisType.TAXBASIS.name());
@@ -454,6 +462,7 @@ public class AnalysisSelect
         theMap.put(AnalysisType.CASH, theCashSelect);
         theMap.put(AnalysisType.LOAN, theLoanSelect);
         theMap.put(AnalysisType.SECURITY, theSecuritySelect);
+        theMap.put(AnalysisType.PORTFOLIO, thePortfolioSelect);
         theMap.put(AnalysisType.PAYEE, thePayeeSelect);
         theMap.put(AnalysisType.CATEGORY, theEventSelect);
         theMap.put(AnalysisType.TAXBASIS, theTaxBasisSelect);
@@ -542,6 +551,7 @@ public class AnalysisSelect
         theCashSelect.setAnalysis(myAnalysis);
         theLoanSelect.setAnalysis(myAnalysis);
         theSecuritySelect.setAnalysis(myAnalysis);
+        thePortfolioSelect.setAnalysis(myAnalysis);
         theEventSelect.setAnalysis(myAnalysis);
         thePayeeSelect.setAnalysis(myAnalysis);
         theTaxBasisSelect.setAnalysis(myAnalysis);
@@ -712,6 +722,7 @@ public class AnalysisSelect
             theCashSelect.addChangeListener(this);
             theLoanSelect.addChangeListener(this);
             theSecuritySelect.addChangeListener(this);
+            thePortfolioSelect.addChangeListener(this);
             thePayeeSelect.addChangeListener(this);
             theEventSelect.addChangeListener(this);
             theTaxBasisSelect.addChangeListener(this);
@@ -945,6 +956,17 @@ public class AnalysisSelect
             } else if (theSecuritySelect.equals(o)) {
                 /* Create the new filter */
                 SecurityFilter myFilter = theSecuritySelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                fireStateChanged();
+
+                /* If this is the portfolio select */
+            } else if (thePortfolioSelect.equals(o)) {
+                /* Create the new filter */
+                PortfolioFilter myFilter = thePortfolioSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */

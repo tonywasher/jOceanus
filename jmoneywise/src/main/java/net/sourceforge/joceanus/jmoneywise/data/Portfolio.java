@@ -117,6 +117,11 @@ public class Portfolio
     private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.PORTFOLIO_NEWACCOUNT.getValue();
 
     /**
+     * Portfolio Cash account.
+     */
+    public static final String NAME_CASHACCOUNT = MoneyWiseDataResource.PORTFOLIO_CASHACCOUNT.getValue();
+
+    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -910,6 +915,17 @@ public class Portfolio
         /* Set validation flag */
         if (!hasErrors()) {
             setValidEdit();
+        }
+    }
+
+    @Override
+    protected void validateName(final String pName) {
+        /* Perform basic checks */
+        super.validateName(pName);
+
+        /* Check that the name does not contain invalid characters */
+        if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
+            addError(ERROR_INVALIDCHAR, FIELD_NAME);
         }
     }
 

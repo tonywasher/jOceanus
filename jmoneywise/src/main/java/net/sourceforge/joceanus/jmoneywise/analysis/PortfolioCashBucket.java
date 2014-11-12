@@ -47,7 +47,7 @@ public class PortfolioCashBucket
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pCash the cash account
+     * @param pPortfolio the portfolio
      */
     protected PortfolioCashBucket(final Analysis pAnalysis,
                                   final Portfolio pPortfolio) {
@@ -82,7 +82,8 @@ public class PortfolioCashBucket
     }
 
     /**
-     * Adjust account for credit.
+     * Adjust account for transfer.
+     * @param pSource the source portfolio
      * @param pTrans the transaction causing the credit
      */
     protected void adjustForXfer(final PortfolioCashBucket pSource,

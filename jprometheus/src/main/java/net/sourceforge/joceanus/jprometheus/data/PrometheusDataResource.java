@@ -191,6 +191,11 @@ public enum PrometheusDataResource implements ResourceId {
     DATAITEM_ERROR_ZERO("DataItem.Error.Zero"),
 
     /**
+     * Asset Invalid Characters Error.
+     */
+    DATAITEM_ERROR_INVALIDCHAR("DataItem.Error.InvalidChar"),
+
+    /**
      * DataList Name.
      */
     DATALIST_NAME("DataList.Name"),

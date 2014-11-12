@@ -47,6 +47,11 @@ public enum AnalysisType {
     SECURITY,
 
     /**
+     * Portfolio.
+     */
+    PORTFOLIO,
+
+    /**
      * Payee.
      */
     PAYEE,
@@ -109,6 +114,7 @@ public enum AnalysisType {
             case CASH:
             case LOAN:
             case PAYEE:
+            case PORTFOLIO:
             case SECURITY:
             case CATEGORY:
             case TAXBASIS:
@@ -129,6 +135,7 @@ public enum AnalysisType {
             case DEPOSIT:
             case CASH:
             case LOAN:
+            case PORTFOLIO:
             case TRANSTAG:
             case ALL:
                 return AccountAttribute.values();

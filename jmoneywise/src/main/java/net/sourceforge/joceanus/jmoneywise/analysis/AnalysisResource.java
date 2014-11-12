@@ -570,6 +570,8 @@ public enum AnalysisResource implements ResourceId {
                 return MoneyWiseDataTypeResource.PAYEE_NAME;
             case SECURITY:
                 return MoneyWiseDataTypeResource.SECURITY_NAME;
+            case PORTFOLIO:
+                return MoneyWiseDataTypeResource.PORTFOLIO_NAME;
             case CATEGORY:
                 return MoneyWiseDataTypeResource.TRANSCAT_NAME;
             case TAXBASIS:

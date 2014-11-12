@@ -81,8 +81,8 @@ public final class TransactionValidator {
                 return myType.isAsset();
 
             case INTEREST:
-                /* Account must be deposit */
-                return myType.isDeposit();
+                /* Account must be deposit or portfolio */
+                return myType.isDeposit() || myType.isPortfolio();
 
             case DIVIDEND:
                 /* Account must be SecurityHolding */
@@ -310,7 +310,7 @@ public final class TransactionValidator {
                 return isRecursive || myPartnerType.isValued();
 
             case LOYALTYBONUS:
-                return myPartnerType.isSecurity() || myPartnerType.isDeposit();
+                return myPartnerType.isSecurityHolding() || myPartnerType.isPortfolio();
 
             case UNITSADJUST:
             case STOCKSPLIT:

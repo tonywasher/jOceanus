@@ -754,7 +754,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                     myAccount.adjustClosed();
 
                     /* If we are Relevant */
-                    if (myAccount.isRelevant()) {
+                    if (myAccount.isRelevant() && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
                         throw new JMoneyWiseDataException(myCurr, "Illegally closed account");
                     }

@@ -122,6 +122,11 @@ public abstract class DataItem<E extends Enum<E>>
     public static final String ERROR_MULT = PrometheusDataResource.DATAITEM_ERROR_MULTIPLE.getValue();
 
     /**
+     * Reserved name error.
+     */
+    public static final String ERROR_INVALIDCHAR = PrometheusDataResource.DATAITEM_ERROR_INVALIDCHAR.getValue();
+
+    /**
      * Instance ReportFields.
      */
     private final JDataFields theFields;

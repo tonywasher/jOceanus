@@ -358,7 +358,8 @@ public final class SecurityHolding
      * SecurityHolding Map.
      */
     public static class SecurityHoldingMap
-            extends HashMap<Integer, PortfolioHoldingsMap> {
+            extends HashMap<Integer, PortfolioHoldingsMap>
+            implements JDataFormat {
         /**
          * SerialId.
          */
@@ -373,6 +374,11 @@ public final class SecurityHolding
          * Underlying security list.
          */
         private final transient SecurityList theSecurities;
+
+        @Override
+        public String formatObject() {
+            return SecurityHoldingMap.class.getSimpleName();
+        }
 
         /**
          * Constructor.

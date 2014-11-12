@@ -309,13 +309,17 @@ public class TransactionInfoSet
             case LOANINTERESTCHARGED:
                 return JDataFieldRequired.CANEXIST;
             case INTEREST:
-                if (!(pDebit instanceof Deposit)) {
-                    return JDataFieldRequired.NOTALLOWED;
+                if (pDebit instanceof Deposit) {
+                    Deposit myDeposit = (Deposit) pDebit;
+                    return ((myDeposit.isTaxFree()) || (myDeposit.isGross()))
+                                                                             ? JDataFieldRequired.NOTALLOWED
+                                                                             : JDataFieldRequired.MUSTEXIST;
+                } else if (pDebit instanceof Portfolio) {
+                    return ((Portfolio) pDebit).isTaxFree()
+                                                           ? JDataFieldRequired.NOTALLOWED
+                                                           : JDataFieldRequired.MUSTEXIST;
                 }
-                Deposit myDeposit = (Deposit) pDebit;
-                return ((myDeposit.isTaxFree()) || (myDeposit.isGross()))
-                                                                         ? JDataFieldRequired.NOTALLOWED
-                                                                         : JDataFieldRequired.MUSTEXIST;
+                return JDataFieldRequired.NOTALLOWED;
             case DIVIDEND:
                 if (!(pDebit instanceof SecurityHolding)) {
                     return JDataFieldRequired.NOTALLOWED;

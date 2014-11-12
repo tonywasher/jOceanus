@@ -45,7 +45,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     /**
      * Item separator.
      */
-    protected static final String ITEM_SEP = ",";
+    public static final String ITEM_SEP = ",";
 
     /**
      * The local fields.

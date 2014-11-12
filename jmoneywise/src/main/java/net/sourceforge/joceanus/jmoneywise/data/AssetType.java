@@ -131,10 +131,10 @@ public enum AssetType {
             case DEPOSIT:
             case CASH:
             case LOAN:
+            case PORTFOLIO:
                 return true;
             case AUTOEXPENSE:
             case SECURITY:
-            case PORTFOLIO:
             case PAYEE:
             case SECURITYHOLDING:
             default:
@@ -174,8 +174,8 @@ public enum AssetType {
             case CASH:
             case LOAN:
             case SECURITYHOLDING:
-                return true;
             case PORTFOLIO:
+                return true;
             case PAYEE:
             default:
                 return false;
@@ -228,6 +228,19 @@ public enum AssetType {
     public boolean isSecurityHolding() {
         switch (this) {
             case SECURITYHOLDING:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether this is a portfolio.
+     * @return true/false
+     */
+    public boolean isPortfolio() {
+        switch (this) {
+            case PORTFOLIO:
                 return true;
             default:
                 return false;

@@ -1007,6 +1007,23 @@ public class Security
         }
     }
 
+    @Override
+    protected void validateName(final String pName) {
+        /* Perform basic checks */
+        super.validateName(pName);
+
+        /* Check that the name is not a reserved name */
+        if (pName.equals(SecurityHolding.SECURITYHOLDING_NEW)
+            || pName.equals(Portfolio.NAME_CASHACCOUNT)) {
+            addError(ERROR_RESERVED, FIELD_NAME);
+        }
+
+        /* Check that the name does not contain invalid characters */
+        if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
+            addError(ERROR_INVALIDCHAR, FIELD_NAME);
+        }
+    }
+
     /**
      * Update base security from an edited security.
      * @param pSecurity the edited security

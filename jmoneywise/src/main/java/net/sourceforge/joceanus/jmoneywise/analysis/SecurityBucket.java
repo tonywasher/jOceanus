@@ -810,8 +810,10 @@ public final class SecurityBucket
                 /* Access the bucket for this date */
                 SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pDate);
 
-                /* Ignore non-active securities */
-                if (myBucket.isActive()) {
+                /*
+                 * Ignore idle securities. Note that we must include securities that have been closed in order to adjust Market Growth.
+                 */
+                if (!myBucket.isIdle()) {
                     /* Add to the list */
                     append(myBucket);
                 }
@@ -898,7 +900,7 @@ public final class SecurityBucket
                     mySecurity.adjustClosed();
 
                     /* If we are Relevant */
-                    if (mySecurity.isRelevant()) {
+                    if (mySecurity.isRelevant() && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
                         throw new JMoneyWiseDataException(myCurr, "Illegally closed security");
                     }
