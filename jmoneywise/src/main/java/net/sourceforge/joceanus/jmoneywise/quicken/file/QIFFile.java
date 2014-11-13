@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
@@ -53,6 +54,11 @@ public class QIFFile {
      * Hash multiplier.
      */
     protected static final int HASH_BASE = 37;
+
+    /**
+     * Holding suffix.
+     */
+    protected static final String HOLDING_SUFFIX = "Holding";
 
     /**
      * Type of file.
@@ -432,6 +438,26 @@ public class QIFFile {
         if (myAccount == null) {
             /* Create the new Account and add to the map and list */
             myAccount = new QIFAccountEvents(this, pAccount);
+            theAccountMap.put(myName, myAccount);
+            theAccounts.append(myAccount);
+        }
+
+        /* Return the account */
+        return myAccount;
+    }
+
+    /**
+     * Register holding account.
+     * @param pPortfolio the portfolio
+     * @return the QIFAccount representation
+     */
+    public QIFAccountEvents registerHoldingAccount(final Portfolio pPortfolio) {
+        /* Locate an existing account */
+        String myName = pPortfolio.getName() + HOLDING_SUFFIX;
+        QIFAccountEvents myAccount = theAccountMap.get(myName);
+        if (myAccount == null) {
+            /* Create the new Account and add to the map and list */
+            myAccount = new QIFAccountEvents(this, myName);
             theAccountMap.put(myName, myAccount);
             theAccounts.append(myAccount);
         }

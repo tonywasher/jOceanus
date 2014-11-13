@@ -82,11 +82,6 @@ public class Portfolio
     public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
-     * Holding Field Id.
-     */
-    public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.PORTFOLIO_HOLDING.getValue());
-
-    /**
      * isTaxFree Field Id.
      */
     public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue());
@@ -95,21 +90,6 @@ public class Portfolio
      * PortfolioInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
-
-    /**
-     * Holding Closed Error Text.
-     */
-    private static final String ERROR_HOLDCLOSED = MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDCLOSED.getValue();
-
-    /**
-     * Holding Parent Error Text.
-     */
-    private static final String ERROR_HOLDPARENT = MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDPARENT.getValue();
-
-    /**
-     * Holding Tax Invalid Error Text.
-     */
-    private static final String ERROR_HOLDTAX = MoneyWiseDataResource.PORTFOLIO_ERROR_HOLDTAX.getValue();
 
     /**
      * New Account name.
@@ -145,9 +125,6 @@ public class Portfolio
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
         if (FIELD_PARENT.equals(pField)) {
-            return true;
-        }
-        if (FIELD_HOLDING.equals(pField)) {
             return true;
         }
         if (FIELD_TAXFREE.equals(pField)) {
@@ -289,40 +266,7 @@ public class Portfolio
                                  : myParent.getName();
     }
 
-    /**
-     * Obtain Holding.
-     * @return the holding account
-     */
-    public Deposit getHolding() {
-        return getHolding(getValueSet());
-    }
-
-    /**
-     * Obtain HoldingId.
-     * @return the holdingId
-     */
-    public Integer getHoldingId() {
-        Deposit myHolding = getHolding();
-        return (myHolding == null)
-                                  ? null
-                                  : myHolding.getId();
-    }
-
-    /**
-     * Obtain HoldingName.
-     * @return the holdingName
-     */
-    public String getHoldingName() {
-        Deposit myHolding = getHolding();
-        return (myHolding == null)
-                                  ? null
-                                  : myHolding.getName();
-    }
-
-    /**
-     * Is the portfolio taxFree.
-     * @return true/false
-     */
+    @Override
     public Boolean isTaxFree() {
         return isTaxFree(getValueSet());
     }
@@ -334,15 +278,6 @@ public class Portfolio
      */
     public static Payee getParent(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, Payee.class);
-    }
-
-    /**
-     * Obtain Holding.
-     * @param pValueSet the valueSet
-     * @return the Holding Account
-     */
-    public static Deposit getHolding(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_HOLDING, Deposit.class);
     }
 
     /**
@@ -376,30 +311,6 @@ public class Portfolio
      */
     private void setValueParent(final String pValue) {
         getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set holding value.
-     * @param pValue the value
-     */
-    private void setValueHolding(final Deposit pValue) {
-        getValueSet().setValue(FIELD_HOLDING, pValue);
-    }
-
-    /**
-     * Set holding id.
-     * @param pValue the value
-     */
-    private void setValueHolding(final Integer pValue) {
-        getValueSet().setValue(FIELD_HOLDING, pValue);
-    }
-
-    /**
-     * Set holding name.
-     * @param pValue the value
-     */
-    private void setValueHolding(final String pValue) {
-        getValueSet().setValue(FIELD_HOLDING, pValue);
     }
 
     /**
@@ -585,14 +496,6 @@ public class Portfolio
                 setValueParent((String) myValue);
             }
 
-            /* Store the Holding */
-            myValue = pValues.getValue(FIELD_HOLDING);
-            if (myValue instanceof Integer) {
-                setValueHolding((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueHolding((String) myValue);
-            }
-
             /* Store the taxFree flag */
             myValue = pValues.getValue(FIELD_TAXFREE);
             if (myValue instanceof Boolean) {
@@ -646,25 +549,6 @@ public class Portfolio
     }
 
     /**
-     * adjust values after parent change.
-     * @param pUpdateSet the update set
-     * @throws JOceanusException on error
-     */
-    public void adjustForParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Access taxFree status */
-        Boolean isTaxFree = isTaxFree();
-        Payee myParent = getParent();
-        Deposit myHolding = getHolding();
-
-        /* If the holding account needs changing */
-        if ((myHolding == null) || !Difference.isEqual(myParent, myHolding.getParent())) {
-            /* Determine new holding */
-            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-            setHolding(myDeposits.getDefaultHolding(myParent, isTaxFree));
-        }
-    }
-
-    /**
      * adjust values after taxFree change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
@@ -681,10 +565,6 @@ public class Portfolio
             myParent = myPayees.getDefaultPortfolioParent(pUpdateSet, isTaxFree);
             setParent(myParent);
         }
-
-        /* Select relevant deposit */
-        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-        setHolding(myDeposits.getDefaultHolding(myParent, isTaxFree));
     }
 
     @Override
@@ -696,7 +576,6 @@ public class Portfolio
         MoneyWiseData myData = getDataSet();
         ValueSet myValues = getValueSet();
         resolveDataLink(FIELD_PARENT, myData.getPayees());
-        resolveDataLink(FIELD_HOLDING, myData.getDeposits());
 
         /* Adjust TaxFree */
         Object myTaxFree = myValues.getValue(FIELD_TAXFREE);
@@ -709,9 +588,7 @@ public class Portfolio
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent/holding within list */
         PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
-        resolveDataLink(FIELD_HOLDING, myDeposits);
     }
 
     /**
@@ -721,15 +598,6 @@ public class Portfolio
      */
     public void setParent(final Payee pParent) throws JOceanusException {
         setValueParent(pParent);
-    }
-
-    /**
-     * Set a new holding account.
-     * @param pHolding the holding
-     * @throws JOceanusException on error
-     */
-    public void setHolding(final Deposit pHolding) throws JOceanusException {
-        setValueHolding(pHolding);
     }
 
     /**
@@ -845,9 +713,6 @@ public class Portfolio
 
     @Override
     public void touchUnderlyingItems() {
-        /* touch the holding account */
-        getHolding().touchItem(this);
-
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
     }
@@ -859,13 +724,11 @@ public class Portfolio
 
         /* Touch parent */
         getParent().touchItem(this);
-        getHolding().touchItem(this);
     }
 
     @Override
     public void validate() {
         Payee myParent = getParent();
-        Deposit myHolding = getHolding();
 
         /* Validate base components */
         super.validate();
@@ -883,26 +746,6 @@ public class Portfolio
             /* If we are open then parent must be open */
             if (!isClosed() && myParent.isClosed()) {
                 addError(ERROR_PARCLOSED, FIELD_CLOSED);
-            }
-        }
-
-        /* Holding account must exist */
-        if (myHolding == null) {
-            addError(ERROR_MISSING, FIELD_HOLDING);
-        } else {
-            /* If we are open then holding account must be open */
-            if (!isClosed() && myHolding.isClosed()) {
-                addError(ERROR_HOLDCLOSED, FIELD_HOLDING);
-            }
-
-            /* We must have the same tax free status as the holding account */
-            if (!isTaxFree().equals(myHolding.isTaxFree())) {
-                addError(ERROR_HOLDTAX, FIELD_HOLDING);
-            }
-
-            /* We must have the same parent as the holding account */
-            if (myParent != null && !myParent.equals(myHolding.getParent())) {
-                addError(ERROR_HOLDPARENT, FIELD_PARENT);
             }
         }
 
@@ -951,11 +794,6 @@ public class Portfolio
         /* Update the parent account if required */
         if (!Difference.isEqual(getParent(), myPortfolio.getParent())) {
             setValueParent(myPortfolio.getParent());
-        }
-
-        /* Update the holding account if required */
-        if (!Difference.isEqual(getHolding(), myPortfolio.getHolding())) {
-            setValueHolding(myPortfolio.getHolding());
         }
 
         /* Update the taxFree status if required */

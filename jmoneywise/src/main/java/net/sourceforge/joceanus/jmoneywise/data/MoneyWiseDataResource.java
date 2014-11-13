@@ -399,11 +399,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     LOAN_NEWACCOUNT("Loan.NewAccount"),
 
     /**
-     * Portfolio Holding.
-     */
-    PORTFOLIO_HOLDING("Portfolio.Holding"),
-
-    /**
      * Portfolio InfoSet.
      */
     PORTFOLIO_INFOSET("Portfolio.InfoSet"),
@@ -452,21 +447,6 @@ public enum MoneyWiseDataResource implements ResourceId {
      * StockOption Error BadExpiry.
      */
     STOCKOPTION_ERROR_BADEXPIRE("StockOption.Error.BadExpire"),
-
-    /**
-     * Portfolio HoldingClosed Error.
-     */
-    PORTFOLIO_ERROR_HOLDCLOSED("Portfolio.Error.HoldClosed"),
-
-    /**
-     * Portfolio HoldingTax Error.
-     */
-    PORTFOLIO_ERROR_HOLDTAX("Portfolio.Error.HoldTax"),
-
-    /**
-     * Portfolio HoldingParent Error.
-     */
-    PORTFOLIO_ERROR_HOLDPARENT("Portfolio.Error.HoldParent"),
 
     /**
      * SecurityHolding New Menu.

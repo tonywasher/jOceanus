@@ -363,7 +363,7 @@ public class TransactionTable
         theNewButton = MoneyWiseIcons.getNewButton();
 
         /* Create the Analysis Selection */
-        theSelect = new AnalysisSelect(theNewButton);
+        theSelect = new AnalysisSelect(theView, theNewButton);
 
         /* Create the action buttons */
         theActionButtons = new ActionButtons(theUpdateSet);
@@ -410,6 +410,12 @@ public class TransactionTable
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
+
+        /* Initialise the filter */
+        theFilter = theSelect.getFilter();
+        theColumns.adjustColumns(theSelect.showColumns()
+                                                        ? theSelect.getColumns()
+                                                        : AnalysisColumnSet.BALANCE);
     }
 
     /**
@@ -449,7 +455,7 @@ public class TransactionTable
         myTask = myTask.startTask("Statement");
 
         /* Update the selection */
-        theSelect.refreshData(theView);
+        theSelect.refreshData();
 
         /* Set the filter */
         theFilter = theSelect.getFilter();
@@ -1145,9 +1151,6 @@ public class TransactionTable
             declareColumn(theDonationColumn);
             theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, theActionIconRenderer, theActionIconEditor);
             declareColumn(theActionColumn);
-
-            /* Set the Balance column set */
-            adjustColumns(AnalysisColumnSet.BALANCE);
 
             /* Add listeners */
             new EditorListener();

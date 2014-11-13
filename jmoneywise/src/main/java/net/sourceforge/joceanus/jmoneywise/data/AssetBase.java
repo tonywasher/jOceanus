@@ -192,6 +192,16 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return null;
     }
 
+    @Override
+    public Boolean isTaxFree() {
+        return Boolean.FALSE;
+    }
+
+    @Override
+    public Boolean isGross() {
+        return Boolean.FALSE;
+    }
+
     /**
      * Get the close Date of the account.
      * @return the closeDate

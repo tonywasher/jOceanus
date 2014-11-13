@@ -353,18 +353,12 @@ public class Deposit
                                    : myCurrency.getName();
     }
 
-    /**
-     * Is the deposit gross.
-     * @return true/false
-     */
+    @Override
     public Boolean isGross() {
         return isGross(getValueSet());
     }
 
-    /**
-     * Is the deposit taxFree.
-     * @return true/false
-     */
+    @Override
     public Boolean isTaxFree() {
         return isTaxFree(getValueSet());
     }

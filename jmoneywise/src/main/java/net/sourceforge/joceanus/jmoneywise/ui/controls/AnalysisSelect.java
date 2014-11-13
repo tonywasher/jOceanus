@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
@@ -125,6 +126,11 @@ public class AnalysisSelect
      * Text for Title.
      */
     private static final String NLS_FILTERTITLE = MoneyWiseUIControlResource.ANALYSIS_FILTER_TITLE.getValue();
+
+    /**
+     * View.
+     */
+    private final View theView;
 
     /**
      * Analysis Manager.
@@ -295,9 +301,15 @@ public class AnalysisSelect
 
     /**
      * Constructor.
+     * @param pView the view
      * @param pNewButton the new button
      */
-    public AnalysisSelect(final JButton pNewButton) {
+    public AnalysisSelect(final View pView,
+                          final JButton pNewButton) {
+        /* Access the analysis manager */
+        theView = pView;
+        theManager = theView.getAnalysisManager();
+
         /* Create the range button */
         theRangeButton = new JButton(ArrowIcon.DOWN);
         theRangeButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -363,9 +375,9 @@ public class AnalysisSelect
 
         /* Create initial state */
         theState = new AnalysisState();
-        theState.setRange(theRangeSelect);
-        theState.applyState();
-        theState.showColumns(false);
+        theState.showColumns(true);
+        StatementSelect mySelect = new StatementSelect(theRangeSelect, new AllFilter());
+        selectStatement(mySelect);
 
         /* set maximum size */
         setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_HEIGHT));
@@ -519,17 +531,16 @@ public class AnalysisSelect
 
     /**
      * Refresh data.
-     * @param pView the view
      */
-    public void refreshData(final View pView) {
+    public void refreshData() {
         /* Set refreshing flag */
         isRefreshing = true;
 
         /* Access the analysis manager */
-        theManager = pView.getAnalysisManager();
+        theManager = theView.getAnalysisManager();
 
         /* Update the range selection */
-        JDateDayRange myRange = pView.getRange();
+        JDateDayRange myRange = theView.getRange();
         theRangeSelect.setOverallRange(myRange);
 
         /* Update the filter selection */

@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -49,7 +48,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -74,7 +72,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Portfolio Table.
@@ -100,11 +97,6 @@ public class PortfolioTable
      * Parent Column Title.
      */
     private static final String TITLE_PARENT = Portfolio.FIELD_PARENT.getName();
-
-    /**
-     * Holding Column Title.
-     */
-    private static final String TITLE_HOLDING = Portfolio.FIELD_HOLDING.getName();
 
     /**
      * Closed Column Title.
@@ -606,24 +598,19 @@ public class PortfolioTable
         private static final int COLUMN_PARENT = 2;
 
         /**
-         * Holding column id.
-         */
-        private static final int COLUMN_HOLDING = 3;
-
-        /**
          * Closed column id.
          */
-        private static final int COLUMN_CLOSED = 4;
+        private static final int COLUMN_CLOSED = 3;
 
         /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 5;
+        private static final int COLUMN_ACTIVE = 4;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 6;
+        private static final int COLUMN_LASTTRAN = 5;
 
         /**
          * Closed Icon Renderer.
@@ -666,11 +653,6 @@ public class PortfolioTable
         private final ScrollButtonCellEditor<Payee> theParentEditor;
 
         /**
-         * Holding ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<Deposit> theHoldingEditor;
-
-        /**
          * Closed column.
          */
         private final JDataTableColumn theClosedColumn;
@@ -688,7 +670,6 @@ public class PortfolioTable
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theHoldingEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -702,7 +683,6 @@ public class PortfolioTable
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
-            declareColumn(new JDataTableColumn(COLUMN_HOLDING, WIDTH_NAME, theStringRenderer, theHoldingEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
@@ -710,9 +690,6 @@ public class PortfolioTable
 
             /* Initialise the columns */
             setColumns();
-
-            /* Add listeners */
-            new EditorListener();
         }
 
         /**
@@ -740,8 +717,6 @@ public class PortfolioTable
                     return TITLE_DESC;
                 case COLUMN_PARENT:
                     return TITLE_PARENT;
-                case COLUMN_HOLDING:
-                    return TITLE_HOLDING;
                 case COLUMN_CLOSED:
                     return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
@@ -767,8 +742,6 @@ public class PortfolioTable
                     return pPortfolio.getName();
                 case COLUMN_PARENT:
                     return pPortfolio.getParent();
-                case COLUMN_HOLDING:
-                    return pPortfolio.getHolding();
                 case COLUMN_DESC:
                     return pPortfolio.getDesc();
                 case COLUMN_CLOSED:
@@ -807,10 +780,6 @@ public class PortfolioTable
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);
-                    pItem.adjustForParent(theUpdateSet);
-                    break;
-                case COLUMN_HOLDING:
-                    pItem.setHolding((Deposit) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -836,7 +805,6 @@ public class PortfolioTable
                 case COLUMN_DESC:
                     return true;
                 case COLUMN_PARENT:
-                case COLUMN_HOLDING:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
@@ -860,51 +828,12 @@ public class PortfolioTable
                     return Portfolio.FIELD_DESC;
                 case COLUMN_PARENT:
                     return Portfolio.FIELD_PARENT;
-                case COLUMN_HOLDING:
-                    return Portfolio.FIELD_HOLDING;
                 case COLUMN_CLOSED:
                     return Portfolio.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Portfolio.FIELD_TOUCH;
                 default:
                     return null;
-            }
-        }
-
-        /**
-         * EditorListener.
-         */
-        private final class EditorListener
-                implements ChangeListener {
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theHoldingEditor.addChangeListener(this);
-            }
-
-            @Override
-            public void stateChanged(final ChangeEvent pEvent) {
-                Object o = pEvent.getSource();
-
-                if (theHoldingEditor.equals(o)) {
-                    buildHoldingMenu();
-                }
-            }
-
-            /**
-             * Build the popUpMenu for holding.
-             */
-            private void buildHoldingMenu() {
-                /* Access details */
-                JScrollMenuBuilder<Deposit> myBuilder = theHoldingEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theHoldingEditor.getPoint();
-                Portfolio myPortfolio = thePortfolios.get(myCell.y);
-
-                /* Build the menu */
-                theActiveAccount.buildHoldingMenu(myBuilder, myPortfolio);
             }
         }
     }

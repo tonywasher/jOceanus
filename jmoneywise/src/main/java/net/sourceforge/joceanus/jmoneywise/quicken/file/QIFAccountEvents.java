@@ -84,6 +84,20 @@ public class QIFAccountEvents
 
     /**
      * Constructor.
+     * @param pFile the QIF file.
+     * @param pAccount the account name.
+     */
+    protected QIFAccountEvents(final QIFFile pFile,
+                               final String pAccount) {
+        /* Store parameters */
+        theAccount = new QIFAccount(pFile, pAccount);
+
+        /* Create the list */
+        theEvents = new ArrayList<QIFEventRecord<?>>();
+    }
+
+    /**
+     * Constructor.
      * @param pAccount the account.
      */
     protected QIFAccountEvents(final QIFAccount pAccount) {

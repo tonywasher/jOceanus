@@ -309,36 +309,19 @@ public class TransactionInfoSet
             case LOANINTERESTCHARGED:
                 return JDataFieldRequired.CANEXIST;
             case INTEREST:
-                if (pDebit instanceof Deposit) {
-                    Deposit myDeposit = (Deposit) pDebit;
-                    return ((myDeposit.isTaxFree()) || (myDeposit.isGross()))
-                                                                             ? JDataFieldRequired.NOTALLOWED
-                                                                             : JDataFieldRequired.MUSTEXIST;
-                } else if (pDebit instanceof Portfolio) {
-                    return ((Portfolio) pDebit).isTaxFree()
-                                                           ? JDataFieldRequired.NOTALLOWED
-                                                           : JDataFieldRequired.MUSTEXIST;
-                }
-                return JDataFieldRequired.NOTALLOWED;
+                return (pDebit.isTaxFree() || pDebit.isGross())
+                                                               ? JDataFieldRequired.NOTALLOWED
+                                                               : JDataFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                if (!(pDebit instanceof SecurityHolding)) {
-                    return JDataFieldRequired.NOTALLOWED;
-                }
-
-                /* Check portfolio tax status */
-                Portfolio myPortfolio = ((SecurityHolding) pDebit).getPortfolio();
-                return myPortfolio.isTaxFree()
-                                              ? JDataFieldRequired.NOTALLOWED
-                                              : JDataFieldRequired.MUSTEXIST;
+            case LOYALTYBONUS:
+                return pDebit.isTaxFree()
+                                         ? JDataFieldRequired.NOTALLOWED
+                                         : JDataFieldRequired.MUSTEXIST;
             case TRANSFER:
                 return (pDebit instanceof SecurityHolding)
                        && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))
                                                                                                                 ? JDataFieldRequired.MUSTEXIST
                                                                                                                 : JDataFieldRequired.NOTALLOWED;
-            case LOYALTYBONUS:
-                return (pDebit instanceof Portfolio) && (!((Portfolio) pDebit).isTaxFree())
-                                                                                           ? JDataFieldRequired.MUSTEXIST
-                                                                                           : JDataFieldRequired.NOTALLOWED;
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }

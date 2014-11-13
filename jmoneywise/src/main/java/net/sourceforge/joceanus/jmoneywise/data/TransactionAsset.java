@@ -60,6 +60,18 @@ public interface TransactionAsset {
     AssetBase<?> getParent();
 
     /**
+     * Is the Asset taxFree?
+     * @return true/false
+     */
+    Boolean isTaxFree();
+
+    /**
+     * Is the Asset gross?
+     * @return true/false
+     */
+    Boolean isGross();
+
+    /**
      * Touch underlying item.
      * @param pItem the object that is touching the item
      */

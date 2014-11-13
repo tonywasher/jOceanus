@@ -188,7 +188,17 @@ public final class SecurityHolding
 
     @Override
     public Payee getParent() {
-        return null;
+        return theSecurity.getParent();
+    }
+
+    @Override
+    public Boolean isTaxFree() {
+        return thePortfolio.isTaxFree();
+    }
+
+    @Override
+    public Boolean isGross() {
+        return thePortfolio.isGross();
     }
 
     @Override

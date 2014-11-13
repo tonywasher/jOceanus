@@ -206,7 +206,7 @@ public class QIFPortfolioBuilder {
         /* If we are using a holding account */
         if (useHoldingAccount) {
             /* Access Holding Account */
-            QIFAccountEvents myHolding = theFile.registerAccount(myPort.getHolding());
+            QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
 
             /* Create output amount */
             JMoney myOutAmount = new JMoney(myAmount);
@@ -294,7 +294,7 @@ public class QIFPortfolioBuilder {
         /* If we are using a holding account */
         if (useHoldingAccount) {
             /* Access Holding Account */
-            QIFAccountEvents myHolding = theFile.registerAccount(myPort.getHolding());
+            QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
 
             /* Create an event */
             QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
@@ -632,7 +632,7 @@ public class QIFPortfolioBuilder {
             /* If we are using a holding account */
             if (useHoldingAccount) {
                 /* Access Holding Account */
-                QIFAccountEvents myHolding = theFile.registerAccount(myPortfolio.getHolding());
+                QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
 
                 /* Create an event */
                 QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
@@ -749,7 +749,7 @@ public class QIFPortfolioBuilder {
                 /* If we are using a holding account */
                 if (useHoldingAccount) {
                     /* Access Holding Account */
-                    QIFAccountEvents myHolding = theFile.registerAccount(myPortfolio.getHolding());
+                    QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
 
                     /* Create an event */
                     QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);

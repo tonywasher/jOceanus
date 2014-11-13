@@ -204,6 +204,26 @@ public class QIFAccount
     }
 
     /**
+     * Constructor for holding account.
+     * @param pFile the QIF File
+     * @param pName the Portfolio Name
+     */
+    protected QIFAccount(final QIFFile pFile,
+                         final String pName) {
+        /* Call super-constructor */
+        super(pFile, QAccountLineType.class);
+
+        /* Store data */
+        theName = pName;
+        theClass = DepositCategoryClass.SAVINGS;
+        theDesc = null;
+
+        /* Build lines */
+        addLine(new QIFAccountNameLine(theName));
+        addLine(new QIFAccountTypeLine(theClass));
+    }
+
+    /**
      * Constructor.
      * @param pFile the QIF File
      * @param pFormatter the formatter
