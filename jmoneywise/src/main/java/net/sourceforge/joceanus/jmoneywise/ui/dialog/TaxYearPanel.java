@@ -549,11 +549,11 @@ public class TaxYearPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
-        TaxYear myItem = getItem();
-        TaxRegime myRegime = myItem.getTaxRegime();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myRegime);
+    protected void declareGoToItems(final boolean pUpdates) {
+        if (!pUpdates) {
+            TaxYear myItem = getItem();
+            TaxRegime myRegime = myItem.getTaxRegime();
+            declareGoToItem(myRegime);
         }
     }
 

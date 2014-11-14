@@ -452,16 +452,16 @@ public class DepositPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         Deposit myItem = getItem();
-        DepositCategory myCategory = myItem.getCategory();
         Payee myParent = myItem.getParent();
-        AccountCurrency myCurrency = myItem.getDepositCurrency();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myCategory);
-            buildGoToEvent(myCurrency);
+        if (!pUpdates) {
+            DepositCategory myCategory = myItem.getCategory();
+            AccountCurrency myCurrency = myItem.getDepositCurrency();
+            declareGoToItem(myCategory);
+            declareGoToItem(myCurrency);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     @Override

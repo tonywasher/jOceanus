@@ -126,4 +126,9 @@ public class TransactionTagPanel
             myTag.setDescription(pUpdate.getString());
         }
     }
+
+    @Override
+    protected void declareGoToItems(final boolean pUpdates) {
+        /* No GoTo items */
+    }
 }

@@ -361,16 +361,16 @@ public class LoanPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         Loan myItem = getItem();
-        LoanCategory myCategory = myItem.getCategory();
         Payee myParent = myItem.getParent();
-        AccountCurrency myCurrency = myItem.getLoanCurrency();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myCategory);
-            buildGoToEvent(myCurrency);
+        if (!pUpdates) {
+            LoanCategory myCategory = myItem.getCategory();
+            AccountCurrency myCurrency = myItem.getLoanCurrency();
+            declareGoToItem(myCategory);
+            declareGoToItem(myCurrency);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     /**

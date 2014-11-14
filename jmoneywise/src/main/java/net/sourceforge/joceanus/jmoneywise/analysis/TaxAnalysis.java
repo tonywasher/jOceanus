@@ -247,11 +247,11 @@ public class TaxAnalysis {
         JMoney myIncome = new JMoney();
 
         /* Access the salary bucket and add to income */
-        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSSALARY);
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.SALARY);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the rental bucket */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSRENTAL);
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.RENTALINCOME);
         JMoney myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
@@ -261,24 +261,28 @@ public class TaxAnalysis {
             myIncome.addAmount(myChargeable);
         }
 
-        /* Access the interest bucket and add to income */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSINTEREST);
+        /* Access the taxed interest bucket and add to income */
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXEDINTEREST);
+        myIncome.addAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.GROSS));
+
+        /* Access the untaxed interest bucket and add to income */
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.UNTAXEDINTEREST);
         myIncome.addAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the dividends bucket and add to income */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSDIVIDEND);
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.DIVIDEND);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the unit trust dividends bucket and add to income */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSUTDIVIDEND);
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the taxable gains bucket and add to income */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSTAXABLEGAINS);
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXABLEGAINS);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the capital gains bucket */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSCAPITALGAINS);
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.CAPITALGAINS);
         myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
@@ -423,7 +427,7 @@ public class TaxAnalysis {
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access Salary */
-        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSSALARY);
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.SALARY);
         JMoney mySalary = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
@@ -582,7 +586,7 @@ public class TaxAnalysis {
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access Rental */
-        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSRENTAL);
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.RENTALINCOME);
         JMoney myRental = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
@@ -769,10 +773,14 @@ public class TaxAnalysis {
         }
 
         /* Access Interest */
-        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSINTEREST);
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXEDINTEREST);
         JMoney myInterest = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
+
+        /* Add any UnTaxed Interest */
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.UNTAXEDINTEREST);
+        myInterest.add(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueInterest Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TAXDUEINTEREST);
@@ -921,13 +929,13 @@ public class TaxAnalysis {
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access Dividends */
-        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSDIVIDEND);
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.DIVIDEND);
         JMoney myDividends = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* Access Unit Trust Dividends */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSUTDIVIDEND);
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
         myDividends.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueDividends Bucket */
@@ -1235,7 +1243,7 @@ public class TaxAnalysis {
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access base bucket */
-        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.GROSSCAPITALGAINS);
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.CAPITALGAINS);
         JMoney myCapital = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueCapital Bucket */

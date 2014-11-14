@@ -431,7 +431,7 @@ public final class TaxBasisBucket
         /* Access the counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NET);
+        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
         myNet = new JMoney(myNet);
 
         /* If this is an expense */
@@ -510,7 +510,7 @@ public final class TaxBasisBucket
 
         /* Set the values */
         setValue(TaxBasisAttribute.GROSS, myGross);
-        setValue(TaxBasisAttribute.NET, myNet);
+        setValue(TaxBasisAttribute.NETT, myNet);
 
         /* Register the transaction */
         theHistory.registerTransaction(pTrans, theValues);
@@ -531,7 +531,7 @@ public final class TaxBasisBucket
         /* Access the counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NET);
+        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
         myNet = new JMoney(myNet);
 
         /* If this is an income */
@@ -574,7 +574,7 @@ public final class TaxBasisBucket
 
         /* Set the values */
         setValue(TaxBasisAttribute.GROSS, myGross);
-        setValue(TaxBasisAttribute.NET, myNet);
+        setValue(TaxBasisAttribute.NETT, myNet);
 
         /* Register the transaction */
         theHistory.registerTransaction(pTrans, theValues);
@@ -602,7 +602,7 @@ public final class TaxBasisBucket
         /* Access the counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NET);
+        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
         myNet = new JMoney(myNet);
 
         /* Adjust the gross and net */
@@ -611,7 +611,7 @@ public final class TaxBasisBucket
 
         /* Set the values */
         setValue(TaxBasisAttribute.GROSS, myGross);
-        setValue(TaxBasisAttribute.NET, myNet);
+        setValue(TaxBasisAttribute.NETT, myNet);
     }
 
     /**
@@ -670,7 +670,7 @@ public final class TaxBasisBucket
 
             /* Create all possible values */
             put(TaxBasisAttribute.GROSS, new JMoney());
-            put(TaxBasisAttribute.NET, new JMoney());
+            put(TaxBasisAttribute.NETT, new JMoney());
             put(TaxBasisAttribute.TAXCREDIT, new JMoney());
         }
 
@@ -692,7 +692,7 @@ public final class TaxBasisBucket
         protected void adjustToBaseValues(final TaxBasisValues pBase) {
             /* Adjust gross/net/tax values */
             adjustMoneyToBase(pBase, TaxBasisAttribute.GROSS);
-            adjustMoneyToBase(pBase, TaxBasisAttribute.NET);
+            adjustMoneyToBase(pBase, TaxBasisAttribute.NETT);
             adjustMoneyToBase(pBase, TaxBasisAttribute.TAXCREDIT);
         }
 
@@ -700,7 +700,7 @@ public final class TaxBasisBucket
         protected void resetBaseValues() {
             /* Reset Income and expense values */
             put(TaxBasisAttribute.GROSS, new JMoney());
-            put(TaxBasisAttribute.NET, new JMoney());
+            put(TaxBasisAttribute.NETT, new JMoney());
             put(TaxBasisAttribute.TAXCREDIT, new JMoney());
         }
 
@@ -710,7 +710,7 @@ public final class TaxBasisBucket
          */
         public boolean isActive() {
             JMoney myGross = getMoneyValue(TaxBasisAttribute.GROSS);
-            JMoney myNet = getMoneyValue(TaxBasisAttribute.NET);
+            JMoney myNet = getMoneyValue(TaxBasisAttribute.NETT);
             JMoney myTax = getMoneyValue(TaxBasisAttribute.TAXCREDIT);
             return (myGross.isNonZero()) || (myNet.isNonZero()) || (myTax.isNonZero());
         }
@@ -909,30 +909,34 @@ public final class TaxBasisBucket
                 case BENEFITINCOME:
                 case RENTALINCOME:
                     /* Adjust the Gross salary bucket */
-                    myBucket = getBucket(TaxBasisClass.GROSSSALARY);
+                    myBucket = getBucket(TaxBasisClass.SALARY);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case INTEREST:
                 case TAXEDINTEREST:
+                    /* Adjust the Gross interest bucket */
+                    myBucket = getBucket(TaxBasisClass.TAXEDINTEREST);
+                    myBucket.addIncomeTransaction(pTrans);
+                    break;
                 case GROSSINTEREST:
                     /* Adjust the Gross interest bucket */
-                    myBucket = getBucket(TaxBasisClass.GROSSINTEREST);
+                    myBucket = getBucket(TaxBasisClass.UNTAXEDINTEREST);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case DIVIDEND:
                 case SHAREDIVIDEND:
                     /* Adjust the Gross dividend bucket */
-                    myBucket = getBucket(TaxBasisClass.GROSSDIVIDEND);
+                    myBucket = getBucket(TaxBasisClass.DIVIDEND);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case UNITTRUSTDIVIDEND:
                     /* Adjust the Gross UT dividend bucket */
-                    myBucket = getBucket(TaxBasisClass.GROSSUTDIVIDEND);
+                    myBucket = getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case ROOMRENTALINCOME:
                     /* Adjust the Gross rental bucket */
-                    myBucket = getBucket(TaxBasisClass.GROSSRENTAL);
+                    myBucket = getBucket(TaxBasisClass.RENTALINCOME);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case TAXSETTLEMENT:
@@ -1038,13 +1042,14 @@ public final class TaxBasisBucket
 
                 /* Switch on the tax basis */
                 switch (myBasis.getTaxClass()) {
-                    case GROSSSALARY:
-                    case GROSSINTEREST:
-                    case GROSSDIVIDEND:
-                    case GROSSUTDIVIDEND:
-                    case GROSSRENTAL:
-                    case GROSSTAXABLEGAINS:
-                    case GROSSCAPITALGAINS:
+                    case SALARY:
+                    case TAXEDINTEREST:
+                    case UNTAXEDINTEREST:
+                    case DIVIDEND:
+                    case UNITTRUSTDIVIDEND:
+                    case RENTALINCOME:
+                    case TAXABLEGAINS:
+                    case CAPITALGAINS:
                     case MARKET:
                     case TAXFREE:
                         /* Adjust the Total Profit buckets */

@@ -129,11 +129,11 @@ public class TaxBasis
      */
     public boolean hasTaxCredits() {
         switch (getTaxClass()) {
-            case GROSSSALARY:
-            case GROSSINTEREST:
-            case GROSSDIVIDEND:
-            case GROSSUTDIVIDEND:
-            case GROSSTAXABLEGAINS:
+            case SALARY:
+            case TAXEDINTEREST:
+            case DIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXABLEGAINS:
                 return true;
             default:
                 return false;

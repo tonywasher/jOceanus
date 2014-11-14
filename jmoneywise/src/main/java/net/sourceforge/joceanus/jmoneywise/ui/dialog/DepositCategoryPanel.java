@@ -198,14 +198,14 @@ public class DepositCategoryPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         DepositCategory myItem = getItem();
-        DepositCategoryType myType = myItem.getCategoryType();
         DepositCategory myParent = myItem.getParentCategory();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myType);
+        if (!pUpdates) {
+            DepositCategoryType myType = myItem.getCategoryType();
+            declareGoToItem(myType);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     /**

@@ -171,7 +171,7 @@ public class ActionButtons
                 case CLEAN:
                     theCommitButton.setEnabled(false);
                     theUndoButton.setEnabled(false);
-                    theResetButton.setEnabled(false);
+                    theResetButton.setEnabled(theUpdateSet.hasUpdates());
                     break;
                 case DIRTY:
                 case ERROR:

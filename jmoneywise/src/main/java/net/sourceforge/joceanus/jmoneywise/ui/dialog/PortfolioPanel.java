@@ -383,10 +383,10 @@ public class PortfolioPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         Portfolio myItem = getItem();
         Payee myParent = myItem.getParent();
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     /**

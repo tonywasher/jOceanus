@@ -34,9 +34,9 @@ public enum TaxBasisAttribute implements BucketAttribute {
     GROSS,
 
     /**
-     * Net Amount.
+     * Nett Amount.
      */
-    NET,
+    NETT,
 
     /**
      * TaxCredit.

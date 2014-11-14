@@ -361,11 +361,11 @@ public class PayeePanel
     }
 
     @Override
-    protected void buildGoToMenu() {
-        Payee myItem = getItem();
-        PayeeType myType = myItem.getPayeeType();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myType);
+    protected void declareGoToItems(final boolean pUpdates) {
+        if (!pUpdates) {
+            Payee myItem = getItem();
+            PayeeType myType = myItem.getPayeeType();
+            declareGoToItem(myType);
         }
     }
 

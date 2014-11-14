@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
@@ -47,6 +48,16 @@ public class TaxationBasis
      * The Title text.
      */
     private static final String TEXT_TITLE = ReportResource.TAXBASIS_TITLE.getValue();
+
+    /**
+     * The Net text.
+     */
+    private static final String TEXT_NETT = AnalysisResource.TAXATTR_NETT.getValue();
+
+    /**
+     * The Gross text.
+     */
+    private static final String TEXT_GROSS = AnalysisResource.TAXATTR_GROSS.getValue();
 
     /**
      * HTML builder.
@@ -83,6 +94,10 @@ public class TaxationBasis
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable);
+        theBuilder.makeTitleCell(myTable, TEXT_NETT);
+        theBuilder.makeTitleCell(myTable, TEXT_GROSS);
 
         /* Loop through the TaxBasis Buckets */
         Iterator<TaxBasisBucket> myIterator = myTaxBasis.iterator();
@@ -91,17 +106,19 @@ public class TaxationBasis
 
             /* Access the amount */
             TaxBasisValues myValues = myBucket.getValues();
-            JMoney myAmount = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            JMoney myGross = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            JMoney myNet = myValues.getMoneyValue(TaxBasisAttribute.NETT);
 
             /* If we have a non-zero value */
-            if (myAmount.isNonZero()) {
+            if (myGross.isNonZero()) {
                 /* Access bucket name */
                 String myName = myBucket.getName();
 
                 /* Format the detail */
                 theBuilder.startRow(myTable);
                 theBuilder.makeFilterLinkCell(myTable, myName);
-                theBuilder.makeValueCell(myTable, myAmount);
+                theBuilder.makeValueCell(myTable, myNet);
+                theBuilder.makeValueCell(myTable, myGross);
 
                 /* Record the filter */
                 setFilterForId(myName, myBucket);

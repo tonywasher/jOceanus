@@ -382,9 +382,9 @@ public enum AnalysisResource implements ResourceId {
     TAXATTR_GROSS("TaxAttr.Gross"),
 
     /**
-     * TaxAttr Net.
+     * TaxAttr Nett.
      */
-    TAXATTR_NET("TaxAttr.Net"),
+    TAXATTR_NETT("TaxAttr.Nett"),
 
     /**
      * TaxAttr Tax.
@@ -544,8 +544,8 @@ public enum AnalysisResource implements ResourceId {
         switch (pValue) {
             case GROSS:
                 return TAXATTR_GROSS;
-            case NET:
-                return TAXATTR_NET;
+            case NETT:
+                return TAXATTR_NETT;
             case TAXCREDIT:
                 return TAXATTR_TAX;
             default:

@@ -331,16 +331,16 @@ public class SecurityPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         Security myItem = getItem();
-        SecurityType myType = myItem.getSecurityType();
         Payee myParent = myItem.getParent();
-        AccountCurrency myCurrency = myItem.getSecurityCurrency();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myType);
-            buildGoToEvent(myCurrency);
+        if (!pUpdates) {
+            SecurityType myType = myItem.getSecurityType();
+            AccountCurrency myCurrency = myItem.getSecurityCurrency();
+            declareGoToItem(myType);
+            declareGoToItem(myCurrency);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     @Override

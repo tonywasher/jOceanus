@@ -1110,7 +1110,7 @@ public final class EventCategoryBucket
                         theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, pGains);
                     } else {
                         theCapitalGains.addIncome(pTrans, pGains);
-                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.GROSSCAPITALGAINS, pGains);
+                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.CAPITALGAINS, pGains);
                     }
                 } else {
                     /* Adjust category */
@@ -1119,7 +1119,7 @@ public final class EventCategoryBucket
                         theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, pGains);
                     } else {
                         theCapitalGains.subtractExpense(pTrans, pGains);
-                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.GROSSCAPITALGAINS, pGains);
+                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.CAPITALGAINS, pGains);
                     }
                 }
             }
@@ -1151,7 +1151,7 @@ public final class EventCategoryBucket
             }
 
             /* Adjust tax basis */
-            theTaxBasis.adjustValue(pTrans, TaxBasisClass.GROSSTAXABLEGAINS, myGains);
+            theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXABLEGAINS, myGains);
         }
 
         /**

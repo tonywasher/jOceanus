@@ -353,18 +353,18 @@ public class CashPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         Cash myItem = getItem();
-        CashCategory myCategory = myItem.getCategory();
-        TransactionCategory myAutoExpense = myItem.getAutoExpense();
         Payee myAutoPayee = myItem.getAutoPayee();
-        AccountCurrency myCurrency = myItem.getCashCurrency();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myCategory);
-            buildGoToEvent(myCurrency);
-            buildGoToEvent(myAutoExpense);
+        if (!pUpdates) {
+            CashCategory myCategory = myItem.getCategory();
+            TransactionCategory myAutoExpense = myItem.getAutoExpense();
+            AccountCurrency myCurrency = myItem.getCashCurrency();
+            declareGoToItem(myCategory);
+            declareGoToItem(myCurrency);
+            declareGoToItem(myAutoExpense);
         }
-        buildGoToEvent(myAutoPayee);
+        declareGoToItem(myAutoPayee);
     }
 
     /**

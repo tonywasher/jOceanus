@@ -650,16 +650,28 @@ public class TransactionPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
-        Transaction myItem = getItem();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent((AssetBase<?>) myItem.getAccount());
-            buildGoToEvent((AssetBase<?>) myItem.getPartner());
-            buildGoToEvent(myItem.getCategory());
-            Deposit myThirdParty = myItem.getThirdParty();
-            if (myThirdParty != null) {
-                buildGoToEvent(myThirdParty);
-            }
+    protected void declareGoToItems(final boolean pUpdates) {
+        if (!pUpdates) {
+            Transaction myItem = getItem();
+            buildAssetGoTo(myItem.getAccount());
+            buildAssetGoTo(myItem.getPartner());
+            declareGoToItem(myItem.getCategory());
+            declareGoToItem(myItem.getThirdParty());
+        }
+    }
+
+    /**
+     * Handle goto declarations for TransactionAssets.
+     * @param pAsset the asset
+     */
+    private void buildAssetGoTo(final TransactionAsset pAsset) {
+        if (pAsset instanceof SecurityHolding) {
+            /* Build menu Items for Portfolio and Security */
+            SecurityHolding myHolding = (SecurityHolding) pAsset;
+            declareGoToItem(myHolding.getPortfolio());
+            declareGoToItem(myHolding.getSecurity());
+        } else if (pAsset instanceof AssetBase<?>) {
+            declareGoToItem((AssetBase<?>) pAsset);
         }
     }
 

@@ -23,6 +23,11 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -38,6 +43,7 @@ import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
 /**
  * MoneyWise Data Item Panel.
@@ -56,6 +62,11 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     private JScrollMenuBuilder<ActionDetailEvent> theGoToBuilder;
 
     /**
+     * The GoToMenuMap.
+     */
+    private final transient List<DataItem<MoneyWiseDataType>> theGoToList;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -65,6 +76,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final ErrorPanel pError) {
         super(pFieldMgr, pUpdateSet, pError);
+        theGoToList = new ArrayList<DataItem<MoneyWiseDataType>>();
     }
 
     @Override
@@ -73,44 +85,96 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     }
 
     @Override
-    protected void buildGoToEvent(final DataItem<MoneyWiseDataType> pItem) {
+    protected void buildGoToMenu() {
+        /* Clear the goTo list */
+        theGoToList.clear();
+
+        /* Declare the goTo items */
+        declareGoToItems(getUpdateSet().hasUpdates());
+
+        /* Process the goTo items */
+        processGoToItems();
+    }
+
+    /**
+     * Declare GoTo Items.
+     * @param pUpdates are there active updates?
+     */
+    protected abstract void declareGoToItems(final boolean pUpdates);
+
+    /**
+     * Declare GoTo Item.
+     * @param pItem the item to declare
+     */
+    protected void declareGoToItem(final DataItem<MoneyWiseDataType> pItem) {
         /* Ignore null items */
         if (pItem == null) {
             return;
         }
 
-        /* set default values */
-        int myId = -1;
-        String myName = null;
-
-        /* Handle differing items */
-        if (pItem instanceof StaticData) {
-            StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) pItem;
-            myId = MainTab.ACTION_VIEWSTATIC;
-            myName = myStatic.getName();
-        } else if (pItem instanceof AssetBase) {
-            AssetBase<?> myAccount = (AssetBase<?>) pItem;
-            myId = MainTab.ACTION_VIEWACCOUNT;
-            myName = myAccount.getName();
-        } else if (pItem instanceof CategoryBase) {
-            CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) pItem;
-            myId = MainTab.ACTION_VIEWCATEGORY;
-            myName = myCategory.getName();
-        } else if (pItem instanceof TaxYear) {
-            TaxYear myYear = (TaxYear) pItem;
-            myId = MainTab.ACTION_VIEWTAXYEAR;
-            myName = myYear.getTaxYear().toString();
-        } else if (pItem instanceof TransactionTag) {
-            TransactionTag myTag = (TransactionTag) pItem;
-            myId = MainTab.ACTION_VIEWTAG;
-            myName = myTag.getName();
+        /* Ignore if the item is already listed */
+        if (theGoToList.contains(pItem)) {
+            return;
         }
 
-        /* Add a prefix */
-        myName = pItem.getItemType().toString() + ": " + myName;
+        /* remember the item */
+        theGoToList.add(pItem);
+    }
 
-        /* Build the item */
-        ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, pItem);
-        theGoToBuilder.addItem(myEvent, myName);
+    /**
+     * Process goTo items.
+     * @param pItem
+     */
+    private void processGoToItems() {
+        /* Create a simple map for top-level categories */
+        Map<MoneyWiseDataType, JScrollMenu> myMap = new HashMap<MoneyWiseDataType, JScrollMenu>();
+
+        /* Loop through the items */
+        Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToList.iterator();
+        while (myIterator.hasNext()) {
+            DataItem<MoneyWiseDataType> myItem = myIterator.next();
+
+            /* Determine DataType and obtain parent menu */
+            MoneyWiseDataType myType = myItem.getItemType();
+            JScrollMenu myMenu = myMap.get(myType);
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theGoToBuilder.addSubMenu(myType.getItemName());
+                myMap.put(myType, myMenu);
+            }
+
+            /* set default values */
+            int myId = -1;
+            String myName = null;
+
+            /* Handle differing items */
+            if (myItem instanceof StaticData) {
+                StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) myItem;
+                myId = MainTab.ACTION_VIEWSTATIC;
+                myName = myStatic.getName();
+            } else if (myItem instanceof AssetBase) {
+                AssetBase<?> myAccount = (AssetBase<?>) myItem;
+                myId = MainTab.ACTION_VIEWACCOUNT;
+                myName = myAccount.getName();
+            } else if (myItem instanceof CategoryBase) {
+                CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) myItem;
+                myId = MainTab.ACTION_VIEWCATEGORY;
+                myName = myCategory.getName();
+            } else if (myItem instanceof TaxYear) {
+                TaxYear myYear = (TaxYear) myItem;
+                myId = MainTab.ACTION_VIEWTAXYEAR;
+                myName = myYear.getTaxYear().toString();
+            } else if (myItem instanceof TransactionTag) {
+                TransactionTag myTag = (TransactionTag) myItem;
+                myId = MainTab.ACTION_VIEWTAG;
+                myName = myTag.getName();
+            }
+
+            /* Build the item */
+            ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, myItem);
+            theGoToBuilder.addItem(myMenu, myEvent, myName);
+        }
     }
 }

@@ -193,14 +193,14 @@ public class CashCategoryPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         CashCategory myItem = getItem();
-        CashCategoryType myType = myItem.getCategoryType();
         CashCategory myParent = myItem.getParentCategory();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myType);
+        if (!pUpdates) {
+            CashCategoryType myType = myItem.getCategoryType();
+            declareGoToItem(myType);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     /**

@@ -191,14 +191,14 @@ public class TransactionCategoryPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         TransactionCategory myItem = getItem();
-        TransactionCategoryType myType = myItem.getCategoryType();
         TransactionCategory myParent = myItem.getParentCategory();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myType);
+        if (!pUpdates) {
+            TransactionCategoryType myType = myItem.getCategoryType();
+            declareGoToItem(myType);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     /**

@@ -336,13 +336,13 @@ public class StockOptionPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         StockOption myItem = getItem();
         SecurityHolding myHolding = myItem.getStockHolding();
         Portfolio myPortfolio = myHolding.getPortfolio();
         Security mySecurity = myHolding.getSecurity();
-        buildGoToEvent(myPortfolio);
-        buildGoToEvent(mySecurity);
+        declareGoToItem(myPortfolio);
+        declareGoToItem(mySecurity);
     }
 
     @Override

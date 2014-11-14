@@ -32,64 +32,69 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public enum TaxBasisClass implements StaticInterface {
     /**
-     * Gross Salary Income.
+     * Salary Income.
      */
-    GROSSSALARY(1, 0),
+    SALARY(1, 0),
 
     /**
-     * Gross Interest Income.
+     * Rental Income.
      */
-    GROSSINTEREST(2, 1),
+    RENTALINCOME(2, 1),
 
     /**
-     * Gross Dividend Income.
+     * Taxed Interest Income.
      */
-    GROSSDIVIDEND(3, 2),
+    TAXEDINTEREST(3, 2),
 
     /**
-     * Gross Unit Trust Dividend Income.
+     * UnTaxed Interest Income.
      */
-    GROSSUTDIVIDEND(4, 3),
+    UNTAXEDINTEREST(4, 3),
 
     /**
-     * Gross Rental Income.
+     * Dividend Income.
      */
-    GROSSRENTAL(5, 4),
+    DIVIDEND(5, 4),
 
     /**
-     * Gross Taxable gains.
+     * Unit Trust Dividend Income.
      */
-    GROSSTAXABLEGAINS(6, 5),
+    UNITTRUSTDIVIDEND(6, 5),
 
     /**
-     * Gross Capital gains.
+     * Taxable gains.
      */
-    GROSSCAPITALGAINS(7, 6),
+    TAXABLEGAINS(7, 6),
+
+    /**
+     * Capital gains.
+     */
+    CAPITALGAINS(8, 7),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(8, 7),
+    TAXPAID(9, 8),
 
     /**
      * Market Growth.
      */
-    MARKET(9, 8),
+    MARKET(10, 9),
 
     /**
      * Tax Free Income.
      */
-    TAXFREE(10, 9),
+    TAXFREE(11, 10),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(11, 10),
+    EXPENSE(12, 11),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(12, 11);
+    VIRTUAL(13, 12);
 
     /**
      * The String name.

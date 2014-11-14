@@ -392,39 +392,44 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_TOTALS("TransType.Totals"),
 
     /**
-     * TaxBasis GrossSalary.
+     * TaxBasis Salary.
      */
-    TAXBASIS_GROSSSALARY("TaxBasis.GrossSalary"),
+    TAXBASIS_SALARY("TaxBasis.Salary"),
 
     /**
-     * TaxBasis GrossRental.
+     * TaxBasis RentalIncome.
      */
-    TAXBASIS_GROSSRENTAL("TaxBasis.GrossRental"),
+    TAXBASIS_RENTALINCOME("TaxBasis.RentalIncome"),
 
     /**
-     * TaxBasis GrossInterest.
+     * TaxBasis Interest.
      */
-    TAXBASIS_GROSSINTEREST("TaxBasis.GrossInterest"),
+    TAXBASIS_TAXEDINTEREST("TaxBasis.TaxedInterest"),
 
     /**
-     * TaxBasis GrossDividend.
+     * TaxBasis UnTaxedInterest.
      */
-    TAXBASIS_GROSSDIVIDEND("TaxBasis.GrossDividend"),
+    TAXBASIS_UNTAXEDINTEREST("TaxBasis.UnTaxedInterest"),
 
     /**
-     * TaxBasis GrossUnitTrustDividend.
+     * TaxBasis Dividend.
      */
-    TAXBASIS_GROSSUTDIVIDEND("TaxBasis.GrossUTDividend"),
+    TAXBASIS_DIVIDEND("TaxBasis.Dividend"),
+
+    /**
+     * TaxBasis UnitTrustDividend.
+     */
+    TAXBASIS_UTDIVIDEND("TaxBasis.UnitTrustDividend"),
 
     /**
      * TaxBasis TaxableGains.
      */
-    TAXBASIS_TAXABLEGAINS("TaxBasis.GrossTaxableGains"),
+    TAXBASIS_TAXABLEGAINS("TaxBasis.TaxableGains"),
 
     /**
      * TaxBasis CapitalGains.
      */
-    TAXBASIS_CAPITALGAINS("TaxBasis.GrossCapitalGains"),
+    TAXBASIS_CAPITALGAINS("TaxBasis.CapitalGains"),
 
     /**
      * TaxBasis TaxPaid.
@@ -1227,19 +1232,21 @@ public enum StaticDataResource implements ResourceId {
      */
     protected static StaticDataResource getKeyForTaxBasis(final TaxBasisClass pValue) {
         switch (pValue) {
-            case GROSSSALARY:
-                return TAXBASIS_GROSSSALARY;
-            case GROSSRENTAL:
-                return TAXBASIS_GROSSRENTAL;
-            case GROSSINTEREST:
-                return TAXBASIS_GROSSINTEREST;
-            case GROSSDIVIDEND:
-                return TAXBASIS_GROSSDIVIDEND;
-            case GROSSUTDIVIDEND:
-                return TAXBASIS_GROSSUTDIVIDEND;
-            case GROSSTAXABLEGAINS:
+            case SALARY:
+                return TAXBASIS_SALARY;
+            case RENTALINCOME:
+                return TAXBASIS_RENTALINCOME;
+            case TAXEDINTEREST:
+                return TAXBASIS_TAXEDINTEREST;
+            case UNTAXEDINTEREST:
+                return TAXBASIS_UNTAXEDINTEREST;
+            case DIVIDEND:
+                return TAXBASIS_DIVIDEND;
+            case UNITTRUSTDIVIDEND:
+                return TAXBASIS_UTDIVIDEND;
+            case TAXABLEGAINS:
                 return TAXBASIS_TAXABLEGAINS;
-            case GROSSCAPITALGAINS:
+            case CAPITALGAINS:
                 return TAXBASIS_CAPITALGAINS;
             case TAXPAID:
                 return TAXBASIS_TAXPAID;

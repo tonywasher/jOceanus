@@ -547,6 +547,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     }
 
     /**
+     * Declare the GoTo menu Builder.
+     * @param pBuilder the menu builder
+     */
+    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder);
+
+    /**
      * Process goTo request.
      * @param pEvent the goTo request event
      */
@@ -556,22 +562,8 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Build goTo menu.
-     * @param pBuilder the menu builder
      */
-    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder);
-
-    /**
-     * Build goTo menu.
-     */
-    protected void buildGoToMenu() {
-        /* Default empty implementation */
-    }
-
-    /**
-     * Build a GoTo entry.
-     * @param pItem the item
-     */
-    protected abstract void buildGoToEvent(final DataItem<E> pItem);
+    protected abstract void buildGoToMenu();
 
     /**
      * FieldListener class.

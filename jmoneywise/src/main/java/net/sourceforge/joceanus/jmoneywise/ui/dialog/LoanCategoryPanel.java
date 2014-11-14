@@ -193,14 +193,14 @@ public class LoanCategoryPanel
     }
 
     @Override
-    protected void buildGoToMenu() {
+    protected void declareGoToItems(final boolean pUpdates) {
         LoanCategory myItem = getItem();
-        LoanCategoryType myType = myItem.getCategoryType();
         LoanCategory myParent = myItem.getParentCategory();
-        if (!getUpdateSet().hasUpdates()) {
-            buildGoToEvent(myType);
+        if (!pUpdates) {
+            LoanCategoryType myType = myItem.getCategoryType();
+            declareGoToItem(myType);
         }
-        buildGoToEvent(myParent);
+        declareGoToItem(myParent);
     }
 
     /**
