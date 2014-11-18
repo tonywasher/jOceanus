@@ -58,7 +58,7 @@ public class AllSelect
      */
     public AllSelect() {
         /* Create the filter */
-        theFilter = new AllFilter();
+        theFilter = AnalysisFilter.FILTER_ALL;
     }
 
     /**
@@ -84,7 +84,7 @@ public class AllSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* Nothing to do */
     }
 }

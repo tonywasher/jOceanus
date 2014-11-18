@@ -221,7 +221,7 @@ public class SecurityAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof SecurityFilter) {
             /* Access filter */

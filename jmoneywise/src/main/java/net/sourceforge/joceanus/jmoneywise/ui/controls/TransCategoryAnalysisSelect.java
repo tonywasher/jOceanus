@@ -40,12 +40,12 @@ import net.sourceforge.joceanus.jmetis.field.JFieldElement;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 /**
  * EventCategory Analysis Selection.
  */
-public class EventCategoryAnalysisSelect
+public class TransCategoryAnalysisSelect
         extends JEventPanel
         implements AnalysisFilterSelection {
     /**
@@ -63,14 +63,14 @@ public class EventCategoryAnalysisSelect
     private static final long serialVersionUID = -5828172857155415661L;
 
     /**
-     * Text for EventCategory Label.
+     * Text for TransCategory Label.
      */
     private static final String NLS_CATEGORY = MoneyWiseDataType.TRANSCATEGORY.getItemName();
 
     /**
-     * The active event categories bucket list.
+     * The active transaction categories bucket list.
      */
-    private EventCategoryBucketList theCategories;
+    private TransactionCategoryBucketList theCategories;
 
     /**
      * The state.
@@ -85,13 +85,13 @@ public class EventCategoryAnalysisSelect
     /**
      * The select button.
      */
-    private final JScrollButton<EventCategoryBucket> theButton;
+    private final JScrollButton<TransactionCategoryBucket> theButton;
 
     @Override
-    public EventCategoryFilter getFilter() {
-        EventCategoryBucket myCategory = theState.getEventCategory();
+    public TransactionCategoryFilter getFilter() {
+        TransactionCategoryBucket myCategory = theState.getEventCategory();
         return myCategory != null
-                                 ? new EventCategoryFilter(myCategory)
+                                 ? new TransactionCategoryFilter(myCategory)
                                  : null;
     }
 
@@ -103,9 +103,9 @@ public class EventCategoryAnalysisSelect
     /**
      * Constructor.
      */
-    public EventCategoryAnalysisSelect() {
+    public TransCategoryAnalysisSelect() {
         /* Create the button */
-        theButton = new JScrollButton<EventCategoryBucket>();
+        theButton = new JScrollButton<TransactionCategoryBucket>();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
@@ -157,10 +157,10 @@ public class EventCategoryAnalysisSelect
      */
     public void setAnalysis(final Analysis pAnalysis) {
         /* Access buckets */
-        theCategories = pAnalysis.getEventCategories();
+        theCategories = pAnalysis.getTransCategories();
 
         /* Obtain the current category */
-        EventCategoryBucket myCategory = theState.getEventCategory();
+        TransactionCategoryBucket myCategory = theState.getEventCategory();
 
         /* If we have a selected Category */
         if (myCategory != null) {
@@ -180,14 +180,14 @@ public class EventCategoryAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof EventCategoryFilter) {
+        if (pFilter instanceof TransactionCategoryFilter) {
             /* Access filter */
-            EventCategoryFilter myFilter = (EventCategoryFilter) pFilter;
+            TransactionCategoryFilter myFilter = (TransactionCategoryFilter) pFilter;
 
             /* Obtain the filter bucket */
-            EventCategoryBucket myCategory = myFilter.getBucket();
+            TransactionCategoryBucket myCategory = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
             myCategory = theCategories.findItemById(myCategory.getOrderedId());
@@ -202,11 +202,11 @@ public class EventCategoryAnalysisSelect
      * Obtain first non-parent event category.
      * @return the first event category
      */
-    private EventCategoryBucket getFirstCategory() {
+    private TransactionCategoryBucket getFirstCategory() {
         /* Loop through the available account values */
-        Iterator<EventCategoryBucket> myIterator = theCategories.iterator();
+        Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            EventCategoryBucket myBucket = myIterator.next();
+            TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Return if non-parent */
             if (!myBucket.getEventCategoryType().getCategoryClass().canParentCategory()) {
@@ -226,7 +226,7 @@ public class EventCategoryAnalysisSelect
         /**
          * Category menu builder.
          */
-        private final JScrollMenuBuilder<EventCategoryBucket> theCategoryMenuBuilder;
+        private final JScrollMenuBuilder<TransactionCategoryBucket> theCategoryMenuBuilder;
 
         /**
          * Constructor.
@@ -259,13 +259,13 @@ public class EventCategoryAnalysisSelect
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
             /* Record active item */
-            EventCategoryBucket myCurrent = theState.getEventCategory();
+            TransactionCategoryBucket myCurrent = theState.getEventCategory();
             JMenuItem myActive = null;
 
             /* Loop through the available category values */
-            Iterator<EventCategoryBucket> myIterator = theCategories.iterator();
+            Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
-                EventCategoryBucket myBucket = myIterator.next();
+                TransactionCategoryBucket myBucket = myIterator.next();
 
                 /* Only process low-level items */
                 TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
@@ -323,13 +323,13 @@ public class EventCategoryAnalysisSelect
         /**
          * The active EventCategoryBucket.
          */
-        private EventCategoryBucket theCategory;
+        private TransactionCategoryBucket theCategory;
 
         /**
          * Obtain the EventCategory Bucket.
          * @return the EventCategory
          */
-        private EventCategoryBucket getEventCategory() {
+        private TransactionCategoryBucket getEventCategory() {
             return theCategory;
         }
 
@@ -355,7 +355,7 @@ public class EventCategoryAnalysisSelect
          * @param pCategory the Event Category
          * @return true/false did a change occur
          */
-        private boolean setEventCategory(final EventCategoryBucket pCategory) {
+        private boolean setEventCategory(final TransactionCategoryBucket pCategory) {
             /* Adjust the selected category */
             if (!Difference.isEqual(pCategory, theCategory)) {
                 theCategory = pCategory;

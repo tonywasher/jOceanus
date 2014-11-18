@@ -194,8 +194,7 @@ public class SheetDeposit
         /* Access Parent account */
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Skip alias, portfolio and holding columns */
-        iAdjust++;
+        /* Skip alias and portfolio columns */
         iAdjust++;
         iAdjust++;
 

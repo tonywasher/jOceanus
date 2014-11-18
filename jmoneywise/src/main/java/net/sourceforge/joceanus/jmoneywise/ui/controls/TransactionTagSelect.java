@@ -179,14 +179,14 @@ public class TransactionTagSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof TagFilter) {
             /* Access filter */
             TagFilter myFilter = (TagFilter) pFilter;
 
             /* Obtain the tag */
-            TransactionTagBucket myTag = myFilter.getTag();
+            TransactionTagBucket myTag = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
             myTag = theTags.findItemById(myTag.getOrderedId());

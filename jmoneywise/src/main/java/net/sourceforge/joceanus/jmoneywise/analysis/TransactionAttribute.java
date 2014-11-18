@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 
 /**
- * EventAttribute enumeration.
+ * TransactionAttribute enumeration.
  */
-public enum EventAttribute implements BucketAttribute {
+public enum TransactionAttribute implements BucketAttribute {
     /**
      * IncomeDelta.
      */

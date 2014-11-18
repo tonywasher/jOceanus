@@ -444,7 +444,7 @@ public class ReportTab
                 if (myEvent.getSubId() == ReportManager.ACTION_VIEWFILTER) {
                     /* Create the details of the report */
                     JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
-                    AnalysisFilter<?> myFilter = myEvent.getDetails(AnalysisFilter.class);
+                    AnalysisFilter<?, ?> myFilter = myEvent.getDetails(AnalysisFilter.class);
                     StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 
                     /* Request the action */

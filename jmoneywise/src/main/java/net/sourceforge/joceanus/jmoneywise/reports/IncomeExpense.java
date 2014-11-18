@@ -27,14 +27,14 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.CategoryValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 import org.w3c.dom.Document;
@@ -79,11 +79,11 @@ public class IncomeExpense
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket list */
         theAnalysis = pAnalysis;
-        EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
+        TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
         JDateDayRange myRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
-        EventCategoryBucket myTotals = myCategories.getTotals();
+        TransactionCategoryBucket myTotals = myCategories.getTotals();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -98,9 +98,9 @@ public class IncomeExpense
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Loop through the SubTotal Buckets */
-        Iterator<EventCategoryBucket> myIterator = myCategories.iterator();
+        Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            EventCategoryBucket myBucket = myIterator.next();
+            TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Only process subTotal items */
             TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
@@ -117,9 +117,9 @@ public class IncomeExpense
             /* Format the Category Total */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.DELTA));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -131,9 +131,9 @@ public class IncomeExpense
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.DELTA));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -143,8 +143,8 @@ public class IncomeExpense
     protected HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
-        if (mySource instanceof EventCategoryBucket) {
-            EventCategoryBucket mySourceBucket = (EventCategoryBucket) mySource;
+        if (mySource instanceof TransactionCategoryBucket) {
+            TransactionCategoryBucket mySourceBucket = (TransactionCategoryBucket) mySource;
             return createDelayedCategory(pTable.getParent(), mySourceBucket);
         }
 
@@ -159,18 +159,18 @@ public class IncomeExpense
      * @return the new document fragment
      */
     protected HTMLTable createDelayedCategory(final HTMLTable pParent,
-                                              final EventCategoryBucket pSource) {
+                                              final TransactionCategoryBucket pSource) {
         /* Access the category */
-        EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
+        TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
         TransactionCategory myCategory = pSource.getEventCategory();
 
         /* Create an embedded table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        Iterator<EventCategoryBucket> myIterator = myCategories.iterator();
+        Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            EventCategoryBucket myBucket = myIterator.next();
+            TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
             TransactionCategory myCurr = myBucket.getEventCategory();
@@ -187,9 +187,9 @@ public class IncomeExpense
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.DELTA));
 
             /* Record the selection */
             setFilterForId(myName, myBucket);
@@ -200,11 +200,11 @@ public class IncomeExpense
     }
 
     @Override
-    protected EventCategoryFilter processFilter(final Object pSource) {
+    protected TransactionCategoryFilter processFilter(final Object pSource) {
         /* If this is an EventCategoryBucket */
-        if (pSource instanceof EventCategoryBucket) {
+        if (pSource instanceof TransactionCategoryBucket) {
             /* Create the new filter */
-            return new EventCategoryFilter((EventCategoryBucket) pSource);
+            return new TransactionCategoryFilter((TransactionCategoryBucket) pSource);
         }
         return null;
     }

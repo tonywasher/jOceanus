@@ -62,7 +62,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -692,7 +692,7 @@ public class NetWorth
     }
 
     @Override
-    protected AnalysisFilter<?> processFilter(final Object pSource) {
+    protected AnalysisFilter<?, ?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
         if (pSource instanceof DepositBucket) {
             /* Create the new filter */
@@ -716,7 +716,7 @@ public class NetWorth
         /* If this is a PortfolioBucket */
         if (pSource instanceof PortfolioBucket) {
             /* Create the new filter */
-            return new PortfolioFilter((PortfolioBucket) pSource);
+            return new PortfolioCashFilter((PortfolioBucket) pSource);
         }
         return null;
     }

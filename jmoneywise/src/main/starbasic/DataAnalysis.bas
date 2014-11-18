@@ -100,12 +100,12 @@ Sub analyseYear(ByRef Context As FinanceState, _
 		myCharity = myEvent.evtCharity
 		myDebUnits = myEvent.evtDebUnits
 		myCredUnits = myEvent.evtCredUnits
-			
+		
 		'Break Off after date
 		If (myDate > myFinalDate) Then
 			Exit For
 		End If	
-						      
+			
     	'If we have a value in the Units cell
 		If ((myDebUnits <> 0) Or (myCredUnits <> 0)) Then
 			'If the credit account has units 
@@ -187,7 +187,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					myParInfo = myDebInfo.acctParent					
 					
 					'Adjust parent income
-					myParInfo.acctIncome = myParInfo.acctIncome + myValue
+					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred
 				ElseIf (myCatInfo.isRental) Then
 					'Access the parent account (of credit!!)
 					myParInfo = myCredInfo.acctParent					

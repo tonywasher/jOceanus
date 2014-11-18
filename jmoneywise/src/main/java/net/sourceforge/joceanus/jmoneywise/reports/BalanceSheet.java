@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -650,6 +650,7 @@ public class BalanceSheet
         if (!myCash.isIdle()) {
             /* Access values */
             AccountValues myValues = myCash.getValues();
+            AccountValues myBaseValues = myCash.getBaseValues();
 
             /* Access bucket name */
             String myName = pSource.getName();
@@ -657,9 +658,9 @@ public class BalanceSheet
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName, TEXT_CASH);
-            theBuilder.makeValueCell(myTable);
-            theBuilder.makeValueCell(myTable);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
 
             /* Record the filter */
             setFilterForId(myName, pSource);
@@ -693,7 +694,7 @@ public class BalanceSheet
     }
 
     @Override
-    protected AnalysisFilter<?> processFilter(final Object pSource) {
+    protected AnalysisFilter<?, ?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
         if (pSource instanceof DepositBucket) {
             /* Create the new filter */
@@ -717,7 +718,7 @@ public class BalanceSheet
         /* If this is a PortfolioBucket */
         if (pSource instanceof PortfolioBucket) {
             /* Create the new filter */
-            return new PortfolioFilter((PortfolioBucket) pSource);
+            return new PortfolioCashFilter((PortfolioBucket) pSource);
         }
         return null;
     }

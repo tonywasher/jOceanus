@@ -299,7 +299,7 @@ public class TransactionTable
     /**
      * The analysis filter.
      */
-    private transient AnalysisFilter<?> theFilter;
+    private transient AnalysisFilter<?, ?> theFilter;
 
     /**
      * Transactions.
@@ -393,7 +393,7 @@ public class TransactionTable
         thePanel.add(getScrollPane());
 
         /* Create a transaction panel */
-        theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theError);
+        theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theSelect, theError);
         thePanel.add(theActiveTrans);
 
         /* Prevent reordering of columns and auto-resizing */

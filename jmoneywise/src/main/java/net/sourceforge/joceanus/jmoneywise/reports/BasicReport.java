@@ -66,7 +66,7 @@ public abstract class BasicReport {
      * @param pSource the filter source
      * @return the AnalysisFilter or null
      */
-    protected AnalysisFilter<?> processFilter(final Object pSource) {
+    protected AnalysisFilter<?, ?> processFilter(final Object pSource) {
         return null;
     }
 
@@ -75,7 +75,7 @@ public abstract class BasicReport {
      * @param pReference the reference
      * @return the filter (or null)
      */
-    protected AnalysisFilter<?> processFilterReference(final String pReference) {
+    protected AnalysisFilter<?, ?> processFilterReference(final String pReference) {
         /* Lookup the filter */
         Object mySource = theFilterMap.get(pReference);
         return (mySource != null)

@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -70,8 +71,11 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagLis
 import net.sourceforge.joceanus.jmoneywise.data.TransactionValidator;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.TransactionFilters;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -148,6 +152,11 @@ public class TransactionPanel
     private final JScrollListButton<TransactionTag> theTagButton;
 
     /**
+     * Analysis selection panel.
+     */
+    private final AnalysisSelect theAnalysisSelect;
+
+    /**
      * The Tag Menu Builder.
      */
     private final transient JScrollListMenuBuilder<TransactionTag> theTagMenuBuilder;
@@ -166,13 +175,16 @@ public class TransactionPanel
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
+     * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
     public TransactionPanel(final JFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final AnalysisSelect pAnalysisSelect,
                             final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
+        theAnalysisSelect = pAnalysisSelect;
 
         /* Create the text fields */
         theDateButton = new JDateDayButton();
@@ -651,8 +663,29 @@ public class TransactionPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
+        /* Access the item */
+        Transaction myItem = getItem();
+
+        /* Access the analysis and the relevant filters */
+        Analysis myAnalysis = theAnalysisSelect.getAnalysis();
+        TransactionFilters myFilters = new TransactionFilters(myAnalysis, myItem);
+
+        /* Remove the current filter */
+        AnalysisFilter<?, ?> myCurrent = theAnalysisSelect.getFilter();
+        myFilters.remove(myCurrent);
+
+        /* Loop through the filters */
+        Iterator<AnalysisFilter<?, ?>> myIterator = myFilters.iterator();
+        while (myIterator.hasNext()) {
+            AnalysisFilter<?, ?> myFilter = myIterator.next();
+
+            /* declare it */
+            declareGoToFilter(myFilter);
+        }
+
+        /* If we have not had updates */
         if (!pUpdates) {
-            Transaction myItem = getItem();
+            /* Allow GoTo different panels */
             buildAssetGoTo(myItem.getAccount());
             buildAssetGoTo(myItem.getPartner());
             declareGoToItem(myItem.getCategory());

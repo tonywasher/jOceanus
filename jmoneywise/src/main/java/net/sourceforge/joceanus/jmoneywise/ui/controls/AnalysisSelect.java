@@ -48,16 +48,15 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
@@ -136,6 +135,11 @@ public class AnalysisSelect
      * Analysis Manager.
      */
     private AnalysisManager theManager;
+
+    /**
+     * Analysis.
+     */
+    private Analysis theAnalysis;
 
     /**
      * Analysis State.
@@ -228,9 +232,9 @@ public class AnalysisSelect
     private final PayeeAnalysisSelect thePayeeSelect;
 
     /**
-     * EventCategory Select Panel.
+     * TransCategory Select Panel.
      */
-    private final EventCategoryAnalysisSelect theEventSelect;
+    private final TransCategoryAnalysisSelect theCategorySelect;
 
     /**
      * TaxBasis Select Panel.
@@ -276,10 +280,18 @@ public class AnalysisSelect
     }
 
     /**
+     * Obtain the analysis.
+     * @return the range.
+     */
+    public Analysis getAnalysis() {
+        return theAnalysis;
+    }
+
+    /**
      * Obtain the Filter.
      * @return the filter.
      */
-    public AnalysisFilter<?> getFilter() {
+    public AnalysisFilter<?, ?> getFilter() {
         return theState.getFilter();
     }
 
@@ -344,7 +356,7 @@ public class AnalysisSelect
         theSecuritySelect = new SecurityAnalysisSelect();
         thePortfolioSelect = new PortfolioAnalysisSelect();
         thePayeeSelect = new PayeeAnalysisSelect();
-        theEventSelect = new EventCategoryAnalysisSelect();
+        theCategorySelect = new TransCategoryAnalysisSelect();
         theTaxBasisSelect = new TaxBasisAnalysisSelect();
         theTagSelect = new TransactionTagSelect();
         theAllSelect = new AllSelect();
@@ -376,7 +388,7 @@ public class AnalysisSelect
         /* Create initial state */
         theState = new AnalysisState();
         theState.showColumns(true);
-        StatementSelect mySelect = new StatementSelect(theRangeSelect, new AllFilter());
+        StatementSelect mySelect = new StatementSelect(theRangeSelect, AnalysisFilter.FILTER_ALL);
         selectStatement(mySelect);
 
         /* set maximum size */
@@ -464,7 +476,7 @@ public class AnalysisSelect
         theCardPanel.add(theSecuritySelect, AnalysisType.SECURITY.name());
         theCardPanel.add(thePortfolioSelect, AnalysisType.PORTFOLIO.name());
         theCardPanel.add(thePayeeSelect, AnalysisType.PAYEE.name());
-        theCardPanel.add(theEventSelect, AnalysisType.CATEGORY.name());
+        theCardPanel.add(theCategorySelect, AnalysisType.CATEGORY.name());
         theCardPanel.add(theTaxBasisSelect, AnalysisType.TAXBASIS.name());
         theCardPanel.add(theTagSelect, AnalysisType.TRANSTAG.name());
         theCardPanel.add(theAllSelect, AnalysisType.ALL.name());
@@ -476,7 +488,7 @@ public class AnalysisSelect
         theMap.put(AnalysisType.SECURITY, theSecuritySelect);
         theMap.put(AnalysisType.PORTFOLIO, thePortfolioSelect);
         theMap.put(AnalysisType.PAYEE, thePayeeSelect);
-        theMap.put(AnalysisType.CATEGORY, theEventSelect);
+        theMap.put(AnalysisType.CATEGORY, theCategorySelect);
         theMap.put(AnalysisType.TAXBASIS, theTaxBasisSelect);
         theMap.put(AnalysisType.TRANSTAG, theTagSelect);
         theMap.put(AnalysisType.ALL, theAllSelect);
@@ -507,14 +519,16 @@ public class AnalysisSelect
 
         /* Update the range */
         JDateDayRangeSelect mySelect = pSelect.getRangeSelect();
-        theRangeSelect.setSelection(mySelect);
-        theRangeSelect.lockPeriod(false);
+        if (mySelect != null) {
+            theRangeSelect.setSelection(mySelect);
+            theRangeSelect.lockPeriod(false);
 
-        /* Update analysis for filter panels */
-        setAnalysis(mySelect.getRange());
+            /* Update analysis for filter panels */
+            setAnalysisRange(mySelect.getRange());
+        }
 
         /* Access the filter and the selection panel */
-        AnalysisFilter<?> myFilter = pSelect.getFilter();
+        AnalysisFilter<?, ?> myFilter = pSelect.getFilter();
         AnalysisType myType = myFilter.getAnalysisType();
         AnalysisFilterSelection myPanel = theMap.get(myType);
 
@@ -544,7 +558,7 @@ public class AnalysisSelect
         theRangeSelect.setOverallRange(myRange);
 
         /* Update the filter selection */
-        setAnalysis(getRange());
+        setAnalysisRange(getRange());
         checkType();
 
         /* Clear refreshing flag */
@@ -555,18 +569,18 @@ public class AnalysisSelect
      * Declare analysis.
      * @param pRange the range
      */
-    private void setAnalysis(final JDateDayRange pRange) {
+    private void setAnalysisRange(final JDateDayRange pRange) {
         /* Update the filter selection */
-        Analysis myAnalysis = theManager.getAnalysis(pRange);
-        theDepositSelect.setAnalysis(myAnalysis);
-        theCashSelect.setAnalysis(myAnalysis);
-        theLoanSelect.setAnalysis(myAnalysis);
-        theSecuritySelect.setAnalysis(myAnalysis);
-        thePortfolioSelect.setAnalysis(myAnalysis);
-        theEventSelect.setAnalysis(myAnalysis);
-        thePayeeSelect.setAnalysis(myAnalysis);
-        theTaxBasisSelect.setAnalysis(myAnalysis);
-        theTagSelect.setAnalysis(myAnalysis);
+        theAnalysis = theManager.getAnalysis(pRange);
+        theDepositSelect.setAnalysis(theAnalysis);
+        theCashSelect.setAnalysis(theAnalysis);
+        theLoanSelect.setAnalysis(theAnalysis);
+        theSecuritySelect.setAnalysis(theAnalysis);
+        thePortfolioSelect.setAnalysis(theAnalysis);
+        theCategorySelect.setAnalysis(theAnalysis);
+        thePayeeSelect.setAnalysis(theAnalysis);
+        theTaxBasisSelect.setAnalysis(theAnalysis);
+        theTagSelect.setAnalysis(theAnalysis);
     }
 
     /**
@@ -654,7 +668,7 @@ public class AnalysisSelect
             AnalysisFilterSelection myPanel = theMap.get(myType);
             if (myPanel.isAvailable()) {
                 /* We are OK */
-                AnalysisFilter<?> myFilter = myPanel.getFilter();
+                AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
                 theState.setFilter(myFilter);
                 return;
             }
@@ -675,7 +689,7 @@ public class AnalysisSelect
                 theLayout.show(theCardPanel, myType.name());
 
                 /* Obtain the relevant filter */
-                AnalysisFilter<?> myFilter = myPanel.getFilter();
+                AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
                 BucketAttribute myDefault = myType.getDefaultValue();
                 if (myFilter != null) {
                     myFilter.setCurrentAttribute(myDefault);
@@ -735,7 +749,7 @@ public class AnalysisSelect
             theSecuritySelect.addChangeListener(this);
             thePortfolioSelect.addChangeListener(this);
             thePayeeSelect.addChangeListener(this);
-            theEventSelect.addChangeListener(this);
+            theCategorySelect.addChangeListener(this);
             theTaxBasisSelect.addChangeListener(this);
             theTagSelect.addChangeListener(this);
 
@@ -848,7 +862,7 @@ public class AnalysisSelect
                 /* If we have a change to the range */
                 if (theState.setRange(theRangeSelect)) {
                     /* Declare new analysis */
-                    setAnalysis(getRange());
+                    setAnalysisRange(getRange());
                     checkType();
                     theState.applyState();
                     fireStateChanged();
@@ -871,7 +885,7 @@ public class AnalysisSelect
 
                     /* Obtain the relevant filter */
                     AnalysisFilterSelection myPanel = theMap.get(myType);
-                    AnalysisFilter<?> myFilter = myPanel.getFilter();
+                    AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
                     myFilter.setCurrentAttribute(myType.getDefaultValue());
 
                     /* Set new bucket type and apply state */
@@ -886,7 +900,7 @@ public class AnalysisSelect
                 /* Record the bucket */
                 BucketAttribute myBucket = theBucketButton.getValue();
                 if (theState.setBucket(myBucket)) {
-                    AnalysisFilter<?> myFilter = theState.getFilter();
+                    AnalysisFilter<?, ?> myFilter = theState.getFilter();
                     if (myBucket != null) {
                         myFilter.setCurrentAttribute(myBucket);
                     }
@@ -977,7 +991,7 @@ public class AnalysisSelect
                 /* If this is the portfolio select */
             } else if (thePortfolioSelect.equals(o)) {
                 /* Create the new filter */
-                PortfolioFilter myFilter = thePortfolioSelect.getFilter();
+                PortfolioCashFilter myFilter = thePortfolioSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
@@ -997,9 +1011,9 @@ public class AnalysisSelect
                 fireStateChanged();
 
                 /* If this is the category select */
-            } else if (theEventSelect.equals(o)) {
+            } else if (theCategorySelect.equals(o)) {
                 /* Create the new filter */
-                EventCategoryFilter myFilter = theEventSelect.getFilter();
+                TransactionCategoryFilter myFilter = theCategorySelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
@@ -1059,7 +1073,7 @@ public class AnalysisSelect
         /**
          * The filter.
          */
-        private AnalysisFilter<?> theFilter;
+        private AnalysisFilter<?, ?> theFilter;
 
         /**
          * Are we showing Columns?
@@ -1102,7 +1116,7 @@ public class AnalysisSelect
          * Obtain the Filter.
          * @return the filter.
          */
-        private AnalysisFilter<?> getFilter() {
+        private AnalysisFilter<?, ?> getFilter() {
             return theFilter;
         }
 
@@ -1220,7 +1234,7 @@ public class AnalysisSelect
          * Set filter.
          * @param pFilter the filter
          */
-        private void setFilter(final AnalysisFilter<?> pFilter) {
+        private void setFilter(final AnalysisFilter<?, ?> pFilter) {
             theFilter = pFilter;
         }
 
@@ -1269,7 +1283,7 @@ public class AnalysisSelect
         /**
          * The AnalysisFilter.
          */
-        private final AnalysisFilter<?> theFilter;
+        private final AnalysisFilter<?, ?> theFilter;
 
         /**
          * Obtain the RangeSelection.
@@ -1283,7 +1297,7 @@ public class AnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        public AnalysisFilter<?> getFilter() {
+        public AnalysisFilter<?, ?> getFilter() {
             return theFilter;
         }
 
@@ -1293,7 +1307,7 @@ public class AnalysisSelect
          * @param pFilter the analysis filter
          */
         public StatementSelect(final JDateDayRangeSelect pRangeSelect,
-                               final AnalysisFilter<?> pFilter) {
+                               final AnalysisFilter<?, ?> pFilter) {
             /* Store parameters */
             theRangeSelect = pRangeSelect;
             theFilter = pFilter;

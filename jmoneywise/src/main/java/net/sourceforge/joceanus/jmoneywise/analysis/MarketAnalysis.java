@@ -22,14 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
@@ -116,7 +116,7 @@ public class MarketAnalysis {
         /* Access lists */
         PayeeBucketList myPayees = pAnalysis.getPayees();
         TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
-        EventCategoryBucketList myCategories = pAnalysis.getEventCategories();
+        TransactionCategoryBucketList myCategories = pAnalysis.getTransCategories();
 
         /* If we have market income/expense */
         if ((theMarketIncome.isNonZero())
@@ -133,7 +133,7 @@ public class MarketAnalysis {
         if ((theGrowthIncome.isNonZero())
             || (theGrowthExpense.isNonZero())) {
             /* Access marketGrowth category */
-            EventCategoryBucket myGrowth = myCategories.getBucket(TransactionCategoryClass.MARKETGROWTH);
+            TransactionCategoryBucket myGrowth = myCategories.getBucket(TransactionCategoryClass.MARKETGROWTH);
 
             /* Adjust totals */
             myGrowth.addIncome(theGrowthIncome);

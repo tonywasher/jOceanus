@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.ui.MainTab;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.ui.DataItemPanel;
@@ -57,14 +59,24 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     private static final long serialVersionUID = 5042288497641543026L;
 
     /**
+     * Filter text.
+     */
+    private static final String FILTER_MENU = "Filter";
+
+    /**
      * The GoToMenuBuilder.
      */
     private JScrollMenuBuilder<ActionDetailEvent> theGoToBuilder;
 
     /**
-     * The GoToMenuMap.
+     * The DataItem GoToMenuMap.
      */
-    private final transient List<DataItem<MoneyWiseDataType>> theGoToList;
+    private final transient List<DataItem<MoneyWiseDataType>> theGoToItemList;
+
+    /**
+     * The Filter GoToMenuMap.
+     */
+    private final transient List<AnalysisFilter<?, ?>> theGoToFilterList;
 
     /**
      * Constructor.
@@ -76,7 +88,8 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final ErrorPanel pError) {
         super(pFieldMgr, pUpdateSet, pError);
-        theGoToList = new ArrayList<DataItem<MoneyWiseDataType>>();
+        theGoToFilterList = new ArrayList<AnalysisFilter<?, ?>>();
+        theGoToItemList = new ArrayList<DataItem<MoneyWiseDataType>>();
     }
 
     @Override
@@ -86,8 +99,9 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
 
     @Override
     protected void buildGoToMenu() {
-        /* Clear the goTo list */
-        theGoToList.clear();
+        /* Clear the goTo lists */
+        theGoToFilterList.clear();
+        theGoToItemList.clear();
 
         /* Declare the goTo items */
         declareGoToItems(getUpdateSet().hasUpdates());
@@ -113,24 +127,45 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
         }
 
         /* Ignore if the item is already listed */
-        if (theGoToList.contains(pItem)) {
+        if (theGoToItemList.contains(pItem)) {
             return;
         }
 
         /* remember the item */
-        theGoToList.add(pItem);
+        theGoToItemList.add(pItem);
+    }
+
+    /**
+     * Declare GoTo Filter.
+     * @param pFilter the filter to declare
+     */
+    protected void declareGoToFilter(final AnalysisFilter<?, ?> pFilter) {
+        /* Ignore null filters */
+        if (pFilter == null) {
+            return;
+        }
+
+        /* Ignore if the item is already listed */
+        if (theGoToFilterList.contains(pFilter)) {
+            return;
+        }
+
+        /* remember the item */
+        theGoToFilterList.add(pFilter);
     }
 
     /**
      * Process goTo items.
-     * @param pItem
      */
     private void processGoToItems() {
+        /* Process goTo filters */
+        processGoToFilters();
+
         /* Create a simple map for top-level categories */
         Map<MoneyWiseDataType, JScrollMenu> myMap = new HashMap<MoneyWiseDataType, JScrollMenu>();
 
         /* Loop through the items */
-        Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToList.iterator();
+        Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
         while (myIterator.hasNext()) {
             DataItem<MoneyWiseDataType> myItem = myIterator.next();
 
@@ -175,6 +210,35 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             /* Build the item */
             ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, myItem);
             theGoToBuilder.addItem(myMenu, myEvent, myName);
+        }
+    }
+
+    /**
+     * Process goTo filters.
+     * @param pItem
+     */
+    private void processGoToFilters() {
+        /* Create a simple map for top-level categories */
+        JScrollMenu myMenu = null;
+
+        /* Loop through the items */
+        Iterator<AnalysisFilter<?, ?>> myIterator = theGoToFilterList.iterator();
+        while (myIterator.hasNext()) {
+            AnalysisFilter<?, ?> myFilter = myIterator.next();
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theGoToBuilder.addSubMenu(FILTER_MENU);
+            }
+
+            /* Determine action */
+            StatementSelect myStatement = new StatementSelect(null, myFilter);
+            int myId = MainTab.ACTION_VIEWSTATEMENT;
+
+            /* Build the item */
+            ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, myStatement);
+            theGoToBuilder.addItem(myMenu, myEvent, myFilter.getName());
         }
     }
 }

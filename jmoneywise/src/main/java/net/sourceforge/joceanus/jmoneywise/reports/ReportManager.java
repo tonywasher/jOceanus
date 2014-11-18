@@ -198,7 +198,7 @@ public class ReportManager
                 /* else if this is a filter reference */
             } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
                 /* Process the filter reference */
-                AnalysisFilter<?> myFilter = theReport.processFilterReference(pId);
+                AnalysisFilter<?, ?> myFilter = theReport.processFilterReference(pId);
 
                 /* Fire Action event if necessary */
                 if (myFilter != null) {

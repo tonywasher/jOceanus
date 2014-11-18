@@ -177,14 +177,14 @@ public enum AnalysisResource implements ResourceId {
     LOANCATEGORY_LIST("LoanCategory.List"),
 
     /**
-     * EventCategory Name.
+     * TransactionCategory Name.
      */
-    EVENTCATEGORY_NAME("TransCategory.Name"),
+    TRANSCATEGORY_NAME("TransCategory.Name"),
 
     /**
-     * EventCategory List.
+     * TransactionCategory List.
      */
-    EVENTCATEGORY_LIST("TransCategory.List"),
+    TRANSCATEGORY_LIST("TransCategory.List"),
 
     /**
      * Payee Name.
@@ -472,7 +472,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static AnalysisResource getKeyForEventAttr(final EventAttribute pValue) {
+    protected static AnalysisResource getKeyForEventAttr(final TransactionAttribute pValue) {
         switch (pValue) {
             case INCOME:
                 return PAYEEATTR_INCOME;

@@ -160,8 +160,7 @@ public class SheetCash
             isClosed = myCell.getBooleanValue();
         }
 
-        /* Skip parent, alias, portfolio, holding, maturity, openingBalance and symbol columns */
-        iAdjust++;
+        /* Skip parent, alias, portfolio, maturity, openingBalance and symbol columns */
         iAdjust++;
         iAdjust++;
         iAdjust++;
@@ -227,8 +226,7 @@ public class SheetCash
             isClosed = myCell.getBooleanValue();
         }
 
-        /* Skip parent, alias, portfolio, holding, maturity, openingBalance and symbol columns */
-        iAdjust++;
+        /* Skip parent, alias, portfolio, maturity, openingBalance and symbol columns */
         iAdjust++;
         iAdjust++;
         iAdjust++;

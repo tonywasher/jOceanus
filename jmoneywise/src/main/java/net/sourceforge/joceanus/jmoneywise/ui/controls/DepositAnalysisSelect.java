@@ -220,7 +220,7 @@ public class DepositAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof DepositFilter) {
             /* Access filter */

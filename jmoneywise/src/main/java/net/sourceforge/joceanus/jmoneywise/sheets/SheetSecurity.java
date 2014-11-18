@@ -205,8 +205,7 @@ public class SheetSecurity
             return;
         }
 
-        /* Skip holding,maturity and opening columns */
-        iAdjust++;
+        /* Skip maturity and opening columns */
         iAdjust++;
         iAdjust++;
 

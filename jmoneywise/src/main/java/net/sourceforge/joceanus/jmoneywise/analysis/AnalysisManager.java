@@ -28,12 +28,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -195,9 +195,9 @@ public class AnalysisManager
         PayeeBucketList myPayees = pAnalysis.getPayees();
         myPayees.produceTotals();
 
-        /* Analyse the EventCategories */
-        EventCategoryBucketList myEventCategories = pAnalysis.getEventCategories();
-        myEventCategories.produceTotals();
+        /* Analyse the TransactionCategories */
+        TransactionCategoryBucketList myTransCategories = pAnalysis.getTransCategories();
+        myTransCategories.produceTotals();
 
         /* Analyse the TaxBasis */
         TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
@@ -216,7 +216,7 @@ public class AnalysisManager
         LoanCategoryBucket myLoanCat = pAnalysis.getLoanCategories().getTotals();
         PortfolioBucket myPort = pAnalysis.getPortfolios().getTotals();
         PayeeBucket myPayee = pAnalysis.getPayees().getTotals();
-        EventCategoryBucket myEvent = pAnalysis.getEventCategories().getTotals();
+        TransactionCategoryBucket myTrans = pAnalysis.getTransCategories().getTotals();
         TaxBasisBucket myTax = pAnalysis.getTaxBasis().getTotals();
 
         /* Handle null data */
@@ -230,7 +230,7 @@ public class AnalysisManager
         JMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.DELTA);
         JMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.DELTA);
         JMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.DELTA);
-        JMoney myEvtTotal = myEvent.getValues().getMoneyValue(EventAttribute.DELTA);
+        JMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.DELTA);
         JMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
 
         /* Create a copy */
@@ -253,7 +253,7 @@ public class AnalysisManager
             theLogger.error("Payee total mismatch");
         }
         if (!myDepTotal.equals(myEvtTotal)) {
-            theLogger.error("EventCategory total mismatch");
+            theLogger.error("TransactionCategory total mismatch");
         }
         if (!myDepTotal.equals(myTaxTotal)) {
             theLogger.error("TaxBasis total mismatch");

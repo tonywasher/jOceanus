@@ -24,9 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
@@ -36,9 +38,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
@@ -51,6 +50,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.CategoryValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -65,10 +67,16 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Analysis Filter Classes.
+ * @param <B> the underlying bucket type
  * @param <T> the attribute for the filter
  */
-public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
+public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         implements JDataContents {
+    /**
+     * AllFilter.
+     */
+    public static final AllFilter FILTER_ALL = new AllFilter();
+
     /**
      * Local Report fields.
      */
@@ -94,6 +102,11 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         if (FIELD_ATTR.equals(pField)) {
             return theAttr;
         }
+        if (FIELD_BUCKET.equals(pField)) {
+            return theBucket == null
+                                    ? JDataFieldValue.SKIP
+                                    : theBucket;
+        }
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
     }
@@ -102,6 +115,11 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     public String formatObject() {
         return getName();
     }
+
+    /**
+     * The Underlying bucket.
+     */
+    private final B theBucket;
 
     /**
      * The Current Attribute.
@@ -136,10 +154,21 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     public abstract AnalysisType getAnalysisType();
 
     /**
+     * Obtain underlying bucket.
+     * @return theBucket
+     */
+    public B getBucket() {
+        return theBucket;
+    }
+
+    /**
      * Constructor.
+     * @param pBucket the underlying bucket
      * @param pClass the attribute class
      */
-    protected AnalysisFilter(final Class<T> pClass) {
+    protected AnalysisFilter(final B pBucket,
+                             final Class<T> pClass) {
+        theBucket = pBucket;
         theClass = pClass;
     }
 
@@ -375,63 +404,68 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      */
     public abstract String getName();
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (getClass() != pThat.getClass()) {
+            return false;
+        }
+
+        /* Access as AccountFilter */
+        AnalysisFilter<?, ?> myThat = (AnalysisFilter<?, ?>) pThat;
+
+        /* Check equality */
+        return Difference.isEqual(getBucket(), myThat.getBucket());
+    }
+
+    @Override
+    public int hashCode() {
+        return getBucket().hashCode();
+    }
+
     /**
-     * Loan Bucket filter class.
+     * Account filter class.
+     * @param <B> the underlying bucket type
      * @param <T> the account data type
      */
-    public abstract static class AccountFilter<T extends AssetBase<T>>
-            extends AnalysisFilter<AccountAttribute> {
-        /**
-         * The Account bucket.
-         */
-        private final AccountBucket<T> theAccount;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return theAccount;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public AccountBucket<T> getBucket() {
-            return theAccount;
-        }
-
+    public abstract static class AccountFilter<B extends AccountBucket<T>, T extends AssetBase<T>>
+            extends AnalysisFilter<B, AccountAttribute> {
         @Override
         public String getName() {
-            return theAccount.getName();
+            return getBucket().getName();
         }
 
         /**
          * Constructor.
          * @param pAccount the account bucket
          */
-        public AccountFilter(final AccountBucket<T> pAccount) {
+        public AccountFilter(final B pAccount) {
             /* Store parameter */
-            super(AccountAttribute.class);
-            theAccount = pAccount;
+            super(pAccount, AccountAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
         protected AccountValues getBaseValues() {
-            return theAccount.getBaseValues();
+            return getBucket().getBaseValues();
         }
 
         @Override
         public AccountValues getValuesForTransaction(final Transaction pTrans) {
-            return theAccount.getValuesForTransaction(pTrans);
+            return getBucket().getValuesForTransaction(pTrans);
         }
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
-            return theAccount.getDeltaForTransaction(pTrans, getCurrentAttribute());
+            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -439,12 +473,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * Deposit Bucket filter class.
      */
     public static class DepositFilter
-            extends AccountFilter<Deposit> {
-        @Override
-        public DepositBucket getBucket() {
-            return (DepositBucket) super.getBucket();
-        }
-
+            extends AccountFilter<DepositBucket, Deposit> {
         @Override
         public AnalysisType getAnalysisType() {
             return AnalysisType.DEPOSIT;
@@ -464,12 +493,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * Cash Bucket filter class.
      */
     public static class CashFilter
-            extends AccountFilter<Cash> {
-        @Override
-        public CashBucket getBucket() {
-            return (CashBucket) super.getBucket();
-        }
-
+            extends AccountFilter<CashBucket, Cash> {
         @Override
         public AnalysisType getAnalysisType() {
             return AnalysisType.CASH;
@@ -489,12 +513,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * Loan Bucket filter class.
      */
     public static class LoanFilter
-            extends AccountFilter<Loan> {
-        @Override
-        public LoanBucket getBucket() {
-            return (LoanBucket) super.getBucket();
-        }
-
+            extends AccountFilter<LoanBucket, Loan> {
         @Override
         public AnalysisType getAnalysisType() {
             return AnalysisType.LOAN;
@@ -514,32 +533,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * Security Bucket filter class.
      */
     public static class SecurityFilter
-            extends AnalysisFilter<SecurityAttribute> {
-        /**
-         * The security bucket.
-         */
-        private final SecurityBucket theSecurity;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return theSecurity;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public SecurityBucket getBucket() {
-            return theSecurity;
-        }
-
+            extends AnalysisFilter<SecurityBucket, SecurityAttribute> {
         @Override
         public String getName() {
-            return theSecurity.getDecoratedName();
+            return getBucket().getDecoratedName();
         }
 
         @Override
@@ -553,56 +550,41 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          */
         public SecurityFilter(final SecurityBucket pSecurity) {
             /* Store parameter */
-            super(SecurityAttribute.class);
-            theSecurity = pSecurity;
+            super(pSecurity, SecurityAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
         protected SecurityValues getBaseValues() {
-            return theSecurity.getBaseValues();
+            return getBucket().getBaseValues();
         }
 
         @Override
         public SecurityValues getValuesForTransaction(final Transaction pTrans) {
-            return theSecurity.getValuesForTransaction(pTrans);
+            return getBucket().getValuesForTransaction(pTrans);
         }
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
-            return theSecurity.getDeltaForTransaction(pTrans, getCurrentAttribute());
+            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
     /**
      * Portfolio Bucket filter class.
      */
-    public static class PortfolioFilter
-            extends AnalysisFilter<AccountAttribute> {
+    public static class PortfolioCashFilter
+            extends AnalysisFilter<PortfolioCashBucket, AccountAttribute> {
         /**
          * The portfolio bucket.
          */
         private final PortfolioBucket thePortfolio;
 
         /**
-         * The portfolio cash bucket.
+         * Obtain portfolio bucket.
+         * @return the portfolio bucket
          */
-        private final PortfolioCashBucket theCash;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return thePortfolio;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public PortfolioBucket getBucket() {
+        public PortfolioBucket getPortfolioBucket() {
             return thePortfolio;
         }
 
@@ -620,27 +602,26 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          * Constructor.
          * @param pPortfolio the portfolio bucket
          */
-        public PortfolioFilter(final PortfolioBucket pPortfolio) {
+        public PortfolioCashFilter(final PortfolioBucket pPortfolio) {
             /* Store parameter */
-            super(AccountAttribute.class);
+            super(pPortfolio.getPortfolioCash(), AccountAttribute.class);
             thePortfolio = pPortfolio;
-            theCash = thePortfolio.getPortfolioCash();
             setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
         protected AccountValues getBaseValues() {
-            return theCash.getBaseValues();
+            return getBucket().getBaseValues();
         }
 
         @Override
         public AccountValues getValuesForTransaction(final Transaction pTrans) {
-            return theCash.getValuesForTransaction(pTrans);
+            return getBucket().getValuesForTransaction(pTrans);
         }
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
-            return theCash.getDeltaForTransaction(pTrans, getCurrentAttribute());
+            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -648,32 +629,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * Payee Bucket filter class.
      */
     public static class PayeeFilter
-            extends AnalysisFilter<PayeeAttribute> {
-        /**
-         * The payee bucket.
-         */
-        private final PayeeBucket thePayee;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return thePayee;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public PayeeBucket getBucket() {
-            return thePayee;
-        }
-
+            extends AnalysisFilter<PayeeBucket, PayeeAttribute> {
         @Override
         public String getName() {
-            return thePayee.getName();
+            return getBucket().getName();
         }
 
         @Override
@@ -687,57 +646,34 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          */
         public PayeeFilter(final PayeeBucket pPayee) {
             /* Store parameter */
-            super(PayeeAttribute.class);
-            thePayee = pPayee;
+            super(pPayee, PayeeAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
         protected PayeeValues getBaseValues() {
-            return thePayee.getBaseValues();
+            return getBucket().getBaseValues();
         }
 
         @Override
         public PayeeValues getValuesForTransaction(final Transaction pTrans) {
-            return thePayee.getValuesForTransaction(pTrans);
+            return getBucket().getValuesForTransaction(pTrans);
         }
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
-            return thePayee.getDeltaForTransaction(pTrans, getCurrentAttribute());
+            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
     /**
-     * EventCategory Bucket filter class.
+     * TransactionCategory Bucket filter class.
      */
-    public static class EventCategoryFilter
-            extends AnalysisFilter<EventAttribute> {
-        /**
-         * The event category bucket.
-         */
-        private final EventCategoryBucket theCategory;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return theCategory;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public EventCategoryBucket getBucket() {
-            return theCategory;
-        }
-
+    public static class TransactionCategoryFilter
+            extends AnalysisFilter<TransactionCategoryBucket, TransactionAttribute> {
         @Override
         public String getName() {
-            return theCategory.getName();
+            return getBucket().getName();
         }
 
         @Override
@@ -749,26 +685,25 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          * Constructor.
          * @param pCategory the category bucket
          */
-        public EventCategoryFilter(final EventCategoryBucket pCategory) {
+        public TransactionCategoryFilter(final TransactionCategoryBucket pCategory) {
             /* Store parameter */
-            super(EventAttribute.class);
-            theCategory = pCategory;
+            super(pCategory, TransactionAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
         protected CategoryValues getBaseValues() {
-            return theCategory.getBaseValues();
+            return getBucket().getBaseValues();
         }
 
         @Override
         public CategoryValues getValuesForTransaction(final Transaction pTrans) {
-            return theCategory.getValuesForTransaction(pTrans);
+            return getBucket().getValuesForTransaction(pTrans);
         }
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
-            return theCategory.getDeltaForTransaction(pTrans, getCurrentAttribute());
+            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -776,32 +711,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * TaxBasis Bucket filter class.
      */
     public static class TaxBasisFilter
-            extends AnalysisFilter<TaxBasisAttribute> {
-        /**
-         * The taxBasis bucket.
-         */
-        private final TaxBasisBucket theTaxBasis;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return theTaxBasis;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public TaxBasisBucket getBucket() {
-            return theTaxBasis;
-        }
-
+            extends AnalysisFilter<TaxBasisBucket, TaxBasisAttribute> {
         @Override
         public String getName() {
-            return theTaxBasis.getName();
+            return getBucket().getName();
         }
 
         @Override
@@ -815,24 +728,23 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          */
         public TaxBasisFilter(final TaxBasisBucket pTaxBasis) {
             /* Store parameter */
-            super(TaxBasisAttribute.class);
-            theTaxBasis = pTaxBasis;
+            super(pTaxBasis, TaxBasisAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
         protected TaxBasisValues getBaseValues() {
-            return theTaxBasis.getBaseValues();
+            return getBucket().getBaseValues();
         }
 
         @Override
         public TaxBasisValues getValuesForTransaction(final Transaction pTrans) {
-            return theTaxBasis.getValuesForTransaction(pTrans);
+            return getBucket().getValuesForTransaction(pTrans);
         }
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
-            return theTaxBasis.getDeltaForTransaction(pTrans, getCurrentAttribute());
+            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -840,32 +752,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * TransactionTag filter class.
      */
     public static class TagFilter
-            extends AnalysisFilter<AccountAttribute> {
-        /**
-         * The tag.
-         */
-        private final TransactionTagBucket theTransTag;
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_BUCKET.equals(pField)) {
-                return theTransTag;
-            }
-            /* Unknown */
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
-        public TransactionTagBucket getTag() {
-            return theTransTag;
-        }
-
+            extends AnalysisFilter<TransactionTagBucket, AccountAttribute> {
         @Override
         public String getName() {
-            return theTransTag.getName();
+            return getBucket().getName();
         }
 
         @Override
@@ -879,14 +769,13 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          */
         public TagFilter(final TransactionTagBucket pTag) {
             /* Store parameter */
-            super(AccountAttribute.class);
-            theTransTag = pTag;
+            super(pTag, AccountAttribute.class);
             setCurrentAttribute(null);
         }
 
         @Override
         public boolean filterSingleTransaction(final Transaction pTrans) {
-            return pTrans.isHeader() || !theTransTag.hasTransaction(pTrans);
+            return pTrans.isHeader() || !getBucket().hasTransaction(pTrans);
         }
 
         @Override
@@ -908,8 +797,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     /**
      * All filter class.
      */
-    public static class AllFilter
-            extends AnalysisFilter<AccountAttribute> {
+    public static final class AllFilter
+            extends AnalysisFilter<Void, AccountAttribute> {
         @Override
         public String getName() {
             return AnalysisType.ALL.toString();
@@ -920,12 +809,17 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             return AnalysisType.ALL;
         }
 
+        @Override
+        public Void getBucket() {
+            return null;
+        }
+
         /**
          * Constructor.
          */
-        public AllFilter() {
+        private AllFilter() {
             /* Store parameter */
-            super(AccountAttribute.class);
+            super(null, AccountAttribute.class);
             setCurrentAttribute(null);
         }
 
@@ -947,6 +841,17 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return null;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Only ever one instance */
+            return this == pThat;
+        }
+
+        @Override
+        public int hashCode() {
+            return JDataManager.HASH_PRIME;
         }
     }
 }

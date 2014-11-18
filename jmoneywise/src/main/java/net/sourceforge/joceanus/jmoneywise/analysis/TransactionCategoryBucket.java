@@ -52,14 +52,14 @@ import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
- * Event Category Bucket.
+ * Transaction Category Bucket.
  */
-public final class EventCategoryBucket
-        implements JDataContents, Comparable<EventCategoryBucket>, OrderedIdItem<Integer> {
+public final class TransactionCategoryBucket
+        implements JDataContents, Comparable<TransactionCategoryBucket>, OrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.EVENTCATEGORY_NAME.getValue());
+    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TRANSCATEGORY_NAME.getValue());
 
     /**
      * Analysis Field Id.
@@ -67,12 +67,12 @@ public final class EventCategoryBucket
     private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
-     * Event Category Field Id.
+     * Transaction Category Field Id.
      */
     private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
-     * Event Type Field Id.
+     * Transaction Type Field Id.
      */
     private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTYPE.getItemName());
 
@@ -89,7 +89,7 @@ public final class EventCategoryBucket
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, EventAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, EventAttribute.class);
+    private static final Map<JDataField, TransactionAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TransactionAttribute.class);
 
     /**
      * Totals bucket name.
@@ -102,12 +102,12 @@ public final class EventCategoryBucket
     private final Analysis theAnalysis;
 
     /**
-     * The event category.
+     * The transaction category.
      */
     private final TransactionCategory theCategory;
 
     /**
-     * The event category type.
+     * The transaction category type.
      */
     private final TransactionCategoryType theType;
 
@@ -124,7 +124,7 @@ public final class EventCategoryBucket
     /**
      * History Map.
      */
-    private final BucketHistory<CategoryValues, EventAttribute> theHistory;
+    private final BucketHistory<CategoryValues, TransactionAttribute> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -152,7 +152,7 @@ public final class EventCategoryBucket
         }
 
         /* Handle Attribute fields */
-        EventAttribute myClass = getClassForField(pField);
+        TransactionAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
@@ -192,16 +192,16 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Obtain the event category.
-     * @return the event category
+     * Obtain the transaction category.
+     * @return the transaction category
      */
     public TransactionCategory getEventCategory() {
         return theCategory;
     }
 
     /**
-     * Obtain the event category type.
-     * @return the event category type
+     * Obtain the transaction category type.
+     * @return the transaction category type
      */
     public TransactionCategoryType getEventCategoryType() {
         return theType;
@@ -248,7 +248,7 @@ public final class EventCategoryBucket
      * @return the delta (or null)
      */
     public JDecimal getDeltaForTransaction(final Transaction pTrans,
-                                           final EventAttribute pAttr) {
+                                           final TransactionAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -257,7 +257,7 @@ public final class EventCategoryBucket
      * Obtain the history map.
      * @return the history map
      */
-    private BucketHistory<CategoryValues, EventAttribute> getHistoryMap() {
+    private BucketHistory<CategoryValues, TransactionAttribute> getHistoryMap() {
         return theHistory;
     }
 
@@ -282,7 +282,7 @@ public final class EventCategoryBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setValue(final EventAttribute pAttr,
+    protected void setValue(final TransactionAttribute pAttr,
                             final JMoney pValue) {
         /* Set the value */
         theValues.put(pAttr, pValue);
@@ -293,7 +293,7 @@ public final class EventCategoryBucket
      * @param pAttr the attribute
      * @return the value to set
      */
-    private Object getAttributeValue(final EventAttribute pAttr) {
+    private Object getAttributeValue(final TransactionAttribute pAttr) {
         /* Access value of object */
         Object myValue = getValue(pAttr);
 
@@ -308,7 +308,7 @@ public final class EventCategoryBucket
      * @param pField the field
      * @return the class
      */
-    private static EventAttribute getClassForField(final JDataField pField) {
+    private static TransactionAttribute getClassForField(final JDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -318,7 +318,7 @@ public final class EventCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getValue(final EventAttribute pAttr) {
+    private Object getValue(final TransactionAttribute pAttr) {
         /* Obtain the value */
         return theValues.get(pAttr);
     }
@@ -326,10 +326,10 @@ public final class EventCategoryBucket
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pCategory the event category
+     * @param pCategory the transaction category
      */
-    private EventCategoryBucket(final Analysis pAnalysis,
-                                final TransactionCategory pCategory) {
+    private TransactionCategoryBucket(final Analysis pAnalysis,
+                                      final TransactionCategory pCategory) {
         /* Store the parameters */
         theAnalysis = pAnalysis;
         theCategory = pCategory;
@@ -338,7 +338,7 @@ public final class EventCategoryBucket
                                      : pCategory.getCategoryType();
 
         /* Create the history map */
-        theHistory = new BucketHistory<CategoryValues, EventAttribute>(new CategoryValues());
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(new CategoryValues());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -351,16 +351,16 @@ public final class EventCategoryBucket
      * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
-    private EventCategoryBucket(final Analysis pAnalysis,
-                                final EventCategoryBucket pBase,
-                                final JDateDay pDate) {
+    private TransactionCategoryBucket(final Analysis pAnalysis,
+                                      final TransactionCategoryBucket pBase,
+                                      final JDateDay pDate) {
         /* Copy details from base */
         theCategory = pBase.getEventCategory();
         theType = pBase.getEventCategoryType();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues, EventAttribute>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -373,16 +373,16 @@ public final class EventCategoryBucket
      * @param pBase the underlying bucket
      * @param pRange the range for the bucket
      */
-    private EventCategoryBucket(final Analysis pAnalysis,
-                                final EventCategoryBucket pBase,
-                                final JDateDayRange pRange) {
+    private TransactionCategoryBucket(final Analysis pAnalysis,
+                                      final TransactionCategoryBucket pBase,
+                                      final JDateDayRange pRange) {
         /* Copy details from base */
         theCategory = pBase.getEventCategory();
         theType = pBase.getEventCategoryType();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues, EventAttribute>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -390,7 +390,7 @@ public final class EventCategoryBucket
     }
 
     @Override
-    public int compareTo(final EventCategoryBucket pThat) {
+    public int compareTo(final TransactionCategoryBucket pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -412,12 +412,12 @@ public final class EventCategoryBucket
         if (pThat == null) {
             return false;
         }
-        if (!(pThat instanceof EventCategoryBucket)) {
+        if (!(pThat instanceof TransactionCategoryBucket)) {
             return false;
         }
 
-        /* Compare the Event Categories */
-        EventCategoryBucket myThat = (EventCategoryBucket) pThat;
+        /* Compare the transaction Categories */
+        TransactionCategoryBucket myThat = (TransactionCategoryBucket) pThat;
         if (!getEventCategory().equals(myThat.getEventCategory())) {
             return false;
         }
@@ -436,7 +436,7 @@ public final class EventCategoryBucket
      * @return the new income value
      */
     private JMoney getNewIncome() {
-        JMoney myIncome = theValues.getMoneyValue(EventAttribute.INCOME);
+        JMoney myIncome = theValues.getMoneyValue(TransactionAttribute.INCOME);
         return new JMoney(myIncome);
     }
 
@@ -445,7 +445,7 @@ public final class EventCategoryBucket
      * @return the new expense value
      */
     private JMoney getNewExpense() {
-        JMoney myExpense = theValues.getMoneyValue(EventAttribute.EXPENSE);
+        JMoney myExpense = theValues.getMoneyValue(TransactionAttribute.EXPENSE);
         return new JMoney(myExpense);
     }
 
@@ -472,7 +472,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myIncome = getNewIncome();
             myIncome.addAmount(pValue);
-            setValue(EventAttribute.INCOME, myIncome);
+            setValue(TransactionAttribute.INCOME, myIncome);
         }
     }
 
@@ -485,7 +485,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myIncome = getNewIncome();
             myIncome.subtractAmount(pValue);
-            setValue(EventAttribute.INCOME, myIncome);
+            setValue(TransactionAttribute.INCOME, myIncome);
         }
     }
 
@@ -512,7 +512,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myExpense = getNewExpense();
             myExpense.addAmount(pValue);
-            setValue(EventAttribute.EXPENSE, myExpense);
+            setValue(TransactionAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -539,7 +539,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myExpense = getNewExpense();
             myExpense.subtractAmount(pValue);
-            setValue(EventAttribute.EXPENSE, myExpense);
+            setValue(TransactionAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -570,7 +570,7 @@ public final class EventCategoryBucket
                     /* Add as income */
                     JMoney myIncome = getNewIncome();
                     myIncome.addAmount(myAmount);
-                    setValue(EventAttribute.INCOME, myIncome);
+                    setValue(TransactionAttribute.INCOME, myIncome);
                     isExpense = false;
 
                     /* else its standard expense */
@@ -578,7 +578,7 @@ public final class EventCategoryBucket
                     /* Add as expense */
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
-                    setValue(EventAttribute.EXPENSE, myExpense);
+                    setValue(TransactionAttribute.EXPENSE, myExpense);
                 }
             }
 
@@ -621,7 +621,7 @@ public final class EventCategoryBucket
                     /* Add as expense */
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
-                    setValue(EventAttribute.EXPENSE, myExpense);
+                    setValue(TransactionAttribute.EXPENSE, myExpense);
 
                     /* else standard income */
                 } else {
@@ -630,7 +630,7 @@ public final class EventCategoryBucket
                     myIncome.addAmount(myAmount);
 
                     /* Store the value */
-                    setValue(EventAttribute.INCOME, myIncome);
+                    setValue(TransactionAttribute.INCOME, myIncome);
                     isExpense = false;
                 }
             }
@@ -664,18 +664,18 @@ public final class EventCategoryBucket
      * Add bucket to totals.
      * @param pSource the bucket to add
      */
-    private void addValues(final EventCategoryBucket pSource) {
+    private void addValues(final TransactionCategoryBucket pSource) {
         /* Access source values */
         CategoryValues mySource = pSource.getValues();
 
         /* Add income values */
-        JMoney myValue = theValues.getMoneyValue(EventAttribute.INCOME);
-        JMoney mySrcValue = mySource.getMoneyValue(EventAttribute.INCOME);
+        JMoney myValue = theValues.getMoneyValue(TransactionAttribute.INCOME);
+        JMoney mySrcValue = mySource.getMoneyValue(TransactionAttribute.INCOME);
         myValue.addAmount(mySrcValue);
 
         /* Add expense values */
-        myValue = theValues.getMoneyValue(EventAttribute.EXPENSE);
-        mySrcValue = mySource.getMoneyValue(EventAttribute.EXPENSE);
+        myValue = theValues.getMoneyValue(TransactionAttribute.EXPENSE);
+        mySrcValue = mySource.getMoneyValue(TransactionAttribute.EXPENSE);
         myValue.addAmount(mySrcValue);
     }
 
@@ -683,7 +683,7 @@ public final class EventCategoryBucket
      * CategoryValues class.
      */
     public static final class CategoryValues
-            extends BucketValues<CategoryValues, EventAttribute> {
+            extends BucketValues<CategoryValues, TransactionAttribute> {
         /**
          * SerialId.
          */
@@ -694,11 +694,11 @@ public final class EventCategoryBucket
          */
         private CategoryValues() {
             /* Initialise class */
-            super(EventAttribute.class);
+            super(TransactionAttribute.class);
 
             /* Create all possible values */
-            put(EventAttribute.INCOME, new JMoney());
-            put(EventAttribute.EXPENSE, new JMoney());
+            put(TransactionAttribute.INCOME, new JMoney());
+            put(TransactionAttribute.EXPENSE, new JMoney());
         }
 
         /**
@@ -718,8 +718,8 @@ public final class EventCategoryBucket
         @Override
         protected void adjustToBaseValues(final CategoryValues pBase) {
             /* Adjust income/expense values */
-            adjustMoneyToBase(pBase, EventAttribute.INCOME);
-            adjustMoneyToBase(pBase, EventAttribute.EXPENSE);
+            adjustMoneyToBase(pBase, TransactionAttribute.INCOME);
+            adjustMoneyToBase(pBase, TransactionAttribute.EXPENSE);
             calculateDelta();
         }
 
@@ -728,23 +728,23 @@ public final class EventCategoryBucket
          */
         private void calculateDelta() {
             /* Obtain a copy of the value */
-            JMoney myDelta = getMoneyValue(EventAttribute.INCOME);
+            JMoney myDelta = getMoneyValue(TransactionAttribute.INCOME);
             myDelta = new JMoney(myDelta);
 
             /* Subtract the expense value */
-            JMoney myExpense = getMoneyValue(EventAttribute.EXPENSE);
+            JMoney myExpense = getMoneyValue(TransactionAttribute.EXPENSE);
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            put(EventAttribute.DELTA, myDelta);
+            put(TransactionAttribute.DELTA, myDelta);
         }
 
         @Override
         protected void resetBaseValues() {
             /* Reset Income and expense values */
-            put(EventAttribute.INCOME, new JMoney());
-            put(EventAttribute.EXPENSE, new JMoney());
-            put(EventAttribute.DELTA, new JMoney());
+            put(TransactionAttribute.INCOME, new JMoney());
+            put(TransactionAttribute.EXPENSE, new JMoney());
+            put(TransactionAttribute.DELTA, new JMoney());
         }
 
         /**
@@ -752,23 +752,23 @@ public final class EventCategoryBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myIncome = getMoneyValue(EventAttribute.INCOME);
-            JMoney myExpense = getMoneyValue(EventAttribute.EXPENSE);
+            JMoney myIncome = getMoneyValue(TransactionAttribute.INCOME);
+            JMoney myExpense = getMoneyValue(TransactionAttribute.EXPENSE);
             return (myIncome.isNonZero()) || (myExpense.isNonZero());
         }
     }
 
     /**
-     * EventCategoryBucket list class.
+     * TransactionCategoryBucket list class.
      */
-    public static final class EventCategoryBucketList
-            extends OrderedIdList<Integer, EventCategoryBucket>
+    public static final class TransactionCategoryBucketList
+            extends OrderedIdList<Integer, TransactionCategoryBucket>
             implements JDataContents {
 
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.EVENTCATEGORY_LIST.getValue());
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TRANSCATEGORY_LIST.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -822,7 +822,7 @@ public final class EventCategoryBucket
         /**
          * The totals.
          */
-        private final EventCategoryBucket theTotals;
+        private final TransactionCategoryBucket theTotals;
 
         /**
          * The TaxBasis.
@@ -832,48 +832,48 @@ public final class EventCategoryBucket
         /**
          * The TaxCredit.
          */
-        private final EventCategoryBucket theTaxCredit;
+        private final TransactionCategoryBucket theTaxCredit;
 
         /**
          * The TaxRelief.
          */
-        private final EventCategoryBucket theTaxRelief;
+        private final TransactionCategoryBucket theTaxRelief;
 
         /**
          * The NatInsurance.
          */
-        private final EventCategoryBucket theNatInsurance;
+        private final TransactionCategoryBucket theNatInsurance;
 
         /**
          * The DeemedBenefit.
          */
-        private final EventCategoryBucket theDeemedBenefit;
+        private final TransactionCategoryBucket theDeemedBenefit;
 
         /**
          * The CharityDonation.
          */
-        private final EventCategoryBucket theCharityDonation;
+        private final TransactionCategoryBucket theCharityDonation;
 
         /**
          * The CapitalGains.
          */
-        private final EventCategoryBucket theCapitalGains;
+        private final TransactionCategoryBucket theCapitalGains;
 
         /**
          * The TaxFreeGains.
          */
-        private final EventCategoryBucket theTaxFreeGains;
+        private final TransactionCategoryBucket theTaxFreeGains;
 
         /**
          * The TaxableGains.
          */
-        private final EventCategoryBucket theTaxableGains;
+        private final TransactionCategoryBucket theTaxableGains;
 
         /**
          * Obtain the Totals.
          * @return the totals bucket
          */
-        public EventCategoryBucket getTotals() {
+        public TransactionCategoryBucket getTotals() {
             return theTotals;
         }
 
@@ -881,9 +881,9 @@ public final class EventCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected EventCategoryBucketList(final Analysis pAnalysis) {
+        protected TransactionCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(EventCategoryBucket.class);
+            super(TransactionCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
@@ -909,11 +909,11 @@ public final class EventCategoryBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected EventCategoryBucketList(final Analysis pAnalysis,
-                                          final EventCategoryBucketList pBase,
-                                          final JDateDay pDate) {
+        protected TransactionCategoryBucketList(final Analysis pAnalysis,
+                                                final TransactionCategoryBucketList pBase,
+                                                final JDateDay pDate) {
             /* Initialise class */
-            super(EventCategoryBucket.class);
+            super(TransactionCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
@@ -930,12 +930,12 @@ public final class EventCategoryBucket
             theCapitalGains = null;
 
             /* Loop through the buckets */
-            Iterator<EventCategoryBucket> myIterator = pBase.listIterator();
+            Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                EventCategoryBucket myCurr = myIterator.next();
+                TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                EventCategoryBucket myBucket = new EventCategoryBucket(pAnalysis, myCurr, pDate);
+                TransactionCategoryBucket myBucket = new TransactionCategoryBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -951,11 +951,11 @@ public final class EventCategoryBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected EventCategoryBucketList(final Analysis pAnalysis,
-                                          final EventCategoryBucketList pBase,
-                                          final JDateDayRange pRange) {
+        protected TransactionCategoryBucketList(final Analysis pAnalysis,
+                                                final TransactionCategoryBucketList pBase,
+                                                final JDateDayRange pRange) {
             /* Initialise class */
-            super(EventCategoryBucket.class);
+            super(TransactionCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
@@ -972,12 +972,12 @@ public final class EventCategoryBucket
             theCapitalGains = null;
 
             /* Loop through the buckets */
-            Iterator<EventCategoryBucket> myIterator = pBase.listIterator();
+            Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                EventCategoryBucket myCurr = myIterator.next();
+                TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                EventCategoryBucket myBucket = new EventCategoryBucket(pAnalysis, myCurr, pRange);
+                TransactionCategoryBucket myBucket = new TransactionCategoryBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -989,32 +989,32 @@ public final class EventCategoryBucket
         }
 
         /**
-         * Allocate the Totals EventCategoryBucket.
+         * Allocate the Totals TransactionCategoryBucket.
          * @return the bucket
          */
-        private EventCategoryBucket allocateTotalsBucket() {
+        private TransactionCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
-            return new EventCategoryBucket(theAnalysis, null);
+            return new TransactionCategoryBucket(theAnalysis, null);
         }
 
         /**
-         * Obtain the EventCategoryBucket for a given event category.
-         * @param pCategory the event category
+         * Obtain the TransactionCategoryBucket for a given transaction category.
+         * @param pCategory the transaction category
          * @return the bucket
          */
-        protected EventCategoryBucket getBucket(final TransactionCategory pCategory) {
+        protected TransactionCategoryBucket getBucket(final TransactionCategory pCategory) {
             /* Handle null category */
             if (pCategory == null) {
                 return null;
             }
 
             /* Locate the bucket in the list */
-            EventCategoryBucket myItem = findItemById(pCategory.getId());
+            TransactionCategoryBucket myItem = findItemById(pCategory.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new EventCategoryBucket(theAnalysis, pCategory);
+                myItem = new TransactionCategoryBucket(theAnalysis, pCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -1025,11 +1025,11 @@ public final class EventCategoryBucket
         }
 
         /**
-         * Obtain the EventCategoryBucket for a given event category class.
-         * @param pClass the event category class
+         * Obtain the TransactionCategoryBucket for a given transaction category class.
+         * @param pClass the transaction category class
          * @return the bucket
          */
-        protected EventCategoryBucket getBucket(final TransactionCategoryClass pClass) {
+        protected TransactionCategoryBucket getBucket(final TransactionCategoryClass pClass) {
             /* Determine required category */
             TransactionCategory myCategory = theData.getTransCategories().getSingularClass(pClass);
 
@@ -1045,7 +1045,7 @@ public final class EventCategoryBucket
         protected void adjustCategories(final Transaction pTrans,
                                         final TransactionCategory pCategory) {
             /* Adjust the primary category bucket */
-            EventCategoryBucket myCatBucket = getBucket(pCategory);
+            TransactionCategoryBucket myCatBucket = getBucket(pCategory);
             myCatBucket.adjustValues(pTrans);
 
             /* Adjust tax basis */
@@ -1155,23 +1155,23 @@ public final class EventCategoryBucket
         }
 
         /**
-         * Produce totals for the EventCategories.
+         * Produce totals for the TransactionCategories.
          */
         protected void produceTotals() {
             /* Create a list of new buckets */
-            OrderedIdList<Integer, EventCategoryBucket> myTotals = new OrderedIdList<Integer, EventCategoryBucket>(EventCategoryBucket.class);
+            OrderedIdList<Integer, TransactionCategoryBucket> myTotals = new OrderedIdList<Integer, TransactionCategoryBucket>(TransactionCategoryBucket.class);
 
             /* Loop through the buckets */
-            Iterator<EventCategoryBucket> myIterator = listIterator();
+            Iterator<TransactionCategoryBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                EventCategoryBucket myCurr = myIterator.next();
+                TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
                 TransactionCategory myCategory = myCurr.getEventCategory();
                 TransactionCategory myParent = myCategory.getParentCategory();
 
                 /* Access parent bucket */
-                EventCategoryBucket myTotal = findItemById(myParent.getId());
+                TransactionCategoryBucket myTotal = findItemById(myParent.getId());
 
                 /* Calculate the delta */
                 myCurr.calculateDelta();
@@ -1184,7 +1184,7 @@ public final class EventCategoryBucket
                     /* If the bucket is completely new */
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
-                        myTotal = new EventCategoryBucket(theAnalysis, myParent);
+                        myTotal = new TransactionCategoryBucket(theAnalysis, myParent);
                         myTotals.add(myTotal);
                     }
                 }
@@ -1197,7 +1197,7 @@ public final class EventCategoryBucket
             /* Loop through the new totals */
             myIterator = myTotals.listIterator();
             while (myIterator.hasNext()) {
-                EventCategoryBucket myCurr = myIterator.next();
+                TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
                 myCurr.calculateDelta();

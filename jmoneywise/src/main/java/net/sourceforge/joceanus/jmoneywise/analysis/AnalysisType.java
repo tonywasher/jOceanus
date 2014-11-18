@@ -144,7 +144,7 @@ public enum AnalysisType {
             case PAYEE:
                 return PayeeAttribute.values();
             case CATEGORY:
-                return EventAttribute.values();
+                return TransactionAttribute.values();
             case TAXBASIS:
                 return TaxBasisAttribute.values();
             default:

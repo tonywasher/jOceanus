@@ -38,13 +38,13 @@ import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEv
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -117,9 +117,9 @@ public class Analysis
     private static final JDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getListName());
 
     /**
-     * EventCategoryBuckets Field Id.
+     * TransactionCategoryBuckets Field Id.
      */
-    private static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListName());
+    private static final JDataField FIELD_TRANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListName());
 
     /**
      * TransactionTagBuckets Field Id.
@@ -201,10 +201,10 @@ public class Analysis
                                                 ? JDataFieldValue.SKIP
                                                 : theLoanCategories;
         }
-        if (FIELD_EVTCATS.equals(pField)) {
-            return (theEventCategories.isEmpty())
+        if (FIELD_TRANCATS.equals(pField)) {
+            return (theTransCategories.isEmpty())
                                                  ? JDataFieldValue.SKIP
-                                                 : theEventCategories;
+                                                 : theTransCategories;
         }
         if (FIELD_TRANSTAGS.equals(pField)) {
             return (theTransTags.isEmpty())
@@ -307,9 +307,9 @@ public class Analysis
     private final LoanCategoryBucketList theLoanCategories;
 
     /**
-     * The event category buckets.
+     * The transaction category buckets.
      */
-    private final EventCategoryBucketList theEventCategories;
+    private final TransactionCategoryBucketList theTransCategories;
 
     /**
      * The TransactionTag buckets.
@@ -443,11 +443,11 @@ public class Analysis
     }
 
     /**
-     * Obtain the event categories list.
+     * Obtain the transaction categories list.
      * @return the list
      */
-    public EventCategoryBucketList getEventCategories() {
-        return theEventCategories;
+    public TransactionCategoryBucketList getTransCategories() {
+        return theTransCategories;
     }
 
     /**
@@ -525,7 +525,7 @@ public class Analysis
         thePortfolios = new PortfolioBucketList(this);
         thePayees = new PayeeBucketList(this);
         theTaxBasis = new TaxBasisBucketList(this);
-        theEventCategories = new EventCategoryBucketList(this);
+        theTransCategories = new TransactionCategoryBucketList(this);
         theTransTags = new TransactionTagBucketList(this);
 
         /* Create totalling buckets */
@@ -572,7 +572,7 @@ public class Analysis
         theLoans = new LoanBucketList(this, pSource.getLoans(), pDate);
         thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
-        theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
+        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pDate);
         theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pDate);
         theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
 
@@ -607,7 +607,7 @@ public class Analysis
         theLoans = new LoanBucketList(this, pSource.getLoans(), pRange);
         thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
-        theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
+        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pRange);
         theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pRange);
         theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
 

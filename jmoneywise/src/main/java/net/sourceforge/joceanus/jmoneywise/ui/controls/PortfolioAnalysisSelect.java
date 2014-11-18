@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -83,10 +83,10 @@ public class PortfolioAnalysisSelect
     private final JScrollButton<PortfolioBucket> thePortButton;
 
     @Override
-    public PortfolioFilter getFilter() {
+    public PortfolioCashFilter getFilter() {
         PortfolioBucket myPortfolio = theState.getPortfolio();
         return myPortfolio != null
-                                  ? new PortfolioFilter(myPortfolio)
+                                  ? new PortfolioCashFilter(myPortfolio)
                                   : null;
     }
 
@@ -179,14 +179,14 @@ public class PortfolioAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof PortfolioFilter) {
+        if (pFilter instanceof PortfolioCashFilter) {
             /* Access filter */
-            PortfolioFilter myFilter = (PortfolioFilter) pFilter;
+            PortfolioCashFilter myFilter = (PortfolioCashFilter) pFilter;
 
             /* Obtain the filter bucket */
-            PortfolioBucket myPortfolio = myFilter.getBucket();
+            PortfolioBucket myPortfolio = myFilter.getPortfolioBucket();
 
             /* Look for the equivalent bucket */
             myPortfolio = thePortfolios.findItemById(myPortfolio.getOrderedId());

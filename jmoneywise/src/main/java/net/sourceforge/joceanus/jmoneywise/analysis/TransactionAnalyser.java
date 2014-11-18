@@ -36,12 +36,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMa
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
@@ -173,9 +173,9 @@ public class TransactionAnalyser
     private final PayeeBucketList thePayeeBuckets;
 
     /**
-     * The event category buckets.
+     * The transaction category buckets.
      */
-    private final EventCategoryBucketList theCategoryBuckets;
+    private final TransactionCategoryBucketList theCategoryBuckets;
 
     /**
      * The transactionTag buckets.
@@ -250,7 +250,7 @@ public class TransactionAnalyser
         theLoanBuckets = theAnalysis.getLoans();
         thePortfolioBuckets = theAnalysis.getPortfolios();
         thePayeeBuckets = theAnalysis.getPayees();
-        theCategoryBuckets = theAnalysis.getEventCategories();
+        theCategoryBuckets = theAnalysis.getTransCategories();
         theTagBuckets = theAnalysis.getTransactionTags();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
         theDilutions = theAnalysis.getDilutions();
@@ -448,7 +448,7 @@ public class TransactionAnalyser
                 myPayee.subtractExpense(pTrans, myAmount);
 
                 /* Subtract expense from Category bucket */
-                EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
+                TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
                 myCatBucket.subtractExpense(pTrans, myAmount);
                 theTaxBasisBuckets.adjustAutoExpense(pTrans, false);
 
@@ -480,7 +480,7 @@ public class TransactionAnalyser
                 myPayee.addExpense(pTrans, myAmount);
 
                 /* Adjust the relevant category bucket */
-                EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
+                TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
                 myCatBucket.addExpense(pTrans, myAmount);
                 theTaxBasisBuckets.adjustAutoExpense(pTrans, true);
 

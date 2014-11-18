@@ -34,11 +34,10 @@ Private Const colAcctClosed As Integer = 6
 Private Const colAcctParent As Integer = 7
 Private Const colAcctAlias As Integer = 8
 Private Const colAcctPortfolio As Integer = 9
-Private Const colAcctHolding As Integer = 10
-Private Const colAcctMaturity As Integer = 11
-Private Const colAcctOpenBal As Integer = 12
-Private Const colAcctSymbol As Integer = 13
-Private Const colAcctAutoExp As Integer = 14
+Private Const colAcctMaturity As Integer = 10
+Private Const colAcctOpenBal As Integer = 11
+Private Const colAcctSymbol As Integer = 12
+Private Const colAcctAutoExp As Integer = 13
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
@@ -83,7 +82,6 @@ Public Type AccountStats
 	strAccount As String
 	strParent As String
 	strPortfolio As String
-	strHolding As String
 	strAlias As String
 	strSymbol As String
 	
@@ -221,7 +219,6 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
     	myAcct.strAccount = myName
 	    myAcct.strParent = myRow.getCellByPosition(colAcctParent, 0).getString()
 	    myAcct.strPortfolio = myRow.getCellByPosition(colAcctPortfolio, 0).getString()
-	    myAcct.strHolding = myRow.getCellByPosition(colAcctHolding, 0).getString()
 	    myAcct.isTaxFree = myRow.getCellByPosition(colAcctTaxFree, 0).getValue()
 	    myAcct.isGross = myRow.getCellByPosition(colAcctGross, 0).getValue()
 	    myAcct.isClosed = myRow.getCellByPosition(colAcctClosed, 0).getValue()
