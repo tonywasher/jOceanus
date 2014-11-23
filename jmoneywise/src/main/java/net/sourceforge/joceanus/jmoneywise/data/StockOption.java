@@ -685,11 +685,13 @@ public class StockOption
      * @throws JOceanusException on error
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Set name */
+        setName(getList().getUniqueName(NAME_NEWOPTION));
+        setClosed(Boolean.FALSE);
+
         /* Determine default holding */
-        SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
-        PortfolioList myPortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-        Portfolio myPortfolio = myPortfolios.getDefaultPortfolio();
-        Security mySecurity = mySecurities.getDefaultStockOption();
+        Portfolio myPortfolio = getDefaultPortfolio(pUpdateSet);
+        Security mySecurity = getDefaultSecurity(pUpdateSet);
         SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
         SecurityHolding myHolding = myMap.declareHolding(myPortfolio, mySecurity);
         setStockHolding(myHolding);
@@ -703,10 +705,55 @@ public class StockOption
 
         /* Set default price */
         setPrice(JPrice.getWholeUnits(1, mySecurity.getSecurityCurrency().getCurrency()));
+    }
 
-        /* Set name */
-        setName(getList().getUniqueName(NAME_NEWOPTION));
-        setClosed(Boolean.FALSE);
+    /**
+     * Obtain default portfolio for stockOption.
+     * @param pUpdateSet the update set
+     * @return the default portfolio
+     */
+    private Portfolio getDefaultPortfolio(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* loop through the portfolios */
+        PortfolioList myPortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        Iterator<Portfolio> myIterator = myPortfolios.iterator();
+        while (myIterator.hasNext()) {
+            Portfolio myPortfolio = myIterator.next();
+
+            /* Ignore deleted and closed portfolios */
+            if (!myPortfolio.isDeleted() && !myPortfolio.isClosed()) {
+                return myPortfolio;
+            }
+        }
+
+        /* Return no payee */
+        return null;
+    }
+
+    /**
+     * Obtain default security for stockOption.
+     * @param pUpdateSet the update set
+     * @return the default security
+     */
+    private Security getDefaultSecurity(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* loop through the securities */
+        SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        Iterator<Security> myIterator = mySecurities.iterator();
+        while (myIterator.hasNext()) {
+            Security mySecurity = myIterator.next();
+
+            /* Ignore deleted and closed securities */
+            if (mySecurity.isDeleted() || mySecurity.isClosed()) {
+                continue;
+            }
+
+            /* Only allow shares */
+            if (mySecurity.isSecurityClass(SecurityTypeClass.SHARES)) {
+                return mySecurity;
+            }
+        }
+
+        /* Return no security */
+        return null;
     }
 
     @Override

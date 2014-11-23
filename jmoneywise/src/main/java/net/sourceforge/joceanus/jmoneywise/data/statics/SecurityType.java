@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -250,26 +248,6 @@ public class SecurityType
 
             /* Return it */
             return myType;
-        }
-
-        /**
-         * Obtain security type for new security account.
-         * @return the security type
-         */
-        public SecurityType getDefaultSecurityType() {
-            /* loop through the security types */
-            Iterator<SecurityType> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                SecurityType myType = myIterator.next();
-
-                /* Ignore deleted types */
-                if (!myType.isDeleted()) {
-                    return myType;
-                }
-            }
-
-            /* Return no category */
-            return null;
         }
     }
 }

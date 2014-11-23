@@ -681,25 +681,49 @@ public class TransactionAnalyser
 
             /* If the bucket is active */
             if (myBucket.isActive()) {
-                /* Access number of units */
-                SecurityValues myValues = myBucket.getValues();
-                JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
-                myUnits = new JUnits(myUnits);
-
-                /* Adjust the Target Units */
+                /* Adjust the Target Bucket */
                 SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myBucket.getSecurity());
-                myTargetBucket.adjustUnits(myUnits);
-                myTargetBucket.registerTransaction(pTrans);
 
-                /* Adjust the Source Units */
-                myUnits = new JUnits(myUnits);
-                myUnits.negate();
-                myBucket.adjustUnits(myUnits);
-                myBucket.registerTransaction(pTrans);
+                /* Process the Transfer */
+                processPortfolioXfer(myBucket, myTargetBucket, pTrans);
             }
         }
 
         /* PortfolioXfer is a transfer, so no need to update the categories */
+    }
+
+    /**
+     * Process a portfolio transfer.
+     * @param pSource the source holding
+     * @param pTarget the target holding
+     * @param pTrans the transaction
+     */
+    private void processPortfolioXfer(final SecurityBucket pSource,
+                                      final SecurityBucket pTarget,
+                                      final Transaction pTrans) {
+        /* Access source details */
+        SecurityValues myValues = pSource.getValues();
+        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
+        JMoney myInvested = myValues.getMoneyValue(SecurityAttribute.INVESTED);
+
+        /* Adjust the Target Units */
+        pTarget.adjustUnits(myUnits);
+        pTarget.adjustCost(myCost);
+        pTarget.adjustInvested(myInvested);
+        pTarget.registerTransaction(pTrans);
+
+        /* Adjust the Source details to zero */
+        myUnits = new JUnits(myUnits);
+        myUnits.negate();
+        pSource.adjustUnits(myUnits);
+        myCost = new JMoney(myCost);
+        myCost.negate();
+        pSource.adjustCost(myCost);
+        myInvested = new JMoney(myInvested);
+        myInvested.negate();
+        pSource.adjustInvested(myInvested);
+        pSource.registerTransaction(pTrans);
     }
 
     /**
@@ -722,21 +746,11 @@ public class TransactionAnalyser
 
         /* If the bucket is active */
         if (myBucket.isActive()) {
-            /* Access number of units */
-            SecurityValues myValues = myBucket.getValues();
-            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
-            myUnits = new JUnits(myUnits);
-
-            /* Adjust the Target Units */
+            /* Adjust the Target Bucket */
             SecurityBucket myTargetBucket = myTarget.getSecurityBucket(pSource.getSecurity());
-            myTargetBucket.adjustUnits(myUnits);
-            myTargetBucket.registerTransaction(pTrans);
 
-            /* Adjust the Source Units */
-            myUnits = new JUnits(myUnits);
-            myUnits.negate();
-            myBucket.adjustUnits(myUnits);
-            myBucket.registerTransaction(pTrans);
+            /* Process the Transfer */
+            processPortfolioXfer(myBucket, myTargetBucket, pTrans);
         }
 
         /* PortfolioXfer is a transfer, so no need to update the categories */

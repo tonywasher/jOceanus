@@ -440,6 +440,11 @@ public class TransactionTable
         /* Set the filter */
         theFilter = theSelect.getFilter();
 
+        /* Ensure that columns are correct */
+        theColumns.adjustColumns(theSelect.showColumns()
+                                                        ? theSelect.getColumns()
+                                                        : AnalysisColumnSet.BALANCE);
+
         /* Set the selection */
         theRange = null;
         setSelection(theSelect.getRange());

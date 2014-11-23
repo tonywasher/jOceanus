@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
@@ -221,11 +221,11 @@ public class TaxYearPanel
         myRentalAllow.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), DataType.MONEY, myAllowance);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), DataType.MONEY, myLoAgeAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), DataType.MONEY, myHiAgeAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), DataType.MONEY, myCapitalAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), DataType.MONEY, myAllowance);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), DataType.MONEY, myLoAgeAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), DataType.MONEY, myHiAgeAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), DataType.MONEY, myCapitalAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalAllow);
 
         /* Create the allow panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -233,11 +233,11 @@ public class TaxYearPanel
         /* Layout the allow panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -261,8 +261,8 @@ public class TaxYearPanel
         myAddLimit.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), DataType.MONEY, myAgeLimit);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLimit);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), DataType.MONEY, myAgeLimit);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLimit);
 
         /* Create the limits panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -270,8 +270,8 @@ public class TaxYearPanel
         /* Layout the limits panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -297,9 +297,9 @@ public class TaxYearPanel
         myAddIncBdy.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), DataType.MONEY, myLoBand);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), DataType.MONEY, myBasicBand);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncBdy);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), DataType.MONEY, myLoBand);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), DataType.MONEY, myBasicBand);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncBdy);
 
         /* Create the bands panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -307,9 +307,9 @@ public class TaxYearPanel
         /* Layout the bands panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -337,10 +337,10 @@ public class TaxYearPanel
         myAddTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), DataType.RATE, myLoTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), DataType.RATE, myBasicTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), DataType.RATE, myHiTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), DataType.RATE, myLoTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), DataType.RATE, myBasicTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), DataType.RATE, myHiTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -348,10 +348,10 @@ public class TaxYearPanel
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -379,10 +379,10 @@ public class TaxYearPanel
         myAddDivTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), DataType.RATE, myIntTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), DataType.RATE, myDivTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), DataType.RATE, myHiDivTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), DataType.RATE, myIntTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), DataType.RATE, myDivTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), DataType.RATE, myHiDivTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -390,10 +390,10 @@ public class TaxYearPanel
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -417,8 +417,8 @@ public class TaxYearPanel
         myHiCapTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), DataType.RATE, myCapTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), DataType.RATE, myCapTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -426,8 +426,8 @@ public class TaxYearPanel
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), myPanel);
-        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -461,12 +461,12 @@ public class TaxYearPanel
         theYear.setText(Integer.toString(myYear.getTaxYear().getYear()));
 
         /* Set field visibility */
-        theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), hasAdditionalTaxBand);
-        theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), hasAdditionalTaxBand);
-        theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), hasAdditionalTaxBand);
-        theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), hasAdditionalTaxBand);
-        theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), !hasCapitalGainsAsIncome);
-        theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), !hasCapitalGainsAsIncome);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), hasAdditionalTaxBand);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), hasAdditionalTaxBand);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), hasAdditionalTaxBand);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), hasAdditionalTaxBand);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), !hasCapitalGainsAsIncome);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), !hasCapitalGainsAsIncome);
     }
 
     @Override
@@ -478,10 +478,10 @@ public class TaxYearPanel
         if (myField.equals(TaxYear.FIELD_REGIME)) {
             /* Update the Value */
             myYear.setTaxRegime(pUpdate.getValue(TaxRegime.class));
-            myYear.adjustForTaxRegime();
+            myYear.autoCorrect();
         } else {
             /* Switch on the field */
-            switch (TaxInfoSet.getClassForField(myField)) {
+            switch (TaxYearInfoSet.getClassForField(myField)) {
                 case ALLOWANCE:
                     myYear.setAllowance(pUpdate.getMoney());
                     break;

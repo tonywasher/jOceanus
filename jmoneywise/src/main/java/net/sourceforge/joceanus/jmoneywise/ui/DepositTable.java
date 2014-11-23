@@ -843,7 +843,7 @@ public class DepositTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setDepositCategory((DepositCategory) pValue);
-                    pItem.adjustForCategory(theUpdateSet);
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);

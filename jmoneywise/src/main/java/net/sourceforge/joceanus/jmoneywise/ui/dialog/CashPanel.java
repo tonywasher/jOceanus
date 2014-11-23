@@ -209,14 +209,19 @@ public class CashPanel
      * @return the panel
      */
     private JPanel buildXtrasPanel() {
+        /* Allocate fields */
+        JTextField myOpening = new JTextField();
+
         /* restrict the fields */
         int myWidth = Cash.NAMELEN >> 1;
         restrictField(theAutoExpenseButton, myWidth);
         restrictField(theAutoPayeeButton, myWidth);
+        restrictField(myOpening, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, theAutoExpenseButton);
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, theAutoPayeeButton);
+        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
 
         /* Create the extras panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -226,6 +231,7 @@ public class CashPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), myPanel);
         theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), myPanel);
+        theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -278,6 +284,7 @@ public class CashPanel
         boolean bIsActive = myCash.isActive();
         boolean bIsRelevant = myCash.isRelevant();
         boolean isAutoExpense = myCash.isAutoExpense();
+        boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
@@ -292,10 +299,6 @@ public class CashPanel
         boolean bShowDesc = isEditable || myCash.getDesc() != null;
         theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
-        /* Category/Currency cannot be changed if the item is active */
-        theFieldSet.setEditable(Cash.FIELD_CATEGORY, !bIsActive && isEditable);
-        theFieldSet.setEditable(Cash.FIELD_CURRENCY, !bIsActive && isEditable);
-
         /* Currency is hidden if we are autoExpense */
         theFieldSet.setVisibility(Cash.FIELD_CURRENCY, !isAutoExpense);
 
@@ -305,10 +308,25 @@ public class CashPanel
         theFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
         theFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
 
+        /* OpeningBalance is hidden if we are autoExpense */
+        JDataField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        boolean bHasOpening = myCash.getOpeningBalance() != null;
+        boolean bShowOpening = bIsChangeable || bHasOpening;
+        theFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
+
+        /* Category/Currency cannot be changed if the item is active */
+        theFieldSet.setEditable(Cash.FIELD_CATEGORY, bIsChangeable);
+        theFieldSet.setEditable(Cash.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
+
         /* AutoExpense/Payee cannot be changed for closed item */
         boolean canEdit = isEditable && !bIsClosed;
         theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
         theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
+
+        /* Set currency for opening balance */
+        if (!isAutoExpense) {
+            theFieldSet.setAssumedCurrency(myOpeningField, myCash.getCashCurrency().getCurrency());
+        }
     }
 
     @Override
@@ -327,7 +345,7 @@ public class CashPanel
         } else if (myField.equals(Cash.FIELD_CATEGORY)) {
             /* Update the Category */
             myCash.setCashCategory(pUpdate.getValue(CashCategory.class));
-            myCash.adjustForCategory(getUpdateSet());
+            myCash.autoCorrect(getUpdateSet());
         } else if (myField.equals(Cash.FIELD_CURRENCY)) {
             /* Update the Currency */
             myCash.setCashCurrency(pUpdate.getValue(AccountCurrency.class));
@@ -342,6 +360,9 @@ public class CashPanel
                     break;
                 case AUTOPAYEE:
                     myCash.setAutoPayee(pUpdate.getValue(Payee.class));
+                    break;
+                case OPENINGBALANCE:
+                    myCash.setOpeningBalance(pUpdate.getMoney());
                     break;
                 case NOTES:
                     myCash.setNotes(pUpdate.getCharArray());

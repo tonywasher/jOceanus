@@ -1163,6 +1163,7 @@ public class AnalysisSelect
             theFilter = pFilter.getFilter();
             theType = theFilter.getAnalysisType();
             theBucket = theFilter.getCurrentAttribute();
+            showColumns = theBucket == null;
             applyState();
         }
 
@@ -1203,7 +1204,7 @@ public class AnalysisSelect
             if (!Difference.isEqual(pBucket, theBucket)) {
                 /* If this is the null bucket */
                 if (pBucket == null) {
-                    showColumns(true);
+                    showColumns = true;
                 } else {
                     theBucket = pBucket;
                 }
@@ -1221,7 +1222,7 @@ public class AnalysisSelect
             if (!Difference.isEqual(pColumnSet, theColumns)) {
                 /* If this is the balance bucket */
                 if (pColumnSet.equals(AnalysisColumnSet.BALANCE)) {
-                    showColumns(false);
+                    showColumns = false;
                 } else {
                     theColumns = pColumnSet;
                 }
@@ -1251,6 +1252,7 @@ public class AnalysisSelect
             theFilterTypeButton.setValue(theType);
             theBucketButton.setValue(theBucket);
             theColumnButton.setValue(theColumns);
+            showColumns(showColumns);
         }
 
         /**

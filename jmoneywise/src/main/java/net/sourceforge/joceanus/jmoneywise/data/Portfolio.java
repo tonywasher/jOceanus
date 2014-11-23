@@ -543,28 +543,33 @@ public class Portfolio
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setParent(getDefaultParent(pUpdateSet));
         setClosed(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
-        adjustForTaxFree(pUpdateSet);
     }
 
     /**
-     * adjust values after taxFree change.
+     * Obtain default parent for portfolio.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @return the default parent
      */
-    public void adjustForTaxFree(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Access taxFree status and parent */
-        Boolean isTaxFree = isTaxFree();
-        Payee myParent = getParent();
+    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* loop through the payees */
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
 
-        /* Check that the current parent is viable */
-        if ((myParent == null) || !myParent.canParentPortfolio(pUpdateSet, isTaxFree)) {
-            /* Select new parent */
-            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-            myParent = myPayees.getDefaultPortfolioParent(pUpdateSet, isTaxFree);
-            setParent(myParent);
+            /* Ignore deleted and closed payees and those that cannot parent this portfolio */
+            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
+            bIgnore |= !myPayee.getPayeeTypeClass().canParentPortfolio();
+            if (!bIgnore) {
+                return myPayee;
+            }
         }
+
+        /* Return no payee */
+        return null;
     }
 
     @Override
@@ -1019,26 +1024,6 @@ public class Portfolio
 
             /* Return it */
             return myPortfolio;
-        }
-
-        /**
-         * Obtain default portfolio for stockOption.
-         * @return the default portfolio
-         */
-        public Portfolio getDefaultPortfolio() {
-            /* loop through the portfolios */
-            Iterator<Portfolio> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Portfolio myPortfolio = myIterator.next();
-
-                /* Ignore deleted and closed portfolios */
-                if (!myPortfolio.isDeleted() && !myPortfolio.isClosed()) {
-                    return myPortfolio;
-                }
-            }
-
-            /* Return no payee */
-            return null;
         }
 
         /**

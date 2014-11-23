@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -30,12 +31,17 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * CashInfoSet class.
@@ -220,6 +226,10 @@ public class CashInfoSet
             case NOTES:
                 return JDataFieldRequired.CANEXIST;
 
+            case OPENINGBALANCE:
+                return myCash.isAutoExpense()
+                                             ? JDataFieldRequired.NOTALLOWED
+                                             : JDataFieldRequired.CANEXIST;
             case AUTOPAYEE:
             case AUTOEXPENSE:
                 return myCash.isAutoExpense()
@@ -235,7 +245,6 @@ public class CashInfoSet
             case USERID:
             case PASSWORD:
             case MATURITY:
-            case OPENINGBALANCE:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -246,7 +255,7 @@ public class CashInfoSet
      */
     protected void validate() {
         /* Access details about the Cash */
-        Cash myDeposit = getOwner();
+        Cash myCash = getOwner();
 
         /* Loop through the classes */
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
@@ -261,37 +270,130 @@ public class CashInfoSet
             if (!isExisting) {
                 /* Handle required field missing */
                 if (myState == JDataFieldRequired.MUSTEXIST) {
-                    myDeposit.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
+                    myCash.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
             if (myState == JDataFieldRequired.NOTALLOWED) {
-                myDeposit.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
+                myCash.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }
 
             /* Switch on class */
             switch (myClass) {
+                case OPENINGBALANCE:
+                    /* Access data */
+                    JMoney myBalance = myInfo.getValue(JMoney.class);
+                    if (!myBalance.getCurrency().equals(myCash.getCashCurrency().getCurrency())) {
+                        myCash.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
+                    }
+                    break;
                 case AUTOEXPENSE:
                     /* Access data */
                     TransactionCategory myExpense = myInfo.getEventCategory();
                     TransactionCategoryClass myCatClass = myExpense.getCategoryTypeClass();
                     if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
-                        myDeposit.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
+                        myCash.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
                     }
                     break;
                 case NOTES:
                     /* Access data */
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
-                        myDeposit.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
+                        myCash.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    /**
+     * autoCorrect values after change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    protected void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access cash account */
+        Cash myCash = getOwner();
+
+        /* If we are autoExpense */
+        if (myCash.isAutoExpense()) {
+            /* Ensure that we have an autoExpense */
+            if (getInfo(AccountInfoClass.AUTOEXPENSE) == null) {
+                setValue(AccountInfoClass.AUTOEXPENSE, getDefaultAutoExpense(pUpdateSet));
+            }
+
+            /* Ensure that we have an autoPayee */
+            if (getInfo(AccountInfoClass.AUTOPAYEE) == null) {
+                setValue(AccountInfoClass.AUTOPAYEE, getDefaultAutoPayee(pUpdateSet));
+            }
+
+            /* No opening balance */
+            setValue(AccountInfoClass.OPENINGBALANCE, null);
+
+            /* Else standard cash account */
+        } else {
+            /* Ensure that autoPayee and autoExpense are null */
+            setValue(AccountInfoClass.AUTOEXPENSE, null);
+            setValue(AccountInfoClass.AUTOPAYEE, null);
+        }
+    }
+
+    /**
+     * Obtain default expense for autoExpense cash.
+     * @param pUpdateSet the updateSet
+     * @return the default expense
+     */
+    private TransactionCategory getDefaultAutoExpense(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* Access the category list */
+        TransactionCategoryList myCategories = pUpdateSet.findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+
+        /* loop through the categories */
+        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* Ignore categories that are the wrong class */
+            TransactionCategoryClass myCatClass = myCategory.getCategoryTypeClass();
+            if (myCatClass.isExpense() && !myCatClass.canParentCategory()) {
+                return myCategory;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default payee for autoExpense cash.
+     * @param pUpdateSet the updateSet
+     * @return the default payee
+     */
+    private Payee getDefaultAutoPayee(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* Access the payee list */
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+
+        /* loop through the payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (!myPayee.isDeleted() && !myPayee.isClosed()) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
     }
 }

@@ -160,7 +160,7 @@ public class TaxYearInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the TaxInfoSet and register this data */
-            TaxInfoSet mySet = getOwner().getInfoSet();
+            TaxYearInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (JOceanusException e) {
@@ -172,7 +172,7 @@ public class TaxYearInfo
     @Override
     public void deRegister() {
         /* Access the TaxInfoSet and deRegister this value */
-        TaxInfoSet mySet = getOwner().getInfoSet();
+        TaxYearInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -218,7 +218,7 @@ public class TaxYearInfo
         resolveDataLink(FIELD_OWNER, myData.getTaxYears());
 
         /* Access the TaxInfoSet and register this data */
-        TaxInfoSet mySet = getOwner().getInfoSet();
+        TaxYearInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 

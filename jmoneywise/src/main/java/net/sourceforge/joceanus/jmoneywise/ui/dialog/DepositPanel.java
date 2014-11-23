@@ -363,7 +363,8 @@ public class DepositPanel
         theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
         boolean bShowReference = isEditable || myDeposit.getReference() != null;
         theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
-        boolean bShowOpening = bIsChangeable || myDeposit.getOpeningBalance() != null;
+        boolean bHasOpening = myDeposit.getOpeningBalance() != null;
+        boolean bShowOpening = bIsChangeable || bHasOpening;
         JDataField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         theFieldSet.setVisibility(myOpeningField, bShowOpening);
         boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
@@ -380,7 +381,7 @@ public class DepositPanel
         boolean isHolding = myDeposit.getTouchStatus().touchedBy(MoneyWiseDataType.PORTFOLIO);
         boolean canTaxChange = canTaxFree && !isHolding && bIsChangeable;
         theFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
-        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable);
+        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
         theFieldSet.setEditable(Deposit.FIELD_GROSS, canTaxChange && !bIsTaxFree);
         theFieldSet.setEditable(Deposit.FIELD_TAXFREE, canTaxChange && !bIsGross);
         theFieldSet.setEditable(myOpeningField, bIsChangeable);
@@ -408,7 +409,7 @@ public class DepositPanel
         } else if (myField.equals(Deposit.FIELD_CATEGORY)) {
             /* Update the Category */
             myDeposit.setDepositCategory(pUpdate.getValue(DepositCategory.class));
-            myDeposit.adjustForCategory(getUpdateSet());
+            myDeposit.autoCorrect(getUpdateSet());
         } else if (myField.equals(Deposit.FIELD_PARENT)) {
             /* Update the Parent */
             myDeposit.setParent(pUpdate.getValue(Payee.class));

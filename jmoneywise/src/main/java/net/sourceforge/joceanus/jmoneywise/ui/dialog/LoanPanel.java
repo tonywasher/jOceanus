@@ -207,17 +207,20 @@ public class LoanPanel
         JTextField mySortCode = new JTextField();
         JTextField myAccount = new JTextField();
         JTextField myReference = new JTextField();
+        JTextField myOpening = new JTextField();
 
         /* Restrict the fields */
         int myWidth = Loan.NAMELEN >> 1;
         restrictField(mySortCode, myWidth);
         restrictField(myAccount, myWidth);
         restrictField(myReference, myWidth);
+        restrictField(myOpening, myWidth);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
 
         /* Create the extras panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -228,6 +231,7 @@ public class LoanPanel
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
+        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -279,6 +283,7 @@ public class LoanPanel
         boolean bIsClosed = myLoan.isClosed();
         boolean bIsActive = myLoan.isActive();
         boolean bIsRelevant = myLoan.isRelevant();
+        boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
@@ -302,15 +307,23 @@ public class LoanPanel
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
         boolean bShowReference = isEditable || myLoan.getReference() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        boolean bHasOpening = myLoan.getOpeningBalance() != null;
+        boolean bShowOpening = bIsChangeable || bHasOpening;
+        JDataField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        theFieldSet.setVisibility(myOpeningField, bShowOpening);
         boolean bShowNotes = isEditable || myLoan.getNotes() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
-        theFieldSet.setEditable(Loan.FIELD_CATEGORY, isEditable && !bIsActive);
-        theFieldSet.setEditable(Loan.FIELD_CURRENCY, isEditable && !bIsActive);
+        theFieldSet.setEditable(Loan.FIELD_CATEGORY, bIsChangeable);
+        theFieldSet.setEditable(Loan.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
+        theFieldSet.setEditable(myOpeningField, bIsChangeable);
 
         /* Set editable value for parent */
         theFieldSet.setEditable(Loan.FIELD_PARENT, isEditable && !bIsClosed);
+
+        /* Set currency for opening balance */
+        theFieldSet.setAssumedCurrency(myOpeningField, myLoan.getLoanCurrency().getCurrency());
     }
 
     @Override
@@ -329,7 +342,7 @@ public class LoanPanel
         } else if (myField.equals(Loan.FIELD_CATEGORY)) {
             /* Update the Category */
             myLoan.setLoanCategory(pUpdate.getValue(LoanCategory.class));
-            myLoan.adjustForCategory(getUpdateSet());
+            myLoan.autoCorrect(getUpdateSet());
         } else if (myField.equals(Loan.FIELD_PARENT)) {
             /* Update the Parent */
             myLoan.setParent(pUpdate.getValue(Payee.class));
@@ -342,6 +355,9 @@ public class LoanPanel
         } else {
             /* Switch on the field */
             switch (LoanInfoSet.getClassForField(myField)) {
+                case OPENINGBALANCE:
+                    myLoan.setOpeningBalance(pUpdate.getMoney());
+                    break;
                 case SORTCODE:
                     myLoan.setSortCode(pUpdate.getCharArray());
                     break;

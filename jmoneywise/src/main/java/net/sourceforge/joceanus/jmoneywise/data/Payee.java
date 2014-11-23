@@ -37,16 +37,12 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -54,7 +50,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -512,44 +507,32 @@ public class Payee
      */
     public void setDefaults() throws JOceanusException {
         /* Set values */
-        PayeeTypeList myTypes = getDataSet().getPayeeTypes();
-        setPayeeType(myTypes.getDefaultPayeeType());
+        setPayeeType(getDefaultPayeeType());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
     }
 
     /**
-     * Can this payee parent a portfolio of the required Tax status?
-     * @param pUpdateSet the updateSet
-     * @param pTaxFree is the portfolio taxFree?
-     * @return true/false
+     * Obtain payee type for new payee account.
+     * @return the payee type
      */
-    public boolean canParentPortfolio(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                      final Boolean pTaxFree) {
-        /* Check that it is the correct class */
-        if (!getPayeeTypeClass().canParentPortfolio()) {
-            return false;
-        }
+    private PayeeType getDefaultPayeeType() {
+        /* Access payee types */
+        PayeeTypeList myTypes = getDataSet().getPayeeTypes();
 
-        /* Access Deposits */
-        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-
-        /* Loop through the Deposits */
-        Iterator<Deposit> myIterator = myDeposits.iterator();
+        /* loop through the payee types */
+        Iterator<PayeeType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            Deposit myDeposit = myIterator.next();
+            PayeeType myType = myIterator.next();
 
-            /* Ignore deleted/closed/different parent and different tax status deposits */
-            boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
-            bIgnore |= !this.equals(myDeposit.getParent());
-            bIgnore |= !pTaxFree.equals(myDeposit.isTaxFree());
-            if (!bIgnore) {
-                return true;
+            /* Ignore deleted and singular types */
+            if (!myType.isDeleted() && !myType.getPayeeClass().isSingular()) {
+                return myType;
             }
         }
 
-        /* Can't parent portfolio */
-        return false;
+        /* Return no category */
+        return null;
     }
 
     @Override
@@ -988,129 +971,6 @@ public class Payee
 
             /* Return it */
             return myPayee;
-        }
-
-        /**
-         * Obtain default parent for new deposit.
-         * @param pClass the class of the deposit
-         * @return the default parent
-         */
-        public Payee getDefaultDepositParent(final DepositCategoryClass pClass) {
-            /* loop through the payees */
-            Iterator<Payee> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted and closed payees */
-                if (myPayee.isDeleted() || myPayee.isClosed()) {
-                    continue;
-                }
-
-                /* If the payee can parent */
-                if (myPayee.getPayeeTypeClass().canParentDeposit(pClass)) {
-                    return myPayee;
-                }
-            }
-
-            /* Return no payee */
-            return null;
-        }
-
-        /**
-         * Obtain default parent for new loan.
-         * @param pClass the class of the loan
-         * @return the default parent
-         */
-        public Payee getDefaultLoanParent(final LoanCategoryClass pClass) {
-            /* loop through the payees */
-            Iterator<Payee> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted and closed payees */
-                if (myPayee.isDeleted() || myPayee.isClosed()) {
-                    continue;
-                }
-
-                /* If the payee can parent */
-                if (myPayee.getPayeeTypeClass().canParentLoan(pClass)) {
-                    return myPayee;
-                }
-            }
-
-            /* Return no payee */
-            return null;
-        }
-
-        /**
-         * Obtain default parent for new security.
-         * @param pClass the class of the security
-         * @return the default parent
-         */
-        public Payee getDefaultSecurityParent(final SecurityTypeClass pClass) {
-            /* loop through the payees */
-            Iterator<Payee> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted and closed payees */
-                if (myPayee.isDeleted() || myPayee.isClosed()) {
-                    continue;
-                }
-
-                /* If the payee can parent */
-                if (myPayee.getPayeeTypeClass().canParentSecurity(pClass)) {
-                    return myPayee;
-                }
-            }
-
-            /* Return no payee */
-            return null;
-        }
-
-        /**
-         * Obtain default parent for portfolio.
-         * @param pUpdateSet the update set
-         * @param isTaxFree should holding be taxFree?
-         * @return the default parent
-         */
-        public Payee getDefaultPortfolioParent(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                               final Boolean isTaxFree) {
-            /* loop through the payees */
-            Iterator<Payee> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted and closed payees and those that cannot parent this portfolio */
-                boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
-                bIgnore |= !myPayee.canParentPortfolio(pUpdateSet, isTaxFree);
-                if (!bIgnore) {
-                    return myPayee;
-                }
-            }
-
-            /* Return no payee */
-            return null;
-        }
-
-        /**
-         * Obtain default payee for autoExpense cash.
-         * @return the default payee
-         */
-        public Payee getDefaultAutoPayee() {
-            /* loop through the payees */
-            Iterator<Payee> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Payee myPayee = myIterator.next();
-
-                /* Ignore deleted and closed payees */
-                if (!myPayee.isDeleted() && !myPayee.isClosed()) {
-                    return myPayee;
-                }
-            }
-
-            /* Return no payee */
-            return null;
         }
 
         @Override

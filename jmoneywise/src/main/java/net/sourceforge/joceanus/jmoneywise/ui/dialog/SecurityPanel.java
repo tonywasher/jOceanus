@@ -308,7 +308,7 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_SECTYPE)) {
             /* Update the Security Type */
             mySecurity.setSecurityType(pUpdate.getValue(SecurityType.class));
-            mySecurity.adjustForCategory(getUpdateSet());
+            mySecurity.autoCorrect(getUpdateSet());
         } else if (myField.equals(Security.FIELD_PARENT)) {
             /* Update the Parent */
             mySecurity.setParent(pUpdate.getValue(Payee.class));

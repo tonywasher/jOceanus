@@ -1037,7 +1037,7 @@ public class HTMLBuilder {
                     theTable.insertBefore(theHeader, theBody);
                 }
             }
-            return theTable;
+            return theHeader;
         }
 
         /**
@@ -1051,7 +1051,7 @@ public class HTMLBuilder {
                 theBody = theDocument.createElement(ELEMENT_TBODY);
                 theTable.appendChild(theBody);
             }
-            return theTable;
+            return theBody;
         }
 
         /**

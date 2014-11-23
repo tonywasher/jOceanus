@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
@@ -570,6 +571,15 @@ public class Transaction
     }
 
     /**
+     * autoCorrect values after change.
+     * @throws JOceanusException on error
+     */
+    public void autoCorrect() throws JOceanusException {
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect();
+    }
+
+    /**
      * Validate the transaction.
      */
     @Override
@@ -629,6 +639,27 @@ public class Transaction
         if (!hasErrors()) {
             setValidEdit();
         }
+    }
+
+    /**
+     * Obtain default deposit for ThirdParty.
+     * @return the default thirdParty
+     */
+    protected Deposit getDefaultThirdParty() {
+        /* loop through the deposits */
+        DepositList myDeposits = getDataSet().getDeposits();
+        Iterator<Deposit> myIterator = myDeposits.iterator();
+        while (myIterator.hasNext()) {
+            Deposit myDeposit = myIterator.next();
+
+            /* Use if not deleted or closed */
+            if (!myDeposit.isDeleted() && !myDeposit.isClosed()) {
+                return myDeposit;
+            }
+        }
+
+        /* Return no category */
+        return null;
     }
 
     /**

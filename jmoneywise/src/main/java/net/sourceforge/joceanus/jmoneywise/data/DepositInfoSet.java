@@ -62,7 +62,7 @@ public class DepositInfoSet
     /**
      * Opening Balance Currency Error Text.
      */
-    private static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    protected static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     @Override
     public JDataFields getDataFields() {

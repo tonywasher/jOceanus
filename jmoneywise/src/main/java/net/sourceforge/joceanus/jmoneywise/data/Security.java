@@ -779,31 +779,80 @@ public class Security
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
-        SecurityTypeList myTypes = getDataSet().getSecurityTypes();
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        setSecurityType(myTypes.getDefaultSecurityType());
-        setSecurityCurrency(getDataSet().getDefaultCurrency());
-        setParent(myPayees.getDefaultSecurityParent(getSecurityTypeClass()));
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setSecurityType(getDefaultSecurityType());
+        setSecurityCurrency(getDataSet().getDefaultCurrency());
         setSymbol(getName());
         setClosed(Boolean.FALSE);
+        autoCorrect(pUpdateSet);
     }
 
     /**
-     * adjust values after category change.
+     * autoCorrect values after change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
-    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Access category class and parent */
         SecurityTypeClass myClass = getSecurityTypeClass();
         Payee myParent = getParent();
 
-        /* Check that parent is valid for category */
-        if (!myParent.getPayeeTypeClass().canParentSecurity(myClass)) {
-            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-            setParent(myPayees.getDefaultSecurityParent(myClass));
+        /* Ensure that we have a valid parent */
+        if ((myParent == null)
+            || myParent.getPayeeTypeClass().canParentSecurity(myClass)) {
+            setParent(getDefaultParent(pUpdateSet));
         }
+    }
+
+    /**
+     * Obtain security type for new security account.
+     * @return the security type
+     */
+    public SecurityType getDefaultSecurityType() {
+        /* loop through the security types */
+        SecurityTypeList myTypes = getDataSet().getSecurityTypes();
+        Iterator<SecurityType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            SecurityType myType = myIterator.next();
+
+            /* Ignore deleted types */
+            if (!myType.isDeleted()) {
+                return myType;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default parent for new security.
+     * @param pUpdateSet the update set
+     * @return the default parent
+     */
+    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* Access details */
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        SecurityTypeClass myClass = getSecurityTypeClass();
+
+        /* loop through the payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (myPayee.isDeleted() || myPayee.isClosed()) {
+                continue;
+            }
+
+            /* If the payee can parent */
+            if (myPayee.getPayeeTypeClass().canParentSecurity(myClass)) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
     }
 
     @Override
@@ -1280,31 +1329,6 @@ public class Security
 
             /* Return it */
             return mySecurity;
-        }
-
-        /**
-         * Obtain default security for stockOption.
-         * @return the default security
-         */
-        public Security getDefaultStockOption() {
-            /* loop through the securities */
-            Iterator<Security> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Security mySecurity = myIterator.next();
-
-                /* Ignore deleted and closed securities */
-                if (mySecurity.isDeleted() || mySecurity.isClosed()) {
-                    continue;
-                }
-
-                /* Only allow shares */
-                if (mySecurity.isSecurityClass(SecurityTypeClass.SHARES)) {
-                    return mySecurity;
-                }
-            }
-
-            /* Return no security */
-            return null;
         }
 
         @Override

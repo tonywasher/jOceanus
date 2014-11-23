@@ -831,7 +831,7 @@ public class SecurityTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setSecurityType((SecurityType) pValue);
-                    pItem.adjustForCategory(theUpdateSet);
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);

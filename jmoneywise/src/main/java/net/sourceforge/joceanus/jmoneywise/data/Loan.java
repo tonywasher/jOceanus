@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Loan class.
@@ -197,6 +198,16 @@ public class Loan
     public char[] getNotes() {
         return hasInfoSet
                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain Opening Balance.
+     * @return the Opening balance
+     */
+    public JMoney getOpeningBalance() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
                          : null;
     }
 
@@ -621,30 +632,84 @@ public class Loan
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
-        LoanCategoryList myCategories = getDataSet().getLoanCategories();
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        setLoanCategory(myCategories.getDefaultCategory());
-        setLoanCurrency(getDataSet().getDefaultCurrency());
-        setParent(myPayees.getDefaultLoanParent(getCategoryClass()));
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setLoanCategory(getDefaultCategory());
+        setLoanCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
+        autoCorrect(pUpdateSet);
     }
 
     /**
-     * adjust values after category change.
+     * adjust values after change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
-    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Access category class and parent */
         LoanCategoryClass myClass = getCategoryClass();
         Payee myParent = getParent();
 
-        /* Check that parent is valid for category */
-        if (!myParent.getPayeeTypeClass().canParentLoan(myClass)) {
-            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-            setParent(myPayees.getDefaultLoanParent(myClass));
+        /* Ensure that we have valid parent */
+        if ((myParent == null)
+            || !myParent.getPayeeTypeClass().canParentLoan(myClass)) {
+            setParent(getDefaultParent(pUpdateSet));
         }
+    }
+
+    /**
+     * Obtain default category for new loan account.
+     * @return the default category
+     */
+    public LoanCategory getDefaultCategory() {
+        /* loop through the categories */
+        LoanCategoryList myCategories = getDataSet().getLoanCategories();
+        Iterator<LoanCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            LoanCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* If the category is not a parent */
+            if (!myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
+                return myCategory;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default parent for new loan.
+     * @param pUpdateSet the update set
+     * @return the default parent
+     */
+    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* Access details */
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        LoanCategoryClass myClass = getCategoryClass();
+
+        /* loop through the payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (myPayee.isDeleted() || myPayee.isClosed()) {
+                continue;
+            }
+
+            /* If the payee can parent */
+            if (myPayee.getPayeeTypeClass().canParentLoan(myClass)) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
     }
 
     @Override
@@ -745,6 +810,15 @@ public class Loan
      */
     public void setNotes(final char[] pNotes) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
+    }
+
+    /**
+     * Set a new opening balance.
+     * @param pBalance the new opening balance
+     * @throws JOceanusException on error
+     */
+    public void setOpeningBalance(final JMoney pBalance) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
     /**

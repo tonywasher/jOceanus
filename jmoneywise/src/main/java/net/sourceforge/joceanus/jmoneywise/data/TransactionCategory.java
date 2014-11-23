@@ -576,32 +576,6 @@ public final class TransactionCategory
             return myCategory;
         }
 
-        /**
-         * Obtain default expense for autoExpense cash.
-         * @return the default expense
-         */
-        public TransactionCategory getDefaultAutoExpense() {
-            /* loop through the categories */
-            Iterator<TransactionCategory> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                TransactionCategory myCategory = myIterator.next();
-
-                /* Ignore deleted categories */
-                if (myCategory.isDeleted()) {
-                    continue;
-                }
-
-                /* Ignore categories that are the wrong class */
-                TransactionCategoryClass myCatClass = myCategory.getCategoryTypeClass();
-                if (myCatClass.isExpense() && !myCatClass.canParentCategory()) {
-                    return myCategory;
-                }
-            }
-
-            /* Return no category */
-            return null;
-        }
-
         @Override
         protected TransCategoryDataMap allocateDataMap() {
             return new TransCategoryDataMap();

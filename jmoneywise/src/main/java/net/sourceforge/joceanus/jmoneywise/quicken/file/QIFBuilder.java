@@ -332,14 +332,9 @@ public class QIFBuilder {
         /* Access details */
         TransactionCategory myCat = pTrans.getCategory();
 
-        /* If this is a loyaltyBonus */
-        if (pDebit instanceof Portfolio) {
-            /* Process as loyaltyBonus */
-            processLoyaltyBonus((Portfolio) pDebit, pCredit, pTrans);
-
-            /* If this is a cash AutoExpense */
-        } else if ((pCredit instanceof Cash)
-                   && ((Cash) pCredit).isAutoExpense()) {
+        /* If this is a cash AutoExpense */
+        if ((pCredit instanceof Cash)
+            && ((Cash) pCredit).isAutoExpense()) {
             /* Process as standard expense */
             processCashExpense((Cash) pCredit, pDebit, pTrans);
 
@@ -367,6 +362,10 @@ public class QIFBuilder {
         } else {
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
+                case LOYALTYBONUS:
+                    /* Process as loyalty bonus */
+                    processLoyaltyBonus((Portfolio) pDebit, pCredit, pTrans);
+                    break;
                 case CASHBACK:
                     /* Process as cashBack payment */
                     processCashBack(pDebit, pCredit, pTrans);

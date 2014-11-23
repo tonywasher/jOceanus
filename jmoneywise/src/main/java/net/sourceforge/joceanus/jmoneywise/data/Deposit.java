@@ -747,32 +747,29 @@ public class Deposit
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
-        DepositCategoryList myCategories = getDataSet().getDepositCategories();
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        setDepositCategory(myCategories.getDefaultCategory());
-        setDepositCurrency(getDataSet().getDefaultCurrency());
-        setParent(myPayees.getDefaultDepositParent(getCategoryClass()));
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setDepositCategory(getDefaultCategory());
+        setDepositCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         setGross(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
-        adjustForCategory(pUpdateSet);
+        autoCorrect(pUpdateSet);
     }
 
     /**
-     * adjust values after category change.
+     * autoCorrect values after change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
-    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Access category class */
         DepositCategoryClass myClass = getCategoryClass();
         Payee myParent = getParent();
 
-        /* Check that parent is valid for category */
-        if (!myParent.getPayeeTypeClass().canParentDeposit(myClass)) {
-            PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-            setParent(myPayees.getDefaultDepositParent(myClass));
+        /* Ensure that we have a valid parent */
+        if ((myParent == null)
+            || !myParent.getPayeeTypeClass().canParentDeposit(myClass)) {
+            setParent(getDefaultParent(pUpdateSet));
         }
 
         /* Adjust bond date if required */
@@ -783,6 +780,62 @@ public class Deposit
             myDate.adjustYear(1);
             setMaturity(myDate);
         }
+    }
+
+    /**
+     * Obtain default category for new deposit account.
+     * @return the default category
+     */
+    private DepositCategory getDefaultCategory() {
+        /* loop through the categories */
+        DepositCategoryList myCategories = getDataSet().getDepositCategories();
+        Iterator<DepositCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            DepositCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* If the category is not a parent */
+            if (!myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
+                return myCategory;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default parent for new deposit.
+     * @param pUpdateSet the update set
+     * @return the default parent
+     */
+    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        /* Access details */
+        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        DepositCategoryClass myClass = getCategoryClass();
+
+        /* loop through the payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (myPayee.isDeleted() || myPayee.isClosed()) {
+                continue;
+            }
+
+            /* If the payee can parent */
+            if (myPayee.getPayeeTypeClass().canParentDeposit(myClass)) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
     }
 
     @Override

@@ -38,8 +38,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -53,6 +51,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Cash class.
@@ -180,6 +179,16 @@ public class Cash
     public Payee getAutoPayee() {
         return hasInfoSet
                          ? theInfoSet.getPayee(AccountInfoClass.AUTOPAYEE)
+                         : null;
+    }
+
+    /**
+     * Obtain Opening Balance.
+     * @return the Opening balance
+     */
+    public JMoney getOpeningBalance() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
                          : null;
     }
 
@@ -538,47 +547,56 @@ public class Cash
      */
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Set values */
-        CashCategoryList myCategories = getDataSet().getCashCategories();
-        setCashCategory(myCategories.getDefaultCategory());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setCashCategory(getDefaultCategory());
         setClosed(Boolean.FALSE);
-        adjustForCategory(pUpdateSet);
+        autoCorrect(pUpdateSet);
     }
 
     /**
-     * adjust values after category change.
+     * autoCorrect values after change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
-    public void adjustForCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* If we are autoExpense */
         if (isAutoExpense()) {
-            /* Ensure that we have an autoExpense */
-            if (getAutoExpense() == null) {
-                TransactionCategoryList myCategories = getDataSet().getTransCategories();
-                setAutoExpense(myCategories.getDefaultAutoExpense());
-            }
-
-            /* Ensure that we have an autoPayee */
-            if (getAutoPayee() == null) {
-                PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-                setAutoPayee(myPayees.getDefaultAutoPayee());
-            }
-
-            /* No currency */
+            /* We must not have a currency */
             setCashCurrency(null);
 
-            /* Else standard cash account */
-        } else {
-            /* Ensure that autoPayee and Expense are null */
-            setAutoExpense(null);
-            setAutoPayee(null);
+            /* Else standard cash account so ensure we have a currency */
+        } else if (getCashCurrency() == null) {
+            setCashCurrency(getDataSet().getDefaultCurrency());
+        }
 
-            /* Ensure that we have a currency */
-            if (getCashCurrency() == null) {
-                setCashCurrency(getDataSet().getDefaultCurrency());
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect(pUpdateSet);
+    }
+
+    /**
+     * Obtain default category for new cash account.
+     * @return the default category
+     */
+    private CashCategory getDefaultCategory() {
+        /* loop through the categories */
+        CashCategoryList myCategories = getDataSet().getCashCategories();
+        Iterator<CashCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            CashCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* If the category is not a parent */
+            if (!myCategory.isCategoryClass(CashCategoryClass.PARENT)) {
+                return myCategory;
             }
         }
+
+        /* Return no category */
+        return null;
     }
 
     @Override
@@ -653,6 +671,15 @@ public class Cash
      */
     public void setAutoPayee(final Payee pPayee) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.AUTOPAYEE, pPayee);
+    }
+
+    /**
+     * Set a new opening balance.
+     * @param pBalance the new opening balance
+     * @throws JOceanusException on error
+     */
+    public void setOpeningBalance(final JMoney pBalance) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
     /**

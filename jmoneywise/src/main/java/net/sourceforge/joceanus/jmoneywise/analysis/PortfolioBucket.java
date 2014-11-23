@@ -780,6 +780,7 @@ public final class PortfolioBucket
 
                 /* Add the cash bucket */
                 PortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
+                myCash.calculateDelta();
                 myPortfolio.addValues(myCash);
                 theTotals.addValues(myCash);
 

@@ -36,13 +36,16 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * TaxInfoSet class.
  * @author Tony Washer
  */
-public class TaxInfoSet
+public class TaxYearInfoSet
         extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Report fields.
@@ -58,6 +61,16 @@ public class TaxInfoSet
      * Reverse FieldSet map.
      */
     private static final Map<TaxYearInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, TaxYearInfoClass.class);
+
+    /**
+     * Default Additional Income Threshold.
+     */
+    private static final JMoney DEFAULT_ADDTHRESHOLD = JMoney.getWholeUnits(150000);
+
+    /**
+     * Default Additional Income Limit.
+     */
+    private static final JMoney DEFAULT_ADDLIMIT = JMoney.getWholeUnits(100000);
 
     /**
      * Allowance Limit Error Text.
@@ -127,9 +140,9 @@ public class TaxInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList source InfoSet
      */
-    protected TaxInfoSet(final TaxYear pOwner,
-                         final TaxYearInfoTypeList pTypeList,
-                         final TaxInfoList pInfoList) {
+    protected TaxYearInfoSet(final TaxYear pOwner,
+                             final TaxYearInfoTypeList pTypeList,
+                             final TaxInfoList pInfoList) {
         /* Store the Owner and Info List */
         super(pOwner, pTypeList, pInfoList);
     }
@@ -138,7 +151,7 @@ public class TaxInfoSet
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
      */
-    protected void cloneDataInfoSet(final TaxInfoSet pSource) {
+    protected void cloneDataInfoSet(final TaxYearInfoSet pSource) {
         /* Clone the dataInfoSet */
         cloneTheDataInfoSet(pSource);
     }
@@ -262,6 +275,73 @@ public class TaxInfoSet
                     myTaxYear.addError(ERROR_LOALLOW, getFieldForClass(myClass));
                 }
             }
+        }
+    }
+
+    /**
+     * adjust values after change.
+     * @throws JOceanusException on error
+     */
+    protected void autoCorrect() throws JOceanusException {
+        /* Access tax regime */
+        TaxYear myOwner = getOwner();
+        TaxRegime myRegime = myOwner.getTaxRegime();
+
+        /* If Capital Gains is taxed as income */
+        if (myRegime.hasCapitalGainsAsIncome()) {
+            /* Clear the rates */
+            setValue(TaxYearInfoClass.CAPITALTAXRATE, null);
+            setValue(TaxYearInfoClass.HICAPITALTAXRATE, null);
+
+            /* Else Initialise CapitalTaxRate from Standard Rate if required */
+        } else if (getInfo(TaxYearInfoClass.CAPITALTAXRATE) == null) {
+            JRate myRate = getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class);
+            setValue(TaxYearInfoClass.CAPITALTAXRATE, myRate);
+        }
+
+        /* If we do not use additional bands */
+        if (!myRegime.hasAdditionalTaxBand()) {
+            /* Clear the values */
+            setValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, null);
+            setValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, null);
+            setValue(TaxYearInfoClass.ADDITIONALTAXRATE, null);
+            setValue(TaxYearInfoClass.ADDITIONALTAXRATE, null);
+
+            /* Else we need additional bands */
+        } else {
+            /* Set boundaries as required */
+            if (getInfo(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT) == null) {
+                setValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, DEFAULT_ADDLIMIT);
+            }
+            if (getInfo(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD) == null) {
+                setValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, DEFAULT_ADDTHRESHOLD);
+            }
+
+            /* Initialise Additional rates from High rates */
+            if (getInfo(TaxYearInfoClass.ADDITIONALTAXRATE) == null) {
+                JRate myRate = getValue(TaxYearInfoClass.HITAXRATE, JRate.class);
+                setValue(TaxYearInfoClass.ADDITIONALTAXRATE, myRate);
+            }
+            if (getInfo(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE) == null) {
+                JRate myRate = getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class);
+                setValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, myRate);
+            }
+        }
+
+        /* Access age allowances */
+        JMoney myAllow = getValue(TaxYearInfoClass.ALLOWANCE, JMoney.class);
+        JMoney myLoAgeAllow = getValue(TaxYearInfoClass.LOAGEALLOWANCE, JMoney.class);
+        JMoney myHiAgeAllow = getValue(TaxYearInfoClass.HIAGEALLOWANCE, JMoney.class);
+
+        /* Check LoAge Allowance */
+        if (myLoAgeAllow.compareTo(myAllow) < 0) {
+            setValue(TaxYearInfoClass.LOAGEALLOWANCE, myAllow);
+            myLoAgeAllow = myAllow;
+        }
+
+        /* Check HiAge Allowance */
+        if (myHiAgeAllow.compareTo(myLoAgeAllow) < 0) {
+            setValue(TaxYearInfoClass.HIAGEALLOWANCE, myLoAgeAllow);
         }
     }
 }

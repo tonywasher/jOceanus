@@ -103,7 +103,7 @@ public class TaxYear
         }
 
         /* Handle infoSet fields */
-        TaxYearInfoClass myClass = TaxInfoSet.getClassForField(pField);
+        TaxYearInfoClass myClass = TaxYearInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -125,10 +125,10 @@ public class TaxYear
     /**
      * TaxInfoSet.
      */
-    private final TaxInfoSet theInfoSet;
+    private final TaxYearInfoSet theInfoSet;
 
     @Override
-    public TaxInfoSet getInfoSet() {
+    public TaxYearInfoSet getInfoSet() {
         return theInfoSet;
     }
 
@@ -330,32 +330,6 @@ public class TaxYear
         return hasInfoSet
                          ? theInfoSet.getValue(TaxYearInfoClass.HICAPITALTAXRATE, JRate.class)
                          : null;
-    }
-
-    /**
-     * adjust values after taxRegime change.
-     * @throws JOceanusException on error
-     */
-    public void adjustForTaxRegime() throws JOceanusException {
-        /* Access tax regime */
-        TaxRegime myRegime = getTaxRegime();
-
-        /* If we are setting a non-null regime */
-        if (myRegime != null) {
-            /* Clear Capital tax rates if required */
-            if (myRegime.hasCapitalGainsAsIncome()) {
-                setCapTaxRate(null);
-                setHiCapTaxRate(null);
-            }
-
-            /* Clear Additional values if required */
-            if (!myRegime.hasAdditionalTaxBand()) {
-                setAddAllowLimit(null);
-                setAddIncBound(null);
-                setAddTaxRate(null);
-                setAddDivTaxRate(null);
-            }
-        }
     }
 
     /**
@@ -642,7 +616,7 @@ public class TaxYear
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        TaxYearInfoClass myClass = TaxInfoSet.getClassForField(pField);
+        TaxYearInfoClass myClass = TaxYearInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)
@@ -687,14 +661,14 @@ public class TaxYear
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+                theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
                 theInfoSet.cloneDataInfoSet(pTaxYear.getInfoSet());
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
             case CLONE:
             case CORE:
-                theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+                theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
                 break;
@@ -718,9 +692,18 @@ public class TaxYear
         super(pList, pValues);
 
         /* Create the InfoSet */
-        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+        theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
         hasInfoSet = true;
         useInfoSet = false;
+    }
+
+    /**
+     * adjust values after taxRegime change.
+     * @throws JOceanusException on error
+     */
+    public void autoCorrect() throws JOceanusException {
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect();
     }
 
     /**

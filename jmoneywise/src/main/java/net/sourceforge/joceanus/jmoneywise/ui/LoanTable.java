@@ -829,7 +829,7 @@ public class LoanTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setLoanCategory((LoanCategory) pValue);
-                    pItem.adjustForCategory(theUpdateSet);
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);

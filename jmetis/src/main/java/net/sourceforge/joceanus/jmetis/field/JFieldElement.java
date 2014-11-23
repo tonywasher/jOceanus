@@ -30,7 +30,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
@@ -401,12 +400,8 @@ public class JFieldElement<T extends JFieldSetItem> {
             add(myComponent, NAME_EDITABLE);
             add(myLabel, NAME_READONLY);
 
-            /* Set maximum size and alignment */
+            /* Set maximum size */
             setMaximumSize(myComponent.getMaximumSize());
-            if (myComponent instanceof JTextField) {
-                JTextField myField = (JTextField) myComponent;
-                myLabel.setHorizontalAlignment(myField.getHorizontalAlignment());
-            }
         }
 
         /**

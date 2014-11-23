@@ -348,7 +348,6 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_TAXFREE)) {
             /* Update the taxFree indication */
             myPortfolio.setTaxFree(pUpdate.getBoolean());
-            myPortfolio.adjustForTaxFree(getUpdateSet());
         } else {
             /* Switch on the field */
             switch (PortfolioInfoSet.getClassForField(myField)) {
@@ -401,7 +400,6 @@ public class PortfolioPanel
 
         /* Record active item */
         Payee myCurr = pPortfolio.getParent();
-        Boolean isTaxFree = pPortfolio.isTaxFree();
         JMenuItem myActive = null;
 
         /* Access Payees */
@@ -414,7 +412,7 @@ public class PortfolioPanel
 
             /* Ignore deleted/closed and ones that cannot own this portfolio */
             boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
-            bIgnore |= !myPayee.canParentPortfolio(getUpdateSet(), isTaxFree);
+            bIgnore |= !myPayee.getPayeeTypeClass().canParentPortfolio();
             if (bIgnore) {
                 continue;
             }

@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * LoanInfoSet class.
@@ -163,6 +164,7 @@ public class LoanInfoSet
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
+            case OPENINGBALANCE:
                 return JDataFieldRequired.CANEXIST;
 
                 /* Old style */
@@ -171,7 +173,6 @@ public class LoanInfoSet
             case USERID:
             case PASSWORD:
             case MATURITY:
-            case OPENINGBALANCE:
             case AUTOEXPENSE:
             default:
                 return JDataFieldRequired.NOTALLOWED;
@@ -211,6 +212,13 @@ public class LoanInfoSet
 
             /* Switch on class */
             switch (myClass) {
+                case OPENINGBALANCE:
+                    /* Access data */
+                    JMoney myBalance = myInfo.getValue(JMoney.class);
+                    if (!myBalance.getCurrency().equals(myLoan.getLoanCurrency().getCurrency())) {
+                        myLoan.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
+                    }
+                    break;
                 case SORTCODE:
                 case ACCOUNT:
                 case NOTES:

@@ -645,7 +645,7 @@ public class TaxYearTable
             switch (pColIndex) {
                 case COLUMN_REGIME:
                     pItem.setTaxRegime((TaxRegime) pValue);
-                    pItem.adjustForTaxRegime();
+                    pItem.autoCorrect();
                     break;
                 case COLUMN_ACTIVE:
                     pItem.setDeleted(true);

@@ -241,7 +241,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.3</version>
         <configuration>
            <linkXref>true</linkXref>
            <aggregate>true</aggregate>
