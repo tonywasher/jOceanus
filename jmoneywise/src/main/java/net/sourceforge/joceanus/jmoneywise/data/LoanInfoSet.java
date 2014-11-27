@@ -142,12 +142,8 @@ public class LoanInfoSet
                               : isClassRequired(myClass);
     }
 
-    /**
-     * Determine if an infoSet class is required.
-     * @param pClass the infoSet class
-     * @return the status
-     */
-    protected JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    @Override
+    public JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Loan */
         Loan myLoan = getOwner();
         LoanCategory myCategory = myLoan.getCategory();

@@ -268,7 +268,7 @@ public class LoanPanel
         /* If we have an item */
         Loan myItem = getItem();
         if (myItem != null) {
-            LoanList myLoans = findDataList(MoneyWiseDataType.LOAN, LoanList.class);
+            LoanList myLoans = getDataList(MoneyWiseDataType.LOAN, LoanList.class);
             setItem(myLoans.findItemById(myItem.getId()));
         }
 
@@ -404,7 +404,7 @@ public class LoanPanel
         JMenuItem myActive = null;
 
         /* Access Loan Categories */
-        LoanCategoryList myCategories = findDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+        LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -462,7 +462,7 @@ public class LoanPanel
         JMenuItem myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
         Iterator<Payee> myIterator = myPayees.iterator();
@@ -505,7 +505,7 @@ public class LoanPanel
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

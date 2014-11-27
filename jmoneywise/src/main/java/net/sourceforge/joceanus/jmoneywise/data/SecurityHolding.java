@@ -406,8 +406,8 @@ public final class SecurityHolding
          */
         public SecurityHoldingMap(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
             /* Access lists */
-            thePortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-            theSecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+            thePortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+            theSecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         }
 
         /**

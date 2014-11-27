@@ -96,7 +96,7 @@ public class TransactionTagPanel
         /* If we have an item */
         TransactionTag myItem = getItem();
         if (myItem != null) {
-            TransactionTagList myTags = findDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+            TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
             setItem(myTags.findItemById(myItem.getId()));
         }
 

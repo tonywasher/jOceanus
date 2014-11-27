@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedMoney;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
@@ -31,14 +33,23 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
+import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -868,6 +879,193 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+    }
+
+    /**
+     * autoCorrect values after change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Access details */
+        TransactionAsset myAccount = getAccount();
+        TransactionAsset myPartner = getPartner();
+        TransactionCategory myCategory = getCategory();
+        AssetDirection myDir = getDirection();
+        JMoney myAmount = getAmount();
+
+        /* Check that category is valid */
+        if (!TransactionValidator.isValidCategory(myAccount, myCategory)) {
+            /* Determine valid category */
+            myCategory = getDefaultCategory(pUpdateSet, myAccount);
+            setCategory(myCategory);
+        }
+
+        /* Check that direction is valid */
+        if (!TransactionValidator.isValidDirection(myAccount, myCategory, myDir)) {
+            /* Reverse direction */
+            switchDirection();
+        }
+
+        /* Check that partner is valid */
+        if (!TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
+            /* Determine valid partner */
+            myPartner = getDefaultPartner(pUpdateSet, myAccount, myCategory);
+            setPartner(myPartner);
+        }
+
+        /* If we have a non-zero amount */
+        if (myAmount != null && myAmount.isNonZero()) {
+            /* Check whether it needs to be forced to be zero */
+            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            if (myClass.needsZeroAmount()) {
+                /* Need to get currency correct */
+                setAmount(new JMoney());
+            }
+        }
+    }
+
+    /**
+     * Obtain default category for account.
+     * @param pUpdateSet the update set
+     * @param pAccount the account
+     * @return the default category
+     */
+    protected TransactionCategory getDefaultCategory(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                                     final TransactionAsset pAccount) {
+        /* Access Categories */
+        TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+
+        /* Loop through the available category values */
+        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategory myCategory = myIterator.next();
+
+            /* Only process non-deleted low-level items */
+            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            if (myCategory.isDeleted() || myClass.canParentCategory()) {
+                continue;
+            }
+
+            /* Check whether the category is allowable for the owner */
+            if (TransactionValidator.isValidCategory(pAccount, myCategory)) {
+                return myCategory;
+            }
+        }
+
+        /* No category available */
+        return null;
+    }
+
+    /**
+     * Obtain default partner for account and transaction.
+     * @param pUpdateSet the update set
+     * @param pAccount the account
+     * @param pCategory the category
+     * @return the default partner
+     */
+    protected TransactionAsset getDefaultPartner(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                                 final TransactionAsset pAccount,
+                                                 final TransactionCategory pCategory) {
+        /* Try deposits/cash/loans */
+        TransactionAsset myPartner = getDefaultPartnerAsset(pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), pAccount, pCategory);
+        if (myPartner == null) {
+            myPartner = getDefaultPartnerAsset(pUpdateSet.getDataList(MoneyWiseDataType.CASH, CashList.class), pAccount, pCategory);
+        }
+        if (myPartner == null) {
+            myPartner = getDefaultPartnerAsset(pUpdateSet.getDataList(MoneyWiseDataType.LOAN, LoanList.class), pAccount, pCategory);
+        }
+
+        /* Try holdings */
+        if (myPartner == null) {
+            myPartner = getDefaultPartnerHolding(pUpdateSet, pAccount, pCategory);
+        }
+
+        /* Try portfolios/payees */
+        if (myPartner == null) {
+            myPartner = getDefaultPartnerAsset(pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), pAccount, pCategory);
+        }
+        if (myPartner == null) {
+            myPartner = getDefaultPartnerAsset(pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class), pAccount, pCategory);
+        }
+
+        /* Return the partner */
+        return myPartner;
+    }
+
+    /**
+     * Obtain the default partner from an asset list.
+     * @param <X> the Asset type
+     * @param pList the list to select from
+     * @param pAccount the account
+     * @param pCategory the category
+     * @return the default partner or null
+     */
+    private <X extends AssetBase<X>> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X> pList,
+                                                                             final TransactionAsset pAccount,
+                                                                             final TransactionCategory pCategory) {
+        /* Loop through the available values */
+        Iterator<X> myIterator = pList.iterator();
+        while (myIterator.hasNext()) {
+            X myAsset = myIterator.next();
+
+            /* Only process non-deleted, non-closed items */
+            if (myAsset.isDeleted() || myAsset.isClosed()) {
+                continue;
+            }
+
+            /* Check whether the asset is allowable for the owner */
+            if (TransactionValidator.isValidPartner(pAccount, pCategory, myAsset)) {
+                return myAsset;
+            }
+        }
+
+        /* No asset available */
+        return null;
+    }
+
+    /**
+     * Obtain the default partner security holding from the security map.
+     * @param pUpdateSet the update set
+     * @param pAccount the account
+     * @param pCategory the category
+     * @return the default partner
+     */
+    private SecurityHolding getDefaultPartnerHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                                     final TransactionAsset pAccount,
+                                                     final TransactionCategory pCategory) {
+        /* Access Portfolios and Holdings Map */
+        MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+
+        /* Loop through the Portfolios */
+        Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            Portfolio myPortfolio = myPortIterator.next();
+
+            /* Ignore deleted or closed */
+            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
+                continue;
+            }
+
+            /* Look for existing holdings */
+            Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            if (myExistIterator != null) {
+                /* Loop through them */
+                while (myExistIterator.hasNext()) {
+                    SecurityHolding myHolding = myExistIterator.next();
+
+                    /* Check whether the asset is allowable for the combination */
+                    if (TransactionValidator.isValidPartner(pAccount, pCategory, myHolding)) {
+                        return myHolding;
+                    }
+                }
+            }
+        }
+
+        /* No holding available */
+        return null;
     }
 
     /**

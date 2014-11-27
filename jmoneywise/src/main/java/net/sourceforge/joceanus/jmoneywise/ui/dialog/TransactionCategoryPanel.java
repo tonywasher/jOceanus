@@ -133,7 +133,7 @@ public class TransactionCategoryPanel
         /* If we have an item */
         TransactionCategory myItem = getItem();
         if (myItem != null) {
-            TransactionCategoryList myCategories = findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+            TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -217,7 +217,7 @@ public class TransactionCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Transaction Category types */
-        TransactionCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
+        TransactionCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
 
         /* Loop through the TransCategoryTypes */
         Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();

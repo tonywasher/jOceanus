@@ -457,7 +457,7 @@ public class SecurityPrice
      */
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
-        SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         resolveDataLink(FIELD_SECURITY, mySecurities);
     }
 

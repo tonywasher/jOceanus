@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -168,12 +169,8 @@ public class TaxYearInfoSet
                               : isClassRequired(myClass);
     }
 
-    /**
-     * Determine if an infoSet class is required.
-     * @param pClass the infoSet class
-     * @return the status
-     */
-    protected JDataFieldRequired isClassRequired(final TaxYearInfoClass pClass) {
+    @Override
+    public JDataFieldRequired isClassRequired(final TaxYearInfoClass pClass) {
         /* Access details about the Tax Year */
         TaxYear myTaxYear = getOwner();
         TaxRegime myRegime = myTaxYear.getTaxRegime();
@@ -278,70 +275,31 @@ public class TaxYearInfoSet
         }
     }
 
-    /**
-     * adjust values after change.
-     * @throws JOceanusException on error
-     */
-    protected void autoCorrect() throws JOceanusException {
-        /* Access tax regime */
-        TaxYear myOwner = getOwner();
-        TaxRegime myRegime = myOwner.getTaxRegime();
-
-        /* If Capital Gains is taxed as income */
-        if (myRegime.hasCapitalGainsAsIncome()) {
-            /* Clear the rates */
-            setValue(TaxYearInfoClass.CAPITALTAXRATE, null);
-            setValue(TaxYearInfoClass.HICAPITALTAXRATE, null);
-
-            /* Else Initialise CapitalTaxRate from Standard Rate if required */
-        } else if (getInfo(TaxYearInfoClass.CAPITALTAXRATE) == null) {
-            JRate myRate = getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class);
-            setValue(TaxYearInfoClass.CAPITALTAXRATE, myRate);
-        }
-
-        /* If we do not use additional bands */
-        if (!myRegime.hasAdditionalTaxBand()) {
-            /* Clear the values */
-            setValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, null);
-            setValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, null);
-            setValue(TaxYearInfoClass.ADDITIONALTAXRATE, null);
-            setValue(TaxYearInfoClass.ADDITIONALTAXRATE, null);
-
-            /* Else we need additional bands */
-        } else {
-            /* Set boundaries as required */
-            if (getInfo(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT) == null) {
-                setValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, DEFAULT_ADDLIMIT);
-            }
-            if (getInfo(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD) == null) {
-                setValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, DEFAULT_ADDTHRESHOLD);
-            }
-
-            /* Initialise Additional rates from High rates */
-            if (getInfo(TaxYearInfoClass.ADDITIONALTAXRATE) == null) {
-                JRate myRate = getValue(TaxYearInfoClass.HITAXRATE, JRate.class);
-                setValue(TaxYearInfoClass.ADDITIONALTAXRATE, myRate);
-            }
-            if (getInfo(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE) == null) {
-                JRate myRate = getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class);
-                setValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, myRate);
-            }
-        }
-
-        /* Access age allowances */
-        JMoney myAllow = getValue(TaxYearInfoClass.ALLOWANCE, JMoney.class);
-        JMoney myLoAgeAllow = getValue(TaxYearInfoClass.LOAGEALLOWANCE, JMoney.class);
-        JMoney myHiAgeAllow = getValue(TaxYearInfoClass.HIAGEALLOWANCE, JMoney.class);
-
-        /* Check LoAge Allowance */
-        if (myLoAgeAllow.compareTo(myAllow) < 0) {
-            setValue(TaxYearInfoClass.LOAGEALLOWANCE, myAllow);
-            myLoAgeAllow = myAllow;
-        }
-
-        /* Check HiAge Allowance */
-        if (myHiAgeAllow.compareTo(myLoAgeAllow) < 0) {
-            setValue(TaxYearInfoClass.HIAGEALLOWANCE, myLoAgeAllow);
+    @Override
+    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
+                                   final TaxYearInfoClass pClass) throws JOceanusException {
+        /* Switch on the class */
+        switch (pClass) {
+            case CAPITALTAXRATE:
+                JRate myRate = getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class);
+                setValue(pClass, myRate);
+                break;
+            case ADDITIONALTAXRATE:
+                myRate = getValue(TaxYearInfoClass.HITAXRATE, JRate.class);
+                setValue(pClass, myRate);
+                break;
+            case ADDITIONALDIVIDENDTAXRATE:
+                myRate = getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class);
+                setValue(pClass, myRate);
+                break;
+            case ADDITIONALALLOWANCELIMIT:
+                setValue(pClass, DEFAULT_ADDLIMIT);
+                break;
+            case ADDITIONALINCOMETHRESHOLD:
+                setValue(pClass, DEFAULT_ADDTHRESHOLD);
+                break;
+            default:
+                break;
         }
     }
 }

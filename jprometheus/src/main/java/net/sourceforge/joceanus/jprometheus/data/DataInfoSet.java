@@ -36,8 +36,10 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
+import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -813,6 +815,54 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      */
     public boolean isEmpty() {
         return theMap.isEmpty();
+    }
+
+    /**
+     * autoCorrect values after change.
+     * @param pUpdateSet the update set
+     * @throws JOceanusException on error
+     */
+    public void autoCorrect(final DataListSet<E> pUpdateSet) throws JOceanusException {
+        /* Loop through the classes */
+        for (S myClass : theTypeList.getEnumClass().getEnumConstants()) {
+            /* Access value and requirement */
+            JDataFieldRequired myState = isClassRequired(myClass);
+
+            /* Switch on required state */
+            switch (myState) {
+                case MUSTEXIST:
+                    if (getInfo(myClass) == null) {
+                        setDefaultValue(pUpdateSet, myClass);
+                    }
+                    break;
+                case NOTALLOWED:
+                    if (getInfo(myClass) != null) {
+                        setValue(myClass, null);
+                    }
+                    break;
+                case CANEXIST:
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public abstract JDataFieldRequired isClassRequired(final S pClass);
+
+    /**
+     * set default value after update.
+     * @param pUpdateSet the update set
+     * @param pClass the class
+     * @throws JOceanusException on error
+     */
+    protected void setDefaultValue(final DataListSet<E> pUpdateSet,
+                                   final S pClass) throws JOceanusException {
+        /* Overridden as necessary */
     }
 
     /**

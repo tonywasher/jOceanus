@@ -1331,21 +1331,26 @@ public class TransactionTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setCategory((TransactionCategory) pValue);
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_ACCOUNT:
                     pItem.setAccount(TransactionPanel.resolveAsset((TransactionAsset) pValue));
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_DIRECTION:
                     pItem.switchDirection();
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARTNER:
                     pItem.setPartner(TransactionPanel.resolveAsset((TransactionAsset) pValue));
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_DESC:
                     pItem.setComments((String) pValue);
                     break;
                 case COLUMN_AMOUNT:
                     pItem.setAmount((JMoney) pValue);
+                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_REF:
                     pItem.setReference((String) pValue);

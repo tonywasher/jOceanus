@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
@@ -699,11 +700,12 @@ public class TaxYear
 
     /**
      * adjust values after taxRegime change.
+     * @param pUpdateSet the update set
      * @throws JOceanusException on error
      */
-    public void autoCorrect() throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* autoCorrect the infoSet */
-        theInfoSet.autoCorrect();
+        theInfoSet.autoCorrect(pUpdateSet);
     }
 
     /**

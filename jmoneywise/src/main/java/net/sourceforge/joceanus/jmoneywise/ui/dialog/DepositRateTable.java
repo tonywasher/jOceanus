@@ -198,7 +198,7 @@ public class DepositRateTable
      */
     protected void refreshData() {
         /* Access the rates list */
-        theRates = theUpdateSet.findDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
+        theRates = theUpdateSet.getDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
         theHeader = new RateHeader(theRates);
         theColumns.setDateRange();
         setList(theRates);

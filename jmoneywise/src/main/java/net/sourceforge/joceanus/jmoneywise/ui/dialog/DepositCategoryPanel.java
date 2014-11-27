@@ -138,7 +138,7 @@ public class DepositCategoryPanel
         /* If we have an item */
         DepositCategory myItem = getItem();
         if (myItem != null) {
-            DepositCategoryList myCategories = findDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
+            DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -223,7 +223,7 @@ public class DepositCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Deposit Category types */
-        DepositCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
+        DepositCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
 
         /* Loop through the DepositCategoryTypes */
         Iterator<DepositCategoryType> myIterator = myCategoryTypes.iterator();

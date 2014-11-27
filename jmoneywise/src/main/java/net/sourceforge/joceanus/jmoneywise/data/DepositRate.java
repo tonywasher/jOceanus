@@ -574,7 +574,7 @@ public class DepositRate
      */
     private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
-        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
         resolveDataLink(FIELD_DEPOSIT, myDeposits);
     }
 

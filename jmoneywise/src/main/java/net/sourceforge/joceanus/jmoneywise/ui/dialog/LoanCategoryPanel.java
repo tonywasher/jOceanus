@@ -133,7 +133,7 @@ public class LoanCategoryPanel
         /* If we have an item */
         LoanCategory myItem = getItem();
         if (myItem != null) {
-            LoanCategoryList myCategories = findDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+            LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -218,7 +218,7 @@ public class LoanCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Loan Category types */
-        LoanCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
+        LoanCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
 
         /* Loop through the LoanCategoryTypes */
         Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();

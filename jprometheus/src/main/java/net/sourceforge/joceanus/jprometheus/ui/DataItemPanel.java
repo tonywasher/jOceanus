@@ -398,10 +398,10 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      */
     public <L extends DataList<X, E>, X extends DataItem<E> & Comparable<? super X>>
             L
-            findDataList(final E pDataType,
-                         final Class<L> pClass) {
+            getDataList(final E pDataType,
+                        final Class<L> pClass) {
         /* Look up the base list */
-        return theUpdateSet.findDataList(pDataType, pClass);
+        return theUpdateSet.getDataList(pDataType, pClass);
     }
 
     /**

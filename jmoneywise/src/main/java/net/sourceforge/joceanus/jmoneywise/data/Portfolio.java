@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
@@ -80,6 +81,11 @@ public class Portfolio
      * Parent Field Id.
      */
     public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
+
+    /**
+     * Currency Field Id.
+     */
+    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * isTaxFree Field Id.
@@ -125,6 +131,9 @@ public class Portfolio
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
         if (FIELD_PARENT.equals(pField)) {
+            return true;
+        }
+        if (FIELD_CURRENCY.equals(pField)) {
             return true;
         }
         if (FIELD_TAXFREE.equals(pField)) {
@@ -266,6 +275,36 @@ public class Portfolio
                                  : myParent.getName();
     }
 
+    /**
+     * Obtain Portfolio Currency.
+     * @return the currency
+     */
+    public AccountCurrency getPortfolioCurrency() {
+        return getPortfolioCurrency(getValueSet());
+    }
+
+    /**
+     * Obtain PortfolioCurrencyId.
+     * @return the currencyId
+     */
+    public Integer getPortfolioCurrencyId() {
+        AccountCurrency myCurrency = getPortfolioCurrency();
+        return (myCurrency == null)
+                                   ? null
+                                   : myCurrency.getId();
+    }
+
+    /**
+     * Obtain PortfolioCurrencyName.
+     * @return the currencyName
+     */
+    public String getPortfolioCurrencyName() {
+        AccountCurrency myCurrency = getPortfolioCurrency();
+        return (myCurrency == null)
+                                   ? null
+                                   : myCurrency.getName();
+    }
+
     @Override
     public Boolean isTaxFree() {
         return isTaxFree(getValueSet());
@@ -278,6 +317,15 @@ public class Portfolio
      */
     public static Payee getParent(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, Payee.class);
+    }
+
+    /**
+     * Obtain PortfolioCurrency.
+     * @param pValueSet the valueSet
+     * @return the PortfolioCurrency
+     */
+    public static AccountCurrency getPortfolioCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
     }
 
     /**
@@ -311,6 +359,30 @@ public class Portfolio
      */
     private void setValueParent(final String pValue) {
         getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set portfolio currency value.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final AccountCurrency pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set portfolio currency id.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final Integer pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set portfolio currency name.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final String pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
     /**
@@ -496,6 +568,16 @@ public class Portfolio
                 setValueParent((String) myValue);
             }
 
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            } else if (myValue instanceof AccountCurrency) {
+                setValueCurrency((AccountCurrency) myValue);
+            }
+
             /* Store the taxFree flag */
             myValue = pValues.getValue(FIELD_TAXFREE);
             if (myValue instanceof Boolean) {
@@ -544,6 +626,7 @@ public class Portfolio
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setParent(getDefaultParent(pUpdateSet));
+        setPortfolioCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
     }
@@ -555,7 +638,7 @@ public class Portfolio
      */
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* loop through the payees */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
             Payee myPayee = myIterator.next();
@@ -581,6 +664,7 @@ public class Portfolio
         MoneyWiseData myData = getDataSet();
         ValueSet myValues = getValueSet();
         resolveDataLink(FIELD_PARENT, myData.getPayees());
+        resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
 
         /* Adjust TaxFree */
         Object myTaxFree = myValues.getValue(FIELD_TAXFREE);
@@ -592,7 +676,7 @@ public class Portfolio
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent/holding within list */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 
@@ -603,6 +687,14 @@ public class Portfolio
      */
     public void setParent(final Payee pParent) throws JOceanusException {
         setValueParent(pParent);
+    }
+
+    /**
+     * Set a new portfolio currency.
+     * @param pCurrency the new currency
+     */
+    public void setPortfolioCurrency(final AccountCurrency pCurrency) {
+        setValueCurrency(pCurrency);
     }
 
     /**
@@ -718,6 +810,10 @@ public class Portfolio
 
     @Override
     public void touchUnderlyingItems() {
+        /* Touch parent and currency */
+        getParent().touchItem(this);
+        getPortfolioCurrency().touchItem(this);
+
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
     }
@@ -734,6 +830,7 @@ public class Portfolio
     @Override
     public void validate() {
         Payee myParent = getParent();
+        AccountCurrency myCurrency = getPortfolioCurrency();
 
         /* Validate base components */
         super.validate();
@@ -752,6 +849,13 @@ public class Portfolio
             if (!isClosed() && myParent.isClosed()) {
                 addError(ERROR_PARCLOSED, FIELD_CLOSED);
             }
+        }
+
+        /* Currency must be non-null and enabled */
+        if (myCurrency == null) {
+            addError(ERROR_MISSING, FIELD_CURRENCY);
+        } else if (!myCurrency.getEnabled()) {
+            addError(ERROR_DISABLED, FIELD_CURRENCY);
         }
 
         /* If we have an infoSet */
@@ -799,6 +903,11 @@ public class Portfolio
         /* Update the parent account if required */
         if (!Difference.isEqual(getParent(), myPortfolio.getParent())) {
             setValueParent(myPortfolio.getParent());
+        }
+
+        /* Update the portfolio currency if required */
+        if (!Difference.isEqual(getPortfolioCurrency(), myPortfolio.getPortfolioCurrency())) {
+            setValueCurrency(myPortfolio.getPortfolioCurrency());
         }
 
         /* Update the taxFree status if required */
@@ -916,7 +1025,7 @@ public class Portfolio
         public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             PortfolioList myList = getEmptyList(ListStyle.EDIT);
-            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             myList.ensureMap(myDeposits);
 
             /* Store InfoType list */

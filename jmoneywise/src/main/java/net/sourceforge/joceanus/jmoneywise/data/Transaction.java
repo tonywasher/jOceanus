@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -570,13 +571,13 @@ public class Transaction
         return theInfoSet.isClassRequired(pClass);
     }
 
-    /**
-     * autoCorrect values after change.
-     * @throws JOceanusException on error
-     */
-    public void autoCorrect() throws JOceanusException {
+    @Override
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* autoCorrect the base item */
+        super.autoCorrect(pUpdateSet);
+
         /* autoCorrect the infoSet */
-        theInfoSet.autoCorrect();
+        theInfoSet.autoCorrect(pUpdateSet);
     }
 
     /**

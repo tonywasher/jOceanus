@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
@@ -48,7 +50,7 @@ import org.slf4j.Logger;
  */
 public class UpdateSet<E extends Enum<E>>
         extends JEventObject
-        implements JDataContents {
+        implements JDataContents, DataListSet<E> {
     /**
      * Report fields.
      */
@@ -135,6 +137,16 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
+     * Obtain the dataSet.
+     * @param <T> the dataSet type
+     * @param pClass the class of the dataSet
+     * @return the dataSet
+     */
+    public <T extends DataSet<T, E>> T getDataSet(final Class<T> pClass) {
+        return pClass.cast(theControl.getData());
+    }
+
+    /**
      * Constructor for an update list.
      * @param pControl the Data Control
      * @param pClass the enum class
@@ -178,16 +190,15 @@ public class UpdateSet<E extends Enum<E>>
      * <p>
      * Will look first for the list in the updateSet and then in the underlying data.
      * @param <L> the list type
-     * @param <T> the object type
      * @param pDataType the data type
      * @param pClass the list class
      * @return the list
      */
-    public <L extends DataList<T, E>, T extends DataItem<E> & Comparable<? super T>> L findDataList(final E pDataType,
-                                                                                                    final Class<L> pClass) {
+    public <L extends DataList<?, E>> L getDataList(final E pDataType,
+                                                    final Class<L> pClass) {
         /* Locate an existing entry */
         @SuppressWarnings("unchecked")
-        UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
+        UpdateEntry<?, E> myEntry = (UpdateEntry<?, E>) theMap.get(pDataType);
 
         /* Cast correctly */
         return myEntry != null

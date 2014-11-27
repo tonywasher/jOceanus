@@ -275,7 +275,7 @@ public class Cash
     /**
      * Obtain CashCurrency.
      * @param pValueSet the valueSet
-     * @return the SecurityCurrency
+     * @return the CashCurrency
      */
     public static AccountCurrency getCashCurrency(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
@@ -894,7 +894,7 @@ public class Cash
         public CashList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
             /* Build an empty List */
             CashList myList = getEmptyList(ListStyle.EDIT);
-            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             myList.ensureMap(myDeposits);
 
             /* Store InfoType list */

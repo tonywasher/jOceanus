@@ -384,7 +384,7 @@ public class Deposit
     /**
      * Obtain DepositCurrency.
      * @param pValueSet the valueSet
-     * @return the SecurityCurrency
+     * @return the PortfolioCurrency
      */
     public static AccountCurrency getDepositCurrency(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
@@ -815,7 +815,7 @@ public class Deposit
      */
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access details */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         DepositCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
@@ -886,7 +886,7 @@ public class Deposit
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 

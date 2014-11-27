@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -55,6 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.PortfolioPanel;
@@ -72,6 +74,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Portfolio Table.
@@ -97,6 +100,11 @@ public class PortfolioTable
      * Parent Column Title.
      */
     private static final String TITLE_PARENT = Portfolio.FIELD_PARENT.getName();
+
+    /**
+     * Currency Column Title.
+     */
+    private static final String TITLE_CURRENCY = Portfolio.FIELD_CURRENCY.getName();
 
     /**
      * Closed Column Title.
@@ -598,19 +606,24 @@ public class PortfolioTable
         private static final int COLUMN_PARENT = 2;
 
         /**
+         * Currency column id.
+         */
+        private static final int COLUMN_CURR = 3;
+
+        /**
          * Closed column id.
          */
-        private static final int COLUMN_CLOSED = 3;
+        private static final int COLUMN_CLOSED = 4;
 
         /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 4;
+        private static final int COLUMN_ACTIVE = 5;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 5;
+        private static final int COLUMN_LASTTRAN = 6;
 
         /**
          * Closed Icon Renderer.
@@ -653,6 +666,11 @@ public class PortfolioTable
         private final ScrollButtonCellEditor<Payee> theParentEditor;
 
         /**
+         * Currency ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
+
+        /**
          * Closed column.
          */
         private final JDataTableColumn theClosedColumn;
@@ -670,6 +688,7 @@ public class PortfolioTable
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -683,6 +702,7 @@ public class PortfolioTable
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theCurrencyEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
@@ -690,6 +710,9 @@ public class PortfolioTable
 
             /* Initialise the columns */
             setColumns();
+
+            /* Add listeners */
+            new EditorListener();
         }
 
         /**
@@ -717,6 +740,8 @@ public class PortfolioTable
                     return TITLE_DESC;
                 case COLUMN_PARENT:
                     return TITLE_PARENT;
+                case COLUMN_CURR:
+                    return TITLE_CURRENCY;
                 case COLUMN_CLOSED:
                     return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
@@ -744,6 +769,8 @@ public class PortfolioTable
                     return pPortfolio.getParent();
                 case COLUMN_DESC:
                     return pPortfolio.getDesc();
+                case COLUMN_CURR:
+                    return pPortfolio.getPortfolioCurrency();
                 case COLUMN_CLOSED:
                     return pPortfolio.isClosed();
                 case COLUMN_ACTIVE:
@@ -781,6 +808,9 @@ public class PortfolioTable
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);
                     break;
+                case COLUMN_CURR:
+                    pItem.setPortfolioCurrency((AccountCurrency) pValue);
+                    break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
                     break;
@@ -805,6 +835,7 @@ public class PortfolioTable
                 case COLUMN_DESC:
                     return true;
                 case COLUMN_PARENT:
+                case COLUMN_CURR:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
@@ -828,12 +859,69 @@ public class PortfolioTable
                     return Portfolio.FIELD_DESC;
                 case COLUMN_PARENT:
                     return Portfolio.FIELD_PARENT;
+                case COLUMN_CURR:
+                    return Portfolio.FIELD_CURRENCY;
                 case COLUMN_CLOSED:
                     return Portfolio.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Portfolio.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * EditorListener.
+         */
+        private final class EditorListener
+                implements ChangeListener {
+            /**
+             * Constructor.
+             */
+            private EditorListener() {
+                theParentEditor.addChangeListener(this);
+                theCurrencyEditor.addChangeListener(this);
+            }
+
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                Object o = pEvent.getSource();
+
+                if (theParentEditor.equals(o)) {
+                    buildParentMenu();
+                } else if (theCurrencyEditor.equals(o)) {
+                    buildCurrencyMenu();
+                }
+            }
+
+            /**
+             * Build the popUpMenu for parents.
+             */
+            private void buildParentMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theParentEditor.getPoint();
+                Portfolio myPortfolio = thePortfolios.get(myCell.y);
+
+                /* Build the menu */
+                theActiveAccount.buildParentMenu(myBuilder, myPortfolio);
+            }
+
+            /**
+             * Build the popUpMenu for currencies.
+             */
+            private void buildCurrencyMenu() {
+                /* Access details */
+                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
+
+                /* Record active item */
+                Point myCell = theCurrencyEditor.getPoint();
+                Portfolio myPortfolio = thePortfolios.get(myCell.y);
+
+                /* Build the menu */
+                theActiveAccount.buildCurrencyMenu(myBuilder, myPortfolio);
             }
         }
     }

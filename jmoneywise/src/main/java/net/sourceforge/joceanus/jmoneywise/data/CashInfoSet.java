@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountI
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
@@ -205,12 +205,8 @@ public class CashInfoSet
                               : isClassRequired(myClass);
     }
 
-    /**
-     * Determine if an infoSet class is required.
-     * @param pClass the infoSet class
-     * @return the status
-     */
-    protected JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    @Override
+    public JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Cash */
         Cash myCash = getOwner();
         CashCategory myCategory = myCash.getCategory();
@@ -311,35 +307,19 @@ public class CashInfoSet
         }
     }
 
-    /**
-     * autoCorrect values after change.
-     * @param pUpdateSet the update set
-     * @throws JOceanusException on error
-     */
-    protected void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* Access cash account */
-        Cash myCash = getOwner();
-
-        /* If we are autoExpense */
-        if (myCash.isAutoExpense()) {
-            /* Ensure that we have an autoExpense */
-            if (getInfo(AccountInfoClass.AUTOEXPENSE) == null) {
-                setValue(AccountInfoClass.AUTOEXPENSE, getDefaultAutoExpense(pUpdateSet));
-            }
-
-            /* Ensure that we have an autoPayee */
-            if (getInfo(AccountInfoClass.AUTOPAYEE) == null) {
-                setValue(AccountInfoClass.AUTOPAYEE, getDefaultAutoPayee(pUpdateSet));
-            }
-
-            /* No opening balance */
-            setValue(AccountInfoClass.OPENINGBALANCE, null);
-
-            /* Else standard cash account */
-        } else {
-            /* Ensure that autoPayee and autoExpense are null */
-            setValue(AccountInfoClass.AUTOEXPENSE, null);
-            setValue(AccountInfoClass.AUTOPAYEE, null);
+    @Override
+    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
+                                   final AccountInfoClass pClass) throws JOceanusException {
+        /* Switch on the class */
+        switch (pClass) {
+            case AUTOEXPENSE:
+                setValue(pClass, getDefaultAutoExpense(pUpdateSet));
+                break;
+            case AUTOPAYEE:
+                setValue(pClass, getDefaultAutoPayee(pUpdateSet));
+                break;
+            default:
+                break;
         }
     }
 
@@ -348,9 +328,9 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default expense
      */
-    private TransactionCategory getDefaultAutoExpense(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private TransactionCategory getDefaultAutoExpense(final DataListSet<MoneyWiseDataType> pUpdateSet) {
         /* Access the category list */
-        TransactionCategoryList myCategories = pUpdateSet.findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* loop through the categories */
         Iterator<TransactionCategory> myIterator = myCategories.iterator();
@@ -378,9 +358,9 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default payee
      */
-    private Payee getDefaultAutoPayee(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private Payee getDefaultAutoPayee(final DataListSet<MoneyWiseDataType> pUpdateSet) {
         /* Access the payee list */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* loop through the payees */
         Iterator<Payee> myIterator = myPayees.iterator();

@@ -46,6 +46,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -79,6 +81,11 @@ public class PortfolioPanel
     private final JScrollButton<Payee> theParentButton;
 
     /**
+     * Currency Button Field.
+     */
+    private final JScrollButton<AccountCurrency> theCurrencyButton;
+
+    /**
      * Closed Button Field.
      */
     private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
@@ -102,6 +109,7 @@ public class PortfolioPanel
 
         /* Create the buttons */
         theParentButton = new JScrollButton<Payee>();
+        theCurrencyButton = new JScrollButton<AccountCurrency>();
 
         /* Set button states */
         theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
@@ -156,6 +164,7 @@ public class PortfolioPanel
         restrictField(myName, Portfolio.NAMELEN);
         restrictField(myDesc, Portfolio.NAMELEN);
         restrictField(theParentButton, Portfolio.NAMELEN);
+        restrictField(theCurrencyButton, Portfolio.NAMELEN);
         restrictField(myClosedButton, Portfolio.NAMELEN);
         restrictField(myTaxFreeButton, Portfolio.NAMELEN);
 
@@ -163,6 +172,7 @@ public class PortfolioPanel
         theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, myName);
         theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, theParentButton);
+        theFieldSet.addFieldElement(Portfolio.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
 
@@ -175,6 +185,7 @@ public class PortfolioPanel
         theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_PARENT, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -265,7 +276,7 @@ public class PortfolioPanel
         /* If we have an item */
         Portfolio myItem = getItem();
         if (myItem != null) {
-            PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+            PortfolioList myPortfolios = getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
             setItem(myPortfolios.findItemById(myItem.getId()));
         }
 
@@ -317,8 +328,9 @@ public class PortfolioPanel
         boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Parent, Holding and TaxFree status cannot be changed if the item is active */
+        /* Parent, Currency and TaxFree status cannot be changed if the item is active */
         theFieldSet.setEditable(Portfolio.FIELD_PARENT, bIsChangeable);
+        theFieldSet.setEditable(Portfolio.FIELD_CURRENCY, bIsChangeable);
         theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, bIsChangeable);
         theTaxFreeState.setState(bIsChangeable);
 
@@ -342,6 +354,9 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_PARENT)) {
             /* Update the Parent */
             myPortfolio.setParent(pUpdate.getValue(Payee.class));
+        } else if (myField.equals(Portfolio.FIELD_CURRENCY)) {
+            /* Update the Currency */
+            myPortfolio.setPortfolioCurrency(pUpdate.getValue(AccountCurrency.class));
         } else if (myField.equals(Portfolio.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myPortfolio.setClosed(pUpdate.getBoolean());
@@ -385,6 +400,10 @@ public class PortfolioPanel
     protected void declareGoToItems(final boolean pUpdates) {
         Portfolio myItem = getItem();
         Payee myParent = myItem.getParent();
+        if (!pUpdates) {
+            AccountCurrency myCurrency = myItem.getPortfolioCurrency();
+            declareGoToItem(myCurrency);
+        }
         declareGoToItem(myParent);
     }
 
@@ -403,7 +422,7 @@ public class PortfolioPanel
         JMenuItem myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
         Iterator<Payee> myIterator = myPayees.iterator();
@@ -432,6 +451,48 @@ public class PortfolioPanel
     }
 
     /**
+     * Build the currency list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pPortfolio the portfolio to build for
+     */
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+                                  final Portfolio pPortfolio) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        AccountCurrency myCurr = pPortfolio.getPortfolioCurrency();
+        JMenuItem myActive = null;
+
+        /* Access Currencies */
+        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+
+        /* Loop through the AccountCurrencies */
+        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        while (myIterator.hasNext()) {
+            AccountCurrency myCurrency = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the currency */
+            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+
+            /* If this is the active currency */
+            if (myCurrency.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * Portfolio Listener.
      */
     private final class PortfolioListener
@@ -442,12 +503,19 @@ public class PortfolioPanel
         private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
 
         /**
+         * The Currency Menu Builder.
+         */
+        private final JScrollMenuBuilder<AccountCurrency> theCurrencyMenuBuilder;
+
+        /**
          * Constructor.
          */
         private PortfolioListener() {
             /* Access the MenuBuilders */
             theParentMenuBuilder = theParentButton.getMenuBuilder();
             theParentMenuBuilder.addChangeListener(this);
+            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+            theCurrencyMenuBuilder.addChangeListener(this);
         }
 
         @Override
@@ -457,6 +525,8 @@ public class PortfolioPanel
             /* Handle menu type */
             if (theParentMenuBuilder.equals(o)) {
                 buildParentMenu(theParentMenuBuilder, getItem());
+            } else if (theCurrencyMenuBuilder.equals(o)) {
+                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
             }
         }
     }

@@ -448,7 +448,7 @@ public class StockOptionVest
      */
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
-        StockOptionList myOptions = pUpdateSet.findDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
+        StockOptionList myOptions = pUpdateSet.getDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
         resolveDataLink(FIELD_OPTION, myOptions);
     }
 

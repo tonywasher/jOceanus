@@ -243,7 +243,7 @@ public class SecurityPanel
         /* If we have an item */
         Security myItem = getItem();
         if (myItem != null) {
-            SecurityList mySecurities = findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+            SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
             setItem(mySecurities.findItemById(myItem.getId()));
         }
 
@@ -404,7 +404,7 @@ public class SecurityPanel
         JMenuItem myActive = null;
 
         /* Access SecurityTypes */
-        SecurityTypeList myTypes = findDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
+        SecurityTypeList myTypes = getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
 
         /* Loop through the SecurityTypes */
         Iterator<SecurityType> myIterator = myTypes.iterator();
@@ -447,7 +447,7 @@ public class SecurityPanel
         JMenuItem myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
         Iterator<Payee> myIterator = myPayees.iterator();
@@ -490,7 +490,7 @@ public class SecurityPanel
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

@@ -215,7 +215,7 @@ public class SecurityPriceTable
      */
     protected void refreshData() {
         /* Access the prices list */
-        thePrices = theUpdateSet.findDataList(MoneyWiseDataType.SECURITYPRICE, ViewSecurityPriceList.class);
+        thePrices = theUpdateSet.getDataList(MoneyWiseDataType.SECURITYPRICE, ViewSecurityPriceList.class);
         theHeader = new PriceHeader(thePrices);
         theDilutions = theView.getDilutions();
         theColumns.setDateRange();

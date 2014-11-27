@@ -330,7 +330,7 @@ public class Loan
     /**
      * Obtain LoanCurrency.
      * @param pValueSet the valueSet
-     * @return the SecurityCurrency
+     * @return the LoanCurrency
      */
     public static AccountCurrency getLoanCurrency(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
@@ -689,7 +689,7 @@ public class Loan
      */
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access details */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         LoanCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
@@ -747,7 +747,7 @@ public class Loan
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
-        PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 
@@ -1056,7 +1056,7 @@ public class Loan
         public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
             /* Build an empty List */
             LoanList myList = getEmptyList(ListStyle.EDIT);
-            DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             myList.ensureMap(myDeposits);
 
             /* Store InfoType list */

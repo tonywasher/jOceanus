@@ -255,7 +255,7 @@ public class PayeePanel
         /* If we have an item */
         Payee myItem = getItem();
         if (myItem != null) {
-            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
             setItem(myPayees.findItemById(myItem.getId()));
         }
 
@@ -385,7 +385,7 @@ public class PayeePanel
         JMenuItem myActive = null;
 
         /* Access PayeeTypes */
-        PayeeTypeList myTypes = findDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
+        PayeeTypeList myTypes = getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
 
         /* Loop through the PayeeTypes */
         Iterator<PayeeType> myIterator = myTypes.iterator();

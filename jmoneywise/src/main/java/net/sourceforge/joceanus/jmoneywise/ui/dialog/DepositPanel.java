@@ -310,7 +310,7 @@ public class DepositPanel
         /* If we have an item */
         Deposit myItem = getItem();
         if (myItem != null) {
-            DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             setItem(myDeposits.findItemById(myItem.getId()));
         }
 
@@ -516,7 +516,7 @@ public class DepositPanel
         JMenuItem myActive = null;
 
         /* Access Deposit Categories */
-        DepositCategoryList myCategories = findDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
+        DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
 
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -574,7 +574,7 @@ public class DepositPanel
         JMenuItem myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
         Iterator<Payee> myIterator = myPayees.iterator();
@@ -617,7 +617,7 @@ public class DepositPanel
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

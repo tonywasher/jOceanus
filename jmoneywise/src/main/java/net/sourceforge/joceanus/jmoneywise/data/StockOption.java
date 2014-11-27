@@ -714,7 +714,7 @@ public class StockOption
      */
     private Portfolio getDefaultPortfolio(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* loop through the portfolios */
-        PortfolioList myPortfolios = pUpdateSet.findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         Iterator<Portfolio> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
             Portfolio myPortfolio = myIterator.next();
@@ -736,7 +736,7 @@ public class StockOption
      */
     private Security getDefaultSecurity(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* loop through the securities */
-        SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         Iterator<Security> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
             Security mySecurity = myIterator.next();

@@ -268,7 +268,7 @@ public class CashPanel
         /* If we have an item */
         Cash myItem = getItem();
         if (myItem != null) {
-            CashList myCash = findDataList(MoneyWiseDataType.CASH, CashList.class);
+            CashList myCash = getDataList(MoneyWiseDataType.CASH, CashList.class);
             setItem(myCash.findItemById(myItem.getId()));
         }
 
@@ -403,7 +403,7 @@ public class CashPanel
         JMenuItem myActive = null;
 
         /* Access Cash Categories */
-        CashCategoryList myCategories = findDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+        CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
 
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -460,7 +460,7 @@ public class CashPanel
         JMenuItem myActive = null;
 
         /* Access Transaction Categories */
-        TransactionCategoryList myCategories = findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -519,7 +519,7 @@ public class CashPanel
         JMenuItem myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
         Iterator<Payee> myIterator = myPayees.iterator();
@@ -560,7 +560,7 @@ public class CashPanel
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = findDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
         Iterator<AccountCurrency> myIterator = myCurrencies.iterator();

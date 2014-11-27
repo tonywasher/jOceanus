@@ -133,7 +133,7 @@ public class CashCategoryPanel
         /* If we have an item */
         CashCategory myItem = getItem();
         if (myItem != null) {
-            CashCategoryList myCategories = findDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+            CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -218,7 +218,7 @@ public class CashCategoryPanel
         JMenuItem myActive = null;
 
         /* Access Cash Category types */
-        CashCategoryTypeList myCategoryTypes = findDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
+        CashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
 
         /* Loop through the CashCategoryTypes */
         Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();

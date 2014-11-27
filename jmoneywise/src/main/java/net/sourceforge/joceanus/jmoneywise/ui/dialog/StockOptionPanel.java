@@ -245,7 +245,7 @@ public class StockOptionPanel
         /* If we have an item */
         StockOption myItem = getItem();
         if (myItem != null) {
-            StockOptionList myOptions = findDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
+            StockOptionList myOptions = getDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
             setItem(myOptions.findItemById(myItem.getId()));
         }
 
@@ -387,7 +387,7 @@ public class StockOptionPanel
         JMenuItem myActive = null;
 
         /* Access Portfolios and Holdings Map */
-        PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        PortfolioList myPortfolios = getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         SecurityHoldingMap myMap = pOption.getList().getSecurityHoldings();
 
         /* Loop through the Portfolios */

@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -188,11 +189,7 @@ public class TransactionInfoSet
                               : isClassRequired(myClass);
     }
 
-    /**
-     * Determine if an infoSet class is required.
-     * @param pClass the infoSet class
-     * @return the status
-     */
+    @Override
     public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
@@ -520,41 +517,9 @@ public class TransactionInfoSet
         }
     }
 
-    /**
-     * autoCorrect values after change.
-     * @throws JOceanusException on error
-     */
-    protected void autoCorrect() throws JOceanusException {
-        /* Loop through the classes */
-        for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
-            /* Access value and requirement */
-            JDataFieldRequired myState = isClassRequired(myClass);
-
-            /* Switch on required state */
-            switch (myState) {
-                case MUSTEXIST:
-                    if (getInfo(myClass) == null) {
-                        setDefaultValue(myClass);
-                    }
-                    break;
-                case NOTALLOWED:
-                    if (getInfo(myClass) != null) {
-                        setValue(myClass, null);
-                    }
-                    break;
-                case CANEXIST:
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * set default value after update.
-     * @param pClass the class
-     * @throws JOceanusException on error
-     */
-    private void setDefaultValue(final TransactionInfoClass pClass) throws JOceanusException {
+    @Override
+    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
+                                   final TransactionInfoClass pClass) throws JOceanusException {
         /* Switch on the class */
         switch (pClass) {
             case CREDITUNITS:

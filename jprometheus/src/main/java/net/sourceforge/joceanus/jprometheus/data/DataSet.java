@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
+import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preferences.DataListPreferences;
@@ -51,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
-        implements JDataContents {
+        implements JDataContents, DataListSet<E> {
     /**
      * The Hash prime.
      */
@@ -569,13 +570,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
     }
 
-    /**
-     * Obtain DataList for an item type.
-     * @param <L> the List type
-     * @param pListType the list type
-     * @param pListClass the class of the list
-     * @return the list of items
-     */
+    @Override
     public <L extends DataList<?, E>> L getDataList(final E pListType,
                                                     final Class<L> pListClass) {
         /* Access the list */

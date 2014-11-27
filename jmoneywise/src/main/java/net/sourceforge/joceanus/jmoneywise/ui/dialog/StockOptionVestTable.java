@@ -188,7 +188,7 @@ public class StockOptionVestTable
      */
     protected void refreshData() {
         /* Access the prices list */
-        theVests = theUpdateSet.findDataList(MoneyWiseDataType.STOCKOPTIONVEST, StockOptionVestList.class);
+        theVests = theUpdateSet.getDataList(MoneyWiseDataType.STOCKOPTIONVEST, StockOptionVestList.class);
         theHeader = new VestHeader(theVests);
         setList(theVests);
     }

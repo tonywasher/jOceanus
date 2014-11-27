@@ -47,6 +47,22 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
+     * DataList interface.
+     * @param <E> the data type enum class
+     */
+    public interface DataListSet<E extends Enum<E>> {
+        /**
+         * Obtain the list for a class.
+         * @param <L> the list type
+         * @param pDataType the data type
+         * @param pClass the list class
+         * @return the list
+         */
+        <L extends DataList<?, E>> L getDataList(final E pDataType,
+                                                 final Class<L> pClass);
+    }
+
+    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATALIST_NAME.getValue());

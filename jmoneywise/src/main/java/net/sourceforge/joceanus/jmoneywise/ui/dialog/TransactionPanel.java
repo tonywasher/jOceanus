@@ -335,6 +335,7 @@ public class TransactionPanel
         JTextField myNatIns = new JTextField();
         JTextField myBenefit = new JTextField();
         JTextField myDonation = new JTextField();
+        JTextField myYears = new JTextField();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
@@ -342,12 +343,14 @@ public class TransactionPanel
         restrictField(myNatIns, myWidth);
         restrictField(myBenefit, myWidth);
         restrictField(myDonation, myWidth);
+        restrictField(myYears, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), DataType.MONEY, myTaxCredit);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), DataType.MONEY, myNatIns);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), DataType.MONEY, myBenefit);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), DataType.MONEY, myDonation);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), DataType.INTEGER, myYears);
 
         /* Create the Tax panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -359,6 +362,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -374,7 +378,6 @@ public class TransactionPanel
         JTextField myCredUnits = new JTextField();
         JTextField myDebUnits = new JTextField();
         JTextField myDilution = new JTextField();
-        JTextField myYears = new JTextField();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
@@ -382,14 +385,12 @@ public class TransactionPanel
         restrictField(myDebUnits, myWidth);
         restrictField(myDilution, myWidth);
         restrictField(theThirdPartyButton, myWidth);
-        restrictField(myYears, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), DataType.UNITS, myCredUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), DataType.UNITS, myDebUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), DataType.DILUTION, myDilution);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), Deposit.class, theThirdPartyButton);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), DataType.INTEGER, myYears);
 
         /* Create the Tax panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -401,7 +402,6 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -413,7 +413,7 @@ public class TransactionPanel
         /* If we have an item */
         Transaction myItem = getItem();
         if (myItem != null) {
-            TransactionList myTrans = findDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
+            TransactionList myTrans = getDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
             setItem(myTrans.findItemById(myItem.getId()));
         }
 
@@ -444,7 +444,7 @@ public class TransactionPanel
      */
     public void updateTagMenuBuilder(final JScrollListMenuBuilder<TransactionTag> pBuilder) {
         /* Access TransactionTags */
-        TransactionTagList myTags = findDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+        TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
         pBuilder.clearAvailableItems();
 
         /* Loop through the tags */
@@ -601,18 +601,23 @@ public class TransactionPanel
         } else if (myField.equals(Transaction.FIELD_AMOUNT)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getMoney());
+            myTrans.autoCorrect(getUpdateSet());
         } else if (myField.equals(Transaction.FIELD_ACCOUNT)) {
             /* Update the Account */
             myTrans.setAccount(resolveAsset(pUpdate.getValue(AssetBase.class)));
+            myTrans.autoCorrect(getUpdateSet());
         } else if (myField.equals(Transaction.FIELD_DIRECTION)) {
             /* Update the Direction */
             myTrans.switchDirection();
+            myTrans.autoCorrect(getUpdateSet());
         } else if (myField.equals(Transaction.FIELD_PARTNER)) {
             /* Update the Partner */
             myTrans.setPartner(resolveAsset(pUpdate.getValue(AssetBase.class)));
+            myTrans.autoCorrect(getUpdateSet());
         } else if (myField.equals(Transaction.FIELD_CATEGORY)) {
             /* Update the Category */
             myTrans.setCategory(pUpdate.getValue(TransactionCategory.class));
+            myTrans.autoCorrect(getUpdateSet());
         } else if (myField.equals(Transaction.FIELD_RECONCILED)) {
             /* Update the Reconciled indication */
             myTrans.setReconciled(pUpdate.getBoolean());
@@ -740,11 +745,11 @@ public class TransactionPanel
         pMenuBuilder.clearMenu();
 
         /* Add possible items */
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
         buildHoldingMenu(pMenuBuilder, true, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
     }
 
     /**
@@ -758,12 +763,12 @@ public class TransactionPanel
         pMenuBuilder.clearMenu();
 
         /* Add possible items */
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
         buildHoldingMenu(pMenuBuilder, false, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, findDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
+        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
     }
 
     /**
@@ -825,14 +830,13 @@ public class TransactionPanel
 
     /**
      * Build the asset list for an item.
-     * @param <T> the Asset type
      * @param pMenuBuilder the menu builder
      * @param pIsAccount is this item the account rather than partner
      * @param pTrans the transaction to build for
      */
-    private <T extends AssetBase<T>> void buildHoldingMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
-                                                           final boolean pIsAccount,
-                                                           final Transaction pTrans) {
+    private void buildHoldingMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+                                  final boolean pIsAccount,
+                                  final Transaction pTrans) {
         /* Record active item */
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCategory = pTrans.getCategory();
@@ -959,7 +963,7 @@ public class TransactionPanel
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
         /* Access Categories */
-        TransactionCategoryList myCategories = findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Loop through the available category values */
         Iterator<TransactionCategory> myIterator = myCategories.iterator();
@@ -1025,7 +1029,7 @@ public class TransactionPanel
         JMenuItem myActive = null;
 
         /* Access Deposits */
-        DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
         /* Loop through the Portfolios */
         Iterator<Deposit> myIterator = myDeposits.iterator();

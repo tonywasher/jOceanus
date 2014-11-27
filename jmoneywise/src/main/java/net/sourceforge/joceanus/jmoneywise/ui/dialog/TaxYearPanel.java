@@ -44,9 +44,9 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
@@ -439,7 +439,7 @@ public class TaxYearPanel
         /* If we have an item */
         TaxYear myItem = getItem();
         if (myItem != null) {
-            TaxYearList myYears = findDataList(MoneyWiseDataType.TAXYEAR, TaxYearList.class);
+            TaxYearList myYears = getDataList(MoneyWiseDataType.TAXYEAR, TaxYearList.class);
             setItem(myYears.findItemById(myItem.getId()));
         }
 
@@ -478,7 +478,7 @@ public class TaxYearPanel
         if (myField.equals(TaxYear.FIELD_REGIME)) {
             /* Update the Value */
             myYear.setTaxRegime(pUpdate.getValue(TaxRegime.class));
-            myYear.autoCorrect();
+            myYear.autoCorrect(getUpdateSet());
         } else {
             /* Switch on the field */
             switch (TaxYearInfoSet.getClassForField(myField)) {
@@ -578,7 +578,7 @@ public class TaxYearPanel
         JMenuItem myActive = null;
 
         /* Access TaxRegimes */
-        TaxRegimeList myRegimes = findDataList(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);
+        TaxRegimeList myRegimes = getDataList(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);
 
         /* Loop through the panels */
         Iterator<TaxRegime> myIterator = myRegimes.iterator();

@@ -60,9 +60,14 @@ public class SheetPortfolio
     private static final int COL_PARENT = COL_DESC + 1;
 
     /**
+     * Currency column.
+     */
+    private static final int COL_CURRENCY = COL_PARENT + 1;
+
+    /**
      * TaxFree column.
      */
-    private static final int COL_TAXFREE = COL_PARENT + 1;
+    private static final int COL_TAXFREE = COL_CURRENCY + 1;
 
     /**
      * Closed column.
@@ -100,6 +105,7 @@ public class SheetPortfolio
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(Portfolio.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, loadBytes(COL_DESC));
         myValues.addValue(Portfolio.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
@@ -114,6 +120,7 @@ public class SheetPortfolio
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_PARENT, pItem.getParentId());
+        writeInteger(COL_CURRENCY, pItem.getPortfolioCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
@@ -170,6 +177,7 @@ public class SheetPortfolio
         DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myName);
         myValues.addValue(Portfolio.FIELD_PARENT, myParent);
+        myValues.addValue(Portfolio.FIELD_CURRENCY, pData.getDefaultCurrency());
         myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
         myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
 
