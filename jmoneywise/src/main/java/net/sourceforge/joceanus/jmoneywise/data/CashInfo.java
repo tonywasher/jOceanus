@@ -477,7 +477,7 @@ public class CashInfo
             /* If we are setting autoExpense */
             if (AccountInfoClass.AUTOEXPENSE.equals(pInfoClass)) {
                 /* Clear currency on the account */
-                pCash.setCashCurrency(null);
+                pCash.setAssetCurrency(null);
             }
 
             /* Create the values */

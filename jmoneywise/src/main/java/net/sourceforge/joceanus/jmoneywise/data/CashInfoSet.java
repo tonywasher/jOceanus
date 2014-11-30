@@ -282,7 +282,7 @@ public class CashInfoSet
                 case OPENINGBALANCE:
                     /* Access data */
                     JMoney myBalance = myInfo.getValue(JMoney.class);
-                    if (!myBalance.getCurrency().equals(myCash.getCashCurrency().getCurrency())) {
+                    if (!myBalance.getCurrency().equals(myCash.getCurrency())) {
                         myCash.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;

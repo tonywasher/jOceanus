@@ -120,7 +120,7 @@ public class SheetPortfolio
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_PARENT, pItem.getParentId());
-        writeInteger(COL_CURRENCY, pItem.getPortfolioCurrencyId());
+        writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());

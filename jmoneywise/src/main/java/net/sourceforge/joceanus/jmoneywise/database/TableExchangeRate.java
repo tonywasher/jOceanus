@@ -63,8 +63,8 @@ public class TableExchangeRate
 
         /* Declare the columns */
         ColumnDefinition myDateCol = myTableDef.addDateColumn(ExchangeRate.FIELD_DATE);
-        ColumnDefinition myFromCol = myTableDef.addReferenceColumn(ExchangeRate.FIELD_FROM, TableAccountCurrency.TABLE_NAME);
-        myTableDef.addReferenceColumn(ExchangeRate.FIELD_TO, TableAccountCurrency.TABLE_NAME);
+        ColumnDefinition myFromCol = myTableDef.addReferenceColumn(ExchangeRate.FIELD_FROM, TableAssetCurrency.TABLE_NAME);
+        myTableDef.addReferenceColumn(ExchangeRate.FIELD_TO, TableAssetCurrency.TABLE_NAME);
         myTableDef.addRatioColumn(ExchangeRate.FIELD_RATE);
 
         /* Declare Sort Columns */

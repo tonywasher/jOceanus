@@ -53,7 +53,7 @@ public class TablePortfolio
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
-        myTableDef.addReferenceColumn(Portfolio.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addReferenceColumn(Portfolio.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Portfolio.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(Portfolio.FIELD_DESC, Portfolio.DESCLEN);
         myTableDef.addBooleanColumn(Portfolio.FIELD_TAXFREE);
@@ -96,7 +96,7 @@ public class TablePortfolio
         } else if (Portfolio.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Portfolio.FIELD_CURRENCY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getPortfolioCurrencyId());
+            myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
         } else if (Portfolio.FIELD_TAXFREE.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isTaxFree());
         } else if (Portfolio.FIELD_CLOSED.equals(iField)) {

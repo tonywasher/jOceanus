@@ -36,7 +36,7 @@ import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
@@ -197,7 +197,7 @@ public class SpotRatesSelect
 
         /* Set the currency name */
         MoneyWiseData myData = theView.getData();
-        AccountCurrency myDefault = myData.getDefaultCurrency();
+        AssetCurrency myDefault = myData.getDefaultCurrency();
         theCurrLabel.setText(myDefault != null
                                               ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
                                               : null);

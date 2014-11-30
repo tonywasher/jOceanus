@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
@@ -275,34 +275,9 @@ public class Portfolio
                                  : myParent.getName();
     }
 
-    /**
-     * Obtain Portfolio Currency.
-     * @return the currency
-     */
-    public AccountCurrency getPortfolioCurrency() {
-        return getPortfolioCurrency(getValueSet());
-    }
-
-    /**
-     * Obtain PortfolioCurrencyId.
-     * @return the currencyId
-     */
-    public Integer getPortfolioCurrencyId() {
-        AccountCurrency myCurrency = getPortfolioCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getId();
-    }
-
-    /**
-     * Obtain PortfolioCurrencyName.
-     * @return the currencyName
-     */
-    public String getPortfolioCurrencyName() {
-        AccountCurrency myCurrency = getPortfolioCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getName();
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return getAssetCurrency(getValueSet());
     }
 
     @Override
@@ -324,8 +299,8 @@ public class Portfolio
      * @param pValueSet the valueSet
      * @return the PortfolioCurrency
      */
-    public static AccountCurrency getPortfolioCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    public static AssetCurrency getAssetCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
     /**
@@ -365,7 +340,7 @@ public class Portfolio
      * Set portfolio currency value.
      * @param pValue the value
      */
-    private void setValueCurrency(final AccountCurrency pValue) {
+    private void setValueCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
@@ -574,8 +549,8 @@ public class Portfolio
                 setValueCurrency((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCurrency((String) myValue);
-            } else if (myValue instanceof AccountCurrency) {
-                setValueCurrency((AccountCurrency) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
             }
 
             /* Store the taxFree flag */
@@ -626,7 +601,7 @@ public class Portfolio
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setParent(getDefaultParent(pUpdateSet));
-        setPortfolioCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
     }
@@ -693,7 +668,7 @@ public class Portfolio
      * Set a new portfolio currency.
      * @param pCurrency the new currency
      */
-    public void setPortfolioCurrency(final AccountCurrency pCurrency) {
+    public void setAssetCurrency(final AssetCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -812,7 +787,7 @@ public class Portfolio
     public void touchUnderlyingItems() {
         /* Touch parent and currency */
         getParent().touchItem(this);
-        getPortfolioCurrency().touchItem(this);
+        getAssetCurrency().touchItem(this);
 
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
@@ -830,7 +805,7 @@ public class Portfolio
     @Override
     public void validate() {
         Payee myParent = getParent();
-        AccountCurrency myCurrency = getPortfolioCurrency();
+        AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();
@@ -906,8 +881,8 @@ public class Portfolio
         }
 
         /* Update the portfolio currency if required */
-        if (!Difference.isEqual(getPortfolioCurrency(), myPortfolio.getPortfolioCurrency())) {
-            setValueCurrency(myPortfolio.getPortfolioCurrency());
+        if (!Difference.isEqual(getAssetCurrency(), myPortfolio.getAssetCurrency())) {
+            setValueCurrency(myPortfolio.getAssetCurrency());
         }
 
         /* Update the taxFree status if required */

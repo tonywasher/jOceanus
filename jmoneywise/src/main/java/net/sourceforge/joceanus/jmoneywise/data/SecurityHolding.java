@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -35,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -89,6 +91,11 @@ public final class SecurityHolding
      * Security Field Id.
      */
     public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemName());
+
+    /**
+     * Invalid currency combo error.
+     */
+    public static final String ERROR_CURRENCYCOMBO = MoneyWiseDataResource.SECURITYHOLDING_ERROR_CURRENCYCOMBO.getValue();
 
     @Override
     public JDataFields getDataFields() {
@@ -237,6 +244,16 @@ public final class SecurityHolding
         return AssetType.SECURITYHOLDING;
     }
 
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return thePortfolio.getAssetCurrency();
+    }
+
+    @Override
+    public Currency getCurrency() {
+        return thePortfolio.getCurrency();
+    }
+
     /**
      * Generate the name.
      * @return the name.
@@ -302,6 +319,25 @@ public final class SecurityHolding
     }
 
     /**
+     * Obtain the security class.
+     * @return the security class.
+     */
+    private SecurityTypeClass getSecurityTypeClass() {
+        /* Check for match */
+        return theSecurity.getSecurityTypeClass();
+    }
+
+    /**
+     * Is this holding the required security class.
+     * @param pClass the required security class.
+     * @return true/false
+     */
+    public boolean isSecurityClass(final SecurityTypeClass pClass) {
+        /* Check for match */
+        return getSecurityTypeClass() == pClass;
+    }
+
+    /**
      * Constructor.
      * @param pPortfolio the portfolio
      * @param pSecurity the security
@@ -362,6 +398,14 @@ public final class SecurityHolding
 
         /* Compare securities */
         return getSecurity().compareTo(pThat.getSecurity());
+    }
+
+    /**
+     * Are the currencies the same?
+     * @return true/false
+     */
+    protected boolean validCurrencies() {
+        return thePortfolio.getCurrency().equals(theSecurity.getCurrency());
     }
 
     /**
@@ -461,7 +505,7 @@ public final class SecurityHolding
 
             /* If the holding does not currently exist */
             if (myHolding == null) {
-                /* Create the holding */
+                /* Create the holding and store it */
                 myHolding = new SecurityHolding(pPortfolio, pSecurity);
                 myMap.put(myId, myHolding);
             }
@@ -628,6 +672,7 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
+            Currency myCurrency = pPortfolio.getCurrency();
             OrderedList<SecurityHolding> myList = new OrderedList<SecurityHolding>(SecurityHolding.class);
 
             /* Loop through the securities */
@@ -635,9 +680,10 @@ public final class SecurityHolding
             while (myIterator.hasNext()) {
                 Security mySecurity = myIterator.next();
 
-                /* Ignore closed/deleted and wrong class */
+                /* Ignore closed/deleted and wrong class/currency */
                 boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
                 bIgnore |= pClass != null && !pClass.equals(mySecurity.getSecurityTypeClass());
+                bIgnore |= !myCurrency.equals(mySecurity.getCurrency());
                 if (bIgnore) {
                     continue;
                 }
@@ -722,9 +768,13 @@ public final class SecurityHolding
                     return null;
                 }
 
-                /* Allocate and store the map */
+                /* Allocate the holding */
                 myHolding = new SecurityHolding(thePortfolio, mySecurity);
-                put(pId, myHolding);
+
+                /* Only store the holding if it is correct currency */
+                if (thePortfolio.getCurrency().equals(mySecurity.getCurrency())) {
+                    put(pId, myHolding);
+                }
             }
 
             /* Return the holding */
@@ -751,9 +801,13 @@ public final class SecurityHolding
 
             /* If the Id is not found */
             if (myHolding == null) {
-                /* Allocate and store the map */
+                /* Allocate the holding */
                 myHolding = new SecurityHolding(thePortfolio, mySecurity);
-                put(myId, myHolding);
+
+                /* Only store the holding if it is correct currency */
+                if (thePortfolio.getCurrency().equals(mySecurity.getCurrency())) {
+                    put(myId, myHolding);
+                }
             }
 
             /* Return the holding */
@@ -827,6 +881,7 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
+            Currency myCurrency = thePortfolio.getCurrency();
             OrderedList<SecurityHolding> myList = new OrderedList<SecurityHolding>(SecurityHolding.class);
 
             /* Loop through the securities */
@@ -834,9 +889,10 @@ public final class SecurityHolding
             while (myIterator.hasNext()) {
                 Security mySecurity = myIterator.next();
 
-                /* Ignore closed/deleted and wrong class */
+                /* Ignore closed/deleted and wrong class/currency */
                 boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
                 bIgnore |= pClass != null && pClass.equals(mySecurity.getSecurityTypeClass());
+                bIgnore |= !myCurrency.equals(mySecurity.getCurrency());
                 if (bIgnore) {
                     continue;
                 }

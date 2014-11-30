@@ -211,7 +211,7 @@ public class LoanInfoSet
                 case OPENINGBALANCE:
                     /* Access data */
                     JMoney myBalance = myInfo.getValue(JMoney.class);
-                    if (!myBalance.getCurrency().equals(myLoan.getLoanCurrency().getCurrency())) {
+                    if (!myBalance.getCurrency().equals(myLoan.getCurrency())) {
                         myLoan.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;

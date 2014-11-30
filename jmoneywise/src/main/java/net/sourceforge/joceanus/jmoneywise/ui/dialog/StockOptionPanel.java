@@ -290,7 +290,7 @@ public class StockOptionPanel
         theFieldSet.setEditable(StockOption.FIELD_PRICE, isEditable && !bIsActive);
 
         /* Set currency for price */
-        theFieldSet.setAssumedCurrency(StockOption.FIELD_PRICE, myOption.getStockHolding().getSecurity().getSecurityCurrency().getCurrency());
+        theFieldSet.setAssumedCurrency(StockOption.FIELD_PRICE, myOption.getStockHolding().getCurrency());
     }
 
     @Override

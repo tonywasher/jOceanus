@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
@@ -693,7 +693,7 @@ public class SecurityTable
         /**
          * Currency ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
+        private final ScrollButtonCellEditor<AssetCurrency> theCurrencyEditor;
 
         /**
          * Closed column.
@@ -714,7 +714,7 @@ public class SecurityTable
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(SecurityType.class);
             theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
+            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
@@ -808,7 +808,7 @@ public class SecurityTable
                 case COLUMN_PARENT:
                     return pSecurity.getParent();
                 case COLUMN_CURR:
-                    return pSecurity.getSecurityCurrency();
+                    return pSecurity.getAssetCurrency();
                 default:
                     return null;
             }
@@ -843,7 +843,7 @@ public class SecurityTable
                     pItem.setSymbol((String) pValue);
                     break;
                 case COLUMN_CURR:
-                    pItem.setSecurityCurrency((AccountCurrency) pValue);
+                    pItem.setAssetCurrency((AssetCurrency) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -975,7 +975,7 @@ public class SecurityTable
              */
             private void buildCurrencyMenu() {
                 /* Access details */
-                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
+                JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
 
                 /* Record active item */
                 Point myCell = theCurrencyEditor.getPoint();

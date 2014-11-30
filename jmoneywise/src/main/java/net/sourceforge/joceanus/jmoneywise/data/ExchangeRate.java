@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -150,7 +150,7 @@ public class ExchangeRate
      * Obtain From currency.
      * @return the currency
      */
-    public AccountCurrency getFromCurrency() {
+    public AssetCurrency getFromCurrency() {
         return getFromCurrency(getValueSet());
     }
 
@@ -159,7 +159,7 @@ public class ExchangeRate
      * @return the fromCurrencyId
      */
     public Integer getFromCurrencyId() {
-        AccountCurrency myCurr = getFromCurrency();
+        AssetCurrency myCurr = getFromCurrency();
         return (myCurr == null)
                                ? null
                                : myCurr.getId();
@@ -170,7 +170,7 @@ public class ExchangeRate
      * @return the fromCurrencyName
      */
     public String getFromCurrencyName() {
-        AccountCurrency myCurr = getFromCurrency();
+        AssetCurrency myCurr = getFromCurrency();
         return (myCurr == null)
                                ? null
                                : myCurr.getName();
@@ -180,7 +180,7 @@ public class ExchangeRate
      * Obtain To currency.
      * @return the currency
      */
-    public AccountCurrency getToCurrency() {
+    public AssetCurrency getToCurrency() {
         return getToCurrency(getValueSet());
     }
 
@@ -189,7 +189,7 @@ public class ExchangeRate
      * @return the toCurrencyId
      */
     public Integer getToCurrencyId() {
-        AccountCurrency myCurr = getToCurrency();
+        AssetCurrency myCurr = getToCurrency();
         return (myCurr == null)
                                ? null
                                : myCurr.getId();
@@ -200,7 +200,7 @@ public class ExchangeRate
      * @return the toCurrencyName
      */
     public String getToCurrencyName() {
-        AccountCurrency myCurr = getToCurrency();
+        AssetCurrency myCurr = getToCurrency();
         return (myCurr == null)
                                ? null
                                : myCurr.getName();
@@ -239,8 +239,8 @@ public class ExchangeRate
      * @param pValueSet the valueSet
      * @return the currency
      */
-    public static AccountCurrency getFromCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_FROM, AccountCurrency.class);
+    public static AssetCurrency getFromCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_FROM, AssetCurrency.class);
     }
 
     /**
@@ -248,8 +248,8 @@ public class ExchangeRate
      * @param pValueSet the valueSet
      * @return the currency
      */
-    public static AccountCurrency getToCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TO, AccountCurrency.class);
+    public static AssetCurrency getToCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TO, AssetCurrency.class);
     }
 
     /**
@@ -273,7 +273,7 @@ public class ExchangeRate
      * Set from currency value.
      * @param pValue the value
      */
-    private void setValueFromCurrency(final AccountCurrency pValue) {
+    private void setValueFromCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_FROM, pValue);
     }
 
@@ -297,7 +297,7 @@ public class ExchangeRate
      * Set to currency value.
      * @param pValue the value
      */
-    private void setValueToCurrency(final AccountCurrency pValue) {
+    private void setValueToCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_TO, pValue);
     }
 
@@ -472,7 +472,7 @@ public class ExchangeRate
 
         /* Resolve currencies */
         MoneyWiseData myData = getDataSet();
-        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+        AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
         resolveDataLink(FIELD_FROM, myCurrencies);
         resolveDataLink(FIELD_TO, myCurrencies);
     }
@@ -489,7 +489,7 @@ public class ExchangeRate
      * Set a new from currency.
      * @param pCurrency the new from currency
      */
-    public void setFromCurrency(final AccountCurrency pCurrency) {
+    public void setFromCurrency(final AssetCurrency pCurrency) {
         setValueFromCurrency(pCurrency);
     }
 
@@ -497,7 +497,7 @@ public class ExchangeRate
      * Set a new to currency.
      * @param pCurrency the new to currency
      */
-    public void setToCurrency(final AccountCurrency pCurrency) {
+    public void setToCurrency(final AssetCurrency pCurrency) {
         setValueToCurrency(pCurrency);
     }
 
@@ -519,8 +519,8 @@ public class ExchangeRate
     @Override
     public void validate() {
         ExchangeRateList myList = (ExchangeRateList) getList();
-        AccountCurrency myFrom = getFromCurrency();
-        AccountCurrency myTo = getToCurrency();
+        AssetCurrency myFrom = getFromCurrency();
+        AssetCurrency myTo = getToCurrency();
         JDateDay myDate = getDate();
         JRatio myRate = getExchangeRate();
         JDateDayRange myRange = getDataSet().getDateRange();
@@ -565,7 +565,7 @@ public class ExchangeRate
             }
 
             /* From currency must be the default currency */
-            AccountCurrency myDefault = getDataSet().getDefaultCurrency();
+            AssetCurrency myDefault = getDataSet().getDefaultCurrency();
             if (!myFrom.equals(myDefault)) {
                 addError(ERROR_DEF, FIELD_FROM);
             }
@@ -700,13 +700,13 @@ public class ExchangeRate
         /**
          * The default currency.
          */
-        private AccountCurrency theDefault = null;
+        private AssetCurrency theDefault = null;
 
         /**
          * Obtain default currency.
          * @return the default currency
          */
-        public AccountCurrency getDefaultCurrency() {
+        public AssetCurrency getDefaultCurrency() {
             return theDefault;
         }
 
@@ -802,11 +802,11 @@ public class ExchangeRate
          * @return the converted value
          */
         public JMoney convertCurrency(final JMoney pValue,
-                                      final AccountCurrency pCurrency,
+                                      final AssetCurrency pCurrency,
                                       final JDateDay pDate) {
             /* Obtain the existing currency */
             JMoney myValue = pValue;
-            AccountCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
+            AssetCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
             Currency myCurrent = pValue.getCurrency();
             Currency myDefault = theDefault.getCurrency();
             Currency myTarget = pCurrency.getCurrency();
@@ -844,7 +844,7 @@ public class ExchangeRate
          * @param pDate the date to find the exchange rate for
          * @return the exchange rate
          */
-        private ExchangeRate findRate(final AccountCurrency pCurrency,
+        private ExchangeRate findRate(final AssetCurrency pCurrency,
                                       final JDateDay pDate) {
             /* Access the iterator */
             Iterator<ExchangeRate> myIterator = iterator();
@@ -874,7 +874,7 @@ public class ExchangeRate
          * Set the default currency.
          * @param pCurrency the new default currency
          */
-        public void setDefaultCurrency(final AccountCurrency pCurrency) {
+        public void setDefaultCurrency(final AssetCurrency pCurrency) {
             /* Access the iterator */
             Iterator<ExchangeRate> myIterator = iterator();
             JRatio myCurrRate = null;
@@ -886,7 +886,7 @@ public class ExchangeRate
 
                 /* Access details */
                 JDateDay myDate = myCurr.getDate();
-                AccountCurrency myTo = myCurr.getToCurrency();
+                AssetCurrency myTo = myCurr.getToCurrency();
                 JRatio myRatio = myCurr.getExchangeRate();
 
                 /* If this is a new date */
@@ -984,14 +984,14 @@ public class ExchangeRate
         /**
          * Map of Maps.
          */
-        private final Map<AccountCurrency, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<AssetCurrency, Map<JDateDay, Integer>> theMapOfMaps;
 
         /**
          * Constructor.
          */
         public ExchangeRateDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<AccountCurrency, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<AssetCurrency, Map<JDateDay, Integer>>();
         }
 
         @Override
@@ -1002,7 +1002,7 @@ public class ExchangeRate
         @Override
         public void adjustForItem(final T pItem) {
             /* Access the Currency Id */
-            AccountCurrency myCurrency = pItem.getToCurrency();
+            AssetCurrency myCurrency = pItem.getToCurrency();
             if (myCurrency == null) {
                 return;
             }
@@ -1031,7 +1031,7 @@ public class ExchangeRate
          */
         public boolean validRateCount(final ExchangeRate pItem) {
             /* Access the Details */
-            AccountCurrency myCurrency = pItem.getToCurrency();
+            AssetCurrency myCurrency = pItem.getToCurrency();
             JDateDay myDate = pItem.getDate();
 
             /* Access the map */
@@ -1049,7 +1049,7 @@ public class ExchangeRate
          * @param pDate the key to look up
          * @return true/false
          */
-        public boolean availableDate(final AccountCurrency pCurrency,
+        public boolean availableDate(final AssetCurrency pCurrency,
                                      final JDateDay pDate) {
             /* Access the map */
             Map<JDateDay, Integer> myMap = theMapOfMaps.get(pCurrency);

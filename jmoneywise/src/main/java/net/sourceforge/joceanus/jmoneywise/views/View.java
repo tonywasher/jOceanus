@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -234,7 +234,7 @@ public class View
      * Set the default currency.
      * @param pCurrency the new default currency
      */
-    public void setDefaultCurrency(final AccountCurrency pCurrency) {
+    public void setDefaultCurrency(final AssetCurrency pCurrency) {
         /* Set default currency in AccountCurrencies */
         theData.getAccountCurrencies().setDefaultCurrency(pCurrency);
 

@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -37,21 +37,21 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableStaticData extension for AccountCategoryType.
  * @author Tony Washer
  */
-public class TableAccountCurrency
-        extends TableStaticData<AccountCurrency, MoneyWiseDataType> {
+public class TableAssetCurrency
+        extends TableStaticData<AssetCurrency, MoneyWiseDataType> {
     /**
      * The table name.
      */
-    protected static final String TABLE_NAME = AccountCurrency.LIST_NAME;
+    protected static final String TABLE_NAME = AssetCurrency.LIST_NAME;
 
     /**
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableAccountCurrency(final Database<MoneyWiseData> pDatabase) {
+    protected TableAssetCurrency(final Database<MoneyWiseData> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
-        myTableDef.addBooleanColumn(AccountCurrency.FIELD_DEFAULT);
+        myTableDef.addBooleanColumn(AssetCurrency.FIELD_DEFAULT);
     }
 
     @Override
@@ -66,19 +66,19 @@ public class TableAccountCurrency
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCurrency.OBJECT_NAME);
-        myValues.addValue(AccountCurrency.FIELD_DEFAULT, myTableDef.getBooleanValue(AccountCurrency.FIELD_DEFAULT));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AssetCurrency.OBJECT_NAME);
+        myValues.addValue(AssetCurrency.FIELD_DEFAULT, myTableDef.getBooleanValue(AssetCurrency.FIELD_DEFAULT));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void setFieldValue(final AccountCurrency pItem,
+    protected void setFieldValue(final AssetCurrency pItem,
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (AccountCurrency.FIELD_DEFAULT.equals(iField)) {
+        if (AssetCurrency.FIELD_DEFAULT.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isDefault());
         } else {
             super.setFieldValue(pItem, iField);

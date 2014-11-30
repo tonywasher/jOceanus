@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Currency;
+
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
@@ -32,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
@@ -190,6 +193,44 @@ public abstract class AssetBase<T extends AssetBase<T>>
     @Override
     public AssetBase<?> getParent() {
         return null;
+    }
+
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return null;
+    }
+
+    /**
+     * Obtain CurrencyId.
+     * @return the currencyId
+     */
+    public Integer getAssetCurrencyId() {
+        AssetCurrency myCurrency = getAssetCurrency();
+        return (myCurrency == null)
+                                   ? null
+                                   : myCurrency.getId();
+    }
+
+    /**
+     * Obtain CurrencyName.
+     * @return the currencyName
+     */
+    public String getAssetCurrencyName() {
+        AssetCurrency myCurrency = getAssetCurrency();
+        return (myCurrency == null)
+                                   ? null
+                                   : myCurrency.getName();
+    }
+
+    @Override
+    public Currency getCurrency() {
+        AssetCurrency myCurrency = getAssetCurrency();
+        myCurrency = myCurrency == null
+                                       ? getDataSet().getDefaultCurrency()
+                                       : myCurrency;
+        return myCurrency == null
+                                 ? null
+                                 : myCurrency.getCurrency();
     }
 
     @Override

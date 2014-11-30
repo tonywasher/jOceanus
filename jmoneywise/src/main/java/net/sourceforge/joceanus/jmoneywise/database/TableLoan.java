@@ -56,7 +56,7 @@ public class TableLoan
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Loan.FIELD_CATEGORY, TableLoanCategory.TABLE_NAME);
-        myTableDef.addReferenceColumn(Loan.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addReferenceColumn(Loan.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Loan.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Loan.FIELD_NAME, Loan.NAMELEN);
         myTableDef.addNullEncryptedColumn(Loan.FIELD_DESC, Loan.DESCLEN);
@@ -100,7 +100,7 @@ public class TableLoan
         } else if (Loan.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Loan.FIELD_CURRENCY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getLoanCurrencyId());
+            myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
         } else if (Loan.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Loan.FIELD_DESC.equals(iField)) {

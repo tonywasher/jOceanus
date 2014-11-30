@@ -129,7 +129,7 @@ public class SheetSecurity
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getSecurityTypeId());
         writeInteger(COL_PARENT, pItem.getParentId());
-        writeInteger(COL_CURRENCY, pItem.getSecurityCurrencyId());
+        writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_SYMBOL, pItem.getSymbolBytes());

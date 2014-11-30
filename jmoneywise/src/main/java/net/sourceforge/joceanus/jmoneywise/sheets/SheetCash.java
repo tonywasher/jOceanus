@@ -119,7 +119,7 @@ public class SheetCash
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
-        writeInteger(COL_CURRENCY, pItem.getCashCurrencyId());
+        writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_CLOSED, pItem.isClosed());

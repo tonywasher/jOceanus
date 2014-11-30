@@ -64,7 +64,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
@@ -335,8 +335,8 @@ public class ArchiveLoader {
                 bContinue = SheetTaxCategory.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                myStage.startTask(AccountCurrency.LIST_NAME);
-                bContinue = SheetAccountCurrency.loadArchive(pTask, myWorkbook, myData);
+                myStage.startTask(AssetCurrency.LIST_NAME);
+                bContinue = SheetAssetCurrency.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
                 myStage.startTask(TaxRegime.LIST_NAME);

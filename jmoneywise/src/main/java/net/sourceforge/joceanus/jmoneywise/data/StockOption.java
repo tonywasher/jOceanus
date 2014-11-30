@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Currency;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
@@ -222,6 +223,22 @@ public class StockOption
         return hasInfoSet
                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
                          : null;
+    }
+
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        SecurityHolding myHolding = getStockHolding();
+        return myHolding == null
+                                ? null
+                                : myHolding.getAssetCurrency();
+    }
+
+    @Override
+    public Currency getCurrency() {
+        SecurityHolding myHolding = getStockHolding();
+        return myHolding == null
+                                ? null
+                                : myHolding.getCurrency();
     }
 
     /**
@@ -596,6 +613,8 @@ public class StockOption
                 setValueStockHolding((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueStockHolding((String) myValue);
+            } else if (myValue instanceof SecurityHolding) {
+                setValueStockHolding((SecurityHolding) myValue);
             }
 
             /* Store GrantDate */
@@ -691,7 +710,7 @@ public class StockOption
 
         /* Determine default holding */
         Portfolio myPortfolio = getDefaultPortfolio(pUpdateSet);
-        Security mySecurity = getDefaultSecurity(pUpdateSet);
+        Security mySecurity = getDefaultSecurity(pUpdateSet, myPortfolio);
         SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
         SecurityHolding myHolding = myMap.declareHolding(myPortfolio, mySecurity);
         setStockHolding(myHolding);
@@ -704,7 +723,7 @@ public class StockOption
         setExpiryDate(myDate);
 
         /* Set default price */
-        setPrice(JPrice.getWholeUnits(1, mySecurity.getSecurityCurrency().getCurrency()));
+        setPrice(JPrice.getWholeUnits(1, mySecurity.getCurrency()));
     }
 
     /**
@@ -732,17 +751,27 @@ public class StockOption
     /**
      * Obtain default security for stockOption.
      * @param pUpdateSet the update set
+     * @param pPortfolio the portfolio
      * @return the default security
      */
-    private Security getDefaultSecurity(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private Security getDefaultSecurity(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                        final Portfolio pPortfolio) {
+        /* No security if there is no portfolio */
+        if (pPortfolio == null) {
+            return null;
+        }
+
         /* loop through the securities */
+        Currency myCurrency = pPortfolio.getCurrency();
         SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         Iterator<Security> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
             Security mySecurity = myIterator.next();
 
-            /* Ignore deleted and closed securities */
-            if (mySecurity.isDeleted() || mySecurity.isClosed()) {
+            /* Ignore deleted and closed securities plus those of a different currency */
+            boolean bIgnore = mySecurity.isDeleted() || mySecurity.isClosed();
+            bIgnore |= !myCurrency.equals(mySecurity.getCurrency());
+            if (bIgnore) {
                 continue;
             }
 
@@ -856,9 +885,7 @@ public class StockOption
     @Override
     public void validate() {
         SecurityHolding myHolding = getStockHolding();
-        Security mySecurity = myHolding == null
-                                               ? null
-                                               : myHolding.getSecurity();
+        Currency myCurrency = getCurrency();
         JDateDay myGrant = getGrantDate();
         JDateDay myExpiry = getExpiryDate();
         JPrice myPrice = getPrice();
@@ -867,11 +894,13 @@ public class StockOption
         /* Validate base components */
         super.validate();
 
-        /* Security must be non-null */
+        /* Holding must be non-null */
         if (myHolding == null) {
             addError(ERROR_MISSING, FIELD_STOCKHOLDING);
-        } else if (!mySecurity.isSecurityClass(SecurityTypeClass.SHARES)) {
+        } else if (!myHolding.isSecurityClass(SecurityTypeClass.SHARES)) {
             addError(ERROR_BADSECURITY, FIELD_STOCKHOLDING);
+        } else if (!myHolding.validCurrencies()) {
+            addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_STOCKHOLDING);
         }
 
         /* GrantDate must be non-null and within range */
@@ -899,11 +928,8 @@ public class StockOption
             addError(ERROR_NEGATIVE, FIELD_PRICE);
         } else {
             /* Ensure that currency is correct */
-            AccountCurrency myCurrency = mySecurity == null
-                                                           ? null
-                                                           : mySecurity.getSecurityCurrency();
             if ((myCurrency != null)
-                && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
+                && !myPrice.getCurrency().equals(myCurrency)) {
                 addError(ERROR_CURRENCY, FIELD_PRICE);
             }
         }

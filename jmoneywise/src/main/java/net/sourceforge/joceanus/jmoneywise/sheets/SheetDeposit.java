@@ -136,7 +136,7 @@ public class SheetDeposit
         super.insertSecureItem(pItem);
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeInteger(COL_PARENT, pItem.getParentId());
-        writeInteger(COL_CURRENCY, pItem.getDepositCurrencyId());
+        writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_GROSS, pItem.isGross());

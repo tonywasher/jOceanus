@@ -56,7 +56,7 @@ public class TableSecurity
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_SECTYPE, TableSecurityType.TABLE_NAME);
-        myTableDef.addReferenceColumn(Security.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addReferenceColumn(Security.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Security.FIELD_NAME, Security.NAMELEN);
         myTableDef.addNullEncryptedColumn(Security.FIELD_DESC, Security.DESCLEN);
@@ -102,7 +102,7 @@ public class TableSecurity
         } else if (Security.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Security.FIELD_CURRENCY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getSecurityCurrencyId());
+            myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
         } else if (Security.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Security.FIELD_DESC.equals(iField)) {

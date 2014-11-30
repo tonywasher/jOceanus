@@ -1409,12 +1409,14 @@ public class TransactionTable
                     return !pItem.isLocked();
                 case COLUMN_DATE:
                 case COLUMN_ACCOUNT:
-                case COLUMN_DIRECTION:
                 case COLUMN_PARTNER:
                 case COLUMN_CATEGORY:
-                case COLUMN_AMOUNT:
                 case COLUMN_ACTION:
                     return !pItem.isReconciled();
+                case COLUMN_DIRECTION:
+                    return !pItem.isReconciled() && pItem.canSwitchDirection();
+                case COLUMN_AMOUNT:
+                    return !pItem.isReconciled() && !pItem.needsZeroAmount();
                 case COLUMN_DESC:
                 case COLUMN_REF:
                 case COLUMN_TAGS:

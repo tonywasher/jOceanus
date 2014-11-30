@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Currency;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -148,6 +149,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Zero Amount Error Text.
      */
     private static final String ERROR_ZEROAMOUNT = MoneyWiseDataResource.TRANSACTION_ERROR_ZERO.getValue();
+
+    /**
+     * Currency Error Text.
+     */
+    protected static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -1233,7 +1239,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public boolean isInterest() {
         /* Check for interest */
-        return (getCategory() != null) && getCategory().getCategoryTypeClass().isInterest();
+        TransactionCategoryClass myClass = getCategoryClass();
+        return myClass == null
+                              ? false
+                              : myClass.isInterest();
     }
 
     /**
@@ -1241,8 +1250,29 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return dividend true/false
      */
     public boolean isDividend() {
-        /* Check for dividend */
-        return (getCategory() != null) && getCategory().getCategoryTypeClass().isDividend();
+        TransactionCategoryClass myClass = getCategoryClass();
+        return myClass == null
+                              ? false
+                              : myClass.isDividend();
+    }
+
+    /**
+     * Determines whether an event needs a zero amount.
+     * @return true/false
+     */
+    public boolean needsZeroAmount() {
+        TransactionCategoryClass myClass = getCategoryClass();
+        return myClass == null
+                              ? false
+                              : myClass.needsZeroAmount();
+    }
+
+    /**
+     * Determines whether we can switch direction.
+     * @return true/false
+     */
+    public boolean canSwitchDirection() {
+        return TransactionValidator.isValidDirection(getAccount(), getCategory(), getDirection().reverse());
     }
 
     /**
@@ -1397,10 +1427,18 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             addError(ERROR_MISSING, FIELD_ACCOUNT);
             doCheckCombo = false;
 
+        } else {
+            /* Holding currency combo must be valid */
+            if ((myAccount instanceof SecurityHolding)
+                && !((SecurityHolding) myAccount).validCurrencies()) {
+                addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_ACCOUNT);
+            }
+
             /* Account must be valid */
-        } else if (!TransactionValidator.isValidAccount(myAccount)) {
-            addError(ERROR_COMBO, FIELD_ACCOUNT);
-            doCheckCombo = false;
+            if (!TransactionValidator.isValidAccount(myAccount)) {
+                addError(ERROR_COMBO, FIELD_ACCOUNT);
+                doCheckCombo = false;
+            }
         }
 
         /* Category must be non-null */
@@ -1430,10 +1468,18 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             addError(ERROR_MISSING, FIELD_PARTNER);
             doCheckCombo = false;
 
+        } else {
+            /* Holding currency combo must be valid */
+            if ((myPartner instanceof SecurityHolding)
+                && !((SecurityHolding) myPartner).validCurrencies()) {
+                addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_PARTNER);
+            }
+
             /* Partner must be valid for Account */
-        } else if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
-            addError(ERROR_COMBO, FIELD_PARTNER);
-            doCheckCombo = false;
+            if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
+                addError(ERROR_COMBO, FIELD_PARTNER);
+                doCheckCombo = false;
+            }
         }
 
         /* If we have a parent */
@@ -1449,17 +1495,26 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             }
         }
 
-        /* Money must not be null/negative */
+        /* Money must not be null */
         if (myAmount == null) {
             addError(ERROR_MISSING, FIELD_AMOUNT);
-        } else if (!myAmount.isPositive()) {
-            addError(ERROR_NEGATIVE, FIELD_AMOUNT);
-        }
+        } else {
+            /* Money must not be negative */
+            if (!myAmount.isPositive()) {
+                addError(ERROR_NEGATIVE, FIELD_AMOUNT);
+            }
 
-        /* Money must be zero for stock split/adjust/deMerger */
-        if ((myAmount != null) && (myAmount.isNonZero())
-            && (myCategory != null) && (myCategory.getCategoryTypeClass().needsZeroAmount())) {
-            addError(ERROR_ZEROAMOUNT, FIELD_AMOUNT);
+            /* Check that if money needs to be zero it is */
+            if (needsZeroAmount()
+                && (myAmount.isNonZero())) {
+                addError(ERROR_ZEROAMOUNT, FIELD_AMOUNT);
+            }
+
+            /* Check that amount is correct currency */
+            Currency myCurrency = myAccount.getCurrency();
+            if (!myAmount.getCurrency().equals(myCurrency)) {
+                addError(ERROR_CURRENCY, FIELD_AMOUNT);
+            }
         }
     }
 

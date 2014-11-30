@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
@@ -211,7 +211,7 @@ public class MaintenanceTab
         theStatic.addStatic(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
-        theStatic.addStatic(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        theStatic.addStatic(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
         theStatic.addStatic(MoneyWiseDataType.TAXBASIS, TaxBasisList.class);
         theStatic.addStatic(MoneyWiseDataType.TAXTYPE, TaxCategoryList.class);
         theStatic.addStatic(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);

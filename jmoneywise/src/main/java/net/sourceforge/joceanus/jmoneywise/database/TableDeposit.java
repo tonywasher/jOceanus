@@ -56,7 +56,7 @@ public class TableDeposit
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Deposit.FIELD_CATEGORY, TableDepositCategory.TABLE_NAME);
-        myTableDef.addReferenceColumn(Deposit.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addReferenceColumn(Deposit.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Deposit.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Deposit.FIELD_NAME, Deposit.NAMELEN);
         myTableDef.addNullEncryptedColumn(Deposit.FIELD_DESC, Deposit.DESCLEN);
@@ -104,7 +104,7 @@ public class TableDeposit
         } else if (Deposit.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Deposit.FIELD_CURRENCY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getDepositCurrencyId());
+            myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
         } else if (Deposit.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Deposit.FIELD_DESC.equals(iField)) {

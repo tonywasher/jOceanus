@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.CashPanel;
@@ -668,7 +668,7 @@ public class CashTable
         /**
          * Currency ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
+        private final ScrollButtonCellEditor<AssetCurrency> theCurrencyEditor;
 
         /**
          * Closed column.
@@ -688,7 +688,7 @@ public class CashTable
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(CashCategory.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
+            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -770,7 +770,7 @@ public class CashTable
                 case COLUMN_DESC:
                     return pCash.getDesc();
                 case COLUMN_CURR:
-                    return pCash.getCashCurrency();
+                    return pCash.getAssetCurrency();
                 case COLUMN_CLOSED:
                     return pCash.isClosed();
                 case COLUMN_ACTIVE:
@@ -809,7 +809,7 @@ public class CashTable
                     pItem.setCashCategory((CashCategory) pValue);
                     break;
                 case COLUMN_CURR:
-                    pItem.setCashCurrency((AccountCurrency) pValue);
+                    pItem.setAssetCurrency((AssetCurrency) pValue);
                     pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_CLOSED:
@@ -915,7 +915,7 @@ public class CashTable
              */
             private void buildCurrencyMenu() {
                 /* Access details */
-                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
+                JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
 
                 /* Record active item */
                 Point myCell = theCurrencyEditor.getPoint();

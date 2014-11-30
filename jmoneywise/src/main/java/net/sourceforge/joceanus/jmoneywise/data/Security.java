@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
@@ -303,34 +303,9 @@ public class Security
         return getSymbolField(getValueSet());
     }
 
-    /**
-     * Obtain Security Currency.
-     * @return the currency
-     */
-    public AccountCurrency getSecurityCurrency() {
-        return getSecurityCurrency(getValueSet());
-    }
-
-    /**
-     * Obtain SecurityCurrencyId.
-     * @return the currencyId
-     */
-    public Integer getSecurityCurrencyId() {
-        AccountCurrency myCurrency = getSecurityCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getId();
-    }
-
-    /**
-     * Obtain SecurityCurrencyName.
-     * @return the currencyName
-     */
-    public String getSecurityCurrencyName() {
-        AccountCurrency myCurrency = getSecurityCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getName();
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return getAssetCurrency(getValueSet());
     }
 
     /**
@@ -383,8 +358,8 @@ public class Security
      * @param pValueSet the valueSet
      * @return the SecurityCurrency
      */
-    public static AccountCurrency getSecurityCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    public static AssetCurrency getAssetCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
     /**
@@ -465,7 +440,7 @@ public class Security
      * Set security currency value.
      * @param pValue the value
      */
-    private void setValueCurrency(final AccountCurrency pValue) {
+    private void setValueCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
@@ -737,8 +712,8 @@ public class Security
                 setValueCurrency((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCurrency((String) myValue);
-            } else if (myValue instanceof AccountCurrency) {
-                setValueCurrency((AccountCurrency) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
             }
 
             /* Catch Exceptions */
@@ -781,7 +756,7 @@ public class Security
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setSecurityType(getDefaultSecurityType());
-        setSecurityCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getDefaultCurrency());
         setSymbol(getName());
         setClosed(Boolean.FALSE);
         autoCorrect(pUpdateSet);
@@ -915,7 +890,7 @@ public class Security
      * Set a new security currency.
      * @param pCurrency the new currency
      */
-    public void setSecurityCurrency(final AccountCurrency pCurrency) {
+    public void setAssetCurrency(final AssetCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -972,7 +947,7 @@ public class Security
     public void touchUnderlyingItems() {
         /* touch the security type, currency and parent */
         getSecurityType().touchItem(this);
-        getSecurityCurrency().touchItem(this);
+        getAssetCurrency().touchItem(this);
         getParent().touchItem(this);
 
         /* touch infoSet items */
@@ -993,7 +968,7 @@ public class Security
     public void validate() {
         Payee myParent = getParent();
         SecurityType mySecType = getSecurityType();
-        AccountCurrency myCurrency = getSecurityCurrency();
+        AssetCurrency myCurrency = getAssetCurrency();
         String mySymbol = getSymbol();
 
         /* Validate base components */
@@ -1108,8 +1083,8 @@ public class Security
         }
 
         /* Update the security currency if required */
-        if (!Difference.isEqual(getSecurityCurrency(), mySecurity.getSecurityCurrency())) {
-            setValueCurrency(mySecurity.getSecurityCurrency());
+        if (!Difference.isEqual(getAssetCurrency(), mySecurity.getAssetCurrency())) {
+            setValueCurrency(mySecurity.getAssetCurrency());
         }
 
         /* Check for changes */

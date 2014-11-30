@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
@@ -121,7 +121,7 @@ public class Cash
             return true;
         }
         if (FIELD_CURRENCY.equals(pField)) {
-            return getCashCurrency() != null;
+            return getAssetCurrency() != null;
         }
 
         /* Pass call on */
@@ -233,34 +233,9 @@ public class Cash
                                    : myCategory.getCategoryTypeClass();
     }
 
-    /**
-     * Obtain Cash Currency.
-     * @return the currency
-     */
-    public AccountCurrency getCashCurrency() {
-        return getCashCurrency(getValueSet());
-    }
-
-    /**
-     * Obtain DepositCurrencyId.
-     * @return the currencyId
-     */
-    public Integer getCashCurrencyId() {
-        AccountCurrency myCurrency = getCashCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getId();
-    }
-
-    /**
-     * Obtain CashCurrencyName.
-     * @return the currencyName
-     */
-    public String getCashCurrencyName() {
-        AccountCurrency myCurrency = getCashCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getName();
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return getCurrency(getValueSet());
     }
 
     /**
@@ -277,8 +252,8 @@ public class Cash
      * @param pValueSet the valueSet
      * @return the CashCurrency
      */
-    public static AccountCurrency getCashCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    public static AssetCurrency getCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
     /**
@@ -309,7 +284,7 @@ public class Cash
      * Set cash currency value.
      * @param pValue the value
      */
-    private void setValueCurrency(final AccountCurrency pValue) {
+    private void setValueCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
@@ -517,8 +492,8 @@ public class Cash
             setValueCurrency((Integer) myValue);
         } else if (myValue instanceof String) {
             setValueCurrency((String) myValue);
-        } else if (myValue instanceof AccountCurrency) {
-            setValueCurrency((AccountCurrency) myValue);
+        } else if (myValue instanceof AssetCurrency) {
+            setValueCurrency((AssetCurrency) myValue);
         }
 
         /* Create the InfoSet */
@@ -562,11 +537,11 @@ public class Cash
         /* If we are autoExpense */
         if (isAutoExpense()) {
             /* We must not have a currency */
-            setCashCurrency(null);
+            setAssetCurrency(null);
 
             /* Else standard cash account so ensure we have a currency */
-        } else if (getCashCurrency() == null) {
-            setCashCurrency(getDataSet().getDefaultCurrency());
+        } else if (getAssetCurrency() == null) {
+            setAssetCurrency(getDataSet().getDefaultCurrency());
         }
 
         /* autoCorrect the infoSet */
@@ -642,7 +617,7 @@ public class Cash
      * Set a new cash currency.
      * @param pCurrency the new currency
      */
-    public void setCashCurrency(final AccountCurrency pCurrency) {
+    public void setAssetCurrency(final AssetCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -703,7 +678,7 @@ public class Cash
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
-        AccountCurrency myCurrency = getCashCurrency();
+        AssetCurrency myCurrency = getAssetCurrency();
         if (myCurrency != null) {
             myCurrency.touchItem(this);
         }
@@ -721,7 +696,7 @@ public class Cash
     @Override
     public void validate() {
         CashCategory myCategory = getCategory();
-        AccountCurrency myCurrency = getCashCurrency();
+        AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();
@@ -781,8 +756,8 @@ public class Cash
         }
 
         /* Update the deposit currency if required */
-        if (!Difference.isEqual(getCashCurrency(), myCash.getCashCurrency())) {
-            setValueCurrency(myCash.getCashCurrency());
+        if (!Difference.isEqual(getAssetCurrency(), myCash.getAssetCurrency())) {
+            setValueCurrency(myCash.getAssetCurrency());
         }
 
         /* Check for changes */

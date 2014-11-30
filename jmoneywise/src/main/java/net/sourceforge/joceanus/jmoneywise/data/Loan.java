@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
@@ -279,34 +279,9 @@ public class Loan
                                    : myCategory.getCategoryTypeClass();
     }
 
-    /**
-     * Obtain Deposit Currency.
-     * @return the currency
-     */
-    public AccountCurrency getLoanCurrency() {
-        return getLoanCurrency(getValueSet());
-    }
-
-    /**
-     * Obtain LoanCurrencyId.
-     * @return the currencyId
-     */
-    public Integer getLoanCurrencyId() {
-        AccountCurrency myCurrency = getLoanCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getId();
-    }
-
-    /**
-     * Obtain LoanCurrencyName.
-     * @return the currencyName
-     */
-    public String getLoanCurrencyName() {
-        AccountCurrency myCurrency = getLoanCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getName();
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return getAssetCurrency(getValueSet());
     }
 
     /**
@@ -332,8 +307,8 @@ public class Loan
      * @param pValueSet the valueSet
      * @return the LoanCurrency
      */
-    public static AccountCurrency getLoanCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    public static AssetCurrency getAssetCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
     /**
@@ -388,7 +363,7 @@ public class Loan
      * Set loan currency value.
      * @param pValue the value
      */
-    private void setValueCurrency(final AccountCurrency pValue) {
+    private void setValueCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
@@ -602,8 +577,8 @@ public class Loan
             setValueCurrency((Integer) myValue);
         } else if (myValue instanceof String) {
             setValueCurrency((String) myValue);
-        } else if (myValue instanceof AccountCurrency) {
-            setValueCurrency((AccountCurrency) myValue);
+        } else if (myValue instanceof AssetCurrency) {
+            setValueCurrency((AssetCurrency) myValue);
         }
 
         /* Create the InfoSet */
@@ -634,7 +609,7 @@ public class Loan
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setLoanCategory(getDefaultCategory());
-        setLoanCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         autoCorrect(pUpdateSet);
     }
@@ -763,7 +738,7 @@ public class Loan
      * Set a new loan currency.
      * @param pCurrency the new currency
      */
-    public void setLoanCurrency(final AccountCurrency pCurrency) {
+    public void setAssetCurrency(final AssetCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -842,7 +817,7 @@ public class Loan
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
-        getLoanCurrency().touchItem(this);
+        getAssetCurrency().touchItem(this);
 
         /* Touch parent */
         getParent().touchItem(this);
@@ -861,7 +836,7 @@ public class Loan
     public void validate() {
         Payee myParent = getParent();
         LoanCategory myCategory = getCategory();
-        AccountCurrency myCurrency = getLoanCurrency();
+        AssetCurrency myCurrency = getAssetCurrency();
         LoanCategoryClass myClass = getCategoryClass();
 
         /* Validate base components */
@@ -942,8 +917,8 @@ public class Loan
         }
 
         /* Update the deposit currency if required */
-        if (!Difference.isEqual(getLoanCurrency(), myLoan.getLoanCurrency())) {
-            setValueCurrency(myLoan.getLoanCurrency());
+        if (!Difference.isEqual(getAssetCurrency(), myLoan.getAssetCurrency())) {
+            setValueCurrency(myLoan.getAssetCurrency());
         }
 
         /* Check for changes */

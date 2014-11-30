@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
@@ -323,34 +323,9 @@ public class Deposit
                                    : myCategory.getCategoryTypeClass();
     }
 
-    /**
-     * Obtain Deposit Currency.
-     * @return the currency
-     */
-    public AccountCurrency getDepositCurrency() {
-        return getDepositCurrency(getValueSet());
-    }
-
-    /**
-     * Obtain DepositCurrencyId.
-     * @return the currencyId
-     */
-    public Integer getDepositCurrencyId() {
-        AccountCurrency myCurrency = getDepositCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getId();
-    }
-
-    /**
-     * Obtain DepositCurrencyName.
-     * @return the currencyName
-     */
-    public String getDepositCurrencyName() {
-        AccountCurrency myCurrency = getDepositCurrency();
-        return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getName();
+    @Override
+    public AssetCurrency getAssetCurrency() {
+        return getCurrency(getValueSet());
     }
 
     @Override
@@ -386,8 +361,8 @@ public class Deposit
      * @param pValueSet the valueSet
      * @return the PortfolioCurrency
      */
-    public static AccountCurrency getDepositCurrency(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    public static AssetCurrency getCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
     /**
@@ -460,7 +435,7 @@ public class Deposit
      * Set deposit currency value.
      * @param pValue the value
      */
-    private void setValueCurrency(final AccountCurrency pValue) {
+    private void setValueCurrency(final AssetCurrency pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
@@ -695,8 +670,8 @@ public class Deposit
                 setValueCurrency((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCurrency((String) myValue);
-            } else if (myValue instanceof AccountCurrency) {
-                setValueCurrency((AccountCurrency) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
             }
 
             /* Store the gross flag */
@@ -749,7 +724,7 @@ public class Deposit
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setDepositCategory(getDefaultCategory());
-        setDepositCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         setGross(Boolean.FALSE);
         setTaxFree(Boolean.FALSE);
@@ -902,7 +877,7 @@ public class Deposit
      * Set a new deposit currency.
      * @param pCurrency the new currency
      */
-    public void setDepositCurrency(final AccountCurrency pCurrency) {
+    public void setAssetCurrency(final AssetCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -1040,7 +1015,7 @@ public class Deposit
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
-        getDepositCurrency().touchItem(this);
+        getAssetCurrency().touchItem(this);
 
         /* Touch parent */
         getParent().touchItem(this);
@@ -1063,7 +1038,7 @@ public class Deposit
     public void validate() {
         Payee myParent = getParent();
         DepositCategory myCategory = getCategory();
-        AccountCurrency myCurrency = getDepositCurrency();
+        AssetCurrency myCurrency = getAssetCurrency();
         DepositCategoryClass myClass = getCategoryClass();
 
         /* Validate base components */
@@ -1160,8 +1135,8 @@ public class Deposit
         }
 
         /* Update the deposit currency if required */
-        if (!Difference.isEqual(getDepositCurrency(), myDeposit.getDepositCurrency())) {
-            setValueCurrency(myDeposit.getDepositCurrency());
+        if (!Difference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
+            setValueCurrency(myDeposit.getAssetCurrency());
         }
 
         /* Update the gross status if required */

@@ -449,6 +449,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     STOCKOPTION_ERROR_BADEXPIRE("StockOption.Error.BadExpire"),
 
     /**
+     * SecurityHolding InvalidCurrencyCombo Error.
+     */
+    SECURITYHOLDING_ERROR_CURRENCYCOMBO("SecurityHolding.Error.CurrencyCombo"),
+
+    /**
      * SecurityHolding New Menu.
      */
     SECURITYHOLDING_NEW("SecurityHolding.Menu.New"),
@@ -552,6 +557,11 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Transaction MultipleDates Error.
      */
     TRANSACTION_ERROR_MULTDATES("Transaction.Error.MultipleDates"),
+
+    /**
+     * Transaction PartialReconcile Error.
+     */
+    TRANSACTION_ERROR_PARTIALRECONCILE("Transaction.Error.PartialReconcile"),
 
     /**
      * Transaction MultiplePortfolios Error.

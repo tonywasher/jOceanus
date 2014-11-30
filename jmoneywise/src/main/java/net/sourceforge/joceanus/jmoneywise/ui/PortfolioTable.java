@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.PortfolioPanel;
@@ -668,7 +668,7 @@ public class PortfolioTable
         /**
          * Currency ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
+        private final ScrollButtonCellEditor<AssetCurrency> theCurrencyEditor;
 
         /**
          * Closed column.
@@ -688,7 +688,7 @@ public class PortfolioTable
             theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
+            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -770,7 +770,7 @@ public class PortfolioTable
                 case COLUMN_DESC:
                     return pPortfolio.getDesc();
                 case COLUMN_CURR:
-                    return pPortfolio.getPortfolioCurrency();
+                    return pPortfolio.getAssetCurrency();
                 case COLUMN_CLOSED:
                     return pPortfolio.isClosed();
                 case COLUMN_ACTIVE:
@@ -809,7 +809,7 @@ public class PortfolioTable
                     pItem.setParent((Payee) pValue);
                     break;
                 case COLUMN_CURR:
-                    pItem.setPortfolioCurrency((AccountCurrency) pValue);
+                    pItem.setAssetCurrency((AssetCurrency) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -914,7 +914,7 @@ public class PortfolioTable
              */
             private void buildCurrencyMenu() {
                 /* Access details */
-                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
+                JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
 
                 /* Record active item */
                 Point myCell = theCurrencyEditor.getPoint();

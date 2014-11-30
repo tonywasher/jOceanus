@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -504,9 +504,9 @@ public class SecurityPrice
             addError(ERROR_NEGATIVE, FIELD_PRICE);
         } else {
             /* Ensure that currency is correct */
-            AccountCurrency myCurrency = mySecurity == null
+            AssetCurrency myCurrency = mySecurity == null
                                                            ? null
-                                                           : mySecurity.getSecurityCurrency();
+                                                           : mySecurity.getAssetCurrency();
             if ((myCurrency != null)
                 && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
                 addError(ERROR_CURRENCY, FIELD_PRICE);

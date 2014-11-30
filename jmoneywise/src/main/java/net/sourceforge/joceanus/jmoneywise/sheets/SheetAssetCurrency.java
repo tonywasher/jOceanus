@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
@@ -40,12 +40,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SheetStaticData extension for AccountCurrency.
  * @author Tony Washer
  */
-public class SheetAccountCurrency
-        extends SheetStaticData<AccountCurrency, MoneyWiseDataType> {
+public class SheetAssetCurrency
+        extends SheetStaticData<AssetCurrency, MoneyWiseDataType> {
     /**
      * NamedArea for AccountCurrencies.
      */
-    private static final String AREA_ACCOUNTCURRENCIES = AccountCurrency.LIST_NAME;
+    private static final String AREA_ACCOUNTCURRENCIES = AssetCurrency.LIST_NAME;
 
     /**
      * Default column.
@@ -56,7 +56,7 @@ public class SheetAccountCurrency
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountCurrency(final MoneyWiseReader pReader) {
+    protected SheetAssetCurrency(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
@@ -69,7 +69,7 @@ public class SheetAccountCurrency
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountCurrency(final MoneyWiseWriter pWriter) {
+    protected SheetAssetCurrency(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTCURRENCIES);
 
@@ -81,15 +81,15 @@ public class SheetAccountCurrency
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCurrency.OBJECT_NAME);
-        myValues.addValue(AccountCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AssetCurrency.OBJECT_NAME);
+        myValues.addValue(AssetCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final AccountCurrency pItem) throws JOceanusException {
+    protected void insertSecureItem(final AssetCurrency pItem) throws JOceanusException {
         /* Insert standard fields */
         super.insertSecureItem(pItem);
 
@@ -115,7 +115,7 @@ public class SheetAccountCurrency
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of account currencies */
-        AccountCurrencyList myList = pData.getAccountCurrencies();
+        AssetCurrencyList myList = pData.getAccountCurrencies();
 
         /* Protect against exceptions */
         try {
@@ -131,7 +131,7 @@ public class SheetAccountCurrency
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* Count the number of AccountCurrencies */
+            /* Count the number of AssetCurrencies */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */

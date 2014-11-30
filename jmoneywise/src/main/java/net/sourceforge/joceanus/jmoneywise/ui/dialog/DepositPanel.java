@@ -50,8 +50,8 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
@@ -101,7 +101,7 @@ public class DepositPanel
     /**
      * Currency Button Field.
      */
-    private final JScrollButton<AccountCurrency> theCurrencyButton;
+    private final JScrollButton<AssetCurrency> theCurrencyButton;
 
     /**
      * Closed Button Field.
@@ -138,7 +138,7 @@ public class DepositPanel
         /* Create the buttons */
         theCategoryButton = new JScrollButton<DepositCategory>();
         theParentButton = new JScrollButton<Payee>();
-        theCurrencyButton = new JScrollButton<AccountCurrency>();
+        theCurrencyButton = new JScrollButton<AssetCurrency>();
 
         /* Create icon button states */
         theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
@@ -211,7 +211,7 @@ public class DepositPanel
         theFieldSet.addFieldElement(Deposit.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Deposit.FIELD_CATEGORY, DepositCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Deposit.FIELD_PARENT, Payee.class, theParentButton);
-        theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Deposit.FIELD_CLOSED, Boolean.class, myClosedButton);
         theFieldSet.addFieldElement(Deposit.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
         theFieldSet.addFieldElement(Deposit.FIELD_GROSS, Boolean.class, myGrossButton);
@@ -387,7 +387,7 @@ public class DepositPanel
         theFieldSet.setEditable(myOpeningField, bIsChangeable);
 
         /* Set currency for opening balance */
-        theFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getDepositCurrency().getCurrency());
+        theFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getCurrency());
 
         /* Set editable value for parent */
         theFieldSet.setEditable(Deposit.FIELD_PARENT, isEditable && !bIsClosed);
@@ -415,7 +415,7 @@ public class DepositPanel
             myDeposit.setParent(pUpdate.getValue(Payee.class));
         } else if (myField.equals(Deposit.FIELD_CURRENCY)) {
             /* Update the Currency */
-            myDeposit.setDepositCurrency(pUpdate.getValue(AccountCurrency.class));
+            myDeposit.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (myField.equals(Deposit.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myDeposit.setClosed(pUpdate.getBoolean());
@@ -458,7 +458,7 @@ public class DepositPanel
         Payee myParent = myItem.getParent();
         if (!pUpdates) {
             DepositCategory myCategory = myItem.getCategory();
-            AccountCurrency myCurrency = myItem.getDepositCurrency();
+            AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
         }
@@ -607,22 +607,22 @@ public class DepositPanel
      * @param pMenuBuilder the menu builder
      * @param pDeposit the deposit to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
                                   final Deposit pDeposit) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        AccountCurrency myCurr = pDeposit.getDepositCurrency();
+        AssetCurrency myCurr = pDeposit.getAssetCurrency();
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            AccountCurrency myCurrency = myIterator.next();
+            AssetCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
@@ -662,7 +662,7 @@ public class DepositPanel
         /**
          * The Currency Menu Builder.
          */
-        private final JScrollMenuBuilder<AccountCurrency> theCurrencyMenuBuilder;
+        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
         /**
          * Constructor.

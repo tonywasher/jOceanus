@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Currency;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -419,6 +420,8 @@ public class TransactionInfoSet
     protected void validate() {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
+        TransactionAsset myAccount = myTransaction.getAccount();
+        Currency myCurrency = myAccount.getCurrency();
 
         /* Loop through the classes */
         for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
@@ -469,6 +472,8 @@ public class TransactionInfoSet
                     JMoney myAmount = myInfo.getValue(JMoney.class);
                     if (!myAmount.isPositive()) {
                         myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
+                    } else if (!myAmount.getCurrency().equals(myCurrency)) {
+                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
                 case NATINSURANCE:
@@ -480,6 +485,8 @@ public class TransactionInfoSet
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (!myAmount.isPositive()) {
                         myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
+                    } else if (!myAmount.getCurrency().equals(myCurrency)) {
+                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
                 case CREDITUNITS:

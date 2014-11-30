@@ -247,7 +247,7 @@ public class SecurityPriceTable
         /* Set the item value */
         myPrice.setSecurity(pSecurity);
         myPrice.setDate(new JDateDay());
-        myPrice.setPrice(JPrice.getWholeUnits(1, pSecurity.getSecurityCurrency().getCurrency()));
+        myPrice.setPrice(JPrice.getWholeUnits(1, pSecurity.getCurrency()));
 
         /* Add to the list */
         myPrice.setNewVersion();
@@ -538,7 +538,7 @@ public class SecurityPriceTable
          */
         private void setAssumedCurrency() {
             if (theSecurity != null) {
-                thePriceEditor.setAssumedCurrency(theSecurity.getSecurityCurrency().getCurrency());
+                thePriceEditor.setAssumedCurrency(theSecurity.getCurrency());
             }
         }
 

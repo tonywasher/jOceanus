@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -125,7 +125,7 @@ public final class SpotExchangeRate
      * @param pCurrency the currency
      */
     private SpotExchangeRate(final SpotExchangeList pList,
-                             final AccountCurrency pCurrency) {
+                             final AssetCurrency pCurrency) {
         super(pList);
 
         /* Store base values */
@@ -275,7 +275,7 @@ public final class SpotExchangeRate
         /**
          * The currency.
          */
-        private final AccountCurrency theCurrency;
+        private final AssetCurrency theCurrency;
 
         /**
          * The next date.
@@ -322,13 +322,13 @@ public final class SpotExchangeRate
             /* Obtain the portfolio bucket */
             MoneyWiseData myData = theView.getData();
             theCurrency = myData.getDefaultCurrency();
-            AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+            AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
 
             /* Loop through the Currencies */
             JDateDay myDate = new JDateDay(theDate);
-            Iterator<AccountCurrency> myCurIterator = myCurrencies.iterator();
+            Iterator<AssetCurrency> myCurIterator = myCurrencies.iterator();
             while (myCurIterator.hasNext()) {
-                AccountCurrency myCurrency = myCurIterator.next();
+                AssetCurrency myCurrency = myCurIterator.next();
 
                 /* Ignore deleted/disabled and default currency */
                 boolean bIgnore = myCurrency.isDeleted() || myCurrency.isDisabled();
@@ -369,7 +369,7 @@ public final class SpotExchangeRate
                 }
 
                 /* Access the Spot Rate and ignore if not relevant */
-                AccountCurrency myCurrency = myRate.getToCurrency();
+                AssetCurrency myCurrency = myRate.getToCurrency();
                 SpotExchangeRate mySpot = findItemById(myCurrency.getId());
                 if (mySpot == null) {
                     continue;

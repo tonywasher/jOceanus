@@ -56,7 +56,7 @@ public class TableCash
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Cash.FIELD_CATEGORY, TableCashCategory.TABLE_NAME);
-        myTableDef.addNullReferenceColumn(Cash.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addNullReferenceColumn(Cash.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addEncryptedColumn(Cash.FIELD_NAME, Cash.NAMELEN);
         myTableDef.addNullEncryptedColumn(Cash.FIELD_DESC, Cash.DESCLEN);
         myTableDef.addBooleanColumn(Cash.FIELD_CLOSED);
@@ -96,7 +96,7 @@ public class TableCash
         if (Cash.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Cash.FIELD_CURRENCY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getCashCurrencyId());
+            myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
         } else if (Cash.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Cash.FIELD_DESC.equals(iField)) {

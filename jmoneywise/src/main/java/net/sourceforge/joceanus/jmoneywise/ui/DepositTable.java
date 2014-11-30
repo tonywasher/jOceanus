@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.DepositPanel;
@@ -698,7 +698,7 @@ public class DepositTable
         /**
          * Currency ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
+        private final ScrollButtonCellEditor<AssetCurrency> theCurrencyEditor;
 
         /**
          * Closed column.
@@ -719,7 +719,7 @@ public class DepositTable
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(DepositCategory.class);
             theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
+            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
             theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
             theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
@@ -806,7 +806,7 @@ public class DepositTable
                 case COLUMN_PARENT:
                     return pDeposit.getParent();
                 case COLUMN_CURR:
-                    return pDeposit.getDepositCurrency();
+                    return pDeposit.getAssetCurrency();
                 case COLUMN_CLOSED:
                     return pDeposit.isClosed();
                 case COLUMN_ACTIVE:
@@ -849,7 +849,7 @@ public class DepositTable
                     pItem.setParent((Payee) pValue);
                     break;
                 case COLUMN_CURR:
-                    pItem.setDepositCurrency((AccountCurrency) pValue);
+                    pItem.setAssetCurrency((AssetCurrency) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -978,7 +978,7 @@ public class DepositTable
              */
             private void buildCurrencyMenu() {
                 /* Access details */
-                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
+                JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
 
                 /* Record active item */
                 Point myCell = theCurrencyEditor.getPoint();

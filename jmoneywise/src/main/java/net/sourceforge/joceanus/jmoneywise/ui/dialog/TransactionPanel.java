@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -471,6 +472,7 @@ public class TransactionPanel
         Transaction myTrans = getItem();
         boolean bIsReconciled = myTrans.isReconciled();
         boolean bIsLocked = myTrans.isLocked();
+        Currency myCurrency = myTrans.getAccount().getCurrency();
 
         /* Determine whether the comments field should be visible */
         boolean bShowField = isEditable || myTrans.getComments() != null;
@@ -495,6 +497,7 @@ public class TransactionPanel
         bShowField = bEditField || myTrans.getTaxCredit() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the natIns field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
@@ -502,6 +505,7 @@ public class TransactionPanel
         bShowField = bEditField || myTrans.getNatInsurance() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the benefit field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT);
@@ -509,6 +513,7 @@ public class TransactionPanel
         bShowField = bEditField || myTrans.getDeemedBenefit() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the donation field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION);
@@ -516,6 +521,7 @@ public class TransactionPanel
         bShowField = bEditField || myTrans.getCharityDonation() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the creditUnits field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS);
@@ -558,12 +564,16 @@ public class TransactionPanel
         theDirectionState.setState(!bIsReconciled);
         theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
-        theFieldSet.setEditable(Transaction.FIELD_DIRECTION, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_AMOUNT, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_PARTNER, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_CATEGORY, isEditable && !bIsReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_DATE, isEditable && !bIsReconciled);
+
+        /* Determine basic editing */
+        boolean canEdit = isEditable && !bIsReconciled;
+        theFieldSet.setEditable(Transaction.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
+        theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, canEdit);
+        theFieldSet.setEditable(Transaction.FIELD_PARTNER, canEdit);
+        theFieldSet.setEditable(Transaction.FIELD_CATEGORY, canEdit);
+        theFieldSet.setEditable(Transaction.FIELD_DATE, canEdit);
+        theFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !myTrans.needsZeroAmount());
+        theFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
     }
 
     /**

@@ -63,7 +63,7 @@ public class MoneyWiseDatabase
         addTable(new TableTransCategoryType(this));
         addTable(new TableTaxBasis(this));
         addTable(new TableTaxCategory(this));
-        addTable(new TableAccountCurrency(this));
+        addTable(new TableAssetCurrency(this));
         addTable(new TableTaxRegime(this));
         addTable(new TableFrequency(this));
         addTable(new TableTaxYearInfoType(this));

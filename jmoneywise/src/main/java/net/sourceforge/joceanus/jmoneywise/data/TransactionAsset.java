@@ -22,7 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Currency;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 
 /**
@@ -94,4 +97,16 @@ public interface TransactionAsset {
      * @return true/false
      */
     boolean isAutoExpense();
+
+    /**
+     * Obtain the currency of the Asset.
+     * @return the currency
+     */
+    AssetCurrency getAssetCurrency();
+
+    /**
+     * Obtain the currency of the Asset.
+     * @return the currency
+     */
+    Currency getCurrency();
 }

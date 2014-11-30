@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Enumeration of AccountCurrency Classes.
+ * Enumeration of AssetCurrency Classes.
  */
-public enum AccountCurrencyClass implements StaticInterface {
+public enum AssetCurrencyClass implements StaticInterface {
     /**
      * British Pounds.
      */
@@ -846,8 +846,8 @@ public enum AccountCurrencyClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private AccountCurrencyClass(final int uId,
-                                 final int uOrder) {
+    private AssetCurrencyClass(final int uId,
+                               final int uOrder) {
         theId = uId;
         theOrder = uOrder;
         String myName = name();
@@ -860,8 +860,8 @@ public enum AccountCurrencyClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JOceanusException on error
      */
-    public static AccountCurrencyClass fromId(final int id) throws JOceanusException {
-        for (AccountCurrencyClass myClass : values()) {
+    public static AssetCurrencyClass fromId(final int id) throws JOceanusException {
+        for (AssetCurrencyClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
@@ -874,10 +874,10 @@ public enum AccountCurrencyClass implements StaticInterface {
      * @param pCurrency the currency
      * @return the corresponding enum object
      */
-    public static AccountCurrencyClass fromCurrency(final Currency pCurrency) {
+    public static AssetCurrencyClass fromCurrency(final Currency pCurrency) {
         String myCode = pCurrency == null
                                          ? null
                                          : pCurrency.getCurrencyCode();
-        return AccountCurrencyClass.valueOf(myCode);
+        return AssetCurrencyClass.valueOf(myCode);
     }
 }

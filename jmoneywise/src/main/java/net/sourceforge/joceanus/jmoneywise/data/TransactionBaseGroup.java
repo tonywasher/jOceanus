@@ -53,6 +53,11 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
     private static final String ERROR_PAYEE = MoneyWiseDataResource.TRANSACTION_ERROR_MULTPAYEES.getValue();
 
     /**
+     * Partial Reconcile Error.
+     */
+    private static final String ERROR_RECONCILE = MoneyWiseDataResource.TRANSACTION_ERROR_PARTIALRECONCILE.getValue();
+
+    /**
      * Bad Owner Error.
      */
     private static final String ERROR_OWNER = MoneyWiseDataResource.TRANSACTION_ERROR_BADOWNER.getValue();
@@ -76,6 +81,11 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
      * Active Owner.
      */
     private TransactionAsset theOwner;
+
+    /**
+     * Active Reconciled.
+     */
+    private Boolean isReconciled;
 
     /**
      * Active Payee.
@@ -162,6 +172,7 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
 
         /* Store owner */
         theOwner = myAccount;
+        isReconciled = myParent.isReconciled();
 
         /* Handle if we are dealing with a payee */
         if (myPartner instanceof Payee) {
@@ -180,6 +191,7 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionAsset myPartner = pTrans.getPartner();
         boolean isCash = myAccount instanceof Cash;
+        Boolean bIsReconciled = pTrans.isReconciled();
 
         /* If the date differs */
         if (!myDate.equals(theDate)) {
@@ -189,6 +201,11 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
         /* If the Account differs it must be cash */
         if (!myAccount.equals(theOwner) && !isCash) {
             pTrans.addError(ERROR_OWNER, Transaction.FIELD_ACCOUNT);
+        }
+
+        /* Reconciled state must be identical */
+        if (!bIsReconciled.equals(isReconciled)) {
+            pTrans.addError(ERROR_RECONCILE, Transaction.FIELD_RECONCILED);
         }
 
         /* If we have a Payee Partner */

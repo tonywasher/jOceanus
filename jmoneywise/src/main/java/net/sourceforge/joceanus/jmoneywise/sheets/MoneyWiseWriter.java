@@ -55,7 +55,7 @@ public class MoneyWiseWriter
         addSheet(new SheetTransCategoryType(this));
         addSheet(new SheetTaxBasis(this));
         addSheet(new SheetTaxCategory(this));
-        addSheet(new SheetAccountCurrency(this));
+        addSheet(new SheetAssetCurrency(this));
         addSheet(new SheetTaxRegime(this));
         addSheet(new SheetFrequency(this));
         addSheet(new SheetTaxYearInfoType(this));

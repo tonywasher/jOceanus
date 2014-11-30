@@ -50,8 +50,8 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
@@ -94,7 +94,7 @@ public class LoanPanel
     /**
      * Currency Button Field.
      */
-    private final JScrollButton<AccountCurrency> theCurrencyButton;
+    private final JScrollButton<AssetCurrency> theCurrencyButton;
 
     /**
      * Closed Button Field.
@@ -116,7 +116,7 @@ public class LoanPanel
         /* Create the buttons */
         theCategoryButton = new JScrollButton<LoanCategory>();
         theParentButton = new JScrollButton<Payee>();
-        theCurrencyButton = new JScrollButton<AccountCurrency>();
+        theCurrencyButton = new JScrollButton<AssetCurrency>();
 
         /* Set closed button */
         theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
@@ -177,7 +177,7 @@ public class LoanPanel
         theFieldSet.addFieldElement(Loan.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Loan.FIELD_PARENT, Payee.class, theParentButton);
-        theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Loan.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -323,7 +323,7 @@ public class LoanPanel
         theFieldSet.setEditable(Loan.FIELD_PARENT, isEditable && !bIsClosed);
 
         /* Set currency for opening balance */
-        theFieldSet.setAssumedCurrency(myOpeningField, myLoan.getLoanCurrency().getCurrency());
+        theFieldSet.setAssumedCurrency(myOpeningField, myLoan.getCurrency());
     }
 
     @Override
@@ -348,7 +348,7 @@ public class LoanPanel
             myLoan.setParent(pUpdate.getValue(Payee.class));
         } else if (myField.equals(Loan.FIELD_CURRENCY)) {
             /* Update the Currency */
-            myLoan.setLoanCurrency(pUpdate.getValue(AccountCurrency.class));
+            myLoan.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (myField.equals(Loan.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myLoan.setClosed(pUpdate.getBoolean());
@@ -382,7 +382,7 @@ public class LoanPanel
         Payee myParent = myItem.getParent();
         if (!pUpdates) {
             LoanCategory myCategory = myItem.getCategory();
-            AccountCurrency myCurrency = myItem.getLoanCurrency();
+            AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
         }
@@ -495,22 +495,22 @@ public class LoanPanel
      * @param pMenuBuilder the menu builder
      * @param pLoan the loan to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
                                   final Loan pLoan) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        AccountCurrency myCurr = pLoan.getLoanCurrency();
+        AssetCurrency myCurr = pLoan.getAssetCurrency();
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            AccountCurrency myCurrency = myIterator.next();
+            AssetCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
@@ -550,7 +550,7 @@ public class LoanPanel
         /**
          * The Currency Menu Builder.
          */
-        private final JScrollMenuBuilder<AccountCurrency> theCurrencyMenuBuilder;
+        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
         /**
          * Constructor.

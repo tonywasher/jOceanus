@@ -52,8 +52,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -92,7 +92,7 @@ public class CashPanel
     /**
      * Currency Button Field.
      */
-    private final JScrollButton<AccountCurrency> theCurrencyButton;
+    private final JScrollButton<AssetCurrency> theCurrencyButton;
 
     /**
      * AutoExpense Button Field.
@@ -123,7 +123,7 @@ public class CashPanel
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<CashCategory>();
-        theCurrencyButton = new JScrollButton<AccountCurrency>();
+        theCurrencyButton = new JScrollButton<AssetCurrency>();
         theAutoExpenseButton = new JScrollButton<TransactionCategory>();
         theAutoPayeeButton = new JScrollButton<Payee>();
 
@@ -184,7 +184,7 @@ public class CashPanel
         theFieldSet.addFieldElement(Cash.FIELD_NAME, DataType.STRING, myName);
         theFieldSet.addFieldElement(Cash.FIELD_DESC, DataType.STRING, myDesc);
         theFieldSet.addFieldElement(Cash.FIELD_CATEGORY, CashCategory.class, theCategoryButton);
-        theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Cash.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -325,7 +325,7 @@ public class CashPanel
 
         /* Set currency for opening balance */
         if (!isAutoExpense) {
-            theFieldSet.setAssumedCurrency(myOpeningField, myCash.getCashCurrency().getCurrency());
+            theFieldSet.setAssumedCurrency(myOpeningField, myCash.getCurrency());
         }
     }
 
@@ -348,7 +348,7 @@ public class CashPanel
             myCash.autoCorrect(getUpdateSet());
         } else if (myField.equals(Cash.FIELD_CURRENCY)) {
             /* Update the Currency */
-            myCash.setCashCurrency(pUpdate.getValue(AccountCurrency.class));
+            myCash.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (myField.equals(Cash.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myCash.setClosed(pUpdate.getBoolean());
@@ -380,7 +380,7 @@ public class CashPanel
         if (!pUpdates) {
             CashCategory myCategory = myItem.getCategory();
             TransactionCategory myAutoExpense = myItem.getAutoExpense();
-            AccountCurrency myCurrency = myItem.getCashCurrency();
+            AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
             declareGoToItem(myAutoExpense);
@@ -550,22 +550,22 @@ public class CashPanel
      * @param pMenuBuilder the menu builder
      * @param pCash the cash to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AccountCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
                                   final Cash pCash) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        AccountCurrency myCurr = pCash.getCashCurrency();
+        AssetCurrency myCurr = pCash.getAssetCurrency();
         JMenuItem myActive = null;
 
         /* Access Currencies */
-        AccountCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+        AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+        Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            AccountCurrency myCurrency = myIterator.next();
+            AssetCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
@@ -600,7 +600,7 @@ public class CashPanel
         /**
          * The Currency Menu Builder.
          */
-        private final JScrollMenuBuilder<AccountCurrency> theCurrencyMenuBuilder;
+        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
         /**
          * The AutoExpense Menu Builder.

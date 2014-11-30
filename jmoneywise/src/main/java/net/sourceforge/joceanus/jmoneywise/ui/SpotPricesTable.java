@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotPricesSelect;
@@ -766,7 +766,7 @@ public class SpotPricesTable
                 /* Update to allow correct currency */
                 SpotSecurityPrice myPrice = thePrices.get(myCell.y);
                 Security mySecurity = myPrice.getSecurity();
-                AccountCurrency myCurrency = mySecurity.getSecurityCurrency();
+                AssetCurrency myCurrency = mySecurity.getAssetCurrency();
                 thePriceEditor.setAssumedCurrency(myCurrency.getCurrency());
             }
         }

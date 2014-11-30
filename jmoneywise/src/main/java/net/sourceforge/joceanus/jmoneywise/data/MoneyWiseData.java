@@ -61,9 +61,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
@@ -154,7 +154,7 @@ public class MoneyWiseData
     /**
      * Default Currency.
      */
-    private AccountCurrency theDefaultCurrency = null;
+    private AssetCurrency theDefaultCurrency = null;
 
     /**
      * SecurityHoldings Map.
@@ -231,11 +231,11 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain Account Currencies.
-     * @return the Account Currencies
+     * Obtain Asset Currencies.
+     * @return the Asset Currencies
      */
-    public AccountCurrencyList getAccountCurrencies() {
-        return getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
+    public AssetCurrencyList getAccountCurrencies() {
+        return getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
     }
 
     /**
@@ -514,7 +514,7 @@ public class MoneyWiseData
      * Obtain default currency.
      * @return the default currency
      */
-    public AccountCurrency getDefaultCurrency() {
+    public AssetCurrency getDefaultCurrency() {
         return theDefaultCurrency;
     }
 
@@ -592,7 +592,7 @@ public class MoneyWiseData
             case TAXTYPE:
                 return new TaxCategoryList(this);
             case CURRENCY:
-                return new AccountCurrencyList(this);
+                return new AssetCurrencyList(this);
             case TAXREGIME:
                 return new TaxRegimeList(this);
             case FREQUENCY:

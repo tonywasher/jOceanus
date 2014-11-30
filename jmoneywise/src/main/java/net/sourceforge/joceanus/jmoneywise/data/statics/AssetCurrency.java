@@ -40,11 +40,11 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * AccountCurrency data type.
+ * AssetCurrency data type.
  * @author Tony Washer
  */
-public class AccountCurrency
-        extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+public class AssetCurrency
+        extends StaticData<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -112,18 +112,18 @@ public class AccountCurrency
      * Return the Currency class of the AccountCurrency.
      * @return the class
      */
-    public AccountCurrencyClass getCurrencyClass() {
+    public AssetCurrencyClass getCurrencyClass() {
         return super.getStaticClass();
     }
 
     @Override
-    public AccountCurrency getBase() {
-        return (AccountCurrency) super.getBase();
+    public AssetCurrency getBase() {
+        return (AssetCurrency) super.getBase();
     }
 
     @Override
-    public AccountCurrencyList getList() {
-        return (AccountCurrencyList) super.getList();
+    public AssetCurrencyList getList() {
+        return (AssetCurrencyList) super.getList();
     }
 
     /**
@@ -139,8 +139,8 @@ public class AccountCurrency
      * @param pList The list to associate the Account Currency with
      * @param pCurrency The Account Currency to copy
      */
-    protected AccountCurrency(final AccountCurrencyList pList,
-                              final AccountCurrency pCurrency) {
+    protected AssetCurrency(final AssetCurrencyList pList,
+                            final AssetCurrency pCurrency) {
         super(pList, pCurrency);
     }
 
@@ -150,8 +150,8 @@ public class AccountCurrency
      * @param pName Name of Account Currency
      * @throws JOceanusException on error
      */
-    private AccountCurrency(final AccountCurrencyList pList,
-                            final String pName) throws JOceanusException {
+    private AssetCurrency(final AssetCurrencyList pList,
+                          final String pName) throws JOceanusException {
         super(pList, pName);
         setValueDefault(Boolean.FALSE);
         setValueEnabled(Boolean.FALSE);
@@ -164,8 +164,8 @@ public class AccountCurrency
      * @param pClass Class of Account Currency
      * @throws JOceanusException on error
      */
-    private AccountCurrency(final AccountCurrencyList pList,
-                            final AccountCurrencyClass pClass) throws JOceanusException {
+    private AssetCurrency(final AssetCurrencyList pList,
+                          final AssetCurrencyClass pClass) throws JOceanusException {
         super(pList, pClass);
         setValueDefault(Boolean.FALSE);
         setValueEnabled(Boolean.TRUE);
@@ -178,8 +178,8 @@ public class AccountCurrency
      * @param pValues the values
      * @throws JOceanusException on error
      */
-    private AccountCurrency(final AccountCurrencyList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private AssetCurrency(final AssetCurrencyList pList,
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         super(pList, pValues);
 
         /* Store the Default */
@@ -193,7 +193,7 @@ public class AccountCurrency
     }
 
     @Override
-    public int compareTo(final AccountCurrency pThat) {
+    public int compareTo(final AssetCurrency pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -238,7 +238,7 @@ public class AccountCurrency
 
     @Override
     public void validate() {
-        AccountCurrencyList myList = getList();
+        AssetCurrencyList myList = getList();
         CurrencyDataMap myMap = myList.getDataMap();
 
         /* Check that default is non-null */
@@ -265,12 +265,12 @@ public class AccountCurrency
     @Override
     public boolean applyChanges(final DataItem<?> pData) {
         /* Can only apply changes for AccountCurrency */
-        if (!(pData instanceof AccountCurrency)) {
+        if (!(pData instanceof AssetCurrency)) {
             return false;
         }
 
         /* Access the data */
-        AccountCurrency myData = (AccountCurrency) pData;
+        AssetCurrency myData = (AssetCurrency) pData;
 
         /* Store the current detail into history */
         pushHistory();
@@ -288,10 +288,10 @@ public class AccountCurrency
     }
 
     /**
-     * Represents a list of {@link AccountCurrency} objects.
+     * Represents a list of {@link AssetCurrency} objects.
      */
-    public static class AccountCurrencyList
-            extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+    public static class AssetCurrencyList
+            extends StaticList<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -309,12 +309,12 @@ public class AccountCurrency
 
         @Override
         public JDataFields getItemFields() {
-            return AccountCurrency.FIELD_DEFS;
+            return AssetCurrency.FIELD_DEFS;
         }
 
         @Override
-        protected Class<AccountCurrencyClass> getEnumClass() {
-            return AccountCurrencyClass.class;
+        protected Class<AssetCurrencyClass> getEnumClass() {
+            return AssetCurrencyClass.class;
         }
 
         @Override
@@ -326,39 +326,39 @@ public class AccountCurrency
          * Construct an empty CORE account currency list.
          * @param pData the DataSet for the list
          */
-        public AccountCurrencyList(final DataSet<?, ?> pData) {
-            super(AccountCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
+        public AssetCurrencyList(final DataSet<?, ?> pData) {
+            super(AssetCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private AccountCurrencyList(final AccountCurrencyList pSource) {
+        private AssetCurrencyList(final AssetCurrencyList pSource) {
             super(pSource);
         }
 
         @Override
-        protected AccountCurrencyList getEmptyList(final ListStyle pStyle) {
-            AccountCurrencyList myList = new AccountCurrencyList(this);
+        protected AssetCurrencyList getEmptyList(final ListStyle pStyle) {
+            AssetCurrencyList myList = new AssetCurrencyList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public AccountCurrency addCopyItem(final DataItem<?> pItem) {
+        public AssetCurrency addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountCurrency */
-            if (!(pItem instanceof AccountCurrency)) {
+            if (!(pItem instanceof AssetCurrency)) {
                 throw new UnsupportedOperationException();
             }
 
-            AccountCurrency myCurr = new AccountCurrency(this, (AccountCurrency) pItem);
+            AssetCurrency myCurr = new AssetCurrency(this, (AssetCurrency) pItem);
             add(myCurr);
             return myCurr;
         }
 
         @Override
-        public AccountCurrency addNewItem() {
+        public AssetCurrency addNewItem() {
             throw new UnsupportedOperationException();
         }
 
@@ -377,7 +377,7 @@ public class AccountCurrency
          */
         public void addBasicItem(final String pCurrency) throws JOceanusException {
             /* Create a new Account Currency */
-            AccountCurrency myCurr = new AccountCurrency(this, pCurrency);
+            AssetCurrency myCurr = new AssetCurrency(this, pCurrency);
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
@@ -390,9 +390,9 @@ public class AccountCurrency
         }
 
         @Override
-        public AccountCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public AssetCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the currency */
-            AccountCurrency myCurrency = new AccountCurrency(this, pValues);
+            AssetCurrency myCurrency = new AssetCurrency(this, pValues);
 
             /* Check that this CurrencyId has not been previously added */
             if (!isIdUnique(myCurrency.getId())) {
@@ -426,10 +426,10 @@ public class AccountCurrency
             Currency myCurrency = mySymbols.getCurrency();
 
             /* Find the currency in the list */
-            AccountCurrency myCurr = findCurrency(myCurrency);
+            AssetCurrency myCurr = findCurrency(myCurrency);
             if (myCurr == null) {
                 /* Default to GBP if local currency not found */
-                myCurr = findItemByClass(AccountCurrencyClass.GBP);
+                myCurr = findItemByClass(AssetCurrencyClass.GBP);
             }
 
             /* If we have a currency */
@@ -445,9 +445,9 @@ public class AccountCurrency
          * @param pCurrency the currency to find
          * @return The currency
          */
-        public AccountCurrency findCurrency(final Currency pCurrency) {
+        public AssetCurrency findCurrency(final Currency pCurrency) {
             /* Look up the currency */
-            AccountCurrencyClass myClass = AccountCurrencyClass.fromCurrency(pCurrency);
+            AssetCurrencyClass myClass = AssetCurrencyClass.fromCurrency(pCurrency);
             return findItemByClass(myClass);
         }
 
@@ -455,7 +455,7 @@ public class AccountCurrency
          * Find the default currency.
          * @return The default currency
          */
-        public AccountCurrency findDefault() {
+        public AssetCurrency findDefault() {
             /* look up the default in the map */
             CurrencyDataMap myMap = getDataMap();
             return myMap == null
@@ -464,9 +464,9 @@ public class AccountCurrency
         }
 
         @Override
-        protected AccountCurrency newItem(final AccountCurrencyClass pClass) throws JOceanusException {
+        protected AssetCurrency newItem(final AssetCurrencyClass pClass) throws JOceanusException {
             /* Create the currency */
-            AccountCurrency myCurr = new AccountCurrency(this, pClass);
+            AssetCurrency myCurr = new AssetCurrency(this, pClass);
 
             /* Check that this CurrId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
@@ -485,9 +485,9 @@ public class AccountCurrency
          * Set default currency.
          * @param pCurrency the new default currency.
          */
-        public void setDefaultCurrency(final AccountCurrency pCurrency) {
+        public void setDefaultCurrency(final AssetCurrency pCurrency) {
             /* Find the default currency */
-            AccountCurrency myCurr = findDefault();
+            AssetCurrency myCurr = findDefault();
 
             /* If we are changing the currency */
             if (!pCurrency.equals(myCurr)) {
@@ -514,7 +514,7 @@ public class AccountCurrency
      * The dataMap class.
      */
     protected static final class CurrencyDataMap
-            extends StaticDataMap<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+            extends StaticDataMap<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
         /**
          * Report fields.
          */
@@ -549,7 +549,7 @@ public class AccountCurrency
         /**
          * Default value.
          */
-        private AccountCurrency theDefault;
+        private AssetCurrency theDefault;
 
         /**
          * Default count.
@@ -570,7 +570,7 @@ public class AccountCurrency
         }
 
         @Override
-        public void adjustForItem(final AccountCurrency pItem) {
+        public void adjustForItem(final AssetCurrency pItem) {
             /* Adjust order count */
             if (pItem.isDefault()) {
                 theDefault = pItem;
@@ -587,7 +587,7 @@ public class AccountCurrency
          * find default currency.
          * @return the default currency
          */
-        public AccountCurrency getDefault() {
+        public AssetCurrency getDefault() {
             return theDefault;
         }
 

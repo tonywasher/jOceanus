@@ -140,7 +140,7 @@ public class AnalysisMaps {
             }
 
             /* return price */
-            Currency myCurrency = mySecurity.getSecurityCurrency().getCurrency();
+            Currency myCurrency = mySecurity.getCurrency();
             return new JPrice(myCurrency);
         }
 
@@ -153,7 +153,7 @@ public class AnalysisMaps {
         public JPrice[] getPricesForRange(final Security pSecurity,
                                           final JDateDayRange pRange) {
             /* Set price */
-            Currency myCurrency = pSecurity.getSecurityCurrency().getCurrency();
+            Currency myCurrency = pSecurity.getCurrency();
             JPrice myFirst = new JPrice(myCurrency);
             JPrice myLatest = null;
 
