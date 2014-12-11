@@ -348,6 +348,18 @@ public final class AssetPair
         }
 
         /**
+         * Obtain default pair.
+         * @return the assetPair
+         */
+        public AssetPair getDefaultPair() {
+            /* Access default Id */
+            Integer myId = getEncodedId(AssetType.DEPOSIT, AssetType.DEPOSIT, AssetDirection.TO);
+
+            /* LookUp the relevant pair */
+            return MAP_PAIR.get(myId);
+        }
+
+        /**
          * LookUp encoded Pair.
          * @param pId the encoded id
          * @return the assetPair

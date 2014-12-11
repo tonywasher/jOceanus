@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
@@ -327,6 +328,11 @@ public class TransactionTable
     private final transient JDataTableSelection<Transaction, MoneyWiseDataType> theSelectionModel;
 
     /**
+     * TransactionBuilder.
+     */
+    private final transient TransactionBuilder theBuilder;
+
+    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -349,6 +355,7 @@ public class TransactionTable
         theTransEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTION);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
         setUpdateSet(theUpdateSet);
+        theBuilder = new TransactionBuilder(theUpdateSet, theView.getLogger());
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -393,7 +400,7 @@ public class TransactionTable
         thePanel.add(getScrollPane());
 
         /* Create a transaction panel */
-        theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theSelect, theError);
+        theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
         thePanel.add(theActiveTrans);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -522,6 +529,9 @@ public class TransactionTable
             /* Notify panel of refresh */
             theActiveTrans.refreshData();
             theActiveTrans.updateEditors(theRange);
+
+            /* Notify the builder */
+            theBuilder.setParameters(theTransactions, pRange);
         }
 
         /* Update lists */
@@ -653,6 +663,29 @@ public class TransactionTable
             /* Return visibility of row */
             return !pRow.isDeleted() && !theFilter.filterTransaction(pRow);
         }
+
+        /**
+         * New item.
+         */
+        private void addNewItem() {
+            /* Create the new transaction */
+            Transaction myTrans = theFilter.buildNewTransaction(theBuilder);
+
+            /* If we have one available */
+            if (myTrans != null) {
+                /* Add the new item */
+                myTrans.setNewVersion();
+                theTransactions.append(myTrans);
+
+                /* Validate the new item and notify of the changes */
+                myTrans.validate();
+                incrementVersion();
+
+                /* Lock the table */
+                setEnabled(false);
+                theActiveTrans.setNewItem(myTrans);
+            }
+        }
     }
 
     /**
@@ -668,6 +701,7 @@ public class TransactionTable
             theView.addChangeListener(this);
             theSelect.addChangeListener(this);
             theActionButtons.addActionListener(this);
+            theNewButton.addActionListener(this);
             theUpdateSet.addChangeListener(this);
             theActiveTrans.addChangeListener(this);
             theActiveTrans.addActionListener(this);
@@ -760,7 +794,7 @@ public class TransactionTable
                        && (pEvent instanceof ActionDetailEvent)) {
                 cascadeActionEvent((ActionDetailEvent) pEvent);
             } else if (theNewButton.equals(o)) {
-                // theModel.addNewItem();
+                theModel.addNewItem();
             }
         }
     }
@@ -1331,26 +1365,26 @@ public class TransactionTable
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setCategory((TransactionCategory) pValue);
-                    pItem.autoCorrect(theUpdateSet);
+                    theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_ACCOUNT:
                     pItem.setAccount(TransactionPanel.resolveAsset((TransactionAsset) pValue));
-                    pItem.autoCorrect(theUpdateSet);
+                    theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_DIRECTION:
                     pItem.switchDirection();
-                    pItem.autoCorrect(theUpdateSet);
+                    theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_PARTNER:
                     pItem.setPartner(TransactionPanel.resolveAsset((TransactionAsset) pValue));
-                    pItem.autoCorrect(theUpdateSet);
+                    theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_DESC:
                     pItem.setComments((String) pValue);
                     break;
                 case COLUMN_AMOUNT:
                     pItem.setAmount((JMoney) pValue);
-                    pItem.autoCorrect(theUpdateSet);
+                    theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_REF:
                     pItem.setReference((String) pValue);

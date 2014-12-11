@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -666,6 +667,9 @@ public class TransactionAnalyser
         PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
         PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
 
+        /* Access the holdings map */
+        SecurityHoldingMap myMap = theData.getSecurityHoldingsMap();
+
         /* Access source cash bucket */
         PortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
         if (mySourceCash.isActive()) {
@@ -682,7 +686,8 @@ public class TransactionAnalyser
             /* If the bucket is active */
             if (myBucket.isActive()) {
                 /* Adjust the Target Bucket */
-                SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myBucket.getSecurity());
+                SecurityHolding myTargetHolding = myMap.declareHolding(pTarget, myBucket.getSecurity());
+                SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
                 /* Process the Transfer */
                 processPortfolioXfer(myBucket, myTargetBucket, pTrans);
@@ -742,12 +747,16 @@ public class TransactionAnalyser
         PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
 
         /* Access source security bucket */
-        SecurityBucket myBucket = mySource.getSecurityBucket(pSource.getSecurity());
+        SecurityBucket myBucket = mySource.getSecurityBucket(pSource);
+
+        /* Access the holdings map */
+        SecurityHoldingMap myMap = theData.getSecurityHoldingsMap();
 
         /* If the bucket is active */
         if (myBucket.isActive()) {
             /* Adjust the Target Bucket */
-            SecurityBucket myTargetBucket = myTarget.getSecurityBucket(pSource.getSecurity());
+            SecurityHolding myTargetHolding = myMap.declareHolding(pTarget, myBucket.getSecurity());
+            SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
             /* Process the Transfer */
             processPortfolioXfer(myBucket, myTargetBucket, pTrans);
@@ -765,9 +774,7 @@ public class TransactionAnalyser
      */
     private void processUnitsAdjust(final SecurityHolding pHolding,
                                     final Transaction pTrans) {
-        /* Access the details of the holding */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
+        /* Access the units */
         JUnits myDelta = pTrans.getCreditUnits();
         if (myDelta == null) {
             myDelta = new JUnits(pTrans.getDebitUnits());
@@ -775,7 +782,7 @@ public class TransactionAnalyser
         }
 
         /* Adjust the Security Units */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, mySecurity);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         myAsset.adjustUnits(myDelta);
 
         /* Register the transaction */
@@ -831,13 +838,11 @@ public class TransactionAnalyser
     private void processCreditXferIn(final SecurityHolding pHolding,
                                      final Transaction pTrans) {
         /* Transfer is to the credit account and may or may not have a change to the units */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security myCredit = pHolding.getSecurity();
         JUnits myDeltaUnits = pTrans.getCreditUnits();
         JMoney myAmount = pTrans.getAmount();
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, myCredit);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
 
         /* Adjust the cost and investment */
         myAsset.adjustCost(myAmount);
@@ -884,7 +889,7 @@ public class TransactionAnalyser
         myPayee.adjustForDebit(pTrans);
 
         /* Access the Asset Account Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, mySecurity);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
 
         /* If this is a re-investment */
         if (pCredit instanceof SecurityHolding) {
@@ -972,13 +977,11 @@ public class TransactionAnalyser
     private void processDebitXferOut(final SecurityHolding pHolding,
                                      final Transaction pTrans) {
         /* Transfer out is from the debit account and may or may not have units */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security myDebit = pHolding.getSecurity();
         JMoney myAmount = pTrans.getAmount();
         JUnits myDeltaUnits = pTrans.getDebitUnits();
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, myDebit);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         SecurityValues myValues = myAsset.getValues();
 
         /* Record the delta investment */
@@ -1067,13 +1070,12 @@ public class TransactionAnalyser
                                     final AssetBase<?> pCredit,
                                     final Transaction pTrans) {
         /* Taxable Gain is from the debit account and may or may not have units */
-        Portfolio myPortfolio = pHolding.getPortfolio();
         Security myDebit = pHolding.getSecurity();
         JMoney myAmount = pTrans.getAmount();
         JUnits myDeltaUnits = pTrans.getDebitUnits();
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, myDebit);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         SecurityValues myValues = myAsset.getValues();
 
         /* Record the delta investment */
@@ -1161,14 +1163,13 @@ public class TransactionAnalyser
                                          final AssetBase<?> pCredit,
                                          final Transaction pTrans) {
         /* Stock Right Waived is from the debit account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
         Security myDebit = pHolding.getSecurity();
         SecurityPriceList myPrices = theData.getSecurityPrices();
         JMoney myAmount = pTrans.getAmount();
         JMoney myReduction;
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, myDebit);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         SecurityValues myValues = myAsset.getValues();
 
         /* Record the delta investment */
@@ -1257,14 +1258,11 @@ public class TransactionAnalyser
     private void processStockDeMerger(final SecurityHolding pDebit,
                                       final SecurityHolding pCredit,
                                       final Transaction pTrans) {
-        Portfolio myPortfolio = pDebit.getPortfolio();
-        Security myDebit = pDebit.getSecurity();
-        Security myCredit = pCredit.getSecurity();
         JDilution myDilution = pTrans.getDilution();
         JUnits myDeltaUnits = pTrans.getDebitUnits();
 
         /* Access the Debit Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(myPortfolio, myDebit);
+        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myValues = myAsset.getValues();
 
         /* Calculate the diluted value of the Debit account */
@@ -1291,7 +1289,7 @@ public class TransactionAnalyser
         myAsset.registerTransaction(pTrans);
 
         /* Access the Credit Asset Account Bucket */
-        myAsset = thePortfolioBuckets.getBucket(myPortfolio, myCredit);
+        myAsset = thePortfolioBuckets.getBucket(pCredit);
 
         /* The deltaCost is transferred to the credit account */
         myDeltaCost = new JMoney(myDeltaCost);
@@ -1348,14 +1346,12 @@ public class TransactionAnalyser
                                           final SecurityHolding pCredit,
                                           final Transaction pTrans) {
         /* Access details */
-        Portfolio myPortfolio = pDebit.getPortfolio();
-        Security myDebit = pDebit.getSecurity();
         Security myCredit = pCredit.getSecurity();
 
         /* Access the Asset Security Buckets */
-        SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(myPortfolio, myDebit);
+        SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
-        SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(myPortfolio, myCredit);
+        SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
         SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate price for the credit account */
@@ -1412,7 +1408,6 @@ public class TransactionAnalyser
                                              final SecurityHolding pCredit,
                                              final Transaction pTrans) {
         /* Access details */
-        Portfolio myPortfolio = pDebit.getPortfolio();
         Security myDebit = pDebit.getSecurity();
         Security myCredit = pCredit.getSecurity();
         JDateDay myDate = pTrans.getDate();
@@ -1420,9 +1415,9 @@ public class TransactionAnalyser
         JMoney myAmount = pTrans.getAmount();
 
         /* Access the Asset Security Buckets */
-        SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(myPortfolio, myDebit);
+        SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
-        SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(myPortfolio, myCredit);
+        SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
         SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate prices for the assets */

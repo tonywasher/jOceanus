@@ -145,12 +145,12 @@ public enum PayeeTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType is a dividend provider.
-     * @return <code>true</code> if the account category type is a dividend provider, <code>false</code> otherwise.
+     * Determine whether the payeeType is hidden type.
+     * @return <code>true</code> if the payee is hidden, <code>false</code> otherwise.
      */
-    public boolean isDividend() {
+    public boolean isHiddenType() {
         switch (this) {
-            case EMPLOYER:
+            case MARKET:
                 return true;
             default:
                 return false;
@@ -158,8 +158,8 @@ public enum PayeeTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the category type is singular.
-     * @return <code>true</code> if the account category type is singular, <code>false</code> otherwise.
+     * Determine whether the payee type is singular.
+     * @return <code>true</code> if the payee type is singular, <code>false</code> otherwise.
      */
     public boolean isSingular() {
         switch (this) {

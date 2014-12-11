@@ -195,7 +195,7 @@ public final class TransactionCategoryBucket
      * Obtain the transaction category.
      * @return the transaction category
      */
-    public TransactionCategory getEventCategory() {
+    public TransactionCategory getTransactionCategory() {
         return theCategory;
     }
 
@@ -203,7 +203,7 @@ public final class TransactionCategoryBucket
      * Obtain the transaction category type.
      * @return the transaction category type
      */
-    public TransactionCategoryType getEventCategoryType() {
+    public TransactionCategoryType getTransactionCategoryType() {
         return theType;
     }
 
@@ -355,8 +355,8 @@ public final class TransactionCategoryBucket
                                       final TransactionCategoryBucket pBase,
                                       final JDateDay pDate) {
         /* Copy details from base */
-        theCategory = pBase.getEventCategory();
-        theType = pBase.getEventCategoryType();
+        theCategory = pBase.getTransactionCategory();
+        theType = pBase.getTransactionCategoryType();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
@@ -377,8 +377,8 @@ public final class TransactionCategoryBucket
                                       final TransactionCategoryBucket pBase,
                                       final JDateDayRange pRange) {
         /* Copy details from base */
-        theCategory = pBase.getEventCategory();
-        theType = pBase.getEventCategoryType();
+        theCategory = pBase.getTransactionCategory();
+        theType = pBase.getTransactionCategoryType();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
@@ -400,7 +400,7 @@ public final class TransactionCategoryBucket
         }
 
         /* Compare the EventCategories */
-        return getEventCategory().compareTo(pThat.getEventCategory());
+        return getTransactionCategory().compareTo(pThat.getTransactionCategory());
     }
 
     @Override
@@ -418,7 +418,7 @@ public final class TransactionCategoryBucket
 
         /* Compare the transaction Categories */
         TransactionCategoryBucket myThat = (TransactionCategoryBucket) pThat;
-        if (!getEventCategory().equals(myThat.getEventCategory())) {
+        if (!getTransactionCategory().equals(myThat.getTransactionCategory())) {
             return false;
         }
 
@@ -428,7 +428,7 @@ public final class TransactionCategoryBucket
 
     @Override
     public int hashCode() {
-        return getEventCategory().hashCode();
+        return getTransactionCategory().hashCode();
     }
 
     /**
@@ -1167,7 +1167,7 @@ public final class TransactionCategoryBucket
                 TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
-                TransactionCategory myCategory = myCurr.getEventCategory();
+                TransactionCategory myCategory = myCurr.getTransactionCategory();
                 TransactionCategory myParent = myCategory.getParentCategory();
 
                 /* Access parent bucket */

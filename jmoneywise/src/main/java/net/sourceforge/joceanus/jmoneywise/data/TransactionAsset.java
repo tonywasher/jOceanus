@@ -99,6 +99,12 @@ public interface TransactionAsset {
     boolean isAutoExpense();
 
     /**
+     * Is the asset hidden?
+     * @return true/false
+     */
+    boolean isHidden();
+
+    /**
      * Obtain the currency of the Asset.
      * @return the currency
      */

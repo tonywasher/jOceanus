@@ -113,17 +113,15 @@ public class QIFPortfolioBuilder {
 
     /**
      * Obtain resulting units for a security holding event.
-     * @param pPortfolio the portfolio
-     * @param pSecurity the security
+     * @param pHolding the security holding
      * @param pTrans the transaction
      * @return the units
      */
-    private JUnits getUnitsForHoldingEvent(final Portfolio pPortfolio,
-                                           final Security pSecurity,
+    private JUnits getUnitsForHoldingEvent(final SecurityHolding pHolding,
                                            final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        SecurityBucket myBucket = myPortfolios.getBucket(pPortfolio, pSecurity);
+        SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Access the base values */
         SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
@@ -131,18 +129,16 @@ public class QIFPortfolioBuilder {
     }
 
     /**
-     * Obtain resulting units for a security holding event.
-     * @param pPortfolio the portfolio
-     * @param pSecurity the security
+     * Obtain base units for a security holding event.
+     * @param pHolding the security holding
      * @param pTrans the transaction
      * @return the units
      */
-    protected JUnits getBaseUnitsForHolding(final Portfolio pPortfolio,
-                                            final Security pSecurity,
+    protected JUnits getBaseUnitsForHolding(final SecurityHolding pHolding,
                                             final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        SecurityBucket myBucket = myPortfolios.getBucket(pPortfolio, pSecurity);
+        SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Access the base values */
         SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
@@ -157,17 +153,15 @@ public class QIFPortfolioBuilder {
 
     /**
      * Obtain base units for a security holding.
-     * @param pPortfolio the portfolio
-     * @param pSecurity the security
+     * @param pHolding the security holding
      * @param pTrans the transaction
      * @return the delta cost
      */
-    private JMoney getDeltaCostForHolding(final Portfolio pPortfolio,
-                                          final Security pSecurity,
+    private JMoney getDeltaCostForHolding(final SecurityHolding pHolding,
                                           final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        SecurityBucket myBucket = myPortfolios.getBucket(pPortfolio, pSecurity);
+        SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Obtain the cost delta for the transaction */
         return myBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.COST);
@@ -486,7 +480,7 @@ public class QIFPortfolioBuilder {
         QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Obtain number of units after this event */
-        JUnits myTotalUnits = getUnitsForHoldingEvent(myPortfolio, mySecurity, pTrans);
+        JUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
 
         /* Access the delta units */
         JUnits myDeltaUnits = pTrans.getCreditUnits();
@@ -808,7 +802,7 @@ public class QIFPortfolioBuilder {
         JPrice myCreditPrice = getPriceForDate(myCredit, myDate);
 
         /* Obtain the delta cost (i.e. value transferred) */
-        JMoney myValue = getDeltaCostForHolding(myPortfolio, mySecurity, pTrans);
+        JMoney myValue = getDeltaCostForHolding(pHolding, pTrans);
         myValue = new JMoney(myValue);
         myValue.negate();
 
@@ -890,10 +884,10 @@ public class QIFPortfolioBuilder {
         JMoney myAmount = pTrans.getAmount();
 
         /* Obtain the number of units that we are selling */
-        JUnits myBaseUnits = getBaseUnitsForHolding(myPortfolio, mySource, pTrans);
+        JUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);
 
         /* Obtain the delta cost (i.e. value transferred) */
-        JMoney myStockCost = getDeltaCostForHolding(myPortfolio, mySource, pTrans);
+        JMoney myStockCost = getDeltaCostForHolding(pSource, pTrans);
 
         /* Determine the total sale value */
         JMoney mySaleValue = new JMoney(myStockCost);

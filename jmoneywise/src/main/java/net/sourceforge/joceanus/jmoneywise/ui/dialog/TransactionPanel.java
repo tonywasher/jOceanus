@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingM
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
@@ -173,19 +174,27 @@ public class TransactionPanel
     private final transient ComplexIconButtonState<Boolean, Boolean> theReconciledState;
 
     /**
+     * TransactionBuilder.
+     */
+    private final transient TransactionBuilder theBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
+     * @param pBuilder the transaction builder
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
     public TransactionPanel(final JFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final TransactionBuilder pBuilder,
                             final AnalysisSelect pAnalysisSelect,
                             final ErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
         theAnalysisSelect = pAnalysisSelect;
+        theBuilder = pBuilder;
 
         /* Create the text fields */
         theDateButton = new JDateDayButton();
@@ -611,23 +620,23 @@ public class TransactionPanel
         } else if (myField.equals(Transaction.FIELD_AMOUNT)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getMoney());
-            myTrans.autoCorrect(getUpdateSet());
+            theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_ACCOUNT)) {
             /* Update the Account */
             myTrans.setAccount(resolveAsset(pUpdate.getValue(AssetBase.class)));
-            myTrans.autoCorrect(getUpdateSet());
+            theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_DIRECTION)) {
             /* Update the Direction */
             myTrans.switchDirection();
-            myTrans.autoCorrect(getUpdateSet());
+            theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_PARTNER)) {
             /* Update the Partner */
             myTrans.setPartner(resolveAsset(pUpdate.getValue(AssetBase.class)));
-            myTrans.autoCorrect(getUpdateSet());
+            theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_CATEGORY)) {
             /* Update the Category */
             myTrans.setCategory(pUpdate.getValue(TransactionCategory.class));
-            myTrans.autoCorrect(getUpdateSet());
+            theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_RECONCILED)) {
             /* Update the Reconciled indication */
             myTrans.setReconciled(pUpdate.getBoolean());

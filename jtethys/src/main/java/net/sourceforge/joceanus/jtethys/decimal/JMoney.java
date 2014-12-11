@@ -199,6 +199,16 @@ public class JMoney
     }
 
     /**
+     * Obtain value in different currency.
+     * @param pCurrency the currency to convert to
+     * @return the converted money in the new currency
+     */
+    public JMoney changeCurrency(final Currency pCurrency) {
+        /* Convert currency with an exchange rate of one */
+        return convertCurrency(pCurrency, JRatio.ONE);
+    }
+
+    /**
      * Obtain converted money.
      * @param pCurrency the currency to convert to
      * @param pRate the conversion rate

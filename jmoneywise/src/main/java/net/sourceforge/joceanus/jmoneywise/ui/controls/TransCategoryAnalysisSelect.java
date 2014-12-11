@@ -209,7 +209,7 @@ public class TransCategoryAnalysisSelect
             TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Return if non-parent */
-            if (!myBucket.getEventCategoryType().getCategoryClass().canParentCategory()) {
+            if (!myBucket.getTransactionCategoryType().getCategoryClass().canParentCategory()) {
                 return myBucket;
             }
         }
@@ -268,13 +268,13 @@ public class TransCategoryAnalysisSelect
                 TransactionCategoryBucket myBucket = myIterator.next();
 
                 /* Only process low-level items */
-                TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
+                TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
                 if (myClass.canParentCategory()) {
                     continue;
                 }
 
                 /* Determine menu to add to */
-                TransactionCategory myCategory = myBucket.getEventCategory();
+                TransactionCategory myCategory = myBucket.getTransactionCategory();
                 TransactionCategory myParent = myCategory.getParentCategory();
                 String myParentName = myParent.getName();
                 JScrollMenu myMenu = myMap.get(myParentName);

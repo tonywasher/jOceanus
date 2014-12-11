@@ -103,7 +103,7 @@ public class IncomeExpense
             TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Only process subTotal items */
-            TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
+            TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
             if (!myClass.isSubTotal()) {
                 continue;
             }
@@ -162,7 +162,7 @@ public class IncomeExpense
                                               final TransactionCategoryBucket pSource) {
         /* Access the category */
         TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
-        TransactionCategory myCategory = pSource.getEventCategory();
+        TransactionCategory myCategory = pSource.getTransactionCategory();
 
         /* Create an embedded table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
@@ -173,7 +173,7 @@ public class IncomeExpense
             TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            TransactionCategory myCurr = myBucket.getEventCategory();
+            TransactionCategory myCurr = myBucket.getTransactionCategory();
             if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }

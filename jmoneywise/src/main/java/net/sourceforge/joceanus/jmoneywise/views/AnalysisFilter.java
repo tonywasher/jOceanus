@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -243,6 +244,13 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return the delta value
      */
     public abstract JDecimal getDeltaForTransaction(final Transaction pTrans);
+
+    /**
+     * Populate new transaction.
+     * @param pBuilder the transaction builder
+     * @return the new transaction (or null)
+     */
+    public abstract Transaction buildNewTransaction(final TransactionBuilder pBuilder);
 
     /**
      * Obtain starting value for attribute.
@@ -467,6 +475,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return pBuilder.buildTransaction(getBucket().getAccount());
+        }
     }
 
     /**
@@ -568,6 +581,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return pBuilder.buildTransaction(getBucket().getSecurityHolding());
+        }
     }
 
     /**
@@ -623,6 +641,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return pBuilder.buildTransaction(getBucket().getAccount());
+        }
     }
 
     /**
@@ -663,6 +686,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
+        }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return pBuilder.buildTransaction(getBucket().getPayee());
         }
     }
 
@@ -705,6 +733,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return pBuilder.buildTransaction(getBucket().getTransactionCategory());
+        }
     }
 
     /**
@@ -745,6 +778,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
+        }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return null;
         }
     }
 
@@ -790,6 +828,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
         @Override
         public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return null;
+        }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
             return null;
         }
     }
@@ -852,6 +895,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public int hashCode() {
             return JDataManager.HASH_PRIME;
+        }
+
+        @Override
+        public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
+            return pBuilder.buildTransaction(null);
         }
     }
 }

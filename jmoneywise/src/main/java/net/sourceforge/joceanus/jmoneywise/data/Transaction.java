@@ -50,7 +50,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -94,7 +93,7 @@ public class Transaction
     /**
      * Early Date Error Text.
      */
-    private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE.getValue();
+    // private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE.getValue();
 
     /**
      * Circular update Error Text.
@@ -571,20 +570,12 @@ public class Transaction
         return theInfoSet.isClassRequired(pClass);
     }
 
-    @Override
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* autoCorrect the base item */
-        super.autoCorrect(pUpdateSet);
-
-        /* autoCorrect the infoSet */
-        theInfoSet.autoCorrect(pUpdateSet);
-    }
-
     /**
      * Validate the transaction.
      */
     @Override
     public void validate() {
+        // JDateDay myDate = getDate();
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
@@ -607,23 +598,23 @@ public class Transaction
             getList().registerChild(this);
         }
 
-        /* Check for valid account security */
-        if ((myAccount != null) && (myAccount instanceof Security)) {
-            /* If the date of this transaction is prior to the first price */
-            SecurityPrice myPrice = ((Security) myAccount).getInitialPrice();
-            if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
-                addError(ERROR_BADDATE, FIELD_ACCOUNT);
-            }
-        }
+        /* Check for valid account security TODO disabled until earliest date is determined during load rather than just analysis */
+        // if ((myAccount != null) && (myAccount instanceof SecurityHolding)) {
+        // /* Access earliest date */
+        // JDateDay myEarliest = ((SecurityHolding) myAccount).getEarliestDate();
+        // if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
+        // addError(ERROR_BADDATE, FIELD_ACCOUNT);
+        // }
+        // }
 
         /* Check for valid partner security */
-        if ((myPartner != null) && (myPartner instanceof Security) && (!Difference.isEqual(myAccount, myPartner))) {
-            /* If the date of this transaction is prior to the first price */
-            SecurityPrice myPrice = ((Security) myPartner).getInitialPrice();
-            if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
-                addError(ERROR_BADDATE, FIELD_PARTNER);
-            }
-        }
+        // if ((myPartner != null) && (myPartner instanceof SecurityHolding)) {
+        // /* Access earliest date */
+        // JDateDay myEarliest = ((SecurityHolding) myPartner).getEarliestDate();
+        // if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
+        // addError(ERROR_BADDATE, FIELD_PARTNER);
+        // }
+        // }
 
         /* Cannot have Credit and Debit if securities are identical */
         if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myAccount, myPartner))) {

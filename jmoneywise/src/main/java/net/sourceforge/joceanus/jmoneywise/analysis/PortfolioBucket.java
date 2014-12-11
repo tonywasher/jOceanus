@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -358,13 +358,13 @@ public final class PortfolioBucket
     }
 
     /**
-     * Obtain the SecurityBucket from this portfolio for a security.
-     * @param pSecurity the security
+     * Obtain the SecurityBucket from this portfolio for a security holding.
+     * @param pHolding the security holding
      * @return the bucket
      */
-    protected SecurityBucket getSecurityBucket(final Security pSecurity) {
+    protected SecurityBucket getSecurityBucket(final SecurityHolding pHolding) {
         /* Return the security bucket for the portfolio's list */
-        return theSecurities.getBucket(pSecurity, thePortfolio);
+        return theSecurities.getBucket(pHolding);
     }
 
     /**
@@ -739,21 +739,17 @@ public final class PortfolioBucket
         }
 
         /**
-         * Obtain the SecurityBucket for a given portfolio and security.
-         * @param pPortfolio the portfolio
-         * @param pSecurity the security
+         * Obtain the SecurityBucket for a given security holding.
+         * @param pHolding the holding
          * @return the bucket
          */
-        public SecurityBucket getBucket(final Portfolio pPortfolio,
-                                        final AssetBase<?> pSecurity) {
-            /* Access as security */
-            Security mySecurity = Security.class.cast(pSecurity);
-
+        public SecurityBucket getBucket(final SecurityHolding pHolding) {
             /* Locate the portfolio bucket in the list */
-            PortfolioBucket myBucket = getBucket(pPortfolio);
+            Portfolio myPortfolio = pHolding.getPortfolio();
+            PortfolioBucket myBucket = getBucket(myPortfolio);
 
             /* Return the security bucket for the portfolio's list */
-            return myBucket.getSecurityBucket(mySecurity);
+            return myBucket.getSecurityBucket(pHolding);
         }
 
         /**

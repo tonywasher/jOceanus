@@ -33,6 +33,11 @@ public class JRatio
     protected static final int NUM_DECIMALS = 6;
 
     /**
+     * Ratio of one.
+     */
+    public static final JRatio ONE = new JRatio("1");
+
+    /**
      * Constructor.
      */
     protected JRatio() {

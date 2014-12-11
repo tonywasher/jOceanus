@@ -290,11 +290,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return false;
     }
 
-    /**
-     * Can this account issue a dividend?
-     * @return true/false
-     */
-    public boolean canDividend() {
+    @Override
+    public boolean isHidden() {
         return false;
     }
 

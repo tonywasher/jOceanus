@@ -426,9 +426,16 @@ public class Payee
         return getPayeeTypeClass() == pClass;
     }
 
+    /**
+     * Is the category hidden?
+     * @return true/false
+     */
     @Override
-    public boolean canDividend() {
-        return isPayeeClass(PayeeTypeClass.EMPLOYER);
+    public boolean isHidden() {
+        PayeeTypeClass myClass = this.getPayeeTypeClass();
+        return (myClass == null)
+                                ? false
+                                : myClass.isHiddenType();
     }
 
     /**

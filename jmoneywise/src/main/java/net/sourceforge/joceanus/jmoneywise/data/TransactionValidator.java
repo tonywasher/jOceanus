@@ -48,7 +48,7 @@ public final class TransactionValidator {
     public static boolean isValidAccount(final TransactionAsset pAccount) {
         /* Check type of account */
         AssetType myType = pAccount.getAssetType();
-        return myType.isBaseAccount();
+        return myType.isBaseAccount() && !pAccount.isHidden();
     }
 
     /**
@@ -62,6 +62,11 @@ public final class TransactionValidator {
         /* Access details */
         AssetType myType = pAccount.getAssetType();
         TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+
+        /* Immediately reject hidden categories */
+        if (myCatClass.isHiddenType()) {
+            return false;
+        }
 
         /* Switch on the CategoryClass */
         switch (myCatClass) {
@@ -236,6 +241,11 @@ public final class TransactionValidator {
         boolean isRecursive = Difference.isEqual(pAccount, pPartner);
         AssetType myPartnerType = pPartner.getAssetType();
         TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+
+        /* Immediately reject hidden partners */
+        if (pPartner.isHidden()) {
+            return false;
+        }
 
         /* If this involves auto-expense */
         if (pAccount.isAutoExpense()

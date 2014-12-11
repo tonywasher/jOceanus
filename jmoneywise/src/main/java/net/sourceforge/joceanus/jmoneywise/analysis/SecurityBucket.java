@@ -36,8 +36,10 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -65,14 +67,9 @@ public final class SecurityBucket
     private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
-     * Security Field Id.
+     * SecurityHolding Field Id.
      */
-    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
-
-    /**
-     * Portfolio Field Id.
-     */
-    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
+    private static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
 
     /**
      * Security Type Field Id.
@@ -98,6 +95,11 @@ public final class SecurityBucket
      * The analysis.
      */
     private final Analysis theAnalysis;
+
+    /**
+     * The security holding.
+     */
+    private final SecurityHolding theHolding;
 
     /**
      * The security.
@@ -144,11 +146,8 @@ public final class SecurityBucket
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
-        if (FIELD_SECURITY.equals(pField)) {
-            return theSecurity;
-        }
-        if (FIELD_PORTFOLIO.equals(pField)) {
-            return thePortfolio;
+        if (FIELD_HOLDING.equals(pField)) {
+            return theHolding;
         }
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
@@ -198,7 +197,15 @@ public final class SecurityBucket
      * @return the decorated name
      */
     public String getDecoratedName() {
-        return thePortfolio.getName() + ":" + theSecurity.getName();
+        return theHolding.getName();
+    }
+
+    /**
+     * Obtain the holding.
+     * @return the holding
+     */
+    public SecurityHolding getSecurityHolding() {
+        return theHolding;
     }
 
     /**
@@ -381,15 +388,14 @@ public final class SecurityBucket
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pSecurity the security
-     * @param pPortfolio the portfolio
+     * @param pHolding the security holding
      */
     private SecurityBucket(final Analysis pAnalysis,
-                           final Security pSecurity,
-                           final Portfolio pPortfolio) {
+                           final SecurityHolding pHolding) {
         /* Store the details */
-        theSecurity = pSecurity;
-        thePortfolio = pPortfolio;
+        theHolding = pHolding;
+        theSecurity = pHolding.getSecurity();
+        thePortfolio = pHolding.getPortfolio();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -414,6 +420,7 @@ public final class SecurityBucket
                            final SecurityBucket pBase,
                            final JDateDay pDate) {
         /* Copy details from base */
+        theHolding = pBase.getSecurityHolding();
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
@@ -438,6 +445,7 @@ public final class SecurityBucket
                            final SecurityBucket pBase,
                            final JDateDayRange pRange) {
         /* Copy details from base */
+        theHolding = pBase.getSecurityHolding();
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
@@ -851,20 +859,19 @@ public final class SecurityBucket
         }
 
         /**
-         * Obtain the SecurityBucket for a given security and portfolio.
-         * @param pSecurity the security
-         * @param pPortfolio the portfolio
+         * Obtain the SecurityBucket for a given security holding.
+         * @param pHolding the security holding
          * @return the bucket
          */
-        public SecurityBucket getBucket(final Security pSecurity,
-                                        final Portfolio pPortfolio) {
+        public SecurityBucket getBucket(final SecurityHolding pHolding) {
             /* Locate the bucket in the list */
-            SecurityBucket myItem = findItemById(pSecurity.getId());
+            Security mySecurity = pHolding.getSecurity();
+            SecurityBucket myItem = findItemById(mySecurity.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new SecurityBucket(theAnalysis, pSecurity, pPortfolio);
+                myItem = new SecurityBucket(theAnalysis, pHolding);
 
                 /* Add to the list */
                 add(myItem);

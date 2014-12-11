@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Portfolio/Security combination.
@@ -173,6 +174,21 @@ public final class SecurityHolding
         return myPortfolio.isDeleted() || mySecurity.isDeleted();
     }
 
+    /**
+     * Obtain earliest allowable date.
+     * @return the date of the earliest price
+     */
+    public JDateDay getEarliestDate() {
+        /* Access constituent parts */
+        Security mySecurity = getSecurity();
+        SecurityPrice myPrice = mySecurity.getInitialPrice();
+
+        /* Test underlying items */
+        return myPrice == null
+                              ? null
+                              : myPrice.getDate();
+    }
+
     @Override
     public Integer getId() {
         return theId;
@@ -220,6 +236,11 @@ public final class SecurityHolding
 
     @Override
     public boolean isAutoExpense() {
+        return false;
+    }
+
+    @Override
+    public boolean isHidden() {
         return false;
     }
 
