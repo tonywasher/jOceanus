@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
@@ -51,6 +52,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
@@ -524,6 +526,22 @@ public class MoneyWiseData
      */
     public SecurityHoldingMap getSecurityHoldingsMap() {
         return theSecurityHoldings;
+    }
+
+    /**
+     * Obtain security prices map.
+     * @return the prices map
+     */
+    public SecurityPriceDataMap<SecurityPrice> getSecurityPriceDataMap() {
+        return getSecurityPrices().getDataMap();
+    }
+
+    /**
+     * Obtain deposit rates map.
+     * @return the rates map
+     */
+    public DepositRateDataMap getDepositRateDataMap() {
+        return getDepositRates().getDataMap();
     }
 
     /**

@@ -834,6 +834,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* If the item is not deleted */
             if (!myItem.isDeleted()) {
                 /* Map the item */
+                myItem.touchUnderlyingItems();
                 theDataMap.adjustForItem(myItem);
             }
         }

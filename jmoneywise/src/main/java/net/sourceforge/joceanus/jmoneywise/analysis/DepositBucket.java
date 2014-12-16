@@ -25,10 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.DepositRateMap;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateDataMap;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -47,6 +48,11 @@ public final class DepositBucket
      * Deposit Category Field Id.
      */
     private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
+
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
 
     /**
      * The deposit category.
@@ -85,6 +91,7 @@ public final class DepositBucket
         super(pAnalysis, pDeposit);
 
         /* Obtain category */
+        theAnalysis = pAnalysis;
         theCategory = pDeposit.getCategory();
     }
 
@@ -101,6 +108,7 @@ public final class DepositBucket
         super(pAnalysis, pBase, pDate);
 
         /* Obtain category */
+        theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
     }
 
@@ -117,6 +125,7 @@ public final class DepositBucket
         super(pAnalysis, pBase, pRange);
 
         /* Copy details from base */
+        theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
     }
 
@@ -135,9 +144,10 @@ public final class DepositBucket
     @Override
     protected void recordRate(final JDateDay pDate) {
         /* Obtain the appropriate rate record */
-        DepositRateMap myRates = getAnalysis().getRates();
+        MoneyWiseData myData = theAnalysis.getData();
+        DepositRateDataMap myRateMap = myData.getDepositRateDataMap();
         Deposit myDeposit = getAccount();
-        DepositRate myRate = myRates.getRateForDate(myDeposit, pDate);
+        DepositRate myRate = myRateMap.getRateForDate(myDeposit, pDate);
         JDateDay myDate = myDeposit.getMaturity();
 
         /* If we have a rate */

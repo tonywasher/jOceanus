@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
@@ -106,9 +106,8 @@ public class QIFPortfolioBuilder {
     private JPrice getPriceForDate(final Security pSecurity,
                                    final JDateDay pDate) {
         /* Add the price */
-        SecurityPriceList myPrices = theData.getSecurityPrices();
-        SecurityPrice myPrice = myPrices.getLatestPrice(pSecurity, pDate);
-        return myPrice.getPrice();
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
+        return myPriceMap.getPriceForDate(pSecurity, pDate);
     }
 
     /**

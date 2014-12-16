@@ -482,7 +482,7 @@ public class Security
     @Override
     public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
         /* Check for initial price */
-        if ((pSource instanceof SecurityPrice) && (theInitPrice == null)) {
+        if (pSource instanceof SecurityPrice) {
             theInitPrice = (SecurityPrice) pSource;
         }
 

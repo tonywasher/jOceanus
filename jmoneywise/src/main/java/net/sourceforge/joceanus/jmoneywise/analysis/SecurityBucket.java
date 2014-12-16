@@ -34,12 +34,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -584,7 +585,8 @@ public final class SecurityBucket
      */
     private void valueAsset(final JDateDayRange pRange) {
         /* Obtain the appropriate price */
-        SecurityPriceMap myPriceMap = theAnalysis.getPrices();
+        MoneyWiseData myData = theAnalysis.getData();
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
         JPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
 
         /* Access base units */
@@ -600,7 +602,7 @@ public final class SecurityBucket
         myPrice = myPrices[1];
 
         /* Calculate the value */
-        setValue(SecurityAttribute.PRICE, myPrices[1]);
+        setValue(SecurityAttribute.PRICE, myPrice);
         setValue(SecurityAttribute.VALUATION, myUnits.valueAtPrice(myPrice));
     }
 

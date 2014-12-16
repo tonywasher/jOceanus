@@ -329,6 +329,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     SECURITY_NEWACCOUNT("Security.NewAccount"),
 
     /**
+     * SecurityPrice Map Prices.
+     */
+    SECURITYPRICE_MAP_MAPOFPRICES("SecurityPrice.Map.MapOfPrices"),
+
+    /**
      * Deposit Gross.
      */
     DEPOSIT_GROSS("Deposit.Gross"),
@@ -367,6 +372,11 @@ public enum MoneyWiseDataResource implements ResourceId {
      * DepositRate EndDate.
      */
     DEPOSITRATE_ENDDATE("DepositRate.EndDate"),
+
+    /**
+     * DepositRate Map Prices.
+     */
+    DEPOSITRATE_MAP_MAPOFRATES("DepositRate.Map.MapOfRates"),
 
     /**
      * DepositRate NulDate Error.

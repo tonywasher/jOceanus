@@ -30,8 +30,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.DepositRateMap;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
@@ -137,16 +135,6 @@ public class Analysis
     private static final JDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TAXCALC.getValue());
 
     /**
-     * Prices Field Id.
-     */
-    private static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYPRICE.getListName());
-
-    /**
-     * Rates Field Id.
-     */
-    private static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITRATE.getListName());
-
-    /**
      * Charges Field Id.
      */
     private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_CHARGES.getValue());
@@ -220,16 +208,6 @@ public class Analysis
             return ((theTaxCalculations != null) && (!theTaxCalculations.isEmpty()))
                                                                                     ? theTaxCalculations
                                                                                     : JDataFieldValue.SKIP;
-        }
-        if (FIELD_PRICES.equals(pField)) {
-            return (thePrices.isEmpty())
-                                        ? JDataFieldValue.SKIP
-                                        : thePrices;
-        }
-        if (FIELD_RATES.equals(pField)) {
-            return (theRates.isEmpty())
-                                       ? JDataFieldValue.SKIP
-                                       : theRates;
         }
         if (FIELD_CHARGES.equals(pField)) {
             return (theCharges.isEmpty())
@@ -325,16 +303,6 @@ public class Analysis
      * The tax calculations buckets.
      */
     private final TaxCalcBucketList theTaxCalculations;
-
-    /**
-     * The prices.
-     */
-    private final SecurityPriceMap thePrices;
-
-    /**
-     * The rates.
-     */
-    private final DepositRateMap theRates;
 
     /**
      * The charges.
@@ -475,22 +443,6 @@ public class Analysis
     }
 
     /**
-     * Obtain the prices.
-     * @return the prices
-     */
-    public SecurityPriceMap getPrices() {
-        return thePrices;
-    }
-
-    /**
-     * Obtain the rates.
-     * @return the rates
-     */
-    public DepositRateMap getRates() {
-        return theRates;
-    }
-
-    /**
      * Obtain the charges.
      * @return the charges
      */
@@ -538,12 +490,6 @@ public class Analysis
         theCharges = new ChargeableEventList();
         theDilutions = new DilutionEventMap();
 
-        /* Create the security price map */
-        thePrices = new SecurityPriceMap(theData);
-
-        /* Create the account rate map */
-        theRates = new DepositRateMap(theData);
-
         /* Add opening balances */
         addOpeningBalances();
     }
@@ -561,8 +507,6 @@ public class Analysis
         theDateRange = new JDateDayRange(null, pDate);
 
         /* Access the underlying maps/lists */
-        thePrices = pSource.getPrices();
-        theRates = pSource.getRates();
         theCharges = pSource.getCharges();
         theDilutions = pSource.getDilutions();
 
@@ -596,8 +540,6 @@ public class Analysis
         theDateRange = pRange;
 
         /* Access the underlying maps/lists */
-        thePrices = pSource.getPrices();
-        theRates = pSource.getRates();
         theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
         theDilutions = pSource.getDilutions();
 

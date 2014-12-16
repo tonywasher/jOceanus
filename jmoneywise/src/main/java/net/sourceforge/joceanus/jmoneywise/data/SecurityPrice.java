@@ -22,8 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -45,10 +47,12 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
@@ -505,8 +509,8 @@ public class SecurityPrice
         } else {
             /* Ensure that currency is correct */
             AssetCurrency myCurrency = mySecurity == null
-                                                           ? null
-                                                           : mySecurity.getAssetCurrency();
+                                                         ? null
+                                                         : mySecurity.getAssetCurrency();
             if ((myCurrency != null)
                 && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
                 addError(ERROR_CURRENCY, FIELD_PRICE);
@@ -706,34 +710,6 @@ public class SecurityPrice
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * Obtain the most relevant price for a Date.
-         * @param pSecurity the security
-         * @param pDate the date from which a price is required
-         * @return The relevant Price record
-         */
-        public SecurityPrice getLatestPrice(final AssetBase<?> pSecurity,
-                                            final JDateDay pDate) {
-            /* Loop through the Prices */
-            Iterator<SecurityPrice> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                SecurityPrice myCurr = myIterator.next();
-
-                /* Skip records that do not belong to this security */
-                if (!Difference.isEqual(myCurr.getSecurity(), pSecurity)) {
-                    continue;
-                }
-
-                /* Return price if we have reached the date */
-                if (pDate.compareTo(myCurr.getDate()) >= 0) {
-                    return myCurr;
-                }
-            }
-
-            /* Return null */
-            return null;
-        }
-
         @Override
         public SecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the price */
@@ -751,19 +727,13 @@ public class SecurityPrice
             /* Return it */
             return myPrice;
         }
-
-        @Override
-        public void prepareForAnalysis() {
-            /* Just ensure the map */
-            ensureMap();
-        }
     }
 
     /**
      * The dataMap class.
      * @param <T> the data type
      */
-    protected static class SecurityPriceDataMap<T extends SecurityPrice>
+    public static class SecurityPriceDataMap<T extends SecurityPrice>
             implements DataMapItem<T, MoneyWiseDataType>, JDataContents {
         /**
          * Report fields.
@@ -771,9 +741,15 @@ public class SecurityPrice
         protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
-         * CategoryMap Field Id.
+         * InstanceMap Field Id.
          */
-        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        private static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+
+        /**
+         * PriceMap Field Id.
+         */
+        private static final JDataField FIELD_MAPOFPRICES = FIELD_DEFS
+                .declareEqualityValueField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -785,6 +761,9 @@ public class SecurityPrice
             /* Handle standard fields */
             if (FIELD_MAPOFMAPS.equals(pField)) {
                 return theMapOfMaps;
+            }
+            if (FIELD_MAPOFPRICES.equals(pField)) {
+                return theMapOfPrices;
             }
 
             /* Unknown */
@@ -802,16 +781,23 @@ public class SecurityPrice
         private final Map<Security, Map<JDateDay, Integer>> theMapOfMaps;
 
         /**
+         * Map of Prices.
+         */
+        private final Map<Security, PriceList> theMapOfPrices;
+
+        /**
          * Constructor.
          */
         public SecurityPriceDataMap() {
             /* Create the maps */
             theMapOfMaps = new HashMap<Security, Map<JDateDay, Integer>>();
+            theMapOfPrices = new HashMap<Security, PriceList>();
         }
 
         @Override
         public void resetMap() {
             theMapOfMaps.clear();
+            theMapOfPrices.clear();
         }
 
         @Override
@@ -837,6 +823,16 @@ public class SecurityPrice
             } else {
                 myMap.put(myDate, myCount + 1);
             }
+
+            /* Access the list */
+            PriceList myList = theMapOfPrices.get(mySecurity);
+            if (myList == null) {
+                myList = new PriceList(mySecurity);
+                theMapOfPrices.put(mySecurity, myList);
+            }
+
+            /* Add element to the list */
+            myList.add(pItem);
         }
 
         /**
@@ -871,6 +867,143 @@ public class SecurityPrice
             return myMap != null
                                 ? myMap.get(pDate) == null
                                 : true;
+        }
+
+        /**
+         * Obtain price for date.
+         * @param pSecurity the security
+         * @param pDate the date
+         * @return the latest price for the date.
+         */
+        public JPrice getPriceForDate(final AssetBase<?> pSecurity,
+                                      final JDateDay pDate) {
+            /* Access as security */
+            Security mySecurity = Security.class.cast(pSecurity);
+
+            /* Access list for security */
+            PriceList myList = theMapOfPrices.get(mySecurity);
+            if (myList != null) {
+                /* Loop through the prices */
+                ListIterator<SecurityPrice> myIterator = myList.listIterator();
+                while (myIterator.hasNext()) {
+                    SecurityPrice myCurr = myIterator.next();
+
+                    /* Return this price if this is earlier or equal to the the date */
+                    if (pDate.compareTo(myCurr.getDate()) >= 0) {
+                        return myCurr.getPrice();
+                    }
+                }
+            }
+
+            /* return zero price */
+            Currency myCurrency = mySecurity.getCurrency();
+            return new JPrice(myCurrency);
+        }
+
+        /**
+         * Obtain prices for range.
+         * @param pSecurity the security
+         * @param pRange the date range
+         * @return the two deep array of prices for the range.
+         */
+        public JPrice[] getPricesForRange(final Security pSecurity,
+                                          final JDateDayRange pRange) {
+            /* Set price */
+            Currency myCurrency = pSecurity.getCurrency();
+            JPrice myFirst = new JPrice(myCurrency);
+            JPrice myLatest = null;
+
+            /* Access list for security */
+            PriceList myList = theMapOfPrices.get(pSecurity);
+            if (myList != null) {
+                /* Loop through the prices */
+                ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
+                while (myIterator.hasPrevious()) {
+                    SecurityPrice myCurr = myIterator.previous();
+
+                    /* Check for the range of the date */
+                    int iComp = pRange.compareTo(myCurr.getDate());
+
+                    /* If this is later than the range we are finished */
+                    if (iComp < 0) {
+                        break;
+                    }
+
+                    /* Record as best price */
+                    myLatest = myCurr.getPrice();
+
+                    /* Record early price */
+                    if (iComp > 0) {
+                        myFirst = myLatest;
+                    }
+                }
+            }
+
+            /* Return the prices */
+            return new JPrice[]
+            { myFirst, myLatest };
+        }
+
+        /**
+         * Price List class.
+         */
+        private static final class PriceList
+                extends ArrayList<SecurityPrice>
+                implements JDataContents {
+            /**
+             * Serial Id.
+             */
+            private static final long serialVersionUID = -44781825426553991L;
+
+            /**
+             * Report fields.
+             */
+            private static final JDataFields FIELD_DEFS = new JDataFields(PriceList.class.getSimpleName());
+
+            @Override
+            public JDataFields getDataFields() {
+                return FIELD_DEFS;
+            }
+
+            /**
+             * Size Field Id.
+             */
+            private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+
+            @Override
+            public Object getFieldValue(final JDataField pField) {
+                if (FIELD_SIZE.equals(pField)) {
+                    return size();
+                }
+                return JDataFieldValue.UNKNOWN;
+            }
+
+            /**
+             * The security.
+             */
+            private final transient Security theSecurity;
+
+            @Override
+            public String formatObject() {
+                return theSecurity.formatObject()
+                       + "("
+                       + size()
+                       + ")";
+            }
+
+            @Override
+            public String toString() {
+                return formatObject();
+            }
+
+            /**
+             * Constructor.
+             * @param pSecurity the security
+             */
+            private PriceList(final Security pSecurity) {
+                /* Store the security */
+                theSecurity = pSecurity;
+            }
         }
     }
 }

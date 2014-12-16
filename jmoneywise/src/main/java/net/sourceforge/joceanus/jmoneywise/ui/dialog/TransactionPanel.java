@@ -81,7 +81,9 @@ import net.sourceforge.joceanus.jmoneywise.views.TransactionFilters;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -583,6 +585,12 @@ public class TransactionPanel
         theFieldSet.setEditable(Transaction.FIELD_DATE, canEdit);
         theFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !myTrans.needsZeroAmount());
         theFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
+
+        /* Set the range for the dateButton */
+        JDateDayRange myRange = theBuilder.getAdjustedRange(myTrans);
+        JDateDayConfig myConfig = theDateButton.getDateConfig();
+        myConfig.setEarliestDateDay(myRange.getStart());
+        myConfig.setLatestDateDay(myRange.getEnd());
     }
 
     /**
@@ -865,6 +873,9 @@ public class TransactionPanel
         JMenuItem myActive = null;
         JScrollMenu myMenu = null;
 
+        /* Obtain date */
+        JDateDay myDate = pTrans.getDate();
+
         /* Access Portfolios and Holdings Map */
         MoneyWiseData myData = pTrans.getDataSet();
         PortfolioList myPortfolios = myData.getPortfolios();
@@ -891,6 +902,13 @@ public class TransactionPanel
                     while (myExistIterator.hasNext()) {
                         SecurityHolding myHolding = myExistIterator.next();
                         Security mySecurity = myHolding.getSecurity();
+
+                        /* check that initial price is not too late */
+                        JDateDay myEarliest = myHolding.getEarliestDate();
+                        if (myEarliest == null
+                            || myDate.compareTo(myEarliest) < 0) {
+                            continue;
+                        }
 
                         /* Check whether the asset is allowable for the owner */
                         boolean bIgnore = !(pIsAccount

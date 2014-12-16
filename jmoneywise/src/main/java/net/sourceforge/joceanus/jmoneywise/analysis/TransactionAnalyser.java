@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
@@ -54,7 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -1164,7 +1163,6 @@ public class TransactionAnalyser
                                          final Transaction pTrans) {
         /* Stock Right Waived is from the debit account */
         Security myDebit = pHolding.getSecurity();
-        SecurityPriceList myPrices = theData.getSecurityPrices();
         JMoney myAmount = pTrans.getAmount();
         JMoney myReduction;
 
@@ -1181,8 +1179,8 @@ public class TransactionAnalyser
         JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Get the appropriate price for the account */
-        SecurityPrice myActPrice = myPrices.getLatestPrice(myDebit, pTrans.getDate());
-        JPrice myPrice = myActPrice.getPrice();
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
+        JPrice myPrice = myPriceMap.getPriceForDate(myDebit, pTrans.getDate());
 
         /* Determine value of this stock at the current time */
         JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
@@ -1355,7 +1353,7 @@ public class TransactionAnalyser
         SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate price for the credit account */
-        SecurityPriceMap myPriceMap = theAnalysis.getPrices();
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
         JPrice myPrice = myPriceMap.getPriceForDate(myCredit, pTrans.getDate());
 
         /* Determine value of the stock part of the takeOver */
@@ -1421,7 +1419,7 @@ public class TransactionAnalyser
         SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate prices for the assets */
-        SecurityPriceMap myPriceMap = theAnalysis.getPrices();
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
         JPrice myDebitPrice = myPriceMap.getPriceForDate(myDebit, myDate);
         JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
 

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -45,6 +46,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -825,36 +827,6 @@ public class DepositRate
             return myRate;
         }
 
-        /**
-         * Obtain the most relevant rate for a Deposit and a Date.
-         * @param pDeposit the Deposit for which to get the rate
-         * @param pDate the date from which a rate is required
-         * @return The relevant Rate record
-         */
-        public DepositRate getLatestRate(final Deposit pDeposit,
-                                         final JDateDay pDate) {
-            /* Loop through the Rates */
-            ListIterator<DepositRate> myIterator = listIterator();
-            while (myIterator.hasPrevious()) {
-                DepositRate myCurr = myIterator.previous();
-                /* Skip records that do not belong to this deposit */
-                if (!Difference.isEqual(myCurr.getDeposit(), pDeposit)) {
-                    continue;
-                }
-
-                /* Access the date */
-                JDateDay myDate = myCurr.getDate();
-
-                /* break loop if we have the correct record */
-                if ((myDate == null) || (myDate.compareTo(pDate) >= 0)) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
-        }
-
         @Override
         public DepositRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the rate */
@@ -877,18 +849,12 @@ public class DepositRate
         protected DepositRateDataMap allocateDataMap() {
             return new DepositRateDataMap();
         }
-
-        @Override
-        public void prepareForAnalysis() {
-            /* Just ensure the map */
-            ensureMap();
-        }
     }
 
     /**
      * The dataMap class.
      */
-    protected static class DepositRateDataMap
+    public static class DepositRateDataMap
             implements DataMapItem<DepositRate, MoneyWiseDataType>, JDataContents {
         /**
          * Report fields.
@@ -896,9 +862,14 @@ public class DepositRate
         protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
-         * CategoryMap Field Id.
+         * MapOfMaps Field Id.
          */
-        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        private static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+
+        /**
+         * RateMap Field Id.
+         */
+        private static final JDataField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
 
         @Override
         public JDataFields getDataFields() {
@@ -910,6 +881,9 @@ public class DepositRate
             /* Handle standard fields */
             if (FIELD_MAPOFMAPS.equals(pField)) {
                 return theMapOfMaps;
+            }
+            if (FIELD_MAPOFRATES.equals(pField)) {
+                return theMapOfRates;
             }
 
             /* Unknown */
@@ -927,16 +901,23 @@ public class DepositRate
         private final Map<Deposit, Map<JDateDay, Integer>> theMapOfMaps;
 
         /**
+         * Map of Rates.
+         */
+        private final Map<Deposit, RateList> theMapOfRates;
+
+        /**
          * Constructor.
          */
         public DepositRateDataMap() {
             /* Create the maps */
             theMapOfMaps = new HashMap<Deposit, Map<JDateDay, Integer>>();
+            theMapOfRates = new HashMap<Deposit, RateList>();
         }
 
         @Override
         public void resetMap() {
             theMapOfMaps.clear();
+            theMapOfRates.clear();
         }
 
         @Override
@@ -962,6 +943,16 @@ public class DepositRate
             } else {
                 myMap.put(myDate, myCount + 1);
             }
+
+            /* Access the list */
+            RateList myList = theMapOfRates.get(myDeposit);
+            if (myList == null) {
+                myList = new RateList(myDeposit);
+                theMapOfRates.put(myDeposit, myList);
+            }
+
+            /* Add element to the list */
+            myList.add(pItem);
         }
 
         /**
@@ -996,6 +987,99 @@ public class DepositRate
             return myMap != null
                                 ? myMap.get(pDate) == null
                                 : true;
+        }
+
+        /**
+         * Obtain rate for date.
+         * @param pDeposit the deposit
+         * @param pDate the date
+         * @return the latest rate for the date.
+         */
+        public DepositRate getRateForDate(final Deposit pDeposit,
+                                          final JDateDay pDate) {
+            /* Access list for deposit */
+            RateList myList = theMapOfRates.get(pDeposit);
+            if (myList != null) {
+                /* Loop through the rates */
+                ListIterator<DepositRate> myIterator = myList.listIterator(myList.size());
+                while (myIterator.hasPrevious()) {
+                    DepositRate myCurr = myIterator.previous();
+
+                    /* Access the date */
+                    JDateDay myDate = myCurr.getDate();
+
+                    /* break loop if we have the correct record */
+                    if ((myDate == null)
+                        || (myDate.compareTo(pDate) >= 0)) {
+                        return myCurr;
+                    }
+                }
+            }
+
+            /* return null */
+            return null;
+        }
+
+        /**
+         * Rate List class.
+         */
+        private static final class RateList
+                extends ArrayList<DepositRate>
+                implements JDataContents {
+            /**
+             * Serial Id.
+             */
+            private static final long serialVersionUID = -7315972503678709555L;
+
+            /**
+             * Report fields.
+             */
+            private static final JDataFields FIELD_DEFS = new JDataFields(RateList.class.getSimpleName());
+
+            @Override
+            public JDataFields getDataFields() {
+                return FIELD_DEFS;
+            }
+
+            /**
+             * Size Field Id.
+             */
+            private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+
+            @Override
+            public Object getFieldValue(final JDataField pField) {
+                if (FIELD_SIZE.equals(pField)) {
+                    return size();
+                }
+                return JDataFieldValue.UNKNOWN;
+            }
+
+            /**
+             * The security.
+             */
+            private final transient Deposit theDeposit;
+
+            @Override
+            public String formatObject() {
+                return theDeposit.formatObject()
+                       + "("
+                       + size()
+                       + ")";
+            }
+
+            @Override
+            public String toString() {
+                return formatObject();
+            }
+
+            /**
+             * Constructor.
+             * @param pDeposit the deposit
+             */
+            private RateList(final Deposit pDeposit) {
+                /* Store the security */
+                theDeposit = pDeposit;
+            }
         }
     }
 }

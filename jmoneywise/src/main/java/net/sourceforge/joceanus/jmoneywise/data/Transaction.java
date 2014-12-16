@@ -93,7 +93,7 @@ public class Transaction
     /**
      * Early Date Error Text.
      */
-    // private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE.getValue();
+    private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE.getValue();
 
     /**
      * Circular update Error Text.
@@ -575,7 +575,7 @@ public class Transaction
      */
     @Override
     public void validate() {
-        // JDateDay myDate = getDate();
+        JDateDay myDate = getDate();
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
@@ -598,23 +598,23 @@ public class Transaction
             getList().registerChild(this);
         }
 
-        /* Check for valid account security TODO disabled until earliest date is determined during load rather than just analysis */
-        // if ((myAccount != null) && (myAccount instanceof SecurityHolding)) {
-        // /* Access earliest date */
-        // JDateDay myEarliest = ((SecurityHolding) myAccount).getEarliestDate();
-        // if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
-        // addError(ERROR_BADDATE, FIELD_ACCOUNT);
-        // }
-        // }
+        /* Check for valid account security */
+        if ((myAccount != null) && (myAccount instanceof SecurityHolding)) {
+            /* Access earliest date */
+            JDateDay myEarliest = ((SecurityHolding) myAccount).getEarliestDate();
+            if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
+                addError(ERROR_BADDATE, FIELD_ACCOUNT);
+            }
+        }
 
         /* Check for valid partner security */
-        // if ((myPartner != null) && (myPartner instanceof SecurityHolding)) {
-        // /* Access earliest date */
-        // JDateDay myEarliest = ((SecurityHolding) myPartner).getEarliestDate();
-        // if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
-        // addError(ERROR_BADDATE, FIELD_PARTNER);
-        // }
-        // }
+        if ((myPartner != null) && (myPartner instanceof SecurityHolding)) {
+            /* Access earliest date */
+            JDateDay myEarliest = ((SecurityHolding) myPartner).getEarliestDate();
+            if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
+                addError(ERROR_BADDATE, FIELD_PARTNER);
+            }
+        }
 
         /* Cannot have Credit and Debit if securities are identical */
         if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myAccount, myPartner))) {
