@@ -352,6 +352,11 @@ public enum AnalysisResource implements ResourceId {
     SECURITYATTR_GAINS("SecurityAttr.Gains"),
 
     /**
+     * SecurityAttr ProfitAdjustment.
+     */
+    SECURITYATTR_PROFITADJUST("SecurityAttr.ProfitAdjust"),
+
+    /**
      * SecurityAttr Invested.
      */
     SECURITYATTR_INVESTED("SecurityAttr.Invested"),
@@ -520,6 +525,8 @@ public enum AnalysisResource implements ResourceId {
                 return SECURITYATTR_COST;
             case GAINS:
                 return SECURITYATTR_GAINS;
+            case PROFITADJUST:
+                return SECURITYATTR_PROFITADJUST;
             case INVESTED:
                 return SECURITYATTR_INVESTED;
             case DIVIDEND:

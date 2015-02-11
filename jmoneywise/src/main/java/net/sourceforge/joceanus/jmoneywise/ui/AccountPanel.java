@@ -454,16 +454,16 @@ public class AccountPanel
         /* Determine whether we have session focus */
         boolean hasSession = theDepositTable.hasSession();
         if (!hasSession) {
-            hasSession = theCashTable.hasUpdates();
+            hasSession = theCashTable.hasSession();
         }
         if (!hasSession) {
-            hasSession = theLoanTable.hasUpdates();
+            hasSession = theLoanTable.hasSession();
         }
         if (!hasSession) {
-            hasSession = thePortfolioTable.hasUpdates();
+            hasSession = thePortfolioTable.hasSession();
         }
         if (!hasSession) {
-            hasSession = theSecurityTable.hasUpdates();
+            hasSession = theSecurityTable.hasSession();
         }
         if (!hasSession) {
             hasSession = thePayeeTable.hasSession();

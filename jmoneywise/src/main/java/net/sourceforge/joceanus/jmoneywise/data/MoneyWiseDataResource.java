@@ -329,6 +329,16 @@ public enum MoneyWiseDataResource implements ResourceId {
     SECURITY_NEWACCOUNT("Security.NewAccount"),
 
     /**
+     * Security Symbol Map.
+     */
+    SECURITY_SYMBOLMAP("Security.Map.Symbol"),
+
+    /**
+     * Security Symbol Count Map.
+     */
+    SECURITY_SYMBOLCOUNTMAP("Security.Map.SymbolCount"),
+
+    /**
      * SecurityPrice Map Prices.
      */
     SECURITYPRICE_MAP_MAPOFPRICES("SecurityPrice.Map.MapOfPrices"),

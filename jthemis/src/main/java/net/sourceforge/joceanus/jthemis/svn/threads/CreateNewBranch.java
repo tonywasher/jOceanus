@@ -85,10 +85,7 @@ public class CreateNewBranch
         return theWorkingCopySet;
     }
 
-    /**
-     * Obtain the error.
-     * @return the error
-     */
+    @Override
     public JOceanusException getError() {
         return theError;
     }

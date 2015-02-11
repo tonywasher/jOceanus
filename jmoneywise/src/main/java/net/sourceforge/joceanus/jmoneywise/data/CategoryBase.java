@@ -757,11 +757,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             super(pSource);
         }
 
-        /**
-         * Search for a particular item by Name.
-         * @param pName Name of item
-         * @return The Item if present (or null)
-         */
+        @Override
         public T findItemByName(final String pName) {
             /* Access the dataMap */
             CategoryDataMap<T, S, C> myMap = getDataMap();

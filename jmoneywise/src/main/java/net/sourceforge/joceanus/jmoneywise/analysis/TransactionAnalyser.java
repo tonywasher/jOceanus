@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -386,6 +387,7 @@ public class TransactionAnalyser
             /* Else handle the portfolio xfer */
         } else if ((myDebitAsset instanceof Portfolio)
                    && (myCreditAsset instanceof Portfolio)
+                   && (pTrans.getCategoryClass() == TransactionCategoryClass.PORTFOLIOXFER)
                    && !myAccount.equals(myPartner)) {
             /* Process portfolio transfer */
             processPortfolioXfer((Portfolio) myDebitAsset, (Portfolio) myCreditAsset, pTrans);
@@ -706,18 +708,34 @@ public class TransactionAnalyser
                                       final SecurityBucket pTarget,
                                       final Transaction pTrans) {
         /* Access source details */
-        SecurityValues myValues = pSource.getValues();
-        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
-        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
-        JMoney myInvested = myValues.getMoneyValue(SecurityAttribute.INVESTED);
+        SecurityValues mySourceValues = pSource.getValues();
+        SecurityValues myTargetValues = pTarget.getValues();
+        JUnits myUnits = mySourceValues.getUnitsValue(SecurityAttribute.UNITS);
+        JMoney myCost = mySourceValues.getMoneyValue(SecurityAttribute.COST);
+        JMoney myInvested = mySourceValues.getMoneyValue(SecurityAttribute.INVESTED);
 
-        /* Adjust the Target Units */
+        /* Determine value of the stock being transferred */
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
+        JPrice myPrice = myPriceMap.getPriceForDate(pSource.getSecurity(), pTrans.getDate());
+        JMoney myStockValue = myUnits.valueAtPrice(myPrice);
+
+        /* Allocate current profit between the two stocks */
+        JMoney myProfit = new JMoney(myStockValue);
+        myProfit.subtractAmount(myCost);
+        pSource.adjustProfitDelta(myProfit);
+        myProfit = new JMoney(myProfit);
+        myProfit.negate();
+        pTarget.adjustProfitDelta(myProfit);
+
+        /* Transfer Units/Cost/Invested to target */
         pTarget.adjustUnits(myUnits);
         pTarget.adjustCost(myCost);
         pTarget.adjustInvested(myInvested);
         pTarget.registerTransaction(pTrans);
+        myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
+        myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
 
-        /* Adjust the Source details to zero */
+        /* Adjust the Source Units/Cost/Invested to zero */
         myUnits = new JUnits(myUnits);
         myUnits.negate();
         pSource.adjustUnits(myUnits);
@@ -728,6 +746,8 @@ public class TransactionAnalyser
         myInvested.negate();
         pSource.adjustInvested(myInvested);
         pSource.registerTransaction(pTrans);
+        mySourceValues.setValue(SecurityAttribute.PRICE, myPrice);
+        mySourceValues.setValue(SecurityAttribute.VALUATION, myStockValue);
     }
 
     /**
@@ -1345,53 +1365,67 @@ public class TransactionAnalyser
                                           final Transaction pTrans) {
         /* Access details */
         Security myCredit = pCredit.getSecurity();
+        Security myDebit = pDebit.getSecurity();
 
         /* Access the Asset Security Buckets */
         SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
         SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
         SecurityValues myCreditValues = myCreditAsset.getValues();
+        JDateDay myDate = pTrans.getDate();
 
-        /* Get the appropriate price for the credit account */
+        /* Get the appropriate prices for the stock */
         SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
-        JPrice myPrice = myPriceMap.getPriceForDate(myCredit, pTrans.getDate());
+        JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
+        JPrice myDebitPrice = myPriceMap.getPriceForDate(myDebit, myDate);
 
-        /* Determine value of the stock part of the takeOver */
-        JUnits myDeltaUnits = pTrans.getCreditUnits();
-        JMoney myStockValue = myDeltaUnits.valueAtPrice(myPrice);
+        /* Determine value of the stock in both parts of the takeOver */
+        JUnits myCreditUnits = pTrans.getCreditUnits();
+        JMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        JUnits myDebitUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
+        JMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
+        JMoney myInvested = myDebitValues.getMoneyValue(SecurityAttribute.INVESTED);
 
         /* Determine the residual cost of the old stock */
-        JMoney myStockCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
+        JMoney myDebitCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
+
+        /* Allocate current profit between the two stocks */
+        JMoney myProfit = new JMoney(myDebitValue);
+        myProfit.subtractAmount(myDebitCost);
+        myDebitAsset.adjustProfitDelta(myProfit);
+        myProfit = new JMoney(myProfit);
+        myProfit.negate();
+        myCreditAsset.adjustProfitDelta(myProfit);
 
         /* Adjust cost/units/invested of the credit account */
-        myCreditAsset.adjustCost(myStockCost);
-        myCreditAsset.adjustUnits(myDeltaUnits);
-        myCreditAsset.adjustInvested(myStockValue);
+        myCreditAsset.adjustCost(myDebitCost);
+        myCreditAsset.adjustUnits(myCreditUnits);
+        myCreditAsset.adjustInvested(myInvested);
 
         /* Register the transaction */
         myCreditValues = myCreditAsset.registerTransaction(pTrans);
-        myCreditValues.setValue(SecurityAttribute.PRICE, myPrice);
-        myCreditValues.setValue(SecurityAttribute.VALUATION, myStockValue);
+        myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
+        myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
 
         /* Drive debit cost down to zero */
-        JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
-        JMoney myDeltaCost = new JMoney(myCost);
-        myDeltaCost.negate();
-        myDebitAsset.adjustCost(myDeltaCost);
+        myDebitCost = new JMoney(myDebitCost);
+        myDebitCost.negate();
+        myDebitAsset.adjustCost(myDebitCost);
 
         /* Drive debit units down to zero */
-        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
-        myDeltaUnits = new JUnits(myUnits);
-        myDeltaUnits.negate();
-        myDebitAsset.adjustUnits(myDeltaUnits);
+        myDebitUnits = new JUnits(myDebitUnits);
+        myDebitUnits.negate();
+        myDebitAsset.adjustUnits(myDebitUnits);
 
         /* Adjust debit Invested amount */
-        myStockValue = new JMoney(myStockValue);
-        myStockValue.negate();
-        myDebitAsset.adjustInvested(myStockValue);
+        myInvested = new JMoney(myInvested);
+        myInvested.negate();
+        myDebitAsset.adjustInvested(myInvested);
 
         /* Register the transaction */
         myDebitAsset.registerTransaction(pTrans);
+        myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
+        myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
     }
 
     /**
@@ -1424,29 +1458,29 @@ public class TransactionAnalyser
         JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
 
         /* Determine value of the base stock */
-        JUnits myBaseUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
-        JMoney myBaseValue = myBaseUnits.valueAtPrice(myDebitPrice);
+        JUnits myDebitUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
+        JMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
 
         /* Determine value of the stock part of the takeOver */
-        JUnits myDeltaUnits = pTrans.getCreditUnits();
-        JMoney myStockValue = myDeltaUnits.valueAtPrice(myCreditPrice);
+        JUnits myCreditUnits = pTrans.getCreditUnits();
+        JMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
 
         /* Access the current debit cost */
         JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
         JMoney myCostXfer;
 
         /* Calculate the portion of the value that creates a large transaction */
-        JMoney myPortion = myBaseValue.valueAtRate(LIMIT_RATE);
+        JMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large cash takeOver portion (> both valueLimit and rateLimit of value) */
         if ((myAmount.compareTo(LIMIT_VALUE) > 0)
             && (myAmount.compareTo(myPortion) > 0)) {
             /* Calculate the total cost of the takeOver */
             JMoney myTotalCost = new JMoney(myAmount);
-            myTotalCost.addAmount(myStockValue);
+            myTotalCost.addAmount(myCreditValue);
 
             /* Determine the transferable cost */
-            myCostXfer = myCost.valueAtWeight(myStockValue, myTotalCost);
+            myCostXfer = myCost.valueAtWeight(myCreditValue, myTotalCost);
 
             /* else this is viewed as small and is taken out of the cost */
         } else {
@@ -1475,15 +1509,25 @@ public class TransactionAnalyser
             theCategoryBuckets.adjustStandardGain(pTrans, pDebit, myDeltaGains);
         }
 
+        /* Allocate current profit between the two stocks */
+        JMoney myProfit = new JMoney(myDebitValue);
+        myProfit.subtractAmount(myAmount);
+        myProfit.subtractAmount(myCost);
+        myProfit.addAmount(myCostXfer);
+        myDebitAsset.adjustProfitDelta(myProfit);
+        myProfit = new JMoney(myProfit);
+        myProfit.negate();
+        myCreditAsset.adjustProfitDelta(myProfit);
+
         /* Adjust cost/units/invested of the credit account */
         myCreditAsset.adjustCost(myCostXfer);
-        myCreditAsset.adjustUnits(myDeltaUnits);
-        myCreditAsset.adjustInvested(myStockValue);
+        myCreditAsset.adjustUnits(myCreditUnits);
+        myCreditAsset.adjustInvested(myCostXfer);
 
         /* Register the transaction */
         myCreditValues = myCreditAsset.registerTransaction(pTrans);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
-        myCreditValues.setValue(SecurityAttribute.VALUATION, myStockValue);
+        myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
 
         /* Drive debit cost down to zero */
         JMoney myDeltaCost = new JMoney(myCost);
@@ -1491,21 +1535,22 @@ public class TransactionAnalyser
         myDebitAsset.adjustCost(myDeltaCost);
 
         /* Drive debit units down to zero */
-        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
-        myDeltaUnits = new JUnits(myUnits);
-        myDeltaUnits.negate();
-        myDebitAsset.adjustUnits(myDeltaUnits);
+        myDebitUnits = new JUnits(myDebitUnits);
+        myDebitUnits.negate();
+        myDebitAsset.adjustUnits(myDebitUnits);
 
         /* Adjust debit Invested amount */
-        myStockValue = new JMoney(myStockValue);
-        myStockValue.addAmount(pTrans.getAmount());
-        myStockValue.negate();
-        myDebitAsset.adjustInvested(myStockValue);
+        JMoney myInvested = myDebitValues.getMoneyValue(SecurityAttribute.INVESTED);
+        myInvested = new JMoney(myInvested);
+        myInvested.negate();
+        myInvested.subtractAmount(myAmount);
+        myInvested.addAmount(myCostXfer);
+        myDebitAsset.adjustInvested(myInvested);
 
         /* Register the transaction */
         myDebitValues = myDebitAsset.registerTransaction(pTrans);
         myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
-        myCreditValues.setValue(SecurityAttribute.VALUATION, myBaseValue);
+        myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
 
         /* Adjust the ThirdParty account bucket */
         AccountBucket<?> myBucket = getAccountBucket(myThirdParty);

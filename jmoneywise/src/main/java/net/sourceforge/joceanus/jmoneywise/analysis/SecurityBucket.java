@@ -559,6 +559,17 @@ public final class SecurityBucket
     }
 
     /**
+     * Adjust profit adjustment.
+     * @param pDelta the delta
+     */
+    protected void adjustProfitDelta(final JMoney pDelta) {
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.PROFITADJUST);
+        myValue = new JMoney(myValue);
+        myValue.addAmount(pDelta);
+        setValue(SecurityAttribute.PROFITADJUST, myValue);
+    }
+
+    /**
      * Adjust security dividends.
      * @param pDelta the delta
      */
@@ -699,6 +710,7 @@ public final class SecurityBucket
             put(SecurityAttribute.COST, new JMoney());
             put(SecurityAttribute.INVESTED, new JMoney());
             put(SecurityAttribute.GAINS, new JMoney());
+            put(SecurityAttribute.PROFITADJUST, new JMoney());
             put(SecurityAttribute.DIVIDEND, new JMoney());
         }
 
@@ -721,6 +733,7 @@ public final class SecurityBucket
             /* Adjust invested/gains values */
             adjustMoneyToBase(pBase, SecurityAttribute.INVESTED);
             adjustMoneyToBase(pBase, SecurityAttribute.GAINS);
+            adjustMoneyToBase(pBase, SecurityAttribute.PROFITADJUST);
             adjustMoneyToBase(pBase, SecurityAttribute.DIVIDEND);
         }
 
@@ -729,6 +742,7 @@ public final class SecurityBucket
             /* Reset Invested, Gains and Dividend values */
             put(SecurityAttribute.INVESTED, new JMoney());
             put(SecurityAttribute.GAINS, new JMoney());
+            put(SecurityAttribute.PROFITADJUST, new JMoney());
             put(SecurityAttribute.DIVIDEND, new JMoney());
         }
 

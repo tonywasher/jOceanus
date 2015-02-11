@@ -63,10 +63,7 @@ public class CreateTagExtract
      */
     private JOceanusException theError = null;
 
-    /**
-     * Obtain the error.
-     * @return the error
-     */
+    @Override
     public JOceanusException getError() {
         return theError;
     }

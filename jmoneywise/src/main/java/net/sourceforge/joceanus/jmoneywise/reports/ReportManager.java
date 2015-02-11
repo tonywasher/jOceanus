@@ -107,6 +107,14 @@ public class ReportManager
     }
 
     /**
+     * Obtain the logger.
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
      * Constructor.
      * @param pView the view
      * @throws JOceanusException on error

@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Spliterator;
@@ -1263,7 +1264,7 @@ public class NestedHashMap<K, V>
     private final class ValueIterator
             extends HashIterator<V> {
         @Override
-        public V next() {
+        public V next() throws NoSuchElementException {
             return nextEntry().getValue();
         }
     }
@@ -1350,7 +1351,7 @@ public class NestedHashMap<K, V>
     private final class KeyIterator
             extends HashIterator<K> {
         @Override
-        public K next() {
+        public K next() throws NoSuchElementException {
             return nextEntry().getKey();
         }
     }
@@ -1442,7 +1443,7 @@ public class NestedHashMap<K, V>
     private final class EntryIterator
             extends HashIterator<Entry<K, V>> {
         @Override
-        public Entry<K, V> next() {
+        public Entry<K, V> next() throws NoSuchElementException {
             return nextEntry();
         }
     }

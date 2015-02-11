@@ -64,11 +64,6 @@ public class Analysis
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.ANALYSIS_NAME.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Range Field Id.
      */
@@ -143,91 +138,6 @@ public class Analysis
      * Dilutions Field Id.
      */
     private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_RANGE.equals(pField)) {
-            return theDateRange;
-        }
-        if (FIELD_DEPOSITS.equals(pField)) {
-            return (theDeposits.isEmpty())
-                                          ? JDataFieldValue.SKIP
-                                          : theDeposits;
-        }
-        if (FIELD_CASH.equals(pField)) {
-            return (theCash.isEmpty())
-                                      ? JDataFieldValue.SKIP
-                                      : theCash;
-        }
-        if (FIELD_LOANS.equals(pField)) {
-            return (theLoans.isEmpty())
-                                       ? JDataFieldValue.SKIP
-                                       : theLoans;
-        }
-        if (FIELD_PORTFOLIOS.equals(pField)) {
-            return (thePortfolios.isEmpty())
-                                            ? JDataFieldValue.SKIP
-                                            : thePortfolios;
-        }
-        if (FIELD_PAYEES.equals(pField)) {
-            return (thePayees.isEmpty())
-                                        ? JDataFieldValue.SKIP
-                                        : thePayees;
-        }
-        if (FIELD_DEPCATS.equals(pField)) {
-            return (theDepositCategories.isEmpty())
-                                                   ? JDataFieldValue.SKIP
-                                                   : theDepositCategories;
-        }
-        if (FIELD_CASHCATS.equals(pField)) {
-            return (theCashCategories.isEmpty())
-                                                ? JDataFieldValue.SKIP
-                                                : theCashCategories;
-        }
-        if (FIELD_LOANCATS.equals(pField)) {
-            return (theLoanCategories.isEmpty())
-                                                ? JDataFieldValue.SKIP
-                                                : theLoanCategories;
-        }
-        if (FIELD_TRANCATS.equals(pField)) {
-            return (theTransCategories.isEmpty())
-                                                 ? JDataFieldValue.SKIP
-                                                 : theTransCategories;
-        }
-        if (FIELD_TRANSTAGS.equals(pField)) {
-            return (theTransTags.isEmpty())
-                                           ? JDataFieldValue.SKIP
-                                           : theTransTags;
-        }
-        if (FIELD_TAXBASIS.equals(pField)) {
-            return (theTaxBasis.isEmpty())
-                                          ? JDataFieldValue.SKIP
-                                          : theTaxBasis;
-        }
-        if (FIELD_TAXCALC.equals(pField)) {
-            return ((theTaxCalculations != null) && (!theTaxCalculations.isEmpty()))
-                                                                                    ? theTaxCalculations
-                                                                                    : JDataFieldValue.SKIP;
-        }
-        if (FIELD_CHARGES.equals(pField)) {
-            return (theCharges.isEmpty())
-                                         ? JDataFieldValue.SKIP
-                                         : theCharges;
-        }
-        if (FIELD_DILUTIONS.equals(pField)) {
-            return (theDilutions.isEmpty())
-                                           ? JDataFieldValue.SKIP
-                                           : theDilutions;
-        }
-
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
 
     /**
      * The DataSet.
@@ -313,6 +223,206 @@ public class Analysis
      * The dilutions.
      */
     private final DilutionEventMap theDilutions;
+
+    /**
+     * Constructor for a full analysis.
+     * @param pData the data to analyse events for
+     * @param pPreferenceMgr the preference manager
+     */
+    protected Analysis(final MoneyWiseData pData,
+                       final PreferenceManager pPreferenceMgr) {
+        /* Store the data */
+        theData = pData;
+        thePreferences = pPreferenceMgr;
+        theDateRange = theData.getDateRange();
+
+        /* Create a new set of buckets */
+        theDeposits = new DepositBucketList(this);
+        theCash = new CashBucketList(this);
+        theLoans = new LoanBucketList(this);
+        thePortfolios = new PortfolioBucketList(this);
+        thePayees = new PayeeBucketList(this);
+        theTaxBasis = new TaxBasisBucketList(this);
+        theTransCategories = new TransactionCategoryBucketList(this);
+        theTransTags = new TransactionTagBucketList(this);
+
+        /* Create totalling buckets */
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
+        theTaxCalculations = null;
+
+        /* Create the Dilution/Chargeable Event List */
+        theCharges = new ChargeableEventList();
+        theDilutions = new DilutionEventMap();
+
+        /* Add opening balances */
+        addOpeningBalances();
+    }
+
+    /**
+     * Constructor for a dated analysis.
+     * @param pSource the base analysis
+     * @param pDate the date for the analysis
+     */
+    protected Analysis(final Analysis pSource,
+                       final JDateDay pDate) {
+        /* Store the data */
+        theData = pSource.getData();
+        thePreferences = pSource.getPreferenceMgr();
+        theDateRange = new JDateDayRange(null, pDate);
+
+        /* Access the underlying maps/lists */
+        theCharges = pSource.getCharges();
+        theDilutions = pSource.getDilutions();
+
+        /* Create a new set of buckets */
+        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pDate);
+        theCash = new CashBucketList(this, pSource.getCash(), pDate);
+        theLoans = new LoanBucketList(this, pSource.getLoans(), pDate);
+        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
+        thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
+        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pDate);
+        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pDate);
+        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
+
+        /* Create totalling buckets */
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
+        theTaxCalculations = null;
+    }
+
+    /**
+     * Constructor for a ranged analysis.
+     * @param pSource the base analysis
+     * @param pRange the range for the analysis
+     */
+    protected Analysis(final Analysis pSource,
+                       final JDateDayRange pRange) {
+        /* Store the data */
+        theData = pSource.getData();
+        thePreferences = pSource.getPreferenceMgr();
+        theDateRange = pRange;
+
+        /* Access the underlying maps/lists */
+        theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
+        theDilutions = pSource.getDilutions();
+
+        /* Create a new set of buckets */
+        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pRange);
+        theCash = new CashBucketList(this, pSource.getCash(), pRange);
+        theLoans = new LoanBucketList(this, pSource.getLoans(), pRange);
+        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
+        thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
+        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pRange);
+        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pRange);
+        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
+
+        /* Create totalling buckets */
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
+
+        /* Check to see whether this range matches a tax year */
+        TaxYearList myTaxYears = theData.getTaxYears();
+        TaxYear myTaxYear = myTaxYears.matchRange(theDateRange);
+
+        /* Allocate tax calculations if required */
+        theTaxCalculations = (myTaxYear != null)
+                                                ? new TaxCalcBucketList(this, myTaxYear)
+                                                : null;
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_RANGE.equals(pField)) {
+            return theDateRange;
+        }
+        if (FIELD_DEPOSITS.equals(pField)) {
+            return (theDeposits.isEmpty())
+                                          ? JDataFieldValue.SKIP
+                                          : theDeposits;
+        }
+        if (FIELD_CASH.equals(pField)) {
+            return (theCash.isEmpty())
+                                      ? JDataFieldValue.SKIP
+                                      : theCash;
+        }
+        if (FIELD_LOANS.equals(pField)) {
+            return (theLoans.isEmpty())
+                                       ? JDataFieldValue.SKIP
+                                       : theLoans;
+        }
+        if (FIELD_PORTFOLIOS.equals(pField)) {
+            return (thePortfolios.isEmpty())
+                                            ? JDataFieldValue.SKIP
+                                            : thePortfolios;
+        }
+        if (FIELD_PAYEES.equals(pField)) {
+            return (thePayees.isEmpty())
+                                        ? JDataFieldValue.SKIP
+                                        : thePayees;
+        }
+        if (FIELD_DEPCATS.equals(pField)) {
+            return (theDepositCategories.isEmpty())
+                                                   ? JDataFieldValue.SKIP
+                                                   : theDepositCategories;
+        }
+        if (FIELD_CASHCATS.equals(pField)) {
+            return (theCashCategories.isEmpty())
+                                                ? JDataFieldValue.SKIP
+                                                : theCashCategories;
+        }
+        if (FIELD_LOANCATS.equals(pField)) {
+            return (theLoanCategories.isEmpty())
+                                                ? JDataFieldValue.SKIP
+                                                : theLoanCategories;
+        }
+        if (FIELD_TRANCATS.equals(pField)) {
+            return (theTransCategories.isEmpty())
+                                                 ? JDataFieldValue.SKIP
+                                                 : theTransCategories;
+        }
+        if (FIELD_TRANSTAGS.equals(pField)) {
+            return (theTransTags.isEmpty())
+                                           ? JDataFieldValue.SKIP
+                                           : theTransTags;
+        }
+        if (FIELD_TAXBASIS.equals(pField)) {
+            return (theTaxBasis.isEmpty())
+                                          ? JDataFieldValue.SKIP
+                                          : theTaxBasis;
+        }
+        if (FIELD_TAXCALC.equals(pField)) {
+            return ((theTaxCalculations != null) && (!theTaxCalculations.isEmpty()))
+                                                                                    ? theTaxCalculations
+                                                                                    : JDataFieldValue.SKIP;
+        }
+        if (FIELD_CHARGES.equals(pField)) {
+            return (theCharges.isEmpty())
+                                         ? JDataFieldValue.SKIP
+                                         : theCharges;
+        }
+        if (FIELD_DILUTIONS.equals(pField)) {
+            return (theDilutions.isEmpty())
+                                           ? JDataFieldValue.SKIP
+                                           : theDilutions;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
 
     /**
      * Obtain the data.
@@ -456,116 +566,6 @@ public class Analysis
      */
     public DilutionEventMap getDilutions() {
         return theDilutions;
-    }
-
-    /**
-     * Constructor for a full analysis.
-     * @param pData the data to analyse events for
-     * @param pPreferenceMgr the preference manager
-     */
-    protected Analysis(final MoneyWiseData pData,
-                       final PreferenceManager pPreferenceMgr) {
-        /* Store the data */
-        theData = pData;
-        thePreferences = pPreferenceMgr;
-        theDateRange = theData.getDateRange();
-
-        /* Create a new set of buckets */
-        theDeposits = new DepositBucketList(this);
-        theCash = new CashBucketList(this);
-        theLoans = new LoanBucketList(this);
-        thePortfolios = new PortfolioBucketList(this);
-        thePayees = new PayeeBucketList(this);
-        theTaxBasis = new TaxBasisBucketList(this);
-        theTransCategories = new TransactionCategoryBucketList(this);
-        theTransTags = new TransactionTagBucketList(this);
-
-        /* Create totalling buckets */
-        theDepositCategories = new DepositCategoryBucketList(this);
-        theCashCategories = new CashCategoryBucketList(this);
-        theLoanCategories = new LoanCategoryBucketList(this);
-        theTaxCalculations = null;
-
-        /* Create the Dilution/Chargeable Event List */
-        theCharges = new ChargeableEventList();
-        theDilutions = new DilutionEventMap();
-
-        /* Add opening balances */
-        addOpeningBalances();
-    }
-
-    /**
-     * Constructor for a dated analysis.
-     * @param pSource the base analysis
-     * @param pDate the date for the analysis
-     */
-    protected Analysis(final Analysis pSource,
-                       final JDateDay pDate) {
-        /* Store the data */
-        theData = pSource.getData();
-        thePreferences = pSource.getPreferenceMgr();
-        theDateRange = new JDateDayRange(null, pDate);
-
-        /* Access the underlying maps/lists */
-        theCharges = pSource.getCharges();
-        theDilutions = pSource.getDilutions();
-
-        /* Create a new set of buckets */
-        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pDate);
-        theCash = new CashBucketList(this, pSource.getCash(), pDate);
-        theLoans = new LoanBucketList(this, pSource.getLoans(), pDate);
-        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
-        thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
-        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pDate);
-        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pDate);
-        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
-
-        /* Create totalling buckets */
-        theDepositCategories = new DepositCategoryBucketList(this);
-        theCashCategories = new CashCategoryBucketList(this);
-        theLoanCategories = new LoanCategoryBucketList(this);
-        theTaxCalculations = null;
-    }
-
-    /**
-     * Constructor for a ranged analysis.
-     * @param pSource the base analysis
-     * @param pRange the range for the analysis
-     */
-    protected Analysis(final Analysis pSource,
-                       final JDateDayRange pRange) {
-        /* Store the data */
-        theData = pSource.getData();
-        thePreferences = pSource.getPreferenceMgr();
-        theDateRange = pRange;
-
-        /* Access the underlying maps/lists */
-        theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
-        theDilutions = pSource.getDilutions();
-
-        /* Create a new set of buckets */
-        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pRange);
-        theCash = new CashBucketList(this, pSource.getCash(), pRange);
-        theLoans = new LoanBucketList(this, pSource.getLoans(), pRange);
-        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
-        thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
-        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pRange);
-        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pRange);
-        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
-
-        /* Create totalling buckets */
-        theDepositCategories = new DepositCategoryBucketList(this);
-        theCashCategories = new CashCategoryBucketList(this);
-        theLoanCategories = new LoanCategoryBucketList(this);
-
-        /* Check to see whether this range matches a tax year */
-        TaxYearList myTaxYears = theData.getTaxYears();
-        TaxYear myTaxYear = myTaxYears.matchRange(theDateRange);
-
-        /* Allocate tax calculations if required */
-        theTaxCalculations = (myTaxYear != null)
-                                                ? new TaxCalcBucketList(this, myTaxYear)
-                                                : null;
     }
 
     /**

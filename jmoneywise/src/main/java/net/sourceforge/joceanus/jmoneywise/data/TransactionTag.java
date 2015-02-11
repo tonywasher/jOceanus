@@ -573,11 +573,7 @@ public class TransactionTag
             return myTag;
         }
 
-        /**
-         * Search for a particular item by Name.
-         * @param pName Name of item
-         * @return The Item if present (or null)
-         */
+        @Override
         public TransactionTag findItemByName(final String pName) {
             /* look up the name in the map */
             return getDataMap().findItemByName(pName);

@@ -360,10 +360,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return getDescField(getValueSet());
     }
 
-    /**
-     * Is the asset closed?
-     * @return true/false
-     */
+    @Override
     public Boolean isClosed() {
         return isClosed(getValueSet());
     }
@@ -744,9 +741,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
         setValueClosed(isClosed);
     }
 
-    /**
-     * Validate the account.
-     */
     @Override
     public void validate() {
         String myName = getName();
@@ -839,11 +833,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             super(pSource);
         }
 
-        /**
-         * Search for a particular item by Name.
-         * @param pName Name of item
-         * @return The Item if present (or null)
-         */
+        @Override
         public abstract T findItemByName(final String pName);
 
         /**

@@ -206,9 +206,12 @@ public class MainTab
 
     /**
      * Constructor.
-     * @param pProfile the startup profile
-     * @param pLogger the logger
-     * @throws JOceanusException on error
+     * @param pProfile
+     * the startup profile
+     * @param pLogger
+     * the logger
+     * @throws JOceanusException
+     * on error
      */
     public MainTab(final JDataProfile pProfile,
                    final Logger pLogger) throws JOceanusException {
@@ -261,7 +264,7 @@ public class MainTab
         determineFocus();
 
         /* Set the icon */
-        getFrame().setIconImage(MoneyWiseIcons.getProgramImage());
+        getFrame().setIconImages(MoneyWiseIcons.getProgramImages());
 
         /* Complete task */
         myTask.end();
@@ -272,7 +275,8 @@ public class MainTab
 
     /**
      * Add Data Menu items.
-     * @param pMenu the menu
+     * @param pMenu
+     * the menu
      */
     @Override
     protected void addDataMenuItems(final JMenu pMenu) {
@@ -373,7 +377,8 @@ public class MainTab
 
     /**
      * Select a Statement.
-     * @param pSelect the statement request
+     * @param pSelect
+     * the statement request
      */
     private void selectStatement(final StatementSelect pSelect) {
         /* Pass through to the Register view */
@@ -385,7 +390,8 @@ public class MainTab
 
     /**
      * Select maintenance.
-     * @param pEvent the action request
+     * @param pEvent
+     * the action request
      */
     private void selectMaintenance(final ActionDetailEvent pEvent) {
         /* Pass through to the Maintenance view */
@@ -397,7 +403,8 @@ public class MainTab
 
     /**
      * Goto the specific tab.
-     * @param pTabName the tab name
+     * @param pTabName
+     * the tab name
      */
     private void gotoNamedTab(final String pTabName) {
         /* Access the Named index */
@@ -632,7 +639,8 @@ public class MainTab
 
         /**
          * Constructor.
-         * @param pAccount the requested account
+         * @param pAccount
+         * the requested account
          */
         protected ActionRequest(final AssetBase<?> pAccount) {
             theAccount = pAccount;
@@ -642,7 +650,8 @@ public class MainTab
 
         /**
          * Constructor.
-         * @param pRange the requested range
+         * @param pRange
+         * the requested range
          */
         protected ActionRequest(final JDateDayRangeSelect pRange) {
             theAccount = null;
@@ -652,8 +661,10 @@ public class MainTab
 
         /**
          * Constructor.
-         * @param pAccount the requested account
-         * @param pRange the requested range
+         * @param pAccount
+         * the requested account
+         * @param pRange
+         * the requested range
          */
         protected ActionRequest(final AssetBase<?> pAccount,
                                 final JDateDayRangeSelect pRange) {
@@ -664,8 +675,10 @@ public class MainTab
 
         /**
          * Constructor.
-         * @param pAccount the requested account
-         * @param pTrans the base transaction
+         * @param pAccount
+         * the requested account
+         * @param pTrans
+         * the base transaction
          */
         protected ActionRequest(final AssetBase<?> pAccount,
                                 final Transaction pTrans) {

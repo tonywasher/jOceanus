@@ -194,10 +194,10 @@ public class UpdateSet<E extends Enum<E>>
      * @param pClass the list class
      * @return the list
      */
+    @Override
     public <L extends DataList<?, E>> L getDataList(final E pDataType,
                                                     final Class<L> pClass) {
         /* Locate an existing entry */
-        @SuppressWarnings("unchecked")
         UpdateEntry<?, E> myEntry = (UpdateEntry<?, E>) theMap.get(pDataType);
 
         /* Cast correctly */

@@ -83,6 +83,11 @@ public class SpotPricesTable
     private static final long serialVersionUID = 5826211763056873599L;
 
     /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = MoneyWiseUIResource.PRICES_DATAENTRY.getValue();
+
+    /**
      * The data view.
      */
     private final transient View theView;
@@ -207,8 +212,8 @@ public class SpotPricesTable
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataPrice = myDataMgr.new JDataEntry(SpotSecurityList.class.getSimpleName());
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        theDataPrice = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataPrice.addAsChildOf(mySection);
         theDataPrice.setObject(theUpdateSet);
 

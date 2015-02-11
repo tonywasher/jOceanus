@@ -606,10 +606,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
             }
         }
 
-        /**
-         * Obtain Value.
-         * @return the value
-         */
+        @Override
         protected Boolean getValue() {
             return (Boolean) super.getValue();
         }
@@ -658,10 +655,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
             }
         }
 
-        /**
-         * Obtain Value.
-         * @return the value
-         */
+        @Override
         protected JDateDay getValue() {
             return (JDateDay) super.getValue();
         }

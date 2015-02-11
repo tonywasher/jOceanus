@@ -184,10 +184,7 @@ public class JScrollMenu
         return thePopUp.getMenuItems();
     }
 
-    /**
-     * Obtain count of menu Items.
-     * @return the array
-     */
+    @Override
     public int getItemCount() {
         /* Pass call to popUp */
         return thePopUp.getItemCount();

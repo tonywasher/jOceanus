@@ -108,6 +108,21 @@ public class TransactionTable
     private static final long serialVersionUID = -8054491530459145911L;
 
     /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = MoneyWiseUIResource.REGISTER_DATAENTRY.getValue();
+
+    /**
+     * Text for Filter DataEntry Title.
+     */
+    private static final String NLS_FILTERDATAENTRY = MoneyWiseUIResource.FILTER_DATAENTRY.getValue();
+
+    /**
+     * Text for Transactions DataEntry Title.
+     */
+    private static final String NLS_TRANSDATAENTRY = MoneyWiseUIResource.TRANSACTION_DATAENTRY.getValue();
+
+    /**
      * Date Column Title.
      */
     private static final String TITLE_DATE = Transaction.FIELD_DATE.getName();
@@ -341,6 +356,14 @@ public class TransactionTable
     }
 
     /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveTrans.isEditing();
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      */
@@ -359,12 +382,14 @@ public class TransactionTable
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataAnalysis = myDataMgr.new JDataEntry(TransactionTable.class.getSimpleName());
-        theDataAnalysis.addAsChildOf(mySection);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry myDataRegister = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        myDataRegister.addAsChildOf(mySection);
+        theDataFilter = myDataMgr.new JDataEntry(NLS_FILTERDATAENTRY);
+        theDataFilter.addAsChildOf(myDataRegister);
+        theDataAnalysis = myDataMgr.new JDataEntry(NLS_TRANSDATAENTRY);
+        theDataAnalysis.addAsChildOf(myDataRegister);
         theDataAnalysis.setObject(theUpdateSet);
-        theDataFilter = myDataMgr.new JDataEntry(AnalysisFilter.class.getSimpleName());
-        theDataFilter.addAsChildOf(mySection);
 
         /* Create new button */
         theNewButton = MoneyWiseIcons.getNewButton();
@@ -376,7 +401,7 @@ public class TransactionTable
         theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataAnalysis);
+        theError = new ErrorPanel(myDataMgr, myDataRegister);
 
         /* Create the table model */
         theModel = new AnalysisTableModel(this);
@@ -485,9 +510,6 @@ public class TransactionTable
         theError.addError(pError);
     }
 
-    /**
-     * Call underlying controls to take notice of changes in view/selection.
-     */
     @Override
     public void notifyChanges() {
         /* Determine whether we have updates */
@@ -550,18 +572,17 @@ public class TransactionTable
         theSelectionModel.handleNewFilter();
     }
 
-    /**
-     * Does this panel have updates?
-     * @return true/false
-     */
+    @Override
     public boolean hasUpdates() {
         return theUpdateSet.hasUpdates();
     }
 
-    /**
-     * Do we have errors?
-     * @return true/false
-     */
+    @Override
+    public boolean hasSession() {
+        return hasUpdates() || isItemEditing();
+    }
+
+    @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
     }
@@ -769,6 +790,7 @@ public class TransactionTable
                     /* Handle a simple filter change */
                     theModel.fireNewDataEvents();
                     theSelectionModel.handleNewFilter();
+                    theDataFilter.setObject(theFilter);
                 } else {
                     /* Select a new date range */
                     setSelection(myRange);

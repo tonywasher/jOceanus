@@ -79,6 +79,11 @@ public class TaxYearTable
     private static final long serialVersionUID = -9063059159264496070L;
 
     /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = MoneyWiseUIResource.TAXYEAR_DATAENTRY.getValue();
+
+    /**
      * Name Column Title.
      */
     private static final String TITLE_NAME = TaxYear.FIELD_TAXYEAR.getName();
@@ -193,7 +198,7 @@ public class TaxYearTable
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry(TaxYear.class.getSimpleName());
+        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 

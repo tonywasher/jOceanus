@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -1003,9 +1005,17 @@ public class Security
         if (mySymbol == null) {
             addError(ERROR_MISSING, FIELD_SYMBOL);
 
-            /* Check that the symbol is valid */
-        } else if (mySymbol.length() > SYMBOLLEN) {
-            addError(ERROR_LENGTH, FIELD_SYMBOL);
+            /* Check symbol validity */
+        } else {
+            /* Check length of symbol */
+            if (mySymbol.length() > SYMBOLLEN) {
+                addError(ERROR_LENGTH, FIELD_SYMBOL);
+            }
+
+            /* Check symbol count */
+            if (!getList().validSymbolCount(mySymbol)) {
+                addError(ERROR_DUPLICATE, FIELD_SYMBOL);
+            }
         }
 
         /* If we have an infoSet */
@@ -1237,6 +1247,26 @@ public class Security
         }
 
         /**
+         * Find the item that uses the symbol.
+         * @param pSymbol the symbol to lookup
+         * @return the item (or null)
+         */
+        public Security findItemBySymbol(final String pSymbol) {
+            /* look up the symbol in the map */
+            return getDataMap().findItemBySymbol(pSymbol);
+        }
+
+        /**
+         * check that symbol is unique.
+         * @param pSymbol the symbol
+         * @return true/false
+         */
+        protected boolean validSymbolCount(final String pSymbol) {
+            /* check availability in map */
+            return getDataMap().validSymbolCount(pSymbol);
+        }
+
+        /**
          * Add a new item to the core list.
          * @param pSecurity item
          * @return the newly added item
@@ -1306,10 +1336,96 @@ public class Security
      */
     protected static class SecurityDataMap
             extends DataInstanceMap<Security, MoneyWiseDataType, String> {
+        /**
+         * Report fields.
+         */
+        private static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
+
+        /**
+         * SymbolMap Field Id.
+         */
+        private static final JDataField FIELD_SYMMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
+
+        /**
+         * SymbolCountMap Field Id.
+         */
+        private static final JDataField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_SYMMAP.equals(pField)) {
+                return theSymbolMap;
+            }
+            if (FIELD_SYMCOUNT.equals(pField)) {
+                return theSymbolCountMap;
+            }
+
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Map of symbol counts.
+         */
+        private final Map<String, Integer> theSymbolCountMap;
+
+        /**
+         * Map of symbols.
+         */
+        private final Map<String, Security> theSymbolMap;
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Constructor.
+         */
+        public SecurityDataMap() {
+            /* Create the maps */
+            theSymbolCountMap = new HashMap<String, Integer>();
+            theSymbolMap = new HashMap<String, Security>();
+        }
+
+        @Override
+        public void resetMap() {
+            super.resetMap();
+            theSymbolCountMap.clear();
+            theSymbolMap.clear();
+        }
+
         @Override
         public void adjustForItem(final Security pItem) {
+            /* Adjust symbol count */
+            String mySymbol = pItem.getSymbol();
+            Integer myCount = theSymbolCountMap.get(mySymbol);
+            if (myCount == null) {
+                theSymbolCountMap.put(mySymbol, ONE);
+            } else {
+                theSymbolCountMap.put(mySymbol, myCount + 1);
+            }
+
+            /* Adjust symbol map */
+            theSymbolMap.put(mySymbol, pItem);
+
             /* Adjust name count */
             adjustForItem(pItem, pItem.getName());
+        }
+
+        /**
+         * find item by symbol.
+         * @param pSymbol the symbol to look up
+         * @return the matching item
+         */
+        public Security findItemBySymbol(final String pSymbol) {
+            return theSymbolMap.get(pSymbol);
         }
 
         /**
@@ -1319,6 +1435,16 @@ public class Security
          */
         public Security findItemByName(final String pName) {
             return findItemByKey(pName);
+        }
+
+        /**
+         * Check validity of symbol count.
+         * @param pSymbol the symbol to look up
+         * @return true/false
+         */
+        public boolean validSymbolCount(final String pSymbol) {
+            Integer myResult = theSymbolCountMap.get(pSymbol);
+            return ONE.equals(myResult);
         }
 
         /**

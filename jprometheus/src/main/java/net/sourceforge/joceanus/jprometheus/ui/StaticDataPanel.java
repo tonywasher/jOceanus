@@ -79,6 +79,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     private static final int STRUT_WIDTH = 5;
 
     /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = PrometheusUIResource.STATIC_DATAENTRY.getValue();
+
+    /**
      * Text for Selection Title.
      */
     private static final String NLS_SELECT = PrometheusUIResource.STATIC_TITLE_SELECT.getValue();
@@ -187,7 +192,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theControl.getDataMgr();
         JDataEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry(StaticData.class.getSimpleName());
+        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 

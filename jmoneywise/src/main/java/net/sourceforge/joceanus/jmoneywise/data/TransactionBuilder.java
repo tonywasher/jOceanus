@@ -248,7 +248,7 @@ public class TransactionBuilder {
         int iResult = myRange.compareTo(myDate);
         if (iResult < 0) {
             myDate = myRange.getEnd();
-        } else if (iResult < 0) {
+        } else if (iResult > 0) {
             myDate = myRange.getStart();
         }
         pTrans.setDate(myDate);

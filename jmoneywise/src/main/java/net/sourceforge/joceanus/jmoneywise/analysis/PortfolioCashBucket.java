@@ -106,4 +106,29 @@ public class PortfolioCashBucket
         pSource.registerTransaction(pTrans);
         registerTransaction(pTrans);
     }
+
+    /**
+     * Add Values.
+     * @param pBucket the portfolio cash bucket
+     */
+    protected void addValues(final PortfolioCashBucket pBucket) {
+        /* Add values */
+        addValues(getValues(), pBucket.getValues());
+
+        /* Add base values */
+        addValues(getBaseValues(), pBucket.getBaseValues());
+    }
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final AccountValues pTotals,
+                                  final AccountValues pSource) {
+        /* Add valuation values */
+        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        myValue.addAmount(mySrcValue);
+    }
 }

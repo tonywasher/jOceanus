@@ -74,10 +74,7 @@ public class QIFPortfolioEvent
         return theDate;
     }
 
-    /**
-     * Is the record cleared.
-     * @return true/false.
-     */
+    @Override
     public Boolean isCleared() {
         return isCleared;
     }

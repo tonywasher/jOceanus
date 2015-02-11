@@ -230,8 +230,10 @@ public final class JSvnManager {
 
     /**
      * Constructor.
-     * @param pLogger the logger
-     * @throws JOceanusException on error
+     * @param pLogger
+     * the logger
+     * @throws JOceanusException
+     * on error
      */
     protected JSvnManager(final Logger pLogger) throws JOceanusException {
         /* Store parameters */
@@ -353,7 +355,8 @@ public final class JSvnManager {
 
     /**
      * Declare subversion data.
-     * @param pData the discover thread
+     * @param pData
+     * the discover thread
      */
     protected void setSubversionData(final DiscoverData pData) {
         /* Declare repository to data manager */
@@ -377,15 +380,18 @@ public final class JSvnManager {
         /* Enable the git menu */
         theCreateGit.setEnabled(true);
 
-        /* Loop through the components */
-        Iterator<SvnComponent> myIterator = theRepository.getComponents().iterator();
-        while (myIterator.hasNext()) {
-            SvnComponent myComp = myIterator.next();
+        /* If we have a repository */
+        if (theRepository != null) {
+            /* Loop through the components */
+            Iterator<SvnComponent> myIterator = theRepository.getComponents().iterator();
+            while (myIterator.hasNext()) {
+                SvnComponent myComp = myIterator.next();
 
-            /* Create a new menu item for the component */
-            ItemAction myAction = new ItemAction(myComp);
-            JMenuItem myItem = new JMenuItem(myAction);
-            theCreateGit.add(myItem);
+                /* Create a new menu item for the component */
+                ItemAction myAction = new ItemAction(myComp);
+                JMenuItem myItem = new JMenuItem(myAction);
+                theCreateGit.add(myItem);
+            }
         }
 
         /* Enable the git menu if we have components */
@@ -405,7 +411,8 @@ public final class JSvnManager {
 
     /**
      * Declare git data.
-     * @param pGit the git thread
+     * @param pGit
+     * the git thread
      */
     protected void setGitData(final CreateGitRepo pGit) {
         /* Declare repository to data manager */
@@ -418,7 +425,8 @@ public final class JSvnManager {
 
     /**
      * Complete thread task.
-     * @param pTask the task that has completed
+     * @param pTask
+     * the task that has completed
      */
     public void completeTask(final Object pTask) {
         /* If this is the discoverData thread */
@@ -549,7 +557,8 @@ public final class JSvnManager {
 
     /**
      * Run create GitRepo.
-     * @param pSource the source component
+     * @param pSource
+     * the source component
      */
     private void createGitRepo(final SvnComponent pSource) {
         /* Create the worker thread */
@@ -642,7 +651,8 @@ public final class JSvnManager {
 
         /**
          * Constructor.
-         * @param pSource the source component
+         * @param pSource
+         * the source component
          */
         private ItemAction(final SvnComponent pSource) {
             super(pSource.getName());

@@ -36,7 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -61,6 +63,11 @@ public class MarketGrowth
     private static final String TEXT_INVEST = AnalysisResource.SECURITYATTR_INVESTED.getValue();
 
     /**
+     * The Adjustment text.
+     */
+    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_PROFITADJUST.getValue();
+
+    /**
      * The Base text.
      */
     private static final String TEXT_BASE = ReportResource.MARKETGROWTH_BASE.getValue();
@@ -81,6 +88,11 @@ public class MarketGrowth
     private final JDataFormatter theFormatter;
 
     /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -88,6 +100,7 @@ public class MarketGrowth
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
+        theLogger = pManager.getLogger();
     }
 
     @Override
@@ -108,8 +121,9 @@ public class MarketGrowth
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
-        theBuilder.makeTitleCell(myTable, TEXT_INVEST);
         theBuilder.makeTitleCell(myTable, TEXT_BASE);
+        theBuilder.makeTitleCell(myTable, TEXT_INVEST);
+        theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
         theBuilder.makeTitleCell(myTable, TEXT_GROWTH);
 
         /* Loop through the Portfolio Buckets */
@@ -122,15 +136,16 @@ public class MarketGrowth
 
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
-            SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Format the Asset */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myBucket.getNonCashValue(false));
+            theBuilder.makeTotalCell(myTable, myBucket.getNonCashValue(true));
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
-            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+            checkPortfolioGrowth(myBucket);
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -138,15 +153,16 @@ public class MarketGrowth
 
         /* Access values */
         SecurityValues myValues = myTotals.getValues();
-        SecurityValues myBaseValues = myTotals.getBaseValues();
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
+        theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(true));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
-        theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+        checkPortfolioGrowth(myTotals);
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -195,9 +211,11 @@ public class MarketGrowth
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+            checkSecurityGrowth(myBucket);
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -205,6 +223,37 @@ public class MarketGrowth
 
         /* Return the table */
         return myTable;
+    }
+
+    /**
+     * Check portfolio growth calculation.
+     * @param pBucket the portfolio bucket
+     */
+    private void checkPortfolioGrowth(final PortfolioBucket pBucket) {
+        SecurityValues myValues = pBucket.getValues();
+        JMoney myCalcGrowth = pBucket.getNonCashValue(false);
+        myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
+        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
+        JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        if (!myGrowth.equals(myCalcGrowth)) {
+            theLogger.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
+        }
+    }
+
+    /**
+     * Check security portfolio profit calculation.
+     * @param pBucket the security bucket
+     */
+    private void checkSecurityGrowth(final SecurityBucket pBucket) {
+        SecurityValues myValues = pBucket.getValues();
+        SecurityValues myBaseValues = pBucket.getBaseValues();
+        JMoney myCalcGrowth = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
+        JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        if (!myGrowth.equals(myCalcGrowth)) {
+            theLogger.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
+        }
     }
 
     @Override

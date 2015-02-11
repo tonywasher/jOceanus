@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseUIControlResourc
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotRatesSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate.SpotExchangeList;
-import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -78,6 +77,11 @@ public class SpotRatesTable
      * Serial Id.
      */
     private static final long serialVersionUID = -68651306151746587L;
+
+    /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = MoneyWiseUIResource.RATES_DATAENTRY.getValue();
 
     /**
      * The data view.
@@ -204,8 +208,8 @@ public class SpotRatesTable
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataPrice = myDataMgr.new JDataEntry(SpotSecurityList.class.getSimpleName());
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        theDataPrice = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataPrice.addAsChildOf(mySection);
         theDataPrice.setObject(theUpdateSet);
 

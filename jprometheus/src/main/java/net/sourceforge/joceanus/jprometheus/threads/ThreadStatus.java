@@ -127,10 +127,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
         return theControl.getDataFormatter();
     }
 
-    /**
-     * Obtain logger.
-     * @return the Logger
-     */
+    @Override
     public Logger getLogger() {
         return theLogger;
     }

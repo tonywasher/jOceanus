@@ -102,9 +102,7 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
         theKeyCountMap = new HashMap<K, Integer>();
     }
 
-    /**
-     * Reset the map.
-     */
+    @Override
     public void resetMap() {
         theKeyMap.clear();
         theKeyCountMap.clear();

@@ -788,10 +788,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         return myState;
     }
 
-    /**
-     * Obtain iterator.
-     * @return the iterator over the values.
-     */
+    @Override
     public Iterator<T> iterator() {
         return new InfoIterator();
     }

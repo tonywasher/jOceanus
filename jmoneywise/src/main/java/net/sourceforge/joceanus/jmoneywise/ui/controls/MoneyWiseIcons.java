@@ -23,6 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Image;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,6 +42,11 @@ public final class MoneyWiseIcons
      * The program icon.
      */
     private static final ImageIcon ICON_PROGRAM = new ImageIcon(MoneyWiseIcons.class.getResource("icons/MoneyWiseIcon.png"));
+
+    /**
+     * The program splash icon.
+     */
+    private static final ImageIcon ICON_SPLASH = new ImageIcon(MoneyWiseIcons.class.getResource("icons/MoneyWiseBig.png"));
 
     /**
      * The locked icon.
@@ -157,8 +164,11 @@ public final class MoneyWiseIcons
      * Obtain the program Image.
      * @return the program Image
      */
-    public static Image getProgramImage() {
-        return ICON_PROGRAM.getImage();
+    public static List<Image> getProgramImages() {
+        List<Image> myList = new ArrayList<Image>();
+        myList.add(ICON_PROGRAM.getImage());
+        myList.add(ICON_SPLASH.getImage());
+        return myList;
     }
 
     /**

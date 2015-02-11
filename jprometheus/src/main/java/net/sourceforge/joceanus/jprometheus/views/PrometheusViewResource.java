@@ -31,14 +31,14 @@ import net.sourceforge.joceanus.jtethys.resource.ResourceId;
  */
 public enum PrometheusViewResource implements ResourceId {
     /**
-     * DataEntry Views.
+     * DataEntry Underlying Data.
      */
-    DATAENTRY_VIEWS("DataEntry.Views"),
+    DATAENTRY_UNDERLYING("DataEntry.Underlying"),
 
     /**
-     * DataEntry Data.
+     * DataEntry DataSet.
      */
-    DATAENTRY_DATA("DataEntry.Data"),
+    DATAENTRY_DATASET("DataEntry.DataSet"),
 
     /**
      * DataEntry Updates.
@@ -51,9 +51,9 @@ public enum PrometheusViewResource implements ResourceId {
     DATAENTRY_ANALYSIS("DataEntry.Analysis"),
 
     /**
-     * DataEntry EditViews.
+     * DataEntry DataViews.
      */
-    DATAENTRY_EDIT("DataEntry.EditViews"),
+    DATAENTRY_VIEWS("DataEntry.DataViews"),
 
     /**
      * DataEntry Maintenance.

@@ -36,7 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -54,6 +56,11 @@ public class PortfolioView
      * The Cost text.
      */
     private static final String TEXT_COST = AnalysisResource.SECURITYATTR_COST.getValue();
+
+    /**
+     * The Adjustment text.
+     */
+    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_PROFITADJUST.getValue();
 
     /**
      * The Value text.
@@ -81,6 +88,11 @@ public class PortfolioView
     private final JDataFormatter theFormatter;
 
     /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -88,6 +100,7 @@ public class PortfolioView
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
+        theLogger = pManager.getLogger();
     }
 
     @Override
@@ -107,10 +120,11 @@ public class PortfolioView
         HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
-        theBuilder.makeTitleCell(myTable, TEXT_COST);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
+        theBuilder.makeTitleCell(myTable, TEXT_COST);
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
         theBuilder.makeTitleCell(myTable, TEXT_DIVIDEND);
+        theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
@@ -127,11 +141,15 @@ public class PortfolioView
             /* Format the Asset */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
+
+            /* Handle values bucket value */
+            theBuilder.makeValueCell(myTable, myBucket.getNonCashValue(false));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
+            checkPortfolioProfit(myBucket);
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -143,11 +161,13 @@ public class PortfolioView
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
+        checkPortfolioProfit(myTotals);
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -187,25 +207,60 @@ public class PortfolioView
 
             /* Access bucket name */
             String myName = myBucket.getName();
+            String myFullName = myBucket.getDecoratedName();
 
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
+            theBuilder.makeFilterLinkCell(myTable, myFullName, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
+            checkSecurityProfit(myBucket);
 
             /* Record the filter */
-            setFilterForId(myName, myBucket);
+            setFilterForId(myFullName, myBucket);
         }
 
         /* Return the table */
         return myTable;
+    }
+
+    /**
+     * Check portfolio profit calculation.
+     * @param pBucket the portfolio bucket
+     */
+    private void checkPortfolioProfit(final PortfolioBucket pBucket) {
+        SecurityValues myValues = pBucket.getValues();
+        JMoney myCalcProfit = pBucket.getNonCashValue(false);
+        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        if (!myProfit.equals(myCalcProfit)) {
+            theLogger.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
+        }
+    }
+
+    /**
+     * Check security portfolio profit calculation.
+     * @param pBucket the security bucket
+     */
+    private void checkSecurityProfit(final SecurityBucket pBucket) {
+        SecurityValues myValues = pBucket.getValues();
+        JMoney myCalcProfit = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        if (!myProfit.equals(myCalcProfit)) {
+            theLogger.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
+        }
     }
 
     @Override

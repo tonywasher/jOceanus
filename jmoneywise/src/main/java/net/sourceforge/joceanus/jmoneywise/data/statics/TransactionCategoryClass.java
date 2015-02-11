@@ -96,54 +96,54 @@ public enum TransactionCategoryClass implements CategoryInterface {
     OTHERINCOME(13, 16),
 
     /**
-     * Transfer.
-     */
-    TRANSFER(14, 17),
-
-    /**
      * Stock Units Adjustment.
      */
-    UNITSADJUST(15, 18),
+    UNITSADJUST(14, 17),
 
     /**
      * Stock Split.
      */
-    STOCKSPLIT(16, 19),
+    STOCKSPLIT(15, 18),
 
     /**
      * Stock DeMerger.
      */
-    STOCKDEMERGER(17, 20),
+    STOCKDEMERGER(16, 19),
 
     /**
      * Security Replacement.
      */
-    SECURITYREPLACE(18, 21),
+    SECURITYREPLACE(17, 20),
 
     /**
      * Stock TakeOver.
      */
-    STOCKTAKEOVER(19, 22),
+    STOCKTAKEOVER(18, 21),
 
     /**
      * Stock Rights Taken.
      */
-    STOCKRIGHTSTAKEN(20, 23),
+    STOCKRIGHTSTAKEN(19, 22),
 
     /**
      * Stock Rights Waived.
      */
-    STOCKRIGHTSWAIVED(21, 24),
+    STOCKRIGHTSWAIVED(20, 23),
 
     /**
      * PortfolioXfer.
      */
-    PORTFOLIOXFER(22, 25),
+    PORTFOLIOXFER(21, 24),
 
     /**
      * Stock Options Vested.
      */
-    OPTIONSVEST(23, 26),
+    OPTIONSVEST(22, 25),
+
+    /**
+     * Transfer.
+     */
+    TRANSFER(23, 26),
 
     /**
      * Stock Options Exercised.
@@ -318,8 +318,10 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * Constructor.
-     * @param uId the id
-     * @param uOrder the default order.
+     * @param uId
+     * the id
+     * @param uOrder
+     * the default order.
      */
     private TransactionCategoryClass(final int uId,
                                      final int uOrder) {
@@ -341,9 +343,11 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * get value from id.
-     * @param id the id value
+     * @param id
+     * the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws JOceanusException
+     * on error
      */
     public static TransactionCategoryClass fromId(final int id) throws JOceanusException {
         for (TransactionCategoryClass myClass : values()) {

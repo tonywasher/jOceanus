@@ -54,6 +54,11 @@ public enum SecurityAttribute implements BucketAttribute {
     GAINS,
 
     /**
+     * ProfitAdjust.
+     */
+    PROFITADJUST,
+
+    /**
      * Invested.
      */
     INVESTED,
@@ -101,6 +106,7 @@ public enum SecurityAttribute implements BucketAttribute {
             case UNITS:
             case COST:
             case GAINS:
+            case PROFITADJUST:
             case DIVIDEND:
             case INVESTED:
                 return true;
@@ -125,6 +131,7 @@ public enum SecurityAttribute implements BucketAttribute {
             case DELTA:
             case COST:
             case GAINS:
+            case PROFITADJUST:
             case INVESTED:
             case DIVIDEND:
             case MARKET:

@@ -58,17 +58,17 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Debug View Name.
      */
-    public static final String DATA_VIEWS = PrometheusViewResource.DATAENTRY_VIEWS.getValue();
+    public static final String DATA_UNDERLYING = PrometheusViewResource.DATAENTRY_UNDERLYING.getValue();
 
     /**
      * Underlying Data Name.
      */
-    public static final String DATA_DATASET = PrometheusViewResource.DATAENTRY_DATA.getValue();
+    private static final String DATA_DATASET = PrometheusViewResource.DATAENTRY_DATASET.getValue();
 
     /**
      * Data Updates Name.
      */
-    public static final String DATA_UPDATES = PrometheusViewResource.DATAENTRY_UPDATES.getValue();
+    private static final String DATA_UPDATES = PrometheusViewResource.DATAENTRY_UPDATES.getValue();
 
     /**
      * Analysis Name.
@@ -78,7 +78,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Debug Edit Name.
      */
-    public static final String DATA_EDIT = PrometheusViewResource.DATAENTRY_EDIT.getValue();
+    public static final String DATA_VIEWS = PrometheusViewResource.DATAENTRY_VIEWS.getValue();
 
     /**
      * Debug Maintenance Name.
@@ -93,7 +93,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Active Profile.
      */
-    public static final String DATA_PROFILE = PrometheusViewResource.DATAENTRY_PROFILE.getValue();
+    private static final String DATA_PROFILE = PrometheusViewResource.DATAENTRY_PROFILE.getValue();
 
     /**
      * The DataSet.
@@ -345,24 +345,24 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void initDataMgr() {
         /* Create Debug Entries */
-        JDataEntry myViews = getDataEntry(DATA_VIEWS);
+        JDataEntry myUnderlying = getDataEntry(DATA_UNDERLYING);
         JDataEntry myData = getDataEntry(DATA_DATASET);
-        JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
         JDataEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
-        JDataEntry myEdit = getDataEntry(DATA_EDIT);
+        JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
+        JDataEntry myViews = getDataEntry(DATA_VIEWS);
         JDataEntry myMaint = getDataEntry(DATA_MAINT);
         JDataEntry myError = getDataEntry(DATA_ERROR);
         JDataEntry myProfile = getDataEntry(DATA_PROFILE);
 
         /* Create the structure */
         myProfile.addAsRootChild();
+        myUnderlying.addAsRootChild();
         myViews.addAsRootChild();
-        myEdit.addAsRootChild();
-        myMaint.addAsRootChild();
         myError.addAsRootChild();
-        myData.addAsChildOf(myViews);
-        myUpdates.addAsChildOf(myViews);
-        myAnalysis.addAsChildOf(myViews);
+        myData.addAsChildOf(myUnderlying);
+        myAnalysis.addAsChildOf(myUnderlying);
+        myUpdates.addAsChildOf(myUnderlying);
+        myMaint.addAsChildOf(myViews);
 
         /* Hide the Error Entry */
         myError.hideEntry();

@@ -321,7 +321,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             int myValue = pResults.getInt(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if (pResults.wasNull()) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -574,7 +574,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             short myValue = pResults.getShort(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if (pResults.wasNull()) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -635,7 +635,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             long myValue = pResults.getLong(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if (pResults.wasNull()) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -696,7 +696,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             float myValue = pResults.getFloat(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if (pResults.wasNull()) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -757,7 +757,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             double myValue = pResults.getDouble(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if (pResults.wasNull()) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -880,7 +880,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             boolean myValue = pResults.getBoolean(pIndex);
-            if ((!myValue) && (pResults.wasNull())) {
+            if (pResults.wasNull()) {
                 setValue(null);
             } else {
                 setValue(myValue);

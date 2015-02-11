@@ -165,7 +165,7 @@ public class OrderedListSpliterator<T extends Comparable<? super T>>
 
     @Override
     public long estimateSize() {
-        return theLastIndex - theCurrIndex;
+        return (long) theLastIndex - theCurrIndex;
     }
 
     @Override

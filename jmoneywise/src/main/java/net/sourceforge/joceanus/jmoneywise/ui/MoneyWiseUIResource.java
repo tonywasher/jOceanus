@@ -86,6 +86,41 @@ public enum MoneyWiseUIResource implements ResourceId {
     CATEGORY_FILTER_SHOWALL("Category.Filter.All"),
 
     /**
+     * Report DataEntry.
+     */
+    REPORT_DATAENTRY("Report.DataEntry"),
+
+    /**
+     * TaxYear DataEntry.
+     */
+    TAXYEAR_DATAENTRY("TaxYear.DataEntry"),
+
+    /**
+     * SpotPrices DataEntry.
+     */
+    PRICES_DATAENTRY("SpotPrices.DataEntry"),
+
+    /**
+     * SpotRates DataEntry.
+     */
+    RATES_DATAENTRY("SpotRates.DataEntry"),
+
+    /**
+     * Register DataEntry.
+     */
+    REGISTER_DATAENTRY("Register.DataEntry"),
+
+    /**
+     * Filter DataEntry.
+     */
+    FILTER_DATAENTRY("Filter.DataEntry"),
+
+    /**
+     * Transaction DataEntry.
+     */
+    TRANSACTION_DATAENTRY("Transactions.DataEntry"),
+
+    /**
      * Statement Column Direction.
      */
     STATEMENT_COLUMN_DIRECTION("Statement.Column.Direction"),

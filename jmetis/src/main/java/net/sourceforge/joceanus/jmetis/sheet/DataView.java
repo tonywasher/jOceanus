@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.sheet;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -265,7 +266,7 @@ public class DataView
         }
 
         @Override
-        public DataRow next() {
+        public DataRow next() throws NoSuchElementException {
             /* If we are a new iterator */
             if (theLastRow == null) {
                 /* Access the first element of the view */
@@ -415,7 +416,7 @@ public class DataView
 
         @Override
         public long estimateSize() {
-            return theLastIndex - theCurrIndex;
+            return (long) theLastIndex - theCurrIndex;
         }
 
         @Override

@@ -103,8 +103,10 @@ public class Backup {
 
     /**
      * Constructor.
-     * @param pStatus the status reporter
-     * @param pPrefMgr the preference manager
+     * @param pStatus
+     * the status reporter
+     * @param pPrefMgr
+     * the preference manager
      */
     public Backup(final ReportStatus pStatus,
                   final PreferenceManager pPrefMgr) {
@@ -129,10 +131,14 @@ public class Backup {
 
     /**
      * Load a repository from the input stream.
-     * @param pRepository the repository directory
-     * @param pSecurity the secure manager
-     * @param pZipFile the zipFile to load
-     * @throws JOceanusException on error
+     * @param pRepository
+     * the repository directory
+     * @param pSecurity
+     * the secure manager
+     * @param pZipFile
+     * the zipFile to load
+     * @throws JOceanusException
+     * on error
      */
     public void loadRepository(final File pRepository,
                                final SecureManager pSecurity,
@@ -154,6 +160,11 @@ public class Backup {
             /* Access the relevant entry and obtain the number of revisions */
             ZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
             Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
+
+            /* Declare the stage */
+            if (!theStatus.setNewStage("Repository")) {
+                return;
+            }
 
             /* Declare the number of revisions */
             if (!theStatus.setNumSteps(myNumRevs.intValue())) {
@@ -179,7 +190,8 @@ public class Backup {
 
     /**
      * Build URL.
-     * @param pName the name of the repository
+     * @param pName
+     * the name of the repository
      * @return the Repository path
      */
     private String buildURL(final String pName) {
@@ -203,10 +215,14 @@ public class Backup {
 
     /**
      * Dump a repository to a Backup directory.
-     * @param pManager the secure manager
-     * @param pRepository the repository directory
-     * @param pBackupDir the backup directory
-     * @throws JOceanusException on error
+     * @param pManager
+     * the secure manager
+     * @param pRepository
+     * the repository directory
+     * @param pBackupDir
+     * the backup directory
+     * @throws JOceanusException
+     * on error
      */
     private void backUpRepository(final SecureManager pManager,
                                   final File pRepository,
@@ -300,8 +316,10 @@ public class Backup {
 
     /**
      * Backup repositories.
-     * @param pManager the secure manager
-     * @throws JOceanusException on error
+     * @param pManager
+     * the secure manager
+     * @throws JOceanusException
+     * on error
      */
     public void backUpRepositories(final SecureManager pManager) throws JOceanusException {
         /* Install an event handler */

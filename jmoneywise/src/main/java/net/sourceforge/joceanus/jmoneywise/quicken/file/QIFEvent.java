@@ -61,10 +61,7 @@ public class QIFEvent
         return theDate;
     }
 
-    /**
-     * Is the record cleared.
-     * @return true/false.
-     */
+    @Override
     public Boolean isCleared() {
         return isCleared;
     }

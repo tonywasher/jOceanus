@@ -446,7 +446,7 @@ public final class PortfolioBucket
      * Add bucket to totals.
      * @param pBucket the underlying bucket
      */
-    protected void addValues(final PortfolioCashBucket pBucket) {
+    private void addValues(final PortfolioCashBucket pBucket) {
         /* Add values */
         addValues(theValues, pBucket.getValues());
 
@@ -492,6 +492,11 @@ public final class PortfolioBucket
         /* Add gains values */
         myValue = pTotals.getMoneyValue(SecurityAttribute.GAINS);
         mySrcValue = pSource.getMoneyValue(SecurityAttribute.GAINS);
+        myValue.addAmount(mySrcValue);
+
+        /* Add profit adjustment values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.PROFITADJUST);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.PROFITADJUST);
         myValue.addAmount(mySrcValue);
 
         /* Add dividends values */
@@ -562,6 +567,34 @@ public final class PortfolioBucket
 
         /* Idle */
         return true;
+    }
+
+    /**
+     * Obtain cash valuation.
+     * @param pBase get base valuation - true/false
+     * @return the valuation minus the cash value
+     */
+    public JMoney getCashValue(final boolean pBase) {
+        /* Obtain the cash valuation */
+        AccountValues myCashValues = pBase
+                                          ? theCash.getBaseValues()
+                                          : theCash.getValues();
+        return new JMoney(myCashValues.getMoneyValue(AccountAttribute.VALUATION));
+    }
+
+    /**
+     * Obtain non-cash valuation.
+     * @param pBase get base valuation - true/false
+     * @return the valuation minus the cash value
+     */
+    public JMoney getNonCashValue(final boolean pBase) {
+        /* Handle valuation by subtracting the cash valuation */
+        SecurityValues myValues = pBase
+                                       ? theBaseValues
+                                       : theValues;
+        JMoney myValue = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        myValue.subtractAmount(getCashValue(pBase));
+        return myValue;
     }
 
     /**
@@ -768,6 +801,7 @@ public final class PortfolioBucket
             /* Market Analysis */
             MarketAnalysis myMarket = new MarketAnalysis();
             JDateDayRange myRange = theAnalysis.getDateRange();
+            PortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
             /* Loop through the portfolio buckets */
             Iterator<PortfolioBucket> myIterator = iterator();
@@ -779,6 +813,7 @@ public final class PortfolioBucket
                 myCash.calculateDelta();
                 myPortfolio.addValues(myCash);
                 theTotals.addValues(myCash);
+                myCashTotals.addValues(myCash);
 
                 /* Loop through the buckets */
                 Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();

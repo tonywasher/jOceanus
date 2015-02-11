@@ -66,7 +66,7 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 /**
- * Alternate version of ReportTab.
+ * Report panel.
  */
 public class ReportTab
         extends JEventPanel {
@@ -74,6 +74,11 @@ public class ReportTab
      * Serial Id.
      */
     private static final long serialVersionUID = 2219752518436850014L;
+
+    /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = MoneyWiseUIResource.REPORT_DATAENTRY.getValue();
 
     /**
      * The Data View.
@@ -138,9 +143,9 @@ public class ReportTab
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        JDataEntry myDataReport = myDataMgr.new JDataEntry("Report");
-        theSpotEntry = myDataMgr.new JDataEntry("SpotAnalysis");
+        JDataEntry myDataReport = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         myDataReport.addAsChildOf(mySection);
+        theSpotEntry = myDataMgr.new JDataEntry(DataControl.DATA_ANALYSIS);
         theSpotEntry.addAsChildOf(myDataReport);
         theSpotEntry.hideEntry();
 
