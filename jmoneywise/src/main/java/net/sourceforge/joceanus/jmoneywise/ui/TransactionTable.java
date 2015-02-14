@@ -378,7 +378,7 @@ public class TransactionTable
         theTransEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTION);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
         setUpdateSet(theUpdateSet);
-        theBuilder = new TransactionBuilder(theUpdateSet, theView.getLogger());
+        theBuilder = new TransactionBuilder(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();

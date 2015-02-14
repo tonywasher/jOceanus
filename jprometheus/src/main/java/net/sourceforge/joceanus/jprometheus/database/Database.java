@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jprometheus.preferences.JDBCDriver;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that encapsulates a database connection.
@@ -64,6 +65,11 @@ public abstract class Database<T extends DataSet<T, ?>> {
     private static final String PROPERTY_PASS = "password";
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Database.class);
+
+    /**
      * Database connection.
      */
     private Connection theConn = null;
@@ -79,36 +85,18 @@ public abstract class Database<T extends DataSet<T, ?>> {
     private final JDBCDriver theDriver;
 
     /**
-     * The logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * List of Database tables.
      */
     private final List<DatabaseTable<?, ?>> theTables;
 
     /**
-     * Obtain the Driver.
-     * @return the driver
-     */
-    protected JDBCDriver getDriver() {
-        return theDriver;
-    }
-
-    /**
      * Construct a new Database class.
-     * @param pLogger the logger
      * @param pPreferences the preferences
      * @throws JOceanusException on error
      */
-    public Database(final Logger pLogger,
-                    final DatabasePreferences pPreferences) throws JOceanusException {
+    public Database(final DatabasePreferences pPreferences) throws JOceanusException {
         /* Create the connection */
         try {
-            /* Store the logger */
-            theLogger = pLogger;
-
             /* Access the batch size */
             theBatchSize = pPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
@@ -153,6 +141,14 @@ public abstract class Database<T extends DataSet<T, ?>> {
         theTables.add(new TableDataKeySet(this));
         theTables.add(new TableDataKeys(this));
         theTables.add(new TableControlData(this));
+    }
+
+    /**
+     * Obtain the Driver.
+     * @return the driver
+     */
+    protected JDBCDriver getDriver() {
+        return theDriver;
     }
 
     /**
@@ -201,7 +197,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
             /* Discard Exceptions */
         } catch (SQLException e) {
-            theLogger.error("Failed to close database connection", e);
+            LOGGER.error("Failed to close database connection", e);
             theConn = null;
         }
     }

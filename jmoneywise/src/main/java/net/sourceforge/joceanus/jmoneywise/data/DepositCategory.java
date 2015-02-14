@@ -149,11 +149,6 @@ public class DepositCategory
     }
 
     @Override
-    public DepositCategory getBase() {
-        return (DepositCategory) super.getBase();
-    }
-
-    @Override
     public DepositCategoryList getList() {
         return (DepositCategoryList) super.getList();
     }

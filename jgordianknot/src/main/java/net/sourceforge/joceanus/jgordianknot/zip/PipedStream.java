@@ -60,6 +60,20 @@ public class PipedStream {
     private final BufferedOutputStream theSink;
 
     /**
+     * Constructor.
+     */
+    public PipedStream() {
+        /* Create the queue */
+        theQueue = new ArrayBlockingQueue<byte[]>(QUEUE_LEN);
+
+        /* Create the source stream */
+        theSource = new PipedInputStream();
+
+        /* Create the sink stream */
+        theSink = new BufferedOutputStream(new PipedOutputStream(), BUFFER_LEN);
+    }
+
+    /**
      * Obtain the source stream.
      * @return the source stream
      */
@@ -73,20 +87,6 @@ public class PipedStream {
      */
     public OutputStream getSink() {
         return theSink;
-    }
-
-    /**
-     * Constructor.
-     */
-    public PipedStream() {
-        /* Create the queue */
-        theQueue = new ArrayBlockingQueue<byte[]>(QUEUE_LEN);
-
-        /* Create the source stream */
-        theSource = new PipedInputStream();
-
-        /* Create the sink stream */
-        theSink = new BufferedOutputStream(new PipedOutputStream(), BUFFER_LEN);
     }
 
     /**
@@ -188,8 +188,8 @@ public class PipedStream {
 
             /* Determine how much data we can transfer */
             iNumRead = (iNumRead <= pLength)
-                    ? iNumRead
-                    : pLength;
+                                            ? iNumRead
+                                            : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {

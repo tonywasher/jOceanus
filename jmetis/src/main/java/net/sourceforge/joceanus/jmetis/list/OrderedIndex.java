@@ -81,22 +81,6 @@ public class OrderedIndex<T extends Comparable<? super T>> {
     private int theActiveMapLength = 0;
 
     /**
-     * Declare list.
-     * @param pList the list that this index is associated with
-     */
-    protected void declareList(final OrderedList<T> pList) {
-        theList = pList;
-    }
-
-    /**
-     * Obtain the granularity shift.
-     * @return the granularity shift
-     */
-    protected int getGranularityShift() {
-        return theGranularityShift;
-    }
-
-    /**
      * Constructor.
      */
     protected OrderedIndex() {
@@ -125,6 +109,22 @@ public class OrderedIndex<T extends Comparable<? super T>> {
         theMap = (OrderedNode<T>[]) new OrderedNode[EXPANSION_SIZE];
         Arrays.fill(theMap, null);
         theMapLength = EXPANSION_SIZE;
+    }
+
+    /**
+     * Declare list.
+     * @param pList the list that this index is associated with
+     */
+    protected void declareList(final OrderedList<T> pList) {
+        theList = pList;
+    }
+
+    /**
+     * Obtain the granularity shift.
+     * @return the granularity shift
+     */
+    protected int getGranularityShift() {
+        return theGranularityShift;
     }
 
     /**

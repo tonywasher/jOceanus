@@ -109,11 +109,6 @@ public class Schedule
         return null;
     }
 
-    @Override
-    public Schedule getParent() {
-        return (Schedule) super.getParent();
-    }
-
     /**
      * Obtain Frequency.
      * @return the frequency
@@ -455,11 +450,6 @@ public class Schedule
         @Override
         public JDataFields getItemFields() {
             return Schedule.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

@@ -74,15 +74,15 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuB
  */
 public final class JFieldCellEditor {
     /**
+     * Empty string.
+     */
+    private static final String STR_EMPTY = "";
+
+    /**
      * private constructor.
      */
     private JFieldCellEditor() {
     }
-
-    /**
-     * Empty string.
-     */
-    private static final String STR_EMPTY = "";
 
     /**
      * String Cell Editor.
@@ -106,19 +106,19 @@ public final class JFieldCellEditor {
         private transient Point thePoint;
 
         /**
-         * Obtain the location of the CellEditor.
-         * @return the point
-         */
-        public Point getPoint() {
-            return thePoint;
-        }
-
-        /**
          * Constructor.
          */
         protected StringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
         }
 
         @Override
@@ -353,23 +353,6 @@ public final class JFieldCellEditor {
         private transient Point thePoint;
 
         /**
-         * Set the CellEditor value.
-         * @param pNewValue the new value
-         */
-        public void setNewValue(final T pNewValue) {
-            theValue = pNewValue;
-            theButton.setValue(theValue);
-        }
-
-        /**
-         * Obtain the location of the CellEditor.
-         * @return the point
-         */
-        public Point getPoint() {
-            return thePoint;
-        }
-
-        /**
          * Constructor.
          * @param pClass the class of the object
          */
@@ -395,6 +378,23 @@ public final class JFieldCellEditor {
             theButton = new JIconButton<T>(theState);
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, theButtonListener);
+        }
+
+        /**
+         * Set the CellEditor value.
+         * @param pNewValue the new value
+         */
+        public void setNewValue(final T pNewValue) {
+            theValue = pNewValue;
+            theButton.setValue(theValue);
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
         }
 
         @Override
@@ -564,22 +564,6 @@ public final class JFieldCellEditor {
         private JTable theTable;
 
         /**
-         * Obtain the menu Builder.
-         * @return the menuBuilder
-         */
-        public JScrollMenuBuilder<T> getMenuBuilder() {
-            return theMenuBuilder;
-        }
-
-        /**
-         * Obtain the location of the CellEditor.
-         * @return the point
-         */
-        public Point getPoint() {
-            return thePoint;
-        }
-
-        /**
          * Constructor.
          * @param pClass the class of the object
          */
@@ -599,6 +583,22 @@ public final class JFieldCellEditor {
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theButtonListener);
             theMenuBuilder.addChangeListener(theButtonListener);
+        }
+
+        /**
+         * Obtain the menu Builder.
+         * @return the menuBuilder
+         */
+        public JScrollMenuBuilder<T> getMenuBuilder() {
+            return theMenuBuilder;
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
         }
 
         @Override
@@ -759,22 +759,6 @@ public final class JFieldCellEditor {
         private JTable theTable;
 
         /**
-         * Obtain the menu Builder.
-         * @return the menuBuilder
-         */
-        public JScrollListMenuBuilder<T> getMenuBuilder() {
-            return theMenuBuilder;
-        }
-
-        /**
-         * Obtain the location of the CellEditor.
-         * @return the point
-         */
-        public Point getPoint() {
-            return thePoint;
-        }
-
-        /**
          * Constructor.
          */
         protected ScrollListButtonCellEditor() {
@@ -789,6 +773,22 @@ public final class JFieldCellEditor {
             theButton.setFocusPainted(false);
             theMenuBuilder.addItemListener(theButtonListener);
             theMenuBuilder.addChangeListener(theButtonListener);
+        }
+
+        /**
+         * Obtain the menu Builder.
+         * @return the menuBuilder
+         */
+        public JScrollListMenuBuilder<T> getMenuBuilder() {
+            return theMenuBuilder;
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
         }
 
         @Override
@@ -942,6 +942,18 @@ public final class JFieldCellEditor {
         private final transient ComboPopup thePopupListener = new ComboPopup();
 
         /**
+         * Constructor.
+         * @param pClass the class of the object
+         */
+        protected ComboBoxCellEditor(final Class<T> pClass) {
+            /* Store parameters */
+            theClass = pClass;
+
+            /* Create button and menu builder */
+            theCombo = new JComboBox<T>();
+        }
+
+        /**
          * Obtain the comboBox.
          * @return the comboBox
          */
@@ -955,18 +967,6 @@ public final class JFieldCellEditor {
          */
         public Point getPoint() {
             return thePoint;
-        }
-
-        /**
-         * Constructor.
-         * @param pClass the class of the object
-         */
-        protected ComboBoxCellEditor(final Class<T> pClass) {
-            /* Store parameters */
-            theClass = pClass;
-
-            /* Create button and menu builder */
-            theCombo = new JComboBox<T>();
         }
 
         @Override
@@ -1142,7 +1142,7 @@ public final class JFieldCellEditor {
         @Override
         public boolean stopCellEditing() {
             JDateDay myDate = (JDateDay) getCellEditorValue();
-            if ((Object) myDate == null) {
+            if (myDate == null) {
                 fireEditingCanceled();
                 return false;
             }
@@ -1331,20 +1331,20 @@ public final class JFieldCellEditor {
         private transient Currency theCurrency;
 
         /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
-         */
-        public void setAssumedCurrency(final Currency pCurrency) {
-            theCurrency = pCurrency;
-        }
-
-        /**
          * Constructor.
          * @param pParser the parser
          */
         protected MoneyCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
             theCurrency = theParser.getDefaultCurrency();
+        }
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        public void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
         }
 
         @Override
@@ -1497,20 +1497,20 @@ public final class JFieldCellEditor {
         private transient Currency theCurrency;
 
         /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
-         */
-        public void setAssumedCurrency(final Currency pCurrency) {
-            theCurrency = pCurrency;
-        }
-
-        /**
          * Constructor.
          * @param pParser the parser
          */
         protected PriceCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
             theCurrency = theParser.getDefaultCurrency();
+        }
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        public void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
         }
 
         @Override
@@ -1549,20 +1549,20 @@ public final class JFieldCellEditor {
         private transient Currency theCurrency;
 
         /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
-         */
-        public void setAssumedCurrency(final Currency pCurrency) {
-            theCurrency = pCurrency;
-        }
-
-        /**
          * Constructor.
          * @param pParser the parser
          */
         protected DilutedPriceCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
             theCurrency = theParser.getDefaultCurrency();
+        }
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        public void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
         }
 
         @Override

@@ -210,16 +210,8 @@ public final class ChargeableEvent
             return -1;
         }
 
-        /* Make sure that the object is a ChargeableEvent */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a Chargeable Event */
-        ChargeableEvent myThat = (ChargeableEvent) pThat;
-
         /* Compare the underlying transactions */
-        return getTransaction().compareTo(myThat.getTransaction());
+        return getTransaction().compareTo(pThat.getTransaction());
     }
 
     @Override

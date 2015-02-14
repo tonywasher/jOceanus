@@ -57,6 +57,21 @@ public class MacOutputStream
     private long theDataLen = 0;
 
     /**
+     * Construct the output stream.
+     * @param pMac the data mac
+     * @param pStream the stream to write encrypted data to
+     * @throws JOceanusException on error
+     */
+    public MacOutputStream(final DataMac pMac,
+                           final OutputStream pStream) throws JOceanusException {
+        /* Store the data mac */
+        theMac = pMac;
+
+        /* Store the stream */
+        theStream = pStream;
+    }
+
+    /**
      * Access the Authentication Code of the data written.
      * @return the Mac of data written
      */
@@ -94,21 +109,6 @@ public class MacOutputStream
      */
     protected OutputStream getNextStream() {
         return theStream;
-    }
-
-    /**
-     * Construct the output stream.
-     * @param pMac the data mac
-     * @param pStream the stream to write encrypted data to
-     * @throws JOceanusException on error
-     */
-    public MacOutputStream(final DataMac pMac,
-                           final OutputStream pStream) throws JOceanusException {
-        /* Store the data mac */
-        theMac = pMac;
-
-        /* Store the stream */
-        theStream = pStream;
     }
 
     @Override

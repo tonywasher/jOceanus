@@ -59,22 +59,6 @@ public class ZipFileContents {
     private final List<ZipFileEntry> theList;
 
     /**
-     * Obtain the header.
-     * @return the header
-     */
-    protected ZipFileEntry getHeader() {
-        return theHeader;
-    }
-
-    /**
-     * Obtain and iterator.
-     * @return the header
-     */
-    public Iterator<ZipFileEntry> iterator() {
-        return theList.iterator();
-    }
-
-    /**
      * Constructor.
      */
     protected ZipFileContents() {
@@ -110,6 +94,22 @@ public class ZipFileContents {
 
         /* Parse the remaining entry */
         parseEncodedEntry(myString.toString());
+    }
+
+    /**
+     * Obtain the header.
+     * @return the header
+     */
+    protected ZipFileEntry getHeader() {
+        return theHeader;
+    }
+
+    /**
+     * Obtain and iterator.
+     * @return the header
+     */
+    public Iterator<ZipFileEntry> iterator() {
+        return theList.iterator();
     }
 
     /**

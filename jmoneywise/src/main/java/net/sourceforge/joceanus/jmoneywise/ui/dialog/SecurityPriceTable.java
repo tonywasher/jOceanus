@@ -465,7 +465,7 @@ public class SecurityPriceTable
         /**
          * Date configuration.
          */
-        private final JDateDayConfig theDateConfig;
+        private final transient JDateDayConfig theDateConfig;
 
         /**
          * Action Icon editor.

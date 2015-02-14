@@ -41,42 +41,6 @@ public class JMoney
     private final Currency theCurrency;
 
     /**
-     * Access the currency.
-     * @return the currency
-     */
-    public Currency getCurrency() {
-        return theCurrency;
-    }
-
-    /**
-     * Factory method for generating whole monetary units for a currency (e.g. £1)
-     * @param pUnits the number of whole monetary units
-     * @param pCurrency the currency
-     * @return the allocated money
-     */
-    public static JMoney getWholeUnits(final long pUnits,
-                                       final Currency pCurrency) {
-        /* Allocate the money */
-        JMoney myResult = new JMoney(pCurrency);
-        int myScale = myResult.scale();
-        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
-        return myResult;
-    }
-
-    /**
-     * Factory method for generating whole monetary units (e.g. £1)
-     * @param pUnits the number of whole monetary units
-     * @return the allocated money
-     */
-    public static JMoney getWholeUnits(final long pUnits) {
-        /* Allocate the money */
-        JMoney myResult = new JMoney();
-        int myScale = myResult.scale();
-        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
-        return myResult;
-    }
-
-    /**
      * Constructor for money of value zero in the default currency.
      */
     public JMoney() {
@@ -158,6 +122,42 @@ public class JMoney
         this(pMoney.getCurrency());
         recordScale(theCurrency.getDefaultFractionDigits());
         calculateProduct(pMoney, pDilution);
+    }
+
+    /**
+     * Access the currency.
+     * @return the currency
+     */
+    public Currency getCurrency() {
+        return theCurrency;
+    }
+
+    /**
+     * Factory method for generating whole monetary units for a currency (e.g. £1)
+     * @param pUnits the number of whole monetary units
+     * @param pCurrency the currency
+     * @return the allocated money
+     */
+    public static JMoney getWholeUnits(final long pUnits,
+                                       final Currency pCurrency) {
+        /* Allocate the money */
+        JMoney myResult = new JMoney(pCurrency);
+        int myScale = myResult.scale();
+        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
+        return myResult;
+    }
+
+    /**
+     * Factory method for generating whole monetary units (e.g. £1)
+     * @param pUnits the number of whole monetary units
+     * @return the allocated money
+     */
+    public static JMoney getWholeUnits(final long pUnits) {
+        /* Allocate the money */
+        JMoney myResult = new JMoney();
+        int myScale = myResult.scale();
+        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
+        return myResult;
     }
 
     /**

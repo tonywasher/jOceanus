@@ -41,9 +41,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -934,11 +934,6 @@ public class Portfolio
         @Override
         public JDataFields getItemFields() {
             return Portfolio.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

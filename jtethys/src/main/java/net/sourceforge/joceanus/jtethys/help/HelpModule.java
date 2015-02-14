@@ -33,6 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -57,6 +58,16 @@ public abstract class HelpModule {
     protected static final String ATTR_INITIAL = "initial";
 
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelpModule.class);
+
+    /**
+     * The stream close error.
+     */
+    protected static final String ERROR_STREAM = "Failed to close stream";
+
+    /**
      * The list of Help pages.
      */
     private List<HelpPage> theList = null;
@@ -77,21 +88,21 @@ public abstract class HelpModule {
     private String theInitial = null;
 
     /**
-     * The logger.
+     * Constructor.
+     * @param pClass the class representing the resource
+     * @param pDefinitions the definitions file name
+     * @throws HelpException on error
      */
-    private final Logger theLogger;
+    public HelpModule(final Class<?> pClass,
+                      final String pDefinitions) throws HelpException {
+        /* Allocate the list */
+        theList = new ArrayList<HelpPage>();
 
-    /**
-     * The stream close error.
-     */
-    protected static final String ERROR_STREAM = "Failed to close stream";
+        /* Parse the help definitions */
+        parseHelpDefinition(pClass, pDefinitions);
 
-    /**
-     * Obtain the logger.
-     * @return the logger
-     */
-    protected Logger getLogger() {
-        return theLogger;
+        /* Loop through the entities */
+        loadHelpPages(pClass, theEntries);
     }
 
     /**
@@ -124,29 +135,6 @@ public abstract class HelpModule {
      */
     protected HelpEntry[] getHelpEntries() {
         return theEntries;
-    }
-
-    /**
-     * Constructor.
-     * @param pClass the class representing the resource
-     * @param pDefinitions the definitions file name
-     * @param pLogger the logger
-     * @throws HelpException on error
-     */
-    public HelpModule(final Class<?> pClass,
-                      final String pDefinitions,
-                      final Logger pLogger) throws HelpException {
-        /* Store the logger */
-        theLogger = pLogger;
-
-        /* Allocate the list */
-        theList = new ArrayList<HelpPage>();
-
-        /* Parse the help definitions */
-        parseHelpDefinition(pClass, pDefinitions);
-
-        /* Loop through the entities */
-        loadHelpPages(pClass, theEntries);
     }
 
     /**
@@ -245,7 +233,7 @@ public abstract class HelpModule {
                     theList.add(myPage);
 
                 } catch (IOException ex) {
-                    theLogger.error(ERROR_STREAM, ex);
+                    LOGGER.error(ERROR_STREAM, ex);
                 }
             }
 

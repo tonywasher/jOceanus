@@ -29,18 +29,11 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Jira test suite.
  */
 public class TestJira {
-    /**
-     * Logger.
-     */
-    private static Logger theLogger = LoggerFactory.getLogger(TestJira.class.getName());
-
     /**
      * Main entry point.
      * @param args the parameters
@@ -55,7 +48,7 @@ public class TestJira {
             myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
             PropertyConfigurator.configure(myLogProp);
 
-            JiraServer myServer = new JiraServer(new PreferenceManager(theLogger));
+            JiraServer myServer = new JiraServer(new PreferenceManager());
             myServer.getIssue("BOX-1");
             System.exit(0);
         } catch (JOceanusException e) {

@@ -36,6 +36,35 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
  */
 public class ValueSetHistory
         implements JDataContents {
+    /**
+     * The current set of values for this object.
+     */
+    private ValueSet theCurr = null;
+
+    /**
+     * The original set of values if any changes have been made.
+     */
+    private ValueSet theOriginal = null;
+
+    /**
+     * The stack of valueSet changes.
+     */
+    private final Deque<ValueSet> theStack;
+
+    /**
+     * The stack of valueSetDelta fields.
+     */
+    private final Deque<ValueSetDelta> theDeltas;
+
+    /**
+     * Constructor.
+     */
+    public ValueSetHistory() {
+        /* Allocate the stack */
+        theStack = new ArrayDeque<ValueSet>();
+        theDeltas = new ArrayDeque<ValueSetDelta>();
+    }
+
     @Override
     public JDataFields getDataFields() {
         /* Allocate new local fields */
@@ -77,35 +106,6 @@ public class ValueSetHistory
     @Override
     public String formatObject() {
         return ValueSetHistory.class.getSimpleName() + "(" + theStack.size() + ")";
-    }
-
-    /**
-     * The current set of values for this object.
-     */
-    private ValueSet theCurr = null;
-
-    /**
-     * The original set of values if any changes have been made.
-     */
-    private ValueSet theOriginal = null;
-
-    /**
-     * The stack of valueSet changes.
-     */
-    private final Deque<ValueSet> theStack;
-
-    /**
-     * The stack of valueSetDelta fields.
-     */
-    private final Deque<ValueSetDelta> theDeltas;
-
-    /**
-     * Constructor.
-     */
-    public ValueSetHistory() {
-        /* Allocate the stack */
-        theStack = new ArrayDeque<ValueSet>();
-        theDeltas = new ArrayDeque<ValueSetDelta>();
     }
 
     /**

@@ -142,11 +142,6 @@ public class ViewSecurityPrice
         getValueSet().setValue(FIELD_DILUTEDPRICE, pValue);
     }
 
-    @Override
-    public SecurityPrice getBase() {
-        return (SecurityPrice) super.getBase();
-    }
-
     /**
      * Calculate Diluted values.
      */

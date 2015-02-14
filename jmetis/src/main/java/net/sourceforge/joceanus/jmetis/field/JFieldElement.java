@@ -85,30 +85,6 @@ public class JFieldElement<T extends JFieldSetItem> {
     private boolean isVisible = true;
 
     /**
-     * Obtain FieldSet.
-     * @return the fieldSet
-     */
-    protected JFieldSet<T> getFieldSet() {
-        return theFieldSet;
-    }
-
-    /**
-     * Obtain Field.
-     * @return the field
-     */
-    protected JDataField getField() {
-        return theField;
-    }
-
-    /**
-     * is the value fixed width?
-     * @return true/false
-     */
-    protected boolean isFixedWidth() {
-        return theModel.isFixedWidth();
-    }
-
-    /**
      * Constructor.
      * @param pFieldSet the field set
      * @param pField the field id
@@ -266,6 +242,30 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Create card panel */
         theCardPanel = new JFieldCardPanel();
+    }
+
+    /**
+     * Obtain FieldSet.
+     * @return the fieldSet
+     */
+    protected JFieldSet<T> getFieldSet() {
+        return theFieldSet;
+    }
+
+    /**
+     * Obtain Field.
+     * @return the field
+     */
+    protected JDataField getField() {
+        return theField;
+    }
+
+    /**
+     * is the value fixed width?
+     * @return true/false
+     */
+    protected boolean isFixedWidth() {
+        return theModel.isFixedWidth();
     }
 
     /**

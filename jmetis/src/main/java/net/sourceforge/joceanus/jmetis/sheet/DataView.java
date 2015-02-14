@@ -54,6 +54,37 @@ public class DataView
     private final int theNumColumns;
 
     /**
+     * Constructor.
+     * @param pSheet the sheet containing the view
+     * @param pFirstCell the first cell of the view
+     * @param pLastCell the last cell of the view
+     */
+    protected DataView(final DataSheet pSheet,
+                       final CellPosition pFirstCell,
+                       final CellPosition pLastCell) {
+        /* Store parameters */
+        theSheet = pSheet;
+        theBaseCell = pFirstCell;
+        theNumRows = pLastCell.getRowIndex()
+                     - pFirstCell.getRowIndex()
+                     + 1;
+        theNumColumns = pLastCell.getColumnIndex()
+                        - pFirstCell.getColumnIndex()
+                        + 1;
+    }
+
+    /**
+     * Constructor.
+     * @param pFirstCell the first cell of the view
+     * @param pLastCell the last cell of the view
+     */
+    protected DataView(final DataCell pFirstCell,
+                       final DataCell pLastCell) {
+        /* Store parameters */
+        this(pFirstCell.getSheet(), pFirstCell.getPosition(), pLastCell.getPosition());
+    }
+
+    /**
      * Obtain the underlying sheet.
      * @return the underlying sheet
      */
@@ -83,37 +114,6 @@ public class DataView
      */
     public int getColumnCount() {
         return theNumColumns;
-    }
-
-    /**
-     * Constructor.
-     * @param pSheet the sheet containing the view
-     * @param pFirstCell the first cell of the view
-     * @param pLastCell the last cell of the view
-     */
-    protected DataView(final DataSheet pSheet,
-                       final CellPosition pFirstCell,
-                       final CellPosition pLastCell) {
-        /* Store parameters */
-        theSheet = pSheet;
-        theBaseCell = pFirstCell;
-        theNumRows = pLastCell.getRowIndex()
-                     - pFirstCell.getRowIndex()
-                     + 1;
-        theNumColumns = pLastCell.getColumnIndex()
-                        - pFirstCell.getColumnIndex()
-                        + 1;
-    }
-
-    /**
-     * Constructor.
-     * @param pFirstCell the first cell of the view
-     * @param pLastCell the last cell of the view
-     */
-    protected DataView(final DataCell pFirstCell,
-                       final DataCell pLastCell) {
-        /* Store parameters */
-        this(pFirstCell.getSheet(), pFirstCell.getPosition(), pLastCell.getPosition());
     }
 
     /**
@@ -266,7 +266,12 @@ public class DataView
         }
 
         @Override
-        public DataRow next() throws NoSuchElementException {
+        public DataRow next() {
+            /* Check validity */
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
             /* If we are a new iterator */
             if (theLastRow == null) {
                 /* Access the first element of the view */

@@ -153,11 +153,6 @@ public final class TransactionCategory
     }
 
     @Override
-    public TransactionCategory getBase() {
-        return (TransactionCategory) super.getBase();
-    }
-
-    @Override
     public TransactionCategoryList getList() {
         return (TransactionCategoryList) super.getList();
     }

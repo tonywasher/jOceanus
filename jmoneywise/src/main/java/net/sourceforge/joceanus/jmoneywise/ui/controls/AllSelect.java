@@ -41,7 +41,7 @@ public class AllSelect
     /**
      * The filter.
      */
-    private final AllFilter theFilter;
+    private final transient AllFilter theFilter;
 
     @Override
     public AllFilter getFilter() {

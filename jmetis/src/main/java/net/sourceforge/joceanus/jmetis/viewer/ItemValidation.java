@@ -40,6 +40,20 @@ public class ItemValidation
     private JDataFields theLocalFields = null;
 
     /**
+     * The first error in the list.
+     */
+    private final List<ErrorElement> theErrors;
+
+    /**
+     * Constructor.
+     */
+    public ItemValidation() {
+        /* Store details */
+        theErrors = new ArrayList<ErrorElement>();
+        allocateNewFields();
+    }
+
+    /**
      * Allocate new DataFields.
      */
     private void allocateNewFields() {
@@ -74,20 +88,6 @@ public class ItemValidation
         /* Access the element */
         ErrorElement myError = theErrors.get(iIndex);
         return myError.getError();
-    }
-
-    /**
-     * The first error in the list.
-     */
-    private final List<ErrorElement> theErrors;
-
-    /**
-     * Constructor.
-     */
-    public ItemValidation() {
-        /* Store details */
-        theErrors = new ArrayList<ErrorElement>();
-        allocateNewFields();
     }
 
     /**
@@ -260,6 +260,17 @@ public class ItemValidation
         private final JDataField theField;
 
         /**
+         * Constructor for the error.
+         * @param pError the error text
+         * @param pField the field
+         */
+        private ErrorElement(final String pError,
+                             final JDataField pField) {
+            theError = pError;
+            theField = pField;
+        }
+
+        /**
          * Get the text for the error.
          * @return the text
          */
@@ -273,17 +284,6 @@ public class ItemValidation
          */
         public JDataField getField() {
             return theField;
-        }
-
-        /**
-         * Constructor for the error.
-         * @param pError the error text
-         * @param pField the field
-         */
-        private ErrorElement(final String pError,
-                             final JDataField pField) {
-            theError = pError;
-            theField = pField;
         }
 
         /**

@@ -77,6 +77,14 @@ public enum SymKeyType {
      */
     private String theName;
 
+    /**
+     * Constructor.
+     * @param id the id
+     */
+    private SymKeyType(final int id) {
+        theId = id;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -151,14 +159,6 @@ public enum SymKeyType {
             default:
                 return "/NOPADDING";
         }
-    }
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    private SymKeyType(final int id) {
-        theId = id;
     }
 
     /**

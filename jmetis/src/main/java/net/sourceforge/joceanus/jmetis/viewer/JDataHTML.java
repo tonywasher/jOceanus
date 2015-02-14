@@ -804,6 +804,17 @@ public final class JDataHTML {
         private final int thePart;
 
         /**
+         * Constructor.
+         * @param pMap the Map
+         * @param pPart the part#
+         */
+        private MapSection(final Map<?, ?> pMap,
+                           final int pPart) {
+            theMap = pMap;
+            thePart = pPart;
+        }
+
+        /**
          * Obtain the map.
          * @return the map
          */
@@ -817,17 +828,6 @@ public final class JDataHTML {
          */
         private int getPart() {
             return thePart;
-        }
-
-        /**
-         * Constructor.
-         * @param pMap the Map
-         * @param pPart the part#
-         */
-        private MapSection(final Map<?, ?> pMap,
-                           final int pPart) {
-            theMap = pMap;
-            thePart = pPart;
         }
     }
 

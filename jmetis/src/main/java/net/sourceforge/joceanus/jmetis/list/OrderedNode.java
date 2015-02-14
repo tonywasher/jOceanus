@@ -54,14 +54,6 @@ public class OrderedNode<T extends Comparable<? super T>> {
     private OrderedNode<T> thePrev = null;
 
     /**
-     * Get object.
-     * @return <code>true/false</code>
-     */
-    protected T getObject() {
-        return theObject;
-    }
-
-    /**
      * Initialiser.
      * @param pList the list that this node belongs to
      * @param pObject the object that this node represents
@@ -71,6 +63,14 @@ public class OrderedNode<T extends Comparable<? super T>> {
         /* Store details */
         theList = pList;
         theObject = pObject;
+    }
+
+    /**
+     * Get object.
+     * @return <code>true/false</code>
+     */
+    protected T getObject() {
+        return theObject;
     }
 
     /**

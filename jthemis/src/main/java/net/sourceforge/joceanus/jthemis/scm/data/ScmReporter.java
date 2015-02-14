@@ -28,8 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 
-import org.slf4j.Logger;
-
 /**
  * Report Subversion events.
  * @author Tony Washer
@@ -109,12 +107,6 @@ public final class ScmReporter {
          * @return the secure manager
          */
         SecureManager getSecureMgr();
-
-        /**
-         * Obtain logger.
-         * @return the logger
-         */
-        Logger getLogger();
 
         /**
          * Obtain frame.

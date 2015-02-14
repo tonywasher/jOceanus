@@ -43,11 +43,19 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * WorkerThread extension to create a QIF archive.
  */
 public class WriteQIF
         extends WorkerThread<Void> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(WriteQIF.class);
+
     /**
      * Task description.
      */
@@ -139,7 +147,7 @@ public class WriteQIF
             /* Delete the file */
             if ((!bSuccess) && (!myOutFile.delete())) {
                 /* Nothing that we can do. At least we tried */
-                theStatus.getLogger().error(ERROR_DELETE);
+                LOGGER.error(ERROR_DELETE);
             }
         }
 
@@ -162,7 +170,7 @@ public class WriteQIF
             /* Check that we successfully parsed the file */
             QIFFile myNewFile = myQParser.getFile();
             if (!myNewFile.equals(myQFile)) {
-                theStatus.getLogger().error("Parsed file does not match source");
+                LOGGER.error("Parsed file does not match source");
             }
 
         } catch (IOException e) {

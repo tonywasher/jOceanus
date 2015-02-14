@@ -45,7 +45,13 @@ public final class JSvnStarter {
     /**
      * Logger.
      */
-    private static Logger theLogger = LoggerFactory.getLogger(JSvnStarter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSvnStarter.class);
+
+    /**
+     * Private constructor.
+     */
+    private JSvnStarter() {
+    }
 
     /**
      * Obtain the manager.
@@ -53,12 +59,6 @@ public final class JSvnStarter {
      */
     public static JSvnManager getManager() {
         return theManager;
-    }
-
-    /**
-     * Private constructor.
-     */
-    private JSvnStarter() {
     }
 
     /**
@@ -75,10 +75,10 @@ public final class JSvnStarter {
             PropertyConfigurator.configure(myLogProp);
 
             /* Create the SvnManager program */
-            theManager = new JSvnManager(theLogger);
+            theManager = new JSvnManager();
 
         } catch (JOceanusException e) {
-            theLogger.error("createGUI didn't complete successfully", e);
+            LOGGER.error("createGUI didn't complete successfully", e);
         }
     }
 

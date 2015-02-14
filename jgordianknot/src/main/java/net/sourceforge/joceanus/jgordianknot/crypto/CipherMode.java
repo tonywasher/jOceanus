@@ -65,19 +65,19 @@ public enum CipherMode {
     private final int theId;
 
     /**
-     * Obtain the external Id.
-     * @return the external Id
-     */
-    public int getId() {
-        return theId;
-    }
-
-    /**
      * Constructor.
      * @param id the id
      */
     private CipherMode(final int id) {
         theId = id;
+    }
+
+    /**
+     * Obtain the external Id.
+     * @return the external Id
+     */
+    public int getId() {
+        return theId;
     }
 
     /**

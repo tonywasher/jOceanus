@@ -284,26 +284,6 @@ public class OasisColumnMap {
         private TableTableColumnElement theElement;
 
         /**
-         * Access Repeat count.
-         * @return the repeat count
-         */
-        private int getRepeat() {
-            /* Determine the maximum instance */
-            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
-            return (myRepeat == null)
-                    ? 1
-                    : myRepeat;
-        }
-
-        /**
-         * Access Column element.
-         * @return the element
-         */
-        private TableTableColumnElement getElement() {
-            return theElement;
-        }
-
-        /**
          * Constructor.
          * @param pElement the column element
          * @param pIndex the column index
@@ -316,6 +296,26 @@ public class OasisColumnMap {
             theIndex = pIndex;
             theInstance = pInstance;
             theElement = pElement;
+        }
+
+        /**
+         * Access Repeat count.
+         * @return the repeat count
+         */
+        private int getRepeat() {
+            /* Determine the maximum instance */
+            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
+            return (myRepeat == null)
+                                     ? 1
+                                     : myRepeat;
+        }
+
+        /**
+         * Access Column element.
+         * @return the element
+         */
+        private TableTableColumnElement getElement() {
+            return theElement;
         }
 
         /**

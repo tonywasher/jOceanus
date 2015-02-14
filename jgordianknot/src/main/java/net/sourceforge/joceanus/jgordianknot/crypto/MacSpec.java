@@ -45,30 +45,6 @@ public class MacSpec {
     private final SymKeyType theKeyType;
 
     /**
-     * Obtain Mac Type.
-     * @return the MacType
-     */
-    public MacType getMacType() {
-        return theMacType;
-    }
-
-    /**
-     * Obtain Digest Type.
-     * @return the DigestType
-     */
-    public DigestType getDigestType() {
-        return theDigestType;
-    }
-
-    /**
-     * Obtain SymKey Type.
-     * @return the KeyType
-     */
-    public SymKeyType getKeyType() {
-        return theKeyType;
-    }
-
-    /**
      * Constructor from Mac.
      * @param pMac the source mac
      */
@@ -106,6 +82,30 @@ public class MacSpec {
                 theKeyType = null;
                 break;
         }
+    }
+
+    /**
+     * Obtain Mac Type.
+     * @return the MacType
+     */
+    public MacType getMacType() {
+        return theMacType;
+    }
+
+    /**
+     * Obtain Digest Type.
+     * @return the DigestType
+     */
+    public DigestType getDigestType() {
+        return theDigestType;
+    }
+
+    /**
+     * Obtain SymKey Type.
+     * @return the KeyType
+     */
+    public SymKeyType getKeyType() {
+        return theKeyType;
     }
 
     /**

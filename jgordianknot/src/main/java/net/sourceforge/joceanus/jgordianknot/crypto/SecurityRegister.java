@@ -401,6 +401,15 @@ public class SecurityRegister {
         private KeyGenerator theKeyGenerator;
 
         /**
+         * Constructor.
+         * @param pKeyLen the key length
+         */
+        private SecretRegister(final int pKeyLen) {
+            /* Store the key type */
+            theKeyLen = pKeyLen;
+        }
+
+        /**
          * Set the algorithm.
          * @param pAlgorithm the algorithm
          */
@@ -422,15 +431,6 @@ public class SecurityRegister {
          */
         protected String getAlgorithm() {
             return theAlgorithm;
-        }
-
-        /**
-         * Constructor.
-         * @param pKeyLen the key length
-         */
-        private SecretRegister(final int pKeyLen) {
-            /* Store the key type */
-            theKeyLen = pKeyLen;
         }
 
         /**

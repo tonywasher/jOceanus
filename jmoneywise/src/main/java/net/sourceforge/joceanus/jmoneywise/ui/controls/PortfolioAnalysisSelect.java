@@ -65,17 +65,17 @@ public class PortfolioAnalysisSelect
     /**
      * The active portfolio bucket list.
      */
-    private PortfolioBucketList thePortfolios;
+    private transient PortfolioBucketList thePortfolios;
 
     /**
      * The state.
      */
-    private PortfolioState theState;
+    private transient PortfolioState theState;
 
     /**
      * The savePoint.
      */
-    private PortfolioState theSavePoint;
+    private transient PortfolioState theSavePoint;
 
     /**
      * The portfolio button.

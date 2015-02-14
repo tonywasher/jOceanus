@@ -94,7 +94,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
-        myDialog.showDialog(theStatus.getLogger());
+        myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 
         /* If we did not select a file */

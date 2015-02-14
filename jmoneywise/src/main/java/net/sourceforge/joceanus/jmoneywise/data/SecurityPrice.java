@@ -77,11 +77,6 @@ public class SecurityPrice
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Security Field Id.
      */
@@ -100,7 +95,85 @@ public class SecurityPrice
     /**
      * Invalid currency error.
      */
-    public static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    private static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pPrice The Price
+     */
+    protected SecurityPrice(final SecurityPriceBaseList<? extends SecurityPrice> pList,
+                            final SecurityPrice pPrice) {
+        /* Set standard values */
+        super(pList, pPrice);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public SecurityPrice(final SecurityPriceBaseList<? extends SecurityPrice> pList) {
+        super(pList, 0);
+        setNextDataKeySet();
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private SecurityPrice(final SecurityPriceList pList,
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the Security */
+            myValue = pValues.getValue(FIELD_SECURITY);
+            if (myValue instanceof Integer) {
+                setValueSecurity((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueSecurity((String) myValue);
+            }
+
+            /* Store the Price */
+            myValue = pValues.getValue(FIELD_PRICE);
+            if (myValue instanceof JPrice) {
+                setValuePrice((JPrice) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValuePrice((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValuePrice(myString);
+                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException
+                | JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public boolean includeXmlField(final JDataField pField) {
@@ -337,79 +410,6 @@ public class SecurityPrice
         return (SecurityPrice) super.getBase();
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pPrice The Price
-     */
-    protected SecurityPrice(final SecurityPriceBaseList<? extends SecurityPrice> pList,
-                            final SecurityPrice pPrice) {
-        /* Set standard values */
-        super(pList, pPrice);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public SecurityPrice(final SecurityPriceBaseList<? extends SecurityPrice> pList) {
-        super(pList, 0);
-        setNextDataKeySet();
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private SecurityPrice(final SecurityPriceList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Date */
-            Object myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store the Security */
-            myValue = pValues.getValue(FIELD_SECURITY);
-            if (myValue instanceof Integer) {
-                setValueSecurity((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueSecurity((String) myValue);
-            }
-
-            /* Store the Price */
-            myValue = pValues.getValue(FIELD_PRICE);
-            if (myValue instanceof JPrice) {
-                setValuePrice((JPrice) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValuePrice((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValuePrice(myString);
-                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException
-                | JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
     @Override
     public int compareTo(final SecurityPrice pThat) {
         /* Handle the trivial cases */
@@ -642,6 +642,22 @@ public class SecurityPrice
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE price list.
+         * @param pData the DataSet for the list
+         */
+        protected SecurityPriceList(final MoneyWiseData pData) {
+            super(pData, SecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private SecurityPriceList(final SecurityPriceList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -660,22 +676,6 @@ public class SecurityPrice
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
-        }
-
-        /**
-         * Construct an empty CORE price list.
-         * @param pData the DataSet for the list
-         */
-        protected SecurityPriceList(final MoneyWiseData pData) {
-            super(pData, SecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private SecurityPriceList(final SecurityPriceList pSource) {
-            super(pSource);
         }
 
         @Override
@@ -751,6 +751,25 @@ public class SecurityPrice
         private static final JDataField FIELD_MAPOFPRICES = FIELD_DEFS
                 .declareEqualityValueField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES.getValue());
 
+        /**
+         * Map of Maps.
+         */
+        private final Map<Security, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Map of Prices.
+         */
+        private final Map<Security, PriceList> theMapOfPrices;
+
+        /**
+         * Constructor.
+         */
+        public SecurityPriceDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<Security, Map<JDateDay, Integer>>();
+            theMapOfPrices = new HashMap<Security, PriceList>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -773,25 +792,6 @@ public class SecurityPrice
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of Maps.
-         */
-        private final Map<Security, Map<JDateDay, Integer>> theMapOfMaps;
-
-        /**
-         * Map of Prices.
-         */
-        private final Map<Security, PriceList> theMapOfPrices;
-
-        /**
-         * Constructor.
-         */
-        public SecurityPriceDataMap() {
-            /* Create the maps */
-            theMapOfMaps = new HashMap<Security, Map<JDateDay, Integer>>();
-            theMapOfPrices = new HashMap<Security, PriceList>();
         }
 
         @Override
@@ -960,15 +960,29 @@ public class SecurityPrice
              */
             private static final JDataFields FIELD_DEFS = new JDataFields(PriceList.class.getSimpleName());
 
-            @Override
-            public JDataFields getDataFields() {
-                return FIELD_DEFS;
-            }
-
             /**
              * Size Field Id.
              */
             private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+
+            /**
+             * The security.
+             */
+            private final transient Security theSecurity;
+
+            /**
+             * Constructor.
+             * @param pSecurity the security
+             */
+            private PriceList(final Security pSecurity) {
+                /* Store the security */
+                theSecurity = pSecurity;
+            }
+
+            @Override
+            public JDataFields getDataFields() {
+                return FIELD_DEFS;
+            }
 
             @Override
             public Object getFieldValue(final JDataField pField) {
@@ -977,11 +991,6 @@ public class SecurityPrice
                 }
                 return JDataFieldValue.UNKNOWN;
             }
-
-            /**
-             * The security.
-             */
-            private final transient Security theSecurity;
 
             @Override
             public String formatObject() {
@@ -994,15 +1003,6 @@ public class SecurityPrice
             @Override
             public String toString() {
                 return formatObject();
-            }
-
-            /**
-             * Constructor.
-             * @param pSecurity the security
-             */
-            private PriceList(final Security pSecurity) {
-                /* Store the security */
-                theSecurity = pSecurity;
             }
         }
     }

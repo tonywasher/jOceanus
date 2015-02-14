@@ -114,11 +114,6 @@ public final class SpotExchangeRate
         return thePrevDate;
     }
 
-    @Override
-    public ExchangeRate getBase() {
-        return (ExchangeRate) super.getBase();
-    }
-
     /**
      * Constructor for a new SpotRate where no rate data exists.
      * @param pList the Spot Rate List

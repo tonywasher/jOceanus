@@ -91,6 +91,24 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
     private final Border theBorder;
 
     /**
+     * Constructor.
+     * @param pComponent the component
+     * @param pModel the data model.
+     */
+    private JFieldComponent(final JComponent pComponent,
+                            final JFieldModel<T> pModel) {
+        /* Store the parameters */
+        theComponent = pComponent;
+        theModel = pModel;
+
+        /* Store the standard border */
+        theBorder = pComponent.getBorder();
+
+        /* Create a readOnly label */
+        theReadOnlyLabel = new JLabel();
+    }
+
+    /**
      * Obtain component.
      * @return the component
      */
@@ -279,24 +297,6 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         /* Allocate component */
         JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
         return new JFieldIconButton<I, X>(pButton, myModel);
-    }
-
-    /**
-     * Constructor.
-     * @param pComponent the component
-     * @param pModel the data model.
-     */
-    private JFieldComponent(final JComponent pComponent,
-                            final JFieldModel<T> pModel) {
-        /* Store the parameters */
-        theComponent = pComponent;
-        theModel = pModel;
-
-        /* Store the standard border */
-        theBorder = pComponent.getBorder();
-
-        /* Create a readOnly label */
-        theReadOnlyLabel = new JLabel();
     }
 
     /**
@@ -525,16 +525,6 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
          */
         private final JModelString<T> theModel;
 
-        @Override
-        protected JTextArea getUnderlyingComponent() {
-            return (JTextArea) super.getUnderlyingComponent();
-        }
-
-        @Override
-        protected JModelString<T> getModel() {
-            return (JModelString<T>) super.getModel();
-        }
-
         /**
          * Constructor.
          * @param pComponent the component.
@@ -552,6 +542,16 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             /* Create the listener and attach it */
             StringListener myListener = new StringListener();
             pComponent.addFocusListener(myListener);
+        }
+
+        @Override
+        protected JTextArea getUnderlyingComponent() {
+            return (JTextArea) super.getUnderlyingComponent();
+        }
+
+        @Override
+        protected JModelString<T> getModel() {
+            return (JModelString<T>) super.getModel();
         }
 
         @Override

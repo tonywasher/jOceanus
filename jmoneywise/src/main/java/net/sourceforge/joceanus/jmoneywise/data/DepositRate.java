@@ -75,11 +75,6 @@ public class DepositRate
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Deposit Field Id.
      */
@@ -104,6 +99,95 @@ public class DepositRate
      * Null Date Error.
      */
     private static final String ERROR_NULLDATE = MoneyWiseDataResource.DEPOSITRATE_ERROR_NULLDATE.getValue();
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pPeriod The Period to copy
+     */
+    protected DepositRate(final DepositRateList pList,
+                          final DepositRate pPeriod) {
+        /* Set standard values */
+        super(pList, pPeriod);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public DepositRate(final DepositRateList pList) {
+        super(pList, 0);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private DepositRate(final DepositRateList pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access the formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Account */
+            Object myValue = pValues.getValue(FIELD_DEPOSIT);
+            if (myValue instanceof Integer) {
+                setValueDeposit((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueDeposit((String) myValue);
+            }
+
+            /* Store the Rate */
+            myValue = pValues.getValue(FIELD_RATE);
+            if (myValue instanceof JRate) {
+                setValueRate((JRate) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueRate((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueRate(myString);
+                setValueRate(myFormatter.parseValue(myString, JRate.class));
+            }
+
+            /* Store the Bonus */
+            myValue = pValues.getValue(FIELD_BONUS);
+            if (myValue instanceof JRate) {
+                setValueBonus((JRate) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueBonus((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueBonus(myString);
+                setValueBonus(myFormatter.parseValue(myString, JRate.class));
+            }
+
+            /* Store the EndDate */
+            myValue = pValues.getValue(FIELD_ENDDATE);
+            if (myValue instanceof JDateDay) {
+                setValueEndDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueEndDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException
+                | JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public boolean includeXmlField(final JDataField pField) {
@@ -437,90 +521,6 @@ public class DepositRate
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pPeriod The Period to copy
-     */
-    protected DepositRate(final DepositRateList pList,
-                          final DepositRate pPeriod) {
-        /* Set standard values */
-        super(pList, pPeriod);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public DepositRate(final DepositRateList pList) {
-        super(pList, 0);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private DepositRate(final DepositRateList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access the formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Account */
-            Object myValue = pValues.getValue(FIELD_DEPOSIT);
-            if (myValue instanceof Integer) {
-                setValueDeposit((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueDeposit((String) myValue);
-            }
-
-            /* Store the Rate */
-            myValue = pValues.getValue(FIELD_RATE);
-            if (myValue instanceof JRate) {
-                setValueRate((JRate) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueRate((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValueRate(myString);
-                setValueRate(myFormatter.parseValue(myString, JRate.class));
-            }
-
-            /* Store the Bonus */
-            myValue = pValues.getValue(FIELD_BONUS);
-            if (myValue instanceof JRate) {
-                setValueBonus((JRate) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueBonus((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValueBonus(myString);
-                setValueBonus(myFormatter.parseValue(myString, JRate.class));
-            }
-
-            /* Store the EndDate */
-            myValue = pValues.getValue(FIELD_ENDDATE);
-            if (myValue instanceof JDateDay) {
-                setValueEndDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueEndDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException
-                | JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Compare this rate to another to establish sort order.
      * @param pThat The Rate to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
@@ -720,7 +720,30 @@ public class DepositRate
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE rate list.
+         * @param pData the DataSet for the list
+         */
+        protected DepositRateList(final MoneyWiseData pData) {
+            super(DepositRate.class, pData, MoneyWiseDataType.DEPOSITRATE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private DepositRateList(final DepositRateList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        protected DepositRateList getEmptyList(final ListStyle pStyle) {
+            DepositRateList myList = new DepositRateList(this);
+            myList.setStyle(pStyle);
+            return myList;
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -745,29 +768,6 @@ public class DepositRate
         @Override
         protected DepositRateDataMap getDataMap() {
             return (DepositRateDataMap) super.getDataMap();
-        }
-
-        /**
-         * Construct an empty CORE rate list.
-         * @param pData the DataSet for the list
-         */
-        protected DepositRateList(final MoneyWiseData pData) {
-            super(DepositRate.class, pData, MoneyWiseDataType.DEPOSITRATE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private DepositRateList(final DepositRateList pSource) {
-            super(pSource);
-        }
-
-        @Override
-        protected DepositRateList getEmptyList(final ListStyle pStyle) {
-            DepositRateList myList = new DepositRateList(this);
-            myList.setStyle(pStyle);
-            return myList;
         }
 
         /**
@@ -859,7 +859,7 @@ public class DepositRate
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * MapOfMaps Field Id.
@@ -870,6 +870,25 @@ public class DepositRate
          * RateMap Field Id.
          */
         private static final JDataField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
+
+        /**
+         * Map of Maps.
+         */
+        private final Map<Deposit, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Map of Rates.
+         */
+        private final Map<Deposit, RateList> theMapOfRates;
+
+        /**
+         * Constructor.
+         */
+        public DepositRateDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<Deposit, Map<JDateDay, Integer>>();
+            theMapOfRates = new HashMap<Deposit, RateList>();
+        }
 
         @Override
         public JDataFields getDataFields() {
@@ -893,25 +912,6 @@ public class DepositRate
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of Maps.
-         */
-        private final Map<Deposit, Map<JDateDay, Integer>> theMapOfMaps;
-
-        /**
-         * Map of Rates.
-         */
-        private final Map<Deposit, RateList> theMapOfRates;
-
-        /**
-         * Constructor.
-         */
-        public DepositRateDataMap() {
-            /* Create the maps */
-            theMapOfMaps = new HashMap<Deposit, Map<JDateDay, Integer>>();
-            theMapOfRates = new HashMap<Deposit, RateList>();
         }
 
         @Override
@@ -1036,15 +1036,29 @@ public class DepositRate
              */
             private static final JDataFields FIELD_DEFS = new JDataFields(RateList.class.getSimpleName());
 
-            @Override
-            public JDataFields getDataFields() {
-                return FIELD_DEFS;
-            }
-
             /**
              * Size Field Id.
              */
             private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+
+            /**
+             * The security.
+             */
+            private final transient Deposit theDeposit;
+
+            /**
+             * Constructor.
+             * @param pDeposit the deposit
+             */
+            private RateList(final Deposit pDeposit) {
+                /* Store the security */
+                theDeposit = pDeposit;
+            }
+
+            @Override
+            public JDataFields getDataFields() {
+                return FIELD_DEFS;
+            }
 
             @Override
             public Object getFieldValue(final JDataField pField) {
@@ -1053,11 +1067,6 @@ public class DepositRate
                 }
                 return JDataFieldValue.UNKNOWN;
             }
-
-            /**
-             * The security.
-             */
-            private final transient Deposit theDeposit;
 
             @Override
             public String formatObject() {
@@ -1070,15 +1079,6 @@ public class DepositRate
             @Override
             public String toString() {
                 return formatObject();
-            }
-
-            /**
-             * Constructor.
-             * @param pDeposit the deposit
-             */
-            private RateList(final Deposit pDeposit) {
-                /* Store the security */
-                theDeposit = pDeposit;
             }
         }
     }

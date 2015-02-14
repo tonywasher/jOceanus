@@ -63,34 +63,6 @@ public class CipherSetKey {
     private final CipherParameters theParams;
 
     /**
-     * Obtain the SymKey Types.
-     * @return the symKeyTypes
-     */
-    public SymKeyType[] getSymKeyTypes() {
-        return theParams.getSymKeyTypes();
-    }
-
-    /**
-     * Obtain the Initialisation vector.
-     * @return the initialisation vector
-     */
-    public byte[] getInitVector() {
-        return (theInitVector == null)
-                ? null
-                : Arrays.copyOf(theInitVector, theInitVector.length);
-    }
-
-    /**
-     * Obtain the bytes.
-     * @return the bytes
-     */
-    public byte[] getBytes() {
-        return (theBytes == null)
-                ? null
-                : Arrays.copyOf(theBytes, theBytes.length);
-    }
-
-    /**
      * Constructor for random choices.
      * @param pGenerator the security generator
      * @param pCreateIV create an IV
@@ -195,6 +167,34 @@ public class CipherSetKey {
     }
 
     /**
+     * Obtain the SymKey Types.
+     * @return the symKeyTypes
+     */
+    public SymKeyType[] getSymKeyTypes() {
+        return theParams.getSymKeyTypes();
+    }
+
+    /**
+     * Obtain the Initialisation vector.
+     * @return the initialisation vector
+     */
+    public byte[] getInitVector() {
+        return (theInitVector == null)
+                                      ? null
+                                      : Arrays.copyOf(theInitVector, theInitVector.length);
+    }
+
+    /**
+     * Obtain the bytes.
+     * @return the bytes
+     */
+    public byte[] getBytes() {
+        return (theBytes == null)
+                                 ? null
+                                 : Arrays.copyOf(theBytes, theBytes.length);
+    }
+
+    /**
      * Build External Format for data.
      * @param pData the encrypted data
      * @return the external form
@@ -259,14 +259,6 @@ public class CipherSetKey {
         private final SymKeyType[] theSymKeyTypes;
 
         /**
-         * Obtain the SymKey Types.
-         * @return the symKeyTypes
-         */
-        public SymKeyType[] getSymKeyTypes() {
-            return theSymKeyTypes;
-        }
-
-        /**
          * Construct the parameters from random key.
          * @param pGenerator the security generator
          * @throws JOceanusException on error
@@ -314,6 +306,14 @@ public class CipherSetKey {
                     theSymKeyTypes[i++] = SymKeyType.fromId(myId);
                 }
             }
+        }
+
+        /**
+         * Obtain the SymKey Types.
+         * @return the symKeyTypes
+         */
+        public SymKeyType[] getSymKeyTypes() {
+            return theSymKeyTypes;
         }
     }
 }

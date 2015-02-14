@@ -145,11 +145,6 @@ public class Transaction
     }
 
     @Override
-    public Transaction getParent() {
-        return (Transaction) super.getParent();
-    }
-
-    @Override
     public Iterator<Transaction> childIterator() {
         /* No iterator if we are not a group or else we are a child */
         if (!isSplit() || isChild()) {

@@ -38,6 +38,18 @@ public abstract class DataColumn {
     private final int theColIndex;
 
     /**
+     * Constructor.
+     * @param pSheet the sheet for the column
+     * @param pIndex the index
+     */
+    protected DataColumn(final DataSheet pSheet,
+                         final int pIndex) {
+        /* Store parameters */
+        theSheet = pSheet;
+        theColIndex = pIndex;
+    }
+
+    /**
      * Obtain the underlying sheet.
      * @return the underlying sheet
      */
@@ -51,18 +63,6 @@ public abstract class DataColumn {
      */
     public int getColumnIndex() {
         return theColIndex;
-    }
-
-    /**
-     * Constructor.
-     * @param pSheet the sheet for the column
-     * @param pIndex the index
-     */
-    protected DataColumn(final DataSheet pSheet,
-                         final int pIndex) {
-        /* Store parameters */
-        theSheet = pSheet;
-        theColIndex = pIndex;
     }
 
     /**

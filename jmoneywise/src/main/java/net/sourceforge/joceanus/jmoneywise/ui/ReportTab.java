@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -79,6 +80,11 @@ public class ReportTab
      * Text for DataEntry Title.
      */
     private static final String NLS_DATAENTRY = MoneyWiseUIResource.REPORT_DATAENTRY.getValue();
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportTab.class);
 
     /**
      * The Data View.
@@ -104,11 +110,6 @@ public class ReportTab
      * The Report selection Panel.
      */
     private final ReportSelect theSelect;
-
-    /**
-     * The Logger.
-     */
-    private final transient Logger theLogger;
 
     /**
      * The Spot Analysis Entry.
@@ -138,7 +139,6 @@ public class ReportTab
     public ReportTab(final View pView) throws JOceanusException {
         /* Store the view */
         theView = pView;
-        theLogger = pView.getLogger();
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -269,7 +269,7 @@ public class ReportTab
             /* Print the report */
             thePrint.print();
         } catch (PrinterException e) {
-            theLogger.error("Failed to print", e);
+            LOGGER.error("Failed to print", e);
         }
     }
 

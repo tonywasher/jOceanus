@@ -51,6 +51,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a component in the repository.
@@ -73,15 +75,39 @@ public final class GitComponent
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(GitComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitComponent.class);
 
     /**
      * jGit repository access object.
      */
     private final Repository theGitRepo;
+
+    /**
+     * Constructor.
+     * @param pParent the Parent repository
+     * @param pName the component name
+     * @throws JOceanusException on error
+     */
+    protected GitComponent(final GitRepository pParent,
+                           final String pName) throws JOceanusException {
+        /* Call super constructor */
+        super(pParent, pName);
+
+        /* Access the repository */
+        theGitRepo = getRepositoryAccess();
+
+        /* Create branch list */
+        GitBranchList myBranches = new GitBranchList(this);
+        setBranches(myBranches);
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
 
     /**
      * Obtain GitRepository access.
@@ -103,25 +129,6 @@ public final class GitComponent
     @Override
     public GitBranchList getBranches() {
         return (GitBranchList) super.getBranches();
-    }
-
-    /**
-     * Constructor.
-     * @param pParent the Parent repository
-     * @param pName the component name
-     * @throws JOceanusException on error
-     */
-    protected GitComponent(final GitRepository pParent,
-                           final String pName) throws JOceanusException {
-        /* Call super constructor */
-        super(pParent, pName);
-
-        /* Access the repository */
-        theGitRepo = getRepositoryAccess();
-
-        /* Create branch list */
-        GitBranchList myBranches = new GitBranchList(this);
-        setBranches(myBranches);
     }
 
     /**
@@ -209,7 +216,7 @@ public final class GitComponent
                 try {
                     myInput.close();
                 } catch (IOException e) {
-                    getLogger().error("Close Failure", e);
+                    LOGGER.error("Close Failure", e);
                 }
             }
         }

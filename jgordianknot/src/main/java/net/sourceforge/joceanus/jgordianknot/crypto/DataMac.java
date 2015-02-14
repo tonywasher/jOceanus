@@ -100,6 +100,134 @@ public class DataMac {
     private final byte[] theEncoded;
 
     /**
+     * Constructor for a new HMac digest of specified parameters.
+     * @param pGenerator the security generator
+     * @param pDigestType DigestType
+     * @param pKey the secret Key (or null)
+     * @throws JOceanusException on error
+     */
+    protected DataMac(final SecurityGenerator pGenerator,
+                      final DigestType pDigestType,
+                      final SecretKey pKey) throws JOceanusException {
+        /* Store the KeyType and the Generator */
+        theMacType = MacType.HMAC;
+        theDigestType = pDigestType;
+        theKey = pKey;
+        theInitVector = null;
+        theKeyType = null;
+
+        /* Determine the algorithm */
+        boolean useLongHash = pGenerator.useLongHash();
+        theAlgo = pDigestType.getMacAlgorithm(useLongHash);
+
+        /* Protect against exceptions */
+        try {
+            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
+            if (theKey != null) {
+                theMac.init(theKey);
+            }
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
+            /* Throw the exception */
+            throw new JGordianCryptoException(ERROR_CREATE, e);
+        }
+
+        /* Create encoded form */
+        theEncoded = (theKey != null)
+                                     ? createEncoded()
+                                     : null;
+    }
+
+    /**
+     * Constructor for a new GMAC/Poly1305Mac of specified parameters.
+     * @param pGenerator the security generator
+     * @param pMacType the mac type
+     * @param pKeyType the key type
+     * @param pKey the secret key
+     * @param pVector the initialisation vector
+     * @throws JOceanusException on error
+     */
+    private DataMac(final SecurityGenerator pGenerator,
+                    final MacType pMacType,
+                    final SymKeyType pKeyType,
+                    final SecretKey pKey,
+                    final byte[] pVector) throws JOceanusException {
+        /* Not allowed for non standard block size */
+        if (!pKeyType.isStdBlock()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Store the KeyType and the Generator */
+        theKey = pKey;
+        theMacType = pMacType;
+        theDigestType = null;
+        theKeyType = pKeyType;
+        theInitVector = Arrays.copyOf(pVector, pVector.length);
+        theAlgo = pMacType.getAlgorithm(theKeyType);
+
+        /* Protect against exceptions */
+        try {
+            /* Return a Mac for the algorithm */
+            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
+            theMac.init(theKey, new IvParameterSpec(pVector));
+
+            /* Catch exceptions */
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+            /* Throw the exception */
+            throw new JGordianCryptoException(ERROR_CREATE, e);
+        }
+
+        /* Create encoded form */
+        theEncoded = createEncoded();
+    }
+
+    /**
+     * Constructor for a new Skein/VMPCMac of specified parameters.
+     * @param pGenerator the security generator
+     * @param pMacType the mac type
+     * @param pKey the secret key
+     * @param pVector the initialisation vector
+     * @throws JOceanusException on error
+     */
+    private DataMac(final SecurityGenerator pGenerator,
+                    final MacType pMacType,
+                    final SecretKey pKey,
+                    final byte[] pVector) throws JOceanusException {
+        /* Store the KeyType and the Generator */
+        theKey = pKey;
+        theMacType = pMacType;
+        theDigestType = null;
+        theKeyType = null;
+        theInitVector = (pVector == null)
+                                         ? null
+                                         : Arrays.copyOf(pVector, pVector.length);
+
+        /* Determine the algorithm */
+        boolean useLongHash = pGenerator.useLongHash();
+        theAlgo = pMacType.getAlgorithm(useLongHash);
+
+        /* Protect against exceptions */
+        try {
+            /* Return a Mac for the algorithm */
+            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
+            if (pVector != null) {
+                theMac.init(theKey, new IvParameterSpec(pVector));
+            } else {
+                theMac.init(theKey);
+            }
+
+            /* Catch exceptions */
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+            /* Throw the exception */
+            throw new JGordianCryptoException(ERROR_CREATE, e);
+        }
+
+        /* Create encoded form */
+        theEncoded = createEncoded();
+    }
+
+    /**
      * Obtain the mac type.
      * @return the mac type
      */
@@ -137,8 +265,8 @@ public class DataMac {
      */
     public byte[] getInitVector() {
         return (theInitVector == null)
-                ? null
-                : Arrays.copyOf(theInitVector, theInitVector.length);
+                                      ? null
+                                      : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -260,8 +388,8 @@ public class DataMac {
         /* Generate an initialisation vector */
         int myIVLen = pMacType.getIVLen();
         byte[] myInitVector = (myIVLen != 0)
-                ? pGenerator.getRandomBytes(myIVLen)
-                : null;
+                                            ? pGenerator.getRandomBytes(myIVLen)
+                                            : null;
 
         /* Generate the Mac */
         return new DataMac(pGenerator, pMacType, myKey, myInitVector);
@@ -332,134 +460,6 @@ public class DataMac {
                 myReg = myRegister.getMacRegistration(myType, pGenerator.getKeyLen());
                 return new DataMac(pGenerator, myType, myReg.resolveKeySpec(myKey), myIV);
         }
-    }
-
-    /**
-     * Constructor for a new HMac digest of specified parameters.
-     * @param pGenerator the security generator
-     * @param pDigestType DigestType
-     * @param pKey the secret Key (or null)
-     * @throws JOceanusException on error
-     */
-    protected DataMac(final SecurityGenerator pGenerator,
-                      final DigestType pDigestType,
-                      final SecretKey pKey) throws JOceanusException {
-        /* Store the KeyType and the Generator */
-        theMacType = MacType.HMAC;
-        theDigestType = pDigestType;
-        theKey = pKey;
-        theInitVector = null;
-        theKeyType = null;
-
-        /* Determine the algorithm */
-        boolean useLongHash = pGenerator.useLongHash();
-        theAlgo = pDigestType.getMacAlgorithm(useLongHash);
-
-        /* Protect against exceptions */
-        try {
-            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
-            if (theKey != null) {
-                theMac.init(theKey);
-            }
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
-            /* Throw the exception */
-            throw new JGordianCryptoException(ERROR_CREATE, e);
-        }
-
-        /* Create encoded form */
-        theEncoded = (theKey != null)
-                ? createEncoded()
-                : null;
-    }
-
-    /**
-     * Constructor for a new GMAC/Poly1305Mac of specified parameters.
-     * @param pGenerator the security generator
-     * @param pMacType the mac type
-     * @param pKeyType the key type
-     * @param pKey the secret key
-     * @param pVector the initialisation vector
-     * @throws JOceanusException on error
-     */
-    private DataMac(final SecurityGenerator pGenerator,
-                    final MacType pMacType,
-                    final SymKeyType pKeyType,
-                    final SecretKey pKey,
-                    final byte[] pVector) throws JOceanusException {
-        /* Not allowed for non standard block size */
-        if (!pKeyType.isStdBlock()) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* Store the KeyType and the Generator */
-        theKey = pKey;
-        theMacType = pMacType;
-        theDigestType = null;
-        theKeyType = pKeyType;
-        theInitVector = Arrays.copyOf(pVector, pVector.length);
-        theAlgo = pMacType.getAlgorithm(theKeyType);
-
-        /* Protect against exceptions */
-        try {
-            /* Return a Mac for the algorithm */
-            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
-            theMac.init(theKey, new IvParameterSpec(pVector));
-
-            /* Catch exceptions */
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
-            /* Throw the exception */
-            throw new JGordianCryptoException(ERROR_CREATE, e);
-        }
-
-        /* Create encoded form */
-        theEncoded = createEncoded();
-    }
-
-    /**
-     * Constructor for a new Skein/VMPCMac of specified parameters.
-     * @param pGenerator the security generator
-     * @param pMacType the mac type
-     * @param pKey the secret key
-     * @param pVector the initialisation vector
-     * @throws JOceanusException on error
-     */
-    private DataMac(final SecurityGenerator pGenerator,
-                    final MacType pMacType,
-                    final SecretKey pKey,
-                    final byte[] pVector) throws JOceanusException {
-        /* Store the KeyType and the Generator */
-        theKey = pKey;
-        theMacType = pMacType;
-        theDigestType = null;
-        theKeyType = null;
-        theInitVector = (pVector == null)
-                ? null
-                : Arrays.copyOf(pVector, pVector.length);
-
-        /* Determine the algorithm */
-        boolean useLongHash = pGenerator.useLongHash();
-        theAlgo = pMacType.getAlgorithm(useLongHash);
-
-        /* Protect against exceptions */
-        try {
-            /* Return a Mac for the algorithm */
-            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
-            if (pVector != null) {
-                theMac.init(theKey, new IvParameterSpec(pVector));
-            } else {
-                theMac.init(theKey);
-            }
-
-            /* Catch exceptions */
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
-            /* Throw the exception */
-            throw new JGordianCryptoException(ERROR_CREATE, e);
-        }
-
-        /* Create encoded form */
-        theEncoded = createEncoded();
     }
 
     /**

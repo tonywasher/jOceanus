@@ -42,30 +42,6 @@ public abstract class DataRow {
     private final int theRowIndex;
 
     /**
-     * Obtain the underlying sheet.
-     * @return the underlying sheet
-     */
-    public DataSheet getSheet() {
-        return theSheet;
-    }
-
-    /**
-     * Obtain the underlying view.
-     * @return the underlying view
-     */
-    public DataView getView() {
-        return theView;
-    }
-
-    /**
-     * Obtain the row index.
-     * @return row index
-     */
-    public int getRowIndex() {
-        return theRowIndex;
-    }
-
-    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pRowIndex the Row index
@@ -89,6 +65,30 @@ public abstract class DataRow {
         theSheet = pView.getSheet();
         theView = pView;
         theRowIndex = pRowIndex;
+    }
+
+    /**
+     * Obtain the underlying sheet.
+     * @return the underlying sheet
+     */
+    public DataSheet getSheet() {
+        return theSheet;
+    }
+
+    /**
+     * Obtain the underlying view.
+     * @return the underlying view
+     */
+    public DataView getView() {
+        return theView;
+    }
+
+    /**
+     * Obtain the row index.
+     * @return row index
+     */
+    public int getRowIndex() {
+        return theRowIndex;
     }
 
     /**

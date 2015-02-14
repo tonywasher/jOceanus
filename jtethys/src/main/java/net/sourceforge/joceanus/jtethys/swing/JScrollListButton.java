@@ -58,15 +58,7 @@ public class JScrollListButton<T>
     /**
      * Menu Builder.
      */
-    private JScrollListMenuBuilder<T> theMenuBuilder;
-
-    /**
-     * Obtain menuBuilder.
-     * @return the menuBuilder.
-     */
-    public JScrollListMenuBuilder<T> getMenuBuilder() {
-        return theMenuBuilder;
-    }
+    private final transient JScrollListMenuBuilder<T> theMenuBuilder;
 
     /**
      * Constructor.
@@ -79,6 +71,14 @@ public class JScrollListButton<T>
 
         /* Create the menu builder */
         theMenuBuilder = new JScrollListMenuBuilder<T>(this);
+    }
+
+    /**
+     * Obtain menuBuilder.
+     * @return the menuBuilder.
+     */
+    public JScrollListMenuBuilder<T> getMenuBuilder() {
+        return theMenuBuilder;
     }
 
     /**
@@ -266,12 +266,12 @@ public class JScrollListButton<T>
         /**
          * The Menu Builder.
          */
-        private final JScrollListMenuBuilder<X> theBuilder;
+        private final transient JScrollListMenuBuilder<X> theBuilder;
 
         /**
          * Map of items.
          */
-        private final Map<X, JCheckBoxMenuItem> theItemMap;
+        private final transient Map<X, JCheckBoxMenuItem> theItemMap;
 
         /**
          * Constructor.
@@ -424,7 +424,7 @@ public class JScrollListButton<T>
             /**
              * The item.
              */
-            private final X theItem;
+            private final transient X theItem;
 
             /**
              * Constructor.

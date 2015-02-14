@@ -121,30 +121,6 @@ public class ZipWriteFile
     private int theFileNo = 0;
 
     /**
-     * Is the ZipFile encrypted.
-     * @return is the Zip File encrypted
-     */
-    private boolean isEncrypted() {
-        return theHash != null;
-    }
-
-    /**
-     * Obtain the contents.
-     * @return the ZipFile Contents
-     */
-    public ZipFileContents getContents() {
-        return theContents;
-    }
-
-    /**
-     * Obtain the currently active ZipFileEntry.
-     * @return the ZipFile Entry
-     */
-    public ZipFileEntry getCurrentEntry() {
-        return theFileEntry;
-    }
-
-    /**
      * Constructor for new output zip file with security.
      * @param pHash the password hash to use
      * @param pFile the file details for the new zip file
@@ -215,6 +191,30 @@ public class ZipWriteFile
         } catch (IOException e) {
             throw new JGordianIOException(ERROR_CREATE, e);
         }
+    }
+
+    /**
+     * Is the ZipFile encrypted.
+     * @return is the Zip File encrypted
+     */
+    private boolean isEncrypted() {
+        return theHash != null;
+    }
+
+    /**
+     * Obtain the contents.
+     * @return the ZipFile Contents
+     */
+    public ZipFileContents getContents() {
+        return theContents;
+    }
+
+    /**
+     * Obtain the currently active ZipFileEntry.
+     * @return the ZipFile Entry
+     */
+    public ZipFileEntry getCurrentEntry() {
+        return theFileEntry;
     }
 
     /**

@@ -306,6 +306,40 @@ public class JDataFields {
         private final boolean isValueSetField;
 
         /**
+         * Constructor.
+         * @param pName the name of the field
+         * @param isEquality is the field used in equality test
+         * @param isValueSet is the field held in a ValueSet
+         */
+        public JDataField(final String pName,
+                          final boolean isEquality,
+                          final boolean isValueSet) {
+            /* Store parameters */
+            theName = pName;
+            isEqualityField = isEquality;
+            isValueSetField = isValueSet;
+
+            /* Allocate value index if required */
+            theIndex = isValueSetField
+                                      ? theNextValue++
+                                      : -1;
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name of the field
+         */
+        public JDataField(final String pName) {
+            /* Store parameters */
+            theName = pName;
+            isEqualityField = false;
+            isValueSetField = false;
+
+            /* Allocate value index */
+            theIndex = theNextValue++;
+        }
+
+        /**
          * Get the index.
          * @return the index
          */
@@ -343,40 +377,6 @@ public class JDataFields {
          */
         public JDataFields getAnchor() {
             return JDataFields.this;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the name of the field
-         * @param isEquality is the field used in equality test
-         * @param isValueSet is the field held in a ValueSet
-         */
-        public JDataField(final String pName,
-                          final boolean isEquality,
-                          final boolean isValueSet) {
-            /* Store parameters */
-            theName = pName;
-            isEqualityField = isEquality;
-            isValueSetField = isValueSet;
-
-            /* Allocate value index if required */
-            theIndex = isValueSetField
-                                      ? theNextValue++
-                                      : -1;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the name of the field
-         */
-        public JDataField(final String pName) {
-            /* Store parameters */
-            theName = pName;
-            isEqualityField = false;
-            isValueSetField = false;
-
-            /* Allocate value index */
-            theIndex = theNextValue++;
         }
 
         @Override

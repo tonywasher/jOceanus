@@ -127,6 +127,47 @@ public class NestedHashMap<K, V>
      */
     private transient int theModCount = 0;
 
+    /**
+     * Constructor.
+     */
+    public NestedHashMap() {
+        /* Pass through for default shift */
+        this(SHIFT_DEF_BITS);
+    }
+
+    /**
+     * Constructor.
+     * @param pShiftBits the number of shift bits
+     */
+    public NestedHashMap(final int pShiftBits) {
+        /* Ensure that the shift bits are in range */
+        if ((pShiftBits < SHIFT_MIN_BITS) || (pShiftBits > SHIFT_MAX_BITS)) {
+            throw new IllegalArgumentException("Invalid number of shift bits " + pShiftBits);
+        }
+
+        /* Calculate the array size */
+        theShiftBits = pShiftBits;
+        theArraySize = getArraySize();
+
+        /* Create the array */
+        theArray = new ArrayElement(theArraySize);
+    }
+
+    /**
+     * Constructor from map.
+     * @param pMap the source map
+     */
+    public NestedHashMap(final Map<? extends K, ? extends V> pMap) {
+        /* Call standard map */
+        this();
+
+        /* Loop through the entry set */
+        for (Entry<? extends K, ? extends V> e : pMap.entrySet()) {
+            /* Put the entry */
+            putEntry(hashKey(e.getKey()), e.getKey(), e.getValue());
+        }
+    }
+
     @Override
     public int size() {
         return theSize;
@@ -230,47 +271,6 @@ public class NestedHashMap<K, V>
             theParent.theArray[theIndex] = myObject;
             theParent.theNumElements -= iArraySize;
             theParent.collapseArray();
-        }
-    }
-
-    /**
-     * Constructor.
-     */
-    public NestedHashMap() {
-        /* Pass through for default shift */
-        this(SHIFT_DEF_BITS);
-    }
-
-    /**
-     * Constructor.
-     * @param pShiftBits the number of shift bits
-     */
-    public NestedHashMap(final int pShiftBits) {
-        /* Ensure that the shift bits are in range */
-        if ((pShiftBits < SHIFT_MIN_BITS) || (pShiftBits > SHIFT_MAX_BITS)) {
-            throw new IllegalArgumentException("Invalid number of shift bits " + pShiftBits);
-        }
-
-        /* Calculate the array size */
-        theShiftBits = pShiftBits;
-        theArraySize = getArraySize();
-
-        /* Create the array */
-        theArray = new ArrayElement(theArraySize);
-    }
-
-    /**
-     * Constructor from map.
-     * @param pMap the source map
-     */
-    public NestedHashMap(final Map<? extends K, ? extends V> pMap) {
-        /* Call standard map */
-        this();
-
-        /* Loop through the entry set */
-        for (Entry<? extends K, ? extends V> e : pMap.entrySet()) {
-            /* Put the entry */
-            putEntry(hashKey(e.getKey()), e.getKey(), e.getValue());
         }
     }
 
@@ -807,6 +807,19 @@ public class NestedHashMap<K, V>
         private HashEntry<K, V> theNext = null;
 
         /**
+         * Constructor.
+         * @param pHash the hash code
+         * @param pKey the key
+         */
+        private HashEntry(final int pHash,
+                          final K pKey) {
+            /* Set the hash, key and value */
+            theHash = pHash;
+            theKey = pKey;
+            valueSet = false;
+        }
+
+        /**
          * Is the value set?.
          * @return true/false
          */
@@ -835,19 +848,6 @@ public class NestedHashMap<K, V>
 
             /* Return the old value */
             return myOld;
-        }
-
-        /**
-         * Constructor.
-         * @param pHash the hash code
-         * @param pKey the key
-         */
-        private HashEntry(final int pHash,
-                          final K pKey) {
-            /* Set the hash, key and value */
-            theHash = pHash;
-            theKey = pKey;
-            valueSet = false;
         }
 
         /**
@@ -1264,7 +1264,13 @@ public class NestedHashMap<K, V>
     private final class ValueIterator
             extends HashIterator<V> {
         @Override
-        public V next() throws NoSuchElementException {
+        public V next() {
+            /* Check validity */
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            /* Return next entry */
             return nextEntry().getValue();
         }
     }
@@ -1351,7 +1357,13 @@ public class NestedHashMap<K, V>
     private final class KeyIterator
             extends HashIterator<K> {
         @Override
-        public K next() throws NoSuchElementException {
+        public K next() {
+            /* Check validity */
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            /* Return next entry */
             return nextEntry().getKey();
         }
     }
@@ -1443,7 +1455,13 @@ public class NestedHashMap<K, V>
     private final class EntryIterator
             extends HashIterator<Entry<K, V>> {
         @Override
-        public Entry<K, V> next() throws NoSuchElementException {
+        public Entry<K, V> next() {
+            /* Check validity */
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            /* Return next entry */
             return nextEntry();
         }
     }

@@ -65,6 +65,24 @@ public class SymmetricKey {
     private final byte[] theEncodedKeyDef;
 
     /**
+     * Constructor for a symmetric key.
+     * @param pGenerator the security generator
+     * @param pKeyType Symmetric KeyType
+     * @param pKey Secret Key for algorithm
+     * @throws JOceanusException on error
+     */
+    protected SymmetricKey(final SecurityGenerator pGenerator,
+                           final SymKeyType pKeyType,
+                           final SecretKey pKey) throws JOceanusException {
+        /* Store the KeyType and the Generator */
+        theKeyType = pKeyType;
+        theKeyLen = pKey.getEncoded().length;
+        theGenerator = pGenerator;
+        theKey = pKey;
+        theEncodedKeyDef = theKey.getEncoded();
+    }
+
+    /**
      * Obtain the generator.
      * @return the generator
      */
@@ -135,24 +153,6 @@ public class SymmetricKey {
 
         /* Generate a SymKey for the SymKey type */
         return new SymmetricKey(pGenerator, pKeyType, myKey);
-    }
-
-    /**
-     * Constructor for a symmetric key.
-     * @param pGenerator the security generator
-     * @param pKeyType Symmetric KeyType
-     * @param pKey Secret Key for algorithm
-     * @throws JOceanusException on error
-     */
-    protected SymmetricKey(final SecurityGenerator pGenerator,
-                           final SymKeyType pKeyType,
-                           final SecretKey pKey) throws JOceanusException {
-        /* Store the KeyType and the Generator */
-        theKeyType = pKeyType;
-        theKeyLen = pKey.getEncoded().length;
-        theGenerator = pGenerator;
-        theKey = pKey;
-        theEncodedKeyDef = theKey.getEncoded();
     }
 
     @Override

@@ -85,6 +85,43 @@ public class JDecimalLocale {
     private final Currency theCurrency;
 
     /**
+     * Constructor.
+     */
+    protected JDecimalLocale() {
+        /* Use default locale */
+        this(Locale.getDefault());
+    }
+
+    /**
+     * Constructor.
+     * @param pLocale the locale
+     */
+    protected JDecimalLocale(final Locale pLocale) {
+        /* Store the locale */
+        theLocale = pLocale;
+
+        /* Create currency map */
+        theMap = new HashMap<String, Currency>();
+
+        /* Access decimal formats */
+        DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
+        DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(pLocale);
+        theGroupingSize = myFormat.getGroupingSize();
+
+        /* Access various interesting formats */
+        theMinusSign = mySymbols.getMinusSign();
+        thePerCent = mySymbols.getPercent();
+        thePerMille = mySymbols.getPerMill();
+        theGrouping = Character.toString(mySymbols.getGroupingSeparator());
+        theDecimal = Character.toString(mySymbols.getDecimalSeparator());
+        theMoneyDecimal = Character.toString(mySymbols.getMonetaryDecimalSeparator());
+
+        /* Access the default currency */
+        theCurrency = mySymbols.getCurrency();
+        theMap.put(theCurrency.getSymbol(theLocale), theCurrency);
+    }
+
+    /**
      * Obtain the grouping size.
      * @return the size
      */
@@ -146,43 +183,6 @@ public class JDecimalLocale {
      */
     protected Currency getDefaultCurrency() {
         return theCurrency;
-    }
-
-    /**
-     * Constructor.
-     */
-    protected JDecimalLocale() {
-        /* Use default locale */
-        this(Locale.getDefault());
-    }
-
-    /**
-     * Constructor.
-     * @param pLocale the locale
-     */
-    protected JDecimalLocale(final Locale pLocale) {
-        /* Store the locale */
-        theLocale = pLocale;
-
-        /* Create currency map */
-        theMap = new HashMap<String, Currency>();
-
-        /* Access decimal formats */
-        DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
-        DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(pLocale);
-        theGroupingSize = myFormat.getGroupingSize();
-
-        /* Access various interesting formats */
-        theMinusSign = mySymbols.getMinusSign();
-        thePerCent = mySymbols.getPercent();
-        thePerMille = mySymbols.getPerMill();
-        theGrouping = Character.toString(mySymbols.getGroupingSeparator());
-        theDecimal = Character.toString(mySymbols.getDecimalSeparator());
-        theMoneyDecimal = Character.toString(mySymbols.getMonetaryDecimalSeparator());
-
-        /* Access the default currency */
-        theCurrency = mySymbols.getCurrency();
-        theMap.put(theCurrency.getSymbol(theLocale), theCurrency);
     }
 
     /**

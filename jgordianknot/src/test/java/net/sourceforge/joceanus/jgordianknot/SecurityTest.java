@@ -60,18 +60,11 @@ import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Security Test suite.
  */
 public class SecurityTest {
-    /**
-     * Logger.
-     */
-    private static Logger theLogger = LoggerFactory.getLogger(SecurityTest.class.getName());
-
     /**
      * Main entry point.
      * @param args the parameters
@@ -121,7 +114,7 @@ public class SecurityTest {
             /* If we are creating a secure zip file */
             if (bSecure) {
                 /* Create new Password Hash */
-                SecureManager myManager = new SecureManager(theLogger);
+                SecureManager myManager = new SecureManager();
                 PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
 
                 /* Initialise the Zip file */
@@ -196,7 +189,7 @@ public class SecurityTest {
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
                 /* Resolve security and unlock file */
-                SecureManager myManager = new SecureManager(theLogger);
+                SecureManager myManager = new SecureManager();
                 PasswordHash myHash = myManager.resolvePasswordHash(myHashBytes, pZipFile.getName());
                 myZipFile.setPasswordHash(myHash);
             }
@@ -249,7 +242,7 @@ public class SecurityTest {
      */
     protected static void testSecurity() throws JOceanusException {
         /* Create new Password Hash */
-        SecureManager myManager = new SecureManager(theLogger);
+        SecureManager myManager = new SecureManager();
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
         SecurityGenerator myGen = myHash.getSecurityGenerator();
 
@@ -292,7 +285,7 @@ public class SecurityTest {
         byte[] myMacSafe = myHash.secureDataMac(myMac);
 
         /* Start a new session */
-        myManager = new SecureManager(theLogger);
+        myManager = new SecureManager();
         PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
         myGen = myHash.getSecurityGenerator();
 
@@ -421,7 +414,7 @@ public class SecurityTest {
     protected static void checkAlgorithms() throws JOceanusException {
         /* Create new Security Generator */
         SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
-        SecureManager myManager = new SecureManager(theLogger, myParams);
+        SecureManager myManager = new SecureManager(myParams);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 
         /* Create instance of each digest */

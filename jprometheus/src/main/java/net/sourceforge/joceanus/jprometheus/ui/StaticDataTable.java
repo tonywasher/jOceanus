@@ -149,27 +149,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     private final ErrorPanel theError;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
-     * Obtain the new button.
-     * @return the new Button
-     */
-    public JScrollButton<S> getNewButton() {
-        return theNewButton;
-    }
-
-    @Override
-    protected void setError(final JOceanusException pError) {
-        theError.addError(pError);
-    }
-
-    /**
      * Constructor.
      * @param pControl the data control
      * @param pUpdateSet the update set
@@ -188,7 +167,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         theControl = pControl;
         theFieldMgr = theControl.getFieldMgr();
         setFieldMgr(theFieldMgr);
-        setLogger(theControl.getLogger());
 
         /* Build the Update set and List */
         theUpdateSet = pUpdateSet;
@@ -224,6 +202,27 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         StaticListener myListener = new StaticListener();
         theUpdateSet.addChangeListener(myListener);
         theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    /**
+     * Obtain the new button.
+     * @return the new Button
+     */
+    public JScrollButton<S> getNewButton() {
+        return theNewButton;
+    }
+
+    @Override
+    protected void setError(final JOceanusException pError) {
+        theError.addError(pError);
     }
 
     /**

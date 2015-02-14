@@ -1133,11 +1133,6 @@ public class Security
         }
 
         @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
-        }
-
-        @Override
         protected SecurityDataMap getDataMap() {
             return (SecurityDataMap) super.getDataMap();
         }

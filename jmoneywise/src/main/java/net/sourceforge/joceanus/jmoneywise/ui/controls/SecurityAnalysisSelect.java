@@ -72,17 +72,17 @@ public class SecurityAnalysisSelect
     /**
      * The active portfolio bucket list.
      */
-    private PortfolioBucketList thePortfolios;
+    private transient PortfolioBucketList thePortfolios;
 
     /**
      * The state.
      */
-    private SecurityState theState;
+    private transient SecurityState theState;
 
     /**
      * The savePoint.
      */
-    private SecurityState theSavePoint;
+    private transient SecurityState theSavePoint;
 
     /**
      * The security button.

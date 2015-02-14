@@ -32,8 +32,6 @@ import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
@@ -48,6 +46,9 @@ import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Demo application for JTableFilter.
@@ -68,7 +69,7 @@ public class DemoFilter
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getAnonymousLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoFilter.class);
 
     @Override
     public void init() {
@@ -86,9 +87,9 @@ public class DemoFilter
                 }
             });
         } catch (InvocationTargetException e) {
-            theLogger.log(Level.SEVERE, "Failed to invoke thread", e);
+            LOGGER.error("Failed to invoke thread", e);
         } catch (InterruptedException e) {
-            theLogger.log(Level.SEVERE, "Thread was interrupted", e);
+            LOGGER.error("Thread was interrupted", e);
         }
     }
 
@@ -129,7 +130,7 @@ public class DemoFilter
             myFrame.setLocationRelativeTo(null);
             myFrame.setVisible(true);
         } catch (HeadlessException e) {
-            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
+            LOGGER.error("createGUI didn't complete successfully", e);
         }
     }
 
@@ -164,19 +165,6 @@ public class DemoFilter
         private final TestTableModel theModel;
 
         /**
-         * Get the scroll pane.
-         * @return the scroll pane
-         */
-        public JScrollPane getScrollPane() {
-            return theScroll;
-        }
-
-        @Override
-        public TestTableModel getModel() {
-            return theModel;
-        }
-
-        /**
          * Constructor.
          */
         protected TestTable() {
@@ -203,6 +191,19 @@ public class DemoFilter
 
             /* Add the mouse listener */
             addMouseListener(new TestMouse(this));
+        }
+
+        /**
+         * Get the scroll pane.
+         * @return the scroll pane
+         */
+        public JScrollPane getScrollPane() {
+            return theScroll;
+        }
+
+        @Override
+        public TestTableModel getModel() {
+            return theModel;
         }
     }
 
@@ -327,6 +328,14 @@ public class DemoFilter
         private transient TableFilter<RowData> theFilter = null;
 
         /**
+         * Constructor.
+         */
+        public TestTableModel() {
+            /* Allocate the list */
+            theList = new ArrayList<RowData>();
+        }
+
+        /**
          * Get showAll value.
          * @return true/false
          */
@@ -348,14 +357,6 @@ public class DemoFilter
          */
         public void registerFilter(final TableFilter<RowData> pFilter) {
             theFilter = pFilter;
-        }
-
-        /**
-         * Constructor.
-         */
-        public TestTableModel() {
-            /* Allocate the list */
-            theList = new ArrayList<RowData>();
         }
 
         /**

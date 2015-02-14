@@ -60,6 +60,24 @@ public class StreamKey {
     private final byte[] theEncodedKeyDef;
 
     /**
+     * Constructor for a decoded stream key.
+     * @param pGenerator the security generator
+     * @param pKeyType Stream KeyType
+     * @param pKey Secret Key for algorithm
+     * @throws JOceanusException on error
+     */
+    protected StreamKey(final SecurityGenerator pGenerator,
+                        final StreamKeyType pKeyType,
+                        final SecretKey pKey) throws JOceanusException {
+        /* Store the KeyType and the Generator */
+        theKeyType = pKeyType;
+        theKeyLen = pKey.getEncoded().length;
+        theGenerator = pGenerator;
+        theKey = pKey;
+        theEncodedKeyDef = theKey.getEncoded();
+    }
+
+    /**
      * Obtain the generator.
      * @return the generator
      */
@@ -130,24 +148,6 @@ public class StreamKey {
 
         /* Generate a StreamKey for the StreamKey type */
         return new StreamKey(pGenerator, pKeyType, myKey);
-    }
-
-    /**
-     * Constructor for a decoded stream key.
-     * @param pGenerator the security generator
-     * @param pKeyType Stream KeyType
-     * @param pKey Secret Key for algorithm
-     * @throws JOceanusException on error
-     */
-    protected StreamKey(final SecurityGenerator pGenerator,
-                        final StreamKeyType pKeyType,
-                        final SecretKey pKey) throws JOceanusException {
-        /* Store the KeyType and the Generator */
-        theKeyType = pKeyType;
-        theKeyLen = pKey.getEncoded().length;
-        theGenerator = pGenerator;
-        theKey = pKey;
-        theEncodedKeyDef = theKey.getEncoded();
     }
 
     @Override

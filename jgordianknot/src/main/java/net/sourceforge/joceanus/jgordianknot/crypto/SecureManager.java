@@ -32,8 +32,6 @@ import javax.swing.JFrame;
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.slf4j.Logger;
-
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
  * passwords will be attempted. If no match is found, then the user will be prompted for the password.
@@ -71,24 +69,21 @@ public class SecureManager {
 
     /**
      * Constructor for default values.
-     * @param pLogger the logger
      * @throws JOceanusException on error
      */
-    public SecureManager(final Logger pLogger) throws JOceanusException {
+    public SecureManager() throws JOceanusException {
         /* Access with defaults */
-        this(pLogger, new SecurityParameters());
+        this(new SecurityParameters());
     }
 
     /**
      * Constructor.
-     * @param pLogger the logger
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    public SecureManager(final Logger pLogger,
-                         final SecurityParameters pParameters) throws JOceanusException {
+    public SecureManager(final SecurityParameters pParameters) throws JOceanusException {
         /* Allocate the security generator */
-        theGenerator = new SecurityGenerator(pLogger, pParameters);
+        theGenerator = new SecurityGenerator(pParameters);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<PasswordHash>();
@@ -155,7 +150,7 @@ public class SecureManager {
 
         /* Prompt for the password */
         boolean isPasswordOk = false;
-        while (PasswordDialog.showTheDialog(myPass, theGenerator.getLogger())) {
+        while (PasswordDialog.showTheDialog(myPass)) {
             try {
                 /* Access the password */
                 myPassword = myPass.getPassword();

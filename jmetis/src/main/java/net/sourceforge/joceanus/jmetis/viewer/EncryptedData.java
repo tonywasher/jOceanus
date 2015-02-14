@@ -56,6 +56,36 @@ public final class EncryptedData {
     private static final int HASH_PRIME = 19;
 
     /**
+     * Encrypted Money length.
+     */
+    public static final int MONEYLEN = 15;
+
+    /**
+     * Encrypted Units length.
+     */
+    public static final int UNITSLEN = 15;
+
+    /**
+     * Encrypted Rate length.
+     */
+    public static final int RATELEN = 10;
+
+    /**
+     * Encrypted Price length.
+     */
+    public static final int PRICELEN = 15;
+
+    /**
+     * Encrypted Dilution length.
+     */
+    public static final int DILUTELEN = 10;
+
+    /**
+     * Encrypted Ratio length.
+     */
+    public static final int RATIOLEN = 10;
+
+    /**
      * Encrypted data conversion failure message.
      */
     private static final String ERROR_BYTES_CONVERT = "Failed to convert value from bytes";
@@ -100,36 +130,6 @@ public final class EncryptedData {
     }
 
     /**
-     * Encrypted Money length.
-     */
-    public static final int MONEYLEN = 15;
-
-    /**
-     * Encrypted Units length.
-     */
-    public static final int UNITSLEN = 15;
-
-    /**
-     * Encrypted Rate length.
-     */
-    public static final int RATELEN = 10;
-
-    /**
-     * Encrypted Price length.
-     */
-    public static final int PRICELEN = 15;
-
-    /**
-     * Encrypted Dilution length.
-     */
-    public static final int DILUTELEN = 10;
-
-    /**
-     * Encrypted Ratio length.
-     */
-    public static final int RATIOLEN = 10;
-
-    /**
      * The generic encrypted object class.
      * @param <T> the field type
      */
@@ -154,14 +154,6 @@ public final class EncryptedData {
          * Data formatter.
          */
         private JDataFormatter theFormatter;
-
-        /**
-         * Obtain the formatter.
-         * @return the formatter
-         */
-        protected JDataFormatter getFormatter() {
-            return theFormatter;
-        }
 
         /**
          * Constructor.
@@ -193,23 +185,6 @@ public final class EncryptedData {
         }
 
         /**
-         * Encrypt the value.
-         * @throws JOceanusException on error
-         */
-        private void encryptValue() throws JOceanusException {
-            /* Reject if encryption is not initialised */
-            if (theCipherSet == null) {
-                throw new JMetisLogicException(ERROR_INIT);
-            }
-
-            /* Obtain the bytes representation of the value */
-            byte[] myBytes = getBytesForEncryption();
-
-            /* Encrypt the Bytes */
-            theEncrypted = theCipherSet.encryptBytes(myBytes);
-        }
-
-        /**
          * Constructor.
          * @param pCipherSet the CipherSet
          * @param pFormatter the data formatter
@@ -233,6 +208,31 @@ public final class EncryptedData {
 
             /* encrypt the value */
             encryptValue();
+        }
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        protected JDataFormatter getFormatter() {
+            return theFormatter;
+        }
+
+        /**
+         * Encrypt the value.
+         * @throws JOceanusException on error
+         */
+        private void encryptValue() throws JOceanusException {
+            /* Reject if encryption is not initialised */
+            if (theCipherSet == null) {
+                throw new JMetisLogicException(ERROR_INIT);
+            }
+
+            /* Obtain the bytes representation of the value */
+            byte[] myBytes = getBytesForEncryption();
+
+            /* Encrypt the Bytes */
+            theEncrypted = theCipherSet.encryptBytes(myBytes);
         }
 
         /**
@@ -813,17 +813,6 @@ public final class EncryptedData {
         private JDateDayFormatter theDateFormatter = null;
 
         /**
-         * Obtain the formatter.
-         * @return the formatter
-         */
-        private JDateDayFormatter getDateFormatter() {
-            if (theDateFormatter == null) {
-                theDateFormatter = getFormatter().getDateFormatter();
-            }
-            return theDateFormatter;
-        }
-
-        /**
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
@@ -847,6 +836,17 @@ public final class EncryptedData {
                                 final JDataFormatter pFormatter,
                                 final Date pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
+        }
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        private JDateDayFormatter getDateFormatter() {
+            if (theDateFormatter == null) {
+                theDateFormatter = getFormatter().getDateFormatter();
+            }
+            return theDateFormatter;
         }
 
         @Override
@@ -889,17 +889,6 @@ public final class EncryptedData {
         private JDateDayFormatter theDateFormatter = null;
 
         /**
-         * Obtain the formatter.
-         * @return the formatter
-         */
-        private JDateDayFormatter getDateFormatter() {
-            if (theDateFormatter == null) {
-                theDateFormatter = getFormatter().getDateFormatter();
-            }
-            return theDateFormatter;
-        }
-
-        /**
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
@@ -923,6 +912,17 @@ public final class EncryptedData {
                                    final JDataFormatter pFormatter,
                                    final JDateDay pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
+        }
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        private JDateDayFormatter getDateFormatter() {
+            if (theDateFormatter == null) {
+                theDateFormatter = getFormatter().getDateFormatter();
+            }
+            return theDateFormatter;
         }
 
         @Override
@@ -1107,28 +1107,6 @@ public final class EncryptedData {
         private JDecimalParser theDecimalParser = null;
 
         /**
-         * Obtain the formatter.
-         * @return the formatter
-         */
-        protected JDecimalFormatter getDecimalFormatter() {
-            if (theDecimalFormatter == null) {
-                theDecimalFormatter = getFormatter().getDecimalFormatter();
-            }
-            return theDecimalFormatter;
-        }
-
-        /**
-         * Obtain the parser.
-         * @return the parser
-         */
-        protected JDecimalParser getDecimalParser() {
-            if (theDecimalParser == null) {
-                theDecimalParser = getFormatter().getDecimalParser();
-            }
-            return theDecimalParser;
-        }
-
-        /**
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
@@ -1152,6 +1130,28 @@ public final class EncryptedData {
                                  final JDataFormatter pFormatter,
                                  final X pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
+        }
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        protected JDecimalFormatter getDecimalFormatter() {
+            if (theDecimalFormatter == null) {
+                theDecimalFormatter = getFormatter().getDecimalFormatter();
+            }
+            return theDecimalFormatter;
+        }
+
+        /**
+         * Obtain the parser.
+         * @return the parser
+         */
+        protected JDecimalParser getDecimalParser() {
+            if (theDecimalParser == null) {
+                theDecimalParser = getFormatter().getDecimalParser();
+            }
+            return theDecimalParser;
         }
 
         @Override

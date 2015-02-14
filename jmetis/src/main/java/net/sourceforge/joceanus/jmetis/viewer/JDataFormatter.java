@@ -72,6 +72,23 @@ public class JDataFormatter {
     private final JDateDayFormatter theDateFormatter;
 
     /**
+     * Constructor.
+     */
+    public JDataFormatter() {
+        this(Locale.getDefault());
+    }
+
+    /**
+     * Constructor for a locale.
+     * @param pLocale the locale
+     */
+    public JDataFormatter(final Locale pLocale) {
+        theDecimalFormatter = new JDecimalFormatter(pLocale);
+        theDecimalParser = new JDecimalParser(pLocale);
+        theDateFormatter = new JDateDayFormatter(pLocale);
+    }
+
+    /**
      * Obtain the DecimalParser.
      * @return the decimal parser
      */
@@ -130,23 +147,6 @@ public class JDataFormatter {
         theDateFormatter.setLocale(pLocale);
         theDecimalFormatter.setLocale(pLocale);
         theDecimalParser.setLocale(pLocale);
-    }
-
-    /**
-     * Constructor.
-     */
-    public JDataFormatter() {
-        this(Locale.getDefault());
-    }
-
-    /**
-     * Constructor for a locale.
-     * @param pLocale the locale
-     */
-    public JDataFormatter(final Locale pLocale) {
-        theDecimalFormatter = new JDecimalFormatter(pLocale);
-        theDecimalParser = new JDecimalParser(pLocale);
-        theDateFormatter = new JDateDayFormatter(pLocale);
     }
 
     /**

@@ -65,8 +65,6 @@ import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
-import org.slf4j.Logger;
-
 /**
  * Preference Set panel.
  * @author Tony Washer
@@ -139,35 +137,22 @@ public class PreferenceSetPanel
     private final transient JDataFormatter theFormatter;
 
     /**
-     * The Logger.
-     */
-    private final transient Logger theLogger;
-
-    /**
      * The Set name.
      */
     private String theName = null;
 
-    @Override
-    public String toString() {
-        return theName;
-    }
-
     /**
      * Constructor.
-     * @param pLogger the logger
      * @param pFieldMgr the field manager
      * @param pSet the preference set
      */
-    public PreferenceSetPanel(final Logger pLogger,
-                              final JFieldManager pFieldMgr,
+    public PreferenceSetPanel(final JFieldManager pFieldMgr,
                               final PreferenceSet pSet) {
         /* Options SubPanel */
         JEnablePanel myOptions = null;
         int myRow = 0;
 
         /* Record the set and manager */
-        theLogger = pLogger;
         thePreferences = pSet;
         theFieldMgr = pFieldMgr;
         theFormatter = pFieldMgr.getDataFormatter();
@@ -254,6 +239,11 @@ public class PreferenceSetPanel
             GridBagUtilities.setPanelRow(myConstraints, myRow);
             add(myOptions, myConstraints);
         }
+    }
+
+    @Override
+    public String toString() {
+        return theName;
     }
 
     /**
@@ -462,13 +452,6 @@ public class PreferenceSetPanel
              */
             private JButton theButton = null;
 
-            @Override
-            protected JComponent getLabel() {
-                return (theType == PreferenceType.STRING)
-                                                         ? super.getLabel()
-                                                         : theButton;
-            }
-
             /**
              * Constructor.
              * @param pPreference the preference
@@ -491,6 +474,13 @@ public class PreferenceSetPanel
                 /* Create a button */
                 theButton = new JButton(pPreference.getDisplay());
                 theButton.addActionListener(myListener);
+            }
+
+            @Override
+            protected JComponent getLabel() {
+                return (theType == PreferenceType.STRING)
+                                                         ? super.getLabel()
+                                                         : theButton;
             }
 
             @Override
@@ -542,7 +532,7 @@ public class PreferenceSetPanel
                                 FileSelector myDialog = new FileSelector(PreferenceSetPanel.this, NLS_SELECT
                                                                                                   + " "
                                                                                                   + theString.getDisplay(), new File(theString.getValue()));
-                                myDialog.showDialog(theLogger);
+                                myDialog.showDialog();
 
                                 /* Handle selection */
                                 File myDir = myDialog.getSelectedFile();
@@ -562,7 +552,7 @@ public class PreferenceSetPanel
                                                                                                       + " "
                                                                                                       + theString.getDisplay(), new File(theString.getValue()),
                                         null, null);
-                                myFileDialog.showDialog(theLogger);
+                                myFileDialog.showDialog();
 
                                 /* Handle selection */
                                 File myFile = myFileDialog.getSelectedFile();

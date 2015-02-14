@@ -45,6 +45,14 @@ public final class ResourceBuilder {
     private WeakReference<ResourceBundle> theBundle;
 
     /**
+     * Standard constructor.
+     * @param pBundleName the Bundle Name
+     */
+    private ResourceBuilder(final String pBundleName) {
+        theBundleName = pBundleName;
+    }
+
+    /**
      * Obtain standard builder.
      * @param pBundleName the Bundle Name
      * @return the builder
@@ -61,14 +69,6 @@ public final class ResourceBuilder {
     public static ResourceBuilder getPackageResourceBuilder(final String pBundleName) {
         String myName = getPackageBundle(pBundleName);
         return new ResourceBuilder(myName);
-    }
-
-    /**
-     * Standard constructor.
-     * @param pBundleName the Bundle Name
-     */
-    private ResourceBuilder(final String pBundleName) {
-        theBundleName = pBundleName;
     }
 
     /**

@@ -37,7 +37,7 @@ public class JEventObject
     /**
      * The Event Manager.
      */
-    private final transient JEventManager theManager = new JEventManager(this);
+    private final JEventManager theManager = new JEventManager(this);
 
     /**
      * Add change Listener to list.

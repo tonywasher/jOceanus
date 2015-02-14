@@ -77,22 +77,22 @@ public class DepositAnalysisSelect
     /**
      * The active category bucket list.
      */
-    private DepositCategoryBucketList theCategories;
+    private transient DepositCategoryBucketList theCategories;
 
     /**
      * The active deposit bucket list.
      */
-    private DepositBucketList theDeposits;
+    private transient DepositBucketList theDeposits;
 
     /**
      * The state.
      */
-    private DepositState theState;
+    private transient DepositState theState;
 
     /**
      * The savePoint.
      */
-    private DepositState theSavePoint;
+    private transient DepositState theSavePoint;
 
     /**
      * The deposit button.

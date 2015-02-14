@@ -58,30 +58,6 @@ public class HelpPage
     private final HelpEntry theEntry;
 
     /**
-     * Obtain the name.
-     * @return the name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    /**
-     * Obtain the HTML.
-     * @return the HTML
-     */
-    public String getHtml() {
-        return theHtml;
-    }
-
-    /**
-     * Obtain the entry.
-     * @return the entry
-     */
-    public HelpEntry getEntry() {
-        return theEntry;
-    }
-
-    /**
      * Constructor.
      * @param pEntry the help entry for the help page
      * @param pStream the stream to read the help page from
@@ -129,6 +105,30 @@ public class HelpPage
         /* Link the entry to us */
         pEntry.setHelpPage(this);
         theEntry = pEntry;
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the HTML.
+     * @return the HTML
+     */
+    public String getHtml() {
+        return theHtml;
+    }
+
+    /**
+     * Obtain the entry.
+     * @return the entry
+     */
+    public HelpEntry getEntry() {
+        return theEntry;
     }
 
     @Override

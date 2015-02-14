@@ -37,22 +37,6 @@ public class CellPosition {
     private final int theRow;
 
     /**
-     * Obtain Column index.
-     * @return the column index
-     */
-    public int getColumnIndex() {
-        return theColumn;
-    }
-
-    /**
-     * Obtain Row index.
-     * @return the row index
-     */
-    public int getRowIndex() {
-        return theRow;
-    }
-
-    /**
      * Constructor.
      * @param pColumnIndex the column index
      * @param pRowIndex the row index
@@ -72,5 +56,21 @@ public class CellPosition {
         /* Store values */
         theColumn = pSource.getColumnIndex();
         theRow = pSource.getRowIndex();
+    }
+
+    /**
+     * Obtain Column index.
+     * @return the column index
+     */
+    public int getColumnIndex() {
+        return theColumn;
+    }
+
+    /**
+     * Obtain Row index.
+     * @return the row index
+     */
+    public int getRowIndex() {
+        return theRow;
     }
 }

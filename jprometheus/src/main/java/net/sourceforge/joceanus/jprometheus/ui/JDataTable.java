@@ -46,8 +46,6 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.JEventTable;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 
-import org.slf4j.Logger;
-
 /**
  * Template class to provide a table to handle a data type.
  * @author Tony Washer
@@ -112,14 +110,20 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     private JEnableScroll theScroll = null;
 
     /**
-     * The Logger.
-     */
-    private Logger theLogger = null;
-
-    /**
      * Is Enabled?
      */
     private boolean isEnabled = false;
+
+    /**
+     * Constructor.
+     */
+    public JDataTable() {
+        /* Store parameters */
+        theRowHdrModel = new RowTableModel<E>(this);
+
+        /* Set the selection mode */
+        setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    }
 
     /**
      * Does the table have a header row?
@@ -135,14 +139,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     public JFieldManager getFieldMgr() {
         return theFieldMgr;
-    }
-
-    /**
-     * Obtain the logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theLogger;
     }
 
     /**
@@ -247,17 +243,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     }
 
     /**
-     * Constructor.
-     */
-    public JDataTable() {
-        /* Store parameters */
-        theRowHdrModel = new RowTableModel<E>(this);
-
-        /* Set the selection mode */
-        setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-    }
-
-    /**
      * Set the table model.
      * @param pModel the table model
      */
@@ -315,14 +300,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected void setFieldMgr(final JFieldManager pFieldMgr) {
         theFieldMgr = pFieldMgr;
-    }
-
-    /**
-     * Set the logger for the table.
-     * @param pLogger the logger
-     */
-    protected void setLogger(final Logger pLogger) {
-        theLogger = pLogger;
     }
 
     /**

@@ -518,7 +518,7 @@ public class ExchangeRate
 
     @Override
     public void validate() {
-        ExchangeRateList myList = (ExchangeRateList) getList();
+        ExchangeRateList myList = getList();
         AssetCurrency myFrom = getFromCurrency();
         AssetCurrency myTo = getToCurrency();
         JDateDay myDate = getDate();

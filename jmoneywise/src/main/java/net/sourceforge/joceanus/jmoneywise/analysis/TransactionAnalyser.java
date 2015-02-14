@@ -243,7 +243,7 @@ public class TransactionAnalyser
         /* Create a new analysis */
         myTask.startTask("Initialise");
         theAnalysis = new Analysis(theData, pPreferenceMgr);
-        theManager = new AnalysisManager(theAnalysis, pPreferenceMgr.getLogger());
+        theManager = new AnalysisManager(theAnalysis);
 
         /* Access details from the analysis */
         theDepositBuckets = theAnalysis.getDeposits();

@@ -34,8 +34,6 @@ import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.slf4j.Logger;
-
 /**
  * Thread Status.
  * @author Tony Washer
@@ -60,11 +58,6 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     private final StatusData theStatus;
 
     /**
-     * The logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * The data control.
      */
     private final DataControl<T, E> theControl;
@@ -78,6 +71,26 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
      * The number of reporting steps.
      */
     private int theSteps;
+
+    /**
+     * Constructor.
+     * @param pControl the data control
+     * @param pStatusBar the status bar
+     */
+    public ThreadStatus(final DataControl<T, E> pControl,
+                        final StatusDisplay pStatusBar) {
+        /* Store parameter */
+        theControl = pControl;
+        theStatusBar = pStatusBar;
+
+        /* Access the threadStatus properties */
+        PreferenceManager myMgr = theControl.getPreferenceMgr();
+        ThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(ThreadStatusPreferences.class);
+        theSteps = myPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
+
+        /* Create the status */
+        theStatus = new StatusData();
+    }
 
     @Override
     public int getReportingSteps() {
@@ -127,38 +140,12 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
         return theControl.getDataFormatter();
     }
 
-    @Override
-    public Logger getLogger() {
-        return theLogger;
-    }
-
     /**
      * Obtain StatusBar.
      * @return the StatusBar
      */
     public StatusDisplay getStatusBar() {
         return theStatusBar;
-    }
-
-    /**
-     * Constructor.
-     * @param pControl the data control
-     * @param pStatusBar the status bar
-     */
-    public ThreadStatus(final DataControl<T, E> pControl,
-                        final StatusDisplay pStatusBar) {
-        /* Store parameter */
-        theControl = pControl;
-        theLogger = pControl.getLogger();
-        theStatusBar = pStatusBar;
-
-        /* Access the threadStatus properties */
-        PreferenceManager myMgr = theControl.getPreferenceMgr();
-        ThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(ThreadStatusPreferences.class);
-        theSteps = myPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
-
-        /* Create the status */
-        theStatus = new StatusData();
     }
 
     /**

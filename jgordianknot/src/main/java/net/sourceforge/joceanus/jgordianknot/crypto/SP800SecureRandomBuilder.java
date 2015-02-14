@@ -97,14 +97,6 @@ public class SP800SecureRandomBuilder {
     private byte[] theSecurityBytes = null;
 
     /**
-     * Access the Secure Random.
-     * @return the secure random
-     */
-    protected SecureRandom getRandom() {
-        return theRandom;
-    }
-
-    /**
      * Basic constructor, creates a builder using an EntropySourceProvider based on the default SecureRandom with predictionResistant set to false.
      * <p>
      * Any SecureRandom created from a builder constructed like this will make use of input passed to SecureRandom.setSeed() if the default SecureRandom does
@@ -145,13 +137,21 @@ public class SP800SecureRandomBuilder {
     }
 
     /**
+     * Access the Secure Random.
+     * @return the secure random
+     */
+    protected SecureRandom getRandom() {
+        return theRandom;
+    }
+
+    /**
      * Set the personalisation string for DRBG SecureRandoms created by this builder.
      * @param pSecurityBytes the personalisation string for the underlying DRBG.
      */
     public void setSecurityBytes(final byte[] pSecurityBytes) {
         theSecurityBytes = (pSecurityBytes == null)
-                ? null
-                : Arrays.copyOf(pSecurityBytes, pSecurityBytes.length);
+                                                   ? null
+                                                   : Arrays.copyOf(pSecurityBytes, pSecurityBytes.length);
     }
 
     /**
@@ -197,12 +197,12 @@ public class SP800SecureRandomBuilder {
         /**
          * The DRBG generator.
          */
-        private final SP80090DRBG theGenerator;
+        private final transient SP80090DRBG theGenerator;
 
         /**
          * The DRBG provider.
          */
-        private final EntropySource theEntropy;
+        private final transient EntropySource theEntropy;
 
         /**
          * Is this instance prediction resistant?

@@ -70,17 +70,17 @@ public class TransCategoryAnalysisSelect
     /**
      * The active transaction categories bucket list.
      */
-    private TransactionCategoryBucketList theCategories;
+    private transient TransactionCategoryBucketList theCategories;
 
     /**
      * The state.
      */
-    private EventState theState;
+    private transient EventState theState;
 
     /**
      * The savePoint.
      */
-    private EventState theSavePoint;
+    private transient EventState theSavePoint;
 
     /**
      * The select button.

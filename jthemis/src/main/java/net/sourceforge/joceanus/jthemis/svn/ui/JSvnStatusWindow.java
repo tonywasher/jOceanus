@@ -41,8 +41,6 @@ import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 import net.sourceforge.joceanus.jthemis.svn.threads.ScmThread;
 
-import org.slf4j.Logger;
-
 /**
  * Status window for SubVersion operations.
  * @author Tony Washer
@@ -118,11 +116,6 @@ public class JSvnStatusWindow
     @Override
     public SecureManager getSecureMgr() {
         return theManager.getSecureMgr();
-    }
-
-    @Override
-    public Logger getLogger() {
-        return theManager.getLogger();
     }
 
     @Override

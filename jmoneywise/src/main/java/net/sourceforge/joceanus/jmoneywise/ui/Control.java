@@ -60,7 +60,7 @@ public final class Control {
     /**
      * Logger.
      */
-    private static Logger theLogger = LoggerFactory.getLogger(Control.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Control.class);
 
     /**
      * Private constructor to avoid instantiation.
@@ -83,11 +83,11 @@ public final class Control {
             PropertyConfigurator.configure(myLogProp);
 
             /* Create the window */
-            theWindow = new MainTab(pProfile, theLogger);
+            theWindow = new MainTab(pProfile);
             theWindow.makeFrame();
 
         } catch (JOceanusException e) {
-            theLogger.error("createGUI didn't complete successfully", e);
+            LOGGER.error("createGUI didn't complete successfully", e);
         }
     }
 

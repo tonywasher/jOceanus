@@ -35,8 +35,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataValues;
 
-import org.slf4j.Logger;
-
 /**
  * Data Manager.
  * @author Tony Washer
@@ -88,9 +86,19 @@ public class JDataManager {
     private int theNextIndex = 0;
 
     /**
-     * Logger.
+     * Constructor.
      */
-    private final Logger theLogger;
+    public JDataManager() {
+        /* Create the root node */
+        theRoot = new JDataEntry(WINDOW_TITLE);
+
+        /* Create the tree model */
+        theModel = new DefaultTreeModel(theRoot.getNode());
+
+        /* Create the formatters */
+        theDataFormatter = new JDataFormatter();
+        theHTMLFormatter = new JDataHTML(theDataFormatter);
+    }
 
     /**
      * Get tree model.
@@ -130,33 +138,6 @@ public class JDataManager {
      */
     public JDataFormatter getDataFormatter() {
         return theDataFormatter;
-    }
-
-    /**
-     * Get Logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
-     * Constructor.
-     * @param pLogger the logger
-     */
-    public JDataManager(final Logger pLogger) {
-        /* Store logger */
-        theLogger = pLogger;
-
-        /* Create the root node */
-        theRoot = new JDataEntry(WINDOW_TITLE);
-
-        /* Create the tree model */
-        theModel = new DefaultTreeModel(theRoot.getNode());
-
-        /* Create the formatters */
-        theDataFormatter = new JDataFormatter();
-        theHTMLFormatter = new JDataHTML(theDataFormatter);
     }
 
     /**
@@ -250,6 +231,21 @@ public class JDataManager {
         private boolean hasChildren = false;
 
         /**
+         * Constructor.
+         * @param pName the object name
+         */
+        public JDataEntry(final String pName) {
+            /* Store name */
+            theName = pName;
+
+            /* Create node */
+            theNode = new DefaultMutableTreeNode(this);
+
+            /* Determine index */
+            theIndex = theNextIndex++;
+        }
+
+        /**
          * Get name.
          * @return the name
          */
@@ -303,21 +299,6 @@ public class JDataManager {
          */
         protected int getIndex() {
             return theIndex;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the object name
-         */
-        public JDataEntry(final String pName) {
-            /* Store name */
-            theName = pName;
-
-            /* Create node */
-            theNode = new DefaultMutableTreeNode(this);
-
-            /* Determine index */
-            theIndex = theNextIndex++;
         }
 
         /**

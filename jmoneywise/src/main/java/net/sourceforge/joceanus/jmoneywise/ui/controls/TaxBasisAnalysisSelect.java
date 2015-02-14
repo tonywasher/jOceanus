@@ -65,17 +65,17 @@ public class TaxBasisAnalysisSelect
     /**
      * The active tax basis bucket list.
      */
-    private TaxBasisBucketList theTaxBases;
+    private transient TaxBasisBucketList theTaxBases;
 
     /**
      * The state.
      */
-    private TaxBasisState theState;
+    private transient TaxBasisState theState;
 
     /**
      * The savePoint.
      */
-    private TaxBasisState theSavePoint;
+    private transient TaxBasisState theSavePoint;
 
     /**
      * The select button.

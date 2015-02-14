@@ -41,12 +41,20 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Write control for spreadsheets.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
 public abstract class SheetWriter<T extends DataSet<T, ?>> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SheetWriter.class);
+
     /**
      * Delete error text.
      */
@@ -163,7 +171,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             /* Delete the file on error */
             if ((!bSuccess) && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
-                theTask.getLogger().error(ERROR_DELETE);
+                LOGGER.error(ERROR_DELETE);
             }
         }
 

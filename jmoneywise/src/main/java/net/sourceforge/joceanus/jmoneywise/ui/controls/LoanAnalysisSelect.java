@@ -77,22 +77,22 @@ public class LoanAnalysisSelect
     /**
      * The active category bucket list.
      */
-    private LoanCategoryBucketList theCategories;
+    private transient LoanCategoryBucketList theCategories;
 
     /**
      * The active loan bucket list.
      */
-    private LoanBucketList theLoans;
+    private transient LoanBucketList theLoans;
 
     /**
      * The state.
      */
-    private LoanState theState;
+    private transient LoanState theState;
 
     /**
      * The savePoint.
      */
-    private LoanState theSavePoint;
+    private transient LoanState theSavePoint;
 
     /**
      * The loan button.

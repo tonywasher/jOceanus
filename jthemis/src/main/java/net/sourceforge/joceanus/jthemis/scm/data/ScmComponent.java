@@ -31,8 +31,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchList;
 
-import org.slf4j.Logger;
-
 /**
  * Represents a component in the repository.
  * @author Tony Washer
@@ -117,14 +115,6 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
      */
     public String getName() {
         return theName;
-    }
-
-    /**
-     * Obtain logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theRepository.getLogger();
     }
 
     /**

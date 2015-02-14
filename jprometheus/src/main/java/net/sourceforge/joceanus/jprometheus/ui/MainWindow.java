@@ -62,6 +62,7 @@ import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jtethys.help.HelpWindow;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main window for application.
@@ -71,6 +72,11 @@ import org.slf4j.Logger;
  */
 public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         implements ThreadControl, ActionListener {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
+
     /**
      * Data menu title.
      */
@@ -1028,8 +1034,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             /* Display it */
             theHelpWdw.showDialog();
         } catch (JOceanusException e) {
-            Logger myLogger = theView.getLogger();
-            myLogger.error("Failed to start Help Window", e);
+            LOGGER.error("Failed to start Help Window", e);
             theHelpWdw = null;
         }
     }

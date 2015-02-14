@@ -134,104 +134,6 @@ public class AsymmetricKey {
     private final Map<AsymmetricKey, CipherSet> theCipherMap;
 
     /**
-     * Obtain the Asymmetric Key type.
-     * @return the key type
-     */
-    public AsymKeyType getKeyType() {
-        return theKeyType;
-    }
-
-    /**
-     * Is the Asymmetric Key a public only key.
-     * @return true/false
-     */
-    public boolean isPublicOnly() {
-        return theKeyPair.getPrivate() == null;
-    }
-
-    /**
-     * Obtain the Private Key.
-     * @return the private key
-     */
-    private PrivateKey getPrivateKey() {
-        return theKeyPair.getPrivate();
-    }
-
-    /**
-     * Obtain the Public Key.
-     * @return the private key
-     */
-    protected PublicKey getPublicKey() {
-        return theKeyPair.getPublic();
-    }
-
-    /**
-     * Obtain the External Public Key definition.
-     * @return the key definition
-     */
-    public byte[] getExternalPublic() {
-        return Arrays.copyOf(theExternalPublic, theExternalPublic.length);
-    }
-
-    /**
-     * Obtain the External Private Key definition.
-     * @return the key definition
-     */
-    protected byte[] getExternalPrivate() {
-        return Arrays.copyOf(theExternalPrivate, theExternalPrivate.length);
-    }
-
-    /**
-     * AsymmetricKey Generator.
-     * @param pGenerator the security generator
-     * @return the new AsymmetricKey
-     * @throws JOceanusException on error
-     */
-    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom);
-
-        /* Generate a AsymmetricKey for the AsymKey type */
-        return generateAsymmetricKey(pGenerator, myType[0]);
-    }
-
-    /**
-     * AsymmetricKey Generator for Elliptic only.
-     * @param pGenerator the security generator
-     * @return the new AsymmetricKey
-     * @throws JOceanusException on error
-     */
-    protected static AsymmetricKey generateEllipticAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom, true);
-
-        /* Generate a AsymmetricKey for the AsymKey type */
-        return generateAsymmetricKey(pGenerator, myType[0]);
-    }
-
-    /**
-     * AsymmetricKey Generator.
-     * @param pGenerator the security generator
-     * @param pKeyType the Asymmetric Key type
-     * @return the new AsymmetricKey
-     * @throws JOceanusException on error
-     */
-    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator,
-                                                         final AsymKeyType pKeyType) throws JOceanusException {
-        /* Obtain the registration */
-        SecurityRegister myRegister = pGenerator.getRegister();
-        AsymmetricRegister myReg = myRegister.getAsymRegistration(pKeyType);
-
-        /* Generate the KeyPair */
-        KeyPair myPair = myReg.generateKeyPair();
-
-        /* Generate a AsymmetricKey for the AsymKey type */
-        return new AsymmetricKey(pGenerator, pKeyType, myPair);
-    }
-
-    /**
      * Constructor for new key.
      * @param pGenerator the security generator
      * @param pKeyType the key type
@@ -354,6 +256,104 @@ public class AsymmetricKey {
         theKeyPair = myReg.deriveKeyPair(thePrivateKeyDef, thePublicKeyDef);
     }
 
+    /**
+     * Obtain the Asymmetric Key type.
+     * @return the key type
+     */
+    public AsymKeyType getKeyType() {
+        return theKeyType;
+    }
+
+    /**
+     * Is the Asymmetric Key a public only key.
+     * @return true/false
+     */
+    public boolean isPublicOnly() {
+        return theKeyPair.getPrivate() == null;
+    }
+
+    /**
+     * Obtain the Private Key.
+     * @return the private key
+     */
+    private PrivateKey getPrivateKey() {
+        return theKeyPair.getPrivate();
+    }
+
+    /**
+     * Obtain the Public Key.
+     * @return the private key
+     */
+    protected PublicKey getPublicKey() {
+        return theKeyPair.getPublic();
+    }
+
+    /**
+     * Obtain the External Public Key definition.
+     * @return the key definition
+     */
+    public byte[] getExternalPublic() {
+        return Arrays.copyOf(theExternalPublic, theExternalPublic.length);
+    }
+
+    /**
+     * Obtain the External Private Key definition.
+     * @return the key definition
+     */
+    protected byte[] getExternalPrivate() {
+        return Arrays.copyOf(theExternalPrivate, theExternalPrivate.length);
+    }
+
+    /**
+     * AsymmetricKey Generator.
+     * @param pGenerator the security generator
+     * @return the new AsymmetricKey
+     * @throws JOceanusException on error
+     */
+    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom);
+
+        /* Generate a AsymmetricKey for the AsymKey type */
+        return generateAsymmetricKey(pGenerator, myType[0]);
+    }
+
+    /**
+     * AsymmetricKey Generator for Elliptic only.
+     * @param pGenerator the security generator
+     * @return the new AsymmetricKey
+     * @throws JOceanusException on error
+     */
+    protected static AsymmetricKey generateEllipticAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom, true);
+
+        /* Generate a AsymmetricKey for the AsymKey type */
+        return generateAsymmetricKey(pGenerator, myType[0]);
+    }
+
+    /**
+     * AsymmetricKey Generator.
+     * @param pGenerator the security generator
+     * @param pKeyType the Asymmetric Key type
+     * @return the new AsymmetricKey
+     * @throws JOceanusException on error
+     */
+    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator,
+                                                         final AsymKeyType pKeyType) throws JOceanusException {
+        /* Obtain the registration */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        AsymmetricRegister myReg = myRegister.getAsymRegistration(pKeyType);
+
+        /* Generate the KeyPair */
+        KeyPair myPair = myReg.generateKeyPair();
+
+        /* Generate a AsymmetricKey for the AsymKey type */
+        return new AsymmetricKey(pGenerator, pKeyType, myPair);
+    }
+
     @Override
     public int hashCode() {
         /* Calculate and return the hashCode for this asymmetric key */
@@ -466,8 +466,8 @@ public class AsymmetricKey {
         try {
             /* Create a new cipher */
             return Cipher.getInstance(bWrap
-                    ? theKeyType.getAlgorithm()
-                    : theKeyType.getCipher(), theGenerator.getProviderName());
+                                           ? theKeyType.getAlgorithm()
+                                           : theKeyType.getCipher(), theGenerator.getProviderName());
 
             /* catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {

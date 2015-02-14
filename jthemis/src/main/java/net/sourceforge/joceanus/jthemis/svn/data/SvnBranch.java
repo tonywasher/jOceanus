@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistoryMap.SvnRevisionPath;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag.SvnTagList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -65,24 +67,10 @@ public final class SvnBranch
      */
     private static final JDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_REVPATH.equals(pField)) {
-            return theRevisionPath;
-        }
-
-        /* Unknown */
-        return super.getFieldValue(pField);
-    }
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SvnBranch.class);
 
     /**
      * Parent Repository.
@@ -93,35 +81,6 @@ public final class SvnBranch
      * RevisionPath.
      */
     private SvnRevisionPath theRevisionPath;
-
-    /**
-     * Get the repository for this branch.
-     * @return the repository
-     */
-    public SvnRepository getRepository() {
-        return theRepository;
-    }
-
-    /**
-     * Get the revision path for this branch.
-     * @return the revision path
-     */
-    public SvnRevisionPath getRevisionPath() {
-        return theRevisionPath;
-    }
-
-    /**
-     * Get the tag iterator for this branch.
-     * @return the iterator
-     */
-    public Iterator<SvnTag> tagIterator() {
-        return getTagList().iterator();
-    }
-
-    @Override
-    public SvnTagList getTagList() {
-        return (SvnTagList) super.getTagList();
-    }
 
     /**
      * Constructor.
@@ -161,6 +120,54 @@ public final class SvnBranch
         /* Create tag list */
         SvnTagList myTags = new SvnTagList(this);
         setTags(myTags);
+    }
+
+    /**
+     * Get the repository for this branch.
+     * @return the repository
+     */
+    public SvnRepository getRepository() {
+        return theRepository;
+    }
+
+    /**
+     * Get the revision path for this branch.
+     * @return the revision path
+     */
+    public SvnRevisionPath getRevisionPath() {
+        return theRevisionPath;
+    }
+
+    /**
+     * Get the tag iterator for this branch.
+     * @return the iterator
+     */
+    public Iterator<SvnTag> tagIterator() {
+        return getTagList().iterator();
+    }
+
+    @Override
+    public SvnTagList getTagList() {
+        return (SvnTagList) super.getTagList();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+        if (FIELD_REVPATH.equals(pField)) {
+            return theRevisionPath;
+        }
+
+        /* Unknown */
+        return super.getFieldValue(pField);
     }
 
     /**
@@ -228,7 +235,7 @@ public final class SvnBranch
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
-            theRepository.getLogger().error("Parse Failure", e);
+            LOGGER.error("Parse Failure", e);
             return null;
         }
     }

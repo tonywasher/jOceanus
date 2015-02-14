@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,6 +54,11 @@ import org.w3c.dom.Node;
  */
 public class ReportManager
         extends JEventObject {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
+
     /**
      * View Filter statement action event.
      */
@@ -84,11 +90,6 @@ public class ReportManager
     private BasicReport theReport = null;
 
     /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * The Current text.
      */
     private String theText = null;
@@ -107,22 +108,11 @@ public class ReportManager
     }
 
     /**
-     * Obtain the logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
      * Constructor.
      * @param pView the view
      * @throws JOceanusException on error
      */
     public ReportManager(final View pView) throws JOceanusException {
-        /* Store parameters */
-        theLogger = pView.getLogger();
-
         /* Create the builder */
         theBuilder = new HTMLBuilder(pView);
 
@@ -217,7 +207,7 @@ public class ReportManager
                 return;
             }
         } catch (JOceanusException e) {
-            theLogger.error("Failed to process reference", e);
+            LOGGER.error("Failed to process reference", e);
             myText = null;
         }
 

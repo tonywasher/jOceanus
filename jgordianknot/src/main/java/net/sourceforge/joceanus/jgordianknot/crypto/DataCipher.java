@@ -120,22 +120,6 @@ public class DataCipher {
     private final SecretKey theSecretKey;
 
     /**
-     * Get Symmetric Key Type.
-     * @return the key type
-     */
-    protected SymKeyType getSymKeyType() {
-        return theSymKey.getKeyType();
-    }
-
-    /**
-     * Get Block Size.
-     * @return the block size
-     */
-    protected int getBlockSize() {
-        return theBlockSize;
-    }
-
-    /**
      * Constructor.
      * @param pKey the Symmetric Key
      * @throws JOceanusException on error
@@ -153,6 +137,22 @@ public class DataCipher {
         theProviderName = myGenerator.getProviderName();
         Cipher myCipher = getCipher(CipherMode.CBC);
         theBlockSize = myCipher.getBlockSize();
+    }
+
+    /**
+     * Get Symmetric Key Type.
+     * @return the key type
+     */
+    protected SymKeyType getSymKeyType() {
+        return theSymKey.getKeyType();
+    }
+
+    /**
+     * Get Block Size.
+     * @return the block size
+     */
+    protected int getBlockSize() {
+        return theBlockSize;
     }
 
     @Override

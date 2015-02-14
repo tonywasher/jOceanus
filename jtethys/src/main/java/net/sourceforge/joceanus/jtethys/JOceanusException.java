@@ -36,15 +36,7 @@ public abstract class JOceanusException
     /**
      * The associated object.
      */
-    private final Object theObject;
-
-    /**
-     * Get the associated object.
-     * @return the associated object
-     */
-    public Object getObject() {
-        return theObject;
-    }
+    private final transient Object theObject;
 
     /**
      * Create a wrapped Exception object based on an underlying exception.
@@ -99,5 +91,13 @@ public abstract class JOceanusException
                              final Throwable c) {
         super(s, c);
         theObject = o;
+    }
+
+    /**
+     * Get the associated object.
+     * @return the associated object
+     */
+    public Object getObject() {
+        return theObject;
     }
 }

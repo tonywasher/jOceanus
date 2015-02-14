@@ -65,17 +65,17 @@ public class TransactionTagSelect
     /**
      * The active transaction tag list.
      */
-    private TransactionTagBucketList theTags;
+    private transient TransactionTagBucketList theTags;
 
     /**
      * The state.
      */
-    private TagState theState;
+    private transient TagState theState;
 
     /**
      * The savePoint.
      */
-    private TagState theSavePoint;
+    private transient TagState theSavePoint;
 
     /**
      * The tag button.

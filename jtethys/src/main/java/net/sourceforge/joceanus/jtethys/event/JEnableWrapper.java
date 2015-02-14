@@ -53,7 +53,7 @@ public final class JEnableWrapper {
         /**
          * List of components.
          */
-        private List<Component> theList = new ArrayList<Component>();
+        private final transient List<Component> theList = new ArrayList<Component>();
 
         @Override
         public Component add(final Component pComponent) {
@@ -101,7 +101,7 @@ public final class JEnableWrapper {
         /**
          * List of components.
          */
-        private List<Component> theList = new ArrayList<Component>();
+        private final transient List<Component> theList = new ArrayList<Component>();
 
         @Override
         public void setViewportView(final Component pComponent) {
@@ -133,7 +133,7 @@ public final class JEnableWrapper {
         /**
          * List of components.
          */
-        private List<Component> theList = new ArrayList<Component>();
+        private final transient List<Component> theList = new ArrayList<Component>();
 
         @Override
         public void addTab(final String pName,

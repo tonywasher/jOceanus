@@ -70,22 +70,6 @@ public enum JFiscalYear {
     private final Month theMonth;
 
     /**
-     * Obtain the day.
-     * @return the day
-     */
-    public int getFirstDay() {
-        return theDay;
-    }
-
-    /**
-     * Obtain the month.
-     * @return the month
-     */
-    public Month getFirstMonth() {
-        return theMonth;
-    }
-
-    /**
      * Constructor.
      */
     private JFiscalYear() {
@@ -109,6 +93,22 @@ public enum JFiscalYear {
                         final Month pMonth) {
         theDay = pDay;
         theMonth = pMonth;
+    }
+
+    /**
+     * Obtain the day.
+     * @return the day
+     */
+    public int getFirstDay() {
+        return theDay;
+    }
+
+    /**
+     * Obtain the month.
+     * @return the month
+     */
+    public Month getFirstMonth() {
+        return theMonth;
     }
 
     /**

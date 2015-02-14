@@ -48,22 +48,6 @@ public class JDateDayRange
     private JDateDay theEnd = null;
 
     /**
-     * Get the start date for the range.
-     * @return the Start date
-     */
-    public JDateDay getStart() {
-        return theStart;
-    }
-
-    /**
-     * Get the end date for the range.
-     * @return the End date
-     */
-    public JDateDay getEnd() {
-        return theEnd;
-    }
-
-    /**
      * Construct a Range from a Start Date and an End Date.
      * @param pStart the start date
      * @param pEnd the end date
@@ -84,6 +68,22 @@ public class JDateDayRange
      */
     public JDateDayRange(final JDateDayRange pRange) {
         this(pRange.getStart(), pRange.getEnd());
+    }
+
+    /**
+     * Get the start date for the range.
+     * @return the Start date
+     */
+    public JDateDay getStart() {
+        return theStart;
+    }
+
+    /**
+     * Get the end date for the range.
+     * @return the End date
+     */
+    public JDateDay getEnd() {
+        return theEnd;
     }
 
     /**

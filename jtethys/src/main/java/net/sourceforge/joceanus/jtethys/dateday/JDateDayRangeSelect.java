@@ -172,14 +172,6 @@ public class JDateDayRangeSelect
     private Locale theLocale = null;
 
     /**
-     * Obtain selected DateRange.
-     * @return the selected date range
-     */
-    public JDateDayRange getRange() {
-        return theState.getRange();
-    }
-
-    /**
      * Constructor.
      */
     public JDateDayRangeSelect() {
@@ -277,6 +269,14 @@ public class JDateDayRangeSelect
         thePeriodButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theStartButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
         theEndButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
+    }
+
+    /**
+     * Obtain selected DateRange.
+     * @return the selected date range
+     */
+    public JDateDayRange getRange() {
+        return theState.getRange();
     }
 
     /**
@@ -574,6 +574,58 @@ public class JDateDayRangeSelect
         private boolean isPrevOK = false;
 
         /**
+         * Constructor.
+         */
+        private JDateRangeState() {
+            /* Default the period */
+            thePeriod = JDatePeriod.ONEMONTH;
+
+            /* Determine initial date */
+            JDateDay myDate = new JDateDay(theLocale);
+
+            /* Make sure that we do not go beyond the date range */
+            if ((theFinalDate != null)
+                && (myDate.compareTo(theFinalDate) > 0)) {
+                myDate = theFinalDate;
+            }
+            if ((theFirstDate != null)
+                && (myDate.compareTo(theFirstDate) < 0)) {
+                myDate = theFirstDate;
+            }
+
+            /* Set appropriate date */
+            if (useStartButtonForPeriod) {
+                /* Initialise start date */
+                theStartDate = myDate;
+                /* else we are using the end date for periods */
+            } else {
+                /* Initialise end date */
+                theEndDate = myDate;
+            }
+
+            /* build the range */
+            buildRange();
+        }
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+        private JDateRangeState(final JDateRangeState pState) {
+            JDateDay myStart = pState.getStartDate();
+            JDateDay myEnd = pState.getEndDate();
+            theStartDate = (myStart == null)
+                                            ? null
+                                            : new JDateDay(myStart);
+            theEndDate = (myEnd == null)
+                                        ? null
+                                        : new JDateDay(myEnd);
+            thePeriod = pState.getPeriod();
+            isLocked = pState.isLocked();
+            buildRange();
+        }
+
+        /**
          * Get the start date.
          * @return the start date
          */
@@ -667,58 +719,6 @@ public class JDateDayRangeSelect
          */
         private boolean isContaining() {
             return thePeriod.isContaining();
-        }
-
-        /**
-         * Constructor.
-         */
-        private JDateRangeState() {
-            /* Default the period */
-            thePeriod = JDatePeriod.ONEMONTH;
-
-            /* Determine initial date */
-            JDateDay myDate = new JDateDay(theLocale);
-
-            /* Make sure that we do not go beyond the date range */
-            if ((theFinalDate != null)
-                && (myDate.compareTo(theFinalDate) > 0)) {
-                myDate = theFinalDate;
-            }
-            if ((theFirstDate != null)
-                && (myDate.compareTo(theFirstDate) < 0)) {
-                myDate = theFirstDate;
-            }
-
-            /* Set appropriate date */
-            if (useStartButtonForPeriod) {
-                /* Initialise start date */
-                theStartDate = myDate;
-                /* else we are using the end date for periods */
-            } else {
-                /* Initialise end date */
-                theEndDate = myDate;
-            }
-
-            /* build the range */
-            buildRange();
-        }
-
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        private JDateRangeState(final JDateRangeState pState) {
-            JDateDay myStart = pState.getStartDate();
-            JDateDay myEnd = pState.getEndDate();
-            theStartDate = (myStart == null)
-                                            ? null
-                                            : new JDateDay(myStart);
-            theEndDate = (myEnd == null)
-                                        ? null
-                                        : new JDateDay(myEnd);
-            thePeriod = pState.getPeriod();
-            isLocked = pState.isLocked();
-            buildRange();
         }
 
         /**

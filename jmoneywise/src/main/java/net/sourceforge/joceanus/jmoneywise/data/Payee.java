@@ -801,11 +801,6 @@ public class Payee
         }
 
         @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
-        }
-
-        @Override
         protected PayeeDataMap getDataMap() {
             return (PayeeDataMap) super.getDataMap();
         }

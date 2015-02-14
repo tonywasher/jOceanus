@@ -41,6 +41,8 @@ import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
@@ -70,6 +72,11 @@ public class Backup {
      * The Data file name.
      */
     private static final String DATA_NAME = "zipData";
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Backup.class);
 
     /**
      * The Buffer length.
@@ -103,10 +110,8 @@ public class Backup {
 
     /**
      * Constructor.
-     * @param pStatus
-     * the status reporter
-     * @param pPrefMgr
-     * the preference manager
+     * @param pStatus the status reporter
+     * @param pPrefMgr the preference manager
      */
     public Backup(final ReportStatus pStatus,
                   final PreferenceManager pPrefMgr) {
@@ -131,14 +136,10 @@ public class Backup {
 
     /**
      * Load a repository from the input stream.
-     * @param pRepository
-     * the repository directory
-     * @param pSecurity
-     * the secure manager
-     * @param pZipFile
-     * the zipFile to load
-     * @throws JOceanusException
-     * on error
+     * @param pRepository the repository directory
+     * @param pSecurity the secure manager
+     * @param pZipFile the zipFile to load
+     * @throws JOceanusException on error
      */
     public void loadRepository(final File pRepository,
                                final SecureManager pSecurity,
@@ -190,8 +191,7 @@ public class Backup {
 
     /**
      * Build URL.
-     * @param pName
-     * the name of the repository
+     * @param pName the name of the repository
      * @return the Repository path
      */
     private String buildURL(final String pName) {
@@ -215,14 +215,10 @@ public class Backup {
 
     /**
      * Dump a repository to a Backup directory.
-     * @param pManager
-     * the secure manager
-     * @param pRepository
-     * the repository directory
-     * @param pBackupDir
-     * the backup directory
-     * @throws JOceanusException
-     * on error
+     * @param pManager the secure manager
+     * @param pRepository the repository directory
+     * @param pBackupDir the backup directory
+     * @throws JOceanusException on error
      */
     private void backUpRepository(final SecureManager pManager,
                                   final File pRepository,
@@ -309,17 +305,15 @@ public class Backup {
         } finally {
             /* Delete the file on error */
             if (doDelete && !myZipName.delete()) {
-                thePreferenceMgr.getLogger().error("Failed to delete file on failure");
+                LOGGER.error("Failed to delete file on failure");
             }
         }
     }
 
     /**
      * Backup repositories.
-     * @param pManager
-     * the secure manager
-     * @throws JOceanusException
-     * on error
+     * @param pManager the secure manager
+     * @throws JOceanusException on error
      */
     public void backUpRepositories(final SecureManager pManager) throws JOceanusException {
         /* Install an event handler */

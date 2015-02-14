@@ -200,22 +200,6 @@ public class OasisWorkBook {
     private final Map<Object, TableContentValidationElement> theConstraintMap;
 
     /**
-     * Obtain the contentsDom.
-     * @return the content Dom
-     */
-    protected OdfContentDom getContentDom() {
-        return theContentDom;
-    }
-
-    /**
-     * Obtain the data formatter.
-     * @return the formatter
-     */
-    protected JDataFormatter getFormatter() {
-        return theFormatter;
-    }
-
-    /**
      * Constructor.
      * @param pInput the input stream
      * @throws JOceanusException on error
@@ -286,6 +270,22 @@ public class OasisWorkBook {
         } catch (Exception e) {
             throw new JMetisIOException(ERROR_LOAD, e);
         }
+    }
+
+    /**
+     * Obtain the contentsDom.
+     * @return the content Dom
+     */
+    protected OdfContentDom getContentDom() {
+        return theContentDom;
+    }
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    protected JDataFormatter getFormatter() {
+        return theFormatter;
     }
 
     /**
@@ -360,8 +360,8 @@ public class OasisWorkBook {
         /* Obtain the existing sheet */
         SheetReference myRef = theSheetMap.get(pName);
         return (myRef == null)
-                ? null
-                : myRef.getReadOnlySheet();
+                              ? null
+                              : myRef.getReadOnlySheet();
     }
 
     /**

@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jthemis.scm.data.ScmTag;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistoryMap.SvnRevisionPath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -74,27 +76,10 @@ public final class SvnTag
      */
     private static final JDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponent;
-        }
-        if (FIELD_REVPATH.equals(pField)) {
-            return theRevisionPath;
-        }
-
-        /* pass onwards */
-        return super.getFieldValue(pField);
-    }
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SvnTag.class);
 
     /**
      * Parent Repository.
@@ -124,6 +109,28 @@ public final class SvnTag
         /* Store values */
         theRepository = pParent.getRepository();
         theComponent = pParent.getComponent();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+        if (FIELD_COMP.equals(pField)) {
+            return theComponent;
+        }
+        if (FIELD_REVPATH.equals(pField)) {
+            return theRevisionPath;
+        }
+
+        /* pass onwards */
+        return super.getFieldValue(pField);
     }
 
     /**
@@ -178,7 +185,7 @@ public final class SvnTag
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
-            theRepository.getLogger().error("Parse Failure", e);
+            LOGGER.error("Parse Failure", e);
             return null;
         }
     }

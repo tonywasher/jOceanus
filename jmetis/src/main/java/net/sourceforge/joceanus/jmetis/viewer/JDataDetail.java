@@ -113,6 +113,61 @@ public class JDataDetail {
     private final ListIterator<?> theIterator;
 
     /**
+     * Constructor for standard object.
+     * @param pFormatter the formatter
+     * @param pObject the object represented
+     */
+    protected JDataDetail(final JDataHTML pFormatter,
+                          final Object pObject) {
+        /* Clear child fields */
+        thePartnerDetail = null;
+        isChild = false;
+        theIndex = -1;
+
+        /* Record the formatter */
+        theFormatter = pFormatter;
+
+        /* Obtain the detail for this object */
+        if (pObject != null) {
+            theBuilder = theFormatter.formatHTMLObject(this, pObject);
+            isList = (pObject instanceof List);
+        } else {
+            theBuilder = null;
+            isList = false;
+        }
+
+        /* Allocate iterator if needed */
+        theList = (isList)
+                          ? (List<?>) pObject
+                          : null;
+        theIterator = (isList())
+                                ? theList.listIterator()
+                                : null;
+        thePartnerDetail = (isList())
+                                     ? new JDataDetail(this, theIterator.next())
+                                     : null;
+    }
+
+    /**
+     * Constructor for child object.
+     * @param pList the list to which the item belongs
+     * @param pObject the object represented
+     */
+    protected JDataDetail(final JDataDetail pList,
+                          final Object pObject) {
+        /* Obtain the detail for this object */
+        thePartnerDetail = pList;
+        theFormatter = pList.theFormatter;
+        theLinks = pList.theLinks;
+        theList = pList.theList;
+        theIndex = theList.indexOf(pObject);
+        theIterator = null;
+        isChild = true;
+        theBuilder = theFormatter.formatHTMLObject(this, pObject);
+        isList = true;
+    }
+
+    /**
      * Get the Data Detail.
      * @return the Detail
      */
@@ -190,61 +245,6 @@ public class JDataDetail {
 
         /* Set backward link */
         theBackward = pLink;
-    }
-
-    /**
-     * Constructor for standard object.
-     * @param pFormatter the formatter
-     * @param pObject the object represented
-     */
-    protected JDataDetail(final JDataHTML pFormatter,
-                          final Object pObject) {
-        /* Clear child fields */
-        thePartnerDetail = null;
-        isChild = false;
-        theIndex = -1;
-
-        /* Record the formatter */
-        theFormatter = pFormatter;
-
-        /* Obtain the detail for this object */
-        if (pObject != null) {
-            theBuilder = theFormatter.formatHTMLObject(this, pObject);
-            isList = (pObject instanceof List);
-        } else {
-            theBuilder = null;
-            isList = false;
-        }
-
-        /* Allocate iterator if needed */
-        theList = (isList)
-                ? (List<?>) pObject
-                : null;
-        theIterator = (isList())
-                ? theList.listIterator()
-                : null;
-        thePartnerDetail = (isList())
-                ? new JDataDetail(this, theIterator.next())
-                : null;
-    }
-
-    /**
-     * Constructor for child object.
-     * @param pList the list to which the item belongs
-     * @param pObject the object represented
-     */
-    protected JDataDetail(final JDataDetail pList,
-                          final Object pObject) {
-        /* Obtain the detail for this object */
-        thePartnerDetail = pList;
-        theFormatter = pList.theFormatter;
-        theLinks = pList.theLinks;
-        theList = pList.theList;
-        theIndex = theList.indexOf(pObject);
-        theIterator = null;
-        isChild = true;
-        theBuilder = theFormatter.formatHTMLObject(this, pObject);
-        isList = true;
     }
 
     /**
@@ -352,13 +352,13 @@ public class JDataDetail {
         /* Handle forward/backward links */
         if (myName.equals(LINK_FORWARD)) {
             return (isChild)
-                    ? thePartnerDetail.theForward
-                    : theForward;
+                            ? thePartnerDetail.theForward
+                            : theForward;
         }
         if (myName.equals(LINK_BACKWARD)) {
             return (isChild)
-                    ? thePartnerDetail.theBackward
-                    : theBackward;
+                            ? thePartnerDetail.theBackward
+                            : theBackward;
         }
 
         /* Loop through the links */

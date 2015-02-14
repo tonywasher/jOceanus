@@ -121,54 +121,6 @@ public class JDateDay
     private int theId = 0;
 
     /**
-     * Get the year of the date.
-     * @return the year of the date
-     */
-    public int getYear() {
-        return theYear;
-    }
-
-    /**
-     * Get the month of the date.
-     * @return the month of the date
-     */
-    public int getMonth() {
-        return theMonth;
-    }
-
-    /**
-     * Get the day of the date.
-     * @return the day of the date
-     */
-    public int getDay() {
-        return theDay;
-    }
-
-    /**
-     * Get the id of the date. This is a unique integer representation of the date usable as an id for the date.
-     * @return the id of the date
-     */
-    public int getId() {
-        return theId;
-    }
-
-    /**
-     * Get the Date associated with this object.
-     * @return the date
-     */
-    public LocalDate getDate() {
-        return theDate;
-    }
-
-    /**
-     * Get the locale associated with this object.
-     * @return the java locale
-     */
-    public Locale getLocale() {
-        return theLocale;
-    }
-
-    /**
      * Construct a new Date and initialise with todays date.
      */
     public JDateDay() {
@@ -360,6 +312,54 @@ public class JDateDay
                                                + " "
                                                + pValue, e);
         }
+    }
+
+    /**
+     * Get the year of the date.
+     * @return the year of the date
+     */
+    public int getYear() {
+        return theYear;
+    }
+
+    /**
+     * Get the month of the date.
+     * @return the month of the date
+     */
+    public int getMonth() {
+        return theMonth;
+    }
+
+    /**
+     * Get the day of the date.
+     * @return the day of the date
+     */
+    public int getDay() {
+        return theDay;
+    }
+
+    /**
+     * Get the id of the date. This is a unique integer representation of the date usable as an id for the date.
+     * @return the id of the date
+     */
+    public int getId() {
+        return theId;
+    }
+
+    /**
+     * Get the Date associated with this object.
+     * @return the date
+     */
+    public LocalDate getDate() {
+        return theDate;
+    }
+
+    /**
+     * Get the locale associated with this object.
+     * @return the java locale
+     */
+    public Locale getLocale() {
+        return theLocale;
     }
 
     /**

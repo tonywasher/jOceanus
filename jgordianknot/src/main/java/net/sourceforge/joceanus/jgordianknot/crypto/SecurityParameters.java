@@ -97,6 +97,40 @@ public class SecurityParameters {
     private int theActiveKeySets;
 
     /**
+     * Default Constructor.
+     */
+    public SecurityParameters() {
+        /* Default provider */
+        this(DEFAULT_PROVIDER);
+    }
+
+    /**
+     * Constructor for explicit provider.
+     * @param pProvider the Security provider
+     */
+    public SecurityParameters(final SecurityProvider pProvider) {
+        /* Default restricted value */
+        this(pProvider, DEFAULT_RESTRICTED);
+    }
+
+    /**
+     * Constructor for explicit provider.
+     * @param pProvider the Security provider
+     * @param pRestricted do we use restricted security
+     */
+    public SecurityParameters(final SecurityProvider pProvider,
+                              final Boolean pRestricted) {
+        /* Store parameters */
+        theProvider = pProvider;
+        useRestricted = pRestricted;
+        useLongHash = DEFAULT_LONGHASH;
+        theCipherSteps = DEFAULT_CIPHER_STEPS;
+        theIterations = DEFAULT_HASH_ITERATIONS;
+        theActiveKeySets = DEFAULT_ACTIVE_KEYSETS;
+        theSecurityPhrase = null;
+    }
+
+    /**
      * Access the Security provider.
      * @return the security provider
      */
@@ -150,40 +184,6 @@ public class SecurityParameters {
      */
     protected int getNumActiveKeySets() {
         return theActiveKeySets;
-    }
-
-    /**
-     * Default Constructor.
-     */
-    public SecurityParameters() {
-        /* Default provider */
-        this(DEFAULT_PROVIDER);
-    }
-
-    /**
-     * Constructor for explicit provider.
-     * @param pProvider the Security provider
-     */
-    public SecurityParameters(final SecurityProvider pProvider) {
-        /* Default restricted value */
-        this(pProvider, DEFAULT_RESTRICTED);
-    }
-
-    /**
-     * Constructor for explicit provider.
-     * @param pProvider the Security provider
-     * @param pRestricted do we use restricted security
-     */
-    public SecurityParameters(final SecurityProvider pProvider,
-                              final Boolean pRestricted) {
-        /* Store parameters */
-        theProvider = pProvider;
-        useRestricted = pRestricted;
-        useLongHash = DEFAULT_LONGHASH;
-        theCipherSteps = DEFAULT_CIPHER_STEPS;
-        theIterations = DEFAULT_HASH_ITERATIONS;
-        theActiveKeySets = DEFAULT_ACTIVE_KEYSETS;
-        theSecurityPhrase = null;
     }
 
     /**

@@ -111,6 +111,17 @@ public final class JDataObject {
         private final Difference theDifference;
 
         /**
+         * Constructor.
+         * @param pObject the object
+         * @param pDifference the difference
+         */
+        public JDataDifference(final Object pObject,
+                               final Difference pDifference) {
+            theObject = pObject;
+            theDifference = pDifference;
+        }
+
+        /**
          * Obtain the object.
          * @return the object
          */
@@ -124,17 +135,6 @@ public final class JDataObject {
          */
         public Difference getDifference() {
             return theDifference;
-        }
-
-        /**
-         * Constructor.
-         * @param pObject the object
-         * @param pDifference the difference
-         */
-        public JDataDifference(final Object pObject,
-                               final Difference pDifference) {
-            theObject = pObject;
-            theDifference = pDifference;
         }
     }
 }

@@ -29,6 +29,9 @@ import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Password Hash implementation.
  */
@@ -52,6 +55,11 @@ public class PasswordHash {
      * Sample point for secret hash.
      */
     public static final int SAMPLE_SECRET = 3;
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordHash.class);
 
     /**
      * Hash Key.
@@ -87,38 +95,6 @@ public class PasswordHash {
      * CipherSet.
      */
     private CipherSet theCipherSet = null;
-
-    /**
-     * Obtain the HashBytes.
-     * @return the HashBytes
-     */
-    public byte[] getHashBytes() {
-        return Arrays.copyOf(theHashBytes, theHashBytes.length);
-    }
-
-    /**
-     * Obtain the HashKey.
-     * @return the HashKey
-     */
-    public HashKey getHashKey() {
-        return theHashKey;
-    }
-
-    /**
-     * Obtain the SecurityGenerator.
-     * @return the SecurityGenerator
-     */
-    public SecurityGenerator getSecurityGenerator() {
-        return theGenerator;
-    }
-
-    /**
-     * Get CipherSet.
-     * @return the CipherSet
-     */
-    public CipherSet getCipherSet() {
-        return theCipherSet;
-    }
 
     /**
      * Constructor for a completely new password hash.
@@ -199,6 +175,38 @@ public class PasswordHash {
                 Arrays.fill(myBytes, (byte) 0);
             }
         }
+    }
+
+    /**
+     * Obtain the HashBytes.
+     * @return the HashBytes
+     */
+    public byte[] getHashBytes() {
+        return Arrays.copyOf(theHashBytes, theHashBytes.length);
+    }
+
+    /**
+     * Obtain the HashKey.
+     * @return the HashKey
+     */
+    public HashKey getHashKey() {
+        return theHashKey;
+    }
+
+    /**
+     * Obtain the SecurityGenerator.
+     * @return the SecurityGenerator
+     */
+    public SecurityGenerator getSecurityGenerator() {
+        return theGenerator;
+    }
+
+    /**
+     * Get CipherSet.
+     * @return the CipherSet
+     */
+    public CipherSet getCipherSet() {
+        return theCipherSet;
     }
 
     /**
@@ -539,15 +547,12 @@ public class PasswordHash {
             myBytes = theCipherSet.decryptBytes(thePassword);
             myPassword = DataConverter.bytesToCharArray(myBytes);
 
-            /* Try to initialise the hash */
-            PasswordHash myHash = new PasswordHash(theGenerator, pHashBytes, myPassword);
-
-            /* Return the new hash */
-            return myHash;
+            /* Try to initialise the hash and return it */
+            return new PasswordHash(theGenerator, pHashBytes, myPassword);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
-            theGenerator.getLogger().error("Password attempt failed", e);
+            LOGGER.error("Password attempt failed", e);
             return null;
         } catch (InvalidCredentialsException e) {
             return null;

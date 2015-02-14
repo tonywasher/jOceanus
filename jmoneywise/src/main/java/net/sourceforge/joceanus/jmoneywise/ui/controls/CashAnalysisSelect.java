@@ -77,22 +77,22 @@ public class CashAnalysisSelect
     /**
      * The active category bucket list.
      */
-    private CashCategoryBucketList theCategories;
+    private transient CashCategoryBucketList theCategories;
 
     /**
      * The active cash bucket list.
      */
-    private CashBucketList theCash;
+    private transient CashBucketList theCash;
 
     /**
      * The state.
      */
-    private CashState theState;
+    private transient CashState theState;
 
     /**
      * The savePoint.
      */
-    private CashState theSavePoint;
+    private transient CashState theSavePoint;
 
     /**
      * The cash button.

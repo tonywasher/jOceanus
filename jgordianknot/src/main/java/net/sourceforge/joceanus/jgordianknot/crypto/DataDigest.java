@@ -47,37 +47,6 @@ public class DataDigest {
     private final DigestType theDigestType;
 
     /**
-     * Obtain the digest type.
-     * @return the digest type
-     */
-    public DigestType getDigestType() {
-        return theDigestType;
-    }
-
-    /**
-     * Obtain the digest length.
-     * @return the digest length
-     */
-    public int getDigestLength() {
-        return theDigest.getDigestLength();
-    }
-
-    /**
-     * DataDigest Generator.
-     * @param pGenerator the security generator
-     * @return the new Digest
-     * @throws JOceanusException on error
-     */
-    protected static DataDigest generateRandomDigest(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
-
-        /* Generate a Digest for the Digest type */
-        return new DataDigest(pGenerator, myType[0]);
-    }
-
-    /**
      * Constructor for a new message digest.
      * @param pGenerator the security generator
      * @param pDigestType DigestType
@@ -110,6 +79,37 @@ public class DataDigest {
     protected DataDigest(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Create digest for random digest type */
         this(pGenerator, DigestType.getRandomTypes(1, pGenerator.getRandom())[0]);
+    }
+
+    /**
+     * Obtain the digest type.
+     * @return the digest type
+     */
+    public DigestType getDigestType() {
+        return theDigestType;
+    }
+
+    /**
+     * Obtain the digest length.
+     * @return the digest length
+     */
+    public int getDigestLength() {
+        return theDigest.getDigestLength();
+    }
+
+    /**
+     * DataDigest Generator.
+     * @param pGenerator the security generator
+     * @return the new Digest
+     * @throws JOceanusException on error
+     */
+    protected static DataDigest generateRandomDigest(final SecurityGenerator pGenerator) throws JOceanusException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+
+        /* Generate a Digest for the Digest type */
+        return new DataDigest(pGenerator, myType[0]);
     }
 
     /**

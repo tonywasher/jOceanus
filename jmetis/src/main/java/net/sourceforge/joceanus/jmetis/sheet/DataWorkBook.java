@@ -130,48 +130,6 @@ public class DataWorkBook {
     private final OasisWorkBook theOasisBook;
 
     /**
-     * Is the workbook readOnly?
-     * @return true/false
-     */
-    public boolean isReadOnly() {
-        return isReadOnly;
-    }
-
-    /**
-     * Obtain workBook type.
-     * @return the type
-     */
-    public WorkBookType getType() {
-        return theBookType;
-    }
-
-    /**
-     * Obtain Excel workBook.
-     * @return the book
-     */
-    public ExcelWorkBook getExcelBook() {
-        return theExcelBook;
-    }
-
-    /**
-     * Obtain Oasis workBook.
-     * @return the book
-     */
-    public OasisWorkBook getOasisBook() {
-        return theOasisBook;
-    }
-
-    /**
-     * Check for readOnly.
-     * @throws JOceanusException on error
-     */
-    private void checkReadOnly() throws JOceanusException {
-        if (isReadOnly) {
-            throw new JMetisLogicException("Attempt to modify readOnly Book");
-        }
-    }
-
-    /**
      * Load Excel workBook from file.
      * @param pInput the input stream
      * @param pType the workbook type
@@ -224,6 +182,48 @@ public class DataWorkBook {
             default:
                 throw new JMetisLogicException(ERROR_TYPE
                                                + pType);
+        }
+    }
+
+    /**
+     * Is the workbook readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
+     * Obtain workBook type.
+     * @return the type
+     */
+    public WorkBookType getType() {
+        return theBookType;
+    }
+
+    /**
+     * Obtain Excel workBook.
+     * @return the book
+     */
+    public ExcelWorkBook getExcelBook() {
+        return theExcelBook;
+    }
+
+    /**
+     * Obtain Oasis workBook.
+     * @return the book
+     */
+    public OasisWorkBook getOasisBook() {
+        return theOasisBook;
+    }
+
+    /**
+     * Check for readOnly.
+     * @throws JOceanusException on error
+     */
+    private void checkReadOnly() throws JOceanusException {
+        if (isReadOnly) {
+            throw new JMetisLogicException("Attempt to modify readOnly Book");
         }
     }
 
@@ -340,5 +340,4 @@ public class DataWorkBook {
         /* return the formatter */
         return myFormatter;
     }
-
 }

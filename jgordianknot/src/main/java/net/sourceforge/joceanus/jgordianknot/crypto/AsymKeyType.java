@@ -82,17 +82,6 @@ public enum AsymKeyType {
      */
     private static final String BASESIGNATURE = "SHA256with";
 
-    @Override
-    public String toString() {
-        /* Elliptic Curve use the curve name */
-        if (isElliptic) {
-            return theCurve;
-        }
-
-        /* return the name */
-        return name();
-    }
-
     /**
      * The external Id of the algorithm.
      */
@@ -112,6 +101,43 @@ public enum AsymKeyType {
      * Is this key an elliptic curve.
      */
     private final boolean isElliptic;
+
+    /**
+     * Constructor.
+     * @param id the id
+     * @param keySize the RSA Key size
+     */
+    private AsymKeyType(final int id,
+                        final int keySize) {
+        theId = id;
+        theKeySize = keySize;
+        theCurve = null;
+        isElliptic = false;
+    }
+
+    /**
+     * Constructor.
+     * @param id the id
+     * @param pCurve the name of the elliptic curve
+     */
+    private AsymKeyType(final int id,
+                        final String pCurve) {
+        theId = id;
+        theKeySize = 0;
+        theCurve = pCurve;
+        isElliptic = true;
+    }
+
+    @Override
+    public String toString() {
+        /* Elliptic Curve use the curve name */
+        if (isElliptic) {
+            return theCurve;
+        }
+
+        /* return the name */
+        return name();
+    }
 
     /**
      * Obtain the external Id.
@@ -179,32 +205,6 @@ public enum AsymKeyType {
         }
         return toString()
                + BASEALGORITHM;
-    }
-
-    /**
-     * Constructor.
-     * @param id the id
-     * @param keySize the RSA Key size
-     */
-    private AsymKeyType(final int id,
-                        final int keySize) {
-        theId = id;
-        theKeySize = keySize;
-        theCurve = null;
-        isElliptic = false;
-    }
-
-    /**
-     * Constructor.
-     * @param id the id
-     * @param pCurve the name of the elliptic curve
-     */
-    private AsymKeyType(final int id,
-                        final String pCurve) {
-        theId = id;
-        theKeySize = 0;
-        theCurve = pCurve;
-        isElliptic = true;
     }
 
     /**

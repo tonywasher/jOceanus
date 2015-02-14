@@ -63,6 +63,23 @@ public final class JFieldData {
     private JFieldState theState;
 
     /**
+     * Constructor.
+     * @param pManager the field manager
+     * @param pFixed is the item fixed width?
+     */
+    protected JFieldData(final JFieldManager pManager,
+                         final boolean pFixed) {
+        /* Record parameters */
+        theManager = pManager;
+        isFixed = pFixed;
+
+        /* Initialise defaults */
+        theForeGround = theManager.getForeground(JFieldState.NORMAL);
+        theBackGround = theManager.getStandardBackground();
+        theFont = theManager.determineFont(JFieldState.NORMAL, false);
+    }
+
+    /**
      * Get the foreground.
      * @return the foreground
      */
@@ -140,23 +157,6 @@ public final class JFieldData {
      */
     public boolean isFixed() {
         return isFixed;
-    }
-
-    /**
-     * Constructor.
-     * @param pManager the field manager
-     * @param pFixed is the item fixed width?
-     */
-    protected JFieldData(final JFieldManager pManager,
-                         final boolean pFixed) {
-        /* Record parameters */
-        theManager = pManager;
-        isFixed = pFixed;
-
-        /* Initialise defaults */
-        theForeGround = theManager.getForeground(JFieldState.NORMAL);
-        theBackGround = theManager.getStandardBackground();
-        theFont = theManager.determineFont(JFieldState.NORMAL, false);
     }
 
     /**

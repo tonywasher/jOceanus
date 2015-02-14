@@ -86,74 +86,6 @@ public class EncryptionOutputStream
     private final byte[] theByte;
 
     /**
-     * Access the symmetric key.
-     * @return the key
-     */
-    public SymmetricKey getSymKey() {
-        return theSymKey;
-    }
-
-    /**
-     * Access the stream key.
-     * @return the key
-     */
-    public StreamKey getStreamKey() {
-        return theStreamKey;
-    }
-
-    /**
-     * Access the stream type.
-     * @return the stream type
-     */
-    public ZipStreamType getStreamType() {
-        return theStreamType;
-    }
-
-    /**
-     * Access the symKey type.
-     * @return the symKey type
-     */
-    public SymKeyType getSymKeyType() {
-        return (theSymKey == null)
-                ? null
-                : theSymKey.getKeyType();
-    }
-
-    /**
-     * Access the cipher mode.
-     * @return the mode
-     */
-    public CipherMode getCipherMode() {
-        return theMode;
-    }
-
-    /**
-     * Access the streamKey type.
-     * @return the streamKey type
-     */
-    public StreamKeyType getStreamKeyType() {
-        return (theStreamKey == null)
-                ? null
-                : theStreamKey.getKeyType();
-    }
-
-    /**
-     * Access the initialisation vector.
-     * @return the initialisation vector
-     */
-    public byte[] getInitVector() {
-        return Arrays.copyOf(theInitVector, theInitVector.length);
-    }
-
-    /**
-     * Obtain the next stream.
-     * @return the stream
-     */
-    protected OutputStream getNextStream() {
-        return theStream;
-    }
-
-    /**
      * Construct a symmetric key encryption output stream.
      * @param pKey the symmetric key to use
      * @param pMode the cipher mode to use
@@ -203,6 +135,74 @@ public class EncryptionOutputStream
         /* Initialise the cipher */
         theCipher = new StreamCipher(pKey);
         theInitVector = theCipher.initialiseEncryption(pKey.getRandom());
+    }
+
+    /**
+     * Access the symmetric key.
+     * @return the key
+     */
+    public SymmetricKey getSymKey() {
+        return theSymKey;
+    }
+
+    /**
+     * Access the stream key.
+     * @return the key
+     */
+    public StreamKey getStreamKey() {
+        return theStreamKey;
+    }
+
+    /**
+     * Access the stream type.
+     * @return the stream type
+     */
+    public ZipStreamType getStreamType() {
+        return theStreamType;
+    }
+
+    /**
+     * Access the symKey type.
+     * @return the symKey type
+     */
+    public SymKeyType getSymKeyType() {
+        return (theSymKey == null)
+                                  ? null
+                                  : theSymKey.getKeyType();
+    }
+
+    /**
+     * Access the cipher mode.
+     * @return the mode
+     */
+    public CipherMode getCipherMode() {
+        return theMode;
+    }
+
+    /**
+     * Access the streamKey type.
+     * @return the streamKey type
+     */
+    public StreamKeyType getStreamKeyType() {
+        return (theStreamKey == null)
+                                     ? null
+                                     : theStreamKey.getKeyType();
+    }
+
+    /**
+     * Access the initialisation vector.
+     * @return the initialisation vector
+     */
+    public byte[] getInitVector() {
+        return Arrays.copyOf(theInitVector, theInitVector.length);
+    }
+
+    /**
+     * Obtain the next stream.
+     * @return the stream
+     */
+    protected OutputStream getNextStream() {
+        return theStream;
     }
 
     @Override

@@ -86,12 +86,12 @@ public enum ArrowIcon implements Icon {
     /**
      * X locations of points.
      */
-    private final int[] theXPoints;
+    private final transient int[] theXPoints;
 
     /**
      * Y Locations of points.
      */
-    private final int[] theYPoints;
+    private final transient int[] theYPoints;
 
     /**
      * Constructor.

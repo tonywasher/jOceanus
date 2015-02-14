@@ -85,7 +85,7 @@ public class SubversionRestore
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
-        myDialog.showDialog(theStatus.getLogger());
+        myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 
         /* If we did not select a file */

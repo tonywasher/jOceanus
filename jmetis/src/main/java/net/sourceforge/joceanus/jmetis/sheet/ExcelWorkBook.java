@@ -108,32 +108,6 @@ public class ExcelWorkBook {
     private final Font theHeaderFont;
 
     /**
-     * evaluate the formula for a cell.
-     * @param pCell the cell to evaluate
-     * @return the calculated value
-     */
-    protected CellValue evaluateFormula(final HSSFCell pCell) {
-        return theEvaluator.evaluate(pCell);
-    }
-
-    /**
-     * Format the cell value.
-     * @param pCell the cell to evaluate
-     * @return the formatted value
-     */
-    protected String formatCellValue(final HSSFCell pCell) {
-        return theExcelFormatter.formatCellValue(pCell);
-    }
-
-    /**
-     * Obtain the data formatter.
-     * @return the formatter
-     */
-    protected JDataFormatter getDataFormatter() {
-        return theDataFormatter;
-    }
-
-    /**
      * Constructor.
      * @param pInput the input stream
      * @throws JOceanusException on error
@@ -191,6 +165,32 @@ public class ExcelWorkBook {
         theHeaderFont.setFontName(DataWorkBook.FONT_VALUE);
         theHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         theHeaderFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
+    }
+
+    /**
+     * evaluate the formula for a cell.
+     * @param pCell the cell to evaluate
+     * @return the calculated value
+     */
+    protected CellValue evaluateFormula(final HSSFCell pCell) {
+        return theEvaluator.evaluate(pCell);
+    }
+
+    /**
+     * Format the cell value.
+     * @param pCell the cell to evaluate
+     * @return the formatted value
+     */
+    protected String formatCellValue(final HSSFCell pCell) {
+        return theExcelFormatter.formatCellValue(pCell);
+    }
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    protected JDataFormatter getDataFormatter() {
+        return theDataFormatter;
     }
 
     /**

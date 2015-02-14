@@ -126,11 +126,6 @@ public final class SpotSecurityPrice
         return getSecurity().isClosed();
     }
 
-    @Override
-    public SecurityPrice getBase() {
-        return (SecurityPrice) super.getBase();
-    }
-
     /**
      * Constructor for a new SpotPrice where no price data exists.
      * @param pList the Spot Price List

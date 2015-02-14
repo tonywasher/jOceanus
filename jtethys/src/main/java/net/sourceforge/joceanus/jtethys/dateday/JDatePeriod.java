@@ -110,6 +110,18 @@ public enum JDatePeriod {
     private final int theAmount;
 
     /**
+     * Constructor.
+     * @param pField the Calendar field
+     * @param pAmount the adjustment value
+     */
+    private JDatePeriod(final ChronoUnit pField,
+                        final int pAmount) {
+        /* Store values */
+        theField = pField;
+        theAmount = pAmount;
+    }
+
+    /**
      * Obtain field.
      * @return the field
      */
@@ -126,18 +138,6 @@ public enum JDatePeriod {
         return (bForward)
                          ? theAmount
                          : -theAmount;
-    }
-
-    /**
-     * Constructor.
-     * @param pField the Calendar field
-     * @param pAmount the adjustment value
-     */
-    private JDatePeriod(final ChronoUnit pField,
-                        final int pAmount) {
-        /* Store values */
-        theField = pField;
-        theAmount = pAmount;
     }
 
     @Override

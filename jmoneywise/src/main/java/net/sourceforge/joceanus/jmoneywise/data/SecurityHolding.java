@@ -560,7 +560,7 @@ public final class SecurityHolding
             }
 
             /* Return the map */
-            return (PortfolioHoldingsMap) myMap;
+            return myMap;
         }
 
         /**
@@ -589,7 +589,7 @@ public final class SecurityHolding
             }
 
             /* Return the map */
-            return (PortfolioHoldingsMap) myMap;
+            return myMap;
         }
 
         /**

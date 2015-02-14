@@ -53,6 +53,8 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,6 +66,11 @@ import org.xml.sax.SAXException;
  * @param <E> the data type enum class
  */
 public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataValuesFormatter.class);
+
     /**
      * Entry suffix.
      */
@@ -174,7 +181,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* Delete the file on error */
             if (!bContinue && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
-                theTask.getLogger().error(ERROR_DELETE);
+                LOGGER.error(ERROR_DELETE);
             }
         }
     }
@@ -230,7 +237,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* Delete the file on error */
             if (!bContinue && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
-                theTask.getLogger().error(ERROR_DELETE);
+                LOGGER.error(ERROR_DELETE);
             }
         }
     }
@@ -456,10 +463,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             Document myDocument = theBuilder.parse(myStream);
 
             /* Populate the list from the document */
-            boolean bContinue = parseXMLDocument(myDocument, pList);
-
-            /* Return success */
-            return bContinue;
+            return parseXMLDocument(myDocument, pList);
 
         } catch (IOException | SAXException e) {
             throw new JPrometheusIOException("Failed to parse XML", e);

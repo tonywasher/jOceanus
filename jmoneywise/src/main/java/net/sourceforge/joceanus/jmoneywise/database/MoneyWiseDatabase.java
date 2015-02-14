@@ -27,8 +27,6 @@ import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.slf4j.Logger;
-
 /**
  * Database extension for MoneyWiseData.
  * @author Tony Washer
@@ -37,14 +35,12 @@ public class MoneyWiseDatabase
         extends Database<MoneyWiseData> {
     /**
      * Construct a new Database class for load.
-     * @param pLogger the logger
      * @param pPreferences the preferences
      * @throws JOceanusException on error
      */
-    public MoneyWiseDatabase(final Logger pLogger,
-                             final DatabasePreferences pPreferences) throws JOceanusException {
+    public MoneyWiseDatabase(final DatabasePreferences pPreferences) throws JOceanusException {
         /* Call super-constructor */
-        super(pLogger, pPreferences);
+        super(pPreferences);
 
         /* Add additional tables */
         declareTables();

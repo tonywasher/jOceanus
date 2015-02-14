@@ -38,9 +38,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -804,11 +804,6 @@ public class Cash
         @Override
         public JDataFields getItemFields() {
             return Cash.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

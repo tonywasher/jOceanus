@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides control of a set of update-able DataLists.
@@ -60,6 +61,11 @@ public class UpdateSet<E extends Enum<E>>
      * Version field id.
      */
     public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATASET_VERSION.getValue());
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateSet.class);
 
     /**
      * OK.
@@ -85,6 +91,38 @@ public class UpdateSet<E extends Enum<E>>
      * Report fields.
      */
     private final JDataFields theLocalFields;
+
+    /**
+     * The entry map.
+     */
+    private final Map<E, UpdateEntry<?, E>> theMap;
+
+    /**
+     * The DataControl.
+     */
+    private final DataControl<?, E> theControl;
+
+    /**
+     * The version.
+     */
+    private int theVersion = 0;
+
+    /**
+     * Constructor for an update list.
+     * @param pControl the Data Control
+     * @param pClass the enum class
+     */
+    public UpdateSet(final DataControl<?, E> pControl,
+                     final Class<E> pClass) {
+        /* Store the Control */
+        theControl = pControl;
+
+        /* Create local fields */
+        theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
+
+        /* Create the map */
+        theMap = new EnumMap<E, UpdateEntry<?, E>>(pClass);
+    }
 
     @Override
     public JDataFields getDataFields() {
@@ -114,21 +152,6 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
-     * The entry map.
-     */
-    private final Map<E, UpdateEntry<?, E>> theMap;
-
-    /**
-     * The DataControl.
-     */
-    private final DataControl<?, E> theControl;
-
-    /**
-     * The version.
-     */
-    private int theVersion = 0;
-
-    /**
      * Obtain the version.
      * @return the version
      */
@@ -144,23 +167,6 @@ public class UpdateSet<E extends Enum<E>>
      */
     public <T extends DataSet<T, E>> T getDataSet(final Class<T> pClass) {
         return pClass.cast(theControl.getData());
-    }
-
-    /**
-     * Constructor for an update list.
-     * @param pControl the Data Control
-     * @param pClass the enum class
-     */
-    public UpdateSet(final DataControl<?, E> pControl,
-                     final Class<E> pClass) {
-        /* Store the Control */
-        theControl = pControl;
-
-        /* Create local fields */
-        theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
-
-        /* Create the map */
-        theMap = new EnumMap<E, UpdateEntry<?, E>>(pClass);
     }
 
     /**
@@ -198,7 +204,7 @@ public class UpdateSet<E extends Enum<E>>
     public <L extends DataList<?, E>> L getDataList(final E pDataType,
                                                     final Class<L> pClass) {
         /* Locate an existing entry */
-        UpdateEntry<?, E> myEntry = (UpdateEntry<?, E>) theMap.get(pDataType);
+        UpdateEntry<?, E> myEntry = theMap.get(pDataType);
 
         /* Cast correctly */
         return myEntry != null
@@ -434,8 +440,7 @@ public class UpdateSet<E extends Enum<E>>
             }
 
         } catch (JOceanusException e) {
-            Logger myLogger = theControl.getLogger();
-            myLogger.error("Failed to prepare changes", e);
+            LOGGER.error("Failed to prepare changes", e);
             bSuccess = false;
         }
 

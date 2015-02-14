@@ -90,6 +90,44 @@ public class OasisCellAddress {
     private final CellPosition thePosition;
 
     /**
+     * Constructor.
+     * @param pSheetName the sheet name
+     * @param pPosition the cell location
+     */
+    protected OasisCellAddress(final String pSheetName,
+                               final CellPosition pPosition) {
+        /* Store parameters */
+        theSheetName = new OasisSheetName(pSheetName, false);
+        thePosition = pPosition;
+    }
+
+    /**
+     * Constructor.
+     * @param pAddress the cell address
+     */
+    protected OasisCellAddress(final String pAddress) {
+        /* Store parameters */
+        int iPos = pAddress.indexOf(CHAR_PERIOD);
+        thePosition = parsePosition(pAddress.substring(iPos + 1));
+        String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR)
+                                                                              ? 1
+                                                                              : 0, iPos);
+        theSheetName = new OasisSheetName(myName, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pSheetName the sheet name
+     * @param pAddress the cell address
+     */
+    protected OasisCellAddress(final String pSheetName,
+                               final String pAddress) {
+        /* Store parameters */
+        thePosition = parsePosition(pAddress);
+        theSheetName = new OasisSheetName(pSheetName, false);
+    }
+
+    /**
      * Obtain the SheetName.
      * @return the name
      */
@@ -119,44 +157,6 @@ public class OasisCellAddress {
      */
     public int getRow() {
         return thePosition.getRowIndex();
-    }
-
-    /**
-     * Constructor.
-     * @param pSheetName the sheet name
-     * @param pPosition the cell location
-     */
-    protected OasisCellAddress(final String pSheetName,
-                               final CellPosition pPosition) {
-        /* Store parameters */
-        theSheetName = new OasisSheetName(pSheetName, false);
-        thePosition = pPosition;
-    }
-
-    /**
-     * Constructor.
-     * @param pAddress the cell address
-     */
-    protected OasisCellAddress(final String pAddress) {
-        /* Store parameters */
-        int iPos = pAddress.indexOf(CHAR_PERIOD);
-        thePosition = parsePosition(pAddress.substring(iPos + 1));
-        String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR)
-                ? 1
-                : 0, iPos);
-        theSheetName = new OasisSheetName(myName, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pSheetName the sheet name
-     * @param pAddress the cell address
-     */
-    protected OasisCellAddress(final String pSheetName,
-                               final String pAddress) {
-        /* Store parameters */
-        thePosition = parsePosition(pAddress);
-        theSheetName = new OasisSheetName(pSheetName, false);
     }
 
     @Override
@@ -270,22 +270,6 @@ public class OasisCellAddress {
         private final String theEscapedName;
 
         /**
-         * Obtain the sheet name.
-         * @return the name
-         */
-        private String getName() {
-            return theSheetName;
-        }
-
-        /**
-         * Obtain the escaped sheet name.
-         * @return the name
-         */
-        private String getEscapedName() {
-            return theEscapedName;
-        }
-
-        /**
          * Constructor.
          * @param pName the name
          * @param isEscaped is the name escaped or not
@@ -339,6 +323,22 @@ public class OasisCellAddress {
                 theSheetName = pName;
                 theEscapedName = pName;
             }
+        }
+
+        /**
+         * Obtain the sheet name.
+         * @return the name
+         */
+        private String getName() {
+            return theSheetName;
+        }
+
+        /**
+         * Obtain the escaped sheet name.
+         * @return the name
+         */
+        private String getEscapedName() {
+            return theEscapedName;
         }
 
         /**
@@ -398,38 +398,6 @@ public class OasisCellAddress {
          * Is Single Sheet.
          */
         private final boolean isSingleSheet;
-
-        /**
-         * Obtain the first cell Address.
-         * @return the address
-         */
-        public OasisCellAddress getFirstCell() {
-            return theFirstCell;
-        }
-
-        /**
-         * Obtain the BottomRight Address.
-         * @return the address
-         */
-        public OasisCellAddress getLastCell() {
-            return theLastCell;
-        }
-
-        /**
-         * Is this range a single cell address?
-         * @return true/false
-         */
-        protected boolean isSingleCell() {
-            return isSingleCell;
-        }
-
-        /**
-         * Is this range a single sheet range?
-         * @return true/false
-         */
-        protected boolean isSingleSheet() {
-            return isSingleSheet;
-        }
 
         /**
          * Constructor.
@@ -509,6 +477,38 @@ public class OasisCellAddress {
                     isSingleSheet = false;
                 }
             }
+        }
+
+        /**
+         * Obtain the first cell Address.
+         * @return the address
+         */
+        public OasisCellAddress getFirstCell() {
+            return theFirstCell;
+        }
+
+        /**
+         * Obtain the BottomRight Address.
+         * @return the address
+         */
+        public OasisCellAddress getLastCell() {
+            return theLastCell;
+        }
+
+        /**
+         * Is this range a single cell address?
+         * @return true/false
+         */
+        protected boolean isSingleCell() {
+            return isSingleCell;
+        }
+
+        /**
+         * Is this range a single sheet range?
+         * @return true/false
+         */
+        protected boolean isSingleSheet() {
+            return isSingleSheet;
         }
 
         @Override

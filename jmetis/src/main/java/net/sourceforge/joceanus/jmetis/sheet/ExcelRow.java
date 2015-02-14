@@ -50,24 +50,6 @@ public class ExcelRow
     private final boolean isReadOnly;
 
     /**
-     * evaluate the formula for a cell.
-     * @param pCell the cell to evaluate
-     * @return the calculated value
-     */
-    protected CellValue evaluateFormula(final HSSFCell pCell) {
-        return theExcelSheet.evaluateFormula(pCell);
-    }
-
-    /**
-     * Format the cell value.
-     * @param pCell the cell to evaluate
-     * @return the formatted value
-     */
-    protected String formatCellValue(final HSSFCell pCell) {
-        return theExcelSheet.formatCellValue(pCell);
-    }
-
-    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pRow the Excel Row
@@ -83,6 +65,24 @@ public class ExcelRow
         theExcelSheet = pSheet;
         theExcelRow = pRow;
         isReadOnly = pReadOnly;
+    }
+
+    /**
+     * evaluate the formula for a cell.
+     * @param pCell the cell to evaluate
+     * @return the calculated value
+     */
+    protected CellValue evaluateFormula(final HSSFCell pCell) {
+        return theExcelSheet.evaluateFormula(pCell);
+    }
+
+    /**
+     * Format the cell value.
+     * @param pCell the cell to evaluate
+     * @return the formatted value
+     */
+    protected String formatCellValue(final HSSFCell pCell) {
+        return theExcelSheet.formatCellValue(pCell);
     }
 
     @Override
@@ -122,8 +122,8 @@ public class ExcelRow
         /* Access the cell */
         HSSFCell myExcelCell = theExcelRow.getCell(pIndex, Row.RETURN_BLANK_AS_NULL);
         return (myExcelCell != null)
-                ? new ExcelCell(this, myExcelCell, pIndex, true)
-                : null;
+                                    ? new ExcelCell(this, myExcelCell, pIndex, true)
+                                    : null;
     }
 
     @Override
@@ -137,8 +137,8 @@ public class ExcelRow
         /* Create the cell */
         HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
         return (myExcelCell != null)
-                ? new ExcelCell(this, myExcelCell, pIndex, false)
-                : null;
+                                    ? new ExcelCell(this, myExcelCell, pIndex, false)
+                                    : null;
     }
 
     /**

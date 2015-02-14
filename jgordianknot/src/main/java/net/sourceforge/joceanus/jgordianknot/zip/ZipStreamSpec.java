@@ -66,19 +66,19 @@ public abstract class ZipStreamSpec {
     private final ZipStreamType theType;
 
     /**
-     * Obtain Stream type.
-     * @return the stream type
-     */
-    public ZipStreamType getStreamType() {
-        return theType;
-    }
-
-    /**
      * Constructor.
      * @param pType the StreamType
      */
     private ZipStreamSpec(final ZipStreamType pType) {
         theType = pType;
+    }
+
+    /**
+     * Obtain Stream type.
+     * @return the stream type
+     */
+    public ZipStreamType getStreamType() {
+        return theType;
     }
 
     /**
@@ -131,14 +131,6 @@ public abstract class ZipStreamSpec {
          * Data length.
          */
         private final long theDataLength;
-
-        /**
-         * Obtain Data length.
-         * @return the data length
-         */
-        public long getDataLength() {
-            return theDataLength;
-        }
 
         /**
          * Constructor.
@@ -259,6 +251,14 @@ public abstract class ZipStreamSpec {
                         break;
                 }
             }
+        }
+
+        /**
+         * Obtain Data length.
+         * @return the data length
+         */
+        public long getDataLength() {
+            return theDataLength;
         }
 
         /**
@@ -742,19 +742,19 @@ public abstract class ZipStreamSpec {
         private final int theId;
 
         /**
-         * Obtain the external Id.
-         * @return the external Id
-         */
-        public int getId() {
-            return theId;
-        }
-
-        /**
          * Constructor.
          * @param id the id
          */
         private ZipStreamType(final int id) {
             theId = id;
+        }
+
+        /**
+         * Obtain the external Id.
+         * @return the external Id
+         */
+        public int getId() {
+            return theId;
         }
 
         /**

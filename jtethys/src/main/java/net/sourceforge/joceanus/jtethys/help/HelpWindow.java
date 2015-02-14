@@ -46,6 +46,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Help Window class, responsible for displaying the help.
@@ -69,6 +70,11 @@ public class HelpWindow
     private static final int WINDOW_HEIGHT = 600;
 
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelpWindow.class);
+
+    /**
      * The editor pane.
      */
     private final JEditorPane theEditor;
@@ -89,11 +95,6 @@ public class HelpWindow
     private final DefaultMutableTreeNode theRoot;
 
     /**
-     * The logger.
-     */
-    private final transient Logger theLogger;
-
-    /**
      * Constructor.
      * @param pParent the parent frame
      * @param pModule the help module to display
@@ -110,9 +111,6 @@ public class HelpWindow
 
         /* Set the title */
         setTitle("Help Manager");
-
-        /* Access the logger */
-        theLogger = pModule.getLogger();
 
         /* Access the Help entries and list */
         HelpEntry[] myEntries = pModule.getHelpEntries();
@@ -259,7 +257,7 @@ public class HelpWindow
                     theEditor.setPage(e.getURL());
                 }
             } catch (IOException t) {
-                theLogger.error(HelpModule.ERROR_STREAM, t);
+                LOGGER.error(HelpModule.ERROR_STREAM, t);
             }
         }
     }

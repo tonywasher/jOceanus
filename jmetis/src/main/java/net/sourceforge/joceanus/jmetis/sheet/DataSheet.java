@@ -34,20 +34,20 @@ public abstract class DataSheet {
     private final String theSheetName;
 
     /**
-     * Obtain the name of the sheet.
-     * @return the name
-     */
-    public String getName() {
-        return theSheetName;
-    }
-
-    /**
      * Constructor for Excel Sheet.
      * @param pName the sheet name
      */
     protected DataSheet(final String pName) {
         /* Store parameters */
         theSheetName = pName;
+    }
+
+    /**
+     * Obtain the name of the sheet.
+     * @return the name
+     */
+    public String getName() {
+        return theSheetName;
     }
 
     /**

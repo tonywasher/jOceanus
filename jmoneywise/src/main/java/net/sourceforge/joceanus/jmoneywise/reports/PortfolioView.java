@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,6 +48,11 @@ import org.w3c.dom.Element;
  */
 public class PortfolioView
         extends BasicReport {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PortfolioView.class);
+
     /**
      * The Title text.
      */
@@ -88,11 +94,6 @@ public class PortfolioView
     private final JDataFormatter theFormatter;
 
     /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -100,7 +101,6 @@ public class PortfolioView
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
-        theLogger = pManager.getLogger();
     }
 
     @Override
@@ -243,7 +243,7 @@ public class PortfolioView
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
-            theLogger.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
+            LOGGER.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
         }
     }
 
@@ -259,7 +259,7 @@ public class PortfolioView
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
-            theLogger.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
+            LOGGER.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
         }
     }
 

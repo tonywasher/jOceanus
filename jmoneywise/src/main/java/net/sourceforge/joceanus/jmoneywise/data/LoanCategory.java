@@ -149,11 +149,6 @@ public class LoanCategory
     }
 
     @Override
-    public LoanCategory getBase() {
-        return (LoanCategory) super.getBase();
-    }
-
-    @Override
     public LoanCategoryList getList() {
         return (LoanCategoryList) super.getList();
     }

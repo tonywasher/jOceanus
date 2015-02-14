@@ -62,6 +62,14 @@ public enum StreamKeyType {
      */
     private String theName;
 
+    /**
+     * Constructor.
+     * @param id the id
+     */
+    private StreamKeyType(final int id) {
+        theId = id;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -102,14 +110,6 @@ public enum StreamKeyType {
             default:
                 return name();
         }
-    }
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    private StreamKeyType(final int id) {
-        theId = id;
     }
 
     /**

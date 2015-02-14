@@ -50,12 +50,12 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     /**
      * values.
      */
-    private final T theValues;
+    private final transient T theValues;
 
     /**
      * Base values.
      */
-    private final T theBaseValues;
+    private final transient T theBaseValues;
 
     /**
      * Last values.

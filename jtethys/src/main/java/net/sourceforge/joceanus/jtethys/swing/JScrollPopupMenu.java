@@ -86,7 +86,7 @@ public class JScrollPopupMenu
     /**
      * List of menu items.
      */
-    private final List<JMenuItem> theMenuItems;
+    private final transient List<JMenuItem> theMenuItems;
 
     /**
      * First item to show in list.
@@ -114,22 +114,6 @@ public class JScrollPopupMenu
      * The ScrollDown Item.
      */
     private final ScrollItem theDownItem;
-
-    /**
-     * Obtain the maximum # of items in the displayed PopUp window.
-     * @return the # of items
-     */
-    public int getMaxDisplayItems() {
-        return theMaxDisplayItems;
-    }
-
-    /**
-     * Obtain the scroll delay.
-     * @return the scroll delay
-     */
-    public int getScrollDelay() {
-        return theScrollDelay;
-    }
 
     /**
      * Constructor.
@@ -177,6 +161,22 @@ public class JScrollPopupMenu
         addMouseWheelListener(myListener);
         addPopupMenuListener(myListener);
         addMenuKeyListener(new ScrollKeyListener());
+    }
+
+    /**
+     * Obtain the maximum # of items in the displayed PopUp window.
+     * @return the # of items
+     */
+    public int getMaxDisplayItems() {
+        return theMaxDisplayItems;
+    }
+
+    /**
+     * Obtain the scroll delay.
+     * @return the scroll delay
+     */
+    public int getScrollDelay() {
+        return theScrollDelay;
     }
 
     /**

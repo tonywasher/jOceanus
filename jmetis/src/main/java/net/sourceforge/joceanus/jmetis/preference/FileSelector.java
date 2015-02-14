@@ -31,6 +31,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File selector class.
@@ -47,6 +48,11 @@ public class FileSelector
      * Show Dialog error Text.
      */
     private static final String ERROR_SHOW = "Failed to show dialog";
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSelector.class);
 
     /**
      * The frame that is the parent to this fileSelector.
@@ -67,11 +73,6 @@ public class FileSelector
      * Filter Suffix.
      */
     private final String theSuffix;
-
-    @Override
-    public File getSelectedFile() {
-        return theResult;
-    }
 
     /**
      * Constructor.
@@ -132,11 +133,15 @@ public class FileSelector
         setDialogTitle(pTitle);
     }
 
+    @Override
+    public File getSelectedFile() {
+        return theResult;
+    }
+
     /**
      * Show the dialog to select a file using an invokeAndWait clause if necessary.
-     * @param pLogger the logger
      */
-    public void showDialog(final Logger pLogger) {
+    public void showDialog() {
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */
@@ -153,10 +158,10 @@ public class FileSelector
                     }
                 });
             } catch (InvocationTargetException e) {
-                pLogger.error(ERROR_SHOW, e);
+                LOGGER.error(ERROR_SHOW, e);
                 theResult = null;
             } catch (InterruptedException e) {
-                pLogger.error(ERROR_SHOW, e);
+                LOGGER.error(ERROR_SHOW, e);
                 theResult = null;
             }
         }

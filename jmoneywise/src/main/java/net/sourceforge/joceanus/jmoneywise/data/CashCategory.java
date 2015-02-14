@@ -149,11 +149,6 @@ public class CashCategory
     }
 
     @Override
-    public CashCategory getBase() {
-        return (CashCategory) super.getBase();
-    }
-
-    @Override
     public CashCategoryList getList() {
         return (CashCategoryList) super.getList();
     }

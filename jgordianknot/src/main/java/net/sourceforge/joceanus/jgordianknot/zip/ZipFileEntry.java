@@ -147,6 +147,54 @@ public class ZipFileEntry {
     private boolean isHeader = false;
 
     /**
+     * Standard constructor from filename.
+     * @param pFileName the file name
+     */
+    protected ZipFileEntry(final String pFileName) {
+        /* Store the file name */
+        theFileName = pFileName;
+
+        /* Allocate the properties */
+        theProperties = new ZipFileProperties();
+    }
+
+    /**
+     * Standard constructor from properties.
+     * @param pProperties the properties
+     * @throws JOceanusException on error
+     */
+    protected ZipFileEntry(final ZipFileProperties pProperties) throws JOceanusException {
+        /* Store the properties */
+        theProperties = pProperties;
+
+        /* Access the top-level details */
+        theFileName = pProperties.getStringProperty(PROP_NAME);
+        theZipName = pProperties.getStringProperty(PROP_ZIPNAME);
+
+        /* Determine whether this is a header */
+        isHeader = (pProperties.getLongProperty(PROP_HEADER) != null);
+
+        /* If this is the header */
+        if (isHeader) {
+            /* Set private/public keys */
+            thePrivateKey = pProperties.getByteProperty(PROP_PRIVATEKEY);
+            thePublicKey = pProperties.getByteProperty(PROP_PUBLICKEY);
+
+            /* Else standard entry */
+        } else {
+            /* Access file sizes */
+            theFileSize = pProperties.getLongProperty(PROP_NAME);
+            theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
+
+            /* Determine the streamSpecs */
+            theStreamList = new ZipStreamList(pProperties);
+
+            /* Get signature */
+            theSignature = pProperties.getByteProperty(PROP_SIGNATURE);
+        }
+    }
+
+    /**
      * Obtain the name of the file.
      * @return the name of the file
      */
@@ -224,54 +272,6 @@ public class ZipFileEntry {
      */
     protected boolean isHeader() {
         return isHeader;
-    }
-
-    /**
-     * Standard constructor from filename.
-     * @param pFileName the file name
-     */
-    protected ZipFileEntry(final String pFileName) {
-        /* Store the file name */
-        theFileName = pFileName;
-
-        /* Allocate the properties */
-        theProperties = new ZipFileProperties();
-    }
-
-    /**
-     * Standard constructor from properties.
-     * @param pProperties the properties
-     * @throws JOceanusException on error
-     */
-    protected ZipFileEntry(final ZipFileProperties pProperties) throws JOceanusException {
-        /* Store the properties */
-        theProperties = pProperties;
-
-        /* Access the top-level details */
-        theFileName = pProperties.getStringProperty(PROP_NAME);
-        theZipName = pProperties.getStringProperty(PROP_ZIPNAME);
-
-        /* Determine whether this is a header */
-        isHeader = (pProperties.getLongProperty(PROP_HEADER) != null);
-
-        /* If this is the header */
-        if (isHeader) {
-            /* Set private/public keys */
-            thePrivateKey = pProperties.getByteProperty(PROP_PRIVATEKEY);
-            thePublicKey = pProperties.getByteProperty(PROP_PUBLICKEY);
-
-            /* Else standard entry */
-        } else {
-            /* Access file sizes */
-            theFileSize = pProperties.getLongProperty(PROP_NAME);
-            theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
-
-            /* Determine the streamSpecs */
-            theStreamList = new ZipStreamList(pProperties);
-
-            /* Get signature */
-            theSignature = pProperties.getByteProperty(PROP_SIGNATURE);
-        }
     }
 
     /**

@@ -77,14 +77,6 @@ public class DigestInputStream
     private boolean hasEOFbeenSeen = false;
 
     /**
-     * Access the data length.
-     * @return the data length
-     */
-    public long getDataLen() {
-        return theDataLen;
-    }
-
-    /**
      * Construct the input stream.
      * @param pDigest the message digest
      * @param pExpected the expected digest value
@@ -99,6 +91,14 @@ public class DigestInputStream
 
         /* Store the stream details */
         theStream = pStream;
+    }
+
+    /**
+     * Access the data length.
+     * @return the data length
+     */
+    public long getDataLen() {
+        return theDataLen;
     }
 
     @Override

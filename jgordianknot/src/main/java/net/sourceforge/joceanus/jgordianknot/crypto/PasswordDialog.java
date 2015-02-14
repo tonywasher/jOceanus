@@ -46,6 +46,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -119,14 +120,19 @@ public class PasswordDialog
     private static final String NLS_LENGTHERR2 = CryptoResource.ERROR_LENGTH2.getValue();
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordDialog.class);
+
+    /**
      * Obtained password.
      */
-    private char[] thePassword = null;
+    private transient char[] thePassword = null;
 
     /**
      * Confirmation password.
      */
-    private char[] theConfirm = null;
+    private transient char[] theConfirm = null;
 
     /**
      * OK Button.
@@ -167,22 +173,6 @@ public class PasswordDialog
      * Do we need to confirm the password.
      */
     private final boolean needConfirm;
-
-    /**
-     * Obtain the password.
-     * @return the password
-     */
-    protected char[] getPassword() {
-        return thePassword;
-    }
-
-    /**
-     * Is the password set.
-     * @return true/false
-     */
-    public boolean isPasswordSet() {
-        return isPasswordSet;
-    }
 
     /**
      * Constructor.
@@ -258,6 +248,22 @@ public class PasswordDialog
 
         /* Set the relative location */
         setLocationRelativeTo(pParent);
+    }
+
+    /**
+     * Obtain the password.
+     * @return the password
+     */
+    protected char[] getPassword() {
+        return thePassword;
+    }
+
+    /**
+     * Is the password set.
+     * @return true/false
+     */
+    public boolean isPasswordSet() {
+        return isPasswordSet;
     }
 
     /**
@@ -350,11 +356,9 @@ public class PasswordDialog
     /**
      * Show the dialog under an invokeAndWait clause.
      * @param pDialog the dialog to show
-     * @param pLogger the logger
      * @return successful dialog usage true/false
      */
-    public static boolean showTheDialog(final PasswordDialog pDialog,
-                                        final Logger pLogger) {
+    public static boolean showTheDialog(final PasswordDialog pDialog) {
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */
@@ -371,7 +375,7 @@ public class PasswordDialog
                     }
                 });
             } catch (InvocationTargetException | InterruptedException e) {
-                pLogger.error("Failed to display dialog", e);
+                LOGGER.error("Failed to display dialog", e);
             }
         }
 

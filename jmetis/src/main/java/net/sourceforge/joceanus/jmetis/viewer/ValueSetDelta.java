@@ -45,14 +45,6 @@ public class ValueSetDelta
     private final ValueSet theNewSet;
 
     /**
-     * Obtain the version.
-     * @return the version
-     */
-    public int getVersion() {
-        return theOldSet.getVersion();
-    }
-
-    /**
      * Constructor.
      * @param pNew the new valueSet.
      * @param pOld the old valueSet.
@@ -64,6 +56,14 @@ public class ValueSetDelta
         theNewSet = pNew;
     }
 
+    /**
+     * Obtain the version.
+     * @return the version
+     */
+    public int getVersion() {
+        return theOldSet.getVersion();
+    }
+
     @Override
     public String formatObject() {
         /* Access the values */
@@ -72,8 +72,8 @@ public class ValueSetDelta
 
         /* Initialise number of differences */
         int myNumDiffs = (theOldSet.isDeletion() == theNewSet.isDeletion())
-                ? 0
-                : 1;
+                                                                           ? 0
+                                                                           : 1;
 
         /* Loop through the objects */
         for (int i = 0; i < myNewValues.length; i++) {
@@ -136,8 +136,8 @@ public class ValueSetDelta
             /* If this is the deletion field, return the flag */
         } else if (myIndex == 1) {
             return (theOldSet.isDeletion() == theNewSet.isDeletion())
-                    ? JDataFieldValue.SKIP
-                    : new JDataDifference(theOldSet.isDeletion(), Difference.DIFFERENT);
+                                                                     ? JDataFieldValue.SKIP
+                                                                     : new JDataDifference(theOldSet.isDeletion(), Difference.DIFFERENT);
         }
 
         /* Adjust index */

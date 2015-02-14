@@ -91,6 +91,88 @@ public class HelpEntry {
     private HelpPage thePage = null;
 
     /**
+     * Constructor for an HTML element built from an XML node.
+     * @param pElement the XML element describing the help entry
+     * @throws HelpException on error
+     */
+    public HelpEntry(final Element pElement) throws HelpException {
+        /* Reject entry if it is not a HelpElement */
+        if (!pElement.getNodeName().equals(ELEMENT_HELP)) {
+            throw new HelpException("Invalid element name: "
+                                    + pElement.getNodeName());
+        }
+
+        /* Access the name of the element */
+        theName = pElement.getAttribute(ATTR_NAME);
+        if (theName == null) {
+            throw new HelpException("Node has no associated name");
+        }
+
+        /* Access the title of the element and default it if required */
+        theTitle = pElement.getAttribute(ATTR_TITLE);
+        if (STR_EMPTY.equals(theTitle)) {
+            theTitle = theName;
+        }
+
+        /* Access the filename for the element and default it if required */
+        theFileName = pElement.getAttribute(ATTR_FILENAME);
+        if (STR_EMPTY.equals(theFileName)) {
+            theFileName = null;
+        }
+
+        /* If the node has sub-elements */
+        if (pElement.hasChildNodes()) {
+            /* Parse the children */
+            theChildren = getHelpEntryArray(pElement);
+        }
+    }
+
+    /**
+     * Constructor for an HTML leaf element (no children).
+     * @param pName the name by which this entry is referenced
+     * @param pTitle the title for this page in the table of contents
+     * @param pFileName the name of the file containing the HTML for this entry
+     */
+    public HelpEntry(final String pName,
+                     final String pTitle,
+                     final String pFileName) {
+        theName = pName;
+        theTitle = pTitle;
+        theFileName = pFileName;
+    }
+
+    /**
+     * Constructor for a table of contents element.
+     * @param pName the name by which this entry is referenced
+     * @param pTitle the title for this page in the table of contents
+     * @param pChildren the children for this element
+     */
+    public HelpEntry(final String pName,
+                     final String pTitle,
+                     final HelpEntry[] pChildren) {
+        theName = pName;
+        theTitle = pTitle;
+        theChildren = Arrays.copyOf(pChildren, pChildren.length);
+    }
+
+    /**
+     * Constructor for a table of contents HTML element.
+     * @param pName the name by which this entry is referenced
+     * @param pTitle the title for this page in the table of contents
+     * @param pFileName the name of the file containing the HTML for this entry
+     * @param pChildren the children for this element
+     */
+    protected HelpEntry(final String pName,
+                        final String pTitle,
+                        final String pFileName,
+                        final HelpEntry[] pChildren) {
+        theName = pName;
+        theTitle = pTitle;
+        theFileName = pFileName;
+        theChildren = Arrays.copyOf(pChildren, pChildren.length);
+    }
+
+    /**
      * Obtain the title.
      * @return the title
      */
@@ -188,88 +270,6 @@ public class HelpEntry {
 
         /* Return the entries */
         return myEntries;
-    }
-
-    /**
-     * Constructor for an HTML element built from an XML node.
-     * @param pElement the XML element describing the help entry
-     * @throws HelpException on error
-     */
-    public HelpEntry(final Element pElement) throws HelpException {
-        /* Reject entry if it is not a HelpElement */
-        if (!pElement.getNodeName().equals(ELEMENT_HELP)) {
-            throw new HelpException("Invalid element name: "
-                                    + pElement.getNodeName());
-        }
-
-        /* Access the name of the element */
-        theName = pElement.getAttribute(ATTR_NAME);
-        if (theName == null) {
-            throw new HelpException("Node has no associated name");
-        }
-
-        /* Access the title of the element and default it if required */
-        theTitle = pElement.getAttribute(ATTR_TITLE);
-        if (STR_EMPTY.equals(theTitle)) {
-            theTitle = theName;
-        }
-
-        /* Access the filename for the element and default it if required */
-        theFileName = pElement.getAttribute(ATTR_FILENAME);
-        if (STR_EMPTY.equals(theFileName)) {
-            theFileName = null;
-        }
-
-        /* If the node has sub-elements */
-        if (pElement.hasChildNodes()) {
-            /* Parse the children */
-            theChildren = getHelpEntryArray(pElement);
-        }
-    }
-
-    /**
-     * Constructor for an HTML leaf element (no children).
-     * @param pName the name by which this entry is referenced
-     * @param pTitle the title for this page in the table of contents
-     * @param pFileName the name of the file containing the HTML for this entry
-     */
-    public HelpEntry(final String pName,
-                     final String pTitle,
-                     final String pFileName) {
-        theName = pName;
-        theTitle = pTitle;
-        theFileName = pFileName;
-    }
-
-    /**
-     * Constructor for a table of contents element.
-     * @param pName the name by which this entry is referenced
-     * @param pTitle the title for this page in the table of contents
-     * @param pChildren the children for this element
-     */
-    public HelpEntry(final String pName,
-                     final String pTitle,
-                     final HelpEntry[] pChildren) {
-        theName = pName;
-        theTitle = pTitle;
-        theChildren = Arrays.copyOf(pChildren, pChildren.length);
-    }
-
-    /**
-     * Constructor for a table of contents HTML element.
-     * @param pName the name by which this entry is referenced
-     * @param pTitle the title for this page in the table of contents
-     * @param pFileName the name of the file containing the HTML for this entry
-     * @param pChildren the children for this element
-     */
-    protected HelpEntry(final String pName,
-                        final String pTitle,
-                        final String pFileName,
-                        final HelpEntry[] pChildren) {
-        theName = pName;
-        theTitle = pTitle;
-        theFileName = pFileName;
-        theChildren = Arrays.copyOf(pChildren, pChildren.length);
     }
 
     @Override

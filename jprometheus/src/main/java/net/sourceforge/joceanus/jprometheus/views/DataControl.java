@@ -46,8 +46,6 @@ import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
-import org.slf4j.Logger;
-
 /**
  * Provides top-level control of data.
  * @param <T> the DataSet type
@@ -126,11 +124,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     private JDataManager theDataMgr = null;
 
     /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * The Field Manager.
      */
     private final JFieldManager theFieldMgr;
@@ -156,21 +149,11 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     private final Map<String, JDataEntry> theMap;
 
     /**
-     * Obtain logger.
-     * @return the Logger
-     */
-    public Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
      * Constructor for default control.
      * @param pProfile the startup profile
-     * @param pLogger the logger.
      * @throws JOceanusException on error
      */
-    protected DataControl(final JDataProfile pProfile,
-                          final Logger pLogger) throws JOceanusException {
+    protected DataControl(final JDataProfile pProfile) throws JOceanusException {
         /* Store the active profile */
         theProfile = pProfile;
 
@@ -178,11 +161,10 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theMap = new HashMap<String, JDataEntry>();
 
         /* Create the Preference manager */
-        theLogger = pLogger;
-        thePreferenceMgr = new PreferenceManager(theLogger);
+        thePreferenceMgr = new PreferenceManager();
 
         /* Create the data manager */
-        theDataMgr = new JDataManager(theLogger);
+        theDataMgr = new JDataManager();
         initDataMgr();
 
         /* Update the Profile entry */
@@ -193,7 +175,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);
 
         /* Create the Secure Manager */
-        theSecurity = mySecurity.getSecurity(theLogger);
+        theSecurity = mySecurity.getSecurity();
 
         /* Create the error list */
         theErrors = new DataErrorList<JMetisExceptionWrapper>();

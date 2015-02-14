@@ -79,25 +79,6 @@ public class CipherSet {
     private final SecurityGenerator theGenerator;
 
     /**
-     * Obtain the SecurityGenerator.
-     * @return the SecurityGenerator
-     */
-    public SecurityGenerator getSecurityGenerator() {
-        return theGenerator;
-    }
-
-    /**
-     * Encryption length.
-     * @param pDataLength the length of data to be encrypted
-     * @return the length of encrypted data
-     */
-    public static int getEncryptionLength(final int pDataLength) {
-        int iBlocks = 1 + ((pDataLength - 1) % IVSIZE);
-        return iBlocks
-               * IVSIZE;
-    }
-
-    /**
      * Constructor.
      * @param pGenerator the security generator
      * @param pSaltBytes the salt bytes
@@ -132,6 +113,25 @@ public class CipherSet {
 
         /* Build the Map */
         theMap = new EnumMap<SymKeyType, DataCipher>(SymKeyType.class);
+    }
+
+    /**
+     * Obtain the SecurityGenerator.
+     * @return the SecurityGenerator
+     */
+    public SecurityGenerator getSecurityGenerator() {
+        return theGenerator;
+    }
+
+    /**
+     * Encryption length.
+     * @param pDataLength the length of data to be encrypted
+     * @return the length of encrypted data
+     */
+    public static int getEncryptionLength(final int pDataLength) {
+        int iBlocks = 1 + ((pDataLength - 1) % IVSIZE);
+        return iBlocks
+               * IVSIZE;
     }
 
     @Override
@@ -407,11 +407,8 @@ public class CipherSet {
         /* Create the Secret Key */
         SecretKey mySecret = new SecretKeySpec(myEncoded, pKeyType.getAlgorithm());
 
-        /* Create the Symmetric Key */
-        SymmetricKey myKey = new SymmetricKey(theGenerator, pKeyType, mySecret);
-
-        /* Return the key */
-        return myKey;
+        /* Create and return the Symmetric Key */
+        return new SymmetricKey(theGenerator, pKeyType, mySecret);
     }
 
     /**

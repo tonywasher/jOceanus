@@ -105,7 +105,7 @@ public class JDataWindow
         JScrollPane myTreeScroll = new JScrollPane(theTree);
 
         /* Create the item panel */
-        theItemPane = new JDataItem(pManager.getHTMLFormatter(), pManager.getLogger());
+        theItemPane = new JDataItem(pManager.getHTMLFormatter());
 
         /* Create the split pane */
         JSplitPane mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, theItemPane.getPanel());

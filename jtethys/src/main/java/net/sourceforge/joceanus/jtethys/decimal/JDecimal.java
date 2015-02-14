@@ -74,22 +74,6 @@ public class JDecimal
     private long theFactor;
 
     /**
-     * Obtain the unscaled value of the decimal.
-     * @return the unscaled value
-     */
-    public long unscaledValue() {
-        return theValue;
-    }
-
-    /**
-     * Obtain the scale of the decimal.
-     * @return the scale
-     */
-    public int scale() {
-        return theScale;
-    }
-
-    /**
      * Standard constructor.
      */
     protected JDecimal() {
@@ -138,6 +122,22 @@ public class JDecimal
                     final int pScale) {
         /* Store value and scale */
         setValue(pUnscaledValue, pScale);
+    }
+
+    /**
+     * Obtain the unscaled value of the decimal.
+     * @return the unscaled value
+     */
+    public long unscaledValue() {
+        return theValue;
+    }
+
+    /**
+     * Obtain the scale of the decimal.
+     * @return the scale
+     */
+    public int scale() {
+        return theScale;
     }
 
     /**

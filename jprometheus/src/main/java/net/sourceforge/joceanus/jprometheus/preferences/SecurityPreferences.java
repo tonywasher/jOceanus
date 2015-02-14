@@ -29,8 +29,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.slf4j.Logger;
-
 /**
  * Security preferences.
  * @author Tony Washer
@@ -152,22 +150,20 @@ public class SecurityPreferences
 
     /**
      * Get SecureManager.
-     * @param pLogger the logger
      * @return Security Manager for these preferences
      * @throws JOceanusException on error
      */
-    public SecureManager getSecurity(final Logger pLogger) throws JOceanusException {
-        return new SecureManager(pLogger, getParameters());
+    public SecureManager getSecurity() throws JOceanusException {
+        return new SecureManager(getParameters());
     }
 
     /**
      * Get SecurityGenerator.
-     * @param pLogger the logger
      * @return Security Generator for these preferences
      * @throws JOceanusException on error
      */
-    public SecurityGenerator getGenerator(final Logger pLogger) throws JOceanusException {
-        return new SecurityGenerator(pLogger, getParameters());
+    public SecurityGenerator getGenerator() throws JOceanusException {
+        return new SecurityGenerator(getParameters());
     }
 
     @Override

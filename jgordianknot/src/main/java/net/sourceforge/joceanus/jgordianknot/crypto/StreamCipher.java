@@ -85,14 +85,6 @@ public class StreamCipher {
     private byte[] theBuffer = null;
 
     /**
-     * Obtain the output buffer.
-     * @return the output buffer
-     */
-    public byte[] getBuffer() {
-        return theBuffer;
-    }
-
-    /**
      * Constructor.
      * @param pKey the symmetric key
      * @param pMode the cipher mode
@@ -135,6 +127,14 @@ public class StreamCipher {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
             throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
+    }
+
+    /**
+     * Obtain the output buffer.
+     * @return the output buffer
+     */
+    public byte[] getBuffer() {
+        return theBuffer;
     }
 
     /**

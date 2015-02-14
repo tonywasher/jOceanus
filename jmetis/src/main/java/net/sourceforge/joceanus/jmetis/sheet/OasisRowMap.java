@@ -335,26 +335,6 @@ public class OasisRowMap {
         private TableTableRowElement theElement;
 
         /**
-         * Access Repeat count.
-         * @return the repeat count
-         */
-        private int getRepeat() {
-            /* Determine the maximum instance */
-            Integer myRepeat = theElement.getTableNumberRowsRepeatedAttribute();
-            return (myRepeat == null)
-                    ? 1
-                    : myRepeat;
-        }
-
-        /**
-         * Access Row element.
-         * @return the element
-         */
-        private TableTableRowElement getElement() {
-            return theElement;
-        }
-
-        /**
          * Constructor.
          * @param pElement the row element
          * @param pIndex the row index
@@ -367,6 +347,26 @@ public class OasisRowMap {
             theIndex = pIndex;
             theInstance = pInstance;
             theElement = pElement;
+        }
+
+        /**
+         * Access Repeat count.
+         * @return the repeat count
+         */
+        private int getRepeat() {
+            /* Determine the maximum instance */
+            Integer myRepeat = theElement.getTableNumberRowsRepeatedAttribute();
+            return (myRepeat == null)
+                                     ? 1
+                                     : myRepeat;
+        }
+
+        /**
+         * Access Row element.
+         * @return the element
+         */
+        private TableTableRowElement getElement() {
+            return theElement;
         }
 
         /**

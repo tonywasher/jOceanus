@@ -38,6 +38,8 @@ import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -86,6 +88,26 @@ public final class SvnComponent
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SvnComponent.class);
+
+    /**
+     * Constructor.
+     * @param pParent the Parent repository
+     * @param pName the component name
+     */
+    protected SvnComponent(final SvnRepository pParent,
+                           final String pName) {
+        /* Call super constructor */
+        super(pParent, pName);
+
+        /* Create branch list */
+        SvnBranchList myBranches = new SvnBranchList(this);
+        setBranches(myBranches);
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -110,21 +132,6 @@ public final class SvnComponent
      */
     public SvnBranch getTrunk() {
         return getBranches().getTrunk();
-    }
-
-    /**
-     * Constructor.
-     * @param pParent the Parent repository
-     * @param pName the component name
-     */
-    protected SvnComponent(final SvnRepository pParent,
-                           final String pName) {
-        /* Call super constructor */
-        super(pParent, pName);
-
-        /* Create branch list */
-        SvnBranchList myBranches = new SvnBranchList(this);
-        setBranches(myBranches);
     }
 
     /**
@@ -212,7 +219,7 @@ public final class SvnComponent
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
-            getRepository().getLogger().error("Parse Failure", e);
+            LOGGER.error("Parse Failure", e);
             return null;
         }
     }
@@ -277,7 +284,7 @@ public final class SvnComponent
                 try {
                     myInput.close();
                 } catch (IOException e) {
-                    getLogger().error("Close Failure", e);
+                    LOGGER.error("Close Failure", e);
                 }
             }
         }

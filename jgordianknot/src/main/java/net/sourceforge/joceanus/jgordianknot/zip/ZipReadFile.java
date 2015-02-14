@@ -87,32 +87,6 @@ public class ZipReadFile
     private final ExecutorService theExecutor;
 
     /**
-     * Is the ZipFile encrypted.
-     * @return is the Zip File encrypted
-     */
-    private boolean isEncrypted() {
-        return theHashBytes != null;
-    }
-
-    /**
-     * Obtain the contents.
-     * @return the contents
-     */
-    public ZipFileContents getContents() {
-        return theContents;
-    }
-
-    /**
-     * Obtain the hash bytes for the file.
-     * @return the hash bytes
-     */
-    public byte[] getHashBytes() {
-        return (theHashBytes == null)
-                                     ? null
-                                     : Arrays.copyOf(theHashBytes, theHashBytes.length);
-    }
-
-    /**
      * Constructor.
      * @param pFile the file to read
      * @throws JOceanusException on error
@@ -163,6 +137,32 @@ public class ZipReadFile
         } catch (IOException e) {
             throw new JGordianIOException("Exception accessing Zip file", e);
         }
+    }
+
+    /**
+     * Is the ZipFile encrypted.
+     * @return is the Zip File encrypted
+     */
+    private boolean isEncrypted() {
+        return theHashBytes != null;
+    }
+
+    /**
+     * Obtain the contents.
+     * @return the contents
+     */
+    public ZipFileContents getContents() {
+        return theContents;
+    }
+
+    /**
+     * Obtain the hash bytes for the file.
+     * @return the hash bytes
+     */
+    public byte[] getHashBytes() {
+        return (theHashBytes == null)
+                                     ? null
+                                     : Arrays.copyOf(theHashBytes, theHashBytes.length);
     }
 
     /**

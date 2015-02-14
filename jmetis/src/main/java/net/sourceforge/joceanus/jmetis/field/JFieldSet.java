@@ -62,17 +62,30 @@ public class JFieldSet<T extends JFieldSetItem>
     /**
      * The Render Manager.
      */
-    private final transient JFieldManager theRenderMgr;
+    private final JFieldManager theRenderMgr;
 
     /**
      * The Data Formatter.
      */
-    private final transient JDataFormatter theFormatter;
+    private final JDataFormatter theFormatter;
 
     /**
      * Is the data being refreshed?
      */
-    private transient boolean isRefreshing = false;
+    private boolean isRefreshing = false;
+
+    /**
+     * Constructor.
+     * @param pRenderMgr the render manager
+     */
+    public JFieldSet(final JFieldManager pRenderMgr) {
+        /* Store the render manager */
+        theRenderMgr = pRenderMgr;
+        theFormatter = pRenderMgr.getDataFormatter();
+
+        /* Create the map */
+        theMap = new HashMap<JDataField, JFieldElement<T>>();
+    }
 
     /**
      * Obtain the data formatter.
@@ -89,19 +102,6 @@ public class JFieldSet<T extends JFieldSetItem>
     public void setRefreshingData(final boolean refreshingData) {
         /* Record flag */
         isRefreshing = refreshingData;
-    }
-
-    /**
-     * Constructor.
-     * @param pRenderMgr the render manager
-     */
-    public JFieldSet(final JFieldManager pRenderMgr) {
-        /* Store the render manager */
-        theRenderMgr = pRenderMgr;
-        theFormatter = pRenderMgr.getDataFormatter();
-
-        /* Create the map */
-        theMap = new HashMap<JDataField, JFieldElement<T>>();
     }
 
     /**
@@ -330,6 +330,17 @@ public class JFieldSet<T extends JFieldSetItem>
         private final Object theValue;
 
         /**
+         * Constructor.
+         * @param pField the source field
+         * @param pNewValue the new Value
+         */
+        protected FieldUpdate(final JDataField pField,
+                              final Object pNewValue) {
+            theField = pField;
+            theValue = pNewValue;
+        }
+
+        /**
          * Obtain the source field.
          * @return the field
          */
@@ -467,17 +478,6 @@ public class JFieldSet<T extends JFieldSetItem>
          */
         public ItemEvent getItemEvent() throws JOceanusException {
             return getValue(ItemEvent.class);
-        }
-
-        /**
-         * Constructor.
-         * @param pField the source field
-         * @param pNewValue the new Value
-         */
-        protected FieldUpdate(final JDataField pField,
-                              final Object pNewValue) {
-            theField = pField;
-            theValue = pNewValue;
         }
     }
 }

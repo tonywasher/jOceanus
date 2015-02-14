@@ -46,14 +46,6 @@ public class ByteArrayInteger {
     private final byte[] theBuffer;
 
     /**
-     * get buffer pointer.
-     * @return the buffer
-     */
-    protected byte[] getBuffer() {
-        return theBuffer;
-    }
-
-    /**
      * Constructor.
      */
     protected ByteArrayInteger() {
@@ -81,6 +73,14 @@ public class ByteArrayInteger {
         theLength = pSource.length;
         theBuffer = new byte[theLength];
         System.arraycopy(pSource, 0, theBuffer, 0, theLength);
+    }
+
+    /**
+     * get buffer pointer.
+     * @return the buffer
+     */
+    protected byte[] getBuffer() {
+        return theBuffer;
     }
 
     /**

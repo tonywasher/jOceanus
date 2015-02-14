@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manager class for preference sets.
@@ -48,9 +49,19 @@ public class PreferenceManager
     private final JDataFields theFields = new JDataFields(PreferenceManager.class.getSimpleName());
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreferenceManager.class);
+
+    /**
      * Load error text.
      */
     private static final String ERROR_LOAD = "Failed to load preference Set";
+
+    /**
+     * Map of preferenceSets.
+     */
+    private Map<String, PreferenceSet> theMap = new HashMap<String, PreferenceSet>();
 
     @Override
     public JDataFields getDataFields() {
@@ -74,38 +85,11 @@ public class PreferenceManager
     }
 
     /**
-     * Map of preferenceSets.
-     */
-    private Map<String, PreferenceSet> theMap = new HashMap<String, PreferenceSet>();
-
-    /**
-     * Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * Obtain the collection of preference sets.
      * @return the preference sets
      */
     public Collection<PreferenceSet> getPreferenceSets() {
         return theMap.values();
-    }
-
-    /**
-     * Obtain logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
-     * Constructor.
-     * @param pLogger the logger.
-     */
-    public PreferenceManager(final Logger pLogger) {
-        /* Store the logger */
-        theLogger = pLogger;
     }
 
     /**
@@ -135,10 +119,10 @@ public class PreferenceManager
                 /* Fire the action performed */
                 fireActionEvent(ActionEvent.ACTION_PERFORMED, mySet);
             } catch (IllegalAccessException e) {
-                theLogger.error(ERROR_LOAD, e);
+                LOGGER.error(ERROR_LOAD, e);
                 mySet = null;
             } catch (InstantiationException e) {
-                theLogger.error(ERROR_LOAD, e);
+                LOGGER.error(ERROR_LOAD, e);
                 mySet = null;
             }
         }

@@ -73,58 +73,6 @@ public class HashKey {
     private final HashParameters theParams;
 
     /**
-     * Obtain the Prime Digest type.
-     * @return the digest type
-     */
-    public DigestType getPrimeDigest() {
-        return theParams.getPrimeDigest();
-    }
-
-    /**
-     * Obtain the Alternate Digest type.
-     * @return the digest type
-     */
-    public DigestType getAlternateDigest() {
-        return theParams.getAlternateDigest();
-    }
-
-    /**
-     * Obtain the Secret Digest type.
-     * @return the digest type
-     */
-    public DigestType getSecretDigest() {
-        return theParams.getSecretDigest();
-    }
-
-    /**
-     * Obtain the Adjustment.
-     * @return the adjustment
-     */
-    public int getAdjustment() {
-        return theParams.getAdjustment();
-    }
-
-    /**
-     * Obtain the Initialisation vector.
-     * @return the initialisation vector
-     */
-    public byte[] getInitVector() {
-        return (theInitVector == null)
-                ? null
-                : Arrays.copyOf(theInitVector, theInitVector.length);
-    }
-
-    /**
-     * Obtain the Hash.
-     * @return the Hash
-     */
-    public byte[] getHash() {
-        return (theHash == null)
-                ? null
-                : Arrays.copyOf(theHash, theHash.length);
-    }
-
-    /**
      * Constructor for random choices.
      * @param pGenerator the security generator
      * @throws JOceanusException on error
@@ -181,6 +129,58 @@ public class HashKey {
 
         /* Allocate new set of parameters */
         theParams = new HashParameters();
+    }
+
+    /**
+     * Obtain the Prime Digest type.
+     * @return the digest type
+     */
+    public DigestType getPrimeDigest() {
+        return theParams.getPrimeDigest();
+    }
+
+    /**
+     * Obtain the Alternate Digest type.
+     * @return the digest type
+     */
+    public DigestType getAlternateDigest() {
+        return theParams.getAlternateDigest();
+    }
+
+    /**
+     * Obtain the Secret Digest type.
+     * @return the digest type
+     */
+    public DigestType getSecretDigest() {
+        return theParams.getSecretDigest();
+    }
+
+    /**
+     * Obtain the Adjustment.
+     * @return the adjustment
+     */
+    public int getAdjustment() {
+        return theParams.getAdjustment();
+    }
+
+    /**
+     * Obtain the Initialisation vector.
+     * @return the initialisation vector
+     */
+    public byte[] getInitVector() {
+        return (theInitVector == null)
+                                      ? null
+                                      : Arrays.copyOf(theInitVector, theInitVector.length);
+    }
+
+    /**
+     * Obtain the Hash.
+     * @return the Hash
+     */
+    public byte[] getHash() {
+        return (theHash == null)
+                                ? null
+                                : Arrays.copyOf(theHash, theHash.length);
     }
 
     /**
@@ -242,38 +242,6 @@ public class HashKey {
         private final int theAdjust;
 
         /**
-         * Obtain the Prime Digest type.
-         * @return the digest type
-         */
-        public DigestType getPrimeDigest() {
-            return thePrimeDigest;
-        }
-
-        /**
-         * Obtain the Alternate Digest type.
-         * @return the digest type
-         */
-        public DigestType getAlternateDigest() {
-            return theAlternateDigest;
-        }
-
-        /**
-         * Obtain the Secret Digest type.
-         * @return the digest type
-         */
-        public DigestType getSecretDigest() {
-            return theSecretDigest;
-        }
-
-        /**
-         * Obtain the Adjustment.
-         * @return the adjustment
-         */
-        public int getAdjustment() {
-            return theAdjust;
-        }
-
-        /**
          * Construct the parameters from random.
          * @param pRandom the random generator
          * @throws JOceanusException on error
@@ -318,6 +286,38 @@ public class HashKey {
             theSecretDigest = DigestType.fromId(myId);
             theAdjust = myValue
                         & DataConverter.NYBBLE_MASK;
+        }
+
+        /**
+         * Obtain the Prime Digest type.
+         * @return the digest type
+         */
+        public DigestType getPrimeDigest() {
+            return thePrimeDigest;
+        }
+
+        /**
+         * Obtain the Alternate Digest type.
+         * @return the digest type
+         */
+        public DigestType getAlternateDigest() {
+            return theAlternateDigest;
+        }
+
+        /**
+         * Obtain the Secret Digest type.
+         * @return the digest type
+         */
+        public DigestType getSecretDigest() {
+            return theSecretDigest;
+        }
+
+        /**
+         * Obtain the Adjustment.
+         * @return the adjustment
+         */
+        public int getAdjustment() {
+            return theAdjust;
         }
     }
 }

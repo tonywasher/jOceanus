@@ -72,6 +72,21 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     private Object theValue = null;
 
     /**
+     * Constructor.
+     * @param pFieldSet the fieldSet
+     * @param pField the field for the model
+     * @param pClass the class of the model
+     */
+    protected JFieldModel(final JFieldSet<T> pFieldSet,
+                          final JDataField pField,
+                          final DataType pClass) {
+        /* Store values */
+        theFieldSet = pFieldSet;
+        theClass = pClass;
+        theField = pField;
+    }
+
+    /**
      * Obtain Field.
      * @return the field
      */
@@ -124,21 +139,6 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     }
 
     /**
-     * Constructor.
-     * @param pFieldSet the fieldSet
-     * @param pField the field for the model
-     * @param pClass the class of the model
-     */
-    protected JFieldModel(final JFieldSet<T> pFieldSet,
-                          final JDataField pField,
-                          final DataType pClass) {
-        /* Store values */
-        theFieldSet = pFieldSet;
-        theClass = pClass;
-        theField = pField;
-    }
-
-    /**
      * Load value.
      * @param pItem the item to load the value from
      */
@@ -179,12 +179,12 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         /**
          * The Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final JDecimalParser theParser;
 
         /**
          * The Decimal Formatter.
          */
-        private final transient JDecimalFormatter theFormatter;
+        private final JDecimalFormatter theFormatter;
 
         /**
          * Are we in error mode?
@@ -210,14 +210,6 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * The Assumed Currency.
          */
         private Currency theCurrency;
-
-        /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
-         */
-        protected void setAssumedCurrency(final Currency pCurrency) {
-            theCurrency = pCurrency;
-        }
 
         /**
          * Constructor.
@@ -258,6 +250,14 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                     throw new IllegalArgumentException(ERROR_TYPE
                                                        + pClass);
             }
+        }
+
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the assumed currency
+         */
+        protected void setAssumedCurrency(final Currency pCurrency) {
+            theCurrency = pCurrency;
         }
 
         /**

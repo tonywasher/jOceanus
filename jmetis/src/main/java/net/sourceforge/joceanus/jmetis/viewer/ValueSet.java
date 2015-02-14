@@ -77,6 +77,18 @@ public class ValueSet {
     private boolean isDeletion;
 
     /**
+     * Constructor.
+     * @param pItem the associated item
+     */
+    public ValueSet(final JDataValues pItem) {
+        /* Create the values array and initialise to null */
+        theItem = pItem;
+        theFields = pItem.getDataFields();
+        theNumValues = theFields.getNumValues();
+        theValues = new Object[theNumValues];
+    }
+
+    /**
      * Obtain the field definitions.
      * @return the field definitions
      */
@@ -130,18 +142,6 @@ public class ValueSet {
      */
     public void setDeletion(final boolean pDeletion) {
         isDeletion = pDeletion;
-    }
-
-    /**
-     * Constructor.
-     * @param pItem the associated item
-     */
-    public ValueSet(final JDataValues pItem) {
-        /* Create the values array and initialise to null */
-        theItem = pItem;
-        theFields = pItem.getDataFields();
-        theNumValues = theFields.getNumValues();
-        theValues = new Object[theNumValues];
     }
 
     /**
@@ -285,8 +285,8 @@ public class ValueSet {
     public int hashCode() {
         /* Use deletion flag in hash Code */
         int iHashCode = isDeletion
-                ? DELETION_HASH
-                : 1;
+                                  ? DELETION_HASH
+                                  : 1;
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
@@ -353,8 +353,8 @@ public class ValueSet {
 
         /* Determine the difference */
         return (isSecureDiff)
-                ? Difference.SECURITY
-                : Difference.IDENTICAL;
+                             ? Difference.SECURITY
+                             : Difference.IDENTICAL;
     }
 
     /**

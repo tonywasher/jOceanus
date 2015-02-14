@@ -136,7 +136,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The Panel map.
      */
-    private final Map<String, StaticDataTable<?, ?, ?, E>> theMap;
+    private final transient Map<String, StaticDataTable<?, ?, ?, E>> theMap;
 
     /**
      * The Active panel.

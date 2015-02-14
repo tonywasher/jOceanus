@@ -61,7 +61,43 @@ public class ActionDetailEvent
     /**
      * The details of the event.
      */
-    private final Object theDetails;
+    private final transient Object theDetails;
+
+    /**
+     * Constructor.
+     * @param pSource the source of the event
+     * @param pId the id of the event
+     * @param pSubId the subId for the event
+     * @param pDetails the details of the event
+     */
+    public ActionDetailEvent(final Object pSource,
+                             final int pId,
+                             final int pSubId,
+                             final Object pDetails) {
+        /* Call super-constructor */
+        super(pSource, pId, (pDetails instanceof String)
+                                                        ? (String) pDetails
+                                                        : null);
+
+        /* Set the details */
+        theSubId = pSubId;
+        theDetails = pDetails;
+    }
+
+    /**
+     * Constructor.
+     * @param pSource the source of the event
+     * @param pEvent the source event
+     */
+    public ActionDetailEvent(final Object pSource,
+                             final ActionDetailEvent pEvent) {
+        /* Call super-constructor */
+        super(pSource, pEvent.getID(), pEvent.getActionCommand());
+
+        /* Set the details */
+        theSubId = pEvent.getSubId();
+        theDetails = pEvent.getDetails();
+    }
 
     /**
      * Obtain the subId.
@@ -87,41 +123,5 @@ public class ActionDetailEvent
      */
     public <T> T getDetails(final Class<T> pClass) {
         return pClass.cast(theDetails);
-    }
-
-    /**
-     * Constructor.
-     * @param pSource the source of the event
-     * @param pId the id of the event
-     * @param pSubId the subId for the event
-     * @param pDetails the details of the event
-     */
-    public ActionDetailEvent(final Object pSource,
-                             final int pId,
-                             final int pSubId,
-                             final Object pDetails) {
-        /* Call super-constructor */
-        super(pSource, pId, (pDetails instanceof String)
-                ? (String) pDetails
-                : null);
-
-        /* Set the details */
-        theSubId = pSubId;
-        theDetails = pDetails;
-    }
-
-    /**
-     * Constructor.
-     * @param pSource the source of the event
-     * @param pEvent the source event
-     */
-    public ActionDetailEvent(final Object pSource,
-                             final ActionDetailEvent pEvent) {
-        /* Call super-constructor */
-        super(pSource, pEvent.getID(), pEvent.getActionCommand());
-
-        /* Set the details */
-        theSubId = pEvent.getSubId();
-        theDetails = pEvent.getDetails();
     }
 }

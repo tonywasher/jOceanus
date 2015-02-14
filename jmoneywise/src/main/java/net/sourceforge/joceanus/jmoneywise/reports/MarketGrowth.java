@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,6 +48,11 @@ import org.w3c.dom.Element;
  */
 public class MarketGrowth
         extends BasicReport {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarketGrowth.class);
+
     /**
      * The Title text.
      */
@@ -88,11 +94,6 @@ public class MarketGrowth
     private final JDataFormatter theFormatter;
 
     /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -100,7 +101,6 @@ public class MarketGrowth
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
-        theLogger = pManager.getLogger();
     }
 
     @Override
@@ -236,7 +236,7 @@ public class MarketGrowth
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
         JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
         if (!myGrowth.equals(myCalcGrowth)) {
-            theLogger.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
+            LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
         }
     }
 
@@ -252,7 +252,7 @@ public class MarketGrowth
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
         JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
         if (!myGrowth.equals(myCalcGrowth)) {
-            theLogger.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
+            LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
         }
     }
 

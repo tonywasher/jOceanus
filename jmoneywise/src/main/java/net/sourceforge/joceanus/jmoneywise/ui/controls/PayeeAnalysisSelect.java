@@ -65,17 +65,17 @@ public class PayeeAnalysisSelect
     /**
      * The active payee bucket list.
      */
-    private PayeeBucketList thePayees;
+    private transient PayeeBucketList thePayees;
 
     /**
      * The state.
      */
-    private PayeeState theState;
+    private transient PayeeState theState;
 
     /**
      * The savePoint.
      */
-    private PayeeState theSavePoint;
+    private transient PayeeState theSavePoint;
 
     /**
      * The select button.

@@ -42,9 +42,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -1028,11 +1028,6 @@ public class StockOption
         @Override
         public JDataFields getItemFields() {
             return StockOption.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

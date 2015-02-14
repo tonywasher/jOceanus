@@ -91,7 +91,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The Update Set.
      */
-    private final UpdateSet<E> theUpdateSet;
+    private final transient UpdateSet<E> theUpdateSet;
 
     /**
      * The ErrorPanel.

@@ -51,6 +51,7 @@ import javax.swing.text.html.StyleSheet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data Item.
@@ -76,6 +77,11 @@ public class JDataItem {
      * Shift one.
      */
     private static final int SHIFT_ONE = 1;
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDataItem.class);
 
     /**
      * The panel.
@@ -133,28 +139,12 @@ public class JDataItem {
     private JDataHTML theFormatter = null;
 
     /**
-     * Logger.
-     */
-    private final Logger theLogger;
-
-    /**
-     * Get the panel.
-     * @return the panel
-     */
-    protected JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
      * Constructor.
      * @param pFormatter the formatter
-     * @param pLogger the logger
      */
-    protected JDataItem(final JDataHTML pFormatter,
-                        final Logger pLogger) {
+    protected JDataItem(final JDataHTML pFormatter) {
         /* Record the formatter */
         theFormatter = pFormatter;
-        theLogger = pLogger;
 
         /* Create the slider */
         theSlider = new JSlider(SwingConstants.HORIZONTAL);
@@ -217,6 +207,14 @@ public class JDataItem {
 
         /* Add slider listener */
         theSlider.addChangeListener(myListener);
+    }
+
+    /**
+     * Get the panel.
+     * @return the panel
+     */
+    protected JPanel getPanel() {
+        return thePanel;
     }
 
     /**
@@ -468,7 +466,7 @@ public class JDataItem {
                             theEditor.setPage(pEvent.getURL());
                         }
                     } catch (IOException e) {
-                        theLogger.error("Failed to access link", e);
+                        LOGGER.error("Failed to access link", e);
                     }
                 }
             }

@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Transaction builder.
@@ -51,14 +52,14 @@ import org.slf4j.Logger;
  */
 public class TransactionBuilder {
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionBuilder.class);
+
+    /**
      * The updateSet.
      */
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
-
-    /**
-     * The logger.
-     */
-    private final Logger theLogger;
 
     /**
      * The Date Range.
@@ -73,12 +74,9 @@ public class TransactionBuilder {
     /**
      * Constructor.
      * @param pUpdateSet the updateSet
-     * @param pLogger the logger
      */
-    public TransactionBuilder(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                              final Logger pLogger) {
+    public TransactionBuilder(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         theUpdateSet = pUpdateSet;
-        theLogger = pLogger;
     }
 
     /**
@@ -182,7 +180,7 @@ public class TransactionBuilder {
                 return buildDefaultTransactionForCategory((TransactionCategory) pKey);
             }
         } catch (JOceanusException e) {
-            theLogger.error("Unable to build transaction", e);
+            LOGGER.error("Unable to build transaction", e);
         }
 
         /* Unrecognised key */

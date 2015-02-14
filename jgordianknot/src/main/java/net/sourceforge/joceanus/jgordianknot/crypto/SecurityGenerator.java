@@ -27,8 +27,6 @@ import java.security.SecureRandom;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.slf4j.Logger;
-
 /**
  * Generator class for various security primitives.
  */
@@ -104,14 +102,56 @@ public class SecurityGenerator {
     private final SecureRandom theRandom;
 
     /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * Security Register.
      */
     private final SecurityRegister theRegister;
+
+    /**
+     * Default Constructor.
+     * @throws JOceanusException on error
+     */
+    public SecurityGenerator() throws JOceanusException {
+        this(new SecurityParameters());
+    }
+
+    /**
+     * Constructor for explicit provider.
+     * @param pParameters the Security parameters
+     * @throws JOceanusException on error
+     */
+    public SecurityGenerator(final SecurityParameters pParameters) throws JOceanusException {
+        /* Store the provider */
+        theProvider = pParameters.getProvider();
+        theProviderName = theProvider.getProvider();
+
+        /* Ensure that the provider is installed */
+        theProvider.ensureInstalled();
+
+        /* Store parameters */
+        useRestricted = pParameters.useRestricted();
+        useLongHash = pParameters.useLongHash();
+        theCipherSteps = pParameters.getNumCipherSteps();
+        theIterations = pParameters.getNumHashIterations();
+        theNumActiveKeySets = pParameters.getNumActiveKeySets();
+
+        /* Store security phrase */
+        String myPhrase = pParameters.getSecurityPhrase();
+        theSecurityPhrase = (myPhrase == null)
+                                              ? null
+                                              : DataConverter.stringToByteArray(myPhrase);
+
+        /* Create the random builder */
+        theRandomBuilder = new SP800SecureRandomBuilder();
+        theRandomBuilder.setSecurityBytes(theSecurityPhrase);
+
+        /* Create a new secure random generator */
+        SecureRandom myRandom = theRandomBuilder.getRandom();
+        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+        theRandom = generateHashSecureRandom(myType[0], false);
+
+        /* Create the register */
+        theRegister = new SecurityRegister(this);
+    }
 
     /**
      * Access the Security provider.
@@ -194,14 +234,6 @@ public class SecurityGenerator {
     }
 
     /**
-     * Obtain logger.
-     * @return the Logger
-     */
-    public Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
      * Determine key length.
      * @return key length
      */
@@ -209,59 +241,6 @@ public class SecurityGenerator {
         return useRestricted
                             ? SMALL_KEYLEN
                             : BIG_KEYLEN;
-    }
-
-    /**
-     * Default Constructor.
-     * @param pLogger the logger
-     * @throws JOceanusException on error
-     */
-    public SecurityGenerator(final Logger pLogger) throws JOceanusException {
-        this(pLogger, new SecurityParameters());
-    }
-
-    /**
-     * Constructor for explicit provider.
-     * @param pLogger the logger
-     * @param pParameters the Security parameters
-     * @throws JOceanusException on error
-     */
-    public SecurityGenerator(final Logger pLogger,
-                             final SecurityParameters pParameters) throws JOceanusException {
-        /* Store the logger */
-        theLogger = pLogger;
-
-        /* Store the provider */
-        theProvider = pParameters.getProvider();
-        theProviderName = theProvider.getProvider();
-
-        /* Ensure that the provider is installed */
-        theProvider.ensureInstalled();
-
-        /* Store parameters */
-        useRestricted = pParameters.useRestricted();
-        useLongHash = pParameters.useLongHash();
-        theCipherSteps = pParameters.getNumCipherSteps();
-        theIterations = pParameters.getNumHashIterations();
-        theNumActiveKeySets = pParameters.getNumActiveKeySets();
-
-        /* Store security phrase */
-        String myPhrase = pParameters.getSecurityPhrase();
-        theSecurityPhrase = (myPhrase == null)
-                                              ? null
-                                              : DataConverter.stringToByteArray(myPhrase);
-
-        /* Create the random builder */
-        theRandomBuilder = new SP800SecureRandomBuilder();
-        theRandomBuilder.setSecurityBytes(theSecurityPhrase);
-
-        /* Create a new secure random generator */
-        SecureRandom myRandom = theRandomBuilder.getRandom();
-        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
-        theRandom = generateHashSecureRandom(myType[0], false);
-
-        /* Create the register */
-        theRegister = new SecurityRegister(this);
     }
 
     /**

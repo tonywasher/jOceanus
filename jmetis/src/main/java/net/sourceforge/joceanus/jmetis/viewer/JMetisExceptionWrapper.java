@@ -66,6 +66,26 @@ public class JMetisExceptionWrapper
      */
     public static final JDataField FIELD_STACK = FIELD_DEFS.declareLocalField("ProgramStack");
 
+    /**
+     * The wrapped exception.
+     */
+    private final Throwable theWrapped;
+
+    /**
+     * The wrapped class.
+     */
+    private final String theClass;
+
+    /**
+     * Create a new Metis Exception Wrapper for an underlying exception.
+     * @param e the underlying exception
+     */
+    public JMetisExceptionWrapper(final Throwable e) {
+        /* Store details */
+        theWrapped = e;
+        theClass = theWrapped.getClass().getSimpleName();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -116,26 +136,6 @@ public class JMetisExceptionWrapper
     @Override
     public String formatObject() {
         return theClass;
-    }
-
-    /**
-     * The wrapped exception.
-     */
-    private final Throwable theWrapped;
-
-    /**
-     * The wrapped class.
-     */
-    private final String theClass;
-
-    /**
-     * Create a new Metis Exception Wrapper for an underlying exception.
-     * @param e the underlying exception
-     */
-    public JMetisExceptionWrapper(final Throwable e) {
-        /* Store details */
-        theWrapped = e;
-        theClass = theWrapped.getClass().getSimpleName();
     }
 
     /**

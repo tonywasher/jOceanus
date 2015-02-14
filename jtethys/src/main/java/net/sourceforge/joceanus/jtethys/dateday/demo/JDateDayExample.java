@@ -34,8 +34,6 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
@@ -61,6 +59,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -142,67 +143,22 @@ public class JDateDayExample
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getAnonymousLogger();
-
-    @Override
-    public void init() {
-        // Execute a job on the event-dispatching thread; creating this applet's GUI.
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    /* Create the panel */
-                    JPanel myPanel = makePanel();
-                    setContentPane(myPanel);
-                }
-            });
-        } catch (InvocationTargetException e) {
-            theLogger.log(Level.SEVERE, "Failed to invoke thread", e);
-        } catch (InterruptedException e) {
-            theLogger.log(Level.SEVERE, "Thread was interrupted", e);
-        }
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDateDayExample.class);
 
     /**
-     * Create and show the GUI.
+     * The first date format.
      */
-    private static void createAndShowGUI() {
-        try {
-            /* Create the frame */
-            JFrame myFrame = new JFrame("DateDayButton Demo");
-
-            /* Create the Example program */
-            JDateDayExample myProgram = new JDateDayExample();
-
-            /* Create the panel */
-            JPanel myPanel = myProgram.makePanel();
-
-            /* Attach the panel to the frame */
-            myPanel.setOpaque(true);
-            myFrame.setContentPane(myPanel);
-            myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-            /* Show the frame */
-            myFrame.pack();
-            myFrame.setLocationRelativeTo(null);
-            myFrame.setVisible(true);
-        } catch (HeadlessException e) {
-            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
-        }
-    }
+    private static final String DATEFORMAT_1 = "dd-MMM-yyyy";
 
     /**
-     * Main function.
-     * @param args the arguments
+     * The selected format.
      */
-    public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
+    private static final String DATEFORMAT_2 = "dd/MMM/yy";
+
+    /**
+     * The selected format.
+     */
+    private static final String DATEFORMAT_3 = "yyyy/MMM/dd";
 
     /**
      * The table.
@@ -260,21 +216,6 @@ public class JDateDayExample
     private boolean doPretty = true;
 
     /**
-     * The first date format.
-     */
-    private static final String DATEFORMAT_1 = "dd-MMM-yyyy";
-
-    /**
-     * The selected format.
-     */
-    private static final String DATEFORMAT_2 = "dd/MMM/yy";
-
-    /**
-     * The selected format.
-     */
-    private static final String DATEFORMAT_3 = "yyyy/MMM/dd";
-
-    /**
      * The selected format.
      */
     private String theFormat = DATEFORMAT_1;
@@ -293,6 +234,66 @@ public class JDateDayExample
      * The formatter.
      */
     private transient JDateDayFormatter theFormatter = new JDateDayFormatter();
+
+    /**
+     * Create and show the GUI.
+     */
+    private static void createAndShowGUI() {
+        try {
+            /* Create the frame */
+            JFrame myFrame = new JFrame("DateDayButton Demo");
+
+            /* Create the Example program */
+            JDateDayExample myProgram = new JDateDayExample();
+
+            /* Create the panel */
+            JPanel myPanel = myProgram.makePanel();
+
+            /* Attach the panel to the frame */
+            myPanel.setOpaque(true);
+            myFrame.setContentPane(myPanel);
+            myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+            /* Show the frame */
+            myFrame.pack();
+            myFrame.setLocationRelativeTo(null);
+            myFrame.setVisible(true);
+        } catch (HeadlessException e) {
+            LOGGER.error("createGUI didn't complete successfully", e);
+        }
+    }
+
+    /**
+     * Main function.
+     * @param args the arguments
+     */
+    public static void main(final String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
+
+    @Override
+    public void init() {
+        // Execute a job on the event-dispatching thread; creating this applet's GUI.
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    /* Create the panel */
+                    JPanel myPanel = makePanel();
+                    setContentPane(myPanel);
+                }
+            });
+        } catch (InvocationTargetException e) {
+            LOGGER.error("Failed to invoke thread", e);
+        } catch (InterruptedException e) {
+            LOGGER.error("Thread was interrupted", e);
+        }
+    }
 
     /**
      * Create the panel.
@@ -458,13 +459,19 @@ public class JDateDayExample
         /**
          * Column Names.
          */
-        private static final String[] COLUMNS = { "Date", "Description" };
+        private static final String[] COLUMNS =
+        { "Date", "Description" };
 
         /**
          * Data for table.
          */
-        private static final Object[][] DATA = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" }, { DATE_THIRD, "Third Entry" },
-                { DATE_FOURTH, "Fourth Entry" }, { DATE_FIFTH, "Fifth Entry" } };
+        private static final Object[][] DATA =
+        {
+                { DATE_FIRST, "First Entry" },
+                { DATE_SECOND, "Second Entry" },
+                { DATE_THIRD, "Third Entry" },
+                { DATE_FOURTH, "Fourth Entry" },
+                { DATE_FIFTH, "Fifth Entry" } };
 
         @Override
         public int getColumnCount() {
@@ -808,30 +815,6 @@ public class JDateDayExample
         private final boolean doShrinkFromRight;
 
         /**
-         * Obtain locale value.
-         * @return the locale
-         */
-        public Locale getLocale() {
-            return theLocale;
-        }
-
-        /**
-         * Obtain maximum day length.
-         * @return the maximum day length
-         */
-        public int getMaxDayLen() {
-            return theMaxDayLen;
-        }
-
-        /**
-         * Shrink names from right.
-         * @return true/false
-         */
-        public boolean doShrinkFromRight() {
-            return doShrinkFromRight;
-        }
-
-        /**
          * Constructor.
          * @param pLocale the locale
          */
@@ -868,6 +851,30 @@ public class JDateDayExample
             theLocale = pLocale;
             theMaxDayLen = iMaxDayLen;
             doShrinkFromRight = bShrinkFromRight;
+        }
+
+        /**
+         * Obtain locale value.
+         * @return the locale
+         */
+        public Locale getLocale() {
+            return theLocale;
+        }
+
+        /**
+         * Obtain maximum day length.
+         * @return the maximum day length
+         */
+        public int getMaxDayLen() {
+            return theMaxDayLen;
+        }
+
+        /**
+         * Shrink names from right.
+         * @return true/false
+         */
+        public boolean doShrinkFromRight() {
+            return doShrinkFromRight;
         }
 
         @Override

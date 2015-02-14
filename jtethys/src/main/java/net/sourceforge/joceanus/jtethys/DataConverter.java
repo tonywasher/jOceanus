@@ -249,7 +249,7 @@ public final class DataConverter {
         /* While we have digits to format */
         while (myValue > 0) {
             /* Access the digit and move to next one */
-            int myDigit = (int) (myValue & NYBBLE_MASK);
+            int myDigit = myValue & NYBBLE_MASK;
             char myChar = Character.forDigit(myDigit, HEX_RADIX);
             myBuilder.insert(0, myChar);
             myValue >>>= NYBBLE_SHIFT;

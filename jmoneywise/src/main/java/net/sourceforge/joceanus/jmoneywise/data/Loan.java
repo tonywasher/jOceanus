@@ -39,9 +39,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -965,11 +965,6 @@ public class Loan
         @Override
         public JDataFields getItemFields() {
             return Loan.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

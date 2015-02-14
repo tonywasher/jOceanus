@@ -26,8 +26,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 
-import org.slf4j.Logger;
-
 /**
  * Status control interface for use by threads to report status and to detect cancellation.
  * @author Tony Washer
@@ -98,12 +96,6 @@ public interface TaskControl<T extends DataSet<T, ?>> {
      * @return true/false
      */
     boolean isCancelled();
-
-    /**
-     * Obtain logger.
-     * @return the logger
-     */
-    Logger getLogger();
 
     /**
      * Create new profile.

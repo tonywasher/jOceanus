@@ -69,7 +69,6 @@ import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 import net.sourceforge.joceanus.jthemis.svn.threads.UpdateWorkingCopy;
 
-import org.slf4j.Logger;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
@@ -95,11 +94,6 @@ public final class JSvnManager {
      * The Preference Manager.
      */
     private final PreferenceManager thePrefMgr;
-
-    /**
-     * The Logger.
-     */
-    private final Logger theLogger;
 
     /**
      * The Data Manager.
@@ -197,63 +191,25 @@ public final class JSvnManager {
     private final JSvnStatusWindow theStatusPanel;
 
     /**
-     * Obtain preference manager.
-     * @return the preference manager
-     */
-    protected PreferenceManager getPreferenceMgr() {
-        return thePrefMgr;
-    }
-
-    /**
-     * Obtain secure manager.
-     * @return the secure manager
-     */
-    protected SecureManager getSecureMgr() {
-        return theSecureMgr;
-    }
-
-    /**
-     * Obtain logger.
-     * @return the logger
-     */
-    protected Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
-     * Obtain frame.
-     * @return the frame
-     */
-    protected JFrame getFrame() {
-        return theFrame;
-    }
-
-    /**
      * Constructor.
-     * @param pLogger
-     * the logger
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
-    protected JSvnManager(final Logger pLogger) throws JOceanusException {
-        /* Store parameters */
-        theLogger = pLogger;
-
+    protected JSvnManager() throws JOceanusException {
         /* Create the data manager */
-        theDataMgr = new JDataManager(theLogger);
+        theDataMgr = new JDataManager();
 
         /* Create the Tabbed Pane */
         JEnableTabbed myTabs = new JEnableTabbed();
 
         /* Create the preference manager */
-        thePrefMgr = new PreferenceManager(theLogger);
+        thePrefMgr = new PreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
 
         /* Access the Security Preferences */
         SecurityPreferences mySecurity = thePrefMgr.getPreferenceSet(SecurityPreferences.class);
 
         /* Create the Secure Manager */
-        theSecureMgr = mySecurity.getSecurity(theLogger);
+        theSecureMgr = mySecurity.getSecurity();
 
         /* Create the frame */
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
@@ -354,9 +310,32 @@ public final class JSvnManager {
     }
 
     /**
+     * Obtain preference manager.
+     * @return the preference manager
+     */
+    protected PreferenceManager getPreferenceMgr() {
+        return thePrefMgr;
+    }
+
+    /**
+     * Obtain secure manager.
+     * @return the secure manager
+     */
+    protected SecureManager getSecureMgr() {
+        return theSecureMgr;
+    }
+
+    /**
+     * Obtain frame.
+     * @return the frame
+     */
+    protected JFrame getFrame() {
+        return theFrame;
+    }
+
+    /**
      * Declare subversion data.
-     * @param pData
-     * the discover thread
+     * @param pData the discover thread
      */
     protected void setSubversionData(final DiscoverData pData) {
         /* Declare repository to data manager */
@@ -411,8 +390,7 @@ public final class JSvnManager {
 
     /**
      * Declare git data.
-     * @param pGit
-     * the git thread
+     * @param pGit the git thread
      */
     protected void setGitData(final CreateGitRepo pGit) {
         /* Declare repository to data manager */
@@ -425,8 +403,7 @@ public final class JSvnManager {
 
     /**
      * Complete thread task.
-     * @param pTask
-     * the task that has completed
+     * @param pTask the task that has completed
      */
     public void completeTask(final Object pTask) {
         /* If this is the discoverData thread */
@@ -557,8 +534,7 @@ public final class JSvnManager {
 
     /**
      * Run create GitRepo.
-     * @param pSource
-     * the source component
+     * @param pSource the source component
      */
     private void createGitRepo(final SvnComponent pSource) {
         /* Create the worker thread */
@@ -647,12 +623,11 @@ public final class JSvnManager {
         /**
          * Item.
          */
-        private final SvnComponent theSource;
+        private final transient SvnComponent theSource;
 
         /**
          * Constructor.
-         * @param pSource
-         * the source component
+         * @param pSource the source component
          */
         private ItemAction(final SvnComponent pSource) {
             super(pSource.getName());

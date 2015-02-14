@@ -67,10 +67,7 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
         SheetReader<T> myReader = getSheetReader(pTask);
 
         /* Load the backup */
-        T myData = myReader.loadBackup(pFile);
-
-        /* Return the data */
-        return myData;
+        return myReader.loadBackup(pFile);
     }
 
     /**

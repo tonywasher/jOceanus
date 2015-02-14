@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Analysis manager.
@@ -52,10 +53,10 @@ public class AnalysisManager
      */
     private static final long serialVersionUID = -8360259174517408222L;
 
-    @Override
-    public String formatObject() {
-        return getClass().getSimpleName();
-    }
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisManager.class);
 
     /**
      * The base analysis.
@@ -68,9 +69,23 @@ public class AnalysisManager
     private final transient JDateDay theFirstDate;
 
     /**
-     * The logger.
+     * Constructor.
+     * @param pAnalysis the new analysis
      */
-    private final transient Logger theLogger;
+    protected AnalysisManager(final Analysis pAnalysis) {
+        /* Store the parameters */
+        theAnalysis = pAnalysis;
+
+        /* Store the first date */
+        MoneyWiseData myData = theAnalysis.getData();
+        JDateDayRange myRange = myData.getDateRange();
+        theFirstDate = myRange.getStart();
+    }
+
+    @Override
+    public String formatObject() {
+        return getClass().getSimpleName();
+    }
 
     /**
      * Is the analysis manager idle?
@@ -86,23 +101,6 @@ public class AnalysisManager
      */
     public Analysis getAnalysis() {
         return theAnalysis;
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the new analysis
-     * @param pLogger the logger
-     */
-    protected AnalysisManager(final Analysis pAnalysis,
-                              final Logger pLogger) {
-        /* Store the parameters */
-        theAnalysis = pAnalysis;
-        theLogger = pLogger;
-
-        /* Store the first date */
-        MoneyWiseData myData = theAnalysis.getData();
-        JDateDayRange myRange = myData.getDateRange();
-        theFirstDate = myRange.getStart();
     }
 
     /**
@@ -250,13 +248,13 @@ public class AnalysisManager
 
         /* Check identities */
         if (!myDepTotal.equals(myPayTotal)) {
-            theLogger.error("Payee total mismatch");
+            LOGGER.error("Payee total mismatch");
         }
         if (!myDepTotal.equals(myEvtTotal)) {
-            theLogger.error("TransactionCategory total mismatch");
+            LOGGER.error("TransactionCategory total mismatch");
         }
         if (!myDepTotal.equals(myTaxTotal)) {
-            theLogger.error("TaxBasis total mismatch");
+            LOGGER.error("TaxBasis total mismatch");
         }
     }
 }

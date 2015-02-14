@@ -60,14 +60,6 @@ public final class LZMAOutputStream
     private final EncoderService theService;
 
     /**
-     * Obtain the next stream.
-     * @return the stream
-     */
-    protected OutputStream getNextStream() {
-        return theTarget;
-    }
-
-    /**
      * Constructor.
      * @param pService the execution service
      * @param pOutput the output stream to wrap
@@ -85,6 +77,14 @@ public final class LZMAOutputStream
         /* Create encoder service */
         theService = new EncoderService();
         pService.execute(theService);
+    }
+
+    /**
+     * Obtain the next stream.
+     * @return the stream
+     */
+    protected OutputStream getNextStream() {
+        return theTarget;
     }
 
     @Override

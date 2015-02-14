@@ -64,6 +64,27 @@ public class ExcelSheet
     private final boolean isReadOnly;
 
     /**
+     * Constructor for Excel Sheet.
+     * @param pBook the WorkBook
+     * @param pSheet the Excel sheet
+     * @param pIndex the index of the sheet
+     * @param pReadOnly is the sheet readOnly?
+     */
+    protected ExcelSheet(final ExcelWorkBook pBook,
+                         final HSSFSheet pSheet,
+                         final int pIndex,
+                         final boolean pReadOnly) {
+        /* Construct super-class */
+        super(pSheet.getSheetName());
+
+        /* Store parameters */
+        theExcelBook = pBook;
+        theExcelSheet = pSheet;
+        theIndex = pIndex;
+        isReadOnly = pReadOnly;
+    }
+
+    /**
      * evaluate the formula for a cell.
      * @param pCell the cell to evaluate
      * @return the calculated value
@@ -89,27 +110,6 @@ public class ExcelSheet
         return theExcelBook.getDataFormatter();
     }
 
-    /**
-     * Constructor for Excel Sheet.
-     * @param pBook the WorkBook
-     * @param pSheet the Excel sheet
-     * @param pIndex the index of the sheet
-     * @param pReadOnly is the sheet readOnly?
-     */
-    protected ExcelSheet(final ExcelWorkBook pBook,
-                         final HSSFSheet pSheet,
-                         final int pIndex,
-                         final boolean pReadOnly) {
-        /* Construct super-class */
-        super(pSheet.getSheetName());
-
-        /* Store parameters */
-        theExcelBook = pBook;
-        theExcelSheet = pSheet;
-        theIndex = pIndex;
-        isReadOnly = pReadOnly;
-    }
-
     @Override
     public int getSheetIndex() {
         return theIndex;
@@ -119,16 +119,16 @@ public class ExcelSheet
     public int getRowCount() {
         int iLastRowNum = theExcelSheet.getLastRowNum();
         return (iLastRowNum == 0)
-                ? theExcelSheet.getPhysicalNumberOfRows()
-                : iLastRowNum + 1;
+                                 ? theExcelSheet.getPhysicalNumberOfRows()
+                                 : iLastRowNum + 1;
     }
 
     @Override
     public ExcelRow getReadOnlyRowByIndex(final int pRowIndex) {
         HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
         return (myExcelRow == null)
-                ? null
-                : new ExcelRow(this, myExcelRow, pRowIndex, true);
+                                   ? null
+                                   : new ExcelRow(this, myExcelRow, pRowIndex, true);
     }
 
     @Override
@@ -152,8 +152,8 @@ public class ExcelSheet
     @Override
     public ExcelColumn getMutableColumnByIndex(final int pColIndex) {
         return (isReadOnly)
-                ? null
-                : new ExcelColumn(this, pColIndex, false);
+                           ? null
+                           : new ExcelColumn(this, pColIndex, false);
     }
 
     @Override

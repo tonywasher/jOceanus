@@ -50,11 +50,6 @@ public class JScrollMenu
      */
     private final JScrollPopupMenu thePopUp;
 
-    @Override
-    public JScrollPopupMenu getPopupMenu() {
-        return thePopUp;
-    }
-
     /**
      * Constructor.
      * @param pTitle the title of the menu.
@@ -98,6 +93,11 @@ public class JScrollMenu
 
         /* Add listener */
         addChangeListener(this);
+    }
+
+    @Override
+    public JScrollPopupMenu getPopupMenu() {
+        return thePopUp;
     }
 
     @Override

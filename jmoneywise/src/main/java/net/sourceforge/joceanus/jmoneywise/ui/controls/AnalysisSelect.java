@@ -129,7 +129,7 @@ public class AnalysisSelect
     /**
      * View.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Analysis Manager.
@@ -139,17 +139,17 @@ public class AnalysisSelect
     /**
      * Analysis.
      */
-    private Analysis theAnalysis;
+    private transient Analysis theAnalysis;
 
     /**
      * Analysis State.
      */
-    private AnalysisState theState;
+    private transient AnalysisState theState;
 
     /**
      * The savePoint.
      */
-    private AnalysisState theSavePoint;
+    private transient AnalysisState theSavePoint;
 
     /**
      * Range Button.
@@ -269,7 +269,7 @@ public class AnalysisSelect
     /**
      * Select panel map.
      */
-    private final Map<AnalysisType, AnalysisFilterSelection> theMap;
+    private final transient Map<AnalysisType, AnalysisFilterSelection> theMap;
 
     /**
      * Obtain the DateDayRange.

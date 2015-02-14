@@ -70,11 +70,6 @@ public abstract class PreferenceSet
      */
     private final JDataFields theFields = new JDataFields(PreferenceSet.class.getSimpleName());
 
-    @Override
-    public JDataFields getDataFields() {
-        return theFields;
-    }
-
     /**
      * The Preference node for this set.
      */
@@ -89,14 +84,6 @@ public abstract class PreferenceSet
      * The list of preferences that have a value on initialisation.
      */
     private String[] theActive = null;
-
-    /**
-     * Obtain the collection of preferences.
-     * @return the preferences
-     */
-    public Collection<PreferenceItem> getPreferences() {
-        return theMap.values();
-    }
 
     /**
      * Constructor.
@@ -122,6 +109,19 @@ public abstract class PreferenceSet
 
         /* Store preference changes */
         storeChanges();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return theFields;
+    }
+
+    /**
+     * Obtain the collection of preferences.
+     * @return the preferences
+     */
+    public Collection<PreferenceItem> getPreferences() {
+        return theMap.values();
     }
 
     /**
@@ -657,6 +657,25 @@ public abstract class PreferenceSet
         private boolean isChanged = false;
 
         /**
+         * Constructor.
+         * @param pName the name of the preference
+         * @param pDefault the default value
+         * @param pType the type of the preference
+         */
+        private PreferenceItem(final String pName,
+                               final Object pDefault,
+                               final PreferenceType pType) {
+            /* Store name and type */
+            theName = pName;
+            theDefault = pDefault;
+            theType = pType;
+            theDisplay = getDisplayName(theName);
+
+            /* Create the DataField */
+            theField = theFields.declareLocalField(pName);
+        }
+
+        /**
          * Obtain the name of the preference.
          * @return the name of the preference
          */
@@ -705,25 +724,6 @@ public abstract class PreferenceSet
          */
         public boolean isChanged() {
             return isChanged;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the name of the preference
-         * @param pDefault the default value
-         * @param pType the type of the preference
-         */
-        private PreferenceItem(final String pName,
-                               final Object pDefault,
-                               final PreferenceType pType) {
-            /* Store name and type */
-            theName = pName;
-            theDefault = pDefault;
-            theType = pType;
-            theDisplay = getDisplayName(theName);
-
-            /* Create the DataField */
-            theField = theFields.declareLocalField(pName);
         }
 
         /**
@@ -782,14 +782,6 @@ public abstract class PreferenceSet
     public class IntegerPreference
             extends PreferenceItem {
         /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public Integer getValue() {
-            return (Integer) super.getValue();
-        }
-
-        /**
          * Constructor.
          * @param pName the name of the preference
          * @param pDefault the default value
@@ -818,6 +810,14 @@ public abstract class PreferenceSet
         }
 
         /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public Integer getValue() {
+            return (Integer) super.getValue();
+        }
+
+        /**
          * Set value.
          * @param pNewValue the new value
          */
@@ -838,14 +838,6 @@ public abstract class PreferenceSet
      */
     public class BooleanPreference
             extends PreferenceItem {
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public Boolean getValue() {
-            return (Boolean) super.getValue();
-        }
-
         /**
          * Constructor.
          * @param pName the name of the preference
@@ -874,6 +866,14 @@ public abstract class PreferenceSet
                 /* Use default as a changed value */
                 super.setNewValue(pDefault);
             }
+        }
+
+        /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public Boolean getValue() {
+            return (Boolean) super.getValue();
         }
 
         /**
@@ -906,14 +906,6 @@ public abstract class PreferenceSet
      */
     public class StringPreference
             extends PreferenceItem {
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public String getValue() {
-            return (String) super.getValue();
-        }
-
         /**
          * Constructor.
          * @param pName the name of the preference
@@ -955,6 +947,14 @@ public abstract class PreferenceSet
         }
 
         /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public String getValue() {
+            return (String) super.getValue();
+        }
+
+        /**
          * Set value.
          * @param pNewValue the new value
          */
@@ -977,14 +977,6 @@ public abstract class PreferenceSet
      */
     public class DatePreference
             extends PreferenceItem {
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public JDateDay getValue() {
-            return (JDateDay) super.getValue();
-        }
-
         /**
          * Constructor.
          * @param pName the name of the preference
@@ -1021,6 +1013,14 @@ public abstract class PreferenceSet
         }
 
         /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public JDateDay getValue() {
+            return (JDateDay) super.getValue();
+        }
+
+        /**
          * Set value.
          * @param pNewValue the new value
          */
@@ -1048,14 +1048,6 @@ public abstract class PreferenceSet
      */
     public class ColorPreference
             extends PreferenceItem {
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public Color getValue() {
-            return (Color) super.getValue();
-        }
-
         /**
          * Constructor.
          * @param pName the name of the preference
@@ -1092,6 +1084,14 @@ public abstract class PreferenceSet
         }
 
         /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public Color getValue() {
+            return (Color) super.getValue();
+        }
+
+        /**
          * Set value.
          * @param pNewValue the new value
          */
@@ -1112,14 +1112,6 @@ public abstract class PreferenceSet
      */
     public class FontPreference
             extends PreferenceItem {
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public Font getValue() {
-            return (Font) super.getValue();
-        }
-
         /**
          * Constructor.
          * @param pName the name of the preference
@@ -1167,6 +1159,14 @@ public abstract class PreferenceSet
         }
 
         /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public Font getValue() {
+            return (Font) super.getValue();
+        }
+
+        /**
          * Set value.
          * @param pNewValue the new value
          */
@@ -1200,22 +1200,6 @@ public abstract class PreferenceSet
          * The enum values.
          */
         private E[] theValues = null;
-
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
-        public E getValue() {
-            return theClass.cast(super.getValue());
-        }
-
-        /**
-         * Obtain the values of the preference.
-         * @return the values of the preference
-         */
-        public E[] getValues() {
-            return Arrays.copyOf(theValues, theValues.length);
-        }
 
         /**
          * Constructor.
@@ -1257,6 +1241,22 @@ public abstract class PreferenceSet
                 /* Use default as a changed value */
                 super.setNewValue(pDefault);
             }
+        }
+
+        /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public E getValue() {
+            return theClass.cast(super.getValue());
+        }
+
+        /**
+         * Obtain the values of the preference.
+         * @return the values of the preference
+         */
+        public E[] getValues() {
+            return Arrays.copyOf(theValues, theValues.length);
         }
 
         /**

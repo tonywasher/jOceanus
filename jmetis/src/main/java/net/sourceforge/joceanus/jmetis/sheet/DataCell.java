@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -30,8 +32,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -51,6 +51,19 @@ public abstract class DataCell {
      * The position of the cell.
      */
     private final CellPosition thePosition;
+
+    /**
+     * Constructor.
+     * @param pRow the row for the cell
+     * @param pColIndex the column index
+     */
+    protected DataCell(final DataRow pRow,
+                       final int pColIndex) {
+        /* Store parameters */
+        theRow = pRow;
+        theView = pRow.getView();
+        thePosition = new CellPosition(pColIndex, pRow.getRowIndex());
+    }
 
     /**
      * Obtain the underlying sheet.
@@ -90,19 +103,6 @@ public abstract class DataCell {
      */
     public int getCellIndex() {
         return thePosition.getColumnIndex();
-    }
-
-    /**
-     * Constructor.
-     * @param pRow the row for the cell
-     * @param pColIndex the column index
-     */
-    protected DataCell(final DataRow pRow,
-                       final int pColIndex) {
-        /* Store parameters */
-        theRow = pRow;
-        theView = pRow.getView();
-        thePosition = new CellPosition(pColIndex, pRow.getRowIndex());
     }
 
     /**
@@ -181,8 +181,8 @@ public abstract class DataCell {
     public byte[] getBytesValue() throws JOceanusException {
         String myValue = getStringValue();
         return (myValue == null)
-                ? null
-                : DataConverter.base64ToByteArray(myValue);
+                                ? null
+                                : DataConverter.base64ToByteArray(myValue);
     }
 
     /**
@@ -193,8 +193,8 @@ public abstract class DataCell {
     public char[] getCharArrayValue() throws JOceanusException {
         byte[] myValue = getBytesValue();
         return (myValue == null)
-                ? null
-                : DataConverter.bytesToCharArray(myValue);
+                                ? null
+                                : DataConverter.bytesToCharArray(myValue);
     }
 
     /**

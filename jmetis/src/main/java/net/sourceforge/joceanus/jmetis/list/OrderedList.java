@@ -82,51 +82,27 @@ public class OrderedList<T extends Comparable<? super T>>
     /**
      * The first node in the list.
      */
-    private transient OrderedNode<T> theFirst = null;
+    private OrderedNode<T> theFirst = null;
 
     /**
      * The last node in the list.
      */
-    private transient OrderedNode<T> theLast = null;
+    private OrderedNode<T> theLast = null;
 
     /**
      * The modification count.
      */
-    private transient int theModCount = 0;
+    private int theModCount = 0;
 
     /**
      * Index map for list.
      */
-    private transient OrderedIndex<T> theIndexMap;
+    private OrderedIndex<T> theIndexMap;
 
     /**
      * Class of the objects held in this list.
      */
-    private transient Class<T> theClass;
-
-    /**
-     * Obtain the class of objects in this sorted list.
-     * @return should we skip hidden elements
-     */
-    public Class<T> getBaseClass() {
-        return theClass;
-    }
-
-    /**
-     * get modification count.
-     * @return the modification count
-     */
-    protected int getModCount() {
-        return theModCount;
-    }
-
-    /**
-     * obtain index.
-     * @return the index
-     */
-    protected OrderedIndex<T> getIndex() {
-        return theIndexMap;
-    }
+    private Class<T> theClass;
 
     /**
      * Construct a list.
@@ -189,6 +165,30 @@ public class OrderedList<T extends Comparable<? super T>>
 
         /* Link the index */
         theIndexMap.declareList(this);
+    }
+
+    /**
+     * Obtain the class of objects in this sorted list.
+     * @return should we skip hidden elements
+     */
+    public Class<T> getBaseClass() {
+        return theClass;
+    }
+
+    /**
+     * get modification count.
+     * @return the modification count
+     */
+    protected int getModCount() {
+        return theModCount;
+    }
+
+    /**
+     * obtain index.
+     * @return the index
+     */
+    protected OrderedIndex<T> getIndex() {
+        return theIndexMap;
     }
 
     @Override

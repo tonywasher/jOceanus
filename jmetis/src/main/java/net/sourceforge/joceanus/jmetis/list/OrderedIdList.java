@@ -45,15 +45,6 @@ import java.util.Map;
 public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>>
         extends OrderedList<T> {
     /**
-     * Get the index as an OrderedIdIndex.
-     * @return the index
-     */
-    @SuppressWarnings("unchecked")
-    private OrderedIdIndex<I, T> getTheIndex() {
-        return (OrderedIdIndex<I, T>) super.getIndex();
-    }
-
-    /**
      * Ordered Index.
      */
     private final OrderedIdIndex<I, T> theIndex;
@@ -116,6 +107,15 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
                             final OrderedIdIndex<I, T> pIndex) {
         super(pClass, pIndex);
         theIndex = pIndex;
+    }
+
+    /**
+     * Get the index as an OrderedIdIndex.
+     * @return the index
+     */
+    @SuppressWarnings("unchecked")
+    private OrderedIdIndex<I, T> getTheIndex() {
+        return (OrderedIdIndex<I, T>) super.getIndex();
     }
 
     /**

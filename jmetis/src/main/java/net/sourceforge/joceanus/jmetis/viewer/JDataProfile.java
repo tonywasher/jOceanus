@@ -115,6 +115,17 @@ public class JDataProfile
      */
     private List<JDataProfile> theSubTasks;
 
+    /**
+     * Constructor.
+     * @param pName the name of the step
+     */
+    public JDataProfile(final String pName) {
+        /* Record the name and start the timer */
+        theName = pName;
+        theStart = System.nanoTime();
+        theStatus = ProfileStatus.RUNNING;
+    }
+
     @Override
     public String formatObject() {
         /* Format the profile */
@@ -174,17 +185,6 @@ public class JDataProfile
      */
     public String getName() {
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param pName the name of the step
-     */
-    public JDataProfile(final String pName) {
-        /* Record the name and start the timer */
-        theName = pName;
-        theStart = System.nanoTime();
-        theStatus = ProfileStatus.RUNNING;
     }
 
     /**

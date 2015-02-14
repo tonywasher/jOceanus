@@ -50,20 +50,20 @@ public enum WorkBookType {
     private final String theExtension;
 
     /**
+     * Constructor.
+     * @param pExtension the extension code
+     */
+    private WorkBookType(final String pExtension) {
+        theExtension = pExtension;
+    }
+
+    /**
      * Obtain the extension.
      * @return the extension
      */
     public String getExtension() {
         return "."
                + theExtension;
-    }
-
-    /**
-     * Constructor.
-     * @param pExtension the extension code
-     */
-    private WorkBookType(final String pExtension) {
-        theExtension = pExtension;
     }
 
     /**

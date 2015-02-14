@@ -40,8 +40,6 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
-import org.slf4j.Logger;
-
 /**
  * Data Control for MoneyWiseApp.
  * @author Tony Washer
@@ -67,6 +65,19 @@ public class View
      * The dilution event map.
      */
     private DilutionEventMap theDilutions = null;
+
+    /**
+     * Constructor.
+     * @param pProfile the startup profile
+     * @throws JOceanusException on error
+     */
+    public View(final JDataProfile pProfile) throws JOceanusException {
+        /* Call super-constructor */
+        super(pProfile);
+
+        /* Create an empty data set */
+        setData(getNewData());
+    }
 
     /**
      * Obtain the date range.
@@ -101,21 +112,6 @@ public class View
     }
 
     /**
-     * Constructor.
-     * @param pProfile the startup profile
-     * @param pLogger the logger.
-     * @throws JOceanusException on error
-     */
-    public View(final JDataProfile pProfile,
-                final Logger pLogger) throws JOceanusException {
-        /* Call super-constructor */
-        super(pProfile, pLogger);
-
-        /* Create an empty data set */
-        setData(getNewData());
-    }
-
-    /**
      * Obtain a new DataSet.
      * @return new DataSet
      */
@@ -127,7 +123,7 @@ public class View
     @Override
     public Database<MoneyWiseData> getDatabase() throws JOceanusException {
         PreferenceManager myMgr = getPreferenceMgr();
-        return new MoneyWiseDatabase(getLogger(), myMgr.getPreferenceSet(DatabasePreferences.class));
+        return new MoneyWiseDatabase(myMgr.getPreferenceSet(DatabasePreferences.class));
     }
 
     /**

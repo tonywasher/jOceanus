@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Preference maintenance panel.
@@ -103,6 +104,11 @@ public class PreferencesPanel
     private static final String ERROR_STORE = PreferenceResource.UI_ERROR_STORE.getValue();
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesPanel.class);
+
+    /**
      * The field manager.
      */
     private final transient JFieldManager theFieldMgr;
@@ -111,11 +117,6 @@ public class PreferencesPanel
      * The Data entry.
      */
     private final transient JDataEntry theDataEntry;
-
-    /**
-     * The logger.
-     */
-    private final transient Logger theLogger;
 
     /**
      * The OK button.
@@ -155,7 +156,7 @@ public class PreferencesPanel
     /**
      * The list of panels.
      */
-    private final List<PreferenceSetPanel> thePanels;
+    private final transient List<PreferenceSetPanel> thePanels;
 
     /**
      * The listener.
@@ -175,7 +176,6 @@ public class PreferencesPanel
                             final JDataEntry pSection) {
         /* Access field manager and logger */
         theFieldMgr = pFieldMgr;
-        theLogger = pPreferenceMgr.getLogger();
 
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
@@ -278,7 +278,7 @@ public class PreferencesPanel
      */
     private void registerSet(final PreferenceSet pSet) {
         /* Create the underlying panel */
-        PreferenceSetPanel myPanel = new PreferenceSetPanel(theLogger, theFieldMgr, pSet);
+        PreferenceSetPanel myPanel = new PreferenceSetPanel(theFieldMgr, pSet);
 
         /* Add the panel */
         theProperties.add(myPanel, myPanel.toString());
@@ -312,7 +312,7 @@ public class PreferencesPanel
         try {
             theActive.storeChanges();
         } catch (JOceanusException e) {
-            theLogger.error(ERROR_STORE, e);
+            LOGGER.error(ERROR_STORE, e);
         }
 
         /* Set correct visibility */

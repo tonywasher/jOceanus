@@ -31,6 +31,7 @@ import java.util.Arrays;
 
 import javax.swing.JTextField;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.
@@ -70,14 +70,6 @@ public class ValueField
      * Value property.
      */
     public static final String PROPERTY_VALUE = "value";
-
-    /**
-     * Get the Value.
-     * @return the value
-     */
-    public Object getValue() {
-        return theModel.getValue();
-    }
 
     /**
      * Constructor.
@@ -140,6 +132,14 @@ public class ValueField
 
         /* Add Focus Listener */
         addFocusListener(new TextFocus());
+    }
+
+    /**
+     * Get the Value.
+     * @return the value
+     */
+    public Object getValue() {
+        return theModel.getValue();
     }
 
     /**
@@ -452,8 +452,8 @@ public class ValueField
 
             /* Set edit and display values */
             theString = (pValue == null)
-                    ? ""
-                    : Integer.toString(getValue());
+                                        ? ""
+                                        : Integer.toString(getValue());
             establishStrings();
         }
 
@@ -515,16 +515,16 @@ public class ValueField
 
             /* Store the new value */
             super.setValue((pValue == null)
-                    ? null
-                    : new JMoney(myNew));
+                                           ? null
+                                           : new JMoney(myNew));
 
             /* Set new edit and display values */
             theDisplayString = ((myNew == null)
-                    ? ""
-                    : theFormatter.formatObject(myNew));
+                                               ? ""
+                                               : theFormatter.formatObject(myNew));
             theEditString = ((myNew == null)
-                    ? ""
-                    : myNew.toString());
+                                            ? ""
+                                            : myNew.toString());
             establishStrings();
         }
 
@@ -586,16 +586,16 @@ public class ValueField
 
             /* Store the new value */
             super.setValue((pValue == null)
-                    ? null
-                    : new JRate(myNew));
+                                           ? null
+                                           : new JRate(myNew));
 
             /* Set new edit and display values */
             theDisplayString = ((myNew == null)
-                    ? ""
-                    : theFormatter.formatObject(myNew));
+                                               ? ""
+                                               : theFormatter.formatObject(myNew));
             theEditString = ((myNew == null)
-                    ? ""
-                    : myNew.toString());
+                                            ? ""
+                                            : myNew.toString());
             establishStrings();
         }
 
@@ -657,16 +657,16 @@ public class ValueField
 
             /* Store the new value */
             super.setValue((pValue == null)
-                    ? null
-                    : new JUnits(myNew));
+                                           ? null
+                                           : new JUnits(myNew));
 
             /* Set new edit and display values */
             theDisplayString = ((myNew == null)
-                    ? ""
-                    : theFormatter.formatObject(myNew));
+                                               ? ""
+                                               : theFormatter.formatObject(myNew));
             theEditString = ((myNew == null)
-                    ? ""
-                    : myNew.toString());
+                                            ? ""
+                                            : myNew.toString());
             establishStrings();
         }
 
@@ -728,16 +728,16 @@ public class ValueField
 
             /* Store the new value */
             super.setValue((pValue == null)
-                    ? null
-                    : new JPrice(myNew));
+                                           ? null
+                                           : new JPrice(myNew));
 
             /* Set new edit and display values */
             theDisplayString = ((myNew == null)
-                    ? ""
-                    : theFormatter.formatObject(myNew));
+                                               ? ""
+                                               : theFormatter.formatObject(myNew));
             theEditString = ((myNew == null)
-                    ? ""
-                    : myNew.toString());
+                                            ? ""
+                                            : myNew.toString());
             establishStrings();
         }
 
@@ -799,16 +799,16 @@ public class ValueField
 
             /* Store the new value */
             super.setValue((pValue == null)
-                    ? null
-                    : new JDilution(myNew));
+                                           ? null
+                                           : new JDilution(myNew));
 
             /* Set new edit and display values */
             theDisplayString = ((myNew == null)
-                    ? ""
-                    : theFormatter.formatObject(myNew));
+                                               ? ""
+                                               : theFormatter.formatObject(myNew));
             theEditString = ((myNew == null)
-                    ? ""
-                    : myNew.toString());
+                                            ? ""
+                                            : myNew.toString());
             establishStrings();
         }
 
@@ -870,13 +870,13 @@ public class ValueField
 
             /* Store the new value */
             super.setValue((pValue == null)
-                    ? null
-                    : Arrays.copyOf(myNew, myNew.length));
+                                           ? null
+                                           : Arrays.copyOf(myNew, myNew.length));
 
             /* Set default edit/display values */
             theEditString = ((myNew == null)
-                    ? ""
-                    : new String(myNew));
+                                            ? ""
+                                            : new String(myNew));
             theDisplayString = "";
 
             /* Set new display value */

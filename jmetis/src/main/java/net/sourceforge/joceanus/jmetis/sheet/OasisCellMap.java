@@ -161,8 +161,8 @@ public class OasisCellMap {
         /* Just return the cell */
         CellReference myRef = theCells.get(pCellIndex);
         return myRef.isDataEmpty()
-                ? null
-                : myRef.getReadOnlyCell();
+                                  ? null
+                                  : myRef.getReadOnlyCell();
     }
 
     /**
@@ -265,26 +265,6 @@ public class OasisCellMap {
         private TableTableCellElement theElement;
 
         /**
-         * Access Repeat count.
-         * @return the repeat count
-         */
-        private int getRepeat() {
-            /* Determine the maximum instance */
-            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
-            return (myRepeat == null)
-                    ? 1
-                    : myRepeat;
-        }
-
-        /**
-         * Access Cell element.
-         * @return the element
-         */
-        private TableTableCellElement getElement() {
-            return theElement;
-        }
-
-        /**
          * Constructor.
          * @param pElement the cell element
          * @param pIndex the cell index
@@ -297,6 +277,26 @@ public class OasisCellMap {
             theIndex = pIndex;
             theInstance = pInstance;
             theElement = pElement;
+        }
+
+        /**
+         * Access Repeat count.
+         * @return the repeat count
+         */
+        private int getRepeat() {
+            /* Determine the maximum instance */
+            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
+            return (myRepeat == null)
+                                     ? 1
+                                     : myRepeat;
+        }
+
+        /**
+         * Access Cell element.
+         * @return the element
+         */
+        private TableTableCellElement getElement() {
+            return theElement;
         }
 
         /**

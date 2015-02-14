@@ -57,6 +57,21 @@ public class DigestOutputStream
     private long theDataLen = 0;
 
     /**
+     * Construct the output stream.
+     * @param pDigest the message digest
+     * @param pStream the stream to write encrypted data to
+     * @throws JOceanusException on error
+     */
+    public DigestOutputStream(final DataDigest pDigest,
+                              final OutputStream pStream) throws JOceanusException {
+        /* Store the data digest */
+        theDigest = pDigest;
+
+        /* Store the stream */
+        theStream = pStream;
+    }
+
+    /**
      * Access the digest of the data written.
      * @return the digest of data written
      */
@@ -86,21 +101,6 @@ public class DigestOutputStream
      */
     protected OutputStream getNextStream() {
         return theStream;
-    }
-
-    /**
-     * Construct the output stream.
-     * @param pDigest the message digest
-     * @param pStream the stream to write encrypted data to
-     * @throws JOceanusException on error
-     */
-    public DigestOutputStream(final DataDigest pDigest,
-                              final OutputStream pStream) throws JOceanusException {
-        /* Store the data digest */
-        theDigest = pDigest;
-
-        /* Store the stream */
-        theStream = pStream;
     }
 
     @Override

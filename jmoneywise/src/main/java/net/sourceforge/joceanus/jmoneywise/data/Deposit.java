@@ -40,9 +40,9 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -1193,11 +1193,6 @@ public class Deposit
         @Override
         public JDataFields getItemFields() {
             return Deposit.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

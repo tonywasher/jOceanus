@@ -49,12 +49,24 @@ public class JIconButton<T>
     /**
      * Button value.
      */
-    private T theValue;
+    private transient T theValue;
 
     /**
      * State Machine.
      */
-    private final IconButtonState<T> theState;
+    private final transient IconButtonState<T> theState;
+
+    /**
+     * Constructor.
+     * @param pState the state machine
+     */
+    public JIconButton(final IconButtonState<T> pState) {
+        /* Store the state */
+        theState = pState;
+
+        /* Declare this button to the state */
+        pState.declareButton(this);
+    }
 
     /**
      * Obtain value.
@@ -70,18 +82,6 @@ public class JIconButton<T>
      */
     public IconButtonState<T> getState() {
         return theState;
-    }
-
-    /**
-     * Constructor.
-     * @param pState the state machine
-     */
-    public JIconButton(final IconButtonState<T> pState) {
-        /* Store the state */
-        theState = pState;
-
-        /* Declare this button to the state */
-        pState.declareButton(this);
     }
 
     /**

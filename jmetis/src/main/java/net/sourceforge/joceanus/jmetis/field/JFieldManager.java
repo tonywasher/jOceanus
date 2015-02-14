@@ -145,6 +145,25 @@ public class JFieldManager {
     private Border theErrorBorder;
 
     /**
+     * Constructor.
+     * @param pManager the data manager
+     * @param pConfig the render configuration
+     */
+    public JFieldManager(final JDataManager pManager,
+                         final JFieldConfig pConfig) {
+        /* Store the parameters */
+        theDataManager = pManager;
+        theConfig = pConfig;
+
+        /* Create data formatter */
+        theFormatter = new JDataFormatter();
+        theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
+
+        /* Process the configuration */
+        processConfiguration();
+    }
+
+    /**
      * Obtain the data formatter.
      * @return the formatter
      */
@@ -169,25 +188,6 @@ public class JFieldManager {
          * @param pData the Field details
          */
         void populateFieldData(final JFieldData pData);
-    }
-
-    /**
-     * Constructor.
-     * @param pManager the data manager
-     * @param pConfig the render configuration
-     */
-    public JFieldManager(final JDataManager pManager,
-                         final JFieldConfig pConfig) {
-        /* Store the parameters */
-        theDataManager = pManager;
-        theConfig = pConfig;
-
-        /* Create data formatter */
-        theFormatter = new JDataFormatter();
-        theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
-
-        /* Process the configuration */
-        processConfiguration();
     }
 
     /**

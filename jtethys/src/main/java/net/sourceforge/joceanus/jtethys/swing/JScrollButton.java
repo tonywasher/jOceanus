@@ -55,12 +55,12 @@ public class JScrollButton<T>
     /**
      * Menu Builder.
      */
-    private final JScrollMenuBuilder<T> theMenuBuilder;
+    private final transient JScrollMenuBuilder<T> theMenuBuilder;
 
     /**
      * Value.
      */
-    private T theValue;
+    private transient T theValue;
 
     /**
      * Name.
@@ -76,6 +76,48 @@ public class JScrollButton<T>
      * Fire on menu close.
      */
     private boolean fireOnClose;
+
+    /**
+     * Constructor.
+     */
+    public JScrollButton() {
+        this(null, ArrowIcon.DOWN);
+    }
+
+    /**
+     * Constructor.
+     * @param pText the fixed text.
+     */
+    public JScrollButton(final String pText) {
+        this(pText, ArrowIcon.DOWN);
+    }
+
+    /**
+     * Constructor.
+     * @param pIcon the icon.
+     */
+    public JScrollButton(final Icon pIcon) {
+        this("", pIcon);
+    }
+
+    /**
+     * Constructor.
+     * @param pText the fixed text.
+     * @param pIcon the icon
+     */
+    private JScrollButton(final String pText,
+                          final Icon pIcon) {
+        super(pIcon);
+        setVerticalTextPosition(AbstractButton.CENTER);
+        setHorizontalTextPosition(AbstractButton.LEFT);
+        theMenuBuilder = new JScrollMenuBuilder<T>(this);
+        theText = pText;
+        fireOnClose = false;
+        if ((theText != null)
+            && (theText.length() > 0)) {
+            setText(theText);
+        }
+    }
 
     /**
      * Set the value.
@@ -208,48 +250,6 @@ public class JScrollButton<T>
     }
 
     /**
-     * Constructor.
-     */
-    public JScrollButton() {
-        this(null, ArrowIcon.DOWN);
-    }
-
-    /**
-     * Constructor.
-     * @param pText the fixed text.
-     */
-    public JScrollButton(final String pText) {
-        this(pText, ArrowIcon.DOWN);
-    }
-
-    /**
-     * Constructor.
-     * @param pIcon the icon.
-     */
-    public JScrollButton(final Icon pIcon) {
-        this("", pIcon);
-    }
-
-    /**
-     * Constructor.
-     * @param pText the fixed text.
-     * @param pIcon the icon
-     */
-    private JScrollButton(final String pText,
-                          final Icon pIcon) {
-        super(pIcon);
-        setVerticalTextPosition(AbstractButton.CENTER);
-        setHorizontalTextPosition(AbstractButton.LEFT);
-        theMenuBuilder = new JScrollMenuBuilder<T>(this);
-        theText = pText;
-        fireOnClose = false;
-        if ((theText != null)
-            && (theText.length() > 0)) {
-            setText(theText);
-        }
-    }
-
-    /**
      * MenuBuilder class.
      * @param <T> the object type
      */
@@ -272,14 +272,6 @@ public class JScrollButton<T>
         private JScrollPopupMenu theMenu;
 
         /**
-         * Are we building the menu?
-         * @return true/false
-         */
-        public boolean buildingMenu() {
-            return buildingMenu;
-        }
-
-        /**
          * Constructor.
          * @param pButton the button
          */
@@ -287,6 +279,14 @@ public class JScrollButton<T>
             theButton = pButton;
             theButton.addActionListener(this);
             theMenu = new JScrollPopupMenu();
+        }
+
+        /**
+         * Are we building the menu?
+         * @return true/false
+         */
+        public boolean buildingMenu() {
+            return buildingMenu;
         }
 
         /**
@@ -496,7 +496,7 @@ public class JScrollButton<T>
         /**
          * Item.
          */
-        private final T theItem;
+        private final transient T theItem;
 
         /**
          * Name.

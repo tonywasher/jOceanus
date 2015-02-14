@@ -67,6 +67,14 @@ public enum MacType {
      */
     private String theName;
 
+    /**
+     * Constructor.
+     * @param id the id
+     */
+    private MacType(final int id) {
+        theId = id;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -85,14 +93,6 @@ public enum MacType {
      */
     public int getId() {
         return theId;
-    }
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    private MacType(final int id) {
-        theId = id;
     }
 
     /**

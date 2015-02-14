@@ -34,8 +34,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
 
-import org.slf4j.Logger;
-
 /**
  * Represents a repository.
  * @author Tony Washer
@@ -94,11 +92,6 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
     }
 
     /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * The Preference Manager.
      */
     private final PreferenceManager thePreferenceMgr;
@@ -124,19 +117,25 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
     private final Map<MvnProjectId, ScmTag<?, ?, ?, R>> theTagMap;
 
     /**
+     * Constructor.
+     * @param pPreferenceMgr the preference manager
+     * @throws JOceanusException on error
+     */
+    public ScmRepository(final PreferenceManager pPreferenceMgr) throws JOceanusException {
+        /* Store the preference manager */
+        thePreferenceMgr = pPreferenceMgr;
+
+        /* Allocate the maps */
+        theBranchMap = new HashMap<MvnProjectId, ScmBranch<?, ?, R>>();
+        theTagMap = new HashMap<MvnProjectId, ScmTag<?, ?, ?, R>>();
+    }
+
+    /**
      * Obtain the repository name.
      * @return the name
      */
     public String getName() {
         return theName;
-    }
-
-    /**
-     * Obtain logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theLogger;
     }
 
     /**
@@ -169,21 +168,6 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
      */
     protected void setComponents(final ScmComponentList<?, R> pComponents) {
         theComponents = pComponents;
-    }
-
-    /**
-     * Constructor.
-     * @param pPreferenceMgr the preference manager
-     * @throws JOceanusException on error
-     */
-    public ScmRepository(final PreferenceManager pPreferenceMgr) throws JOceanusException {
-        /* Store the preference manager */
-        thePreferenceMgr = pPreferenceMgr;
-        theLogger = thePreferenceMgr.getLogger();
-
-        /* Allocate the maps */
-        theBranchMap = new HashMap<MvnProjectId, ScmBranch<?, ?, R>>();
-        theTagMap = new HashMap<MvnProjectId, ScmTag<?, ?, ?, R>>();
     }
 
     @Override
