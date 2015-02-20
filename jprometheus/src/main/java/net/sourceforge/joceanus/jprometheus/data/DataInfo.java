@@ -64,11 +64,6 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFO_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * InfoType Field Id.
      */
@@ -103,6 +98,108 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Invalid Info Class Error.
      */
     protected static final String ERROR_BADINFOCLASS = PrometheusDataResource.DATAINFO_ERROR_CLASS.getValue();
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+                       final DataInfo<T, O, I, S, E> pInfo) {
+        /* Set standard values */
+        super(pList, pInfo);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList) {
+        /* Set standard values */
+        super(pList, 0);
+    }
+
+    /**
+     * Secure constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uKeySetId the keySet id
+     * @param uInfoTypeId the info id
+     * @param uOwnerId the owner id
+     * @throws JOceanusException on error
+     */
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+                       final Integer uId,
+                       final Integer uKeySetId,
+                       final Integer uInfoTypeId,
+                       final Integer uOwnerId) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, uId);
+
+        /* Record the Ids */
+        setValueInfoType(uInfoTypeId);
+        setValueOwner(uOwnerId);
+
+        /* Store the keySetId */
+        setDataKeySet(uKeySetId);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param pInfoType the info type
+     * @param pOwner the owner
+     */
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+                       final Integer uId,
+                       final I pInfoType,
+                       final O pOwner) {
+        /* Initialise the item */
+        super(pList, uId);
+
+        /* Record the parameters */
+        setValueInfoType(pInfoType);
+        setValueOwner(pOwner);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList the list
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    @SuppressWarnings("unchecked")
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+                       final DataValues<E> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the InfoType */
+        Object myValue = pValues.getValue(FIELD_INFOTYPE);
+        if (myValue instanceof Integer) {
+            setValueInfoType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueInfoType((String) myValue);
+        } else if (myValue instanceof StaticData) {
+            setValueInfoType((I) myValue);
+        }
+
+        /* Store the Owner */
+        myValue = pValues.getValue(FIELD_OWNER);
+        if (myValue instanceof Integer) {
+            setValueOwner((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueOwner((String) myValue);
+        } else if (myValue instanceof DataItem) {
+            setValueOwner((O) myValue);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -449,51 +546,6 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pInfo The Info to copy
-     */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final DataInfo<T, O, I, S, E> pInfo) {
-        /* Set standard values */
-        super(pList, pInfo);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList) {
-        /* Set standard values */
-        super(pList, 0);
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the list
-     * @param uId the id
-     * @param uKeySetId the keySet id
-     * @param uInfoTypeId the info id
-     * @param uOwnerId the owner id
-     * @throws JOceanusException on error
-     */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final Integer uId,
-                       final Integer uKeySetId,
-                       final Integer uInfoTypeId,
-                       final Integer uOwnerId) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, uId);
-
-        /* Record the Ids */
-        setValueInfoType(uInfoTypeId);
-        setValueOwner(uOwnerId);
-
-        /* Store the keySetId */
-        setDataKeySet(uKeySetId);
-    }
-
-    /**
      * Mark deleted.
      */
     public void markDeleted() {
@@ -508,58 +560,6 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
         /* Touch the info type */
         getInfoType().touchItem(this);
-    }
-
-    /**
-     * Basic constructor.
-     * @param pList the list
-     * @param uId the id
-     * @param pInfoType the info type
-     * @param pOwner the owner
-     */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final Integer uId,
-                       final I pInfoType,
-                       final O pOwner) {
-        /* Initialise the item */
-        super(pList, uId);
-
-        /* Record the parameters */
-        setValueInfoType(pInfoType);
-        setValueOwner(pOwner);
-    }
-
-    /**
-     * Basic constructor.
-     * @param pList the list
-     * @param pValues the values
-     * @throws JOceanusException on error
-     */
-    @SuppressWarnings("unchecked")
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final DataValues<E> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the InfoType */
-        Object myValue = pValues.getValue(FIELD_INFOTYPE);
-        if (myValue instanceof Integer) {
-            setValueInfoType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueInfoType((String) myValue);
-        } else if (myValue instanceof StaticData) {
-            setValueInfoType((I) myValue);
-        }
-
-        /* Store the Owner */
-        myValue = pValues.getValue(FIELD_OWNER);
-        if (myValue instanceof Integer) {
-            setValueOwner((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueOwner((String) myValue);
-        } else if (myValue instanceof DataItem) {
-            setValueOwner((O) myValue);
-        }
     }
 
     /**
@@ -906,16 +906,6 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFO_LIST.getValue(), DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public boolean includeDataXML() {
-            return false;
-        }
-
         /**
          * Construct a generic data info list.
          * @param pBaseClass the class of the underlying object
@@ -936,6 +926,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
          */
         protected DataInfoList(final DataInfoList<T, O, I, S, E> pSource) {
             super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public boolean includeDataXML() {
+            return false;
         }
 
         @Override

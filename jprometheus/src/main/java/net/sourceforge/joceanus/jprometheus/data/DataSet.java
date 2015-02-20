@@ -103,53 +103,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_GENERATION.equals(pField)) {
-            return theGeneration;
-        }
-        if (FIELD_GRANULARITY.equals(pField)) {
-            return theGranularity;
-        }
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
-        if (FIELD_SECURITY.equals(pField)) {
-            return theSecurity;
-        }
-        if (FIELD_CONTROLKEYS.equals(pField)) {
-            return (theControlKeys.isEmpty())
-                                             ? JDataFieldValue.SKIP
-                                             : theControlKeys;
-        }
-        if (FIELD_DATAKEYSETS.equals(pField)) {
-            return (theDataKeySets.isEmpty())
-                                             ? JDataFieldValue.SKIP
-                                             : theDataKeySets;
-        }
-        if (FIELD_DATAKEYS.equals(pField)) {
-            return (theDataKeys.isEmpty())
-                                          ? JDataFieldValue.SKIP
-                                          : theDataKeys;
-        }
-        if (FIELD_CONTROLDATA.equals(pField)) {
-            return (theControlData.isEmpty())
-                                             ? JDataFieldValue.SKIP
-                                             : theControlData;
-        }
-        return JDataFieldValue.UNKNOWN;
-    }
-
-    @Override
-    public String formatObject() {
-        return DataSet.class.getSimpleName();
-    }
-
     /**
      * Security Manager.
      */
@@ -209,6 +162,106 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * General formatter.
      */
     private final JDataFormatter theFormatter;
+
+    /**
+     * Constructor for new empty DataSet.
+     * @param pEnumClass the EnumClass
+     * @param pSecurity the secure manager
+     * @param pPreferenceMgr the preference manager
+     * @param pFormatter the data formatter
+     */
+    protected DataSet(final Class<E> pEnumClass,
+                      final SecureManager pSecurity,
+                      final PreferenceManager pPreferenceMgr,
+                      final JDataFormatter pFormatter) {
+        /* Store the security manager and Enum class */
+        theSecurity = pSecurity;
+        theEnumClass = pEnumClass;
+
+        /* Access the DataListPreferences */
+        DataListPreferences myPreferences = pPreferenceMgr.getPreferenceSet(DataListPreferences.class);
+        theGranularity = myPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
+
+        /* Create the empty security lists */
+        theControlKeys = new ControlKeyList(this);
+        theDataKeySets = new DataKeySetList(this);
+        theDataKeys = new DataKeyList(this);
+        theControlData = new ControlDataList(this);
+
+        /* Create the map of additional DataLists */
+        theListMap = new EnumMap<E, DataList<?, E>>(pEnumClass);
+
+        /* record formatter */
+        theFormatter = pFormatter;
+    }
+
+    /**
+     * Constructor for a cloned DataSet.
+     * @param pSource the source DataSet
+     */
+    protected DataSet(final DataSet<T, E> pSource) {
+        /* Access the Enum class */
+        theEnumClass = pSource.getEnumClass();
+
+        /* Access the Granularity */
+        theGranularity = pSource.getGranularity();
+
+        /* Store the security manager and class */
+        theSecurity = pSource.getSecurity();
+
+        /* Create the map of additional DataLists */
+        theListMap = new EnumMap<E, DataList<?, E>>(theEnumClass);
+
+        /* Copy formatter */
+        theFormatter = pSource.getDataFormatter();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_GENERATION.equals(pField)) {
+            return theGeneration;
+        }
+        if (FIELD_GRANULARITY.equals(pField)) {
+            return theGranularity;
+        }
+        if (FIELD_VERSION.equals(pField)) {
+            return theVersion;
+        }
+        if (FIELD_SECURITY.equals(pField)) {
+            return theSecurity;
+        }
+        if (FIELD_CONTROLKEYS.equals(pField)) {
+            return (theControlKeys.isEmpty())
+                                             ? JDataFieldValue.SKIP
+                                             : theControlKeys;
+        }
+        if (FIELD_DATAKEYSETS.equals(pField)) {
+            return (theDataKeySets.isEmpty())
+                                             ? JDataFieldValue.SKIP
+                                             : theDataKeySets;
+        }
+        if (FIELD_DATAKEYS.equals(pField)) {
+            return (theDataKeys.isEmpty())
+                                          ? JDataFieldValue.SKIP
+                                          : theDataKeys;
+        }
+        if (FIELD_CONTROLDATA.equals(pField)) {
+            return (theControlData.isEmpty())
+                                             ? JDataFieldValue.SKIP
+                                             : theControlData;
+        }
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return DataSet.class.getSimpleName();
+    }
 
     /**
      * Obtain the data formatter.
@@ -296,59 +349,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public Class<E> getEnumClass() {
         return theEnumClass;
-    }
-
-    /**
-     * Constructor for new empty DataSet.
-     * @param pEnumClass the EnumClass
-     * @param pSecurity the secure manager
-     * @param pPreferenceMgr the preference manager
-     * @param pFormatter the data formatter
-     */
-    protected DataSet(final Class<E> pEnumClass,
-                      final SecureManager pSecurity,
-                      final PreferenceManager pPreferenceMgr,
-                      final JDataFormatter pFormatter) {
-        /* Store the security manager and Enum class */
-        theSecurity = pSecurity;
-        theEnumClass = pEnumClass;
-
-        /* Access the DataListPreferences */
-        DataListPreferences myPreferences = pPreferenceMgr.getPreferenceSet(DataListPreferences.class);
-        theGranularity = myPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
-
-        /* Create the empty security lists */
-        theControlKeys = new ControlKeyList(this);
-        theDataKeySets = new DataKeySetList(this);
-        theDataKeys = new DataKeyList(this);
-        theControlData = new ControlDataList(this);
-
-        /* Create the map of additional DataLists */
-        theListMap = new EnumMap<E, DataList<?, E>>(pEnumClass);
-
-        /* record formatter */
-        theFormatter = pFormatter;
-    }
-
-    /**
-     * Constructor for a cloned DataSet.
-     * @param pSource the source DataSet
-     */
-    protected DataSet(final DataSet<T, E> pSource) {
-        /* Access the Enum class */
-        theEnumClass = pSource.getEnumClass();
-
-        /* Access the Granularity */
-        theGranularity = pSource.getGranularity();
-
-        /* Store the security manager and class */
-        theSecurity = pSource.getSecurity();
-
-        /* Create the map of additional DataLists */
-        theListMap = new EnumMap<E, DataList<?, E>>(theEnumClass);
-
-        /* Copy formatter */
-        theFormatter = pSource.getDataFormatter();
     }
 
     /**

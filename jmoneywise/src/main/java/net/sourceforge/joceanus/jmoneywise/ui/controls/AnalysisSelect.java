@@ -272,46 +272,6 @@ public class AnalysisSelect
     private final transient Map<AnalysisType, AnalysisFilterSelection> theMap;
 
     /**
-     * Obtain the DateDayRange.
-     * @return the range.
-     */
-    public JDateDayRange getRange() {
-        return theState.getRange();
-    }
-
-    /**
-     * Obtain the analysis.
-     * @return the range.
-     */
-    public Analysis getAnalysis() {
-        return theAnalysis;
-    }
-
-    /**
-     * Obtain the Filter.
-     * @return the filter.
-     */
-    public AnalysisFilter<?, ?> getFilter() {
-        return theState.getFilter();
-    }
-
-    /**
-     * Obtain the ColumnSet.
-     * @return the columnSet.
-     */
-    public AnalysisColumnSet getColumns() {
-        return theState.getColumns();
-    }
-
-    /**
-     * Are we showing columns?
-     * @return true/false.
-     */
-    public boolean showColumns() {
-        return theState.showColumns();
-    }
-
-    /**
      * Constructor.
      * @param pView the view
      * @param pNewButton the new button
@@ -396,6 +356,46 @@ public class AnalysisSelect
 
         /* Create the listener */
         new AnalysisListener();
+    }
+
+    /**
+     * Obtain the DateDayRange.
+     * @return the range.
+     */
+    public JDateDayRange getRange() {
+        return theState.getRange();
+    }
+
+    /**
+     * Obtain the analysis.
+     * @return the range.
+     */
+    public Analysis getAnalysis() {
+        return theAnalysis;
+    }
+
+    /**
+     * Obtain the Filter.
+     * @return the filter.
+     */
+    public AnalysisFilter<?, ?> getFilter() {
+        return theState.getFilter();
+    }
+
+    /**
+     * Obtain the ColumnSet.
+     * @return the columnSet.
+     */
+    public AnalysisColumnSet getColumns() {
+        return theState.getColumns();
+    }
+
+    /**
+     * Are we showing columns?
+     * @return true/false.
+     */
+    public boolean showColumns() {
+        return theState.showColumns();
     }
 
     /**
@@ -1081,6 +1081,31 @@ public class AnalysisSelect
         private boolean showColumns;
 
         /**
+         * Constructor.
+         */
+        private AnalysisState() {
+            theRange = null;
+            theFilter = null;
+            theType = null;
+            theBucket = null;
+            theColumns = AnalysisColumnSet.STANDARD;
+            showColumns = true;
+        }
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+        private AnalysisState(final AnalysisState pState) {
+            theRange = pState.getRange();
+            theFilter = pState.getFilter();
+            theType = pState.getType();
+            theBucket = pState.getBucket();
+            theColumns = pState.getColumns();
+            showColumns = pState.showColumns();
+        }
+
+        /**
          * Obtain the DateDayRange.
          * @return the range.
          */
@@ -1126,31 +1151,6 @@ public class AnalysisSelect
          */
         private boolean showColumns() {
             return showColumns;
-        }
-
-        /**
-         * Constructor.
-         */
-        private AnalysisState() {
-            theRange = null;
-            theFilter = null;
-            theType = null;
-            theBucket = null;
-            theColumns = AnalysisColumnSet.STANDARD;
-            showColumns = true;
-        }
-
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        private AnalysisState(final AnalysisState pState) {
-            theRange = pState.getRange();
-            theFilter = pState.getFilter();
-            theType = pState.getType();
-            theBucket = pState.getBucket();
-            theColumns = pState.getColumns();
-            showColumns = pState.showColumns();
         }
 
         /**
@@ -1288,6 +1288,18 @@ public class AnalysisSelect
         private final AnalysisFilter<?, ?> theFilter;
 
         /**
+         * Constructor.
+         * @param pRangeSelect the range selection
+         * @param pFilter the analysis filter
+         */
+        public StatementSelect(final JDateDayRangeSelect pRangeSelect,
+                               final AnalysisFilter<?, ?> pFilter) {
+            /* Store parameters */
+            theRangeSelect = pRangeSelect;
+            theFilter = pFilter;
+        }
+
+        /**
          * Obtain the RangeSelection.
          * @return the filter
          */
@@ -1301,18 +1313,6 @@ public class AnalysisSelect
          */
         public AnalysisFilter<?, ?> getFilter() {
             return theFilter;
-        }
-
-        /**
-         * Constructor.
-         * @param pRangeSelect the range selection
-         * @param pFilter the analysis filter
-         */
-        public StatementSelect(final JDateDayRangeSelect pRangeSelect,
-                               final AnalysisFilter<?, ?> pFilter) {
-            /* Store parameters */
-            theRangeSelect = pRangeSelect;
-            theFilter = pFilter;
         }
     }
 }

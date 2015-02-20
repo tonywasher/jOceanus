@@ -164,22 +164,6 @@ public class TaxYearTable
     private transient TaxYearList theTaxYears = null;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
-     * Are we in the middle of an item edit?
-     * @return true/false
-     */
-    protected boolean isItemEditing() {
-        return theActiveYear.isEditing();
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -247,6 +231,22 @@ public class TaxYearTable
 
         /* Create listener */
         new TaxYearListener();
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveYear.isEditing();
     }
 
     /**

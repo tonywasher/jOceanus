@@ -78,19 +78,6 @@ public class CreateNewBranch
     private JOceanusException theError = null;
 
     /**
-     * Obtain the working copy set.
-     * @return the working copy set
-     */
-    public SvnWorkingCopySet getWorkingCopySet() {
-        return theWorkingCopySet;
-    }
-
-    @Override
-    public JOceanusException getError() {
-        return theError;
-    }
-
-    /**
      * Constructor.
      * @param pTags the tags to create the branches from
      * @param pBranchType the type of branches to create
@@ -126,6 +113,19 @@ public class CreateNewBranch
 
         /* Record tags */
         theTags = myTags;
+    }
+
+    /**
+     * Obtain the working copy set.
+     * @return the working copy set
+     */
+    public SvnWorkingCopySet getWorkingCopySet() {
+        return theWorkingCopySet;
+    }
+
+    @Override
+    public JOceanusException getError() {
+        return theError;
     }
 
     @Override

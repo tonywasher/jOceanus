@@ -69,6 +69,19 @@ public class CashInfoSet
      */
     private static final String ERROR_AUTOEXP = MoneyWiseDataResource.CASH_ERROR_AUTOEXPENSE.getValue();
 
+    /**
+     * Constructor.
+     * @param pOwner the Owner to which this Set belongs
+     * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the InfoList for the set
+     */
+    protected CashInfoSet(final Cash pOwner,
+                          final AccountInfoTypeList pTypeList,
+                          final CashInfoList pInfoList) {
+        /* Store the Owner and Info List */
+        super(pOwner, pTypeList, pInfoList);
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -169,19 +182,6 @@ public class CashInfoSet
 
         /* Return the event category */
         return myValue.getEventCategory();
-    }
-
-    /**
-     * Constructor.
-     * @param pOwner the Owner to which this Set belongs
-     * @param pTypeList the infoTypeList for the set
-     * @param pInfoList the InfoList for the set
-     */
-    protected CashInfoSet(final Cash pOwner,
-                          final AccountInfoTypeList pTypeList,
-                          final CashInfoList pInfoList) {
-        /* Store the Owner and Info List */
-        super(pOwner, pTypeList, pInfoList);
     }
 
     /**

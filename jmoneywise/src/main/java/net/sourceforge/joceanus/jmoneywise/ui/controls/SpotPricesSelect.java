@@ -160,33 +160,6 @@ public class SpotPricesSelect
     private boolean refreshingData = false;
 
     /**
-     * Get the selected date.
-     * @return the date
-     */
-    public JDateDay getDate() {
-        return theState.getDate();
-    }
-
-    /**
-     * Get the selected portfolio.
-     * @return the portfolio
-     */
-    public final Portfolio getPortfolio() {
-        PortfolioBucket myBucket = theState.getPortfolio();
-        return (myBucket == null)
-                                 ? null
-                                 : myBucket.getPortfolio();
-    }
-
-    /**
-     * Do we show closed accounts?.
-     * @return the date
-     */
-    public boolean getShowClosed() {
-        return doShowClosed;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -246,6 +219,33 @@ public class SpotPricesSelect
 
         /* Add the listener for item changes */
         new SpotPricesListener();
+    }
+
+    /**
+     * Get the selected date.
+     * @return the date
+     */
+    public JDateDay getDate() {
+        return theState.getDate();
+    }
+
+    /**
+     * Get the selected portfolio.
+     * @return the portfolio
+     */
+    public final Portfolio getPortfolio() {
+        PortfolioBucket myBucket = theState.getPortfolio();
+        return (myBucket == null)
+                                 ? null
+                                 : myBucket.getPortfolio();
+    }
+
+    /**
+     * Do we show closed accounts?.
+     * @return the date
+     */
+    public boolean getShowClosed() {
+        return doShowClosed;
     }
 
     /**
@@ -487,6 +487,28 @@ public class SpotPricesSelect
         private JDateDay thePrevDate = null;
 
         /**
+         * Constructor.
+         */
+        private SpotPricesState() {
+            theDate = new JDateDay();
+        }
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+        private SpotPricesState(final SpotPricesState pState) {
+            thePortfolio = pState.getPortfolio();
+            theDate = new JDateDay(pState.getDate());
+            if (pState.getNextDate() != null) {
+                theNextDate = new JDateDay(pState.getNextDate());
+            }
+            if (pState.getPrevDate() != null) {
+                thePrevDate = new JDateDay(pState.getPrevDate());
+            }
+        }
+
+        /**
          * Get the portfolio.
          * @return the portfolio
          */
@@ -516,28 +538,6 @@ public class SpotPricesSelect
          */
         private JDateDay getPrevDate() {
             return thePrevDate;
-        }
-
-        /**
-         * Constructor.
-         */
-        private SpotPricesState() {
-            theDate = new JDateDay();
-        }
-
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        private SpotPricesState(final SpotPricesState pState) {
-            thePortfolio = pState.getPortfolio();
-            theDate = new JDateDay(pState.getDate());
-            if (pState.getNextDate() != null) {
-                theNextDate = new JDateDay(pState.getNextDate());
-            }
-            if (pState.getPrevDate() != null) {
-                thePrevDate = new JDateDay(pState.getPrevDate());
-            }
         }
 
         /**

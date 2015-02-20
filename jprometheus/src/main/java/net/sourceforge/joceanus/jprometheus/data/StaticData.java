@@ -53,11 +53,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.STATICDATA_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Name Field Id.
      */
@@ -97,6 +92,143 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * The Enum Class for this Static Data.
      */
     private Class<S> theEnumClass = null;
+
+    /**
+     * Copy Constructor.
+     * @param pList The list to associate the Static Data with
+     * @param pSource The static data to copy
+     */
+    protected StaticData(final StaticList<T, S, E> pList,
+                         final T pSource) {
+        super(pList, pSource);
+        theEnumClass = pSource.getEnumClass();
+    }
+
+    /**
+     * Basic Constructor.
+     * @param pList The list to associate the Static Data with
+     * @param pValue the name of the new item
+     * @throws JOceanusException on error
+     */
+    protected StaticData(final StaticList<T, S, E> pList,
+                         final String pValue) throws JOceanusException {
+        /* Call super constructor */
+        super(pList, 0);
+
+        /* Determine the class */
+        theEnumClass = pList.getEnumClass();
+        parseEnumValue(pValue);
+
+        /* Record the name */
+        setValueName(pValue);
+        setValueEnabled(Boolean.TRUE);
+    }
+
+    /**
+     * Basic Constructor.
+     * @param pList The list to associate the Static Data with
+     * @param pClass the class of the new item
+     * @throws JOceanusException on error
+     */
+    protected StaticData(final StaticList<T, S, E> pList,
+                         final S pClass) throws JOceanusException {
+        /* Call super constructor */
+        super(pList, 0);
+
+        /* Determine the class */
+        theEnumClass = pList.getEnumClass();
+
+        /* Store the class */
+        setValueClass(pClass);
+
+        /* Set encryption */
+        setNextDataKeySet();
+
+        /* Access classId and order */
+        setId(pClass.getClassId());
+        setValueOrder(pClass.getOrder());
+
+        /* Record the name */
+        setValueName(pClass.toString());
+        setValueEnabled(Boolean.TRUE);
+
+        /* Set the DataKeySet */
+        setNextDataKeySet();
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected StaticData(final StaticList<T, S, E> pList,
+                         final DataValues<E> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Determine the class */
+            theEnumClass = pList.getEnumClass();
+
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the class */
+            myValue = pValues.getValue(FIELD_CLASS);
+            if (myValue instanceof String) {
+                parseEnumValue((String) myValue);
+            } else {
+                parseEnumValue(getName());
+            }
+
+            /* Store the Order */
+            myValue = pValues.getValue(FIELD_ORDER);
+            if (myValue instanceof Integer) {
+                setValueOrder((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueOrder(myFormatter.parseValue((String) myValue, Integer.class));
+            }
+
+            /* Store the Enabled flag */
+            myValue = pValues.getValue(FIELD_ENABLED);
+            if (myValue instanceof Boolean) {
+                setValueEnabled((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueEnabled(myFormatter.parseValue((String) myValue, Boolean.class));
+            } else {
+                setValueEnabled(Boolean.TRUE);
+            }
+
+            /* Catch Exceptions */
+        } catch (NumberFormatException
+                | JOceanusException e) {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public String formatObject() {
@@ -457,138 +589,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     /**
-     * Copy Constructor.
-     * @param pList The list to associate the Static Data with
-     * @param pSource The static data to copy
-     */
-    protected StaticData(final StaticList<T, S, E> pList,
-                         final T pSource) {
-        super(pList, pSource);
-        theEnumClass = pSource.getEnumClass();
-    }
-
-    /**
-     * Basic Constructor.
-     * @param pList The list to associate the Static Data with
-     * @param pValue the name of the new item
-     * @throws JOceanusException on error
-     */
-    protected StaticData(final StaticList<T, S, E> pList,
-                         final String pValue) throws JOceanusException {
-        /* Call super constructor */
-        super(pList, 0);
-
-        /* Determine the class */
-        theEnumClass = pList.getEnumClass();
-        parseEnumValue(pValue);
-
-        /* Record the name */
-        setValueName(pValue);
-        setValueEnabled(Boolean.TRUE);
-    }
-
-    /**
-     * Basic Constructor.
-     * @param pList The list to associate the Static Data with
-     * @param pClass the class of the new item
-     * @throws JOceanusException on error
-     */
-    protected StaticData(final StaticList<T, S, E> pList,
-                         final S pClass) throws JOceanusException {
-        /* Call super constructor */
-        super(pList, 0);
-
-        /* Determine the class */
-        theEnumClass = pList.getEnumClass();
-
-        /* Store the class */
-        setValueClass(pClass);
-
-        /* Set encryption */
-        setNextDataKeySet();
-
-        /* Access classId and order */
-        setId(pClass.getClassId());
-        setValueOrder(pClass.getOrder());
-
-        /* Record the name */
-        setValueName(pClass.toString());
-        setValueEnabled(Boolean.TRUE);
-
-        /* Set the DataKeySet */
-        setNextDataKeySet();
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    protected StaticData(final StaticList<T, S, E> pList,
-                         final DataValues<E> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Determine the class */
-            theEnumClass = pList.getEnumClass();
-
-            /* Store the Name */
-            Object myValue = pValues.getValue(FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
-            }
-
-            /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
-            }
-
-            /* Store the class */
-            myValue = pValues.getValue(FIELD_CLASS);
-            if (myValue instanceof String) {
-                parseEnumValue((String) myValue);
-            } else {
-                parseEnumValue(getName());
-            }
-
-            /* Store the Order */
-            myValue = pValues.getValue(FIELD_ORDER);
-            if (myValue instanceof Integer) {
-                setValueOrder((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueOrder(myFormatter.parseValue((String) myValue, Integer.class));
-            }
-
-            /* Store the Enabled flag */
-            myValue = pValues.getValue(FIELD_ENABLED);
-            if (myValue instanceof Boolean) {
-                setValueEnabled((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueEnabled(myFormatter.parseValue((String) myValue, Boolean.class));
-            } else {
-                setValueEnabled(Boolean.TRUE);
-            }
-
-            /* Catch Exceptions */
-        } catch (NumberFormatException
-                | JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Parse enum type.
      * @param pValue the value
      * @throws JOceanusException on error
@@ -716,18 +716,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
             extends EncryptedList<T, E> {
         /**
-         * Obtain the enumClass.
-         * @return the enumClass
-         */
-        protected abstract Class<S> getEnumClass();
-
-        @Override
-        @SuppressWarnings("unchecked")
-        protected StaticDataMap<T, S, E> getDataMap() {
-            return (StaticDataMap<T, S, E>) super.getDataMap();
-        }
-
-        /**
          * Construct a generic static data list.
          * @param pBaseClass the class of the underlying object
          * @param pData the dataSet
@@ -747,6 +735,18 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         protected StaticList(final StaticList<T, S, E> pSource) {
             super(pSource);
+        }
+
+        /**
+         * Obtain the enumClass.
+         * @return the enumClass
+         */
+        protected abstract Class<S> getEnumClass();
+
+        @Override
+        @SuppressWarnings("unchecked")
+        protected StaticDataMap<T, S, E> getDataMap() {
+            return (StaticDataMap<T, S, E>) super.getDataMap();
         }
 
         /**
@@ -892,6 +892,19 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         public static final JDataField FIELD_ORDERCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
 
+        /**
+         * Map of order counts.
+         */
+        private final Map<Integer, Integer> theOrderCountMap;
+
+        /**
+         * Constructor.
+         */
+        public StaticDataMap() {
+            /* Create the maps */
+            theOrderCountMap = new HashMap<Integer, Integer>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -911,19 +924,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of order counts.
-         */
-        private final Map<Integer, Integer> theOrderCountMap;
-
-        /**
-         * Constructor.
-         */
-        public StaticDataMap() {
-            /* Create the maps */
-            theOrderCountMap = new HashMap<Integer, Integer>();
         }
 
         @Override

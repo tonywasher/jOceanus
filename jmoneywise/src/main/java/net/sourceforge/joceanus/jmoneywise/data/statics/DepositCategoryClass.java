@@ -75,6 +75,17 @@ public enum DepositCategoryClass implements CategoryInterface {
      */
     private final int theOrder;
 
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     */
+    private DepositCategoryClass(final int uId,
+                                 final int uOrder) {
+        theId = uId;
+        theOrder = uOrder;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -95,17 +106,6 @@ public enum DepositCategoryClass implements CategoryInterface {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the Id
-     * @param uOrder the default order.
-     */
-    private DepositCategoryClass(final int uId,
-                                 final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
     }
 
     /**

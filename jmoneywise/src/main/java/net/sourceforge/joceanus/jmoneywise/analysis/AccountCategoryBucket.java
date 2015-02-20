@@ -72,6 +72,15 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      */
     private final AccountValues theBaseValues;
 
+    /**
+     * Constructor.
+     */
+    protected AccountCategoryBucket() {
+        /* Create the value maps */
+        theValues = new AccountValues();
+        theBaseValues = new AccountValues();
+    }
+
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_BASE.equals(pField)) {
@@ -175,15 +184,6 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     */
-    protected AccountCategoryBucket() {
-        /* Create the value maps */
-        theValues = new AccountValues();
-        theBaseValues = new AccountValues();
     }
 
     @Override

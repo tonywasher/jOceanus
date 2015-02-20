@@ -145,6 +145,138 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     protected static final String ERROR_CURRENCY = MoneyWiseDataResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
+    /**
+     * Copy Constructor.
+     * @param pList the event list
+     * @param pTrans The Transaction to copy
+     */
+    protected TransactionBase(final TransactionBaseList<T> pList,
+                              final T pTrans) {
+        /* Set standard values */
+        super(pList, pTrans);
+    }
+
+    /**
+     * Edit constructor.
+     * @param pList the list
+     */
+    protected TransactionBase(final TransactionBaseList<T> pList) {
+        super(pList, 0);
+        setNextDataKeySet();
+        setValueAssetPair(getAssetPairManager().getDefaultPair());
+        setValueReconciled(Boolean.FALSE);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    @SuppressWarnings("unchecked")
+    protected TransactionBase(final TransactionBaseList<T> pList,
+                              final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the AssetPair */
+            myValue = pValues.getValue(FIELD_PAIR);
+            if (myValue instanceof Integer) {
+                setValueAssetPair((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueAssetPair((String) myValue);
+            } else if (myValue instanceof AssetPair) {
+                setValueAssetPair((AssetPair) myValue);
+            }
+
+            /* Store the Account */
+            myValue = pValues.getValue(FIELD_ACCOUNT);
+            if (myValue instanceof Integer) {
+                setValueAccount((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueAccount((String) myValue);
+            } else if (myValue instanceof TransactionAsset) {
+                setValueAccount((TransactionAsset) myValue);
+            }
+
+            /* Store the Partner */
+            myValue = pValues.getValue(FIELD_PARTNER);
+            if (myValue instanceof Integer) {
+                setValuePartner((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValuePartner((String) myValue);
+            } else if (myValue instanceof TransactionAsset) {
+                setValuePartner((TransactionAsset) myValue);
+            }
+
+            /* Store the Category */
+            myValue = pValues.getValue(FIELD_CATEGORY);
+            if (myValue instanceof Integer) {
+                setValueCategory((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCategory((String) myValue);
+            } else if (myValue instanceof TransactionCategory) {
+                setValueCategory((TransactionCategory) myValue);
+            }
+
+            /* Store the Amount */
+            myValue = pValues.getValue(FIELD_AMOUNT);
+            if (myValue instanceof JMoney) {
+                setValueAmount((JMoney) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueAmount((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueAmount(myString);
+                setValueAmount(myFormatter.parseValue(myString, JMoney.class));
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof TransactionBase) {
+                setValueParent((T) myValue);
+            }
+
+            /* Store the reconciled flag */
+            myValue = pValues.getValue(FIELD_RECONCILED);
+            if (myValue instanceof Boolean) {
+                setValueReconciled((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Store the split flag */
+            myValue = pValues.getValue(FIELD_SPLIT);
+            if (myValue instanceof Boolean) {
+                setValueSplit((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueSplit(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException
+                | JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
     @Override
     public boolean skipField(final JDataField pField) {
         if ((FIELD_SPLIT.equals(pField)) && !isSplit()) {
@@ -748,138 +880,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the event list
-     * @param pTrans The Transaction to copy
-     */
-    protected TransactionBase(final TransactionBaseList<T> pList,
-                              final T pTrans) {
-        /* Set standard values */
-        super(pList, pTrans);
-    }
-
-    /**
-     * Edit constructor.
-     * @param pList the list
-     */
-    protected TransactionBase(final TransactionBaseList<T> pList) {
-        super(pList, 0);
-        setNextDataKeySet();
-        setValueAssetPair(getAssetPairManager().getDefaultPair());
-        setValueReconciled(Boolean.FALSE);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    @SuppressWarnings("unchecked")
-    protected TransactionBase(final TransactionBaseList<T> pList,
-                              final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Date */
-            Object myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store the AssetPair */
-            myValue = pValues.getValue(FIELD_PAIR);
-            if (myValue instanceof Integer) {
-                setValueAssetPair((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueAssetPair((String) myValue);
-            } else if (myValue instanceof AssetPair) {
-                setValueAssetPair((AssetPair) myValue);
-            }
-
-            /* Store the Account */
-            myValue = pValues.getValue(FIELD_ACCOUNT);
-            if (myValue instanceof Integer) {
-                setValueAccount((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueAccount((String) myValue);
-            } else if (myValue instanceof TransactionAsset) {
-                setValueAccount((TransactionAsset) myValue);
-            }
-
-            /* Store the Partner */
-            myValue = pValues.getValue(FIELD_PARTNER);
-            if (myValue instanceof Integer) {
-                setValuePartner((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValuePartner((String) myValue);
-            } else if (myValue instanceof TransactionAsset) {
-                setValuePartner((TransactionAsset) myValue);
-            }
-
-            /* Store the Category */
-            myValue = pValues.getValue(FIELD_CATEGORY);
-            if (myValue instanceof Integer) {
-                setValueCategory((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCategory((String) myValue);
-            } else if (myValue instanceof TransactionCategory) {
-                setValueCategory((TransactionCategory) myValue);
-            }
-
-            /* Store the Amount */
-            myValue = pValues.getValue(FIELD_AMOUNT);
-            if (myValue instanceof JMoney) {
-                setValueAmount((JMoney) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueAmount((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValueAmount(myString);
-                setValueAmount(myFormatter.parseValue(myString, JMoney.class));
-            }
-
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof TransactionBase) {
-                setValueParent((T) myValue);
-            }
-
-            /* Store the reconciled flag */
-            myValue = pValues.getValue(FIELD_RECONCILED);
-            if (myValue instanceof Boolean) {
-                setValueReconciled((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Store the split flag */
-            myValue = pValues.getValue(FIELD_SPLIT);
-            if (myValue instanceof Boolean) {
-                setValueSplit((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueSplit(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException
-                | JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Compare this event to another to establish sort order.
      * @param pThat The Event to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
@@ -1390,14 +1390,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          */
         private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_RANGE.equals(pField)) {
-                return theRange;
-            }
-            return super.getFieldValue(pField);
-        }
-
         /**
          * DataSet range.
          */
@@ -1407,6 +1399,42 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          * AssetPair Manager.
          */
         private final AssetPairManager theManager;
+
+        /**
+         * Construct an empty CORE Event list.
+         * @param pData the DataSet for the list
+         * @param pClass the class of the item
+         * @param pItemType the item type
+         */
+        protected TransactionBaseList(final MoneyWiseData pData,
+                                      final Class<T> pClass,
+                                      final MoneyWiseDataType pItemType) {
+            /* Call super-constructor */
+            super(pClass, pData, pItemType, ListStyle.CORE);
+
+            /* Allocate new manager */
+            theManager = new AssetPairManager();
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected TransactionBaseList(final TransactionBaseList<T> pSource) {
+            /* Call super-constructor */
+            super(pSource);
+
+            /* Copy the Manager */
+            theManager = pSource.getAssetPairManager();
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_RANGE.equals(pField)) {
+                return theRange;
+            }
+            return super.getFieldValue(pField);
+        }
 
         @Override
         public MoneyWiseData getDataSet() {
@@ -1435,34 +1463,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          */
         protected void setRange(final JDateDayRange pRange) {
             theRange = pRange;
-        }
-
-        /**
-         * Construct an empty CORE Event list.
-         * @param pData the DataSet for the list
-         * @param pClass the class of the item
-         * @param pItemType the item type
-         */
-        protected TransactionBaseList(final MoneyWiseData pData,
-                                      final Class<T> pClass,
-                                      final MoneyWiseDataType pItemType) {
-            /* Call super-constructor */
-            super(pClass, pData, pItemType, ListStyle.CORE);
-
-            /* Allocate new manager */
-            theManager = new AssetPairManager();
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected TransactionBaseList(final TransactionBaseList<T> pSource) {
-            /* Call super-constructor */
-            super(pSource);
-
-            /* Copy the Manager */
-            theManager = pSource.getAssetPairManager();
         }
     }
 }

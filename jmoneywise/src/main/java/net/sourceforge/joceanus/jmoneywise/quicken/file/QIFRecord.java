@@ -87,6 +87,21 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     private List<QIFRecord<T>> theSubList;
 
     /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pClass the class of the lines
+     */
+    protected QIFRecord(final QIFFile pFile,
+                        final Class<T> pClass) {
+        /* Record the class and file */
+        theClass = pClass;
+        theFile = pFile;
+
+        /* Create the map */
+        theMap = new EnumMap<T, QIFLine<T>>(pClass);
+    }
+
+    /**
      * Obtain file.
      * @return the file
      */
@@ -125,21 +140,6 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      */
     protected QIFLine<T> getLine(final T pLineType) {
         return theMap.get(pLineType);
-    }
-
-    /**
-     * Constructor.
-     * @param pFile the QIF File
-     * @param pClass the class of the lines
-     */
-    protected QIFRecord(final QIFFile pFile,
-                        final Class<T> pClass) {
-        /* Record the class and file */
-        theClass = pClass;
-        theFile = pFile;
-
-        /* Create the map */
-        theMap = new EnumMap<T, QIFLine<T>>(pClass);
     }
 
     /**

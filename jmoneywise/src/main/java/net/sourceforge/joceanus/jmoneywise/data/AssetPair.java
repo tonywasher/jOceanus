@@ -70,6 +70,20 @@ public final class AssetPair
      */
     private String theName;
 
+    /**
+     * Constructor.
+     * @param pAccount the account type
+     * @param pPartner the partner type
+     * @param pDirection the direction
+     */
+    private AssetPair(final AssetType pAccount,
+                      final AssetType pPartner,
+                      final AssetDirection pDirection) {
+        theAccount = pAccount;
+        thePartner = pPartner;
+        theDirection = pDirection;
+    }
+
     @Override
     public String formatObject() {
         return toString();
@@ -122,20 +136,6 @@ public final class AssetPair
         myId += pPartner.getId();
         myId <<= ID_SHIFT;
         return myId + pDirection.getId();
-    }
-
-    /**
-     * Constructor.
-     * @param pAccount the account type
-     * @param pPartner the partner type
-     * @param pDirection the direction
-     */
-    private AssetPair(final AssetType pAccount,
-                      final AssetType pPartner,
-                      final AssetDirection pDirection) {
-        theAccount = pAccount;
-        thePartner = pPartner;
-        theDirection = pDirection;
     }
 
     @Override
@@ -521,6 +521,14 @@ public final class AssetPair
         private final int theId;
 
         /**
+         * Constructor.
+         * @param uId the Id
+         */
+        private AssetDirection(final int uId) {
+            theId = uId;
+        }
+
+        /**
          * Obtain class Id.
          * @return the Id
          */
@@ -538,14 +546,6 @@ public final class AssetPair
 
             /* return the name */
             return theName;
-        }
-
-        /**
-         * Constructor.
-         * @param uId the Id
-         */
-        private AssetDirection(final int uId) {
-            theId = uId;
         }
 
         /**

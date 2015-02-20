@@ -66,11 +66,6 @@ public class ViewSecurityPrice
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Dilution Field Id.
      */
@@ -85,6 +80,30 @@ public class ViewSecurityPrice
      * Dilution state.
      */
     private DilutionState theDilutionState = DilutionState.UNKNOWN;
+
+    /**
+     * Construct a copy of a Price.
+     * @param pList the list
+     * @param pPrice The Price
+     */
+    protected ViewSecurityPrice(final ViewSecurityPriceList pList,
+                                final SecurityPrice pPrice) {
+        /* Set standard values */
+        super(pList, pPrice);
+    }
+
+    /**
+     * Standard constructor for a newly inserted price.
+     * @param pList the list
+     */
+    public ViewSecurityPrice(final ViewSecurityPriceList pList) {
+        super(pList);
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     /**
      * Obtain dilution.
@@ -192,25 +211,6 @@ public class ViewSecurityPrice
         theDilutionState = DilutionState.DILUTED;
     }
 
-    /**
-     * Construct a copy of a Price.
-     * @param pList the list
-     * @param pPrice The Price
-     */
-    protected ViewSecurityPrice(final ViewSecurityPriceList pList,
-                                final SecurityPrice pPrice) {
-        /* Set standard values */
-        super(pList, pPrice);
-    }
-
-    /**
-     * Standard constructor for a newly inserted price.
-     * @param pList the list
-     */
-    public ViewSecurityPrice(final ViewSecurityPriceList pList) {
-        super(pList);
-    }
-
     @Override
     public void setPrice(final JPrice pPrice) throws JOceanusException {
         super.setPrice(pPrice);
@@ -234,58 +234,15 @@ public class ViewSecurityPrice
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return ViewSecurityPrice.FIELD_DEFS;
-        }
-
-        @Override
-        protected ViewSecurityPriceList getEmptyList(final ListStyle pStyle) {
-            throw new UnsupportedOperationException();
-        }
-
         /**
          * The Dilutions field id.
          */
         public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_DILUTIONS.equals(pField)) {
-                return (theDilutions.isEmpty())
-                                               ? JDataFieldValue.SKIP
-                                               : theDilutions;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
-        }
-
         /**
          * Dilutions list.
          */
         private final DilutionEventMap theDilutions;
-
-        /**
-         * Obtain dilutions.
-         * @return the dilutions
-         */
-        private DilutionEventMap getDilutions() {
-            return theDilutions;
-        }
 
         /**
          * Construct an edit extract of a Price list.
@@ -320,6 +277,49 @@ public class ViewSecurityPrice
                 /* Adjust the map */
                 myItem.adjustMapForItem();
             }
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return ViewSecurityPrice.FIELD_DEFS;
+        }
+
+        @Override
+        protected ViewSecurityPriceList getEmptyList(final ListStyle pStyle) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_DILUTIONS.equals(pField)) {
+                return (theDilutions.isEmpty())
+                                               ? JDataFieldValue.SKIP
+                                               : theDilutions;
+            }
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
+        }
+
+        /**
+         * Obtain dilutions.
+         * @return the dilutions
+         */
+        private DilutionEventMap getDilutions() {
+            return theDilutions;
         }
 
         @Override

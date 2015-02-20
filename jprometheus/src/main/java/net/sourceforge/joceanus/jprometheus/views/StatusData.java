@@ -64,6 +64,25 @@ public class StatusData {
     private String theTask = "";
 
     /**
+     * Constructor.
+     */
+    public StatusData() {
+    }
+
+    /**
+     * Constructor.
+     * @param pStatus the source status
+     */
+    public StatusData(final StatusData pStatus) {
+        theNumSteps = pStatus.getNumSteps();
+        theNumStages = pStatus.getNumStages();
+        theStepsDone = pStatus.getStepsDone();
+        theStagesDone = pStatus.getStagesDone();
+        theStage = pStatus.getStage();
+        theTask = pStatus.getTask();
+    }
+
+    /**
      * Get number of steps.
      * @return number of steps
      */
@@ -211,24 +230,5 @@ public class StatusData {
      */
     public boolean differTask(final StatusData pData) {
         return (pData == null) || !Difference.isEqual(theTask, pData.getTask());
-    }
-
-    /**
-     * Constructor.
-     */
-    public StatusData() {
-    }
-
-    /**
-     * Constructor.
-     * @param pStatus the source status
-     */
-    public StatusData(final StatusData pStatus) {
-        theNumSteps = pStatus.getNumSteps();
-        theNumStages = pStatus.getNumStages();
-        theStepsDone = pStatus.getStepsDone();
-        theStagesDone = pStatus.getStagesDone();
-        theStage = pStatus.getStage();
-        theTask = pStatus.getTask();
     }
 }

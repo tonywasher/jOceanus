@@ -124,62 +124,6 @@ public class DataValues<E extends Enum<E>> {
     private final List<DataValues<E>> theChildren;
 
     /**
-     * Obtain Item Type.
-     * @return the Item Type
-     */
-    public final String getItemType() {
-        return theItemType;
-    }
-
-    /**
-     * Obtain Field iterator.
-     * @return the Field iterator
-     */
-    public final Iterator<Map.Entry<JDataField, Object>> fieldIterator() {
-        return theFields.entrySet().iterator();
-    }
-
-    /**
-     * Does this item have InfoItems?
-     * @return true/false
-     */
-    public final boolean hasInfoItems() {
-        return theInfoItems != null;
-    }
-
-    /**
-     * Obtain InfoItems iterator.
-     * @return the iterator
-     */
-    public final Iterator<InfoItem<E>> infoIterator() {
-        return theInfoItems.iterator();
-    }
-
-    /**
-     * Does this item have children?
-     * @return true/false
-     */
-    public final boolean hasChildren() {
-        return theChildren != null;
-    }
-
-    /**
-     * Obtain Child iterator.
-     * @return the iterator
-     */
-    public final Iterator<DataValues<E>> childIterator() {
-        return theChildren.iterator();
-    }
-
-    /**
-     * Constructor.
-     * @param pItem the Item to obtain values from
-     */
-    public DataValues(final DataItem<E> pItem) {
-        this(pItem, pItem.getDataFields().getName());
-    }
-
-    /**
      * Constructor.
      * @param pItem the Item to obtain values from
      * @param pItemName the item name
@@ -427,6 +371,62 @@ public class DataValues<E extends Enum<E>> {
     }
 
     /**
+     * Constructor.
+     * @param pItem the Item to obtain values from
+     */
+    public DataValues(final DataItem<E> pItem) {
+        this(pItem, pItem.getDataFields().getName());
+    }
+
+    /**
+     * Obtain Item Type.
+     * @return the Item Type
+     */
+    public final String getItemType() {
+        return theItemType;
+    }
+
+    /**
+     * Obtain Field iterator.
+     * @return the Field iterator
+     */
+    public final Iterator<Map.Entry<JDataField, Object>> fieldIterator() {
+        return theFields.entrySet().iterator();
+    }
+
+    /**
+     * Does this item have InfoItems?
+     * @return true/false
+     */
+    public final boolean hasInfoItems() {
+        return theInfoItems != null;
+    }
+
+    /**
+     * Obtain InfoItems iterator.
+     * @return the iterator
+     */
+    public final Iterator<InfoItem<E>> infoIterator() {
+        return theInfoItems.iterator();
+    }
+
+    /**
+     * Does this item have children?
+     * @return true/false
+     */
+    public final boolean hasChildren() {
+        return theChildren != null;
+    }
+
+    /**
+     * Obtain Child iterator.
+     * @return the iterator
+     */
+    public final Iterator<DataValues<E>> childIterator() {
+        return theChildren.iterator();
+    }
+
+    /**
      * Add value.
      * @param pField the Field definition
      * @param pValue the field value
@@ -599,30 +599,6 @@ public class DataValues<E extends Enum<E>> {
         private final Object theValue;
 
         /**
-         * Obtain name of item.
-         * @return the name
-         */
-        public String getName() {
-            return theName;
-        }
-
-        /**
-         * Obtain id of item.
-         * @return the id
-         */
-        public Integer getId() {
-            return theId;
-        }
-
-        /**
-         * Obtain value of item.
-         * @return the value
-         */
-        public Object getValue() {
-            return theValue;
-        }
-
-        /**
          * Constructor.
          * @param pInfo the info Item
          */
@@ -647,6 +623,30 @@ public class DataValues<E extends Enum<E>> {
             theName = pElement.getNodeName();
             theId = DataValues.getId(pElement);
             theValue = pElement.getTextContent();
+        }
+
+        /**
+         * Obtain name of item.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Obtain id of item.
+         * @return the id
+         */
+        public Integer getId() {
+            return theId;
+        }
+
+        /**
+         * Obtain value of item.
+         * @return the value
+         */
+        public Object getValue() {
+            return theValue;
         }
 
         @Override

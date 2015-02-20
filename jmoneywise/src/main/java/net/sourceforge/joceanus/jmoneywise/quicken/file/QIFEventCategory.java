@@ -57,43 +57,6 @@ public class QIFEventCategory
      */
     private final boolean isIncome;
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
-     * Obtain the Name.
-     * @return the Name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    /**
-     * Obtain the Description.
-     * @return the description
-     */
-    public String getDesc() {
-        return theDesc;
-    }
-
-    /**
-     * Is the Category an income category.
-     * @return true/false
-     */
-    public boolean isIncome() {
-        return isIncome;
-    }
-
-    /**
-     * Is the Category an expense category.
-     * @return true/false
-     */
-    public boolean isExpense() {
-        return !isIncome;
-    }
-
     /**
      * Constructor.
      * @param pFile the QIF File
@@ -182,6 +145,43 @@ public class QIFEventCategory
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the Description.
+     * @return the description
+     */
+    public String getDesc() {
+        return theDesc;
+    }
+
+    /**
+     * Is the Category an income category.
+     * @return true/false
+     */
+    public boolean isIncome() {
+        return isIncome;
+    }
+
+    /**
+     * Is the Category an expense category.
+     * @return true/false
+     */
+    public boolean isExpense() {
+        return !isIncome;
+    }
+
+    @Override
     public int compareTo(final QIFEventCategory pThat) {
         return theName.compareTo(pThat.getName());
     }
@@ -191,6 +191,15 @@ public class QIFEventCategory
      */
     public class QIFCategoryNameLine
             extends QIFStringLine<QCategoryLineType> {
+        /**
+         * Constructor.
+         * @param pName the Name
+         */
+        protected QIFCategoryNameLine(final String pName) {
+            /* Call super-constructor */
+            super(pName);
+        }
+
         @Override
         public QCategoryLineType getLineType() {
             return QCategoryLineType.NAME;
@@ -203,15 +212,6 @@ public class QIFEventCategory
         public String getName() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pName the Name
-         */
-        protected QIFCategoryNameLine(final String pName) {
-            /* Call super-constructor */
-            super(pName);
-        }
     }
 
     /**
@@ -219,6 +219,15 @@ public class QIFEventCategory
      */
     public class QIFCategoryDescLine
             extends QIFStringLine<QCategoryLineType> {
+        /**
+         * Constructor.
+         * @param pDesc the Description
+         */
+        protected QIFCategoryDescLine(final String pDesc) {
+            /* Call super-constructor */
+            super(pDesc);
+        }
+
         @Override
         public QCategoryLineType getLineType() {
             return QCategoryLineType.DESCRIPTION;
@@ -231,15 +240,6 @@ public class QIFEventCategory
         public String getDescription() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pDesc the Description
-         */
-        protected QIFCategoryDescLine(final String pDesc) {
-            /* Call super-constructor */
-            super(pDesc);
-        }
     }
 
     /**
@@ -247,6 +247,12 @@ public class QIFEventCategory
      */
     public static class QIFCategoryIncomeLine
             extends QIFLine<QCategoryLineType> {
+        /**
+         * Constructor.
+         */
+        protected QIFCategoryIncomeLine() {
+        }
+
         @Override
         public QCategoryLineType getLineType() {
             return QCategoryLineType.INCOME;
@@ -255,12 +261,6 @@ public class QIFEventCategory
         @Override
         public String toString() {
             return getLineType().getSymbol();
-        }
-
-        /**
-         * Constructor.
-         */
-        protected QIFCategoryIncomeLine() {
         }
 
         @Override
@@ -275,6 +275,12 @@ public class QIFEventCategory
      */
     public static class QIFCategoryExpenseLine
             extends QIFLine<QCategoryLineType> {
+        /**
+         * Constructor.
+         */
+        protected QIFCategoryExpenseLine() {
+        }
+
         @Override
         public QCategoryLineType getLineType() {
             return QCategoryLineType.EXPENSE;
@@ -283,12 +289,6 @@ public class QIFEventCategory
         @Override
         public String toString() {
             return getLineType().getSymbol();
-        }
-
-        /**
-         * Constructor.
-         */
-        protected QIFCategoryExpenseLine() {
         }
 
         @Override
@@ -303,6 +303,12 @@ public class QIFEventCategory
      */
     public static class QIFCategoryTaxLine
             extends QIFLine<QCategoryLineType> {
+        /**
+         * Constructor.
+         */
+        protected QIFCategoryTaxLine() {
+        }
+
         @Override
         public QCategoryLineType getLineType() {
             return QCategoryLineType.TAX;
@@ -311,12 +317,6 @@ public class QIFEventCategory
         @Override
         public String toString() {
             return getLineType().getSymbol();
-        }
-
-        /**
-         * Constructor.
-         */
-        protected QIFCategoryTaxLine() {
         }
 
         @Override

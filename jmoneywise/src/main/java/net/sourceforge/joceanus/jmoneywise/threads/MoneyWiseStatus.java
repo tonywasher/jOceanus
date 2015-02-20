@@ -39,24 +39,24 @@ public class MoneyWiseStatus
     private final View theView;
 
     /**
-     * Obtain view.
-     * @return the view
-     */
-    protected View getView() {
-        return theView;
-    }
-
-    /**
      * Constructor.
      * @param pView the view
      * @param pStatusBar the status bar
      */
     public MoneyWiseStatus(final View pView,
-                         final StatusBar pStatusBar) {
+                           final StatusBar pStatusBar) {
         /* Call super constructor */
         super(pView, pStatusBar);
 
         /* Store view */
         theView = pView;
+    }
+
+    /**
+     * Obtain view.
+     * @return the view
+     */
+    protected View getView() {
+        return theView;
     }
 }

@@ -52,34 +52,6 @@ public class TransactionCategoryType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the Category class of the Category Type.
-     * @return the class
-     */
-    public TransactionCategoryClass getCategoryClass() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public boolean isActive() {
-        return super.isActive() || getCategoryClass().isHiddenType();
-    }
-
-    @Override
-    public TransactionCategoryType getBase() {
-        return (TransactionCategoryType) super.getBase();
-    }
-
-    @Override
-    public TransactionCategoryTypeList getList() {
-        return (TransactionCategoryTypeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the Category Type with
@@ -123,6 +95,34 @@ public class TransactionCategoryType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Category class of the Category Type.
+     * @return the class
+     */
+    public TransactionCategoryClass getCategoryClass() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public boolean isActive() {
+        return super.isActive() || getCategoryClass().isHiddenType();
+    }
+
+    @Override
+    public TransactionCategoryType getBase() {
+        return (TransactionCategoryType) super.getBase();
+    }
+
+    @Override
+    public TransactionCategoryTypeList getList() {
+        return (TransactionCategoryTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link TransactionCategoryType} objects.
      */
@@ -132,6 +132,22 @@ public class TransactionCategoryType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE category type list.
+         * @param pData the DataSet for the list
+         */
+        public TransactionCategoryTypeList(final DataSet<?, ?> pData) {
+            super(TransactionCategoryType.class, pData, MoneyWiseDataType.TRANSTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TransactionCategoryTypeList(final TransactionCategoryTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -151,22 +167,6 @@ public class TransactionCategoryType
         @Override
         protected Class<TransactionCategoryClass> getEnumClass() {
             return TransactionCategoryClass.class;
-        }
-
-        /**
-         * Construct an empty CORE category type list.
-         * @param pData the DataSet for the list
-         */
-        public TransactionCategoryTypeList(final DataSet<?, ?> pData) {
-            super(TransactionCategoryType.class, pData, MoneyWiseDataType.TRANSTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TransactionCategoryTypeList(final TransactionCategoryTypeList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -80,6 +80,14 @@ public enum AssetType {
     private final int theId;
 
     /**
+     * Constructor.
+     * @param uId the Id
+     */
+    private AssetType(final int uId) {
+        theId = uId;
+    }
+
+    /**
      * Obtain class Id.
      * @return the Id
      */
@@ -97,14 +105,6 @@ public enum AssetType {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the Id
-     */
-    private AssetType(final int uId) {
-        theId = uId;
     }
 
     /**

@@ -337,11 +337,6 @@ public final class SvnComponent
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Parent Repository.
          */
@@ -357,6 +352,11 @@ public final class SvnComponent
 
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         /**

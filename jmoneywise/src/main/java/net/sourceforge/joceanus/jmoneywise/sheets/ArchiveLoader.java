@@ -143,6 +143,18 @@ public class ArchiveLoader {
     private ParentCache theParentCache;
 
     /**
+     * Constructor.
+     */
+    public ArchiveLoader() {
+        /* Create the Years Array */
+        theYears = new ArrayList<ArchiveYear>();
+
+        /* Create the maps */
+        theNameMap = new HashMap<String, Object>();
+        theCategoryMap = new HashMap<String, TransactionCategory>();
+    }
+
+    /**
      * Get the iterator.
      * @return the iterator
      */
@@ -176,8 +188,7 @@ public class ArchiveLoader {
 
     /**
      * Add a year to the front of the list.
-     * @param pName
-     * the range name
+     * @param pName the range name
      */
     private void addYear(final String pName) {
         ArchiveYear myYear = new ArchiveYear(pName);
@@ -186,8 +197,7 @@ public class ArchiveLoader {
 
     /**
      * Check whether date is in range.
-     * @param pDate
-     * the date to check
+     * @param pDate the date to check
      * @return in range true/false
      */
     protected boolean checkDate(final JDateDay pDate) {
@@ -195,26 +205,11 @@ public class ArchiveLoader {
     }
 
     /**
-     * Constructor.
-     */
-    public ArchiveLoader() {
-        /* Create the Years Array */
-        theYears = new ArrayList<ArchiveYear>();
-
-        /* Create the maps */
-        theNameMap = new HashMap<String, Object>();
-        theCategoryMap = new HashMap<String, TransactionCategory>();
-    }
-
-    /**
      * Load an Archive Workbook.
-     * @param pTask
-     * Task Control for task
-     * @param pPreferences
-     * the backup preferences
+     * @param pTask Task Control for task
+     * @param pPreferences the backup preferences
      * @return the newly loaded data
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
     public MoneyWiseData loadArchive(final TaskControl<MoneyWiseData> pTask,
                                      final BackupPreferences pPreferences) throws JOceanusException {
@@ -244,15 +239,11 @@ public class ArchiveLoader {
 
     /**
      * Load the Static from an archive.
-     * @param pTask
-     * the task control
-     * @param pWorkBook
-     * the workbook
-     * @param pData
-     * the data set to load into
+     * @param pTask the task control
+     * @param pWorkBook the workbook
+     * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
     private boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                 final DataWorkBook pWorkBook,
@@ -282,15 +273,11 @@ public class ArchiveLoader {
 
     /**
      * Load an Archive Workbook from a stream.
-     * @param pTask
-     * Task Control for task
-     * @param pStream
-     * Input stream to load from
-     * @param pType
-     * the workBookType
+     * @param pTask Task Control for task
+     * @param pStream Input stream to load from
+     * @param pType the workBookType
      * @return the newly loaded data
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
     private MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
                                             final InputStream pStream,
@@ -438,10 +425,8 @@ public class ArchiveLoader {
 
     /**
      * Declare asset.
-     * @param pAsset
-     * the asset to declare.
-     * @throws JOceanusException
-     * on error
+     * @param pAsset the asset to declare.
+     * @throws JOceanusException on error
      */
     protected void declareAsset(final AssetBase<?> pAsset) throws JOceanusException {
         /* Access the asset name */
@@ -458,10 +443,8 @@ public class ArchiveLoader {
 
     /**
      * Declare category.
-     * @param pCategory
-     * the category to declare.
-     * @throws JOceanusException
-     * on error
+     * @param pCategory the category to declare.
+     * @throws JOceanusException on error
      */
     protected void declareCategory(final TransactionCategory pCategory) throws JOceanusException {
         /* Access the asset name */
@@ -478,12 +461,9 @@ public class ArchiveLoader {
 
     /**
      * Declare security holding.
-     * @param pSecurity
-     * the security.
-     * @param pPortfolio
-     * the portfolio
-     * @throws JOceanusException
-     * on error
+     * @param pSecurity the security.
+     * @param pPortfolio the portfolio
+     * @throws JOceanusException on error
      */
     protected void declareSecurityHolding(final Security pSecurity,
                                           final String pPortfolio) throws JOceanusException {
@@ -501,14 +481,10 @@ public class ArchiveLoader {
 
     /**
      * Declare security holding.
-     * @param pName
-     * the security holding name
-     * @param pAlias
-     * the alias name.
-     * @param pPortfolio
-     * the portfolio
-     * @throws JOceanusException
-     * on error
+     * @param pName the security holding name
+     * @param pAlias the alias name.
+     * @param pPortfolio the portfolio
+     * @throws JOceanusException on error
      */
     protected void declareAliasHolding(final String pName,
                                        final String pAlias,
@@ -526,8 +502,7 @@ public class ArchiveLoader {
 
     /**
      * Resolve security holdings.
-     * @param pData
-     * the dataSet
+     * @param pData the dataSet
      */
     protected void resolveSecurityHoldings(final MoneyWiseData pData) {
         /* Access securityHoldingsMap and Portfolio list */
@@ -556,14 +531,10 @@ public class ArchiveLoader {
 
     /**
      * Process portfolio transfer.
-     * @param pData
-     * the dataSet
-     * @param pSource
-     * the source asset
-     * @param pTarget
-     * the target asset
-     * @throws JOceanusException
-     * on error
+     * @param pData the dataSet
+     * @param pSource the source asset
+     * @param pTarget the target asset
+     * @throws JOceanusException on error
      */
     protected void resolvePortfolioXfer(final MoneyWiseData pData,
                                         final Object pSource,
@@ -613,25 +584,8 @@ public class ArchiveLoader {
         private final String theRangeName;
 
         /**
-         * Get the date.
-         * @return the date
-         */
-        protected JDateDay getDate() {
-            return theDate;
-        }
-
-        /**
-         * Get the range name.
-         * @return the name
-         */
-        protected String getRangeName() {
-            return theRangeName;
-        }
-
-        /**
          * Constructor.
-         * @param pName
-         * the range name
+         * @param pName the range name
          */
         private ArchiveYear(final String pName) {
             /* Store parameters */
@@ -651,6 +605,22 @@ public class ArchiveLoader {
             /* Create the date */
             theDate = new JDateDay(myYear, Month.APRIL, Schedule.END_OF_MONTH_DAY);
         }
+
+        /**
+         * Get the date.
+         * @return the date
+         */
+        protected JDateDay getDate() {
+            return theDate;
+        }
+
+        /**
+         * Get the range name.
+         * @return the name
+         */
+        protected String getRangeName() {
+            return theRangeName;
+        }
     }
 
     /**
@@ -668,6 +638,18 @@ public class ArchiveLoader {
         private final String thePortfolio;
 
         /**
+         * Constructor.
+         * @param pSecurity the security
+         * @param pPortfolio the portfolio
+         */
+        private SecurityHoldingDef(final Security pSecurity,
+                                   final String pPortfolio) {
+            /* Store parameters */
+            theSecurity = pSecurity;
+            thePortfolio = pPortfolio;
+        }
+
+        /**
          * Obtain security.
          * @return the security
          */
@@ -681,20 +663,6 @@ public class ArchiveLoader {
          */
         public String getPortfolio() {
             return thePortfolio;
-        }
-
-        /**
-         * Constructor.
-         * @param pSecurity
-         * the security
-         * @param pPortfolio
-         * the portfolio
-         */
-        private SecurityHoldingDef(final Security pSecurity,
-                                   final String pPortfolio) {
-            /* Store parameters */
-            theSecurity = pSecurity;
-            thePortfolio = pPortfolio;
         }
     }
 
@@ -774,8 +742,7 @@ public class ArchiveLoader {
 
         /**
          * Constructor.
-         * @param pData
-         * the dataSet
+         * @param pData the dataSet
          */
         protected ParentCache(final MoneyWiseData pData) {
             /* Store lists */
@@ -786,13 +753,10 @@ public class ArchiveLoader {
 
         /**
          * Build transaction.
-         * @param pAmount
-         * the amount
-         * @param pReconciled
-         * is the transaction reconciled?
+         * @param pAmount the amount
+         * @param pReconciled is the transaction reconciled?
          * @return the new transaction
-         * @throws JOceanusException
-         * on error
+         * @throws JOceanusException on error
          */
         protected Transaction buildTransaction(final String pAmount,
                                                final boolean pReconciled) throws JOceanusException {
@@ -823,17 +787,12 @@ public class ArchiveLoader {
 
         /**
          * Resolve Values.
-         * @param pDate
-         * the date of the transaction
-         * @param pDebit
-         * the name of the debit object
-         * @param pCredit
-         * the name of the credit object
-         * @param pCategory
-         * the name of the category object
+         * @param pDate the date of the transaction
+         * @param pDebit the name of the debit object
+         * @param pCredit the name of the credit object
+         * @param pCategory the name of the category object
          * @return continue true/false
-         * @throws JOceanusException
-         * on error
+         * @throws JOceanusException on error
          */
         protected boolean resolveValues(final JDateDay pDate,
                                         final String pDebit,
@@ -877,14 +836,10 @@ public class ArchiveLoader {
 
         /**
          * Resolve Child Values.
-         * @param pDebit
-         * the name of the debit object
-         * @param pCredit
-         * the name of the credit object
-         * @param pCategory
-         * the name of the category object
-         * @throws JOceanusException
-         * on error
+         * @param pDebit the name of the debit object
+         * @param pCredit the name of the credit object
+         * @param pCategory the name of the category object
+         * @throws JOceanusException on error
          */
         private void resolveChildValues(final String pDebit,
                                         final String pCredit,
@@ -920,8 +875,7 @@ public class ArchiveLoader {
 
         /**
          * Resolve assets.
-         * @throws JOceanusException
-         * on error
+         * @throws JOceanusException on error
          */
         private void resolveAssets() throws JOceanusException {
             boolean isDebitHolding = theLastDebit instanceof SecurityHolding;

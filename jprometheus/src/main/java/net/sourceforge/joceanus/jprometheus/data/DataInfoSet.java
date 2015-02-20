@@ -69,22 +69,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      */
     public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES.getValue());
 
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_OWNER.equals(pField)) {
-            return theOwner;
-        }
-        if (FIELD_VALUES.equals(pField)) {
-            return theMap;
-        }
-        return JDataFieldValue.UNKNOWN;
-    }
-
-    @Override
-    public String formatObject() {
-        return getDataFields().getName();
-    }
-
     /**
      * The Owner to which this set belongs.
      */
@@ -111,14 +95,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     private final Class<T> theClass;
 
     /**
-     * Obtain owner.
-     * @return the owner
-     */
-    public O getOwner() {
-        return theOwner;
-    }
-
-    /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
@@ -135,6 +111,30 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
         /* Create the Map */
         theMap = new EnumMap<S, DataInfo<T, O, I, S, E>>(theTypeList.getEnumClass());
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_OWNER.equals(pField)) {
+            return theOwner;
+        }
+        if (FIELD_VALUES.equals(pField)) {
+            return theMap;
+        }
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
+    }
+
+    /**
+     * Obtain owner.
+     * @return the owner
+     */
+    public O getOwner() {
+        return theOwner;
     }
 
     /**

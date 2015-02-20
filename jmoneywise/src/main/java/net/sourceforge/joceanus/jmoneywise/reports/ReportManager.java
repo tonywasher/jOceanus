@@ -100,14 +100,6 @@ public class ReportManager
     private final Map<String, HiddenElement> theHiddenMap;
 
     /**
-     * Obtain the builder.
-     * @return the HTML builder
-     */
-    public HTMLBuilder getBuilder() {
-        return theBuilder;
-    }
-
-    /**
      * Constructor.
      * @param pView the view
      * @throws JOceanusException on error
@@ -129,6 +121,14 @@ public class ReportManager
         } catch (Exception e) {
             throw new JMoneyWiseIOException("Failed to create", e);
         }
+    }
+
+    /**
+     * Obtain the builder.
+     * @return the HTML builder
+     */
+    public HTMLBuilder getBuilder() {
+        return theBuilder;
     }
 
     /**

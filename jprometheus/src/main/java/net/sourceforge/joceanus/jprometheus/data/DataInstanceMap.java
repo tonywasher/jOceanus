@@ -59,6 +59,25 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
      */
     public static final Integer ONE = Integer.valueOf(1);
 
+    /**
+     * Map of keys.
+     */
+    private final Map<K, T> theKeyMap;
+
+    /**
+     * Map of key counts.
+     */
+    private final Map<K, Integer> theKeyCountMap;
+
+    /**
+     * Constructor.
+     */
+    protected DataInstanceMap() {
+        /* Create the maps */
+        theKeyMap = new HashMap<K, T>();
+        theKeyCountMap = new HashMap<K, Integer>();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -81,25 +100,6 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
     @Override
     public String formatObject() {
         return FIELD_DEFS.getName();
-    }
-
-    /**
-     * Map of keys.
-     */
-    private final Map<K, T> theKeyMap;
-
-    /**
-     * Map of key counts.
-     */
-    private final Map<K, Integer> theKeyCountMap;
-
-    /**
-     * Constructor.
-     */
-    protected DataInstanceMap() {
-        /* Create the maps */
-        theKeyMap = new HashMap<K, T>();
-        theKeyCountMap = new HashMap<K, Integer>();
     }
 
     @Override

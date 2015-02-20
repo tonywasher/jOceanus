@@ -115,6 +115,21 @@ public abstract class ColumnDefinition {
     private SortOrder theOrder = null;
 
     /**
+     * Constructor.
+     * @param pTable the table to which the column belongs
+     * @param pId the column id
+     */
+    protected ColumnDefinition(final TableDefinition pTable,
+                               final JDataField pId) {
+        /* Record the identity and table */
+        theIdentity = pId;
+        theTable = pTable;
+
+        /* Add to the map */
+        theTable.getMap().put(theIdentity, this);
+    }
+
+    /**
      * Obtain the column name.
      * @return the name
      */
@@ -177,21 +192,6 @@ public abstract class ColumnDefinition {
      */
     protected boolean isValueSet() {
         return isValueSet;
-    }
-
-    /**
-     * Constructor.
-     * @param pTable the table to which the column belongs
-     * @param pId the column id
-     */
-    protected ColumnDefinition(final TableDefinition pTable,
-                               final JDataField pId) {
-        /* Record the identity and table */
-        theIdentity = pId;
-        theTable = pTable;
-
-        /* Add to the map */
-        theTable.getMap().put(theIdentity, this);
     }
 
     /**

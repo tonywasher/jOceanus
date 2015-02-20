@@ -81,6 +81,14 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     private List<SheetDataItem<?, ?>> theSheets = null;
 
     /**
+     * Constructor.
+     * @param pTask the Task control
+     */
+    protected SheetWriter(final TaskControl<T> pTask) {
+        theTask = pTask;
+    }
+
+    /**
      * get thread status.
      * @return the status
      */
@@ -102,14 +110,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      */
     public T getData() {
         return theData;
-    }
-
-    /**
-     * Constructor.
-     * @param pTask the Task control
-     */
-    protected SheetWriter(final TaskControl<T> pTask) {
-        theTask = pTask;
     }
 
     /**

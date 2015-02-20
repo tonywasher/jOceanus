@@ -65,6 +65,64 @@ public class AssetCurrency
      */
     public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
+    /**
+     * Copy Constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pCurrency The Account Currency to copy
+     */
+    protected AssetCurrency(final AssetCurrencyList pList,
+                            final AssetCurrency pCurrency) {
+        super(pList, pCurrency);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pName Name of Account Currency
+     * @throws JOceanusException on error
+     */
+    private AssetCurrency(final AssetCurrencyList pList,
+                          final String pName) throws JOceanusException {
+        super(pList, pName);
+        setValueDefault(Boolean.FALSE);
+        setValueEnabled(Boolean.FALSE);
+        setValueDesc(getCurrencyClass().getCurrency().getDisplayName());
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pClass Class of Account Currency
+     * @throws JOceanusException on error
+     */
+    private AssetCurrency(final AssetCurrencyList pList,
+                          final AssetCurrencyClass pClass) throws JOceanusException {
+        super(pList, pClass);
+        setValueDefault(Boolean.FALSE);
+        setValueEnabled(Boolean.TRUE);
+        setValueDesc(pClass.getCurrency().getDisplayName());
+    }
+
+    /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private AssetCurrency(final AssetCurrencyList pList,
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+
+        /* Store the Default */
+        Object myValue = pValues.getValue(FIELD_DEFAULT);
+        if (myValue instanceof Boolean) {
+            setValueDefault((Boolean) myValue);
+        } else if (myValue instanceof String) {
+            JDataFormatter myFormatter = getDataSet().getDataFormatter();
+            setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
+        }
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -132,64 +190,6 @@ public class AssetCurrency
      */
     public Currency getCurrency() {
         return getCurrencyClass().getCurrency();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList The list to associate the Account Currency with
-     * @param pCurrency The Account Currency to copy
-     */
-    protected AssetCurrency(final AssetCurrencyList pList,
-                            final AssetCurrency pCurrency) {
-        super(pList, pCurrency);
-    }
-
-    /**
-     * Basic constructor.
-     * @param pList The list to associate the Account Currency with
-     * @param pName Name of Account Currency
-     * @throws JOceanusException on error
-     */
-    private AssetCurrency(final AssetCurrencyList pList,
-                          final String pName) throws JOceanusException {
-        super(pList, pName);
-        setValueDefault(Boolean.FALSE);
-        setValueEnabled(Boolean.FALSE);
-        setValueDesc(getCurrencyClass().getCurrency().getDisplayName());
-    }
-
-    /**
-     * Basic constructor.
-     * @param pList The list to associate the Account Currency with
-     * @param pClass Class of Account Currency
-     * @throws JOceanusException on error
-     */
-    private AssetCurrency(final AssetCurrencyList pList,
-                          final AssetCurrencyClass pClass) throws JOceanusException {
-        super(pList, pClass);
-        setValueDefault(Boolean.FALSE);
-        setValueEnabled(Boolean.TRUE);
-        setValueDesc(pClass.getCurrency().getDisplayName());
-    }
-
-    /**
-     * Values constructor.
-     * @param pList The list to associate the item with
-     * @param pValues the values
-     * @throws JOceanusException on error
-     */
-    private AssetCurrency(final AssetCurrencyList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        super(pList, pValues);
-
-        /* Store the Default */
-        Object myValue = pValues.getValue(FIELD_DEFAULT);
-        if (myValue instanceof Boolean) {
-            setValueDefault((Boolean) myValue);
-        } else if (myValue instanceof String) {
-            JDataFormatter myFormatter = getDataSet().getDataFormatter();
-            setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
-        }
     }
 
     @Override
@@ -297,6 +297,22 @@ public class AssetCurrency
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE account currency list.
+         * @param pData the DataSet for the list
+         */
+        public AssetCurrencyList(final DataSet<?, ?> pData) {
+            super(AssetCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private AssetCurrencyList(final AssetCurrencyList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -320,22 +336,6 @@ public class AssetCurrency
         @Override
         protected CurrencyDataMap getDataMap() {
             return (CurrencyDataMap) super.getDataMap();
-        }
-
-        /**
-         * Construct an empty CORE account currency list.
-         * @param pData the DataSet for the list
-         */
-        public AssetCurrencyList(final DataSet<?, ?> pData) {
-            super(AssetCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private AssetCurrencyList(final AssetCurrencyList pSource) {
-            super(pSource);
         }
 
         @Override
@@ -525,6 +525,22 @@ public class AssetCurrency
          */
         public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
+        /**
+         * Default value.
+         */
+        private AssetCurrency theDefault;
+
+        /**
+         * Default count.
+         */
+        private Integer theDefaultCount;
+
+        /**
+         * Constructor.
+         */
+        private CurrencyDataMap() {
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -544,22 +560,6 @@ public class AssetCurrency
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Default value.
-         */
-        private AssetCurrency theDefault;
-
-        /**
-         * Default count.
-         */
-        private Integer theDefaultCount;
-
-        /**
-         * Constructor.
-         */
-        private CurrencyDataMap() {
         }
 
         @Override

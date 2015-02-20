@@ -108,21 +108,6 @@ public class JSvnStatusWindow
      */
     private transient ScmStatus theStatus = new ScmStatus();
 
-    @Override
-    public PreferenceManager getPreferenceMgr() {
-        return theManager.getPreferenceMgr();
-    }
-
-    @Override
-    public SecureManager getSecureMgr() {
-        return theManager.getSecureMgr();
-    }
-
-    @Override
-    public JFrame getFrame() {
-        return theManager.getFrame();
-    }
-
     /**
      * Constructor.
      * @param pManager the manager
@@ -158,6 +143,21 @@ public class JSvnStatusWindow
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(myScroll);
         add(myButtonPanel);
+    }
+
+    @Override
+    public PreferenceManager getPreferenceMgr() {
+        return theManager.getPreferenceMgr();
+    }
+
+    @Override
+    public SecureManager getSecureMgr() {
+        return theManager.getSecureMgr();
+    }
+
+    @Override
+    public JFrame getFrame() {
+        return theManager.getFrame();
     }
 
     /**

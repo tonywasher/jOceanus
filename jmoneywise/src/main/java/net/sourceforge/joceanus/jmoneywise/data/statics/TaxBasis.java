@@ -52,34 +52,6 @@ public class TaxBasis
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the Tax class of the Tax Basis.
-     * @return the class
-     */
-    public TaxBasisClass getTaxClass() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public TaxBasis getBase() {
-        return (TaxBasis) super.getBase();
-    }
-
-    @Override
-    public TaxBasisList getList() {
-        return (TaxBasisList) super.getList();
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the Tax Basis with
@@ -123,6 +95,34 @@ public class TaxBasis
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Tax class of the Tax Basis.
+     * @return the class
+     */
+    public TaxBasisClass getTaxClass() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public TaxBasis getBase() {
+        return (TaxBasis) super.getBase();
+    }
+
+    @Override
+    public TaxBasisList getList() {
+        return (TaxBasisList) super.getList();
+    }
+
+    @Override
+    public boolean isActive() {
+        return true;
+    }
+
     /**
      * Determine whether we should add tax credits to the total.
      * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
@@ -163,6 +163,22 @@ public class TaxBasis
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE tax bucket list.
+         * @param pData the DataSet for the list
+         */
+        public TaxBasisList(final DataSet<?, ?> pData) {
+            super(TaxBasis.class, pData, MoneyWiseDataType.TAXBASIS, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxBasisList(final TaxBasisList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -181,22 +197,6 @@ public class TaxBasis
         @Override
         protected Class<TaxBasisClass> getEnumClass() {
             return TaxBasisClass.class;
-        }
-
-        /**
-         * Construct an empty CORE tax bucket list.
-         * @param pData the DataSet for the list
-         */
-        public TaxBasisList(final DataSet<?, ?> pData) {
-            super(TaxBasis.class, pData, MoneyWiseDataType.TAXBASIS, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TaxBasisList(final TaxBasisList pSource) {
-            super(pSource);
         }
 
         @Override

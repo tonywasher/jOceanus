@@ -141,6 +141,110 @@ public class Security
      */
     private final SecurityInfoSet theInfoSet;
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pSecurity The Security to copy
+     */
+    protected Security(final SecurityList pList,
+                       final Security pSecurity) {
+        /* Set standard values */
+        super(pList, pSecurity);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
+                theInfoSet.cloneDataInfoSet(pSecurity.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Security(final SecurityList pList,
+                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the SecurityType */
+            Object myValue = pValues.getValue(FIELD_SECTYPE);
+            if (myValue instanceof Integer) {
+                setValueType((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueType((String) myValue);
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Store the Symbol */
+            myValue = pValues.getValue(FIELD_SYMBOL);
+            if (myValue instanceof String) {
+                setValueSymbol((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueSymbol((byte[]) myValue);
+            }
+
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public Security(final SecurityList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -628,110 +732,6 @@ public class Security
         }
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pSecurity The Security to copy
-     */
-    protected Security(final SecurityList pList,
-                       final Security pSecurity) {
-        /* Set standard values */
-        super(pList, pSecurity);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
-                theInfoSet.cloneDataInfoSet(pSecurity.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private Security(final SecurityList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the SecurityType */
-            Object myValue = pValues.getValue(FIELD_SECTYPE);
-            if (myValue instanceof Integer) {
-                setValueType((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueType((String) myValue);
-            }
-
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
-            }
-
-            /* Store the Symbol */
-            myValue = pValues.getValue(FIELD_SYMBOL);
-            if (myValue instanceof String) {
-                setValueSymbol((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueSymbol((byte[]) myValue);
-            }
-
-            /* Store the Currency */
-            myValue = pValues.getValue(FIELD_CURRENCY);
-            if (myValue instanceof Integer) {
-                setValueCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCurrency((String) myValue);
-            } else if (myValue instanceof AssetCurrency) {
-                setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Security(final SecurityList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
     @Override
     public void deRegister() {
         SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
@@ -1107,11 +1107,6 @@ public class Security
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The SecurityInfo List.
          */
@@ -1121,6 +1116,27 @@ public class Security
          * The AccountInfoType list.
          */
         private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE Security list.
+         * @param pData the DataSet for the list
+         */
+        public SecurityList(final MoneyWiseData pData) {
+            super(pData, Security.class, MoneyWiseDataType.SECURITY);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected SecurityList(final SecurityList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -1159,27 +1175,11 @@ public class Security
             return theInfoTypeList;
         }
 
-        /**
-         * Construct an empty CORE Security list.
-         * @param pData the DataSet for the list
-         */
-        public SecurityList(final MoneyWiseData pData) {
-            super(pData, Security.class, MoneyWiseDataType.SECURITY);
-        }
-
         @Override
         protected SecurityList getEmptyList(final ListStyle pStyle) {
             SecurityList myList = new SecurityList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected SecurityList(final SecurityList pSource) {
-            super(pSource);
         }
 
         /**
@@ -1346,6 +1346,25 @@ public class Security
          */
         private static final JDataField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
 
+        /**
+         * Map of symbol counts.
+         */
+        private final Map<String, Integer> theSymbolCountMap;
+
+        /**
+         * Map of symbols.
+         */
+        private final Map<String, Security> theSymbolMap;
+
+        /**
+         * Constructor.
+         */
+        public SecurityDataMap() {
+            /* Create the maps */
+            theSymbolCountMap = new HashMap<String, Integer>();
+            theSymbolMap = new HashMap<String, Security>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1365,28 +1384,9 @@ public class Security
             return super.getFieldValue(pField);
         }
 
-        /**
-         * Map of symbol counts.
-         */
-        private final Map<String, Integer> theSymbolCountMap;
-
-        /**
-         * Map of symbols.
-         */
-        private final Map<String, Security> theSymbolMap;
-
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Constructor.
-         */
-        public SecurityDataMap() {
-            /* Create the maps */
-            theSymbolCountMap = new HashMap<String, Integer>();
-            theSymbolMap = new HashMap<String, Security>();
         }
 
         @Override

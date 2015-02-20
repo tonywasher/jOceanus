@@ -62,11 +62,6 @@ public final class SpotExchangeRate
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, ExchangeRate.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Previous Date field Id.
      */
@@ -76,6 +71,35 @@ public final class SpotExchangeRate
      * Previous Rate field Id.
      */
     public static final JDataField FIELD_PREVRATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTRATE_PREVRATE.getValue());
+
+    /**
+     * the previous date.
+     */
+    private JDateDay thePrevDate;
+
+    /**
+     * the previous rate.
+     */
+    private JRatio thePrevRate;
+
+    /**
+     * Constructor for a new SpotRate where no rate data exists.
+     * @param pList the Spot Rate List
+     * @param pCurrency the currency
+     */
+    private SpotExchangeRate(final SpotExchangeList pList,
+                             final AssetCurrency pCurrency) {
+        super(pList);
+
+        /* Store base values */
+        setDate(pList.theDate);
+        setToCurrency(pCurrency);
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -87,16 +111,6 @@ public final class SpotExchangeRate
         }
         return super.getFieldValue(pField);
     }
-
-    /**
-     * the previous date.
-     */
-    private JDateDay thePrevDate;
-
-    /**
-     * the previous rate.
-     */
-    private JRatio thePrevRate;
 
     /**
      * Obtain previous rate.
@@ -112,20 +126,6 @@ public final class SpotExchangeRate
      */
     public JDateDay getPrevDate() {
         return thePrevDate;
-    }
-
-    /**
-     * Constructor for a new SpotRate where no rate data exists.
-     * @param pList the Spot Rate List
-     * @param pCurrency the currency
-     */
-    private SpotExchangeRate(final SpotExchangeList pList,
-                             final AssetCurrency pCurrency) {
-        super(pList);
-
-        /* Store base values */
-        setDate(pList.theDate);
-        setToCurrency(pCurrency);
     }
 
     /**
@@ -220,43 +220,6 @@ public final class SpotExchangeRate
          */
         public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_CURRENCY.equals(pField)) {
-                return theCurrency;
-            }
-            if (FIELD_DATE.equals(pField)) {
-                return theDate;
-            }
-            if (FIELD_NEXT.equals(pField)) {
-                return getNext();
-            }
-            if (FIELD_PREV.equals(pField)) {
-                return getPrev();
-            }
-            return super.getFieldValue(pField);
-        }
-
-        @Override
-        public String listName() {
-            return SpotExchangeList.class.getSimpleName();
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return SpotExchangeRate.FIELD_DEFS;
-        }
-
-        @Override
-        protected SpotExchangeList getEmptyList(final ListStyle pStyle) {
-            throw new UnsupportedOperationException();
-        }
-
         /**
          * The date.
          */
@@ -281,22 +244,6 @@ public final class SpotExchangeRate
          * The previous date.
          */
         private JDateDay thePrev = null;
-
-        /**
-         * Obtain the next date.
-         * @return the date
-         */
-        public JDateDay getNext() {
-            return theNext;
-        }
-
-        /**
-         * Obtain the previous date.
-         * @return the date
-         */
-        public JDateDay getPrev() {
-            return thePrev;
-        }
 
         /**
          * Constructor.
@@ -388,6 +335,59 @@ public final class SpotExchangeRate
                     thePrev = myRate.getDate();
                 }
             }
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_CURRENCY.equals(pField)) {
+                return theCurrency;
+            }
+            if (FIELD_DATE.equals(pField)) {
+                return theDate;
+            }
+            if (FIELD_NEXT.equals(pField)) {
+                return getNext();
+            }
+            if (FIELD_PREV.equals(pField)) {
+                return getPrev();
+            }
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String listName() {
+            return SpotExchangeList.class.getSimpleName();
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return SpotExchangeRate.FIELD_DEFS;
+        }
+
+        @Override
+        protected SpotExchangeList getEmptyList(final ListStyle pStyle) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * Obtain the next date.
+         * @return the date
+         */
+        public JDateDay getNext() {
+            return theNext;
+        }
+
+        /**
+         * Obtain the previous date.
+         * @return the date
+         */
+        public JDateDay getPrev() {
+            return thePrev;
         }
 
         /* Is this list locked */

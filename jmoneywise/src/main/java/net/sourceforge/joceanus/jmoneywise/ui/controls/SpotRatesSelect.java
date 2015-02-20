@@ -121,14 +121,6 @@ public class SpotRatesSelect
     private transient SpotRatesState theSavePoint = null;
 
     /**
-     * Get the selected date.
-     * @return the date
-     */
-    public JDateDay getDate() {
-        return theState.getDate();
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -183,6 +175,14 @@ public class SpotRatesSelect
 
         /* Add the listener for item changes */
         new SpotRatesListener();
+    }
+
+    /**
+     * Get the selected date.
+     * @return the date
+     */
+    public JDateDay getDate() {
+        return theState.getDate();
     }
 
     /**
@@ -322,6 +322,27 @@ public class SpotRatesSelect
         private JDateDay thePrevDate = null;
 
         /**
+         * Constructor.
+         */
+        private SpotRatesState() {
+            theDate = new JDateDay();
+        }
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+        private SpotRatesState(final SpotRatesState pState) {
+            theDate = new JDateDay(pState.getDate());
+            if (pState.getNextDate() != null) {
+                theNextDate = new JDateDay(pState.getNextDate());
+            }
+            if (pState.getPrevDate() != null) {
+                thePrevDate = new JDateDay(pState.getPrevDate());
+            }
+        }
+
+        /**
          * Get the selected date.
          * @return the date
          */
@@ -343,27 +364,6 @@ public class SpotRatesSelect
          */
         private JDateDay getPrevDate() {
             return thePrevDate;
-        }
-
-        /**
-         * Constructor.
-         */
-        private SpotRatesState() {
-            theDate = new JDateDay();
-        }
-
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        private SpotRatesState(final SpotRatesState pState) {
-            theDate = new JDateDay(pState.getDate());
-            if (pState.getNextDate() != null) {
-                theNextDate = new JDateDay(pState.getNextDate());
-            }
-            if (pState.getPrevDate() != null) {
-                thePrevDate = new JDateDay(pState.getPrevDate());
-            }
         }
 
         /**

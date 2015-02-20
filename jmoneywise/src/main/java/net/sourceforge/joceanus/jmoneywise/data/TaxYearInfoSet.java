@@ -83,6 +83,19 @@ public class TaxYearInfoSet
      */
     private static final String ERROR_LOALLOW = MoneyWiseDataResource.TAXYEAR_ERROR_LOALLOWANCE.getValue();
 
+    /**
+     * Constructor.
+     * @param pOwner the Owner to which this Set belongs
+     * @param pTypeList the infoTypeList for the set
+     * @param pInfoList source InfoSet
+     */
+    protected TaxYearInfoSet(final TaxYear pOwner,
+                             final TaxYearInfoTypeList pTypeList,
+                             final TaxInfoList pInfoList) {
+        /* Store the Owner and Info List */
+        super(pOwner, pTypeList, pInfoList);
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -133,19 +146,6 @@ public class TaxYearInfoSet
     public static JDataField getFieldForClass(final TaxYearInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
-    }
-
-    /**
-     * Constructor.
-     * @param pOwner the Owner to which this Set belongs
-     * @param pTypeList the infoTypeList for the set
-     * @param pInfoList source InfoSet
-     */
-    protected TaxYearInfoSet(final TaxYear pOwner,
-                             final TaxYearInfoTypeList pTypeList,
-                             final TaxInfoList pInfoList) {
-        /* Store the Owner and Info List */
-        super(pOwner, pTypeList, pInfoList);
     }
 
     /**

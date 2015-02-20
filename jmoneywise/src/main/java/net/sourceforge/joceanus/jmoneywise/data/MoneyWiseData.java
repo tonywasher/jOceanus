@@ -115,6 +115,59 @@ public class MoneyWiseData
      */
     public static final JDataField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
 
+    /**
+     * DataSet range.
+     */
+    private JDateDayRange theDateRange = null;
+
+    /**
+     * Default Currency.
+     */
+    private AssetCurrency theDefaultCurrency = null;
+
+    /**
+     * SecurityHoldings Map.
+     */
+    private final SecurityHoldingMap theSecurityHoldings;
+
+    /**
+     * Check Closed Accounts.
+     */
+    private boolean doCheckClosedAccounts = true;
+
+    /**
+     * Standard constructor.
+     * @param pSecurity the secure manager
+     * @param pPreferenceMgr the preference manager
+     * @param pFieldMgr the field manager
+     */
+    public MoneyWiseData(final SecureManager pSecurity,
+                         final PreferenceManager pPreferenceMgr,
+                         final JFieldManager pFieldMgr) {
+        /* Call Super-constructor */
+        super(MoneyWiseDataType.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
+
+        /* Loop through the list types */
+        for (MoneyWiseDataType myType : MoneyWiseDataType.values()) {
+            /* Create the empty list */
+            addList(myType, newList(myType));
+        }
+
+        /* Create a security holdings map */
+        theSecurityHoldings = new SecurityHoldingMap(this);
+    }
+
+    /**
+     * Constructor for a cloned DataSet.
+     * @param pSource the source DataSet
+     */
+    private MoneyWiseData(final MoneyWiseData pSource) {
+        super(pSource);
+
+        /* Create a security holdings map */
+        theSecurityHoldings = new SecurityHoldingMap(this);
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -147,26 +200,6 @@ public class MoneyWiseData
     public String formatObject() {
         return MoneyWiseData.class.getSimpleName();
     }
-
-    /**
-     * DataSet range.
-     */
-    private JDateDayRange theDateRange = null;
-
-    /**
-     * Default Currency.
-     */
-    private AssetCurrency theDefaultCurrency = null;
-
-    /**
-     * SecurityHoldings Map.
-     */
-    private final SecurityHoldingMap theSecurityHoldings;
-
-    /**
-     * Check Closed Accounts.
-     */
-    private boolean doCheckClosedAccounts = true;
 
     /**
      * Obtain DepositCategoryTypes.
@@ -550,39 +583,6 @@ public class MoneyWiseData
      */
     public boolean checkClosedAccounts() {
         return doCheckClosedAccounts;
-    }
-
-    /**
-     * Standard constructor.
-     * @param pSecurity the secure manager
-     * @param pPreferenceMgr the preference manager
-     * @param pFieldMgr the field manager
-     */
-    public MoneyWiseData(final SecureManager pSecurity,
-                         final PreferenceManager pPreferenceMgr,
-                         final JFieldManager pFieldMgr) {
-        /* Call Super-constructor */
-        super(MoneyWiseDataType.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
-
-        /* Loop through the list types */
-        for (MoneyWiseDataType myType : MoneyWiseDataType.values()) {
-            /* Create the empty list */
-            addList(myType, newList(myType));
-        }
-
-        /* Create a security holdings map */
-        theSecurityHoldings = new SecurityHoldingMap(this);
-    }
-
-    /**
-     * Constructor for a cloned DataSet.
-     * @param pSource the source DataSet
-     */
-    private MoneyWiseData(final MoneyWiseData pSource) {
-        super(pSource);
-
-        /* Create a security holdings map */
-        theSecurityHoldings = new SecurityHoldingMap(this);
     }
 
     /**

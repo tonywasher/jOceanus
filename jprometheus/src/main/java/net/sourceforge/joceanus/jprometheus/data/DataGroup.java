@@ -46,6 +46,25 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
      */
     public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
+    /**
+     * Parent Event.
+     */
+    private final T theParent;
+
+    /**
+     * Constructor.
+     * @param pParent the parent.
+     * @param pClass the class
+     */
+    public DataGroup(final T pParent,
+                     final Class<T> pClass) {
+        /* Call super-constructor */
+        super(pClass);
+
+        /* Store parameter */
+        theParent = pParent;
+    }
+
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_PARENT.equals(pField)) {
@@ -60,30 +79,11 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     }
 
     /**
-     * Parent Event.
-     */
-    private final T theParent;
-
-    /**
      * Obtain parent.
      * @return the parent
      */
     public T getParent() {
         return theParent;
-    }
-
-    /**
-     * Constructor.
-     * @param pParent the parent.
-     * @param pClass the class
-     */
-    public DataGroup(final T pParent,
-                     final Class<T> pClass) {
-        /* Call super-constructor */
-        super(pClass);
-
-        /* Store parameter */
-        theParent = pParent;
     }
 
     /**

@@ -155,19 +155,6 @@ public class SecurityPriceTable
      */
     private transient boolean isEditable = false;
 
-    @Override
-    protected void setError(final JOceanusException pError) {
-        theError.addError(pError);
-    }
-
-    /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    protected JPanel getPanel() {
-        return thePanel;
-    }
-
     /**
      * Constructor.
      * @param pView the data view
@@ -208,6 +195,19 @@ public class SecurityPriceTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+    }
+
+    @Override
+    protected void setError(final JOceanusException pError) {
+        theError.addError(pError);
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    protected JPanel getPanel() {
+        return thePanel;
     }
 
     /**

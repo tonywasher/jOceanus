@@ -68,6 +68,15 @@ public class SvnRevisionHistoryMap
      */
     private transient Object theOwner;
 
+    /**
+     * Constructor.
+     * @param pRepository the repository
+     */
+    protected SvnRevisionHistoryMap(final SvnRepository pRepository) {
+        /* Access repository and log client */
+        theRepository = pRepository;
+    }
+
     @Override
     public String formatObject() {
         return getClass().getSimpleName();
@@ -87,15 +96,6 @@ public class SvnRevisionHistoryMap
      */
     private Object getOwner() {
         return theOwner;
-    }
-
-    /**
-     * Constructor.
-     * @param pRepository the repository
-     */
-    protected SvnRevisionHistoryMap(final SvnRepository pRepository) {
-        /* Access repository and log client */
-        theRepository = pRepository;
     }
 
     /**
@@ -203,46 +203,6 @@ public class SvnRevisionHistoryMap
          */
         private SvnRevisionPath theSourcePath;
 
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
-        }
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_PATH.equals(pField)) {
-                return thePath;
-            }
-            if (FIELD_REVISION.equals(pField)) {
-                return theBaseRevision;
-            }
-            if (FIELD_HISTORY.equals(pField)) {
-                return theFirstHistory;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
-        /**
-         * Obtain the basedOn link.
-         * @return the log entry
-         */
-        public SvnRevisionHistory getBasedOn() {
-            return theFirstHistory;
-        }
-
-        /**
-         * Obtain the owner.
-         * @return the owner
-         */
-        public Object getOwner() {
-            return theOwner;
-        }
-
         /**
          * Constructor.
          * @param pHistoryMap the History Map
@@ -298,6 +258,46 @@ public class SvnRevisionHistoryMap
                 theSourcePath = new SvnRevisionPath(theHistoryMap, theOrigin);
                 theLastHistory.setBasedOn(theSourcePath.getBasedOn());
             }
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_PATH.equals(pField)) {
+                return thePath;
+            }
+            if (FIELD_REVISION.equals(pField)) {
+                return theBaseRevision;
+            }
+            if (FIELD_HISTORY.equals(pField)) {
+                return theFirstHistory;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the basedOn link.
+         * @return the log entry
+         */
+        public SvnRevisionHistory getBasedOn() {
+            return theFirstHistory;
+        }
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public Object getOwner() {
+            return theOwner;
         }
 
         /**

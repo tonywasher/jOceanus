@@ -73,6 +73,56 @@ public class MvnProjectDefinition
      */
     private static final JDataField FIELD_DEPS = FIELD_DEFS.declareEqualityField("Dependencies");
 
+    /**
+     * POM Model representation.
+     */
+    private Model theModel;
+
+    /**
+     * Main module identity.
+     */
+    private final MvnProjectId theDefinition;
+
+    /**
+     * Dependency identities.
+     */
+    private final ProjectList theDependencies;
+
+    /**
+     * SubModules.
+     */
+    private final List<MvnSubModule> theSubModules;
+
+    /**
+     * Constructor.
+     * @param pInput the project definition file as input stream
+     * @throws JOceanusException on error
+     */
+    public MvnProjectDefinition(final InputStream pInput) throws JOceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Parse the Project definition */
+            MavenXpp3Reader myReader = new MavenXpp3Reader();
+            theModel = myReader.read(pInput);
+
+            /* Obtain the major definition */
+            theDefinition = new MvnProjectId(theModel);
+
+            /* Create the dependency list */
+            theDependencies = new ProjectList();
+            parseDependencies();
+
+            /* Create the submodule list */
+            theSubModules = new ArrayList<MvnSubModule>();
+            parseSubModules();
+
+            /* Catch exceptions */
+        } catch (IOException | XmlPullParserException e) {
+            /* Throw Exception */
+            throw new JThemisIOException("Failed to parse Project file", e);
+        }
+    }
+
     @Override
     public String formatObject() {
         return theDefinition.formatObject();
@@ -96,26 +146,6 @@ public class MvnProjectDefinition
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * POM Model representation.
-     */
-    private Model theModel;
-
-    /**
-     * Main module identity.
-     */
-    private final MvnProjectId theDefinition;
-
-    /**
-     * Dependency identities.
-     */
-    private final ProjectList theDependencies;
-
-    /**
-     * SubModules.
-     */
-    private final List<MvnSubModule> theSubModules;
 
     /**
      * Get Project Identity.
@@ -160,36 +190,6 @@ public class MvnProjectDefinition
                 | IOException e) {
             /* Throw Exception */
             throw new JThemisIOException("Failed to load Project file for " + pFile.getAbsolutePath(), e);
-        }
-    }
-
-    /**
-     * Constructor.
-     * @param pInput the project definition file as input stream
-     * @throws JOceanusException on error
-     */
-    public MvnProjectDefinition(final InputStream pInput) throws JOceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Parse the Project definition */
-            MavenXpp3Reader myReader = new MavenXpp3Reader();
-            theModel = myReader.read(pInput);
-
-            /* Obtain the major definition */
-            theDefinition = new MvnProjectId(theModel);
-
-            /* Create the dependency list */
-            theDependencies = new ProjectList();
-            parseDependencies();
-
-            /* Create the submodule list */
-            theSubModules = new ArrayList<MvnSubModule>();
-            parseSubModules();
-
-            /* Catch exceptions */
-        } catch (IOException | XmlPullParserException e) {
-            /* Throw Exception */
-            throw new JThemisIOException("Failed to parse Project file", e);
         }
     }
 
@@ -321,6 +321,14 @@ public class MvnProjectDefinition
         private MvnProjectDefinition theProject;
 
         /**
+         * Constructor.
+         * @param pName the name of the subModule
+         */
+        private MvnSubModule(final String pName) {
+            theName = pName;
+        }
+
+        /**
          * Obtain the name.
          * @return the name
          */
@@ -342,14 +350,6 @@ public class MvnProjectDefinition
          */
         public void setProjectDefinition(final MvnProjectDefinition pDef) {
             theProject = pDef;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the name of the subModule
-         */
-        private MvnSubModule(final String pName) {
-            theName = pName;
         }
     }
 }

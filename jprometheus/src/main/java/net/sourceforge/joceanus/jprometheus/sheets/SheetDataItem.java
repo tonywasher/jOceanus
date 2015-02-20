@@ -114,19 +114,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     private int theBaseRow = 0;
 
     /**
-     * Obtain the last loaded item.
-     * @return the item
-     */
-    protected T getLastItem() {
-        return theLastItem;
-    }
-
-    @Override
-    public String toString() {
-        return theRangeName;
-    }
-
-    /**
      * Constructor for a load operation.
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
@@ -150,6 +137,19 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
         theTask = pWriter.getTask();
         theWorkBook = pWriter.getWorkBook();
         theRangeName = pRange;
+    }
+
+    /**
+     * Obtain the last loaded item.
+     * @return the item
+     */
+    protected T getLastItem() {
+        return theLastItem;
+    }
+
+    @Override
+    public String toString() {
+        return theRangeName;
     }
 
     /**

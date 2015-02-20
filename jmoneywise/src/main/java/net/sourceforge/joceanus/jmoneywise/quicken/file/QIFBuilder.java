@@ -112,30 +112,6 @@ public class QIFBuilder {
     private final TransactionCategory theOpeningCategory;
 
     /**
-     * Obtain the file.
-     * @return the file
-     */
-    protected QIFFile getFile() {
-        return theFile;
-    }
-
-    /**
-     * Obtain the tax category.
-     * @return the category
-     */
-    protected QIFEventCategory getTaxCategory() {
-        return theFile.registerCategory(theTaxCategory);
-    }
-
-    /**
-     * Obtain the tax payee.
-     * @return the payee
-     */
-    protected QIFPayee getTaxMan() {
-        return theFile.registerPayee(theTaxMan);
-    }
-
-    /**
      * Constructor.
      * @param pFile the QIF File
      * @param pView the view
@@ -163,6 +139,30 @@ public class QIFBuilder {
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);
         theDonateCategory = myCategories.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION);
         theOpeningCategory = myCategories.getSingularClass(TransactionCategoryClass.INHERITED);
+    }
+
+    /**
+     * Obtain the file.
+     * @return the file
+     */
+    protected QIFFile getFile() {
+        return theFile;
+    }
+
+    /**
+     * Obtain the tax category.
+     * @return the category
+     */
+    protected QIFEventCategory getTaxCategory() {
+        return theFile.registerCategory(theTaxCategory);
+    }
+
+    /**
+     * Obtain the tax payee.
+     * @return the payee
+     */
+    protected QIFPayee getTaxMan() {
+        return theFile.registerPayee(theTaxMan);
     }
 
     /**

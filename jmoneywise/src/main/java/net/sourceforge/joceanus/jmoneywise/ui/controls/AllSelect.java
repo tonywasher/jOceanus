@@ -43,6 +43,14 @@ public class AllSelect
      */
     private final transient AllFilter theFilter;
 
+    /**
+     * Constructor.
+     */
+    public AllSelect() {
+        /* Create the filter */
+        theFilter = AnalysisFilter.FILTER_ALL;
+    }
+
     @Override
     public AllFilter getFilter() {
         return theFilter;
@@ -51,14 +59,6 @@ public class AllSelect
     @Override
     public boolean isAvailable() {
         return true;
-    }
-
-    /**
-     * Constructor.
-     */
-    public AllSelect() {
-        /* Create the filter */
-        theFilter = AnalysisFilter.FILTER_ALL;
     }
 
     /**

@@ -66,6 +66,17 @@ public enum TaxRegimeClass implements StaticInterface {
      */
     private final int theOrder;
 
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the default order
+     */
+    private TaxRegimeClass(final int uId,
+                           final int uOrder) {
+        theId = uId;
+        theOrder = uOrder;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -86,17 +97,6 @@ public enum TaxRegimeClass implements StaticInterface {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the default order
-     */
-    private TaxRegimeClass(final int uId,
-                           final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
     }
 
     /**

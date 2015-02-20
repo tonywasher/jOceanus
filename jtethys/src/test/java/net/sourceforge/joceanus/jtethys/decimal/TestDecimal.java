@@ -84,7 +84,7 @@ public final class TestDecimal {
         myPrice = myDPrice.getPrice(myDilution);
 
         /* Set to null */
-        myFormat.trim();
+        myFormat = myFormat.trim();
         myPrice.setZero();
 
         /* Use otherwise dead variables */

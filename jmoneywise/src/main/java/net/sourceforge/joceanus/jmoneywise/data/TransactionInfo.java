@@ -58,6 +58,69 @@ public class TransactionInfo
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected TransactionInfo(final TransactionInfoList pList,
+                              final TransactionInfo pInfo) {
+        /* Set standard values */
+        super(pList, pInfo);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pTransaction the transaction
+     * @param pType the type
+     */
+    private TransactionInfo(final TransactionInfoList pList,
+                            final Transaction pTransaction,
+                            final TransactionInfoType pType) {
+        /* Initialise the item */
+        super(pList);
+        setNextDataKeySet();
+
+        /* Record the Detail */
+        setValueInfoType(pType);
+        setValueOwner(pTransaction);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private TransactionInfo(final TransactionInfoList pList,
+                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Resolve links */
+            MoneyWiseData myData = getDataSet();
+            resolveDataLink(FIELD_INFOTYPE, myData.getTransInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getTransactions());
+
+            /* Set the value */
+            setValue(pValues.getValue(FIELD_VALUE));
+
+            /* Access the TransactionInfoSet and register this data */
+            TransactionInfoSet mySet = getOwner().getInfoSet();
+            mySet.registerInfo(this);
+
+            /* Resolve any link value */
+            resolveLink();
+
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -153,69 +216,6 @@ public class TransactionInfo
     @Override
     public TransactionInfoList getList() {
         return (TransactionInfoList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pInfo The Info to copy
-     */
-    protected TransactionInfo(final TransactionInfoList pList,
-                              final TransactionInfo pInfo) {
-        /* Set standard values */
-        super(pList, pInfo);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     * @param pTransaction the transaction
-     * @param pType the type
-     */
-    private TransactionInfo(final TransactionInfoList pList,
-                            final Transaction pTransaction,
-                            final TransactionInfoType pType) {
-        /* Initialise the item */
-        super(pList);
-        setNextDataKeySet();
-
-        /* Record the Detail */
-        setValueInfoType(pType);
-        setValueOwner(pTransaction);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private TransactionInfo(final TransactionInfoList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Resolve links */
-            MoneyWiseData myData = getDataSet();
-            resolveDataLink(FIELD_INFOTYPE, myData.getTransInfoTypes());
-            resolveDataLink(FIELD_OWNER, myData.getTransactions());
-
-            /* Set the value */
-            setValue(pValues.getValue(FIELD_VALUE));
-
-            /* Access the TransactionInfoSet and register this data */
-            TransactionInfoSet mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
-
-            /* Resolve any link value */
-            resolveLink();
-
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     @Override
@@ -375,6 +375,22 @@ public class TransactionInfo
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE list.
+         * @param pData the DataSet for the list
+         */
+        protected TransactionInfoList(final MoneyWiseData pData) {
+            super(TransactionInfo.class, pData, MoneyWiseDataType.TRANSACTIONINFO, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TransactionInfoList(final TransactionInfoList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -403,22 +419,6 @@ public class TransactionInfo
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
-        }
-
-        /**
-         * Construct an empty CORE list.
-         * @param pData the DataSet for the list
-         */
-        protected TransactionInfoList(final MoneyWiseData pData) {
-            super(TransactionInfo.class, pData, MoneyWiseDataType.TRANSACTIONINFO, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TransactionInfoList(final TransactionInfoList pSource) {
-            super(pSource);
         }
 
         @Override

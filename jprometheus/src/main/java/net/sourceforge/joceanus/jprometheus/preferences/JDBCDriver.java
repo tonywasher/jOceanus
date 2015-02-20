@@ -42,6 +42,11 @@ public enum JDBCDriver {
     MYSQL;
 
     /**
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -57,11 +62,6 @@ public enum JDBCDriver {
         /* return the name */
         return theName;
     }
-
-    /**
-     * Buffer length.
-     */
-    private static final int BUFFER_LEN = 100;
 
     /**
      * Obtain driver class.

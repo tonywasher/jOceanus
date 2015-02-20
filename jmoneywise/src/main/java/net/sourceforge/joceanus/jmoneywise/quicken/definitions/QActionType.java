@@ -166,11 +166,6 @@ public enum QActionType implements QLineType {
      */
     private final String theSymbol;
 
-    @Override
-    public String getSymbol() {
-        return theSymbol;
-    }
-
     /**
      * Constructor.
      * @param pSymbol the symbol
@@ -178,6 +173,11 @@ public enum QActionType implements QLineType {
     private QActionType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
+    }
+
+    @Override
+    public String getSymbol() {
+        return theSymbol;
     }
 
     /**

@@ -127,45 +127,6 @@ public abstract class DataItem<E extends Enum<E>>
     public static final String ERROR_INVALIDCHAR = PrometheusDataResource.DATAITEM_ERROR_INVALIDCHAR.getValue();
 
     /**
-     * Instance ReportFields.
-     */
-    private final JDataFields theFields;
-
-    @Override
-    public JDataFields getDataFields() {
-        return theFields;
-    }
-
-    /**
-     * Declare fields.
-     * @return the fields
-     */
-    public abstract JDataFields declareFields();
-
-    /**
-     * ValueSet.
-     */
-    private ValueSet theValueSet;
-
-    @Override
-    public final void declareValues(final ValueSet pValues) {
-        theValueSet = pValues;
-    }
-
-    @Override
-    public ValueSet getValueSet() {
-        return theValueSet;
-    }
-
-    /**
-     * Obtain valueSet version.
-     * @return the valueSet version
-     */
-    public int getValueSetVersion() {
-        return theValueSet.getVersion();
-    }
-
-    /**
      * Standard Name length.
      */
     public static final int NAMELEN = 30;
@@ -234,6 +195,228 @@ public abstract class DataItem<E extends Enum<E>>
      * Errors Field Id.
      */
     public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
+
+    /**
+     * Instance ReportFields.
+     */
+    private final JDataFields theFields;
+
+    /**
+     * ValueSet.
+     */
+    private ValueSet theValueSet;
+
+    /**
+     * The list to which this item belongs.
+     */
+    private DataList<?, E> theList = null;
+
+    /**
+     * The item that this DataItem is based upon.
+     */
+    private DataItem<?> theBase = null;
+
+    /**
+     * The Edit state of this item {@link EditState}.
+     */
+    private EditState theEdit = EditState.CLEAN;
+
+    /**
+     * Is the item a header.
+     */
+    private boolean isHeader = false;
+
+    /**
+     * The id number of the item.
+     */
+    private Integer theId = 0;
+
+    /**
+     * The history control {@link ValueSetHistory}.
+     */
+    private ValueSetHistory theHistory = null;
+
+    /**
+     * The validation control {@link ItemValidation}.
+     */
+    private ItemValidation theErrors = null;
+
+    /**
+     * Status.
+     */
+    private final DataTouch<E> theTouchStatus;
+
+    /**
+     * Construct a new item.
+     * @param pList the list that this item is associated with
+     * @param uId the Id of the new item (or 0 if not yet known)
+     */
+    public DataItem(final DataList<?, E> pList,
+                    final Integer uId) {
+        /* Record list and item references */
+        theId = uId;
+        theList = pList;
+
+        /* Declare fields (allowing for subclasses) */
+        theFields = declareFields();
+
+        /* Create validation control */
+        theErrors = new ItemValidation();
+
+        /* Create history control */
+        theHistory = new ValueSetHistory();
+
+        /* Allocate initial value set and declare it */
+        ValueSet myValues = (this instanceof EncryptedItem)
+                                                           ? new EncryptedValueSet(this)
+                                                           : new ValueSet(this);
+        declareValues(myValues);
+        theHistory.setValues(myValues);
+
+        /* Allocate id */
+        pList.setNewId(this);
+
+        /* Create the touch status */
+        @SuppressWarnings("unchecked")
+        DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
+        Class<E> myClass = myData.getEnumClass();
+        theTouchStatus = new DataTouch<E>(myClass);
+    }
+
+    /**
+     * Construct a new item.
+     * @param pList the list that this item is associated with
+     * @param pValues the data values
+     */
+    public DataItem(final DataList<?, E> pList,
+                    final DataValues<E> pValues) {
+        /* Record list and item references */
+        this(pList, pValues.getValue(FIELD_ID, Integer.class));
+    }
+
+    /**
+     * Construct a new item based on an old item.
+     * @param pList the list that this item is associated with
+     * @param pBase the old item
+     */
+    protected DataItem(final DataList<?, E> pList,
+                       final DataItem<E> pBase) {
+        /* Initialise using standard constructor */
+        this(pList, pBase.getId());
+
+        /* Initialise the valueSet */
+        theValueSet.copyFrom(pBase.getValueSet());
+
+        /* Access the varying styles and the source state */
+        ListStyle myStyle = pList.getStyle();
+        ListStyle myBaseStyle = pBase.getList().getStyle();
+        DataState myState = pBase.getState();
+
+        /* Switch on the styles */
+        switch (myStyle) {
+        /* We are building an update list (from Core) */
+            case UPDATE:
+                switch (myState) {
+                /* NEW/DELNEW need to be at version 1 */
+                    case DELNEW:
+                    case NEW:
+                        theValueSet.setVersion(1);
+                        break;
+
+                    case DELETED:
+                        theHistory.pushHistory(1);
+                        break;
+
+                    /* Changed items need to have new values at version 1 and originals at version 0 */
+                    case CHANGED:
+                        setHistory(pBase);
+                        break;
+
+                    /* No change for other states */
+                    default:
+                        break;
+                }
+
+                /* Record the base item */
+                theBase = pBase;
+                break;
+
+            /* We are building an edit item (from Core/Edit) */
+            case EDIT:
+                /* Switch on the base style */
+                switch (myBaseStyle) {
+                /* New item from core we need to link back and copy flags */
+                    case CORE:
+                        theBase = pBase;
+                        copyFlags(pBase);
+                        break;
+                    /* Duplication in edit */
+                    case EDIT:
+                        /* set as a new item */
+                        theValueSet.setVersion(pList.getVersion() + 1);
+
+                        /* Reset the Id */
+                        theId = 0;
+                        pList.setNewId(this);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+            /* We are building a CORE item */
+            case CORE:
+                /* set as a new item */
+                theValueSet.setVersion(pList.getVersion() + 1);
+
+                /* If we are adding from Edit */
+                if (myBaseStyle == ListStyle.EDIT) {
+                    /* Reset the Id */
+                    theId = 0;
+                    pList.setNewId(this);
+                }
+                break;
+
+            /* Creation of copy element not allowed */
+            case COPY:
+                throw new IllegalArgumentException("Illegal creation of COPY element");
+
+                /* Nothing special for other styles */
+            case CLONE:
+            case DIFFER:
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return theFields;
+    }
+
+    /**
+     * Declare fields.
+     * @return the fields
+     */
+    public abstract JDataFields declareFields();
+
+    @Override
+    public final void declareValues(final ValueSet pValues) {
+        theValueSet = pValues;
+    }
+
+    @Override
+    public ValueSet getValueSet() {
+        return theValueSet;
+    }
+
+    /**
+     * Obtain valueSet version.
+     * @return the valueSet version
+     */
+    public int getValueSetVersion() {
+        return theValueSet.getVersion();
+    }
 
     @Override
     public String formatObject() {
@@ -306,46 +489,6 @@ public abstract class DataItem<E extends Enum<E>>
         /* Not recognised */
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * The list to which this item belongs.
-     */
-    private DataList<?, E> theList = null;
-
-    /**
-     * The item that this DataItem is based upon.
-     */
-    private DataItem<?> theBase = null;
-
-    /**
-     * The Edit state of this item {@link EditState}.
-     */
-    private EditState theEdit = EditState.CLEAN;
-
-    /**
-     * Is the item a header.
-     */
-    private boolean isHeader = false;
-
-    /**
-     * The id number of the item.
-     */
-    private Integer theId = 0;
-
-    /**
-     * The history control {@link ValueSetHistory}.
-     */
-    private ValueSetHistory theHistory = null;
-
-    /**
-     * The validation control {@link ItemValidation}.
-     */
-    private ItemValidation theErrors = null;
-
-    /**
-     * Status.
-     */
-    private final DataTouch<E> theTouchStatus;
 
     /**
      * Obtain the list.
@@ -873,149 +1016,6 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public boolean includeXmlField(final JDataField pField) {
         return false;
-    }
-
-    /**
-     * Construct a new item.
-     * @param pList the list that this item is associated with
-     * @param uId the Id of the new item (or 0 if not yet known)
-     */
-    public DataItem(final DataList<?, E> pList,
-                    final Integer uId) {
-        /* Record list and item references */
-        theId = uId;
-        theList = pList;
-
-        /* Declare fields (allowing for subclasses) */
-        theFields = declareFields();
-
-        /* Create validation control */
-        theErrors = new ItemValidation();
-
-        /* Create history control */
-        theHistory = new ValueSetHistory();
-
-        /* Allocate initial value set and declare it */
-        ValueSet myValues = (this instanceof EncryptedItem)
-                                                           ? new EncryptedValueSet(this)
-                                                           : new ValueSet(this);
-        declareValues(myValues);
-        theHistory.setValues(myValues);
-
-        /* Allocate id */
-        pList.setNewId(this);
-
-        /* Create the touch status */
-        @SuppressWarnings("unchecked")
-        DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
-        Class<E> myClass = myData.getEnumClass();
-        theTouchStatus = new DataTouch<E>(myClass);
-    }
-
-    /**
-     * Construct a new item.
-     * @param pList the list that this item is associated with
-     * @param pValues the data values
-     */
-    public DataItem(final DataList<?, E> pList,
-                    final DataValues<E> pValues) {
-        /* Record list and item references */
-        this(pList, pValues.getValue(FIELD_ID, Integer.class));
-    }
-
-    /**
-     * Construct a new item based on an old item.
-     * @param pList the list that this item is associated with
-     * @param pBase the old item
-     */
-    protected DataItem(final DataList<?, E> pList,
-                       final DataItem<E> pBase) {
-        /* Initialise using standard constructor */
-        this(pList, pBase.getId());
-
-        /* Initialise the valueSet */
-        theValueSet.copyFrom(pBase.getValueSet());
-
-        /* Access the varying styles and the source state */
-        ListStyle myStyle = pList.getStyle();
-        ListStyle myBaseStyle = pBase.getList().getStyle();
-        DataState myState = pBase.getState();
-
-        /* Switch on the styles */
-        switch (myStyle) {
-        /* We are building an update list (from Core) */
-            case UPDATE:
-                switch (myState) {
-                /* NEW/DELNEW need to be at version 1 */
-                    case DELNEW:
-                    case NEW:
-                        theValueSet.setVersion(1);
-                        break;
-
-                    case DELETED:
-                        theHistory.pushHistory(1);
-                        break;
-
-                    /* Changed items need to have new values at version 1 and originals at version 0 */
-                    case CHANGED:
-                        setHistory(pBase);
-                        break;
-
-                    /* No change for other states */
-                    default:
-                        break;
-                }
-
-                /* Record the base item */
-                theBase = pBase;
-                break;
-
-            /* We are building an edit item (from Core/Edit) */
-            case EDIT:
-                /* Switch on the base style */
-                switch (myBaseStyle) {
-                /* New item from core we need to link back and copy flags */
-                    case CORE:
-                        theBase = pBase;
-                        copyFlags(pBase);
-                        break;
-                    /* Duplication in edit */
-                    case EDIT:
-                        /* set as a new item */
-                        theValueSet.setVersion(pList.getVersion() + 1);
-
-                        /* Reset the Id */
-                        theId = 0;
-                        pList.setNewId(this);
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            /* We are building a CORE item */
-            case CORE:
-                /* set as a new item */
-                theValueSet.setVersion(pList.getVersion() + 1);
-
-                /* If we are adding from Edit */
-                if (myBaseStyle == ListStyle.EDIT) {
-                    /* Reset the Id */
-                    theId = 0;
-                    pList.setNewId(this);
-                }
-                break;
-
-            /* Creation of copy element not allowed */
-            case COPY:
-                throw new IllegalArgumentException("Illegal creation of COPY element");
-
-                /* Nothing special for other styles */
-            case CLONE:
-            case DIFFER:
-            default:
-                break;
-        }
     }
 
     @Override

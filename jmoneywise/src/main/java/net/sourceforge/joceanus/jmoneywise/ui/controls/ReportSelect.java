@@ -105,30 +105,6 @@ public class ReportSelect
     private transient ReportState theSavePoint = null;
 
     /**
-     * Obtain the report type.
-     * @return the report type
-     */
-    public ReportType getReportType() {
-        return theState.getType();
-    }
-
-    /**
-     * Obtain the selected date range.
-     * @return the date range
-     */
-    public JDateDayRange getDateRange() {
-        return theState.getRange();
-    }
-
-    /**
-     * Obtain the date range selection control.
-     * @return the date range selection
-     */
-    public JDateDayRangeSelect getDateRangeSelect() {
-        return theRangeSelect;
-    }
-
-    /**
      * Constructor.
      */
     public ReportSelect() {
@@ -173,6 +149,30 @@ public class ReportSelect
         thePrintButton.addActionListener(myListener);
         theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
+    }
+
+    /**
+     * Obtain the report type.
+     * @return the report type
+     */
+    public ReportType getReportType() {
+        return theState.getType();
+    }
+
+    /**
+     * Obtain the selected date range.
+     * @return the date range
+     */
+    public JDateDayRange getDateRange() {
+        return theState.getRange();
+    }
+
+    /**
+     * Obtain the date range selection control.
+     * @return the date range selection
+     */
+    public JDateDayRangeSelect getDateRangeSelect() {
+        return theRangeSelect;
     }
 
     /**
@@ -276,6 +276,21 @@ public class ReportSelect
         private ReportType theType = null;
 
         /**
+         * Constructor.
+         */
+        private ReportState() {
+        }
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+        private ReportState(final ReportState pState) {
+            theRange = pState.getRange();
+            theType = pState.getType();
+        }
+
+        /**
          * Obtain the selected range.
          * @return the range
          */
@@ -289,21 +304,6 @@ public class ReportSelect
          */
         private ReportType getType() {
             return theType;
-        }
-
-        /**
-         * Constructor.
-         */
-        private ReportState() {
-        }
-
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        private ReportState(final ReportState pState) {
-            theRange = pState.getRange();
-            theType = pState.getType();
         }
 
         /**

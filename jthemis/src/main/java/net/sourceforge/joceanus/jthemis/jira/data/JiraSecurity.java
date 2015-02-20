@@ -149,14 +149,6 @@ public class JiraSecurity {
         private final String theFullName;
 
         /**
-         * Get the full name of the user.
-         * @return the full name
-         */
-        public String getFullname() {
-            return theFullName;
-        }
-
-        /**
          * Constructor.
          * @param pUser the underlying user
          */
@@ -171,6 +163,14 @@ public class JiraSecurity {
                 JiraGroup myGroup = getGroup(myGroupName);
                 myGroup.registerUser(this);
             }
+        }
+
+        /**
+         * Get the full name of the user.
+         * @return the full name
+         */
+        public String getFullname() {
+            return theFullName;
         }
     }
 
@@ -189,14 +189,6 @@ public class JiraSecurity {
         private final List<JiraUser> theMembers;
 
         /**
-         * Get the name of the group.
-         * @return the name
-         */
-        public String getName() {
-            return theName;
-        }
-
-        /**
          * Constructor.
          * @param pName the group name
          */
@@ -206,6 +198,14 @@ public class JiraSecurity {
 
             /* Create the user list */
             theMembers = new ArrayList<JiraUser>();
+        }
+
+        /**
+         * Get the name of the group.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
         }
 
         /**

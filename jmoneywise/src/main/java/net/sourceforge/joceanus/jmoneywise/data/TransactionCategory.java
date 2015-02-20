@@ -71,6 +71,45 @@ public final class TransactionCategory
      */
     private static final String ERROR_DIFFPARENT = MoneyWiseDataResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pCategory The Category to copy
+     */
+    protected TransactionCategory(final TransactionCategoryList pList,
+                                  final TransactionCategory pCategory) {
+        /* Set standard values */
+        super(pList, pCategory);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private TransactionCategory(final TransactionCategoryList pList,
+                                final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Category Type */
+        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public TransactionCategory(final TransactionCategoryList pList) {
+        super(pList);
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -177,45 +216,6 @@ public final class TransactionCategory
         return (myClass == null)
                                 ? false
                                 : myClass.isTransfer();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pCategory The Category to copy
-     */
-    protected TransactionCategory(final TransactionCategoryList pList,
-                                  final TransactionCategory pCategory) {
-        /* Set standard values */
-        super(pList, pCategory);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private TransactionCategory(final TransactionCategoryList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public TransactionCategory(final TransactionCategoryList pList) {
-        super(pList);
     }
 
     /**
@@ -420,6 +420,22 @@ public final class TransactionCategory
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE Category list.
+         * @param pData the DataSet for the list
+         */
+        public TransactionCategoryList(final MoneyWiseData pData) {
+            super(pData, TransactionCategory.class, MoneyWiseDataType.TRANSCATEGORY);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected TransactionCategoryList(final TransactionCategoryList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -440,27 +456,11 @@ public final class TransactionCategory
             return (TransCategoryDataMap) super.getDataMap();
         }
 
-        /**
-         * Construct an empty CORE Category list.
-         * @param pData the DataSet for the list
-         */
-        public TransactionCategoryList(final MoneyWiseData pData) {
-            super(pData, TransactionCategory.class, MoneyWiseDataType.TRANSCATEGORY);
-        }
-
         @Override
         protected TransactionCategoryList getEmptyList(final ListStyle pStyle) {
             TransactionCategoryList myList = new TransactionCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected TransactionCategoryList(final TransactionCategoryList pSource) {
-            super(pSource);
         }
 
         /**
@@ -598,6 +598,25 @@ public final class TransactionCategory
         private static final JDataField FIELD_CATCOUNT = FIELD_DEFS
                 .declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
+        /**
+         * Map of category counts.
+         */
+        private final Map<Integer, Integer> theCategoryCountMap;
+
+        /**
+         * Map of singular categories.
+         */
+        private final Map<Integer, TransactionCategory> theCategoryMap;
+
+        /**
+         * Constructor.
+         */
+        public TransCategoryDataMap() {
+            /* Create the maps */
+            theCategoryCountMap = new HashMap<Integer, Integer>();
+            theCategoryMap = new HashMap<Integer, TransactionCategory>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -620,25 +639,6 @@ public final class TransactionCategory
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of category counts.
-         */
-        private final Map<Integer, Integer> theCategoryCountMap;
-
-        /**
-         * Map of singular categories.
-         */
-        private final Map<Integer, TransactionCategory> theCategoryMap;
-
-        /**
-         * Constructor.
-         */
-        public TransCategoryDataMap() {
-            /* Create the maps */
-            theCategoryCountMap = new HashMap<Integer, Integer>();
-            theCategoryMap = new HashMap<Integer, TransactionCategory>();
         }
 
         @Override

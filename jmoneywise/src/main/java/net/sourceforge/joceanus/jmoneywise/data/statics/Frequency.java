@@ -52,29 +52,6 @@ public class Frequency
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the Frequency class of the Frequency.
-     * @return the class
-     */
-    public FrequencyClass getFrequency() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public Frequency getBase() {
-        return (Frequency) super.getBase();
-    }
-
-    @Override
-    public FrequencyList getList() {
-        return (FrequencyList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the Frequency with
@@ -118,6 +95,29 @@ public class Frequency
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Frequency class of the Frequency.
+     * @return the class
+     */
+    public FrequencyClass getFrequency() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public Frequency getBase() {
+        return (Frequency) super.getBase();
+    }
+
+    @Override
+    public FrequencyList getList() {
+        return (FrequencyList) super.getList();
+    }
+
     /**
      * Represents a list of {@link Frequency} objects.
      */
@@ -127,26 +127,6 @@ public class Frequency
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
-
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return Frequency.FIELD_DEFS;
-        }
-
-        @Override
-        protected Class<FrequencyClass> getEnumClass() {
-            return FrequencyClass.class;
-        }
 
         /**
          * Construct an empty CORE frequency list.
@@ -169,6 +149,26 @@ public class Frequency
             FrequencyList myList = new FrequencyList(this);
             myList.setStyle(pStyle);
             return myList;
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return Frequency.FIELD_DEFS;
+        }
+
+        @Override
+        protected Class<FrequencyClass> getEnumClass() {
+            return FrequencyClass.class;
         }
 
         /**

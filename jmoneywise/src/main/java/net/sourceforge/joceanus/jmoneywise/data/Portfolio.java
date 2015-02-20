@@ -122,6 +122,105 @@ public class Portfolio
      */
     private final PortfolioInfoSet theInfoSet;
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pPortfolio The Portfolio to copy
+     */
+    protected Portfolio(final PortfolioList pList,
+                        final Portfolio pPortfolio) {
+        /* Set standard values */
+        super(pList, pPortfolio);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+                theInfoSet.cloneDataInfoSet(pPortfolio.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Portfolio(final PortfolioList pList,
+                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Parent */
+            Object myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
+            }
+
+            /* Store the taxFree flag */
+            myValue = pValues.getValue(FIELD_TAXFREE);
+            if (myValue instanceof Boolean) {
+                setValueTaxFree((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (NumberFormatException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public Portfolio(final PortfolioList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -487,105 +586,6 @@ public class Portfolio
         super.setDeleted(bDeleted);
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pPortfolio The Portfolio to copy
-     */
-    protected Portfolio(final PortfolioList pList,
-                        final Portfolio pPortfolio) {
-        /* Set standard values */
-        super(pList, pPortfolio);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
-                theInfoSet.cloneDataInfoSet(pPortfolio.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private Portfolio(final PortfolioList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Parent */
-            Object myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
-            }
-
-            /* Store the Currency */
-            myValue = pValues.getValue(FIELD_CURRENCY);
-            if (myValue instanceof Integer) {
-                setValueCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCurrency((String) myValue);
-            } else if (myValue instanceof AssetCurrency) {
-                setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Store the taxFree flag */
-            myValue = pValues.getValue(FIELD_TAXFREE);
-            if (myValue instanceof Boolean) {
-                setValueTaxFree((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (NumberFormatException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Portfolio(final PortfolioList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
     @Override
     public void deRegister() {
         SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
@@ -911,11 +911,6 @@ public class Portfolio
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The PortfolioInfo List.
          */
@@ -925,6 +920,27 @@ public class Portfolio
          * The AccountInfoType list.
          */
         private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE Portfolio list.
+         * @param pData the DataSet for the list
+         */
+        public PortfolioList(final MoneyWiseData pData) {
+            super(pData, Portfolio.class, MoneyWiseDataType.PORTFOLIO);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected PortfolioList(final PortfolioList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -963,27 +979,11 @@ public class Portfolio
             return theInfoTypeList;
         }
 
-        /**
-         * Construct an empty CORE Portfolio list.
-         * @param pData the DataSet for the list
-         */
-        public PortfolioList(final MoneyWiseData pData) {
-            super(pData, Portfolio.class, MoneyWiseDataType.PORTFOLIO);
-        }
-
         @Override
         protected PortfolioList getEmptyList(final ListStyle pStyle) {
             PortfolioList myList = new PortfolioList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected PortfolioList(final PortfolioList pSource) {
-            super(pSource);
         }
 
         /**
@@ -1135,6 +1135,19 @@ public class Portfolio
         public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Constructor.
+         * @param pDeposits the deposits list
+         */
+        protected PortfolioDataMap(final DepositList pDeposits) {
+            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1154,19 +1167,6 @@ public class Portfolio
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * The assetMap.
-         */
-        private AssetDataMap theUnderlyingMap;
-
-        /**
-         * Constructor.
-         * @param pDeposits the deposits list
-         */
-        protected PortfolioDataMap(final DepositList pDeposits) {
-            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
         }
 
         @Override

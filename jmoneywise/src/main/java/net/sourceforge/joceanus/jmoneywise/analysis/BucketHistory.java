@@ -62,35 +62,6 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     private transient T theLastValues = null;
 
-    @Override
-    public String formatObject() {
-        return getClass().getSimpleName();
-    }
-
-    /**
-     * Are there any entries in the map?
-     * @return true/false
-     */
-    protected boolean isIdle() {
-        return isEmpty();
-    }
-
-    /**
-     * Obtain the values.
-     * @return the values
-     */
-    protected T getValues() {
-        return theValues;
-    }
-
-    /**
-     * Obtain the base values.
-     * @return the base values
-     */
-    protected T getBaseValues() {
-        return theBaseValues;
-    }
-
     /**
      * Constructor.
      * @param pValues the initial values
@@ -218,6 +189,35 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         theValues = (myLatest != null)
                                       ? myLatest.getNewSnapShot()
                                       : theBaseValues.getSnapShot();
+    }
+
+    @Override
+    public String formatObject() {
+        return getClass().getSimpleName();
+    }
+
+    /**
+     * Are there any entries in the map?
+     * @return true/false
+     */
+    protected boolean isIdle() {
+        return isEmpty();
+    }
+
+    /**
+     * Obtain the values.
+     * @return the values
+     */
+    protected T getValues() {
+        return theValues;
+    }
+
+    /**
+     * Obtain the base values.
+     * @return the base values
+     */
+    protected T getBaseValues() {
+        return theBaseValues;
     }
 
     /**

@@ -52,29 +52,6 @@ public class TaxRegime
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the TaxRegime class of the TaxRegime.
-     * @return the class
-     */
-    public TaxRegimeClass getRegime() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public TaxRegime getBase() {
-        return (TaxRegime) super.getBase();
-    }
-
-    @Override
-    public TaxRegimeList getList() {
-        return (TaxRegimeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the TaxRegime with
@@ -118,6 +95,29 @@ public class TaxRegime
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the TaxRegime class of the TaxRegime.
+     * @return the class
+     */
+    public TaxRegimeClass getRegime() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public TaxRegime getBase() {
+        return (TaxRegime) super.getBase();
+    }
+
+    @Override
+    public TaxRegimeList getList() {
+        return (TaxRegimeList) super.getList();
+    }
+
     /**
      * Determine whether this tax regime supports a Low Salary Band.
      * @return <code>true/false</code>
@@ -152,6 +152,22 @@ public class TaxRegime
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE tax regime list.
+         * @param pData the DataSet for the list
+         */
+        public TaxRegimeList(final DataSet<?, ?> pData) {
+            super(TaxRegime.class, pData, MoneyWiseDataType.TAXREGIME, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxRegimeList(final TaxRegimeList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -170,22 +186,6 @@ public class TaxRegime
         @Override
         protected Class<TaxRegimeClass> getEnumClass() {
             return TaxRegimeClass.class;
-        }
-
-        /**
-         * Construct an empty CORE tax regime list.
-         * @param pData the DataSet for the list
-         */
-        public TaxRegimeList(final DataSet<?, ?> pData) {
-            super(TaxRegime.class, pData, MoneyWiseDataType.TAXREGIME, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TaxRegimeList(final TaxRegimeList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -40,11 +40,6 @@ public class DataTouch<E extends Enum<E>>
      */
     private static final long serialVersionUID = 1766620543307434230L;
 
-    @Override
-    public String formatObject() {
-        return getClass().getSimpleName();
-    }
-
     /**
      * Constructor.
      * @param pClass the eNum class
@@ -52,6 +47,11 @@ public class DataTouch<E extends Enum<E>>
     public DataTouch(final Class<E> pClass) {
         /* Create the map */
         super(pClass);
+    }
+
+    @Override
+    public String formatObject() {
+        return getClass().getSimpleName();
     }
 
     /**
@@ -152,6 +152,15 @@ public class DataTouch<E extends Enum<E>>
          */
         private int theTouches;
 
+        /**
+         * Constructor.
+         * @param pItemType the item type
+         */
+        private TouchCounter(final E pItemType) {
+            theItemType = pItemType;
+            theTouches = 1;
+        }
+
         @Override
         public String formatObject() {
             return Integer.toString(theTouches);
@@ -171,15 +180,6 @@ public class DataTouch<E extends Enum<E>>
          */
         public int getTouches() {
             return theTouches;
-        }
-
-        /**
-         * Constructor.
-         * @param pItemType the item type
-         */
-        private TouchCounter(final E pItemType) {
-            theItemType = pItemType;
-            theTouches = 1;
         }
 
         /**

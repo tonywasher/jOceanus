@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
++ * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,15 +82,90 @@ public class Schedule
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Frequency Field Id.
      */
     public static final JDataField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName());
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pSchedule The Schedule
+     */
+    protected Schedule(final ScheduleList pList,
+                       final Schedule pSchedule) {
+        /* Simply initialise as Schedule */
+        super(pList, pSchedule);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public Schedule(final ScheduleList pList) {
+        /* Initialise as Transaction */
+        super(pList);
+    }
+
+    /**
+     * Construct a new pattern from a Transaction.
+     * @param pList the list
+     * @param pTrans the transaction
+     */
+    public Schedule(final ScheduleList pList,
+                    final Transaction pTrans) {
+        /* Set standard values */
+        super(pList);
+
+        /* Adjust the date so that it is in the correct range */
+        JDateDay myDate = new JDateDay(pTrans.getDate());
+        while (myDate.compareTo(RANGE_SCHEDULE.getEnd()) > 0) {
+            myDate.adjustYear(-1);
+        }
+        while (myDate.compareTo(RANGE_SCHEDULE.getStart()) < 0) {
+            myDate.adjustYear(1);
+        }
+        setDate(myDate);
+
+        /* Copy underlying values */
+        setValueAssetPair(pTrans.getAssetPair());
+        setValueAccount(pTrans.getAccount());
+        setValuePartner(pTrans.getPartner());
+        setCategory(pTrans.getCategory());
+        setReconciled(Boolean.FALSE);
+        setSplit(Boolean.FALSE);
+        setValueAmount(pTrans.getAmountField());
+
+        /* Default to monthly frequency */
+        MoneyWiseData myData = getDataSet();
+        FrequencyList myFrequencies = myData.getFrequencys();
+        setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.MONTHLY));
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private Schedule(final ScheduleList pList,
+                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Frequency */
+        Object myValue = pValues.getValue(FIELD_FREQ);
+        if (myValue instanceof Integer) {
+            setValueFrequency((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueFrequency((String) myValue);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public boolean includeXmlField(final JDataField pField) {
@@ -180,81 +255,6 @@ public class Schedule
     @Override
     public ScheduleList getList() {
         return (ScheduleList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pSchedule The Schedule
-     */
-    protected Schedule(final ScheduleList pList,
-                       final Schedule pSchedule) {
-        /* Simply initialise as Schedule */
-        super(pList, pSchedule);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Schedule(final ScheduleList pList) {
-        /* Initialise as Transaction */
-        super(pList);
-    }
-
-    /**
-     * Construct a new pattern from a Transaction.
-     * @param pList the list
-     * @param pTrans the transaction
-     */
-    public Schedule(final ScheduleList pList,
-                    final Transaction pTrans) {
-        /* Set standard values */
-        super(pList);
-
-        /* Adjust the date so that it is in the correct range */
-        JDateDay myDate = new JDateDay(pTrans.getDate());
-        while (myDate.compareTo(RANGE_SCHEDULE.getEnd()) > 0) {
-            myDate.adjustYear(-1);
-        }
-        while (myDate.compareTo(RANGE_SCHEDULE.getStart()) < 0) {
-            myDate.adjustYear(1);
-        }
-        setDate(myDate);
-
-        /* Copy underlying values */
-        setValueAssetPair(pTrans.getAssetPair());
-        setValueAccount(pTrans.getAccount());
-        setValuePartner(pTrans.getPartner());
-        setCategory(pTrans.getCategory());
-        setReconciled(Boolean.FALSE);
-        setSplit(Boolean.FALSE);
-        setValueAmount(pTrans.getAmountField());
-
-        /* Default to monthly frequency */
-        MoneyWiseData myData = getDataSet();
-        FrequencyList myFrequencies = myData.getFrequencys();
-        setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.MONTHLY));
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values
-     * @throws JOceanusException on error
-     */
-    private Schedule(final ScheduleList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Frequency */
-        Object myValue = pValues.getValue(FIELD_FREQ);
-        if (myValue instanceof Integer) {
-            setValueFrequency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueFrequency((String) myValue);
-        }
     }
 
     @Override
@@ -437,6 +437,22 @@ public class Schedule
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(ScheduleList.class.getSimpleName(), DataList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE pattern list.
+         * @param pData the DataSet for the list
+         */
+        protected ScheduleList(final MoneyWiseData pData) {
+            super(pData, Schedule.class, MoneyWiseDataType.SCHEDULE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private ScheduleList(final ScheduleList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -455,22 +471,6 @@ public class Schedule
         @Override
         public JDateDayRange getValidDateRange() {
             return RANGE_SCHEDULE;
-        }
-
-        /**
-         * Construct an empty CORE pattern list.
-         * @param pData the DataSet for the list
-         */
-        protected ScheduleList(final MoneyWiseData pData) {
-            super(pData, Schedule.class, MoneyWiseDataType.SCHEDULE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private ScheduleList(final ScheduleList pSource) {
-            super(pSource);
         }
 
         @Override

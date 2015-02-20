@@ -62,6 +62,45 @@ public class CashCategory
      */
     public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CASHTYPE.getItemName());
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pCategory The Category to copy
+     */
+    protected CashCategory(final CashCategoryList pList,
+                           final CashCategory pCategory) {
+        /* Set standard values */
+        super(pList, pCategory);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private CashCategory(final CashCategoryList pList,
+                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Category Type */
+        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public CashCategory(final CashCategoryList pList) {
+        super(pList);
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -151,45 +190,6 @@ public class CashCategory
     @Override
     public CashCategoryList getList() {
         return (CashCategoryList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pCategory The Category to copy
-     */
-    protected CashCategory(final CashCategoryList pList,
-                           final CashCategory pCategory) {
-        /* Set standard values */
-        super(pList, pCategory);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private CashCategory(final CashCategoryList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public CashCategory(final CashCategoryList pList) {
-        super(pList);
     }
 
     /**
@@ -324,6 +324,22 @@ public class CashCategory
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE Category list.
+         * @param pData the DataSet for the list
+         */
+        protected CashCategoryList(final MoneyWiseData pData) {
+            super(pData, CashCategory.class, MoneyWiseDataType.CASHCATEGORY);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected CashCategoryList(final CashCategoryList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -339,27 +355,11 @@ public class CashCategory
             return CashCategory.FIELD_DEFS;
         }
 
-        /**
-         * Construct an empty CORE Category list.
-         * @param pData the DataSet for the list
-         */
-        protected CashCategoryList(final MoneyWiseData pData) {
-            super(pData, CashCategory.class, MoneyWiseDataType.CASHCATEGORY);
-        }
-
         @Override
         protected CashCategoryList getEmptyList(final ListStyle pStyle) {
             CashCategoryList myList = new CashCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected CashCategoryList(final CashCategoryList pSource) {
-            super(pSource);
         }
 
         /**

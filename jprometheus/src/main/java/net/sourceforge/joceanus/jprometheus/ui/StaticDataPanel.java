@@ -169,14 +169,6 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     private final transient StaticListener theListener;
 
     /**
-     * Obtain the updateList.
-     * @return the viewSet
-     */
-    protected UpdateSet<E> getUpdateSet() {
-        return theUpdateSet;
-    }
-
-    /**
      * Constructor.
      * @param pControl the data control
      * @param pClass the dataType class
@@ -267,6 +259,14 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
+    }
+
+    /**
+     * Obtain the updateList.
+     * @return the viewSet
+     */
+    protected UpdateSet<E> getUpdateSet() {
+        return theUpdateSet;
     }
 
     /**

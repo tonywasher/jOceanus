@@ -45,31 +45,10 @@ public final class CashBucket
      */
     private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemName());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        return super.getFieldValue(pField);
-    }
-
     /**
      * The cash category.
      */
     private final CashCategory theCategory;
-
-    /**
-     * Obtain the cash category.
-     * @return the cash category
-     */
-    public CashCategory getCategory() {
-        return theCategory;
-    }
 
     /**
      * Constructor.
@@ -117,6 +96,27 @@ public final class CashBucket
         theCategory = pBase.getCategory();
     }
 
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_CATEGORY.equals(pField)) {
+            return theCategory;
+        }
+        return super.getFieldValue(pField);
+    }
+
+    /**
+     * Obtain the cash category.
+     * @return the cash category
+     */
+    public CashCategory getCategory() {
+        return theCategory;
+    }
+
     /**
      * CashBucket list class.
      */
@@ -126,11 +126,6 @@ public final class CashBucket
          * Local Report fields.
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CASH_LIST.getValue(), AccountBucketList.FIELD_DEFS);
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
 
         /**
          * Construct a top-level List.
@@ -171,6 +166,11 @@ public final class CashBucket
 
             /* Construct list from base */
             constructFromBase(pBase, pRange);
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

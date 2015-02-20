@@ -114,6 +114,70 @@ public final class PayeeBucket
      */
     private final BucketHistory<PayeeValues, PayeeAttribute> theHistory;
 
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pPayee the payee
+     */
+    private PayeeBucket(final Analysis pAnalysis,
+                        final Payee pPayee) {
+        /* Store the details */
+        thePayee = pPayee;
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Create the history map */
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(new PayeeValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private PayeeBucket(final Analysis pAnalysis,
+                        final PayeeBucket pBase,
+                        final JDateDay pDate) {
+        /* Copy details from base */
+        thePayee = pBase.getPayee();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pDate);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private PayeeBucket(final Analysis pAnalysis,
+                        final PayeeBucket pBase,
+                        final JDateDayRange pRange) {
+        /* Copy details from base */
+        thePayee = pBase.getPayee();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pRange);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -304,70 +368,6 @@ public final class PayeeBucket
     private Object getValue(final PayeeAttribute pAttr) {
         /* Obtain the value */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pPayee the payee
-     */
-    private PayeeBucket(final Analysis pAnalysis,
-                        final Payee pPayee) {
-        /* Store the details */
-        thePayee = pPayee;
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Create the history map */
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(new PayeeValues());
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
-     */
-    private PayeeBucket(final Analysis pAnalysis,
-                        final PayeeBucket pBase,
-                        final JDateDay pDate) {
-        /* Copy details from base */
-        thePayee = pBase.getPayee();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pDate);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
-     */
-    private PayeeBucket(final Analysis pAnalysis,
-                        final PayeeBucket pBase,
-                        final JDateDayRange pRange) {
-        /* Copy details from base */
-        thePayee = pBase.getPayee();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pRange);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -854,16 +854,6 @@ public final class PayeeBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PAYEE_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -879,20 +869,6 @@ public final class PayeeBucket
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * The analysis.
          */
@@ -907,14 +883,6 @@ public final class PayeeBucket
          * The totals.
          */
         private final PayeeBucket theTotals;
-
-        /**
-         * Obtain the Totals.
-         * @return the totals
-         */
-        public PayeeBucket getTotals() {
-            return theTotals;
-        }
 
         /**
          * Construct a top-level List.
@@ -989,6 +957,38 @@ public final class PayeeBucket
                     append(myBucket);
                 }
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the Totals.
+         * @return the totals
+         */
+        public PayeeBucket getTotals() {
+            return theTotals;
         }
 
         /**

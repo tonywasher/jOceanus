@@ -104,19 +104,6 @@ public class DepositAnalysisSelect
      */
     private final JScrollButton<DepositCategory> theCatButton;
 
-    @Override
-    public DepositFilter getFilter() {
-        DepositBucket myDeposit = theState.getDeposit();
-        return myDeposit != null
-                                ? new DepositFilter(myDeposit)
-                                : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (theDeposits != null) && !theDeposits.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -151,6 +138,19 @@ public class DepositAnalysisSelect
         DepositListener myListener = new DepositListener();
         theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    @Override
+    public DepositFilter getFilter() {
+        DepositBucket myDeposit = theState.getDeposit();
+        return myDeposit != null
+                                ? new DepositFilter(myDeposit)
+                                : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (theDeposits != null) && !theDeposits.isEmpty();
     }
 
     /**
@@ -427,22 +427,6 @@ public class DepositAnalysisSelect
         private DepositBucket theDeposit;
 
         /**
-         * Obtain the Deposit Bucket.
-         * @return the Deposit
-         */
-        private DepositBucket getDeposit() {
-            return theDeposit;
-        }
-
-        /**
-         * Obtain the Category.
-         * @return the category
-         */
-        private DepositCategory getCategory() {
-            return theCategory;
-        }
-
-        /**
          * Constructor.
          */
         private DepositState() {
@@ -459,6 +443,22 @@ public class DepositAnalysisSelect
             /* Initialise state */
             theDeposit = pState.getDeposit();
             theCategory = pState.getCategory();
+        }
+
+        /**
+         * Obtain the Deposit Bucket.
+         * @return the Deposit
+         */
+        private DepositBucket getDeposit() {
+            return theDeposit;
+        }
+
+        /**
+         * Obtain the Category.
+         * @return the category
+         */
+        private DepositCategory getCategory() {
+            return theCategory;
         }
 
         /**

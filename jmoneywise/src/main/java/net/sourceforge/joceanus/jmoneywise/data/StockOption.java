@@ -141,6 +141,119 @@ public class StockOption
      */
     private final StockOptionInfoSet theInfoSet;
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pOption The Option to copy
+     */
+    protected StockOption(final StockOptionList pList,
+                          final StockOption pOption) {
+        /* Set standard values */
+        super(pList, pOption);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+                theInfoSet.cloneDataInfoSet(pOption.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private StockOption(final StockOptionList pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the StockHolding */
+            Object myValue = pValues.getValue(FIELD_STOCKHOLDING);
+            if (myValue instanceof Integer) {
+                setValueStockHolding((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueStockHolding((String) myValue);
+            } else if (myValue instanceof SecurityHolding) {
+                setValueStockHolding((SecurityHolding) myValue);
+            }
+
+            /* Store GrantDate */
+            myValue = pValues.getValue(FIELD_GRANTDATE);
+            if (myValue instanceof JDateDay) {
+                setValueGrantDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueGrantDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store ExpiryDate */
+            myValue = pValues.getValue(FIELD_EXPIREDATE);
+            if (myValue instanceof JDateDay) {
+                setValueExpiryDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueExpiryDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the Price */
+            myValue = pValues.getValue(FIELD_PRICE);
+            if (myValue instanceof JPrice) {
+                setValuePrice((JPrice) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValuePrice((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValuePrice(myString);
+                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public StockOption(final StockOptionList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -559,119 +672,6 @@ public class StockOption
         super.setDeleted(bDeleted);
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pOption The Option to copy
-     */
-    protected StockOption(final StockOptionList pList,
-                          final StockOption pOption) {
-        /* Set standard values */
-        super(pList, pOption);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
-                theInfoSet.cloneDataInfoSet(pOption.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private StockOption(final StockOptionList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the StockHolding */
-            Object myValue = pValues.getValue(FIELD_STOCKHOLDING);
-            if (myValue instanceof Integer) {
-                setValueStockHolding((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueStockHolding((String) myValue);
-            } else if (myValue instanceof SecurityHolding) {
-                setValueStockHolding((SecurityHolding) myValue);
-            }
-
-            /* Store GrantDate */
-            myValue = pValues.getValue(FIELD_GRANTDATE);
-            if (myValue instanceof JDateDay) {
-                setValueGrantDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueGrantDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store ExpiryDate */
-            myValue = pValues.getValue(FIELD_EXPIREDATE);
-            if (myValue instanceof JDateDay) {
-                setValueExpiryDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueExpiryDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store the Price */
-            myValue = pValues.getValue(FIELD_PRICE);
-            if (myValue instanceof JPrice) {
-                setValuePrice((JPrice) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValuePrice((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValuePrice(myString);
-                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public StockOption(final StockOptionList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new StockOptionInfoSet(this, pList.getActInfoTypes(), pList.getStockOptionInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
     @Override
     public int compareTo(final StockOption pThat) {
         /* Handle the trivial cases */
@@ -1000,11 +1000,6 @@ public class StockOption
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The StockOptionInfo List.
          */
@@ -1019,6 +1014,34 @@ public class StockOption
          * The UpdateSet StockHoldingsMap.
          */
         private SecurityHoldingMap theHoldingsMap = null;
+
+        /**
+         * Construct an empty CORE StockOption list.
+         * @param pData the DataSet for the list
+         */
+        public StockOptionList(final MoneyWiseData pData) {
+            super(pData, StockOption.class, MoneyWiseDataType.STOCKOPTION);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected StockOptionList(final StockOptionList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        protected StockOptionList getEmptyList(final ListStyle pStyle) {
+            StockOptionList myList = new StockOptionList(this);
+            myList.setStyle(pStyle);
+            return myList;
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -1072,29 +1095,6 @@ public class StockOption
                 theInfoTypeList = getDataSet().getActInfoTypes();
             }
             return theInfoTypeList;
-        }
-
-        /**
-         * Construct an empty CORE StockOption list.
-         * @param pData the DataSet for the list
-         */
-        public StockOptionList(final MoneyWiseData pData) {
-            super(pData, StockOption.class, MoneyWiseDataType.STOCKOPTION);
-        }
-
-        @Override
-        protected StockOptionList getEmptyList(final ListStyle pStyle) {
-            StockOptionList myList = new StockOptionList(this);
-            myList.setStyle(pStyle);
-            return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected StockOptionList(final StockOptionList pSource) {
-            super(pSource);
         }
 
         /**

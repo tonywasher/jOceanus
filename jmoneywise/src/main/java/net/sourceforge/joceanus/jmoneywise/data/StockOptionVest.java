@@ -86,6 +86,78 @@ public class StockOptionVest
      */
     public static final JDataField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue());
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pVest The vest to copy
+     */
+    protected StockOptionVest(final StockOptionVestList pList,
+                              final StockOptionVest pVest) {
+        /* Set standard values */
+        super(pList, pVest);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private StockOptionVest(final StockOptionVestList pList,
+                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Security */
+            Object myValue = pValues.getValue(FIELD_OPTION);
+            if (myValue instanceof Integer) {
+                setValueStockOption((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueStockOption((String) myValue);
+            }
+
+            /* Store GrantDate */
+            myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the Units */
+            myValue = pValues.getValue(FIELD_UNITS);
+            if (myValue instanceof JUnits) {
+                setValueUnits((JUnits) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueUnits((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueUnits(myString);
+                setValueUnits(myFormatter.parseValue(myString, JUnits.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public StockOptionVest(final StockOptionVestList pList) {
+        super(pList, 0);
+        setNextDataKeySet();
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -325,78 +397,6 @@ public class StockOptionVest
         return (StockOptionVest) super.getBase();
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pVest The vest to copy
-     */
-    protected StockOptionVest(final StockOptionVestList pList,
-                              final StockOptionVest pVest) {
-        /* Set standard values */
-        super(pList, pVest);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private StockOptionVest(final StockOptionVestList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Security */
-            Object myValue = pValues.getValue(FIELD_OPTION);
-            if (myValue instanceof Integer) {
-                setValueStockOption((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueStockOption((String) myValue);
-            }
-
-            /* Store GrantDate */
-            myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store the Units */
-            myValue = pValues.getValue(FIELD_UNITS);
-            if (myValue instanceof JUnits) {
-                setValueUnits((JUnits) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueUnits((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValueUnits(myString);
-                setValueUnits(myFormatter.parseValue(myString, JUnits.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public StockOptionVest(final StockOptionVestList pList) {
-        super(pList, 0);
-        setNextDataKeySet();
-    }
-
     @Override
     public int compareTo(final StockOptionVest pThat) {
         /* Handle the trivial cases */
@@ -592,6 +592,22 @@ public class StockOptionVest
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE StockOptionVest list.
+         * @param pData the DataSet for the list
+         */
+        public StockOptionVestList(final MoneyWiseData pData) {
+            super(StockOptionVest.class, pData, MoneyWiseDataType.STOCKOPTIONVEST);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected StockOptionVestList(final StockOptionVestList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -617,27 +633,11 @@ public class StockOptionVest
             return (StockOptionVestDataMap) super.getDataMap();
         }
 
-        /**
-         * Construct an empty CORE StockOptionVest list.
-         * @param pData the DataSet for the list
-         */
-        public StockOptionVestList(final MoneyWiseData pData) {
-            super(StockOptionVest.class, pData, MoneyWiseDataType.STOCKOPTIONVEST);
-        }
-
         @Override
         protected StockOptionVestList getEmptyList(final ListStyle pStyle) {
             StockOptionVestList myList = new StockOptionVestList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected StockOptionVestList(final StockOptionVestList pSource) {
-            super(pSource);
         }
 
         /**
@@ -747,6 +747,19 @@ public class StockOptionVest
          */
         public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
+        /**
+         * Map of Maps.
+         */
+        private final Map<StockOption, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Constructor.
+         */
+        public StockOptionVestDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<StockOption, Map<JDateDay, Integer>>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -766,19 +779,6 @@ public class StockOptionVest
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of Maps.
-         */
-        private final Map<StockOption, Map<JDateDay, Integer>> theMapOfMaps;
-
-        /**
-         * Constructor.
-         */
-        public StockOptionVestDataMap() {
-            /* Create the maps */
-            theMapOfMaps = new HashMap<StockOption, Map<JDateDay, Integer>>();
         }
 
         @Override

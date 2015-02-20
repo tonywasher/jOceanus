@@ -122,6 +122,55 @@ public class JiraServer {
     private final List<JiraFilter> theFilters;
 
     /**
+     * Constructor.
+     * @param pManager the preference manager
+     * @throws JOceanusException on error
+     */
+    public JiraServer(final PreferenceManager pManager) throws JOceanusException {
+        /* Allocate the lists */
+        theProjects = new ArrayList<JiraProject>();
+        theFilters = new ArrayList<JiraFilter>();
+        theIssueTypes = new ArrayList<JiraIssueType>();
+        theIssueLinks = new ArrayList<JiraIssueLinks>();
+        theStatuses = new ArrayList<JiraStatus>();
+        theResolutions = new ArrayList<JiraResolution>();
+        thePriorities = new ArrayList<JiraPriority>();
+
+        /* Protect against exceptions */
+        try {
+            /* Access the Jira preferences */
+            JiraPreferences myPreferences = pManager.getPreferenceSet(JiraPreferences.class);
+            String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER);
+
+            /* Access the Rest Client */
+            JiraRestClientFactory myFactory = new AsynchronousJiraRestClientFactory();
+            URI myUri = new URI(baseUrl);
+            String myUser = myPreferences.getStringValue(JiraPreferences.NAME_USER);
+            String myPass = myPreferences.getStringValue(JiraPreferences.NAME_PASS);
+            theClient = myFactory.createWithBasicHttpAuthentication(myUri, myUser, myPass);
+            theDataClient = theClient.getMetadataClient();
+
+            /* Allocate the security class */
+            theSecurity = new JiraSecurity(this);
+            theActive = getUser(myUser);
+
+            /* Load constants */
+            loadIssueTypes();
+            loadIssueLinks();
+            loadResolutions();
+            loadPriorities();
+
+            /* Load projects and filters */
+            loadProjects();
+            loadFilters();
+
+        } catch (URISyntaxException e) {
+            /* Pass the exception on */
+            throw new JThemisIOException(ERROR_SERVICE, e);
+        }
+    }
+
+    /**
      * Obtain the service.
      * @return the service
      */
@@ -183,55 +232,6 @@ public class JiraServer {
      */
     public Iterator<JiraFilter> filterIterator() {
         return theFilters.iterator();
-    }
-
-    /**
-     * Constructor.
-     * @param pManager the preference manager
-     * @throws JOceanusException on error
-     */
-    public JiraServer(final PreferenceManager pManager) throws JOceanusException {
-        /* Allocate the lists */
-        theProjects = new ArrayList<JiraProject>();
-        theFilters = new ArrayList<JiraFilter>();
-        theIssueTypes = new ArrayList<JiraIssueType>();
-        theIssueLinks = new ArrayList<JiraIssueLinks>();
-        theStatuses = new ArrayList<JiraStatus>();
-        theResolutions = new ArrayList<JiraResolution>();
-        thePriorities = new ArrayList<JiraPriority>();
-
-        /* Protect against exceptions */
-        try {
-            /* Access the Jira preferences */
-            JiraPreferences myPreferences = pManager.getPreferenceSet(JiraPreferences.class);
-            String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER);
-
-            /* Access the Rest Client */
-            JiraRestClientFactory myFactory = new AsynchronousJiraRestClientFactory();
-            URI myUri = new URI(baseUrl);
-            String myUser = myPreferences.getStringValue(JiraPreferences.NAME_USER);
-            String myPass = myPreferences.getStringValue(JiraPreferences.NAME_PASS);
-            theClient = myFactory.createWithBasicHttpAuthentication(myUri, myUser, myPass);
-            theDataClient = theClient.getMetadataClient();
-
-            /* Allocate the security class */
-            theSecurity = new JiraSecurity(this);
-            theActive = getUser(myUser);
-
-            /* Load constants */
-            loadIssueTypes();
-            loadIssueLinks();
-            loadResolutions();
-            loadPriorities();
-
-            /* Load projects and filters */
-            loadProjects();
-            loadFilters();
-
-        } catch (URISyntaxException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException(ERROR_SERVICE, e);
-        }
     }
 
     /**
@@ -662,6 +662,19 @@ public class JiraServer {
         private final URI theURI;
 
         /**
+         * Constructor.
+         * @param pEntity the underlying entity
+         * @param pName the entity name
+         */
+        protected JiraEntity(final T pEntity,
+                             final String pName) {
+            /* Access the details */
+            theEntity = pEntity;
+            theName = pName;
+            theURI = pEntity.getSelf();
+        }
+
+        /**
          * Obtain the underlying object.
          * @return the name
          */
@@ -683,19 +696,6 @@ public class JiraServer {
          */
         public URI getURI() {
             return theURI;
-        }
-
-        /**
-         * Constructor.
-         * @param pEntity the underlying entity
-         * @param pName the entity name
-         */
-        protected JiraEntity(final T pEntity,
-                             final String pName) {
-            /* Access the details */
-            theEntity = pEntity;
-            theName = pName;
-            theURI = pEntity.getSelf();
         }
 
         /**
@@ -723,6 +723,17 @@ public class JiraServer {
         private final boolean isSubTask;
 
         /**
+         * Constructor.
+         * @param pType the underlying issueType
+         */
+        private JiraIssueType(final IssueType pType) {
+            /* Access the details */
+            super(pType, pType.getName());
+            theDesc = pType.getDescription();
+            isSubTask = pType.isSubtask();
+        }
+
+        /**
          * Get the description of the issueType.
          * @return the description
          */
@@ -737,17 +748,6 @@ public class JiraServer {
         public boolean isSubTask() {
             return isSubTask;
         }
-
-        /**
-         * Constructor.
-         * @param pType the underlying issueType
-         */
-        private JiraIssueType(final IssueType pType) {
-            /* Access the details */
-            super(pType, pType.getName());
-            theDesc = pType.getDescription();
-            isSubTask = pType.isSubtask();
-        }
     }
 
     /**
@@ -761,14 +761,6 @@ public class JiraServer {
         private final String theDesc;
 
         /**
-         * Get the description of the status.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
-        }
-
-        /**
          * Constructor.
          * @param pStatus the underlying status
          */
@@ -776,6 +768,14 @@ public class JiraServer {
             /* Access the details */
             super(pStatus, pStatus.getName());
             theDesc = pStatus.getDescription();
+        }
+
+        /**
+         * Get the description of the status.
+         * @return the description
+         */
+        public String getDescription() {
+            return theDesc;
         }
     }
 
@@ -790,14 +790,6 @@ public class JiraServer {
         private final String theDesc;
 
         /**
-         * Get the description of the resolution.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
-        }
-
-        /**
          * Constructor.
          * @param pResolution the underlying resolution
          */
@@ -805,6 +797,14 @@ public class JiraServer {
             /* Access the details */
             super(pResolution, pResolution.getName());
             theDesc = pResolution.getDescription();
+        }
+
+        /**
+         * Get the description of the resolution.
+         * @return the description
+         */
+        public String getDescription() {
+            return theDesc;
         }
     }
 
@@ -824,6 +824,17 @@ public class JiraServer {
         private final Color theColor;
 
         /**
+         * Constructor.
+         * @param pPriority the underlying priority
+         */
+        private JiraPriority(final Priority pPriority) {
+            /* Access the details */
+            super(pPriority, pPriority.getName());
+            theDesc = pPriority.getDescription();
+            theColor = Color.decode(pPriority.getStatusColor());
+        }
+
+        /**
          * Get the description of the priority.
          * @return the description
          */
@@ -837,17 +848,6 @@ public class JiraServer {
          */
         public Color getColor() {
             return theColor;
-        }
-
-        /**
-         * Constructor.
-         * @param pPriority the underlying priority
-         */
-        private JiraPriority(final Priority pPriority) {
-            /* Access the details */
-            super(pPriority, pPriority.getName());
-            theDesc = pPriority.getDescription();
-            theColor = Color.decode(pPriority.getStatusColor());
         }
     }
 
@@ -867,6 +867,18 @@ public class JiraServer {
         private final String theOutward;
 
         /**
+         * Constructor.
+         * @param pLink the underlying link
+         * @throws JOceanusException on error
+         */
+        private JiraIssueLinks(final IssuelinksType pLink) throws JOceanusException {
+            /* Access the details */
+            super(pLink, pLink.getName());
+            theInward = pLink.getInward();
+            theOutward = pLink.getOutward();
+        }
+
+        /**
          * Get the inward link name.
          * @return the name
          */
@@ -880,18 +892,6 @@ public class JiraServer {
          */
         public String getOutward() {
             return theOutward;
-        }
-
-        /**
-         * Constructor.
-         * @param pLink the underlying link
-         * @throws JOceanusException on error
-         */
-        private JiraIssueLinks(final IssuelinksType pLink) throws JOceanusException {
-            /* Access the details */
-            super(pLink, pLink.getName());
-            theInward = pLink.getInward();
-            theOutward = pLink.getOutward();
         }
     }
 
@@ -916,6 +916,19 @@ public class JiraServer {
         private final String theQuery;
 
         /**
+         * Constructor.
+         * @param pFilter the underlying filter
+         * @throws JOceanusException on error
+         */
+        private JiraFilter(final Filter pFilter) throws JOceanusException {
+            /* Access the details */
+            super(pFilter, pFilter.getName());
+            theDesc = pFilter.getDescription();
+            theOwner = getUser(pFilter.getOwner());
+            theQuery = pFilter.getJql();
+        }
+
+        /**
          * Get the description of the priority.
          * @return the description
          */
@@ -937,19 +950,6 @@ public class JiraServer {
          */
         protected Iterable<Issue> getIssues() {
             return theClient.getSearchClient().searchJql(theQuery).claim().getIssues();
-        }
-
-        /**
-         * Constructor.
-         * @param pFilter the underlying filter
-         * @throws JOceanusException on error
-         */
-        private JiraFilter(final Filter pFilter) throws JOceanusException {
-            /* Access the details */
-            super(pFilter, pFilter.getName());
-            theDesc = pFilter.getDescription();
-            theOwner = getUser(pFilter.getOwner());
-            theQuery = pFilter.getJql();
         }
     }
 }

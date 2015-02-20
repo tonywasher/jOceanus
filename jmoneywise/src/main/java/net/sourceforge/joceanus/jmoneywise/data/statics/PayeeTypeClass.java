@@ -96,6 +96,17 @@ public enum PayeeTypeClass implements StaticInterface {
      */
     private final int theOrder;
 
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     */
+    private PayeeTypeClass(final int uId,
+                           final int uOrder) {
+        theId = uId;
+        theOrder = uOrder;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -116,17 +127,6 @@ public enum PayeeTypeClass implements StaticInterface {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the Id
-     * @param uOrder the default order.
-     */
-    private PayeeTypeClass(final int uId,
-                           final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
     }
 
     /**

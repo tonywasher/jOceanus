@@ -90,14 +90,6 @@ public class CommitMgr {
     private final CommitHandler theHandler = new CommitHandler();
 
     /**
-     * Obtain revision.
-     * @return the revision
-     */
-    public SVNRevision getNewRevision() {
-        return theRevision;
-    }
-
-    /**
      * Constructor.
      * @param pWorkingSet the workingSet
      * @param pReport the report object
@@ -110,6 +102,14 @@ public class CommitMgr {
         theReport = pReport;
         theMgr = theRepository.getClientManager();
         theMgr.setEventHandler(theHandler);
+    }
+
+    /**
+     * Obtain revision.
+     * @return the revision
+     */
+    public SVNRevision getNewRevision() {
+        return theRevision;
     }
 
     /**

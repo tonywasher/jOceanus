@@ -94,19 +94,6 @@ public class SecurityAnalysisSelect
      */
     private final JScrollButton<PortfolioBucket> thePortButton;
 
-    @Override
-    public SecurityFilter getFilter() {
-        SecurityBucket mySecurity = theState.getSecurity();
-        return mySecurity != null
-                                 ? new SecurityFilter(mySecurity)
-                                 : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (thePortfolios != null) && !thePortfolios.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -141,6 +128,19 @@ public class SecurityAnalysisSelect
         SecurityListener myListener = new SecurityListener();
         theSecButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    @Override
+    public SecurityFilter getFilter() {
+        SecurityBucket mySecurity = theState.getSecurity();
+        return mySecurity != null
+                                 ? new SecurityFilter(mySecurity)
+                                 : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (thePortfolios != null) && !thePortfolios.isEmpty();
     }
 
     /**
@@ -398,22 +398,6 @@ public class SecurityAnalysisSelect
         private SecurityBucket theSecurity;
 
         /**
-         * Obtain the Security Bucket.
-         * @return the Security
-         */
-        private SecurityBucket getSecurity() {
-            return theSecurity;
-        }
-
-        /**
-         * Obtain the Portfolio.
-         * @return the portfolio
-         */
-        private PortfolioBucket getPortfolio() {
-            return thePortfolio;
-        }
-
-        /**
          * Constructor.
          */
         private SecurityState() {
@@ -430,6 +414,22 @@ public class SecurityAnalysisSelect
             /* Initialise state */
             theSecurity = pState.getSecurity();
             thePortfolio = pState.getPortfolio();
+        }
+
+        /**
+         * Obtain the Security Bucket.
+         * @return the Security
+         */
+        private SecurityBucket getSecurity() {
+            return theSecurity;
+        }
+
+        /**
+         * Obtain the Portfolio.
+         * @return the portfolio
+         */
+        private PortfolioBucket getPortfolio() {
+            return thePortfolio;
         }
 
         /**

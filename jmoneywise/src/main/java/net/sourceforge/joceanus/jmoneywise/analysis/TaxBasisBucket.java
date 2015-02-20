@@ -85,6 +85,92 @@ public final class TaxBasisBucket
      */
     private static final Map<JDataField, TaxBasisAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TaxBasisAttribute.class);
 
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
+
+    /**
+     * Tax Basis.
+     */
+    private final TaxBasis theTaxBasis;
+
+    /**
+     * Values.
+     */
+    private final TaxBasisValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final TaxBasisValues theBaseValues;
+
+    /**
+     * History Map.
+     */
+    private final BucketHistory<TaxBasisValues, TaxBasisAttribute> theHistory;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pTaxBasis the basis
+     */
+    private TaxBasisBucket(final Analysis pAnalysis,
+                           final TaxBasis pTaxBasis) {
+        /* Store the parameters */
+        theTaxBasis = pTaxBasis;
+        theAnalysis = pAnalysis;
+
+        /* Create the history map */
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(new TaxBasisValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private TaxBasisBucket(final Analysis pAnalysis,
+                           final TaxBasisBucket pBase,
+                           final JDateDay pDate) {
+        /* Copy details from base */
+        theTaxBasis = pBase.getTaxBasis();
+        theAnalysis = pAnalysis;
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pDate);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private TaxBasisBucket(final Analysis pAnalysis,
+                           final TaxBasisBucket pBase,
+                           final JDateDayRange pRange) {
+        /* Copy details from base */
+        theTaxBasis = pBase.getTaxBasis();
+        theAnalysis = pAnalysis;
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pRange);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -119,31 +205,6 @@ public final class TaxBasisBucket
 
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * The analysis.
-     */
-    private final Analysis theAnalysis;
-
-    /**
-     * Tax Basis.
-     */
-    private final TaxBasis theTaxBasis;
-
-    /**
-     * Values.
-     */
-    private final TaxBasisValues theValues;
-
-    /**
-     * The base values.
-     */
-    private final TaxBasisValues theBaseValues;
-
-    /**
-     * History Map.
-     */
-    private final BucketHistory<TaxBasisValues, TaxBasisAttribute> theHistory;
 
     @Override
     public String formatObject() {
@@ -301,67 +362,6 @@ public final class TaxBasisBucket
     private Object getValue(final TaxBasisAttribute pAttr) {
         /* Obtain the attribute */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pTaxBasis the basis
-     */
-    private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxBasis pTaxBasis) {
-        /* Store the parameters */
-        theTaxBasis = pTaxBasis;
-        theAnalysis = pAnalysis;
-
-        /* Create the history map */
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(new TaxBasisValues());
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
-     */
-    private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxBasisBucket pBase,
-                           final JDateDay pDate) {
-        /* Copy details from base */
-        theTaxBasis = pBase.getTaxBasis();
-        theAnalysis = pAnalysis;
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pDate);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
-     */
-    private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxBasisBucket pBase,
-                           final JDateDayRange pRange) {
-        /* Copy details from base */
-        theTaxBasis = pBase.getTaxBasis();
-        theAnalysis = pAnalysis;
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pRange);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -727,16 +727,6 @@ public final class TaxBasisBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -752,20 +742,6 @@ public final class TaxBasisBucket
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * The analysis.
          */
@@ -780,14 +756,6 @@ public final class TaxBasisBucket
          * The tax basis.
          */
         private final TaxBasisBucket theTotals;
-
-        /**
-         * Obtain the Totals.
-         * @return the totals bucket
-         */
-        public TaxBasisBucket getTotals() {
-            return theTotals;
-        }
 
         /**
          * Construct a top-level List.
@@ -861,6 +829,38 @@ public final class TaxBasisBucket
                     add(myBucket);
                 }
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the Totals.
+         * @return the totals bucket
+         */
+        public TaxBasisBucket getTotals() {
+            return theTotals;
         }
 
         /**

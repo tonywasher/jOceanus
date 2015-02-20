@@ -111,6 +111,82 @@ public final class PortfolioBucket
      */
     private final SecurityValues theBaseValues;
 
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pPortfolio the portfolio account
+     */
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final Portfolio pPortfolio) {
+        /* Store the category */
+        thePortfolio = pPortfolio;
+
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pPortfolio);
+
+        /* Create the securities list */
+        theSecurities = (pPortfolio != null)
+                                            ? new SecurityBucketList(pAnalysis)
+                                            : null;
+
+        /* Create the value maps and initialise them */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        initValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final PortfolioBucket pBase,
+                            final JDateDay pDate) {
+        /* Copy details from base */
+        thePortfolio = pBase.getPortfolio();
+
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);
+
+        /* Create the securities list */
+        theSecurities = (thePortfolio != null)
+                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)
+                                              : null;
+
+        /* Create the value maps and initialise them */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        initValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the date range for the bucket
+     */
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final PortfolioBucket pBase,
+                            final JDateDayRange pRange) {
+        /* Copy details from base */
+        thePortfolio = pBase.getPortfolio();
+
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);
+
+        /* Create the securities list */
+        theSecurities = (thePortfolio != null)
+                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)
+                                              : null;
+
+        /* Create the value maps and initialise them */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        initValues();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -263,82 +339,6 @@ public final class PortfolioBucket
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pPortfolio the portfolio account
-     */
-    private PortfolioBucket(final Analysis pAnalysis,
-                            final Portfolio pPortfolio) {
-        /* Store the category */
-        thePortfolio = pPortfolio;
-
-        /* Create the cash bucket */
-        theCash = new PortfolioCashBucket(pAnalysis, pPortfolio);
-
-        /* Create the securities list */
-        theSecurities = (pPortfolio != null)
-                                            ? new SecurityBucketList(pAnalysis)
-                                            : null;
-
-        /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
-        initValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
-     */
-    private PortfolioBucket(final Analysis pAnalysis,
-                            final PortfolioBucket pBase,
-                            final JDateDay pDate) {
-        /* Copy details from base */
-        thePortfolio = pBase.getPortfolio();
-
-        /* Create the cash bucket */
-        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);
-
-        /* Create the securities list */
-        theSecurities = (thePortfolio != null)
-                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)
-                                              : null;
-
-        /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
-        initValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the date range for the bucket
-     */
-    private PortfolioBucket(final Analysis pAnalysis,
-                            final PortfolioBucket pBase,
-                            final JDateDayRange pRange) {
-        /* Copy details from base */
-        thePortfolio = pBase.getPortfolio();
-
-        /* Create the cash bucket */
-        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);
-
-        /* Create the securities list */
-        theSecurities = (thePortfolio != null)
-                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)
-                                              : null;
-
-        /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
-        initValues();
     }
 
     /**
@@ -608,16 +608,6 @@ public final class PortfolioBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIO_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -633,20 +623,6 @@ public final class PortfolioBucket
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * The analysis.
          */
@@ -656,14 +632,6 @@ public final class PortfolioBucket
          * The totals.
          */
         private final PortfolioBucket theTotals;
-
-        /**
-         * Obtain the Totals.
-         * @return the totals
-         */
-        public PortfolioBucket getTotals() {
-            return theTotals;
-        }
 
         /**
          * Construct a top-level List.
@@ -734,6 +702,38 @@ public final class PortfolioBucket
                     append(myBucket);
                 }
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the Totals.
+         * @return the totals
+         */
+        public PortfolioBucket getTotals() {
+            return theTotals;
         }
 
         /**

@@ -63,48 +63,6 @@ public class QIFSecurity
      */
     private final SecurityTypeClass theClass;
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
-     * Obtain the Name.
-     * @return the Name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    /**
-     * Obtain the symbol.
-     * @return the Name
-     */
-    public String getSymbol() {
-        return theSymbol;
-    }
-
-    /**
-     * Create the CategoryClass to type map.
-     * @return the map
-     */
-    private static Map<SecurityTypeClass, String> createClassMap() {
-        /* Create the map */
-        Map<SecurityTypeClass, String> myMap = new EnumMap<SecurityTypeClass, String>(SecurityTypeClass.class);
-
-        /* Add the entries */
-        myMap.put(SecurityTypeClass.SHARES, "Share");
-        myMap.put(SecurityTypeClass.UNITTRUST, "Unit/Inv. Trust");
-        myMap.put(SecurityTypeClass.LIFEBOND, "Bond");
-        myMap.put(SecurityTypeClass.ASSET, "Asset");
-        myMap.put(SecurityTypeClass.ENDOWMENT, "Trust");
-        myMap.put(SecurityTypeClass.VEHICLE, "Vehicle");
-        myMap.put(SecurityTypeClass.PROPERTY, "Real Estate");
-
-        /* Return the map */
-        return myMap;
-    }
-
     /**
      * Constructor.
      * @param pFile the QIF File
@@ -180,6 +138,48 @@ public class QIFSecurity
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the symbol.
+     * @return the Name
+     */
+    public String getSymbol() {
+        return theSymbol;
+    }
+
+    /**
+     * Create the CategoryClass to type map.
+     * @return the map
+     */
+    private static Map<SecurityTypeClass, String> createClassMap() {
+        /* Create the map */
+        Map<SecurityTypeClass, String> myMap = new EnumMap<SecurityTypeClass, String>(SecurityTypeClass.class);
+
+        /* Add the entries */
+        myMap.put(SecurityTypeClass.SHARES, "Share");
+        myMap.put(SecurityTypeClass.UNITTRUST, "Unit/Inv. Trust");
+        myMap.put(SecurityTypeClass.LIFEBOND, "Bond");
+        myMap.put(SecurityTypeClass.ASSET, "Asset");
+        myMap.put(SecurityTypeClass.ENDOWMENT, "Trust");
+        myMap.put(SecurityTypeClass.VEHICLE, "Vehicle");
+        myMap.put(SecurityTypeClass.PROPERTY, "Real Estate");
+
+        /* Return the map */
+        return myMap;
+    }
+
+    @Override
     public int compareTo(final QIFSecurity pThat) {
         return theName.compareTo(pThat.getName());
     }
@@ -189,6 +189,15 @@ public class QIFSecurity
      */
     public class QIFSecurityNameLine
             extends QIFStringLine<QSecurityLineType> {
+        /**
+         * Constructor.
+         * @param pName the Name
+         */
+        protected QIFSecurityNameLine(final String pName) {
+            /* Call super-constructor */
+            super(pName);
+        }
+
         @Override
         public QSecurityLineType getLineType() {
             return QSecurityLineType.NAME;
@@ -201,15 +210,6 @@ public class QIFSecurity
         public String getName() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pName the Name
-         */
-        protected QIFSecurityNameLine(final String pName) {
-            /* Call super-constructor */
-            super(pName);
-        }
     }
 
     /**
@@ -217,6 +217,15 @@ public class QIFSecurity
      */
     public class QIFSecuritySymbolLine
             extends QIFStringLine<QSecurityLineType> {
+        /**
+         * Constructor.
+         * @param pSymbol the Symbol
+         */
+        protected QIFSecuritySymbolLine(final String pSymbol) {
+            /* Call super-constructor */
+            super(pSymbol);
+        }
+
         @Override
         public QSecurityLineType getLineType() {
             return QSecurityLineType.SYMBOL;
@@ -229,15 +238,6 @@ public class QIFSecurity
         public String getSymbol() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pSymbol the Symbol
-         */
-        protected QIFSecuritySymbolLine(final String pSymbol) {
-            /* Call super-constructor */
-            super(pSymbol);
-        }
     }
 
     /**
@@ -245,28 +245,10 @@ public class QIFSecurity
      */
     public class QIFSecurityTypeLine
             extends QIFStringLine<QSecurityLineType> {
-        @Override
-        public QSecurityLineType getLineType() {
-            return QSecurityLineType.SECTYPE;
-        }
-
         /**
          * The Security Type Class.
          */
         private final SecurityTypeClass theClass;
-
-        @Override
-        public String toString() {
-            return theClass.toString();
-        }
-
-        /**
-         * Obtain security class.
-         * @return the security class
-         */
-        public SecurityTypeClass getSecurityClass() {
-            return theClass;
-        }
 
         /**
          * Constructor.
@@ -303,6 +285,24 @@ public class QIFSecurity
 
             /* Store the class */
             theClass = myClass;
+        }
+
+        @Override
+        public QSecurityLineType getLineType() {
+            return QSecurityLineType.SECTYPE;
+        }
+
+        @Override
+        public String toString() {
+            return theClass.toString();
+        }
+
+        /**
+         * Obtain security class.
+         * @return the security class
+         */
+        public SecurityTypeClass getSecurityClass() {
+            return theClass;
         }
     }
 }

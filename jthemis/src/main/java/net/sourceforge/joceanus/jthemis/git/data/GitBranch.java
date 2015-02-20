@@ -68,22 +68,6 @@ public final class GitBranch
      */
     private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-
-        /* Unknown */
-        return super.getFieldValue(pField);
-    }
-
     /**
      * Parent Repository.
      */
@@ -93,27 +77,6 @@ public final class GitBranch
      * Object Id of the commit.
      */
     private final ObjectId theCommitId;
-
-    /**
-     * Get the repository for this branch.
-     * @return the repository
-     */
-    public GitRepository getRepository() {
-        return theRepository;
-    }
-
-    /**
-     * Get the commit id.
-     * @return the commit id
-     */
-    public ObjectId getCommitId() {
-        return theCommitId;
-    }
-
-    @Override
-    public GitTagList getTagList() {
-        return (GitTagList) super.getTagList();
-    }
 
     /**
      * Constructor.
@@ -163,6 +126,43 @@ public final class GitBranch
     }
 
     @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+
+        /* Unknown */
+        return super.getFieldValue(pField);
+    }
+
+    /**
+     * Get the repository for this branch.
+     * @return the repository
+     */
+    public GitRepository getRepository() {
+        return theRepository;
+    }
+
+    /**
+     * Get the commit id.
+     * @return the commit id
+     */
+    public ObjectId getCommitId() {
+        return theCommitId;
+    }
+
+    @Override
+    public GitTagList getTagList() {
+        return (GitTagList) super.getTagList();
+    }
+
+    @Override
     public GitTag nextTag() {
         /* Determine the next tag */
         return (GitTag) super.nextTag();
@@ -177,11 +177,6 @@ public final class GitBranch
          * Report fields.
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(GitBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
 
         /**
          * The parent component.
@@ -198,6 +193,11 @@ public final class GitBranch
 
             /* Store parent for use by entry handler */
             theComponent = pParent;
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

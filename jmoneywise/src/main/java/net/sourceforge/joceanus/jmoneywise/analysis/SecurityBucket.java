@@ -137,6 +137,81 @@ public final class SecurityBucket
      */
     private final BucketHistory<SecurityValues, SecurityAttribute> theHistory;
 
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pHolding the security holding
+     */
+    private SecurityBucket(final Analysis pAnalysis,
+                           final SecurityHolding pHolding) {
+        /* Store the details */
+        theHolding = pHolding;
+        theSecurity = pHolding.getSecurity();
+        thePortfolio = pHolding.getPortfolio();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Obtain category */
+        theCategory = theSecurity.getSecurityType();
+
+        /* Create the history map */
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(new SecurityValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private SecurityBucket(final Analysis pAnalysis,
+                           final SecurityBucket pBase,
+                           final JDateDay pDate) {
+        /* Copy details from base */
+        theHolding = pBase.getSecurityHolding();
+        theSecurity = pBase.getSecurity();
+        thePortfolio = pBase.getPortfolio();
+        theCategory = pBase.getSecurityType();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pDate);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private SecurityBucket(final Analysis pAnalysis,
+                           final SecurityBucket pBase,
+                           final JDateDayRange pRange) {
+        /* Copy details from base */
+        theHolding = pBase.getSecurityHolding();
+        theSecurity = pBase.getSecurity();
+        thePortfolio = pBase.getPortfolio();
+        theCategory = pBase.getSecurityType();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pRange);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -384,81 +459,6 @@ public final class SecurityBucket
     private Object getAttribute(final SecurityAttribute pAttr) {
         /* Obtain the value */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pHolding the security holding
-     */
-    private SecurityBucket(final Analysis pAnalysis,
-                           final SecurityHolding pHolding) {
-        /* Store the details */
-        theHolding = pHolding;
-        theSecurity = pHolding.getSecurity();
-        thePortfolio = pHolding.getPortfolio();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Obtain category */
-        theCategory = theSecurity.getSecurityType();
-
-        /* Create the history map */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(new SecurityValues());
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
-     */
-    private SecurityBucket(final Analysis pAnalysis,
-                           final SecurityBucket pBase,
-                           final JDateDay pDate) {
-        /* Copy details from base */
-        theHolding = pBase.getSecurityHolding();
-        theSecurity = pBase.getSecurity();
-        thePortfolio = pBase.getPortfolio();
-        theCategory = pBase.getSecurityType();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pDate);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
-     */
-    private SecurityBucket(final Analysis pAnalysis,
-                           final SecurityBucket pBase,
-                           final JDateDayRange pRange) {
-        /* Copy details from base */
-        theHolding = pBase.getSecurityHolding();
-        theSecurity = pBase.getSecurity();
-        thePortfolio = pBase.getPortfolio();
-        theCategory = pBase.getSecurityType();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pRange);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -768,16 +768,6 @@ public final class SecurityBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.SECURITY_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -787,17 +777,6 @@ public final class SecurityBucket
          * Analysis field Id.
          */
         private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
 
         /**
          * The analysis.
@@ -872,6 +851,27 @@ public final class SecurityBucket
                     append(myBucket);
                 }
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
+            }
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

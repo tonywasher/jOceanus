@@ -55,6 +55,15 @@ public final class LoanCategoryBucket
      */
     private final LoanCategory theCategory;
 
+    /**
+     * Constructor.
+     * @param pCategory the account category
+     */
+    protected LoanCategoryBucket(final LoanCategory pCategory) {
+        /* Store the category */
+        theCategory = pCategory;
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -83,15 +92,6 @@ public final class LoanCategoryBucket
     @Override
     public LoanCategory getAccountCategory() {
         return theCategory;
-    }
-
-    /**
-     * Constructor.
-     * @param pCategory the account category
-     */
-    protected LoanCategoryBucket(final LoanCategory pCategory) {
-        /* Store the category */
-        theCategory = pCategory;
     }
 
     @Override
@@ -134,6 +134,27 @@ public final class LoanCategoryBucket
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
+
+        /**
+         * The totals.
+         */
+        private final LoanCategoryBucket theTotals;
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+        protected LoanCategoryBucketList(final Analysis pAnalysis) {
+            /* Initialise class */
+            super(LoanCategoryBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -159,32 +180,11 @@ public final class LoanCategoryBucket
         }
 
         /**
-         * The analysis.
-         */
-        private final Analysis theAnalysis;
-
-        /**
-         * The totals.
-         */
-        private final LoanCategoryBucket theTotals;
-
-        /**
          * Obtain the Totals.
          * @return the totals
          */
         public LoanCategoryBucket getTotals() {
             return theTotals;
-        }
-
-        /**
-         * Construct a top-level List.
-         * @param pAnalysis the analysis
-         */
-        protected LoanCategoryBucketList(final Analysis pAnalysis) {
-            /* Initialise class */
-            super(LoanCategoryBucket.class);
-            theAnalysis = pAnalysis;
-            theTotals = allocateTotalsBucket();
         }
 
         /**

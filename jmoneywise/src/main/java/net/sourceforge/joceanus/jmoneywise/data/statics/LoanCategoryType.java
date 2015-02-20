@@ -52,38 +52,6 @@ public class LoanCategoryType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the Loan class of the LoanCategoryType.
-     * @return the class
-     */
-    public LoanCategoryClass getLoanClass() {
-        return super.getStaticClass();
-    }
-
-    /**
-     * Determine whether the LoanCategoryType is the required class.
-     * @param pClass the desired class
-     * @return <code>true</code> if the loan category type is the required class, <code>false</code> otherwise.
-     */
-    public boolean isLoanCategory(final LoanCategoryClass pClass) {
-        return getLoanClass().equals(pClass);
-    }
-
-    @Override
-    public LoanCategoryType getBase() {
-        return (LoanCategoryType) super.getBase();
-    }
-
-    @Override
-    public LoanCategoryTypeList getList() {
-        return (LoanCategoryTypeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the Loan Category Type with
@@ -127,6 +95,38 @@ public class LoanCategoryType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Loan class of the LoanCategoryType.
+     * @return the class
+     */
+    public LoanCategoryClass getLoanClass() {
+        return super.getStaticClass();
+    }
+
+    /**
+     * Determine whether the LoanCategoryType is the required class.
+     * @param pClass the desired class
+     * @return <code>true</code> if the loan category type is the required class, <code>false</code> otherwise.
+     */
+    public boolean isLoanCategory(final LoanCategoryClass pClass) {
+        return getLoanClass().equals(pClass);
+    }
+
+    @Override
+    public LoanCategoryType getBase() {
+        return (LoanCategoryType) super.getBase();
+    }
+
+    @Override
+    public LoanCategoryTypeList getList() {
+        return (LoanCategoryTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link LoanCategoryType} objects.
      */
@@ -136,6 +136,22 @@ public class LoanCategoryType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE account category list.
+         * @param pData the DataSet for the list
+         */
+        public LoanCategoryTypeList(final DataSet<?, ?> pData) {
+            super(LoanCategoryType.class, pData, MoneyWiseDataType.LOANTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private LoanCategoryTypeList(final LoanCategoryTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -155,22 +171,6 @@ public class LoanCategoryType
         @Override
         protected Class<LoanCategoryClass> getEnumClass() {
             return LoanCategoryClass.class;
-        }
-
-        /**
-         * Construct an empty CORE account category list.
-         * @param pData the DataSet for the list
-         */
-        public LoanCategoryTypeList(final DataSet<?, ?> pData) {
-            super(LoanCategoryType.class, pData, MoneyWiseDataType.LOANTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private LoanCategoryTypeList(final LoanCategoryTypeList pSource) {
-            super(pSource);
         }
 
         @Override

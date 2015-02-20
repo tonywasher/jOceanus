@@ -126,6 +126,72 @@ public final class TransactionCategoryBucket
      */
     private final BucketHistory<CategoryValues, TransactionAttribute> theHistory;
 
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pCategory the transaction category
+     */
+    private TransactionCategoryBucket(final Analysis pAnalysis,
+                                      final TransactionCategory pCategory) {
+        /* Store the parameters */
+        theAnalysis = pAnalysis;
+        theCategory = pCategory;
+        theType = (pCategory == null)
+                                     ? null
+                                     : pCategory.getCategoryType();
+
+        /* Create the history map */
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(new CategoryValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private TransactionCategoryBucket(final Analysis pAnalysis,
+                                      final TransactionCategoryBucket pBase,
+                                      final JDateDay pDate) {
+        /* Copy details from base */
+        theCategory = pBase.getTransactionCategory();
+        theType = pBase.getTransactionCategoryType();
+        theAnalysis = pAnalysis;
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pDate);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private TransactionCategoryBucket(final Analysis pAnalysis,
+                                      final TransactionCategoryBucket pBase,
+                                      final JDateDayRange pRange) {
+        /* Copy details from base */
+        theCategory = pBase.getTransactionCategory();
+        theType = pBase.getTransactionCategoryType();
+        theAnalysis = pAnalysis;
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pRange);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -321,72 +387,6 @@ public final class TransactionCategoryBucket
     private Object getValue(final TransactionAttribute pAttr) {
         /* Obtain the value */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pCategory the transaction category
-     */
-    private TransactionCategoryBucket(final Analysis pAnalysis,
-                                      final TransactionCategory pCategory) {
-        /* Store the parameters */
-        theAnalysis = pAnalysis;
-        theCategory = pCategory;
-        theType = (pCategory == null)
-                                     ? null
-                                     : pCategory.getCategoryType();
-
-        /* Create the history map */
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(new CategoryValues());
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
-     */
-    private TransactionCategoryBucket(final Analysis pAnalysis,
-                                      final TransactionCategoryBucket pBase,
-                                      final JDateDay pDate) {
-        /* Copy details from base */
-        theCategory = pBase.getTransactionCategory();
-        theType = pBase.getTransactionCategoryType();
-        theAnalysis = pAnalysis;
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pDate);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
-     */
-    private TransactionCategoryBucket(final Analysis pAnalysis,
-                                      final TransactionCategoryBucket pBase,
-                                      final JDateDayRange pRange) {
-        /* Copy details from base */
-        theCategory = pBase.getTransactionCategory();
-        theType = pBase.getTransactionCategoryType();
-        theAnalysis = pAnalysis;
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pRange);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -770,16 +770,6 @@ public final class TransactionCategoryBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TRANSCATEGORY_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -794,20 +784,6 @@ public final class TransactionCategoryBucket
          * Totals field Id.
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
 
         /**
          * The analysis.
@@ -868,14 +844,6 @@ public final class TransactionCategoryBucket
          * The TaxableGains.
          */
         private final TransactionCategoryBucket theTaxableGains;
-
-        /**
-         * Obtain the Totals.
-         * @return the totals bucket
-         */
-        public TransactionCategoryBucket getTotals() {
-            return theTotals;
-        }
 
         /**
          * Construct a top-level List.
@@ -986,6 +954,38 @@ public final class TransactionCategoryBucket
                     add(myBucket);
                 }
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the Totals.
+         * @return the totals bucket
+         */
+        public TransactionCategoryBucket getTotals() {
+            return theTotals;
         }
 
         /**

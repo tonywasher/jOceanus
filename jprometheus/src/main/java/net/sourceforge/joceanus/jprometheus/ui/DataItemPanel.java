@@ -139,6 +139,39 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     private transient boolean isEdgeOfList = false;
 
     /**
+     * Constructor.
+     * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
+     */
+    protected DataItemPanel(final JFieldManager pFieldMgr,
+                            final UpdateSet<E> pUpdateSet,
+                            final ErrorPanel pError) {
+        /* Store parameters */
+        theUpdateSet = pUpdateSet;
+        theError = pError;
+
+        /* Access the formatter */
+        theFormatter = pFieldMgr.getDataFormatter();
+
+        /* Create the New FieldSet */
+        theFieldSet = new JFieldSet<T>(pFieldMgr);
+
+        /* Create listener */
+        FieldListener myListener = new FieldListener();
+        theFieldSet.addActionListener(myListener);
+        theUpdateSet.addChangeListener(myListener);
+
+        /* Create the main panel */
+        theMainPanel = new JEnablePanel();
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
+        /* create the action panels */
+        theItemActions = new ItemActions<E>(this);
+        theEditActions = new ItemEditActions<E>(this);
+    }
+
+    /**
      * Obtain the formatter.
      * @return the formatter
      */
@@ -217,39 +250,6 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      */
     public boolean isEdgeOfList() {
         return isEdgeOfList;
-    }
-
-    /**
-     * Constructor.
-     * @param pFieldMgr the field manager
-     * @param pUpdateSet the update set
-     * @param pError the error panel
-     */
-    protected DataItemPanel(final JFieldManager pFieldMgr,
-                            final UpdateSet<E> pUpdateSet,
-                            final ErrorPanel pError) {
-        /* Store parameters */
-        theUpdateSet = pUpdateSet;
-        theError = pError;
-
-        /* Access the formatter */
-        theFormatter = pFieldMgr.getDataFormatter();
-
-        /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<T>(pFieldMgr);
-
-        /* Create listener */
-        FieldListener myListener = new FieldListener();
-        theFieldSet.addActionListener(myListener);
-        theUpdateSet.addChangeListener(myListener);
-
-        /* Create the main panel */
-        theMainPanel = new JEnablePanel();
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        /* create the action panels */
-        theItemActions = new ItemActions<E>(this);
-        theEditActions = new ItemEditActions<E>(this);
     }
 
     /**

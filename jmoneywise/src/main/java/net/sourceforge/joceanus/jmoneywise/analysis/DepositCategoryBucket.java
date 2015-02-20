@@ -56,6 +56,15 @@ public final class DepositCategoryBucket
      */
     private final DepositCategory theCategory;
 
+    /**
+     * Constructor.
+     * @param pCategory the account category
+     */
+    protected DepositCategoryBucket(final DepositCategory pCategory) {
+        /* Store the category */
+        theCategory = pCategory;
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -84,15 +93,6 @@ public final class DepositCategoryBucket
     @Override
     public DepositCategory getAccountCategory() {
         return theCategory;
-    }
-
-    /**
-     * Constructor.
-     * @param pCategory the account category
-     */
-    protected DepositCategoryBucket(final DepositCategory pCategory) {
-        /* Store the category */
-        theCategory = pCategory;
     }
 
     @Override
@@ -135,6 +135,27 @@ public final class DepositCategoryBucket
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
+
+        /**
+         * The totals.
+         */
+        private final DepositCategoryBucket theTotals;
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+        protected DepositCategoryBucketList(final Analysis pAnalysis) {
+            /* Initialise class */
+            super(DepositCategoryBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -160,32 +181,11 @@ public final class DepositCategoryBucket
         }
 
         /**
-         * The analysis.
-         */
-        private final Analysis theAnalysis;
-
-        /**
-         * The totals.
-         */
-        private final DepositCategoryBucket theTotals;
-
-        /**
          * Obtain the Totals.
          * @return the totals
          */
         public DepositCategoryBucket getTotals() {
             return theTotals;
-        }
-
-        /**
-         * Construct a top-level List.
-         * @param pAnalysis the analysis
-         */
-        protected DepositCategoryBucketList(final Analysis pAnalysis) {
-            /* Initialise class */
-            super(DepositCategoryBucket.class);
-            theAnalysis = pAnalysis;
-            theTotals = allocateTotalsBucket();
         }
 
         /**

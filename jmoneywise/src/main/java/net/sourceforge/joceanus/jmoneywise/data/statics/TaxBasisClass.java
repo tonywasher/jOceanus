@@ -111,6 +111,18 @@ public enum TaxBasisClass implements StaticInterface {
      */
     private final int theOrder;
 
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the order
+     */
+    private TaxBasisClass(final int uId,
+                          final int uOrder) {
+        /* Set values */
+        theId = uId;
+        theOrder = uOrder;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -131,18 +143,6 @@ public enum TaxBasisClass implements StaticInterface {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the order
-     */
-    private TaxBasisClass(final int uId,
-                          final int uOrder) {
-        /* Set values */
-        theId = uId;
-        theOrder = uOrder;
     }
 
     /**

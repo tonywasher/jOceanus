@@ -300,22 +300,6 @@ public class HTMLBuilder {
     private final JFieldManager theFieldManager;
 
     /**
-     * Obtain the data formatter.
-     * @return the formatter
-     */
-    public JDataFormatter getDataFormatter() {
-        return theFormatter;
-    }
-
-    /**
-     * Obtain the document.
-     * @return the document
-     */
-    public Document getDocument() {
-        return theDocument;
-    }
-
-    /**
      * Constructor.
      * @param pView the view
      * @throws JOceanusException on error
@@ -336,6 +320,22 @@ public class HTMLBuilder {
         } catch (Exception e) {
             throw new JMoneyWiseIOException("Failed to create", e);
         }
+    }
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theFormatter;
+    }
+
+    /**
+     * Obtain the document.
+     * @return the document
+     */
+    public Document getDocument() {
+        return theDocument;
     }
 
     /**
@@ -1021,6 +1021,30 @@ public class HTMLBuilder {
         private int maxCols = 0;
 
         /**
+         * Constructor.
+         * @param pTable the table element
+         * @param pParent the parent table.
+         */
+        private HTMLTable(final Element pTable,
+                          final HTMLTable pParent) {
+            /* Store parameters */
+            theTable = pTable;
+            theParent = pParent;
+            theClass = pParent.getNextTableClass();
+        }
+
+        /**
+         * Constructor.
+         * @param pTable the table element
+         */
+        private HTMLTable(final Element pTable) {
+            /* Store parameters */
+            theTable = pTable;
+            theParent = null;
+            theClass = TableClass.SUMMARY;
+        }
+
+        /**
          * Obtain the table header.
          * @return the header
          */
@@ -1076,30 +1100,6 @@ public class HTMLBuilder {
          */
         private Element getTable() {
             return theTable;
-        }
-
-        /**
-         * Constructor.
-         * @param pTable the table element
-         * @param pParent the parent table.
-         */
-        private HTMLTable(final Element pTable,
-                          final HTMLTable pParent) {
-            /* Store parameters */
-            theTable = pTable;
-            theParent = pParent;
-            theClass = pParent.getNextTableClass();
-        }
-
-        /**
-         * Constructor.
-         * @param pTable the table element
-         */
-        private HTMLTable(final Element pTable) {
-            /* Store parameters */
-            theTable = pTable;
-            theParent = null;
-            theClass = TableClass.SUMMARY;
         }
 
         /**

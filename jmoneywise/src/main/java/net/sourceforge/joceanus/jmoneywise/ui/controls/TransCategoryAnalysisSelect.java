@@ -87,19 +87,6 @@ public class TransCategoryAnalysisSelect
      */
     private final JScrollButton<TransactionCategoryBucket> theButton;
 
-    @Override
-    public TransactionCategoryFilter getFilter() {
-        TransactionCategoryBucket myCategory = theState.getEventCategory();
-        return myCategory != null
-                                 ? new TransactionCategoryFilter(myCategory)
-                                 : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (theCategories != null) && !theCategories.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -124,6 +111,19 @@ public class TransCategoryAnalysisSelect
 
         /* Create the listener */
         theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
+    }
+
+    @Override
+    public TransactionCategoryFilter getFilter() {
+        TransactionCategoryBucket myCategory = theState.getEventCategory();
+        return myCategory != null
+                                 ? new TransactionCategoryFilter(myCategory)
+                                 : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (theCategories != null) && !theCategories.isEmpty();
     }
 
     /**
@@ -326,14 +326,6 @@ public class TransCategoryAnalysisSelect
         private TransactionCategoryBucket theCategory;
 
         /**
-         * Obtain the EventCategory Bucket.
-         * @return the EventCategory
-         */
-        private TransactionCategoryBucket getEventCategory() {
-            return theCategory;
-        }
-
-        /**
          * Constructor.
          */
         private EventState() {
@@ -348,6 +340,14 @@ public class TransCategoryAnalysisSelect
         private EventState(final EventState pState) {
             /* Initialise state */
             theCategory = pState.getEventCategory();
+        }
+
+        /**
+         * Obtain the EventCategory Bucket.
+         * @return the EventCategory
+         */
+        private TransactionCategoryBucket getEventCategory() {
+            return theCategory;
         }
 
         /**

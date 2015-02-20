@@ -71,6 +71,17 @@ public class DiscoverData
     private final Map<String, SvnExtract> theExtractPlanMap;
 
     /**
+     * Constructor.
+     * @param pReport the report object
+     */
+    public DiscoverData(final ReportTask pReport) {
+        super(pReport);
+        thePreferenceMgr = pReport.getPreferenceMgr();
+        theReport = pReport;
+        theExtractPlanMap = new LinkedHashMap<String, SvnExtract>();
+    }
+
+    /**
      * Obtain the repository.
      * @return the repository
      */
@@ -118,17 +129,6 @@ public class DiscoverData
             myEntry.addAsChildOf(pParent);
             myEntry.setObject(myPlan);
         }
-    }
-
-    /**
-     * Constructor.
-     * @param pReport the report object
-     */
-    public DiscoverData(final ReportTask pReport) {
-        super(pReport);
-        thePreferenceMgr = pReport.getPreferenceMgr();
-        theReport = pReport;
-        theExtractPlanMap = new LinkedHashMap<String, SvnExtract>();
     }
 
     @Override

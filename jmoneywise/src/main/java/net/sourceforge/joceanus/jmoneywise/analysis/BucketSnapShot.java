@@ -72,6 +72,70 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      */
     private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_PREVIOUS.getValue());
 
+    /**
+     * The id of the transaction.
+     */
+    private final Integer theId;
+
+    /**
+     * The transaction.
+     */
+    private final Transaction theTransaction;
+
+    /**
+     * The date.
+     */
+    private final JDateDay theDate;
+
+    /**
+     * SnapShot Values.
+     */
+    private final T theSnapShot;
+
+    /**
+     * Previous SnapShot Values.
+     */
+    private final T thePrevious;
+
+    /**
+     * Constructor.
+     * @param pTrans the transaction
+     * @param pValues the values
+     * @param pPrevious the previous snapShot
+     */
+    protected BucketSnapShot(final Transaction pTrans,
+                             final T pValues,
+                             final T pPrevious) {
+        /* Store transaction details */
+        theId = pTrans.getId();
+        theTransaction = pTrans;
+        theDate = pTrans.getDate();
+
+        /* Store the snapshot map */
+        theSnapShot = pValues.getSnapShot();
+        thePrevious = pPrevious;
+    }
+
+    /**
+     * Constructor.
+     * @param pSnapShot the snapShot
+     * @param pBaseValues the base values
+     * @param pPrevious the previous snapShot
+     */
+    protected BucketSnapShot(final BucketSnapShot<T, E> pSnapShot,
+                             final T pBaseValues,
+                             final T pPrevious) {
+        /* Store event details */
+        theId = pSnapShot.getId();
+        theTransaction = pSnapShot.getTransaction();
+        theDate = pSnapShot.getDate();
+
+        /* Store the snapshot map */
+        theSnapShot = pSnapShot.getNewSnapShot();
+        theSnapShot.adjustToBaseValues(pBaseValues);
+        thePrevious = pPrevious;
+    }
+
     @Override
     public String formatObject() {
         return theDate.toString();
@@ -101,31 +165,6 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
         }
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * The id of the transaction.
-     */
-    private final Integer theId;
-
-    /**
-     * The transaction.
-     */
-    private final Transaction theTransaction;
-
-    /**
-     * The date.
-     */
-    private final JDateDay theDate;
-
-    /**
-     * SnapShot Values.
-     */
-    private final T theSnapShot;
-
-    /**
-     * Previous SnapShot Values.
-     */
-    private final T thePrevious;
 
     /**
      * Obtain id.
@@ -173,45 +212,6 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      */
     protected T getNewSnapShot() {
         return theSnapShot.getSnapShot();
-    }
-
-    /**
-     * Constructor.
-     * @param pTrans the transaction
-     * @param pValues the values
-     * @param pPrevious the previous snapShot
-     */
-    protected BucketSnapShot(final Transaction pTrans,
-                             final T pValues,
-                             final T pPrevious) {
-        /* Store transaction details */
-        theId = pTrans.getId();
-        theTransaction = pTrans;
-        theDate = pTrans.getDate();
-
-        /* Store the snapshot map */
-        theSnapShot = pValues.getSnapShot();
-        thePrevious = pPrevious;
-    }
-
-    /**
-     * Constructor.
-     * @param pSnapShot the snapShot
-     * @param pBaseValues the base values
-     * @param pPrevious the previous snapShot
-     */
-    protected BucketSnapShot(final BucketSnapShot<T, E> pSnapShot,
-                             final T pBaseValues,
-                             final T pPrevious) {
-        /* Store event details */
-        theId = pSnapShot.getId();
-        theTransaction = pSnapShot.getTransaction();
-        theDate = pSnapShot.getDate();
-
-        /* Store the snapshot map */
-        theSnapShot = pSnapShot.getNewSnapShot();
-        theSnapShot.adjustToBaseValues(pBaseValues);
-        thePrevious = pPrevious;
     }
 
     /**

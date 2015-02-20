@@ -91,11 +91,6 @@ public enum QPortfolioLineType implements QLineType {
      */
     private final String theSymbol;
 
-    @Override
-    public String getSymbol() {
-        return theSymbol;
-    }
-
     /**
      * Constructor.
      * @param pSymbol the symbol
@@ -103,6 +98,11 @@ public enum QPortfolioLineType implements QLineType {
     private QPortfolioLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
+    }
+
+    @Override
+    public String getSymbol() {
+        return theSymbol;
     }
 
     /**

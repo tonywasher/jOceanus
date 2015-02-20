@@ -77,19 +77,6 @@ public class CreateWorkingCopy
     private JOceanusException theError = null;
 
     /**
-     * Obtain the working copy set.
-     * @return the working copy set
-     */
-    public SvnWorkingCopySet getWorkingCopySet() {
-        return theWorkingCopySet;
-    }
-
-    @Override
-    public JOceanusException getError() {
-        return theError;
-    }
-
-    /**
      * Constructor.
      * @param pBranches the branches to create the working copy for
      * @param pRevision the revision to check out
@@ -124,6 +111,19 @@ public class CreateWorkingCopy
 
         /* Record branches */
         theBranches = null;
+    }
+
+    /**
+     * Obtain the working copy set.
+     * @return the working copy set
+     */
+    public SvnWorkingCopySet getWorkingCopySet() {
+        return theWorkingCopySet;
+    }
+
+    @Override
+    public JOceanusException getError() {
+        return theError;
     }
 
     @Override

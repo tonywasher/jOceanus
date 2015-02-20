@@ -82,19 +82,6 @@ public class TransactionTagSelect
      */
     private final JScrollButton<TransactionTagBucket> theTagButton;
 
-    @Override
-    public TagFilter getFilter() {
-        TransactionTagBucket myTag = theState.getTag();
-        return myTag != null
-                            ? new TagFilter(myTag)
-                            : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (theTags != null) && !theTags.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -120,6 +107,19 @@ public class TransactionTagSelect
         /* Create the listener */
         TagListener myListener = new TagListener();
         theTagButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    @Override
+    public TagFilter getFilter() {
+        TransactionTagBucket myTag = theState.getTag();
+        return myTag != null
+                            ? new TagFilter(myTag)
+                            : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (theTags != null) && !theTags.isEmpty();
     }
 
     /**
@@ -283,14 +283,6 @@ public class TransactionTagSelect
         private TransactionTagBucket theTransTag;
 
         /**
-         * Obtain the TransactionTag.
-         * @return the Tag
-         */
-        private TransactionTagBucket getTag() {
-            return theTransTag;
-        }
-
-        /**
          * Constructor.
          */
         private TagState() {
@@ -305,6 +297,14 @@ public class TransactionTagSelect
         private TagState(final TagState pState) {
             /* Initialise state */
             theTransTag = pState.getTag();
+        }
+
+        /**
+         * Obtain the TransactionTag.
+         * @return the Tag
+         */
+        private TransactionTagBucket getTag() {
+            return theTransTag;
         }
 
         /**

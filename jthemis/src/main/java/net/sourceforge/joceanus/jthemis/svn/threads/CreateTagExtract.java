@@ -63,11 +63,6 @@ public class CreateTagExtract
      */
     private JOceanusException theError = null;
 
-    @Override
-    public JOceanusException getError() {
-        return theError;
-    }
-
     /**
      * Constructor.
      * @param pTags the tags to create the extract for
@@ -100,6 +95,11 @@ public class CreateTagExtract
 
         /* Record tags */
         theTags = null;
+    }
+
+    @Override
+    public JOceanusException getError() {
+        return theError;
     }
 
     @Override

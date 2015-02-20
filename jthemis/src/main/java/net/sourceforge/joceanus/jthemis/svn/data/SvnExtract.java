@@ -81,41 +81,6 @@ public class SvnExtract
      */
     private static final JDataField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
 
-    @Override
-    public String formatObject() {
-        return toString();
-    }
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_COMP.equals(pField)) {
-            return theComponent;
-        }
-        if (FIELD_TRUNK.equals(pField)) {
-            return theTrunk;
-        }
-        if (FIELD_BRANCHES.equals(pField)) {
-            return theBranches;
-        }
-        if (FIELD_TAGS.equals(pField)) {
-            return theTags;
-        }
-        return JDataFieldValue.UNKNOWN;
-    }
-
-    /**
-     * Obtain the plan name.
-     * @return the name
-     */
-    public String getName() {
-        return theComponent.getName();
-    }
-
     /**
      * Component.
      */
@@ -135,38 +100,6 @@ public class SvnExtract
      * List of tag Extracts.
      */
     private final SvnTagExtractPlanList theTags;
-
-    /**
-     * Obtain the trunk extract plan.
-     * @return the trunk plan
-     */
-    public SvnBranchExtractPlan getTrunkPlan() {
-        return theTrunk;
-    }
-
-    /**
-     * Obtain the branch extract plan iterator.
-     * @return the trunk plan
-     */
-    public Iterator<SvnBranchExtractPlan> branchIterator() {
-        return theBranches.iterator();
-    }
-
-    /**
-     * Obtain the tag extract plan iterator.
-     * @return the trunk plan
-     */
-    public Iterator<SvnTagExtractPlan> tagIterator() {
-        return theTags.iterator();
-    }
-
-    /**
-     * Obtain the number of plans.
-     * @return the number of plans
-     */
-    public int numPlans() {
-        return 1 + theBranches.size() + theTags.size();
-    }
 
     /**
      * Constructor.
@@ -226,6 +159,73 @@ public class SvnExtract
             /* Build tags */
             buildTags(myBranch);
         }
+    }
+
+    @Override
+    public String formatObject() {
+        return toString();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_COMP.equals(pField)) {
+            return theComponent;
+        }
+        if (FIELD_TRUNK.equals(pField)) {
+            return theTrunk;
+        }
+        if (FIELD_BRANCHES.equals(pField)) {
+            return theBranches;
+        }
+        if (FIELD_TAGS.equals(pField)) {
+            return theTags;
+        }
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    /**
+     * Obtain the plan name.
+     * @return the name
+     */
+    public String getName() {
+        return theComponent.getName();
+    }
+
+    /**
+     * Obtain the trunk extract plan.
+     * @return the trunk plan
+     */
+    public SvnBranchExtractPlan getTrunkPlan() {
+        return theTrunk;
+    }
+
+    /**
+     * Obtain the branch extract plan iterator.
+     * @return the trunk plan
+     */
+    public Iterator<SvnBranchExtractPlan> branchIterator() {
+        return theBranches.iterator();
+    }
+
+    /**
+     * Obtain the tag extract plan iterator.
+     * @return the trunk plan
+     */
+    public Iterator<SvnTagExtractPlan> tagIterator() {
+        return theTags.iterator();
+    }
+
+    /**
+     * Obtain the number of plans.
+     * @return the number of plans
+     */
+    public int numPlans() {
+        return 1 + theBranches.size() + theTags.size();
     }
 
     /**
@@ -301,6 +301,18 @@ public class SvnExtract
          */
         private final SVNRevision theRevision;
 
+        /**
+         * Constructor.
+         * @param pOwner the Owner
+         * @param pRevision the revision
+         */
+        public SvnExtractAnchor(final Object pOwner,
+                                final SVNRevision pRevision) {
+            /* store parameters */
+            theOwner = pOwner;
+            theRevision = pRevision;
+        }
+
         @Override
         public String formatObject() {
             return toString();
@@ -320,18 +332,6 @@ public class SvnExtract
          */
         public SVNRevision getRevision() {
             return theRevision;
-        }
-
-        /**
-         * Constructor.
-         * @param pOwner the Owner
-         * @param pRevision the revision
-         */
-        public SvnExtractAnchor(final Object pOwner,
-                                final SVNRevision pRevision) {
-            /* store parameters */
-            theOwner = pOwner;
-            theRevision = pRevision;
         }
 
         @Override
@@ -390,11 +390,6 @@ public class SvnExtract
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(SvnBranchExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Constructor.
          * @param pBranch the branch
@@ -402,6 +397,11 @@ public class SvnExtract
         public SvnBranchExtractPlan(final SvnBranch pBranch) {
             /* Call super-constructor */
             super(pBranch.getRepository(), pBranch);
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         /**
@@ -464,11 +464,6 @@ public class SvnExtract
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(SvnTagExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Constructor.
          * @param pTag the tag
@@ -476,6 +471,11 @@ public class SvnExtract
         public SvnTagExtractPlan(final SvnTag pTag) {
             /* Call super-constructor */
             super(pTag.getRepository(), pTag);
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         /**
@@ -514,25 +514,6 @@ public class SvnExtract
          */
         private static final JDataField FIELD_VIEWS = FIELD_DEFS.declareLocalField("Views");
 
-        @Override
-        public String formatObject() {
-            return toString();
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_OWNER.equals(pField)) {
-                return theOwner;
-            }
-            if (FIELD_ANCHOR.equals(pField)) {
-                return theAnchor;
-            }
-            if (FIELD_VIEWS.equals(pField)) {
-                return theViews;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * Repository.
          */
@@ -552,6 +533,40 @@ public class SvnExtract
          * The anchor point.
          */
         private SvnExtractAnchor theAnchor;
+
+        /**
+         * Constructor.
+         * @param pRepo the repository
+         * @param pOwner the owner
+         */
+        protected SvnExtractPlan(final SvnRepository pRepo,
+                                 final T pOwner) {
+            /* Store parameters */
+            theOwner = pOwner;
+            theRepo = pRepo;
+
+            /* Create the list */
+            theViews = new SvnExtractViewList();
+        }
+
+        @Override
+        public String formatObject() {
+            return toString();
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_OWNER.equals(pField)) {
+                return theOwner;
+            }
+            if (FIELD_ANCHOR.equals(pField)) {
+                return theAnchor;
+            }
+            if (FIELD_VIEWS.equals(pField)) {
+                return theViews;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
 
         /**
          * Obtain the owner.
@@ -591,21 +606,6 @@ public class SvnExtract
          */
         public int numViews() {
             return theViews.size();
-        }
-
-        /**
-         * Constructor.
-         * @param pRepo the repository
-         * @param pOwner the owner
-         */
-        protected SvnExtractPlan(final SvnRepository pRepo,
-                                 final T pOwner) {
-            /* Store parameters */
-            theOwner = pOwner;
-            theRepo = pRepo;
-
-            /* Create the list */
-            theViews = new SvnExtractViewList();
         }
 
         @Override
@@ -912,31 +912,10 @@ public class SvnExtract
          */
         private static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_OWNER.equals(pField)) {
-                return theOwner;
-            }
-            return super.getFieldValue(pField);
-        }
-
         /**
          * Original owner.
          */
         private final Object theOwner;
-
-        /**
-         * Obtain the owner.
-         * @return the owner
-         */
-        public Object getOwner() {
-            return theOwner;
-        }
 
         /**
          * Constructor.
@@ -951,6 +930,27 @@ public class SvnExtract
 
             /* Store the owner */
             theOwner = pOwner;
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_OWNER.equals(pField)) {
+                return theOwner;
+            }
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public Object getOwner() {
+            return theOwner;
         }
     }
 
@@ -984,33 +984,6 @@ public class SvnExtract
          */
         private static final JDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return theRevision.toString();
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_REV.equals(pField)) {
-                return theRevision.toString();
-            }
-            if (FIELD_DATE.equals(pField)) {
-                return getDate();
-            }
-            if (FIELD_MESSAGE.equals(pField)) {
-                return theLogMessage;
-            }
-            if (FIELD_ITEMS.equals(pField)) {
-                return theItems;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * Repository.
          */
@@ -1035,40 +1008,6 @@ public class SvnExtract
          * Extract item list.
          */
         private final SvnExtractItemList theItems;
-
-        /**
-         * Obtain the revision.
-         * @return the revision
-         */
-        public SVNRevision getRevision() {
-            return theRevision;
-        }
-
-        /**
-         * Obtain the log message.
-         * @return the log message
-         */
-        public String getLogMessage() {
-            return theLogMessage;
-        }
-
-        /**
-         * Obtain the date.
-         * @return the date
-         */
-        public Date getDate() {
-            Date myDate = new Date();
-            myDate.setTime(theDate.getTime());
-            return myDate;
-        }
-
-        /**
-         * Obtain the item iterator.
-         * @return the iterator
-         */
-        public Iterator<SvnExtractItem> elementIterator() {
-            return theItems.iterator();
-        }
 
         /**
          * Constructor.
@@ -1139,6 +1078,67 @@ public class SvnExtract
                 /* Add the item */
                 theItems.addItem(myItem);
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return theRevision.toString();
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_REV.equals(pField)) {
+                return theRevision.toString();
+            }
+            if (FIELD_DATE.equals(pField)) {
+                return getDate();
+            }
+            if (FIELD_MESSAGE.equals(pField)) {
+                return theLogMessage;
+            }
+            if (FIELD_ITEMS.equals(pField)) {
+                return theItems;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the revision.
+         * @return the revision
+         */
+        public SVNRevision getRevision() {
+            return theRevision;
+        }
+
+        /**
+         * Obtain the log message.
+         * @return the log message
+         */
+        public String getLogMessage() {
+            return theLogMessage;
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        public Date getDate() {
+            Date myDate = new Date();
+            myDate.setTime(theDate.getTime());
+            return myDate;
+        }
+
+        /**
+         * Obtain the item iterator.
+         * @return the iterator
+         */
+        public Iterator<SvnExtractItem> elementIterator() {
+            return theItems.iterator();
         }
 
         @Override
@@ -1244,6 +1244,36 @@ public class SvnExtract
          */
         private static final JDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
 
+        /**
+         * Target path.
+         */
+        private final String theTarget;
+
+        /**
+         * Source path.
+         */
+        private final SVNURL theSource;
+
+        /**
+         * Constructor.
+         * @param pTarget the target for the element
+         * @param pSource the source for the element
+         */
+        private SvnExtractItem(final String pTarget,
+                               final SVNURL pSource) {
+            /* Store parameters */
+            theTarget = pTarget;
+            theSource = pSource;
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source for the element
+         */
+        private SvnExtractItem(final SVNURL pSource) {
+            this(null, pSource);
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1266,16 +1296,6 @@ public class SvnExtract
         }
 
         /**
-         * Target path.
-         */
-        private final String theTarget;
-
-        /**
-         * Source path.
-         */
-        private final SVNURL theSource;
-
-        /**
          * Obtain the target.
          * @return the target
          */
@@ -1289,26 +1309,6 @@ public class SvnExtract
          */
         public SVNURL getSource() {
             return theSource;
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source for the element
-         */
-        private SvnExtractItem(final SVNURL pSource) {
-            this(null, pSource);
-        }
-
-        /**
-         * Constructor.
-         * @param pTarget the target for the element
-         * @param pSource the source for the element
-         */
-        private SvnExtractItem(final String pTarget,
-                               final SVNURL pSource) {
-            /* Store parameters */
-            theTarget = pTarget;
-            theSource = pSource;
         }
 
         /**

@@ -58,6 +58,19 @@ public class LoanInfoSet
      */
     private static final Map<AccountInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
 
+    /**
+     * Constructor.
+     * @param pOwner the Owner to which this Set belongs
+     * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the InfoList for the set
+     */
+    protected LoanInfoSet(final Loan pOwner,
+                          final AccountInfoTypeList pTypeList,
+                          final LoanInfoList pInfoList) {
+        /* Store the Owner and Info List */
+        super(pOwner, pTypeList, pInfoList);
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -106,19 +119,6 @@ public class LoanInfoSet
     public static JDataField getFieldForClass(final AccountInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
-    }
-
-    /**
-     * Constructor.
-     * @param pOwner the Owner to which this Set belongs
-     * @param pTypeList the infoTypeList for the set
-     * @param pInfoList the InfoList for the set
-     */
-    protected LoanInfoSet(final Loan pOwner,
-                          final AccountInfoTypeList pTypeList,
-                          final LoanInfoList pInfoList) {
-        /* Store the Owner and Info List */
-        super(pOwner, pTypeList, pInfoList);
     }
 
     /**

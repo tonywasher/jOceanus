@@ -56,59 +56,6 @@ public class TaxYearInfo
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public TaxYearInfoType getInfoType() {
-        return getInfoType(getValueSet(), TaxYearInfoType.class);
-    }
-
-    @Override
-    public TaxYearInfoClass getInfoClass() {
-        return getInfoType().getInfoClass();
-    }
-
-    @Override
-    public TaxYear getOwner() {
-        return getOwner(getValueSet(), TaxYear.class);
-    }
-
-    /**
-     * Obtain InfoType.
-     * @param pValueSet the valueSet
-     * @return the Money
-     */
-    public static TaxYearInfoType getInfoType(final ValueSet pValueSet) {
-        return getInfoType(pValueSet, TaxYearInfoType.class);
-    }
-
-    /**
-     * Obtain TaxYear.
-     * @param pValueSet the valueSet
-     * @return the TaxYear
-     */
-    public static TaxYear getTaxYear(final ValueSet pValueSet) {
-        return getOwner(pValueSet, TaxYear.class);
-    }
-
-    @Override
-    public MoneyWiseData getDataSet() {
-        return (MoneyWiseData) super.getDataSet();
-    }
-
-    @Override
-    public TaxYearInfo getBase() {
-        return (TaxYearInfo) super.getBase();
-    }
-
-    @Override
-    public TaxInfoList getList() {
-        return (TaxInfoList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList the list
@@ -167,6 +114,59 @@ public class TaxYearInfo
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public TaxYearInfoType getInfoType() {
+        return getInfoType(getValueSet(), TaxYearInfoType.class);
+    }
+
+    @Override
+    public TaxYearInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
+    }
+
+    @Override
+    public TaxYear getOwner() {
+        return getOwner(getValueSet(), TaxYear.class);
+    }
+
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the Money
+     */
+    public static TaxYearInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, TaxYearInfoType.class);
+    }
+
+    /**
+     * Obtain TaxYear.
+     * @param pValueSet the valueSet
+     * @return the TaxYear
+     */
+    public static TaxYear getTaxYear(final ValueSet pValueSet) {
+        return getOwner(pValueSet, TaxYear.class);
+    }
+
+    @Override
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
+    }
+
+    @Override
+    public TaxYearInfo getBase() {
+        return (TaxYearInfo) super.getBase();
+    }
+
+    @Override
+    public TaxInfoList getList() {
+        return (TaxInfoList) super.getList();
     }
 
     @Override
@@ -259,6 +259,22 @@ public class TaxYearInfo
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE account list.
+         * @param pData the DataSet for the list
+         */
+        protected TaxInfoList(final MoneyWiseData pData) {
+            super(TaxYearInfo.class, pData, MoneyWiseDataType.TAXYEARINFO, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxInfoList(final TaxInfoList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -287,22 +303,6 @@ public class TaxYearInfo
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
-        }
-
-        /**
-         * Construct an empty CORE account list.
-         * @param pData the DataSet for the list
-         */
-        protected TaxInfoList(final MoneyWiseData pData) {
-            super(TaxYearInfo.class, pData, MoneyWiseDataType.TAXYEARINFO, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TaxInfoList(final TaxInfoList pSource) {
-            super(pSource);
         }
 
         @Override

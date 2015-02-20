@@ -56,50 +56,6 @@ public class PayeeInfo
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public AccountInfoType getInfoType() {
-        return getInfoType(getValueSet(), AccountInfoType.class);
-    }
-
-    @Override
-    public AccountInfoClass getInfoClass() {
-        return getInfoType().getInfoClass();
-    }
-
-    @Override
-    public Payee getOwner() {
-        return getOwner(getValueSet(), Payee.class);
-    }
-
-    /**
-     * Obtain InfoType.
-     * @param pValueSet the valueSet
-     * @return the InfoType
-     */
-    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
-        return getInfoType(pValueSet, AccountInfoType.class);
-    }
-
-    @Override
-    public MoneyWiseData getDataSet() {
-        return (MoneyWiseData) super.getDataSet();
-    }
-
-    @Override
-    public PayeeInfo getBase() {
-        return (PayeeInfo) super.getBase();
-    }
-
-    @Override
-    public PayeeInfoList getList() {
-        return (PayeeInfoList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList the list
@@ -158,6 +114,50 @@ public class PayeeInfo
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public AccountInfoType getInfoType() {
+        return getInfoType(getValueSet(), AccountInfoType.class);
+    }
+
+    @Override
+    public AccountInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
+    }
+
+    @Override
+    public Payee getOwner() {
+        return getOwner(getValueSet(), Payee.class);
+    }
+
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the InfoType
+     */
+    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, AccountInfoType.class);
+    }
+
+    @Override
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
+    }
+
+    @Override
+    public PayeeInfo getBase() {
+        return (PayeeInfo) super.getBase();
+    }
+
+    @Override
+    public PayeeInfoList getList() {
+        return (PayeeInfoList) super.getList();
     }
 
     @Override
@@ -250,6 +250,22 @@ public class PayeeInfo
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE info list.
+         * @param pData the DataSet for the list
+         */
+        protected PayeeInfoList(final MoneyWiseData pData) {
+            super(PayeeInfo.class, pData, MoneyWiseDataType.PAYEEINFO, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private PayeeInfoList(final PayeeInfoList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -278,22 +294,6 @@ public class PayeeInfo
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
-        }
-
-        /**
-         * Construct an empty CORE info list.
-         * @param pData the DataSet for the list
-         */
-        protected PayeeInfoList(final MoneyWiseData pData) {
-            super(PayeeInfo.class, pData, MoneyWiseDataType.PAYEEINFO, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private PayeeInfoList(final PayeeInfoList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-
 /**
  * Transaction group type.
  * @author Tony Washer
@@ -40,20 +39,20 @@ public class TransactionGroup
     private Portfolio thePortfolio;
 
     /**
-     * Obtain portfolio.
-     * @return the portfolio if it exists
-     */
-    public Portfolio getPortfolio() {
-        return thePortfolio;
-    }
-
-    /**
      * Constructor.
      * @param pParent the parent.
      */
     public TransactionGroup(final Transaction pParent) {
         /* Call super-constructor */
         super(pParent, Transaction.class);
+    }
+
+    /**
+     * Obtain portfolio.
+     * @return the portfolio if it exists
+     */
+    public Portfolio getPortfolio() {
+        return thePortfolio;
     }
 
     @Override

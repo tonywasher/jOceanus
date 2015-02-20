@@ -61,14 +61,6 @@ public class CreateGitRepo
     private GitRepository theGitRepo;
 
     /**
-     * Obtain the git repository.
-     * @return the git repository
-     */
-    public GitRepository getGitRepo() {
-        return theGitRepo;
-    }
-
-    /**
      * Constructor.
      * @param pReport the report object
      * @param pSource the source subversion component
@@ -79,6 +71,14 @@ public class CreateGitRepo
         thePreferenceMgr = pReport.getPreferenceMgr();
         theReport = pReport;
         theSource = pSource;
+    }
+
+    /**
+     * Obtain the git repository.
+     * @return the git repository
+     */
+    public GitRepository getGitRepo() {
+        return theGitRepo;
     }
 
     @Override

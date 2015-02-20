@@ -48,16 +48,6 @@ public final class ChargeableEvent
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CHARGE_NAME.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public String formatObject() {
-        return getDataFields().getName();
-    }
-
     /**
      * The Gains field id.
      */
@@ -78,23 +68,6 @@ public final class ChargeableEvent
      */
     private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_GAINS.equals(pField)) {
-            return theGains;
-        }
-        if (FIELD_SLICE.equals(pField)) {
-            return theSlice;
-        }
-        if (FIELD_TAXATION.equals(pField)) {
-            return theTaxation;
-        }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTransaction;
-        }
-        return JDataFieldValue.UNKNOWN;
-    }
-
     /**
      * The Gains.
      */
@@ -114,6 +87,49 @@ public final class ChargeableEvent
      * The Transaction.
      */
     private final Transaction theTransaction;
+
+    /**
+     * Constructor.
+     * @param pTrans the Transaction
+     * @param pGains the Gains
+     */
+    protected ChargeableEvent(final Transaction pTrans,
+                              final JMoney pGains) {
+        /* Calculate slice */
+        theSlice = new JMoney(pGains);
+        theSlice.divide(pTrans.getYears());
+
+        /* Store the values */
+        theGains = pGains;
+        theTransaction = pTrans;
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_GAINS.equals(pField)) {
+            return theGains;
+        }
+        if (FIELD_SLICE.equals(pField)) {
+            return theSlice;
+        }
+        if (FIELD_TAXATION.equals(pField)) {
+            return theTaxation;
+        }
+        if (FIELD_TRANS.equals(pField)) {
+            return theTransaction;
+        }
+        return JDataFieldValue.UNKNOWN;
+    }
 
     /**
      * Obtain the amount.
@@ -184,22 +200,6 @@ public final class ChargeableEvent
         return getTransaction().getYears();
     }
 
-    /**
-     * Constructor.
-     * @param pTrans the Transaction
-     * @param pGains the Gains
-     */
-    protected ChargeableEvent(final Transaction pTrans,
-                              final JMoney pGains) {
-        /* Calculate slice */
-        theSlice = new JMoney(pGains);
-        theSlice.divide(pTrans.getYears());
-
-        /* Store the values */
-        theGains = pGains;
-        theTransaction = pTrans;
-    }
-
     @Override
     public int compareTo(final ChargeableEvent pThat) {
         /* Handle the trivial cases */
@@ -268,31 +268,10 @@ public final class ChargeableEvent
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CHARGE_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
-        }
-
         /**
          * Size Field Id.
          */
         private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
 
         /**
          * Constructor.
@@ -327,6 +306,27 @@ public final class ChargeableEvent
                 /* Add to the list */
                 append(myEvent);
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

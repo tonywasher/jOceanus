@@ -306,6 +306,17 @@ public enum TransactionCategoryClass implements CategoryInterface {
      */
     private final int theOrder;
 
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the default order.
+     */
+    private TransactionCategoryClass(final int uId,
+                                     final int uOrder) {
+        theId = uId;
+        theOrder = uOrder;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -314,19 +325,6 @@ public enum TransactionCategoryClass implements CategoryInterface {
     @Override
     public int getOrder() {
         return theOrder;
-    }
-
-    /**
-     * Constructor.
-     * @param uId
-     * the id
-     * @param uOrder
-     * the default order.
-     */
-    private TransactionCategoryClass(final int uId,
-                                     final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
     }
 
     @Override
@@ -343,11 +341,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * get value from id.
-     * @param id
-     * the id value
+     * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
     public static TransactionCategoryClass fromId(final int id) throws JOceanusException {
         for (TransactionCategoryClass myClass : values()) {

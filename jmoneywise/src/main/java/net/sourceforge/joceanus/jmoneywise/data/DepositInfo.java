@@ -56,50 +56,6 @@ public class DepositInfo
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public AccountInfoType getInfoType() {
-        return getInfoType(getValueSet(), AccountInfoType.class);
-    }
-
-    @Override
-    public AccountInfoClass getInfoClass() {
-        return getInfoType().getInfoClass();
-    }
-
-    @Override
-    public Deposit getOwner() {
-        return getOwner(getValueSet(), Deposit.class);
-    }
-
-    /**
-     * Obtain InfoType.
-     * @param pValueSet the valueSet
-     * @return the InfoType
-     */
-    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
-        return getInfoType(pValueSet, AccountInfoType.class);
-    }
-
-    @Override
-    public MoneyWiseData getDataSet() {
-        return (MoneyWiseData) super.getDataSet();
-    }
-
-    @Override
-    public DepositInfo getBase() {
-        return (DepositInfo) super.getBase();
-    }
-
-    @Override
-    public DepositInfoList getList() {
-        return (DepositInfoList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList the list
@@ -158,6 +114,50 @@ public class DepositInfo
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public AccountInfoType getInfoType() {
+        return getInfoType(getValueSet(), AccountInfoType.class);
+    }
+
+    @Override
+    public AccountInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
+    }
+
+    @Override
+    public Deposit getOwner() {
+        return getOwner(getValueSet(), Deposit.class);
+    }
+
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the InfoType
+     */
+    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, AccountInfoType.class);
+    }
+
+    @Override
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
+    }
+
+    @Override
+    public DepositInfo getBase() {
+        return (DepositInfo) super.getBase();
+    }
+
+    @Override
+    public DepositInfoList getList() {
+        return (DepositInfoList) super.getList();
     }
 
     @Override
@@ -250,6 +250,22 @@ public class DepositInfo
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE account list.
+         * @param pData the DataSet for the list
+         */
+        protected DepositInfoList(final MoneyWiseData pData) {
+            super(DepositInfo.class, pData, MoneyWiseDataType.DEPOSITINFO, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private DepositInfoList(final DepositInfoList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -278,22 +294,6 @@ public class DepositInfo
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
-        }
-
-        /**
-         * Construct an empty CORE account list.
-         * @param pData the DataSet for the list
-         */
-        protected DepositInfoList(final MoneyWiseData pData) {
-            super(DepositInfo.class, pData, MoneyWiseDataType.DEPOSITINFO, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private DepositInfoList(final DepositInfoList pSource) {
-            super(pSource);
         }
 
         @Override

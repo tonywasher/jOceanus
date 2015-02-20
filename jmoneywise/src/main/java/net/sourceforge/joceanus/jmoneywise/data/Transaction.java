@@ -100,6 +100,117 @@ public class Transaction
      */
     private static final String ERROR_CIRCULAR = MoneyWiseDataResource.TRANSACTION_ERROR_CIRCLE.getValue();
 
+    /**
+     * Do we have an InfoSet.
+     */
+    private final boolean hasInfoSet;
+
+    /**
+     * Should we use infoSet for DataState etc.
+     */
+    private final boolean useInfoSet;
+
+    /**
+     * TransactionInfoSet.
+     */
+    private final TransactionInfoSet theInfoSet;
+
+    /**
+     * Copy Constructor.
+     * @param pList the transaction list
+     * @param pTransaction The Transaction to copy
+     */
+    public Transaction(final TransactionList pList,
+                       final Transaction pTransaction) {
+        /* Set standard values */
+        super(pList, pTransaction);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+                theInfoSet.cloneDataInfoSet(pTransaction.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Construct a new transaction from a Schedule.
+     * @param pList the list to build into
+     * @param pSchedule The schedule to copy
+     * @throws JOceanusException on error
+     */
+    protected Transaction(final TransactionList pList,
+                          final Schedule pSchedule) throws JOceanusException {
+        /* Set standard values */
+        super(pList);
+
+        /* Copy underlying values */
+        setDate(pSchedule.getDate());
+        setValueAssetPair(pSchedule.getAssetPair());
+        setValueAccount(pSchedule.getAccount());
+        setValuePartner(pSchedule.getPartner());
+        setCategory(pSchedule.getCategory());
+        setReconciled(Boolean.FALSE);
+        setSplit(Boolean.FALSE);
+        setValueAmount(pSchedule.getAmountField());
+
+        /* Set up info set */
+        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+
+        /* If we need a tax Credit */
+        if (TransactionInfoSet.isTaxCreditClassRequired(getAccount(),
+                getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
+            /* Calculate the tax credit */
+            setTaxCredit(calculateTaxCredit());
+        }
+    }
+
+    /**
+     * Edit constructor.
+     * @param pList the list
+     */
+    public Transaction(final TransactionList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private Transaction(final TransactionList pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Create the InfoSet */
+        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -123,21 +234,6 @@ public class Transaction
         /* Pass onwards */
         return super.getFieldValue(pField);
     }
-
-    /**
-     * Do we have an InfoSet.
-     */
-    private final boolean hasInfoSet;
-
-    /**
-     * Should we use infoSet for DataState etc.
-     */
-    private final boolean useInfoSet;
-
-    /**
-     * TransactionInfoSet.
-     */
-    private final TransactionInfoSet theInfoSet;
 
     @Override
     public TransactionInfoSet getInfoSet() {
@@ -443,102 +539,6 @@ public class Transaction
     @Override
     public TransactionList getList() {
         return (TransactionList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the transaction list
-     * @param pTransaction The Transaction to copy
-     */
-    public Transaction(final TransactionList pList,
-                       final Transaction pTransaction) {
-        /* Set standard values */
-        super(pList, pTransaction);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
-                theInfoSet.cloneDataInfoSet(pTransaction.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Construct a new transaction from a Schedule.
-     * @param pList the list to build into
-     * @param pSchedule The schedule to copy
-     * @throws JOceanusException on error
-     */
-    protected Transaction(final TransactionList pList,
-                          final Schedule pSchedule) throws JOceanusException {
-        /* Set standard values */
-        super(pList);
-
-        /* Copy underlying values */
-        setDate(pSchedule.getDate());
-        setValueAssetPair(pSchedule.getAssetPair());
-        setValueAccount(pSchedule.getAccount());
-        setValuePartner(pSchedule.getPartner());
-        setCategory(pSchedule.getCategory());
-        setReconciled(Boolean.FALSE);
-        setSplit(Boolean.FALSE);
-        setValueAmount(pSchedule.getAmountField());
-
-        /* Set up info set */
-        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-
-        /* If we need a tax Credit */
-        if (TransactionInfoSet.isTaxCreditClassRequired(getAccount(),
-                getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
-            /* Calculate the tax credit */
-            setTaxCredit(calculateTaxCredit());
-        }
-    }
-
-    /**
-     * Edit constructor.
-     * @param pList the list
-     */
-    public Transaction(final TransactionList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values
-     * @throws JOceanusException on error
-     */
-    private Transaction(final TransactionList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Create the InfoSet */
-        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
     }
 
     @Override
@@ -921,21 +921,6 @@ public class Transaction
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return Transaction.FIELD_DEFS;
-        }
-
         /**
          * EventGroupList field Id.
          */
@@ -955,6 +940,37 @@ public class Transaction
          * The EventInfoType list.
          */
         private TransactionInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE list.
+         * @param pData the DataSet for the list
+         */
+        public TransactionList(final MoneyWiseData pData) {
+            super(pData, Transaction.class, MoneyWiseDataType.TRANSACTION);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected TransactionList(final TransactionList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return Transaction.FIELD_DEFS;
+        }
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -989,22 +1005,6 @@ public class Transaction
                 theInfoTypeList = getDataSet().getTransInfoTypes();
             }
             return theInfoTypeList;
-        }
-
-        /**
-         * Construct an empty CORE list.
-         * @param pData the DataSet for the list
-         */
-        public TransactionList(final MoneyWiseData pData) {
-            super(pData, Transaction.class, MoneyWiseDataType.TRANSACTION);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected TransactionList(final TransactionList pSource) {
-            super(pSource);
         }
 
         @Override

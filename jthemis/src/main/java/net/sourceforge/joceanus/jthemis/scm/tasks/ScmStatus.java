@@ -62,6 +62,26 @@ public class ScmStatus {
     private String theStep;
 
     /**
+     * Constructor.
+     */
+    public ScmStatus() {
+    }
+
+    /**
+     * Constructor.
+     * @param pStatus the source status
+     */
+    public ScmStatus(final ScmStatus pStatus) {
+        theNumSteps = pStatus.getNumSteps();
+        theNumStages = pStatus.getNumStages();
+        theStepsDone = pStatus.getStepsDone();
+        theStagesDone = pStatus.getStagesDone();
+        theTask = pStatus.getTask();
+        theStage = pStatus.getStage();
+        theStep = pStatus.getStep();
+    }
+
+    /**
      * Get current task.
      * @return the task
      */
@@ -171,25 +191,5 @@ public class ScmStatus {
      */
     public void setStepsDone(final int pDone) {
         theStepsDone = pDone;
-    }
-
-    /**
-     * Constructor.
-     */
-    public ScmStatus() {
-    }
-
-    /**
-     * Constructor.
-     * @param pStatus the source status
-     */
-    public ScmStatus(final ScmStatus pStatus) {
-        theNumSteps = pStatus.getNumSteps();
-        theNumStages = pStatus.getNumStages();
-        theStepsDone = pStatus.getStepsDone();
-        theStagesDone = pStatus.getStagesDone();
-        theTask = pStatus.getTask();
-        theStage = pStatus.getStage();
-        theStep = pStatus.getStep();
     }
 }

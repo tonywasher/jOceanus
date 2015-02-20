@@ -59,27 +59,6 @@ public final class DepositBucket
      */
     private final DepositCategory theCategory;
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the deposit category.
-     * @return the deposit category
-     */
-    public DepositCategory getCategory() {
-        return theCategory;
-    }
-
     /**
      * Constructor.
      * @param pAnalysis the analysis
@@ -129,6 +108,27 @@ public final class DepositBucket
         theCategory = pBase.getCategory();
     }
 
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_CATEGORY.equals(pField)) {
+            return theCategory;
+        }
+        return super.getFieldValue(pField);
+    }
+
+    /**
+     * Obtain the deposit category.
+     * @return the deposit category
+     */
+    public DepositCategory getCategory() {
+        return theCategory;
+    }
+
     /**
      * Set opening balance.
      * @param pBalance the opening balance
@@ -175,11 +175,6 @@ public final class DepositBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DEPOSIT_LIST.getValue(), AccountBucketList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
@@ -219,6 +214,11 @@ public final class DepositBucket
 
             /* Construct list from base */
             constructFromBase(pBase, pRange);
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

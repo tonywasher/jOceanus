@@ -55,6 +55,15 @@ public final class CashCategoryBucket
      */
     private final CashCategory theCategory;
 
+    /**
+     * Constructor.
+     * @param pCategory the account category
+     */
+    protected CashCategoryBucket(final CashCategory pCategory) {
+        /* Store the category */
+        theCategory = pCategory;
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -83,15 +92,6 @@ public final class CashCategoryBucket
     @Override
     public CashCategory getAccountCategory() {
         return theCategory;
-    }
-
-    /**
-     * Constructor.
-     * @param pCategory the account category
-     */
-    protected CashCategoryBucket(final CashCategory pCategory) {
-        /* Store the category */
-        theCategory = pCategory;
     }
 
     @Override
@@ -134,6 +134,27 @@ public final class CashCategoryBucket
          */
         private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
+
+        /**
+         * The totals.
+         */
+        private final CashCategoryBucket theTotals;
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+        protected CashCategoryBucketList(final Analysis pAnalysis) {
+            /* Initialise class */
+            super(CashCategoryBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -159,32 +180,11 @@ public final class CashCategoryBucket
         }
 
         /**
-         * The analysis.
-         */
-        private final Analysis theAnalysis;
-
-        /**
-         * The totals.
-         */
-        private final CashCategoryBucket theTotals;
-
-        /**
          * Obtain the Totals.
          * @return the totals
          */
         public CashCategoryBucket getTotals() {
             return theTotals;
-        }
-
-        /**
-         * Construct a top-level List.
-         * @param pAnalysis the analysis
-         */
-        protected CashCategoryBucketList(final Analysis pAnalysis) {
-            /* Initialise class */
-            super(CashCategoryBucket.class);
-            theAnalysis = pAnalysis;
-            theTotals = allocateTotalsBucket();
         }
 
         /**

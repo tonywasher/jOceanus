@@ -98,6 +98,41 @@ public final class SecurityHolding
      */
     public static final String ERROR_CURRENCYCOMBO = MoneyWiseDataResource.SECURITYHOLDING_ERROR_CURRENCYCOMBO.getValue();
 
+    /**
+     * The id of the holding.
+     */
+    private final Integer theId;
+
+    /**
+     * The name of the holding.
+     */
+    private String theName;
+
+    /**
+     * The portfolio of the holding.
+     */
+    private Portfolio thePortfolio;
+
+    /**
+     * The security of the holding.
+     */
+    private Security theSecurity;
+
+    /**
+     * Constructor.
+     * @param pPortfolio the portfolio
+     * @param pSecurity the security
+     */
+    private SecurityHolding(final Portfolio pPortfolio,
+                            final Security pSecurity) {
+        /* Set portfolio and security */
+        thePortfolio = pPortfolio;
+        theSecurity = pSecurity;
+
+        /* Generate the id */
+        theId = generateId();
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -130,26 +165,6 @@ public final class SecurityHolding
         }
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * The id of the holding.
-     */
-    private final Integer theId;
-
-    /**
-     * The name of the holding.
-     */
-    private String theName;
-
-    /**
-     * The portfolio of the holding.
-     */
-    private Portfolio thePortfolio;
-
-    /**
-     * The security of the holding.
-     */
-    private Security theSecurity;
 
     @Override
     public Boolean isClosed() {
@@ -358,21 +373,6 @@ public final class SecurityHolding
         return getSecurityTypeClass() == pClass;
     }
 
-    /**
-     * Constructor.
-     * @param pPortfolio the portfolio
-     * @param pSecurity the security
-     */
-    private SecurityHolding(final Portfolio pPortfolio,
-                            final Security pSecurity) {
-        /* Set portfolio and security */
-        thePortfolio = pPortfolio;
-        theSecurity = pSecurity;
-
-        /* Generate the id */
-        theId = generateId();
-    }
-
     @Override
     public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
         /* Touch references */
@@ -450,11 +450,6 @@ public final class SecurityHolding
          */
         private final transient SecurityList theSecurities;
 
-        @Override
-        public String formatObject() {
-            return SecurityHoldingMap.class.getSimpleName();
-        }
-
         /**
          * Constructor.
          * @param pData the dataSet
@@ -473,6 +468,11 @@ public final class SecurityHolding
             /* Access lists */
             thePortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
             theSecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        }
+
+        @Override
+        public String formatObject() {
+            return SecurityHoldingMap.class.getSimpleName();
         }
 
         /**
@@ -739,16 +739,6 @@ public final class SecurityHolding
          */
         private static final long serialVersionUID = -5532168973693014505L;
 
-        @Override
-        public String formatObject() {
-            return thePortfolio.formatObject();
-        }
-
-        @Override
-        public String toString() {
-            return formatObject();
-        }
-
         /**
          * Portfolio.
          */
@@ -768,6 +758,16 @@ public final class SecurityHolding
                                      final SecurityList pSecurities) {
             thePortfolio = pPortfolio;
             theSecurities = pSecurities;
+        }
+
+        @Override
+        public String formatObject() {
+            return thePortfolio.formatObject();
+        }
+
+        @Override
+        public String toString() {
+            return formatObject();
         }
 
         /**

@@ -136,6 +136,31 @@ public class QIFFile {
     private final OrderedList<QIFClass> theClasses;
 
     /**
+     * Constructor.
+     * @param pType the file type
+     */
+    public QIFFile(final QIFType pType) {
+        /* Store file type */
+        theFileType = pType;
+
+        /* Allocate maps */
+        theAccountMap = new HashMap<String, QIFAccountEvents>();
+        thePayeeMap = new HashMap<String, QIFPayee>();
+        theSecurityMap = new HashMap<String, QIFSecurityPrices>();
+        theSymbolMap = new HashMap<String, QIFSecurity>();
+        theParentMap = new HashMap<String, QIFParentCategory>();
+        theCategories = new HashMap<String, QIFEventCategory>();
+        theClassMap = new HashMap<String, QIFClass>();
+
+        /* Allocate maps */
+        theAccounts = new OrderedList<QIFAccountEvents>(QIFAccountEvents.class);
+        thePayees = new OrderedList<QIFPayee>(QIFPayee.class);
+        theSecurities = new OrderedList<QIFSecurityPrices>(QIFSecurityPrices.class);
+        theParentCategories = new OrderedList<QIFParentCategory>(QIFParentCategory.class);
+        theClasses = new OrderedList<QIFClass>(QIFClass.class);
+    }
+
+    /**
      * Obtain the file type.
      * @return the file type
      */
@@ -221,31 +246,6 @@ public class QIFFile {
      */
     protected Iterator<QIFSecurityPrices> securityIterator() {
         return theSecurities.iterator();
-    }
-
-    /**
-     * Constructor.
-     * @param pType the file type
-     */
-    public QIFFile(final QIFType pType) {
-        /* Store file type */
-        theFileType = pType;
-
-        /* Allocate maps */
-        theAccountMap = new HashMap<String, QIFAccountEvents>();
-        thePayeeMap = new HashMap<String, QIFPayee>();
-        theSecurityMap = new HashMap<String, QIFSecurityPrices>();
-        theSymbolMap = new HashMap<String, QIFSecurity>();
-        theParentMap = new HashMap<String, QIFParentCategory>();
-        theCategories = new HashMap<String, QIFEventCategory>();
-        theClassMap = new HashMap<String, QIFClass>();
-
-        /* Allocate maps */
-        theAccounts = new OrderedList<QIFAccountEvents>(QIFAccountEvents.class);
-        thePayees = new OrderedList<QIFPayee>(QIFPayee.class);
-        theSecurities = new OrderedList<QIFSecurityPrices>(QIFSecurityPrices.class);
-        theParentCategories = new OrderedList<QIFParentCategory>(QIFParentCategory.class);
-        theClasses = new OrderedList<QIFClass>(QIFClass.class);
     }
 
     /**

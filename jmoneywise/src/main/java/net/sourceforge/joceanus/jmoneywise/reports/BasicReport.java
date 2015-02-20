@@ -177,6 +177,21 @@ public abstract class BasicReport {
         private final Object theSource;
 
         /**
+         * Constructor.
+         * @param pId the table id
+         * @param pParent the parent table.
+         * @param pSource the source
+         */
+        private DelayedTable(final String pId,
+                             final HTMLTable pParent,
+                             final Object pSource) {
+            /* Store details */
+            theId = pId;
+            theParent = pParent;
+            theSource = pSource;
+        }
+
+        /**
          * Obtain the id.
          * @return the id
          */
@@ -198,21 +213,6 @@ public abstract class BasicReport {
          */
         public Object getSource() {
             return theSource;
-        }
-
-        /**
-         * Constructor.
-         * @param pId the table id
-         * @param pParent the parent table.
-         * @param pSource the source
-         */
-        private DelayedTable(final String pId,
-                             final HTMLTable pParent,
-                             final Object pSource) {
-            /* Store details */
-            theId = pId;
-            theParent = pParent;
-            theSource = pSource;
         }
     }
 }

@@ -207,6 +207,97 @@ public class JiraIssue
     private final List<JiraTransition> theTransitions;
 
     /**
+     * Constructor.
+     * @param pServer the server
+     * @param pIssue the underlying issue
+     * @throws JOceanusException on error
+     */
+    protected JiraIssue(final JiraServer pServer,
+                        final Issue pIssue) throws JOceanusException {
+        /* Store parameters */
+        super(pIssue, pIssue.getKey());
+        theServer = pServer;
+
+        /* Access clients */
+        JiraRestClient myClient = theServer.getClient();
+        theClient = myClient.getIssueClient();
+
+        /* Access parameter */
+        theSummary = pIssue.getSummary();
+        theDesc = pIssue.getDescription();
+        theCreated = pIssue.getCreationDate();
+        theDueDate = pIssue.getDueDate();
+        theUpdated = pIssue.getUpdateDate();
+
+        /* Determine the project */
+        theProject = theServer.getProject(pIssue.getProject());
+
+        /* Determine Status etc */
+        theIssueType = theServer.getIssueType(pIssue.getIssueType());
+        theStatus = theServer.getStatus(pIssue.getStatus());
+        thePriority = theServer.getPriority(pIssue.getPriority());
+        theResolution = (pIssue.getResolution() == null)
+                                                        ? null
+                                                        : theServer.getResolution(pIssue.getResolution());
+
+        /* Determine the assignee and reporter */
+        theAssignee = theServer.getUser(pIssue.getAssignee());
+        theReporter = theServer.getUser(pIssue.getReporter());
+
+        /* Access various statistics information */
+        theTimeTracking = pIssue.getTimeTracking();
+        theWatchers = new JiraWatchers(pIssue.getWatchers());
+        theVotes = new JiraVotes(pIssue.getVotes());
+
+        /* Create the lists */
+        theIssueLinks = new ArrayList<JiraIssueLink>();
+        theSubTasks = new ArrayList<JiraSubTask>();
+        theComponents = new ArrayList<JiraComponent>();
+        theFixVers = new ArrayList<JiraVersion>();
+        theAffectsVers = new ArrayList<JiraVersion>();
+        theLabels = new ArrayList<String>();
+        theTransitions = new ArrayList<JiraTransition>();
+
+        /* Populate the transitions fields */
+        for (Transition myTransition : theClient.getTransitions(pIssue).claim()) {
+            theTransitions.add(new JiraTransition(myTransition));
+        }
+
+        /* Populate the issue link fields */
+        for (IssueLink myLink : pIssue.getIssueLinks()) {
+            theIssueLinks.add(new JiraIssueLink(myLink));
+        }
+
+        /* Populate the subTask fields */
+        for (Subtask myTask : pIssue.getSubtasks()) {
+            theSubTasks.add(new JiraSubTask(myTask));
+        }
+
+        /* Populate the labels fields */
+        for (String myLabel : pIssue.getLabels()) {
+            theLabels.add(myLabel);
+        }
+
+        /* Populate the components field */
+        for (BasicComponent myComp : pIssue.getComponents()) {
+            /* Add the component */
+            theComponents.add(theProject.getComponent(myComp));
+        }
+
+        /* Populate the affects versions field */
+        for (Version myVers : pIssue.getAffectedVersions()) {
+            /* Add the component */
+            theAffectsVers.add(theProject.getVersion(myVers));
+        }
+
+        /* Populate the fix versions field */
+        for (Version myVers : pIssue.getFixVersions()) {
+            /* Add the component */
+            theFixVers.add(theProject.getVersion(myVers));
+        }
+    }
+
+    /**
      * Get the key of the issue.
      * @return the key
      */
@@ -388,97 +479,6 @@ public class JiraIssue
      */
     public Iterator<JiraTransition> transitionIterator() {
         return theTransitions.iterator();
-    }
-
-    /**
-     * Constructor.
-     * @param pServer the server
-     * @param pIssue the underlying issue
-     * @throws JOceanusException on error
-     */
-    protected JiraIssue(final JiraServer pServer,
-                        final Issue pIssue) throws JOceanusException {
-        /* Store parameters */
-        super(pIssue, pIssue.getKey());
-        theServer = pServer;
-
-        /* Access clients */
-        JiraRestClient myClient = theServer.getClient();
-        theClient = myClient.getIssueClient();
-
-        /* Access parameter */
-        theSummary = pIssue.getSummary();
-        theDesc = pIssue.getDescription();
-        theCreated = pIssue.getCreationDate();
-        theDueDate = pIssue.getDueDate();
-        theUpdated = pIssue.getUpdateDate();
-
-        /* Determine the project */
-        theProject = theServer.getProject(pIssue.getProject());
-
-        /* Determine Status etc */
-        theIssueType = theServer.getIssueType(pIssue.getIssueType());
-        theStatus = theServer.getStatus(pIssue.getStatus());
-        thePriority = theServer.getPriority(pIssue.getPriority());
-        theResolution = (pIssue.getResolution() == null)
-                                                        ? null
-                                                        : theServer.getResolution(pIssue.getResolution());
-
-        /* Determine the assignee and reporter */
-        theAssignee = theServer.getUser(pIssue.getAssignee());
-        theReporter = theServer.getUser(pIssue.getReporter());
-
-        /* Access various statistics information */
-        theTimeTracking = pIssue.getTimeTracking();
-        theWatchers = new JiraWatchers(pIssue.getWatchers());
-        theVotes = new JiraVotes(pIssue.getVotes());
-
-        /* Create the lists */
-        theIssueLinks = new ArrayList<JiraIssueLink>();
-        theSubTasks = new ArrayList<JiraSubTask>();
-        theComponents = new ArrayList<JiraComponent>();
-        theFixVers = new ArrayList<JiraVersion>();
-        theAffectsVers = new ArrayList<JiraVersion>();
-        theLabels = new ArrayList<String>();
-        theTransitions = new ArrayList<JiraTransition>();
-
-        /* Populate the transitions fields */
-        for (Transition myTransition : theClient.getTransitions(pIssue).claim()) {
-            theTransitions.add(new JiraTransition(myTransition));
-        }
-
-        /* Populate the issue link fields */
-        for (IssueLink myLink : pIssue.getIssueLinks()) {
-            theIssueLinks.add(new JiraIssueLink(myLink));
-        }
-
-        /* Populate the subTask fields */
-        for (Subtask myTask : pIssue.getSubtasks()) {
-            theSubTasks.add(new JiraSubTask(myTask));
-        }
-
-        /* Populate the labels fields */
-        for (String myLabel : pIssue.getLabels()) {
-            theLabels.add(myLabel);
-        }
-
-        /* Populate the components field */
-        for (BasicComponent myComp : pIssue.getComponents()) {
-            /* Add the component */
-            theComponents.add(theProject.getComponent(myComp));
-        }
-
-        /* Populate the affects versions field */
-        for (Version myVers : pIssue.getAffectedVersions()) {
-            /* Add the component */
-            theAffectsVers.add(theProject.getVersion(myVers));
-        }
-
-        /* Populate the fix versions field */
-        for (Version myVers : pIssue.getFixVersions()) {
-            /* Add the component */
-            theFixVers.add(theProject.getVersion(myVers));
-        }
     }
 
     /**
@@ -698,6 +698,20 @@ public class JiraIssue
         private JiraIssue theTarget;
 
         /**
+         * Constructor.
+         * @param pLink the underlying link
+         * @throws JOceanusException on error
+         */
+        private JiraIssueLink(final IssueLink pLink) throws JOceanusException {
+            /* Access the details */
+            theType = pLink.getIssueLinkType();
+
+            /* Determine the target issue */
+            theTargetKey = pLink.getTargetIssueKey();
+            theTarget = null;
+        }
+
+        /**
          * Get the link type.
          * @return the link type
          */
@@ -728,20 +742,6 @@ public class JiraIssue
             /* Return it */
             return theTarget;
         }
-
-        /**
-         * Constructor.
-         * @param pLink the underlying link
-         * @throws JOceanusException on error
-         */
-        private JiraIssueLink(final IssueLink pLink) throws JOceanusException {
-            /* Access the details */
-            theType = pLink.getIssueLinkType();
-
-            /* Determine the target issue */
-            theTargetKey = pLink.getTargetIssueKey();
-            theTarget = null;
-        }
     }
 
     /**
@@ -767,6 +767,21 @@ public class JiraIssue
          * Linked Issue.
          */
         private JiraIssue theTarget;
+
+        /**
+         * Constructor.
+         * @param pSubTask the underlying subTask
+         * @throws JOceanusException on error
+         */
+        private JiraSubTask(final Subtask pSubTask) throws JOceanusException {
+            /* Access the details */
+            theType = theServer.getIssueType(pSubTask.getIssueType());
+            theStatus = theServer.getStatus(pSubTask.getStatus());
+
+            /* Determine the target issue */
+            theTargetKey = pSubTask.getIssueKey();
+            theTarget = null;
+        }
 
         /**
          * Get the issue type.
@@ -807,21 +822,6 @@ public class JiraIssue
             /* Return it */
             return theTarget;
         }
-
-        /**
-         * Constructor.
-         * @param pSubTask the underlying subTask
-         * @throws JOceanusException on error
-         */
-        private JiraSubTask(final Subtask pSubTask) throws JOceanusException {
-            /* Access the details */
-            theType = theServer.getIssueType(pSubTask.getIssueType());
-            theStatus = theServer.getStatus(pSubTask.getStatus());
-
-            /* Determine the target issue */
-            theTargetKey = pSubTask.getIssueKey();
-            theTarget = null;
-        }
     }
 
     /**
@@ -837,6 +837,30 @@ public class JiraIssue
          * The list of voters.
          */
         private final List<JiraUser> theVoters;
+
+        /**
+         * Constructor.
+         * @param pVotes the underlying votes
+         * @throws JOceanusException on error
+         */
+        private JiraVotes(final BasicVotes pVotes) throws JOceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theUnderlying = theClient.getVotes(pVotes.getSelf()).claim();
+                theVoters = new ArrayList<JiraUser>();
+
+                /* Process the voters */
+                for (BasicUser myUser : theUnderlying.getUsers()) {
+                    /* Add to the list */
+                    theVoters.add(theServer.getUser(myUser));
+                }
+
+            } catch (RestClientException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to load votes", e);
+            }
+        }
 
         /**
          * Get the underlying votes.
@@ -869,30 +893,6 @@ public class JiraIssue
         public Iterator<JiraUser> voterIterator() {
             return theVoters.iterator();
         }
-
-        /**
-         * Constructor.
-         * @param pVotes the underlying votes
-         * @throws JOceanusException on error
-         */
-        private JiraVotes(final BasicVotes pVotes) throws JOceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Access the details */
-                theUnderlying = theClient.getVotes(pVotes.getSelf()).claim();
-                theVoters = new ArrayList<JiraUser>();
-
-                /* Process the voters */
-                for (BasicUser myUser : theUnderlying.getUsers()) {
-                    /* Add to the list */
-                    theVoters.add(theServer.getUser(myUser));
-                }
-
-            } catch (RestClientException e) {
-                /* Pass the exception on */
-                throw new JThemisIOException("Failed to load votes", e);
-            }
-        }
     }
 
     /**
@@ -908,6 +908,30 @@ public class JiraIssue
          * The list of watchers.
          */
         private final List<JiraUser> theWatchers;
+
+        /**
+         * Constructor.
+         * @param pWatchers the underlying watchers
+         * @throws JOceanusException on error
+         */
+        private JiraWatchers(final BasicWatchers pWatchers) throws JOceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theUnderlying = theClient.getWatchers(pWatchers.getSelf()).claim();
+                theWatchers = new ArrayList<JiraUser>();
+
+                /* Process the watchers */
+                for (BasicUser myUser : theUnderlying.getUsers()) {
+                    /* Add to the list */
+                    theWatchers.add(theServer.getUser(myUser));
+                }
+
+            } catch (RestClientException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to load watchers", e);
+            }
+        }
 
         /**
          * Get the underlying watchers.
@@ -940,30 +964,6 @@ public class JiraIssue
         public Iterator<JiraUser> voterIterator() {
             return theWatchers.iterator();
         }
-
-        /**
-         * Constructor.
-         * @param pWatchers the underlying watchers
-         * @throws JOceanusException on error
-         */
-        private JiraWatchers(final BasicWatchers pWatchers) throws JOceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Access the details */
-                theUnderlying = theClient.getWatchers(pWatchers.getSelf()).claim();
-                theWatchers = new ArrayList<JiraUser>();
-
-                /* Process the watchers */
-                for (BasicUser myUser : theUnderlying.getUsers()) {
-                    /* Add to the list */
-                    theWatchers.add(theServer.getUser(myUser));
-                }
-
-            } catch (RestClientException e) {
-                /* Pass the exception on */
-                throw new JThemisIOException("Failed to load watchers", e);
-            }
-        }
     }
 
     /**
@@ -984,6 +984,24 @@ public class JiraIssue
          * The field info.
          */
         private Map<String, JiraTransitionField> theFieldMap;
+
+        /**
+         * Constructor.
+         * @param pTransition the underlying transition
+         * @throws JOceanusException on error
+         */
+        private JiraTransition(final Transition pTransition) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pTransition;
+            theName = pTransition.getName();
+            theFieldMap = new LinkedHashMap<String, JiraTransitionField>();
+
+            /* Process the fields */
+            for (Transition.Field myField : pTransition.getFields()) {
+                /* Add to the map */
+                theFieldMap.put(myField.getId(), new JiraTransitionField(myField));
+            }
+        }
 
         /**
          * Get the underlying transition.
@@ -1017,24 +1035,6 @@ public class JiraIssue
         public Iterator<JiraTransitionField> fieldIterator() {
             return theFieldMap.values().iterator();
         }
-
-        /**
-         * Constructor.
-         * @param pTransition the underlying transition
-         * @throws JOceanusException on error
-         */
-        private JiraTransition(final Transition pTransition) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pTransition;
-            theName = pTransition.getName();
-            theFieldMap = new LinkedHashMap<String, JiraTransitionField>();
-
-            /* Process the fields */
-            for (Transition.Field myField : pTransition.getFields()) {
-                /* Add to the map */
-                theFieldMap.put(myField.getId(), new JiraTransitionField(myField));
-            }
-        }
     }
 
     /**
@@ -1055,6 +1055,18 @@ public class JiraIssue
          * The type of the field.
          */
         private final String theType;
+
+        /**
+         * Constructor.
+         * @param pField the underlying field
+         * @throws JOceanusException on error
+         */
+        private JiraTransitionField(final Transition.Field pField) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pField;
+            theName = pField.getId();
+            theType = pField.getType();
+        }
 
         /**
          * Get the underlying field info.
@@ -1086,18 +1098,6 @@ public class JiraIssue
          */
         public boolean isRequired() {
             return theUnderlying.isRequired();
-        }
-
-        /**
-         * Constructor.
-         * @param pField the underlying field
-         * @throws JOceanusException on error
-         */
-        private JiraTransitionField(final Transition.Field pField) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pField;
-            theName = pField.getId();
-            theType = pField.getType();
         }
     }
 }

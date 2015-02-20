@@ -166,7 +166,7 @@ public class SP800SecureRandomBuilder {
                                           final boolean isPredictionResistant) {
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         HashSP800DRBG myProvider = new HashSP800DRBG(pDigest, myEntropy, theSecurityBytes, pInitVector);
-        return new SP800SecureRandom(myProvider, myEntropy, isPredictionResistant);
+        return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 
     /**
@@ -181,18 +181,23 @@ public class SP800SecureRandomBuilder {
                                           final boolean isPredictionResistant) {
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         HMacSP800DRBG myProvider = new HMacSP800DRBG(hMac, myEntropy, theSecurityBytes, pInitVector);
-        return new SP800SecureRandom(myProvider, myEntropy, isPredictionResistant);
+        return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 
     /**
      * SecureRandom wrapper class.
      */
-    protected final class SP800SecureRandom
+    protected static final class SP800SecureRandom
             extends SecureRandom {
         /**
          * Serial Id.
          */
         private static final long serialVersionUID = 781744191004794480L;
+
+        /**
+         * The Basic Secure Random instance.
+         */
+        private final SecureRandom theRandom;
 
         /**
          * The DRBG generator.
@@ -216,10 +221,12 @@ public class SP800SecureRandomBuilder {
          * @param isPredictionResistant true/false
          */
         private SP800SecureRandom(final SP80090DRBG pGenerator,
+                                  final SecureRandom pRandom,
                                   final EntropySource pEntropy,
                                   final boolean isPredictionResistant) {
             /* Store parameters */
             theGenerator = pGenerator;
+            theRandom = pRandom;
             theEntropy = pEntropy;
             predictionResistant = isPredictionResistant;
         }

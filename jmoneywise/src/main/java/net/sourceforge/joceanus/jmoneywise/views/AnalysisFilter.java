@@ -83,11 +83,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseViewResource.FILTER_NAME.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Bucket Field Id.
      */
@@ -97,6 +92,37 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * Attribute Field Id.
      */
     private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
+
+    /**
+     * The Underlying bucket.
+     */
+    private final B theBucket;
+
+    /**
+     * The Current Attribute.
+     */
+    private T theAttr;
+
+    /**
+     * The Attribute class.
+     */
+    private final Class<T> theClass;
+
+    /**
+     * Constructor.
+     * @param pBucket the underlying bucket
+     * @param pClass the attribute class
+     */
+    protected AnalysisFilter(final B pBucket,
+                             final Class<T> pClass) {
+        theBucket = pBucket;
+        theClass = pClass;
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -116,21 +142,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     public String formatObject() {
         return getName();
     }
-
-    /**
-     * The Underlying bucket.
-     */
-    private final B theBucket;
-
-    /**
-     * The Current Attribute.
-     */
-    private T theAttr;
-
-    /**
-     * The Attribute class.
-     */
-    private final Class<T> theClass;
 
     /**
      * Set attribute.
@@ -160,17 +171,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public B getBucket() {
         return theBucket;
-    }
-
-    /**
-     * Constructor.
-     * @param pBucket the underlying bucket
-     * @param pClass the attribute class
-     */
-    protected AnalysisFilter(final B pBucket,
-                             final Class<T> pClass) {
-        theBucket = pBucket;
-        theClass = pClass;
     }
 
     /**
@@ -446,11 +446,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public abstract static class AccountFilter<B extends AccountBucket<T>, T extends AssetBase<T>>
             extends AnalysisFilter<B, AccountAttribute> {
-        @Override
-        public String getName() {
-            return getBucket().getName();
-        }
-
         /**
          * Constructor.
          * @param pAccount the account bucket
@@ -459,6 +454,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Store parameter */
             super(pAccount, AccountAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        @Override
+        public String getName() {
+            return getBucket().getName();
         }
 
         @Override
@@ -487,11 +487,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class DepositFilter
             extends AccountFilter<DepositBucket, Deposit> {
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.DEPOSIT;
-        }
-
         /**
          * Constructor.
          * @param pDeposit the deposit bucket
@@ -500,6 +495,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Call super-constructor */
             super(pDeposit);
         }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.DEPOSIT;
+        }
     }
 
     /**
@@ -507,11 +507,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class CashFilter
             extends AccountFilter<CashBucket, Cash> {
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.CASH;
-        }
-
         /**
          * Constructor.
          * @param pCash the cash bucket
@@ -520,6 +515,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Call super-constructor */
             super(pCash);
         }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.CASH;
+        }
     }
 
     /**
@@ -527,11 +527,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class LoanFilter
             extends AccountFilter<LoanBucket, Loan> {
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.LOAN;
-        }
-
         /**
          * Constructor.
          * @param pLoan the loan bucket
@@ -540,6 +535,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Call super-constructor */
             super(pLoan);
         }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.LOAN;
+        }
     }
 
     /**
@@ -547,16 +547,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class SecurityFilter
             extends AnalysisFilter<SecurityBucket, SecurityAttribute> {
-        @Override
-        public String getName() {
-            return getBucket().getDecoratedName();
-        }
-
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.SECURITY;
-        }
-
         /**
          * Constructor.
          * @param pSecurity the security bucket
@@ -565,6 +555,16 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Store parameter */
             super(pSecurity, SecurityAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        @Override
+        public String getName() {
+            return getBucket().getDecoratedName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.SECURITY;
         }
 
         @Override
@@ -599,6 +599,17 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         private final PortfolioBucket thePortfolio;
 
         /**
+         * Constructor.
+         * @param pPortfolio the portfolio bucket
+         */
+        public PortfolioCashFilter(final PortfolioBucket pPortfolio) {
+            /* Store parameter */
+            super(pPortfolio.getPortfolioCash(), AccountAttribute.class);
+            thePortfolio = pPortfolio;
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        /**
          * Obtain portfolio bucket.
          * @return the portfolio bucket
          */
@@ -614,17 +625,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public AnalysisType getAnalysisType() {
             return AnalysisType.PORTFOLIO;
-        }
-
-        /**
-         * Constructor.
-         * @param pPortfolio the portfolio bucket
-         */
-        public PortfolioCashFilter(final PortfolioBucket pPortfolio) {
-            /* Store parameter */
-            super(pPortfolio.getPortfolioCash(), AccountAttribute.class);
-            thePortfolio = pPortfolio;
-            setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
@@ -653,16 +653,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class PayeeFilter
             extends AnalysisFilter<PayeeBucket, PayeeAttribute> {
-        @Override
-        public String getName() {
-            return getBucket().getName();
-        }
-
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.PAYEE;
-        }
-
         /**
          * Constructor.
          * @param pPayee the payee bucket
@@ -671,6 +661,16 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Store parameter */
             super(pPayee, PayeeAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        @Override
+        public String getName() {
+            return getBucket().getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.PAYEE;
         }
 
         @Override
@@ -699,16 +699,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class TransactionCategoryFilter
             extends AnalysisFilter<TransactionCategoryBucket, TransactionAttribute> {
-        @Override
-        public String getName() {
-            return getBucket().getName();
-        }
-
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.CATEGORY;
-        }
-
         /**
          * Constructor.
          * @param pCategory the category bucket
@@ -717,6 +707,16 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Store parameter */
             super(pCategory, TransactionAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        @Override
+        public String getName() {
+            return getBucket().getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.CATEGORY;
         }
 
         @Override
@@ -745,16 +745,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class TaxBasisFilter
             extends AnalysisFilter<TaxBasisBucket, TaxBasisAttribute> {
-        @Override
-        public String getName() {
-            return getBucket().getName();
-        }
-
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.TAXBASIS;
-        }
-
         /**
          * Constructor.
          * @param pTaxBasis the taxBasis bucket
@@ -763,6 +753,16 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Store parameter */
             super(pTaxBasis, TaxBasisAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
+        }
+
+        @Override
+        public String getName() {
+            return getBucket().getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.TAXBASIS;
         }
 
         @Override
@@ -791,16 +791,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static class TagFilter
             extends AnalysisFilter<TransactionTagBucket, AccountAttribute> {
-        @Override
-        public String getName() {
-            return getBucket().getName();
-        }
-
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.TRANSTAG;
-        }
-
         /**
          * Constructor.
          * @param pTag the transactionTag
@@ -809,6 +799,16 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             /* Store parameter */
             super(pTag, AccountAttribute.class);
             setCurrentAttribute(null);
+        }
+
+        @Override
+        public String getName() {
+            return getBucket().getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.TRANSTAG;
         }
 
         @Override
@@ -842,6 +842,15 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public static final class AllFilter
             extends AnalysisFilter<Void, AccountAttribute> {
+        /**
+         * Constructor.
+         */
+        private AllFilter() {
+            /* Store parameter */
+            super(null, AccountAttribute.class);
+            setCurrentAttribute(null);
+        }
+
         @Override
         public String getName() {
             return AnalysisType.ALL.toString();
@@ -855,15 +864,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public Void getBucket() {
             return null;
-        }
-
-        /**
-         * Constructor.
-         */
-        private AllFilter() {
-            /* Store parameter */
-            super(null, AccountAttribute.class);
-            setCurrentAttribute(null);
         }
 
         @Override

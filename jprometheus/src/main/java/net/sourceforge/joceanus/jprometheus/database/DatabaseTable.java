@@ -78,6 +78,19 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
     private final TableDefinition theTable;
 
     /**
+     * Constructor.
+     * @param pDatabase the database control
+     * @param pTable the table name
+     */
+    protected DatabaseTable(final Database<?> pDatabase,
+                            final String pTable) {
+        /* Set the table */
+        theDatabase = pDatabase;
+        theConn = theDatabase.getConn();
+        theTable = new TableDefinition(theDatabase.getDriver(), pTable);
+    }
+
+    /**
      * Obtain database.
      * @return the database
      */
@@ -91,19 +104,6 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      */
     protected TableDefinition getTableDef() {
         return theTable;
-    }
-
-    /**
-     * Constructor.
-     * @param pDatabase the database control
-     * @param pTable the table name
-     */
-    protected DatabaseTable(final Database<?> pDatabase,
-                            final String pTable) {
-        /* Set the table */
-        theDatabase = pDatabase;
-        theConn = theDatabase.getConn();
-        theTable = new TableDefinition(theDatabase.getDriver(), pTable);
     }
 
     /**

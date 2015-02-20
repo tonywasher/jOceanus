@@ -69,24 +69,6 @@ public class QIFPortfolioEvent
      */
     private final QActionType theAction;
 
-    @Override
-    public JDateDay getDate() {
-        return theDate;
-    }
-
-    @Override
-    public Boolean isCleared() {
-        return isCleared;
-    }
-
-    /**
-     * Obtain the action.
-     * @return the action.
-     */
-    public QActionType getAction() {
-        return theAction;
-    }
-
     /**
      * Constructor.
      * @param pFile the QIF File
@@ -224,6 +206,24 @@ public class QIFPortfolioEvent
         theDate = myDate;
         theAction = myAction;
         isCleared = myCleared;
+    }
+
+    @Override
+    public JDateDay getDate() {
+        return theDate;
+    }
+
+    @Override
+    public Boolean isCleared() {
+        return isCleared;
+    }
+
+    /**
+     * Obtain the action.
+     * @return the action.
+     */
+    public QActionType getAction() {
+        return theAction;
     }
 
     /**
@@ -395,11 +395,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioDateLine
             extends QIFDateLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.DATE;
-        }
-
         /**
          * Constructor.
          * @param pDate the Date
@@ -408,6 +403,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pDate);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.DATE;
+        }
     }
 
     /**
@@ -415,6 +415,15 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioCommentLine
             extends QIFStringLine<QPortfolioLineType> {
+        /**
+         * Constructor.
+         * @param pComment the comment
+         */
+        protected QIFPortfolioCommentLine(final String pComment) {
+            /* Call super-constructor */
+            super(pComment);
+        }
+
         @Override
         public QPortfolioLineType getLineType() {
             return QPortfolioLineType.COMMENT;
@@ -427,15 +436,6 @@ public class QIFPortfolioEvent
         public String getComment() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pComment the comment
-         */
-        protected QIFPortfolioCommentLine(final String pComment) {
-            /* Call super-constructor */
-            super(pComment);
-        }
     }
 
     /**
@@ -443,11 +443,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioClearedLine
             extends QIFClearedLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.CLEARED;
-        }
-
         /**
          * Constructor.
          * @param pCleared is the event cleared?
@@ -456,6 +451,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pCleared);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.CLEARED;
+        }
     }
 
     /**
@@ -463,6 +463,15 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioAmountLine
             extends QIFMoneyLine<QPortfolioLineType> {
+        /**
+         * Constructor.
+         * @param pAmount the amount
+         */
+        protected QIFPortfolioAmountLine(final JMoney pAmount) {
+            /* Call super-constructor */
+            super(pAmount);
+        }
+
         @Override
         public QPortfolioLineType getLineType() {
             return QPortfolioLineType.AMOUNT;
@@ -475,15 +484,6 @@ public class QIFPortfolioEvent
         public JMoney getAmount() {
             return getMoney();
         }
-
-        /**
-         * Constructor.
-         * @param pAmount the amount
-         */
-        protected QIFPortfolioAmountLine(final JMoney pAmount) {
-            /* Call super-constructor */
-            super(pAmount);
-        }
     }
 
     /**
@@ -491,6 +491,15 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioCommissionLine
             extends QIFMoneyLine<QPortfolioLineType> {
+        /**
+         * Constructor.
+         * @param pCommission the commission
+         */
+        protected QIFPortfolioCommissionLine(final JMoney pCommission) {
+            /* Call super-constructor */
+            super(pCommission);
+        }
+
         @Override
         public QPortfolioLineType getLineType() {
             return QPortfolioLineType.COMMISSION;
@@ -503,15 +512,6 @@ public class QIFPortfolioEvent
         public JMoney getCommission() {
             return getMoney();
         }
-
-        /**
-         * Constructor.
-         * @param pCommission the commission
-         */
-        protected QIFPortfolioCommissionLine(final JMoney pCommission) {
-            /* Call super-constructor */
-            super(pCommission);
-        }
     }
 
     /**
@@ -519,11 +519,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioPriceLine
             extends QIFPriceLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.PRICE;
-        }
-
         /**
          * Constructor.
          * @param pPrice the price
@@ -532,6 +527,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pPrice);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.PRICE;
+        }
     }
 
     /**
@@ -539,11 +539,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioQuantityLine
             extends QIFUnitsLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.QUANTITY;
-        }
-
         /**
          * Constructor.
          * @param pUnits the units
@@ -552,6 +547,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pUnits);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.QUANTITY;
+        }
     }
 
     /**
@@ -559,11 +559,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioSplitRatioLine
             extends QIFRatioLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.QUANTITY;
-        }
-
         /**
          * Constructor.
          * @param pRatio the ratio
@@ -571,6 +566,11 @@ public class QIFPortfolioEvent
         protected QIFPortfolioSplitRatioLine(final JRatio pRatio) {
             /* Call super-constructor */
             super(pRatio);
+        }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.QUANTITY;
         }
     }
 
@@ -584,6 +584,15 @@ public class QIFPortfolioEvent
          */
         private final QActionType theAction;
 
+        /**
+         * Constructor.
+         * @param pAction the action type
+         */
+        protected QIFPortfolioActionLine(final QActionType pAction) {
+            /* Store the data */
+            theAction = pAction;
+        }
+
         @Override
         public QPortfolioLineType getLineType() {
             return QPortfolioLineType.ACTION;
@@ -595,15 +604,6 @@ public class QIFPortfolioEvent
          */
         public QActionType getAction() {
             return theAction;
-        }
-
-        /**
-         * Constructor.
-         * @param pAction the action type
-         */
-        protected QIFPortfolioActionLine(final QActionType pAction) {
-            /* Store the data */
-            theAction = pAction;
         }
 
         @Override
@@ -619,11 +619,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioSecurityLine
             extends QIFSecurityLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.SECURITY;
-        }
-
         /**
          * Constructor.
          * @param pSecurity the security
@@ -632,6 +627,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pSecurity);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.SECURITY;
+        }
     }
 
     /**
@@ -639,11 +639,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioPayeeLine
             extends QIFPayeeLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.PAYEE;
-        }
-
         /**
          * Constructor.
          * @param pPayee the payee
@@ -652,6 +647,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pPayee);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.PAYEE;
+        }
     }
 
     /**
@@ -659,11 +659,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioPayeeDescLine
             extends QIFStringLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.PAYEE;
-        }
-
         /**
          * Constructor.
          * @param pPayee the payee description
@@ -672,6 +667,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pPayee);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.PAYEE;
+        }
     }
 
     /**
@@ -679,11 +679,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioAccountLine
             extends QIFXferAccountLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.XFERACCOUNT;
-        }
-
         /**
          * Constructor.
          * @param pAccount the account
@@ -703,6 +698,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pAccount, pClasses);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.XFERACCOUNT;
+        }
     }
 
     /**
@@ -710,11 +710,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioCategoryLine
             extends QIFCategoryLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.XFERACCOUNT;
-        }
-
         /**
          * Constructor.
          * @param pCategory the category
@@ -734,6 +729,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pCategory, pClasses);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.XFERACCOUNT;
+        }
     }
 
     /**
@@ -741,11 +741,6 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioCategoryAccountLine
             extends QIFCategoryAccountLine<QPortfolioLineType> {
-        @Override
-        public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.XFERACCOUNT;
-        }
-
         /**
          * Constructor.
          * @param pCategory the category
@@ -769,6 +764,11 @@ public class QIFPortfolioEvent
             /* Call super-constructor */
             super(pCategory, pAccount, pClasses);
         }
+
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.XFERACCOUNT;
+        }
     }
 
     /**
@@ -776,6 +776,15 @@ public class QIFPortfolioEvent
      */
     public class QIFPortfolioXferAmountLine
             extends QIFMoneyLine<QPortfolioLineType> {
+        /**
+         * Constructor.
+         * @param pAmount the amount
+         */
+        protected QIFPortfolioXferAmountLine(final JMoney pAmount) {
+            /* Call super-constructor */
+            super(pAmount);
+        }
+
         @Override
         public QPortfolioLineType getLineType() {
             return QPortfolioLineType.XFERAMOUNT;
@@ -787,15 +796,6 @@ public class QIFPortfolioEvent
          */
         public JMoney getAmount() {
             return getMoney();
-        }
-
-        /**
-         * Constructor.
-         * @param pAmount the amount
-         */
-        protected QIFPortfolioXferAmountLine(final JMoney pAmount) {
-            /* Call super-constructor */
-            super(pAmount);
         }
     }
 }

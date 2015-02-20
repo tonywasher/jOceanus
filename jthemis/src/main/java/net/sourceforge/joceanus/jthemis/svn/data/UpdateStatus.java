@@ -74,6 +74,37 @@ public class UpdateStatus
      */
     private static final JDataField FIELD_COPYREV = FIELD_DEFS.declareLocalField("CopyRevision");
 
+    /**
+     * Name of item.
+     */
+    private final String theName;
+
+    /**
+     * Status of item.
+     */
+    private final SVNStatus theStatus;
+
+    /**
+     * Constructor.
+     * @param pCopy the working copy for the status
+     * @param pStatus the underlying status
+     */
+    protected UpdateStatus(final SvnWorkingCopy pCopy,
+                           final SVNStatus pStatus) {
+        /* Copy interesting fields */
+        theStatus = pStatus;
+
+        /* Determine the name */
+        String myLocation = pCopy.getLocation()
+                            + File.separator;
+        String myName = theStatus.getFile().getAbsolutePath();
+        if (myName.startsWith(myLocation)) {
+            theName = myName.substring(myLocation.length());
+        } else {
+            theName = myName;
+        }
+    }
+
     @Override
     public String formatObject() {
         return FIELD_DEFS.getName();
@@ -115,37 +146,6 @@ public class UpdateStatus
 
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
-    }
-
-    /**
-     * Name of item.
-     */
-    private final String theName;
-
-    /**
-     * Status of item.
-     */
-    private final SVNStatus theStatus;
-
-    /**
-     * Constructor.
-     * @param pCopy the working copy for the status
-     * @param pStatus the underlying status
-     */
-    protected UpdateStatus(final SvnWorkingCopy pCopy,
-                           final SVNStatus pStatus) {
-        /* Copy interesting fields */
-        theStatus = pStatus;
-
-        /* Determine the name */
-        String myLocation = pCopy.getLocation()
-                            + File.separator;
-        String myName = theStatus.getFile().getAbsolutePath();
-        if (myName.startsWith(myLocation)) {
-            theName = myName.substring(myLocation.length());
-        } else {
-            theName = myName;
-        }
     }
 
     /**

@@ -45,11 +45,6 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      */
     private static final long serialVersionUID = 9160258241035845846L;
 
-    @Override
-    public String formatObject() {
-        return getClass().getSimpleName();
-    }
-
     /**
      * Constructor.
      * @param pClass the Enum class
@@ -64,6 +59,11 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      */
     protected BucketValues(final T pSource) {
         super(pSource);
+    }
+
+    @Override
+    public String formatObject() {
+        return getClass().getSimpleName();
     }
 
     /**

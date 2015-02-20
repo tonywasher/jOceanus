@@ -56,50 +56,6 @@ public class StockOptionInfo
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public AccountInfoType getInfoType() {
-        return getInfoType(getValueSet(), AccountInfoType.class);
-    }
-
-    @Override
-    public AccountInfoClass getInfoClass() {
-        return getInfoType().getInfoClass();
-    }
-
-    @Override
-    public StockOption getOwner() {
-        return getOwner(getValueSet(), StockOption.class);
-    }
-
-    /**
-     * Obtain InfoType.
-     * @param pValueSet the valueSet
-     * @return the InfoType
-     */
-    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
-        return getInfoType(pValueSet, AccountInfoType.class);
-    }
-
-    @Override
-    public MoneyWiseData getDataSet() {
-        return (MoneyWiseData) super.getDataSet();
-    }
-
-    @Override
-    public StockOptionInfo getBase() {
-        return (StockOptionInfo) super.getBase();
-    }
-
-    @Override
-    public StockOptionInfoList getList() {
-        return (StockOptionInfoList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList the list
@@ -158,6 +114,50 @@ public class StockOptionInfo
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public AccountInfoType getInfoType() {
+        return getInfoType(getValueSet(), AccountInfoType.class);
+    }
+
+    @Override
+    public AccountInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
+    }
+
+    @Override
+    public StockOption getOwner() {
+        return getOwner(getValueSet(), StockOption.class);
+    }
+
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the InfoType
+     */
+    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, AccountInfoType.class);
+    }
+
+    @Override
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
+    }
+
+    @Override
+    public StockOptionInfo getBase() {
+        return (StockOptionInfo) super.getBase();
+    }
+
+    @Override
+    public StockOptionInfoList getList() {
+        return (StockOptionInfoList) super.getList();
     }
 
     @Override
@@ -250,6 +250,22 @@ public class StockOptionInfo
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE info list.
+         * @param pData the DataSet for the list
+         */
+        protected StockOptionInfoList(final MoneyWiseData pData) {
+            super(StockOptionInfo.class, pData, MoneyWiseDataType.STOCKOPTIONINFO, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private StockOptionInfoList(final StockOptionInfoList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -278,22 +294,6 @@ public class StockOptionInfo
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
-        }
-
-        /**
-         * Construct an empty CORE info list.
-         * @param pData the DataSet for the list
-         */
-        protected StockOptionInfoList(final MoneyWiseData pData) {
-            super(StockOptionInfo.class, pData, MoneyWiseDataType.STOCKOPTIONINFO, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private StockOptionInfoList(final StockOptionInfoList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
@@ -140,30 +140,6 @@ public class MaintenanceTab
     private final PreferencesPanel thePreferences;
 
     /**
-     * Obtain the view.
-     * @return the view
-     */
-    protected View getView() {
-        return theView;
-    }
-
-    /**
-     * Obtain the top window.
-     * @return the window
-     */
-    protected MainTab getTopWindow() {
-        return theParent;
-    }
-
-    /**
-     * Obtain the data manager.
-     * @return the manager
-     */
-    public JDataManager getDataManager() {
-        return theView.getDataMgr();
-    }
-
-    /**
      * Constructor.
      * @param pTop top window
      */
@@ -237,6 +213,30 @@ public class MaintenanceTab
 
         /* Set the layout */
         add(theTabs);
+    }
+
+    /**
+     * Obtain the view.
+     * @return the view
+     */
+    protected View getView() {
+        return theView;
+    }
+
+    /**
+     * Obtain the top window.
+     * @return the window
+     */
+    protected MainTab getTopWindow() {
+        return theParent;
+    }
+
+    /**
+     * Obtain the data manager.
+     * @return the manager
+     */
+    public JDataManager getDataManager() {
+        return theView.getDataMgr();
     }
 
     @Override

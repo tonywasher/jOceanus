@@ -52,22 +52,6 @@ public class QIFSecurityPrices
     private final OrderedList<QIFPrice> thePrices;
 
     /**
-     * Obtain the security.
-     * @return the security
-     */
-    public QIFSecurity getSecurity() {
-        return theSecurity;
-    }
-
-    /**
-     * Obtain the prices.
-     * @return the prices
-     */
-    public List<QIFPrice> getPrices() {
-        return thePrices;
-    }
-
-    /**
      * Constructor.
      * @param pFile the QIF File
      * @param pSecurity the security.
@@ -95,6 +79,22 @@ public class QIFSecurityPrices
 
         /* Create the list */
         thePrices = new OrderedList<QIFPrice>(QIFPrice.class);
+    }
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public QIFSecurity getSecurity() {
+        return theSecurity;
+    }
+
+    /**
+     * Obtain the prices.
+     * @return the prices
+     */
+    public List<QIFPrice> getPrices() {
+        return thePrices;
     }
 
     /**

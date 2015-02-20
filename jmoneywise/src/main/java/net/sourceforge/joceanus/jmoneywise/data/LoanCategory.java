@@ -62,6 +62,45 @@ public class LoanCategory
      */
     public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.LOANTYPE.getItemName());
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pCategory The Category to copy
+     */
+    protected LoanCategory(final LoanCategoryList pList,
+                           final LoanCategory pCategory) {
+        /* Set standard values */
+        super(pList, pCategory);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private LoanCategory(final LoanCategoryList pList,
+                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Category Type */
+        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public LoanCategory(final LoanCategoryList pList) {
+        super(pList);
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -151,45 +190,6 @@ public class LoanCategory
     @Override
     public LoanCategoryList getList() {
         return (LoanCategoryList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pCategory The Category to copy
-     */
-    protected LoanCategory(final LoanCategoryList pList,
-                           final LoanCategory pCategory) {
-        /* Set standard values */
-        super(pList, pCategory);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private LoanCategory(final LoanCategoryList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public LoanCategory(final LoanCategoryList pList) {
-        super(pList);
     }
 
     /**
@@ -324,6 +324,22 @@ public class LoanCategory
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE Category list.
+         * @param pData the DataSet for the list
+         */
+        protected LoanCategoryList(final MoneyWiseData pData) {
+            super(pData, LoanCategory.class, MoneyWiseDataType.LOANCATEGORY);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected LoanCategoryList(final LoanCategoryList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -339,27 +355,11 @@ public class LoanCategory
             return LoanCategory.FIELD_DEFS;
         }
 
-        /**
-         * Construct an empty CORE Category list.
-         * @param pData the DataSet for the list
-         */
-        protected LoanCategoryList(final MoneyWiseData pData) {
-            super(pData, LoanCategory.class, MoneyWiseDataType.LOANCATEGORY);
-        }
-
         @Override
         protected LoanCategoryList getEmptyList(final ListStyle pStyle) {
             LoanCategoryList myList = new LoanCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected LoanCategoryList(final LoanCategoryList pSource) {
-            super(pSource);
         }
 
         /**

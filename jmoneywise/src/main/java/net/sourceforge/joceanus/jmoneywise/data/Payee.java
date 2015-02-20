@@ -103,6 +103,76 @@ public class Payee
      */
     private final PayeeInfoSet theInfoSet;
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pPayee The Payee to copy
+     */
+    protected Payee(final PayeeList pList,
+                    final Payee pPayee) {
+        /* Set standard values */
+        super(pList, pPayee);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
+                theInfoSet.cloneDataInfoSet(pPayee.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Payee(final PayeeList pList,
+                  final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the PayeeType */
+        Object myValue = pValues.getValue(FIELD_PAYEETYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public Payee(final PayeeList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -439,76 +509,6 @@ public class Payee
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pPayee The Payee to copy
-     */
-    protected Payee(final PayeeList pList,
-                    final Payee pPayee) {
-        /* Set standard values */
-        super(pList, pPayee);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
-                theInfoSet.cloneDataInfoSet(pPayee.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private Payee(final PayeeList pList,
-                  final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the PayeeType */
-        Object myValue = pValues.getValue(FIELD_PAYEETYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Payee(final PayeeList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
-    /**
      * Set defaults.
      * @throws JOceanusException on error
      */
@@ -775,11 +775,6 @@ public class Payee
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The PayeeInfo List.
          */
@@ -789,6 +784,27 @@ public class Payee
          * The AccountInfoType list.
          */
         private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE Payee list.
+         * @param pData the DataSet for the list
+         */
+        public PayeeList(final MoneyWiseData pData) {
+            super(pData, Payee.class, MoneyWiseDataType.PAYEE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected PayeeList(final PayeeList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -827,27 +843,11 @@ public class Payee
             return theInfoTypeList;
         }
 
-        /**
-         * Construct an empty CORE Payee list.
-         * @param pData the DataSet for the list
-         */
-        public PayeeList(final MoneyWiseData pData) {
-            super(pData, Payee.class, MoneyWiseDataType.PAYEE);
-        }
-
         @Override
         protected PayeeList getEmptyList(final ListStyle pStyle) {
             PayeeList myList = new PayeeList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected PayeeList(final PayeeList pSource) {
-            super(pSource);
         }
 
         /**
@@ -1001,6 +1001,25 @@ public class Payee
          */
         public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
+        /**
+         * Map of category counts.
+         */
+        private final Map<Integer, Integer> thePayeeCountMap;
+
+        /**
+         * Map of singular categories.
+         */
+        private final Map<Integer, Payee> thePayeeMap;
+
+        /**
+         * Constructor.
+         */
+        public PayeeDataMap() {
+            /* Create the maps */
+            thePayeeCountMap = new HashMap<Integer, Integer>();
+            thePayeeMap = new HashMap<Integer, Payee>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1023,25 +1042,6 @@ public class Payee
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of category counts.
-         */
-        private final Map<Integer, Integer> thePayeeCountMap;
-
-        /**
-         * Map of singular categories.
-         */
-        private final Map<Integer, Payee> thePayeeMap;
-
-        /**
-         * Constructor.
-         */
-        public PayeeDataMap() {
-            /* Create the maps */
-            thePayeeCountMap = new HashMap<Integer, Integer>();
-            thePayeeMap = new HashMap<Integer, Payee>();
         }
 
         @Override

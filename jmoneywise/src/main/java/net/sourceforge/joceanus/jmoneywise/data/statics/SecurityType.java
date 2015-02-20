@@ -51,29 +51,6 @@ public class SecurityType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the SecurityTypeClass of the SecurityType.
-     * @return the class
-     */
-    public SecurityTypeClass getSecurityClass() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public SecurityType getBase() {
-        return (SecurityType) super.getBase();
-    }
-
-    @Override
-    public SecurityTypeList getList() {
-        return (SecurityTypeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the SecurityType with
@@ -117,6 +94,29 @@ public class SecurityType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the SecurityTypeClass of the SecurityType.
+     * @return the class
+     */
+    public SecurityTypeClass getSecurityClass() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public SecurityType getBase() {
+        return (SecurityType) super.getBase();
+    }
+
+    @Override
+    public SecurityTypeList getList() {
+        return (SecurityTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link SecurityType} objects.
      */
@@ -126,6 +126,22 @@ public class SecurityType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE securityType list.
+         * @param pData the DataSet for the list
+         */
+        public SecurityTypeList(final DataSet<?, ?> pData) {
+            super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private SecurityTypeList(final SecurityTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -145,22 +161,6 @@ public class SecurityType
         @Override
         protected Class<SecurityTypeClass> getEnumClass() {
             return SecurityTypeClass.class;
-        }
-
-        /**
-         * Construct an empty CORE securityType list.
-         * @param pData the DataSet for the list
-         */
-        public SecurityTypeList(final DataSet<?, ?> pData) {
-            super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private SecurityTypeList(final SecurityTypeList pSource) {
-            super(pSource);
         }
 
         @Override

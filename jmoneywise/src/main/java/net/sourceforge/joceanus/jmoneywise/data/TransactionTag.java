@@ -77,6 +77,62 @@ public class TransactionTag
      */
     private static final String NAME_NEWTAG = MoneyWiseDataResource.TRANSTAG_NEWTAG.getValue();
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pClass The Class to copy
+     */
+    protected TransactionTag(final TransactionTagList pList,
+                             final TransactionTag pClass) {
+        /* Set standard values */
+        super(pList, pClass);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private TransactionTag(final TransactionTagList pList,
+                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public TransactionTag(final TransactionTagList pList) {
+        super(pList, 0);
+        setNextDataKeySet();
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -276,62 +332,6 @@ public class TransactionTag
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pClass The Class to copy
-     */
-    protected TransactionTag(final TransactionTagList pList,
-                             final TransactionTag pClass) {
-        /* Set standard values */
-        super(pList, pClass);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private TransactionTag(final TransactionTagList pList,
-                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Name */
-            Object myValue = pValues.getValue(FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
-            }
-
-            /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
-            }
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public TransactionTag(final TransactionTagList pList) {
-        super(pList, 0);
-        setNextDataKeySet();
-    }
-
-    /**
      * Set defaults.
      * @throws JOceanusException on error
      */
@@ -465,6 +465,23 @@ public class TransactionTag
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE Tag list.
+         * <p>
+         * @param pData the DataSet for the list
+         */
+        protected TransactionTagList(final MoneyWiseData pData) {
+            super(TransactionTag.class, pData, MoneyWiseDataType.TRANSTAG, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected TransactionTagList(final TransactionTagList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -490,28 +507,11 @@ public class TransactionTag
             return (TagDataMap) super.getDataMap();
         }
 
-        /**
-         * Construct an empty CORE Tag list.
-         * <p>
-         * @param pData the DataSet for the list
-         */
-        protected TransactionTagList(final MoneyWiseData pData) {
-            super(TransactionTag.class, pData, MoneyWiseDataType.TRANSTAG, ListStyle.CORE);
-        }
-
         @Override
         protected TransactionTagList getEmptyList(final ListStyle pStyle) {
             TransactionTagList myList = new TransactionTagList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected TransactionTagList(final TransactionTagList pSource) {
-            super(pSource);
         }
 
         /**

@@ -69,11 +69,6 @@ public final class SpotSecurityPrice
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Previous Date field Id.
      */
@@ -83,6 +78,35 @@ public final class SpotSecurityPrice
      * Previous Price field Id.
      */
     public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
+
+    /**
+     * the previous date.
+     */
+    private JDateDay thePrevDate;
+
+    /**
+     * the previous price.
+     */
+    private JPrice thePrevPrice;
+
+    /**
+     * Constructor for a new SpotPrice where no price data exists.
+     * @param pList the Spot Price List
+     * @param pSecurity the price for the date
+     */
+    private SpotSecurityPrice(final SpotSecurityList pList,
+                              final Security pSecurity) {
+        super(pList);
+
+        /* Store base values */
+        setDate(pList.theDate);
+        setSecurity(pSecurity);
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -94,16 +118,6 @@ public final class SpotSecurityPrice
         }
         return super.getFieldValue(pField);
     }
-
-    /**
-     * the previous date.
-     */
-    private JDateDay thePrevDate;
-
-    /**
-     * the previous price.
-     */
-    private JPrice thePrevPrice;
 
     /**
      * Obtain previous price.
@@ -124,20 +138,6 @@ public final class SpotSecurityPrice
     @Override
     public boolean isDisabled() {
         return getSecurity().isClosed();
-    }
-
-    /**
-     * Constructor for a new SpotPrice where no price data exists.
-     * @param pList the Spot Price List
-     * @param pSecurity the price for the date
-     */
-    private SpotSecurityPrice(final SpotSecurityList pList,
-                              final Security pSecurity) {
-        super(pList);
-
-        /* Store base values */
-        setDate(pList.theDate);
-        setSecurity(pSecurity);
     }
 
     /**
@@ -232,43 +232,6 @@ public final class SpotSecurityPrice
          */
         public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_PORTFOLIO.equals(pField)) {
-                return thePortfolio;
-            }
-            if (FIELD_DATE.equals(pField)) {
-                return theDate;
-            }
-            if (FIELD_NEXT.equals(pField)) {
-                return getNext();
-            }
-            if (FIELD_PREV.equals(pField)) {
-                return getPrev();
-            }
-            return super.getFieldValue(pField);
-        }
-
-        @Override
-        public String listName() {
-            return SpotSecurityList.class.getSimpleName();
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return SpotSecurityPrice.FIELD_DEFS;
-        }
-
-        @Override
-        protected SpotSecurityList getEmptyList(final ListStyle pStyle) {
-            throw new UnsupportedOperationException();
-        }
-
         /**
          * The date.
          */
@@ -293,22 +256,6 @@ public final class SpotSecurityPrice
          * The previous date.
          */
         private JDateDay thePrev = null;
-
-        /**
-         * Obtain the next date.
-         * @return the date
-         */
-        public JDateDay getNext() {
-            return theNext;
-        }
-
-        /**
-         * Obtain the previous date.
-         * @return the date
-         */
-        public JDateDay getPrev() {
-            return thePrev;
-        }
 
         /**
          * Constructor.
@@ -400,6 +347,59 @@ public final class SpotSecurityPrice
                     thePrev = myPrice.getDate();
                 }
             }
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_PORTFOLIO.equals(pField)) {
+                return thePortfolio;
+            }
+            if (FIELD_DATE.equals(pField)) {
+                return theDate;
+            }
+            if (FIELD_NEXT.equals(pField)) {
+                return getNext();
+            }
+            if (FIELD_PREV.equals(pField)) {
+                return getPrev();
+            }
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String listName() {
+            return SpotSecurityList.class.getSimpleName();
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return SpotSecurityPrice.FIELD_DEFS;
+        }
+
+        @Override
+        protected SpotSecurityList getEmptyList(final ListStyle pStyle) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * Obtain the next date.
+         * @return the date
+         */
+        public JDateDay getNext() {
+            return theNext;
+        }
+
+        /**
+         * Obtain the previous date.
+         * @return the date
+         */
+        public JDateDay getPrev() {
+            return thePrev;
         }
 
         /* Is this list locked */

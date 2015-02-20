@@ -78,6 +78,16 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     private transient TableFilter<T> theFilter = null;
 
     /**
+     * Constructor.
+     * @param pTable the table with which this model is associated
+     */
+    protected JDataTableModel(final JDataTable<T, E> pTable) {
+        /* Access rowHdrModel */
+        theTable = pTable;
+        theRowHdrModel = pTable.getRowTableModel();
+    }
+
+    /**
      * Obtain the table filter.
      * @return the filter
      */
@@ -242,16 +252,6 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      */
     public void registerFilter(final TableFilter<T> pFilter) {
         theFilter = pFilter;
-    }
-
-    /**
-     * Constructor.
-     * @param pTable the table with which this model is associated
-     */
-    protected JDataTableModel(final JDataTable<T, E> pTable) {
-        /* Access rowHdrModel */
-        theTable = pTable;
-        theRowHdrModel = pTable.getRowTableModel();
     }
 
     /**

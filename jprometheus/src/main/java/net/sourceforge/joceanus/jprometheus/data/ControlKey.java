@@ -62,11 +62,6 @@ public final class ControlKey
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Field ID for Prime passwordHash.
      */
@@ -121,6 +116,122 @@ public final class ControlKey
      * The DataKeySet.
      */
     private DataKeySetResource theDataKeySet = new DataKeySetResource();
+
+    /**
+     * Copy constructor.
+     * @param pList the List to add to
+     * @param pSource the source key to copy
+     */
+    private ControlKey(final ControlKeyList pList,
+                       final ControlKey pSource) {
+        /* Initialise the item */
+        super(pList, pSource);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private ControlKey(final ControlKeyList pList,
+                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store Prime indication */
+        Object myValue = pValues.getValue(FIELD_HASHPRIME);
+        if (myValue instanceof Boolean) {
+            setValueHashPrime((Boolean) myValue);
+        }
+
+        /* Store the Prime/AltHashBytes */
+        myValue = pValues.getValue(FIELD_PRIMEPASSHASH);
+        if (myValue instanceof byte[]) {
+            setValuePrimeHashBytes((byte[]) myValue);
+        }
+        myValue = pValues.getValue(FIELD_ALTPASSHASH);
+        if (myValue instanceof byte[]) {
+            setValueAltHashBytes((byte[]) myValue);
+        }
+    }
+
+    /**
+     * Constructor for a new ControlKey.
+     * <p>
+     * This will create a new DataKeySet with a new set of DataKeys.
+     * @param pList the list to which to add the key to
+     * @throws JOceanusException on error
+     */
+    private ControlKey(final ControlKeyList pList) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, 0);
+
+        /* Protect against exceptions */
+        try {
+            /* Access the Security manager */
+            DataSet<?, ?> myData = getDataSet();
+            SecureManager mySecure = myData.getSecurity();
+
+            /* Create a new password hash with new password */
+            PasswordHash myHash = mySecure.resolvePasswordHash(null, NAME_DATABASE);
+
+            /* Store the password hash */
+            setValueHashPrime(Boolean.TRUE);
+            setValuePrimePasswordHash(myHash);
+
+            /* Allocate the DataKeySets */
+            allocateDataKeySets(myData);
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Constructor for a new ControlKey with the same password.
+     * <p>
+     * This will create a new DataKeySet with a new cloned set of DataKeys.
+     * @param pKey the key to copy
+     * @throws JOceanusException on error
+     */
+    private ControlKey(final ControlKey pKey) throws JOceanusException {
+        /* Initialise the item */
+        super(pKey.getList(), 0);
+
+        /* Protect against exceptions */
+        try {
+            /* Access the Security manager */
+            DataSet<?, ?> myData = getDataSet();
+            SecureManager mySecure = myData.getSecurity();
+
+            /* ReSeed the security generator */
+            SecurityGenerator myGenerator = mySecure.getSecurityGenerator();
+            myGenerator.reSeedRandom();
+
+            /* Create a clone of the password hash */
+            PasswordHash myHash = mySecure.clonePasswordHash(myData.getPasswordHash());
+
+            /* Store the password Hash */
+            setValueHashPrime(Boolean.TRUE);
+            setValuePrimePasswordHash(myHash);
+
+            /* Allocate the DataKeySets */
+            allocateDataKeySets(myData);
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -451,117 +562,6 @@ public final class ControlKey
         return myHash;
     }
 
-    /**
-     * Copy constructor.
-     * @param pList the List to add to
-     * @param pSource the source key to copy
-     */
-    private ControlKey(final ControlKeyList pList,
-                       final ControlKey pSource) {
-        /* Initialise the item */
-        super(pList, pSource);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private ControlKey(final ControlKeyList pList,
-                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store Prime indication */
-        Object myValue = pValues.getValue(FIELD_HASHPRIME);
-        if (myValue instanceof Boolean) {
-            setValueHashPrime((Boolean) myValue);
-        }
-
-        /* Store the Prime/AltHashBytes */
-        myValue = pValues.getValue(FIELD_PRIMEPASSHASH);
-        if (myValue instanceof byte[]) {
-            setValuePrimeHashBytes((byte[]) myValue);
-        }
-        myValue = pValues.getValue(FIELD_ALTPASSHASH);
-        if (myValue instanceof byte[]) {
-            setValueAltHashBytes((byte[]) myValue);
-        }
-    }
-
-    /**
-     * Constructor for a new ControlKey.
-     * <p>
-     * This will create a new DataKeySet with a new set of DataKeys.
-     * @param pList the list to which to add the key to
-     * @throws JOceanusException on error
-     */
-    private ControlKey(final ControlKeyList pList) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Protect against exceptions */
-        try {
-            /* Access the Security manager */
-            DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
-
-            /* Create a new password hash with new password */
-            PasswordHash myHash = mySecure.resolvePasswordHash(null, NAME_DATABASE);
-
-            /* Store the password hash */
-            setValueHashPrime(Boolean.TRUE);
-            setValuePrimePasswordHash(myHash);
-
-            /* Allocate the DataKeySets */
-            allocateDataKeySets(myData);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Constructor for a new ControlKey with the same password.
-     * <p>
-     * This will create a new DataKeySet with a new cloned set of DataKeys.
-     * @param pKey the key to copy
-     * @throws JOceanusException on error
-     */
-    private ControlKey(final ControlKey pKey) throws JOceanusException {
-        /* Initialise the item */
-        super(pKey.getList(), 0);
-
-        /* Protect against exceptions */
-        try {
-            /* Access the Security manager */
-            DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
-
-            /* ReSeed the security generator */
-            SecurityGenerator myGenerator = mySecure.getSecurityGenerator();
-            myGenerator.reSeedRandom();
-
-            /* Create a clone of the password hash */
-            PasswordHash myHash = mySecure.clonePasswordHash(myData.getPasswordHash());
-
-            /* Store the password Hash */
-            setValueHashPrime(Boolean.TRUE);
-            setValuePrimePasswordHash(myHash);
-
-            /* Allocate the DataKeySets */
-            allocateDataKeySets(myData);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
     @Override
     public int compareTo(final ControlKey pThat) {
         /* Handle the trivial cases */
@@ -676,26 +676,6 @@ public final class ControlKey
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return ControlKey.FIELD_DEFS;
-        }
-
-        @Override
-        public boolean includeDataXML() {
-            return false;
-        }
-
         /**
          * Construct an empty CORE ControlKey list.
          * @param pData the DataSet for the list
@@ -720,6 +700,26 @@ public final class ControlKey
          */
         private ControlKeyList(final ControlKeyList pSource) {
             super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return ControlKey.FIELD_DEFS;
+        }
+
+        @Override
+        public boolean includeDataXML() {
+            return false;
         }
 
         @Override
@@ -909,6 +909,18 @@ public final class ControlKey
          */
         public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
+        /**
+         * Iterator.
+         */
+        private Iterator<DataKeySet> theIterator;
+
+        /**
+         * Constructor.
+         */
+        private DataKeySetResource() {
+            super(DataKeySet.class);
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -925,18 +937,6 @@ public final class ControlKey
                 return size();
             }
             return JDataFieldValue.UNKNOWN;
-        }
-
-        /**
-         * Iterator.
-         */
-        private Iterator<DataKeySet> theIterator;
-
-        /**
-         * Constructor.
-         */
-        private DataKeySetResource() {
-            super(DataKeySet.class);
         }
 
         /**

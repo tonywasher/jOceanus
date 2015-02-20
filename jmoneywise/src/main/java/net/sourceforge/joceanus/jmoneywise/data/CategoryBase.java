@@ -100,6 +100,73 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     protected static final String ERROR_MATCHPARENT = MoneyWiseDataResource.CATEGORY_ERROR_MATCHPARENT.getValue();
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pCategory The Category to copy
+     */
+    protected CategoryBase(final CategoryBaseList<T, S, C> pList,
+                           final T pCategory) {
+        /* Set standard values */
+        super(pList, pCategory);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected CategoryBase(final CategoryBaseList<T, S, C> pList,
+                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Resolve the subCategory */
+            resolveSubCategory();
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public CategoryBase(final CategoryBaseList<T, S, C> pList) {
+        super(pList, 0);
+        setNextDataKeySet();
+    }
+
     @Override
     public String formatObject() {
         return getName();
@@ -409,73 +476,6 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         return (T) super.getBase();
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pCategory The Category to copy
-     */
-    protected CategoryBase(final CategoryBaseList<T, S, C> pList,
-                           final T pCategory) {
-        /* Set standard values */
-        super(pList, pCategory);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    protected CategoryBase(final CategoryBaseList<T, S, C> pList,
-                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Name */
-            Object myValue = pValues.getValue(FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
-            }
-
-            /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
-            }
-
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
-            }
-
-            /* Resolve the subCategory */
-            resolveSubCategory();
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public CategoryBase(final CategoryBaseList<T, S, C> pList) {
-        super(pList, 0);
-        setNextDataKeySet();
-    }
-
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
@@ -726,17 +726,6 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(CategoryBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        protected CategoryDataMap<T, S, C> getDataMap() {
-            return (CategoryDataMap<T, S, C>) super.getDataMap();
-        }
-
         /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
@@ -755,6 +744,17 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          */
         protected CategoryBaseList(final CategoryBaseList<T, S, C> pSource) {
             super(pSource);
+        }
+
+        @Override
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        protected CategoryDataMap<T, S, C> getDataMap() {
+            return (CategoryDataMap<T, S, C>) super.getDataMap();
         }
 
         @Override

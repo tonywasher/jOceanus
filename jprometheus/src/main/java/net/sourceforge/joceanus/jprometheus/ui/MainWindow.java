@@ -338,6 +338,15 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private JDataWindow theDataWdw = null;
 
     /**
+     * Constructor.
+     * @throws JOceanusException on error
+     */
+    protected MainWindow() throws JOceanusException {
+        /* Create the Executor service */
+        theExecutor = Executors.newSingleThreadExecutor();
+    }
+
+    /**
      * Get the data view.
      * @return the data view
      */
@@ -388,15 +397,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * @throws JOceanusException on error
      */
     protected abstract HelpModule getHelpModule() throws JOceanusException;
-
-    /**
-     * Constructor.
-     * @throws JOceanusException on error
-     */
-    protected MainWindow() throws JOceanusException {
-        /* Create the Executor service */
-        theExecutor = Executors.newSingleThreadExecutor();
-    }
 
     /**
      * Build the main window.

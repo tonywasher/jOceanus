@@ -88,6 +88,60 @@ public final class SvnWorkingCopy
      */
     private static final JDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
 
+    /**
+     * The branch associated with the working copy.
+     */
+    private final SvnBranch theBranch;
+
+    /**
+     * The alias of the branch that is checked out.
+     */
+    private final String theAlias;
+
+    /**
+     * The path at which the branch is checked out.
+     */
+    private final File theLocation;
+
+    /**
+     * The revision at which the branch is checked out.
+     */
+    private final long theRevision;
+
+    /**
+     * The updates.
+     */
+    private final UpdateStatusList theUpdates;
+
+    /**
+     * The project definition.
+     */
+    private MvnProjectDefinition theProject = null;
+
+    /**
+     * Constructor.
+     * @param pLocation the location
+     * @param pBranch the branch
+     * @param pRevision the checked out revision
+     * @throws JOceanusException on error
+     */
+    private SvnWorkingCopy(final File pLocation,
+                           final SvnBranch pBranch,
+                           final SVNRevision pRevision) throws JOceanusException {
+        /* Store parameters */
+        theBranch = pBranch;
+        theLocation = pLocation;
+        theAlias = theLocation.getName();
+        theRevision = pRevision.getNumber();
+        theUpdates = new UpdateStatusList();
+
+        /* Determine the location of the project definition */
+        File myPom = MvnProjectDefinition.getProjectDefFile(theLocation);
+        if (myPom != null) {
+            theProject = MvnProjectDefinition.parseProjectFile(myPom);
+        }
+    }
+
     @Override
     public String formatObject() {
         return getFullName();
@@ -127,36 +181,6 @@ public final class SvnWorkingCopy
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * The branch associated with the working copy.
-     */
-    private final SvnBranch theBranch;
-
-    /**
-     * The alias of the branch that is checked out.
-     */
-    private final String theAlias;
-
-    /**
-     * The path at which the branch is checked out.
-     */
-    private final File theLocation;
-
-    /**
-     * The revision at which the branch is checked out.
-     */
-    private final long theRevision;
-
-    /**
-     * The updates.
-     */
-    private final UpdateStatusList theUpdates;
-
-    /**
-     * The project definition.
-     */
-    private MvnProjectDefinition theProject = null;
 
     /**
      * Get branch.
@@ -212,30 +236,6 @@ public final class SvnWorkingCopy
      */
     public MvnProjectDefinition getProjectDefinition() {
         return theProject;
-    }
-
-    /**
-     * Constructor.
-     * @param pLocation the location
-     * @param pBranch the branch
-     * @param pRevision the checked out revision
-     * @throws JOceanusException on error
-     */
-    private SvnWorkingCopy(final File pLocation,
-                           final SvnBranch pBranch,
-                           final SVNRevision pRevision) throws JOceanusException {
-        /* Store parameters */
-        theBranch = pBranch;
-        theLocation = pLocation;
-        theAlias = theLocation.getName();
-        theRevision = pRevision.getNumber();
-        theUpdates = new UpdateStatusList();
-
-        /* Determine the location of the project definition */
-        File myPom = MvnProjectDefinition.getProjectDefFile(theLocation);
-        if (myPom != null) {
-            theProject = MvnProjectDefinition.parseProjectFile(myPom);
-        }
     }
 
     /**
@@ -397,33 +397,6 @@ public final class SvnWorkingCopy
          */
         private static final JDataField FIELD_LOC = FIELD_DEFS.declareLocalField("Location");
 
-        @Override
-        public String formatObject() {
-            return "WorkingCopySet(" + size() + ")";
-        }
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_REPO.equals(pField)) {
-                return theRepository;
-            }
-            if (FIELD_LOC.equals(pField)) {
-                return theLocation.getAbsolutePath();
-            }
-
-            /* Unknown */
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * The repository for which these are working sets.
          */
@@ -433,22 +406,6 @@ public final class SvnWorkingCopy
          * The base location for the working sets.
          */
         private final File theLocation;
-
-        /**
-         * Get Location.
-         * @return the location
-         */
-        public File getLocation() {
-            return theLocation;
-        }
-
-        /**
-         * Get Repository.
-         * @return the repository
-         */
-        public SvnRepository getRepository() {
-            return theRepository;
-        }
 
         /**
          * Constructor.
@@ -492,6 +449,49 @@ public final class SvnWorkingCopy
 
             /* Analyse the WorkingCopySet */
             analyseWorkingCopySet(pReport);
+        }
+
+        @Override
+        public String formatObject() {
+            return "WorkingCopySet(" + size() + ")";
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_REPO.equals(pField)) {
+                return theRepository;
+            }
+            if (FIELD_LOC.equals(pField)) {
+                return theLocation.getAbsolutePath();
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Get Location.
+         * @return the location
+         */
+        public File getLocation() {
+            return theLocation;
+        }
+
+        /**
+         * Get Repository.
+         * @return the repository
+         */
+        public SvnRepository getRepository() {
+            return theRepository;
         }
 
         /**

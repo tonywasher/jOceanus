@@ -213,11 +213,6 @@ public final class SvnTag
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(SvnTagList.class.getSimpleName(), ScmTagList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Parent Component.
          */
@@ -235,6 +230,11 @@ public final class SvnTag
             theComponent = (pParent == null)
                                             ? null
                                             : pParent.getComponent();
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

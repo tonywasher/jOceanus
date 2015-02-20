@@ -82,19 +82,6 @@ public class PortfolioAnalysisSelect
      */
     private final JScrollButton<PortfolioBucket> thePortButton;
 
-    @Override
-    public PortfolioCashFilter getFilter() {
-        PortfolioBucket myPortfolio = theState.getPortfolio();
-        return myPortfolio != null
-                                  ? new PortfolioCashFilter(myPortfolio)
-                                  : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (thePortfolios != null) && !thePortfolios.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -120,6 +107,19 @@ public class PortfolioAnalysisSelect
         /* Create the listener */
         PortfolioListener myListener = new PortfolioListener();
         thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    @Override
+    public PortfolioCashFilter getFilter() {
+        PortfolioBucket myPortfolio = theState.getPortfolio();
+        return myPortfolio != null
+                                  ? new PortfolioCashFilter(myPortfolio)
+                                  : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (thePortfolios != null) && !thePortfolios.isEmpty();
     }
 
     /**
@@ -283,14 +283,6 @@ public class PortfolioAnalysisSelect
         private PortfolioBucket thePortfolio;
 
         /**
-         * Obtain the Portfolio.
-         * @return the portfolio
-         */
-        private PortfolioBucket getPortfolio() {
-            return thePortfolio;
-        }
-
-        /**
          * Constructor.
          */
         private PortfolioState() {
@@ -305,6 +297,14 @@ public class PortfolioAnalysisSelect
         private PortfolioState(final PortfolioState pState) {
             /* Initialise state */
             thePortfolio = pState.getPortfolio();
+        }
+
+        /**
+         * Obtain the Portfolio.
+         * @return the portfolio
+         */
+        private PortfolioBucket getPortfolio() {
+            return thePortfolio;
         }
 
         /**

@@ -114,6 +114,21 @@ public class Deposit
     private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.DEPOSIT_NEWACCOUNT.getValue();
 
     /**
+     * TaxFree Error Text.
+     */
+    private static final String ERROR_TAXFREE = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREE.getValue();
+
+    /**
+     * GrossInterest Error Text.
+     */
+    private static final String ERROR_GROSS = MoneyWiseDataResource.DEPOSIT_ERROR_GROSS.getValue();
+
+    /**
+     * taxFree And GrossInterest Error Text.
+     */
+    private static final String ERROR_TAXFREEGROSS = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS.getValue();
+
+    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -129,19 +144,119 @@ public class Deposit
     private final DepositInfoSet theInfoSet;
 
     /**
-     * TaxFree Error Text.
+     * Copy Constructor.
+     * @param pList the list
+     * @param pDeposit The Deposit to copy
      */
-    private static final String ERROR_TAXFREE = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREE.getValue();
+    protected Deposit(final DepositList pList,
+                      final Deposit pDeposit) {
+        /* Set standard values */
+        super(pList, pDeposit);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+                theInfoSet.cloneDataInfoSet(pDeposit.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
 
     /**
-     * GrossInterest Error Text.
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
      */
-    private static final String ERROR_GROSS = MoneyWiseDataResource.DEPOSIT_ERROR_GROSS.getValue();
+    private Deposit(final DepositList pList,
+                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Category */
+            Object myValue = pValues.getValue(FIELD_CATEGORY);
+            if (myValue instanceof Integer) {
+                setValueCategory((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCategory((String) myValue);
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
+            }
+
+            /* Store the gross flag */
+            myValue = pValues.getValue(FIELD_GROSS);
+            if (myValue instanceof Boolean) {
+                setValueGross((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueGross(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Store the taxFree flag */
+            myValue = pValues.getValue(FIELD_TAXFREE);
+            if (myValue instanceof Boolean) {
+                setValueTaxFree((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (NumberFormatException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
 
     /**
-     * taxFree And GrossInterest Error Text.
+     * Edit Constructor.
+     * @param pList the list
      */
-    private static final String ERROR_TAXFREEGROSS = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS.getValue();
+    public Deposit(final DepositList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
 
     @Override
     public JDataFields declareFields() {
@@ -601,121 +716,6 @@ public class Deposit
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pDeposit The Deposit to copy
-     */
-    protected Deposit(final DepositList pList,
-                      final Deposit pDeposit) {
-        /* Set standard values */
-        super(pList, pDeposit);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
-                theInfoSet.cloneDataInfoSet(pDeposit.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private Deposit(final DepositList pList,
-                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Category */
-            Object myValue = pValues.getValue(FIELD_CATEGORY);
-            if (myValue instanceof Integer) {
-                setValueCategory((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCategory((String) myValue);
-            }
-
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
-            }
-
-            /* Store the Currency */
-            myValue = pValues.getValue(FIELD_CURRENCY);
-            if (myValue instanceof Integer) {
-                setValueCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCurrency((String) myValue);
-            } else if (myValue instanceof AssetCurrency) {
-                setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Store the gross flag */
-            myValue = pValues.getValue(FIELD_GROSS);
-            if (myValue instanceof Boolean) {
-                setValueGross((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueGross(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Store the taxFree flag */
-            myValue = pValues.getValue(FIELD_TAXFREE);
-            if (myValue instanceof Boolean) {
-                setValueTaxFree((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (NumberFormatException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Deposit(final DepositList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
-    /**
      * Set defaults.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
@@ -1170,11 +1170,6 @@ public class Deposit
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The DepositInfo List.
          */
@@ -1184,6 +1179,27 @@ public class Deposit
          * The AccountInfoType list.
          */
         private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE list.
+         * @param pData the DataSet for the list
+         */
+        public DepositList(final MoneyWiseData pData) {
+            super(pData, Deposit.class, MoneyWiseDataType.DEPOSIT);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected DepositList(final DepositList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -1222,27 +1238,11 @@ public class Deposit
             return theInfoTypeList;
         }
 
-        /**
-         * Construct an empty CORE list.
-         * @param pData the DataSet for the list
-         */
-        public DepositList(final MoneyWiseData pData) {
-            super(pData, Deposit.class, MoneyWiseDataType.DEPOSIT);
-        }
-
         @Override
         protected DepositList getEmptyList(final ListStyle pStyle) {
             DepositList myList = new DepositList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected DepositList(final DepositList pSource) {
-            super(pSource);
         }
 
         /**
@@ -1402,6 +1402,18 @@ public class Deposit
         public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Constructor.
+         */
+        protected DepositDataMap() {
+            theUnderlyingMap = new AssetDataMap();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1424,23 +1436,11 @@ public class Deposit
         }
 
         /**
-         * The assetMap.
-         */
-        private AssetDataMap theUnderlyingMap;
-
-        /**
          * Obtain the underlying map.
          * @return the underlying map
          */
         public AssetDataMap getUnderlyingMap() {
             return theUnderlyingMap;
-        }
-
-        /**
-         * Constructor.
-         */
-        protected DepositDataMap() {
-            theUnderlyingMap = new AssetDataMap();
         }
 
         @Override

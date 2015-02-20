@@ -88,6 +88,31 @@ public class SpotPricesTable
     private static final String NLS_DATAENTRY = MoneyWiseUIResource.PRICES_DATAENTRY.getValue();
 
     /**
+     * The Asset column name.
+     */
+    private static final String TITLE_ASSET = SpotSecurityPrice.FIELD_SECURITY.getName();
+
+    /**
+     * The Price column name.
+     */
+    private static final String TITLE_PRICE = SpotSecurityPrice.FIELD_PRICE.getName();
+
+    /**
+     * The previous price column name.
+     */
+    private static final String TITLE_PREVPRICE = SpotSecurityPrice.FIELD_PREVPRICE.getName();
+
+    /**
+     * The previous date column name.
+     */
+    private static final String TITLE_PREVDATE = SpotSecurityPrice.FIELD_PREVDATE.getName();
+
+    /**
+     * Action Column Title.
+     */
+    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
+
+    /**
      * The data view.
      */
     private final transient View theView;
@@ -158,44 +183,6 @@ public class SpotPricesTable
     private final ErrorPanel theError;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    @Override
-    protected void setError(final JOceanusException pError) {
-        theError.addError(pError);
-    }
-
-    /**
-     * The Asset column name.
-     */
-    private static final String TITLE_ASSET = SpotSecurityPrice.FIELD_SECURITY.getName();
-
-    /**
-     * The Price column name.
-     */
-    private static final String TITLE_PRICE = SpotSecurityPrice.FIELD_PRICE.getName();
-
-    /**
-     * The previous price column name.
-     */
-    private static final String TITLE_PREVPRICE = SpotSecurityPrice.FIELD_PREVPRICE.getName();
-
-    /**
-     * The previous date column name.
-     */
-    private static final String TITLE_PREVDATE = SpotSecurityPrice.FIELD_PREVDATE.getName();
-
-    /**
-     * Action Column Title.
-     */
-    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -259,6 +246,19 @@ public class SpotPricesTable
 
         /* Create the listener */
         new SpotViewListener();
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    @Override
+    protected void setError(final JOceanusException pError) {
+        theError.addError(pError);
     }
 
     /**

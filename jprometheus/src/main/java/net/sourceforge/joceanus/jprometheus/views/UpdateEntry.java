@@ -45,6 +45,16 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
     private DataList<T, E> theDataList;
 
     /**
+     * Constructor.
+     * @param pDataType the dataType
+     */
+    protected UpdateEntry(final E pDataType) {
+        /* Store details */
+        theDataType = pDataType;
+        theDataList = null;
+    }
+
+    /**
      * Obtain the name of the entry.
      * @return the name
      */
@@ -75,16 +85,6 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void setDataList(final DataList<T, E> pDataList) {
         theDataList = pDataList;
-    }
-
-    /**
-     * Constructor.
-     * @param pDataType the dataType
-     */
-    protected UpdateEntry(final E pDataType) {
-        /* Store details */
-        theDataType = pDataType;
-        theDataList = null;
     }
 
     /**

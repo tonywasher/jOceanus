@@ -53,11 +53,6 @@ public class TransactionInfoType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Data length.
      */
@@ -67,40 +62,6 @@ public class TransactionInfoType
      * Comment length.
      */
     protected static final int COMMENT_LEN = 50;
-
-    /**
-     * Return the Info class of the InfoType.
-     * @return the class
-     */
-    public TransactionInfoClass getInfoClass() {
-        return super.getStaticClass();
-    }
-
-    /**
-     * Return the Data Type of the EventInfoType.
-     * @return the data type
-     */
-    public DataType getDataType() {
-        return getInfoClass().getDataType();
-    }
-
-    /**
-     * is this a Link?
-     * @return true/false
-     */
-    public boolean isLink() {
-        return getInfoClass().isLink();
-    }
-
-    @Override
-    public TransactionInfoType getBase() {
-        return (TransactionInfoType) super.getBase();
-    }
-
-    @Override
-    public TransactionInfoTypeList getList() {
-        return (TransactionInfoTypeList) super.getList();
-    }
 
     /**
      * Copy Constructor.
@@ -145,6 +106,45 @@ public class TransactionInfoType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Info class of the InfoType.
+     * @return the class
+     */
+    public TransactionInfoClass getInfoClass() {
+        return super.getStaticClass();
+    }
+
+    /**
+     * Return the Data Type of the EventInfoType.
+     * @return the data type
+     */
+    public DataType getDataType() {
+        return getInfoClass().getDataType();
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+        return getInfoClass().isLink();
+    }
+
+    @Override
+    public TransactionInfoType getBase() {
+        return (TransactionInfoType) super.getBase();
+    }
+
+    @Override
+    public TransactionInfoTypeList getList() {
+        return (TransactionInfoTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link TransactionInfoType} objects.
      */
@@ -154,6 +154,22 @@ public class TransactionInfoType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE Info list.
+         * @param pData the DataSet for the list
+         */
+        public TransactionInfoTypeList(final DataSet<?, ?> pData) {
+            super(TransactionInfoType.class, pData, MoneyWiseDataType.TRANSINFOTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TransactionInfoTypeList(final TransactionInfoTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -173,22 +189,6 @@ public class TransactionInfoType
         @Override
         protected Class<TransactionInfoClass> getEnumClass() {
             return TransactionInfoClass.class;
-        }
-
-        /**
-         * Construct an empty CORE Info list.
-         * @param pData the DataSet for the list
-         */
-        public TransactionInfoTypeList(final DataSet<?, ?> pData) {
-            super(TransactionInfoType.class, pData, MoneyWiseDataType.TRANSINFOTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TransactionInfoTypeList(final TransactionInfoTypeList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -89,6 +89,70 @@ public class TaxYear
      */
     private static final String ERROR_LISTGAP = MoneyWiseDataResource.TAXYEAR_ERROR_LISTGAP.getValue();
 
+    /**
+     * Do we have an InfoSet.
+     */
+    private final boolean hasInfoSet;
+
+    /**
+     * Should we use infoSet for DataState etc.
+     */
+    private final boolean useInfoSet;
+
+    /**
+     * TaxInfoSet.
+     */
+    private final TaxYearInfoSet theInfoSet;
+
+    /**
+     * Construct a copy of a TaxYear.
+     * @param pList The List to build into
+     * @param pTaxYear The TaxYear to copy
+     */
+    public TaxYear(final TaxYearList pList,
+                   final TaxYear pTaxYear) {
+        /* Initialise item */
+        super(pList, pTaxYear);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+                theInfoSet.cloneDataInfoSet(pTaxYear.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private TaxYear(final TaxYearList pList,
+                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Create the InfoSet */
+        theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -112,21 +176,6 @@ public class TaxYear
         /* Pass onwards */
         return super.getFieldValue(pField);
     }
-
-    /**
-     * Do we have an InfoSet.
-     */
-    private final boolean hasInfoSet;
-
-    /**
-     * Should we use infoSet for DataState etc.
-     */
-    private final boolean useInfoSet;
-
-    /**
-     * TaxInfoSet.
-     */
-    private final TaxYearInfoSet theInfoSet;
 
     @Override
     public TaxYearInfoSet getInfoSet() {
@@ -650,55 +699,6 @@ public class TaxYear
     }
 
     /**
-     * Construct a copy of a TaxYear.
-     * @param pList The List to build into
-     * @param pTaxYear The TaxYear to copy
-     */
-    public TaxYear(final TaxYearList pList,
-                   final TaxYear pTaxYear) {
-        /* Initialise item */
-        super(pList, pTaxYear);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
-                theInfoSet.cloneDataInfoSet(pTaxYear.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private TaxYear(final TaxYearList pList,
-                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Create the InfoSet */
-        theInfoSet = new TaxYearInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
      * adjust values after taxRegime change.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
@@ -768,11 +768,6 @@ public class TaxYear
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, TaxYearBaseList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The TaxInfo List.
          */
@@ -787,6 +782,27 @@ public class TaxYear
          * The NewYear.
          */
         private TaxYear theNewYear = null;
+
+        /**
+         * Construct an empty CORE TaxYear list.
+         * @param pData the DataSet for the list
+         */
+        public TaxYearList(final MoneyWiseData pData) {
+            super(pData, TaxYear.class, MoneyWiseDataType.TAXYEAR);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxYearList(final TaxYearList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -831,22 +847,6 @@ public class TaxYear
         @Override
         protected TaxYearDataMap getDataMap() {
             return (TaxYearDataMap) super.getDataMap();
-        }
-
-        /**
-         * Construct an empty CORE TaxYear list.
-         * @param pData the DataSet for the list
-         */
-        public TaxYearList(final MoneyWiseData pData) {
-            super(pData, TaxYear.class, MoneyWiseDataType.TAXYEAR);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TaxYearList(final TaxYearList pSource) {
-            super(pSource);
         }
 
         @Override

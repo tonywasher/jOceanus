@@ -103,58 +103,6 @@ public class QIFAccount
      */
     private final Enum<?> theClass;
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
-     * Obtain the Name.
-     * @return the Name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    /**
-     * Obtain the description.
-     * @return the Name
-     */
-    public String getDesc() {
-        return theDesc;
-    }
-
-    /**
-     * Obtain the account type.
-     * @return the Type
-     */
-    public String getType() {
-        return QIF_ACTCATMAP.get(theClass);
-    }
-
-    /**
-     * Create the CategoryClass to type map.
-     * @return the map
-     */
-    private static Map<Enum<?>, String> createClassMap() {
-        /* Create the map */
-        Map<Enum<?>, String> myMap = new HashMap<Enum<?>, String>();
-
-        /* Add the entries */
-        myMap.put(DepositCategoryClass.CHECKING, QIFACT_BANK);
-        myMap.put(DepositCategoryClass.SAVINGS, QIFACT_BANK);
-        myMap.put(DepositCategoryClass.BOND, QIFACT_BANK);
-        myMap.put(CashCategoryClass.CASH, QIFACT_CASH);
-        myMap.put(CashCategoryClass.AUTOEXPENSE, QIFACT_CASH);
-        myMap.put(LoanCategoryClass.CREDITCARD, QIFACT_CCARD);
-        myMap.put(MoneyWiseDataType.PORTFOLIO, QIFACT_INVST);
-        myMap.put(LoanCategoryClass.PRIVATELOAN, QIFACT_ASSET);
-        myMap.put(LoanCategoryClass.LOAN, QIFACT_LOAN);
-
-        /* Return the map */
-        return myMap;
-    }
-
     /**
      * Constructor.
      * @param pFile the QIF File
@@ -283,6 +231,58 @@ public class QIFAccount
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the description.
+     * @return the Name
+     */
+    public String getDesc() {
+        return theDesc;
+    }
+
+    /**
+     * Obtain the account type.
+     * @return the Type
+     */
+    public String getType() {
+        return QIF_ACTCATMAP.get(theClass);
+    }
+
+    /**
+     * Create the CategoryClass to type map.
+     * @return the map
+     */
+    private static Map<Enum<?>, String> createClassMap() {
+        /* Create the map */
+        Map<Enum<?>, String> myMap = new HashMap<Enum<?>, String>();
+
+        /* Add the entries */
+        myMap.put(DepositCategoryClass.CHECKING, QIFACT_BANK);
+        myMap.put(DepositCategoryClass.SAVINGS, QIFACT_BANK);
+        myMap.put(DepositCategoryClass.BOND, QIFACT_BANK);
+        myMap.put(CashCategoryClass.CASH, QIFACT_CASH);
+        myMap.put(CashCategoryClass.AUTOEXPENSE, QIFACT_CASH);
+        myMap.put(LoanCategoryClass.CREDITCARD, QIFACT_CCARD);
+        myMap.put(MoneyWiseDataType.PORTFOLIO, QIFACT_INVST);
+        myMap.put(LoanCategoryClass.PRIVATELOAN, QIFACT_ASSET);
+        myMap.put(LoanCategoryClass.LOAN, QIFACT_LOAN);
+
+        /* Return the map */
+        return myMap;
+    }
+
+    @Override
     public int compareTo(final QIFAccount pThat) {
         return theName.compareTo(pThat.getName());
     }
@@ -292,6 +292,15 @@ public class QIFAccount
      */
     public class QIFAccountNameLine
             extends QIFStringLine<QAccountLineType> {
+        /**
+         * Constructor.
+         * @param pName the Name
+         */
+        protected QIFAccountNameLine(final String pName) {
+            /* Call super-constructor */
+            super(pName);
+        }
+
         @Override
         public QAccountLineType getLineType() {
             return QAccountLineType.NAME;
@@ -304,15 +313,6 @@ public class QIFAccount
         public String getName() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pName the Name
-         */
-        protected QIFAccountNameLine(final String pName) {
-            /* Call super-constructor */
-            super(pName);
-        }
     }
 
     /**
@@ -320,6 +320,15 @@ public class QIFAccount
      */
     public class QIFAccountDescLine
             extends QIFStringLine<QAccountLineType> {
+        /**
+         * Constructor.
+         * @param pDesc the Description
+         */
+        protected QIFAccountDescLine(final String pDesc) {
+            /* Call super-constructor */
+            super(pDesc);
+        }
+
         @Override
         public QAccountLineType getLineType() {
             return QAccountLineType.DESCRIPTION;
@@ -332,15 +341,6 @@ public class QIFAccount
         public String getDesc() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pDesc the Description
-         */
-        protected QIFAccountDescLine(final String pDesc) {
-            /* Call super-constructor */
-            super(pDesc);
-        }
     }
 
     /**
@@ -348,28 +348,10 @@ public class QIFAccount
      */
     public class QIFAccountTypeLine
             extends QIFStringLine<QAccountLineType> {
-        @Override
-        public QAccountLineType getLineType() {
-            return QAccountLineType.TYPE;
-        }
-
         /**
          * The Account Category Class.
          */
         private final Enum<?> theClass;
-
-        @Override
-        public String toString() {
-            return theClass.toString();
-        }
-
-        /**
-         * Obtain account class.
-         * @return the account class
-         */
-        public Enum<?> getAccountClass() {
-            return theClass;
-        }
 
         /**
          * Constructor.
@@ -407,6 +389,24 @@ public class QIFAccount
             /* Store the class */
             theClass = myClass;
         }
+
+        @Override
+        public QAccountLineType getLineType() {
+            return QAccountLineType.TYPE;
+        }
+
+        @Override
+        public String toString() {
+            return theClass.toString();
+        }
+
+        /**
+         * Obtain account class.
+         * @return the account class
+         */
+        public Enum<?> getAccountClass() {
+            return theClass;
+        }
     }
 
     /**
@@ -414,6 +414,15 @@ public class QIFAccount
      */
     public class QIFAccountLimitLine
             extends QIFMoneyLine<QAccountLineType> {
+        /**
+         * Constructor.
+         * @param pLimit the Credit Limit
+         */
+        protected QIFAccountLimitLine(final JMoney pLimit) {
+            /* Call super-constructor */
+            super(pLimit);
+        }
+
         @Override
         public QAccountLineType getLineType() {
             return QAccountLineType.CREDITLIMIT;
@@ -425,15 +434,6 @@ public class QIFAccount
          */
         public JMoney getCreditLimit() {
             return getMoney();
-        }
-
-        /**
-         * Constructor.
-         * @param pLimit the Credit Limit
-         */
-        protected QIFAccountLimitLine(final JMoney pLimit) {
-            /* Call super-constructor */
-            super(pLimit);
         }
     }
 }

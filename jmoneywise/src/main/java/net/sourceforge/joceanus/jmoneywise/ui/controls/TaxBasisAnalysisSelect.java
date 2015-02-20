@@ -82,19 +82,6 @@ public class TaxBasisAnalysisSelect
      */
     private final JScrollButton<TaxBasisBucket> theButton;
 
-    @Override
-    public TaxBasisFilter getFilter() {
-        TaxBasisBucket myBasis = theState.getTaxBasis();
-        return myBasis != null
-                              ? new TaxBasisFilter(myBasis)
-                              : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (theTaxBases != null) && !theTaxBases.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -119,6 +106,19 @@ public class TaxBasisAnalysisSelect
 
         /* Create the listener */
         theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
+    }
+
+    @Override
+    public TaxBasisFilter getFilter() {
+        TaxBasisBucket myBasis = theState.getTaxBasis();
+        return myBasis != null
+                              ? new TaxBasisFilter(myBasis)
+                              : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (theTaxBases != null) && !theTaxBases.isEmpty();
     }
 
     /**
@@ -279,14 +279,6 @@ public class TaxBasisAnalysisSelect
         private TaxBasisBucket theBasis;
 
         /**
-         * Obtain the TaxBasis Bucket.
-         * @return the Basis
-         */
-        private TaxBasisBucket getTaxBasis() {
-            return theBasis;
-        }
-
-        /**
          * Constructor.
          */
         private TaxBasisState() {
@@ -301,6 +293,14 @@ public class TaxBasisAnalysisSelect
         private TaxBasisState(final TaxBasisState pState) {
             /* Initialise state */
             theBasis = pState.getTaxBasis();
+        }
+
+        /**
+         * Obtain the TaxBasis Bucket.
+         * @return the Basis
+         */
+        private TaxBasisBucket getTaxBasis() {
+            return theBasis;
         }
 
         /**

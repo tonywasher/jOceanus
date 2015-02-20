@@ -67,11 +67,6 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(TransactionGroup.class.getSimpleName(), DataGroup.FIELD_DEFS);
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Active Date.
      */
@@ -93,6 +88,22 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
     private Payee thePayee;
 
     /**
+     * Constructor.
+     * @param pParent the parent.
+     * @param pClass the class
+     */
+    protected TransactionBaseGroup(final T pParent,
+                                   final Class<T> pClass) {
+        /* Call super-constructor */
+        super(pParent, pClass);
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
      * Obtain Owner.
      * @return the owner account if it exists
      */
@@ -106,17 +117,6 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
      */
     public Payee getPayee() {
         return thePayee;
-    }
-
-    /**
-     * Constructor.
-     * @param pParent the parent.
-     * @param pClass the class
-     */
-    protected TransactionBaseGroup(final T pParent,
-                                   final Class<T> pClass) {
-        /* Call super-constructor */
-        super(pParent, pClass);
     }
 
     /**

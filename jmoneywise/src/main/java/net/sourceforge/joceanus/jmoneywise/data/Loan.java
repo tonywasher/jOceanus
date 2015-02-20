@@ -115,6 +115,94 @@ public class Loan
      */
     private final LoanInfoSet theInfoSet;
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pLoan The Loan to copy
+     */
+    protected Loan(final LoanList pList,
+                   final Loan pLoan) {
+        /* Set standard values */
+        super(pList, pLoan);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
+                theInfoSet.cloneDataInfoSet(pLoan.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Loan(final LoanList pList,
+                 final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Category */
+        Object myValue = pValues.getValue(FIELD_CATEGORY);
+        if (myValue instanceof Integer) {
+            setValueCategory((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueCategory((String) myValue);
+        }
+
+        /* Store the Parent */
+        myValue = pValues.getValue(FIELD_PARENT);
+        if (myValue instanceof Integer) {
+            setValueParent((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueParent((String) myValue);
+        }
+
+        /* Store the Currency */
+        myValue = pValues.getValue(FIELD_CURRENCY);
+        if (myValue instanceof Integer) {
+            setValueCurrency((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueCurrency((String) myValue);
+        } else if (myValue instanceof AssetCurrency) {
+            setValueCurrency((AssetCurrency) myValue);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public Loan(final LoanList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -513,94 +601,6 @@ public class Loan
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pLoan The Loan to copy
-     */
-    protected Loan(final LoanList pList,
-                   final Loan pLoan) {
-        /* Set standard values */
-        super(pList, pLoan);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
-                theInfoSet.cloneDataInfoSet(pLoan.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private Loan(final LoanList pList,
-                 final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Category */
-        Object myValue = pValues.getValue(FIELD_CATEGORY);
-        if (myValue instanceof Integer) {
-            setValueCategory((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCategory((String) myValue);
-        }
-
-        /* Store the Parent */
-        myValue = pValues.getValue(FIELD_PARENT);
-        if (myValue instanceof Integer) {
-            setValueParent((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueParent((String) myValue);
-        }
-
-        /* Store the Currency */
-        myValue = pValues.getValue(FIELD_CURRENCY);
-        if (myValue instanceof Integer) {
-            setValueCurrency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCurrency((String) myValue);
-        } else if (myValue instanceof AssetCurrency) {
-            setValueCurrency((AssetCurrency) myValue);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Loan(final LoanList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
-    /**
      * Set defaults.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
@@ -942,11 +942,6 @@ public class Loan
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The LoanInfo List.
          */
@@ -956,6 +951,27 @@ public class Loan
          * The AccountInfoType list.
          */
         private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE list.
+         * @param pData the DataSet for the list
+         */
+        public LoanList(final MoneyWiseData pData) {
+            super(pData, Loan.class, MoneyWiseDataType.LOAN);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected LoanList(final LoanList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -994,27 +1010,11 @@ public class Loan
             return theInfoTypeList;
         }
 
-        /**
-         * Construct an empty CORE list.
-         * @param pData the DataSet for the list
-         */
-        public LoanList(final MoneyWiseData pData) {
-            super(pData, Loan.class, MoneyWiseDataType.LOAN);
-        }
-
         @Override
         protected LoanList getEmptyList(final ListStyle pStyle) {
             LoanList myList = new LoanList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected LoanList(final LoanList pSource) {
-            super(pSource);
         }
 
         /**
@@ -1157,6 +1157,19 @@ public class Loan
         public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Constructor.
+         * @param pDeposits the deposits list
+         */
+        protected LoanDataMap(final DepositList pDeposits) {
+            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1176,19 +1189,6 @@ public class Loan
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * The assetMap.
-         */
-        private AssetDataMap theUnderlyingMap;
-
-        /**
-         * Constructor.
-         * @param pDeposits the deposits list
-         */
-        protected LoanDataMap(final DepositList pDeposits) {
-            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
         }
 
         @Override

@@ -36,19 +36,6 @@ public class QIFPayee
     private final String theName;
 
     /**
-     * Obtain the Name.
-     * @return the Name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
      * Constructor.
      * @param pPayee the Payee
      */
@@ -64,6 +51,19 @@ public class QIFPayee
     public QIFPayee(final String pPayee) {
         /* Store data */
         theName = pPayee;
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override

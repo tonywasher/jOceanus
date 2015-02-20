@@ -58,11 +58,6 @@ public class DataKey
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * DataKeySet Field Id.
      */
@@ -97,6 +92,151 @@ public class DataKey
      * Encrypted Symmetric Key Length.
      */
     public static final int KEYLEN = SymmetricKey.IDSIZE;
+
+    /**
+     * Copy Constructor.
+     * @param pList the list to add to
+     * @param pSource The Key to copy
+     */
+    protected DataKey(final DataKeyList pList,
+                      final DataKey pSource) {
+        /* Set standard values */
+        super(pList, pSource);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private DataKey(final DataKeyList pList,
+                    final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the DataKeySet */
+        Object myValue = pValues.getValue(FIELD_KEYSET);
+        if (myValue instanceof Integer) {
+            /* Store the integer */
+            Integer myInt = (Integer) myValue;
+            setValueDataKeySet(myInt);
+
+            /* Resolve the DataKeySet */
+            DataSet<?, ?> myData = getDataSet();
+            resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
+            DataKeySet myKeySet = getDataKeySet();
+
+            /* Store the KeyType */
+            myValue = pValues.getValue(FIELD_KEYTYPE);
+            if (myValue instanceof Integer) {
+                myInt = (Integer) myValue;
+                setValueKeyType(myInt);
+                setValueKeyType(SymKeyType.fromId(myInt));
+            }
+
+            /* Store the PrimeHash indicator */
+            myValue = pValues.getValue(FIELD_HASHPRIME);
+            Boolean isHashPrime = (myValue instanceof Boolean)
+                                                              ? (Boolean) myValue
+                                                              : Boolean.TRUE;
+            setValueHashPrime(isHashPrime);
+
+            /* Store the KeyDef */
+            myValue = pValues.getValue(FIELD_KEYDEF);
+            if (myValue instanceof byte[]) {
+                byte[] myBytes = (byte[]) myValue;
+                setValueSecuredKeyDef(myBytes);
+
+                /* Create the Symmetric Key from the wrapped data */
+                PasswordHash myHash = myKeySet.getPasswordHash(isHashPrime);
+                CipherSet myCipher = myHash.getCipherSet();
+                SymmetricKey myKey = myCipher.deriveSymmetricKey(myBytes, getKeyType());
+                setValueDataKey(myKey);
+
+                /* Access the Cipher */
+                setValueCipher(myKey.getDataCipher());
+
+                /* Register the DataKey */
+                myKeySet.registerDataKey(this);
+            }
+        }
+    }
+
+    /**
+     * Constructor for a new DataKey in a new DataKeySet.
+     * @param pList the list to add to
+     * @param pKeySet the KeySet to which this key belongs
+     * @param pKeyType the Key type of the new key
+     * @throws JOceanusException on error
+     */
+    private DataKey(final DataKeyList pList,
+                    final DataKeySet pKeySet,
+                    final SymKeyType pKeyType) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, 0);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Details */
+            setValueDataKeySet(pKeySet);
+            setValueKeyType(pKeyType);
+
+            /* Create the new key */
+            Boolean isHashPrime = pKeySet.isHashPrime();
+            setValueHashPrime(isHashPrime);
+
+            /* Create the new key */
+            PasswordHash myHash = pKeySet.getPasswordHash(isHashPrime);
+            CipherSet myCipher = myHash.getCipherSet();
+            SecurityGenerator myGenerator = myHash.getSecurityGenerator();
+            SymmetricKey myKey = myGenerator.generateSymmetricKey(pKeyType);
+            setValueDataKey(myKey);
+
+            /* Store its secured keyDef */
+            setValueSecuredKeyDef(myCipher.secureSymmetricKey(myKey));
+
+            /* Access the Cipher */
+            setValueCipher(myKey.getDataCipher());
+
+            /* Register the DataKey */
+            pKeySet.registerDataKey(this);
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Constructor for a cloned DataKey in a new DataKeySet.
+     * @param pList the list to add to
+     * @param pKeySet the ControlKey to which this key belongs
+     * @param pDataKey the DataKey to clone
+     * @throws JOceanusException on error
+     */
+    private DataKey(final DataKeyList pList,
+                    final DataKeySet pKeySet,
+                    final DataKey pDataKey) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, 0);
+
+        /* Store the KeySet details */
+        setValueDataKeySet(pKeySet);
+
+        /* Copy the key details */
+        setValueDataKey(pDataKey.getDataKey());
+        setValueHashPrime(pDataKey.isHashPrime());
+        setValueSecuredKeyDef(pDataKey.getSecuredKeyDef());
+        setValueCipher(pDataKey.getCipher());
+        setValueKeyType(pDataKey.getKeyType());
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     /**
      * Get the DataKeySet.
@@ -296,146 +436,6 @@ public class DataKey
         return (DataKeyList) super.getList();
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list to add to
-     * @param pSource The Key to copy
-     */
-    protected DataKey(final DataKeyList pList,
-                      final DataKey pSource) {
-        /* Set standard values */
-        super(pList, pSource);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private DataKey(final DataKeyList pList,
-                    final DataValues<CryptographyDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the DataKeySet */
-        Object myValue = pValues.getValue(FIELD_KEYSET);
-        if (myValue instanceof Integer) {
-            /* Store the integer */
-            Integer myInt = (Integer) myValue;
-            setValueDataKeySet(myInt);
-
-            /* Resolve the DataKeySet */
-            DataSet<?, ?> myData = getDataSet();
-            resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
-            DataKeySet myKeySet = getDataKeySet();
-
-            /* Store the KeyType */
-            myValue = pValues.getValue(FIELD_KEYTYPE);
-            if (myValue instanceof Integer) {
-                myInt = (Integer) myValue;
-                setValueKeyType(myInt);
-                setValueKeyType(SymKeyType.fromId(myInt));
-            }
-
-            /* Store the PrimeHash indicator */
-            myValue = pValues.getValue(FIELD_HASHPRIME);
-            Boolean isHashPrime = (myValue instanceof Boolean)
-                                                              ? (Boolean) myValue
-                                                              : Boolean.TRUE;
-            setValueHashPrime(isHashPrime);
-
-            /* Store the KeyDef */
-            myValue = pValues.getValue(FIELD_KEYDEF);
-            if (myValue instanceof byte[]) {
-                byte[] myBytes = (byte[]) myValue;
-                setValueSecuredKeyDef(myBytes);
-
-                /* Create the Symmetric Key from the wrapped data */
-                PasswordHash myHash = myKeySet.getPasswordHash(isHashPrime);
-                CipherSet myCipher = myHash.getCipherSet();
-                SymmetricKey myKey = myCipher.deriveSymmetricKey(myBytes, getKeyType());
-                setValueDataKey(myKey);
-
-                /* Access the Cipher */
-                setValueCipher(myKey.getDataCipher());
-
-                /* Register the DataKey */
-                myKeySet.registerDataKey(this);
-            }
-        }
-    }
-
-    /**
-     * Constructor for a new DataKey in a new DataKeySet.
-     * @param pList the list to add to
-     * @param pKeySet the KeySet to which this key belongs
-     * @param pKeyType the Key type of the new key
-     * @throws JOceanusException on error
-     */
-    private DataKey(final DataKeyList pList,
-                    final DataKeySet pKeySet,
-                    final SymKeyType pKeyType) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Details */
-            setValueDataKeySet(pKeySet);
-            setValueKeyType(pKeyType);
-
-            /* Create the new key */
-            Boolean isHashPrime = pKeySet.isHashPrime();
-            setValueHashPrime(isHashPrime);
-
-            /* Create the new key */
-            PasswordHash myHash = pKeySet.getPasswordHash(isHashPrime);
-            CipherSet myCipher = myHash.getCipherSet();
-            SecurityGenerator myGenerator = myHash.getSecurityGenerator();
-            SymmetricKey myKey = myGenerator.generateSymmetricKey(pKeyType);
-            setValueDataKey(myKey);
-
-            /* Store its secured keyDef */
-            setValueSecuredKeyDef(myCipher.secureSymmetricKey(myKey));
-
-            /* Access the Cipher */
-            setValueCipher(myKey.getDataCipher());
-
-            /* Register the DataKey */
-            pKeySet.registerDataKey(this);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Constructor for a cloned DataKey in a new DataKeySet.
-     * @param pList the list to add to
-     * @param pKeySet the ControlKey to which this key belongs
-     * @param pDataKey the DataKey to clone
-     * @throws JOceanusException on error
-     */
-    private DataKey(final DataKeyList pList,
-                    final DataKeySet pKeySet,
-                    final DataKey pDataKey) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Store the KeySet details */
-        setValueDataKeySet(pKeySet);
-
-        /* Copy the key details */
-        setValueDataKey(pDataKey.getDataKey());
-        setValueHashPrime(pDataKey.isHashPrime());
-        setValueSecuredKeyDef(pDataKey.getSecuredKeyDef());
-        setValueCipher(pDataKey.getCipher());
-        setValueKeyType(pDataKey.getKeyType());
-    }
-
     @Override
     public int compareTo(final DataKey pThat) {
         /* Handle the trivial cases */
@@ -500,26 +500,6 @@ public class DataKey
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return DataKey.FIELD_DEFS;
-        }
-
-        @Override
-        public boolean includeDataXML() {
-            return false;
-        }
-
         /**
          * Construct an empty CORE DataKey list.
          * @param pData the DataSet for the list
@@ -544,6 +524,26 @@ public class DataKey
          */
         private DataKeyList(final DataKeyList pSource) {
             super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return DataKey.FIELD_DEFS;
+        }
+
+        @Override
+        public boolean includeDataXML() {
+            return false;
         }
 
         @Override

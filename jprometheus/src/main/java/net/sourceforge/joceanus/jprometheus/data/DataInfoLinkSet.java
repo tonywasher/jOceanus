@@ -77,6 +77,50 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      */
     private final DataInfoList<T, O, I, S, E> theInfoList;
 
+    /**
+     * Constructor.
+     * @param pList the infoList
+     * @param pOwner the set owner
+     * @param pInfoType the info type
+     */
+    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
+                              final O pOwner,
+                              final I pInfoType) {
+        /* Call super-constructor */
+        super(pList);
+
+        /* Save parameters */
+        theOwner = pOwner;
+        theInfoType = pInfoType;
+        theInfoList = pList;
+
+        /* Allocate the list */
+        theLinks = pList.getEmptyList(pList.getStyle());
+    }
+
+    /**
+     * Constructor.
+     * @param pList the infoList
+     * @param pSet the infoLinkSet to clone
+     */
+    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
+                              final DataInfoLinkSet<T, O, I, S, E> pSet) {
+        /* Call standard constructor */
+        this(pList, pSet.getOwner(), pSet.getInfoType());
+
+        /* Iterator through the links */
+        Iterator<T> myIterator = pSet.iterator();
+        while (myIterator.hasNext()) {
+            T myLink = myIterator.next();
+
+            /* Add a copy item */
+            T myNew = pList.addCopyItem(myLink);
+            theLinks.append(myNew);
+            theLocalFields.declareIndexField(theInfoType.getName());
+            theNumFields++;
+        }
+    }
+
     @Override
     public JDataFields getDataFields() {
         return (theLocalFields == null)
@@ -126,50 +170,6 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      */
     public boolean isEmpty() {
         return theLinks.isEmpty();
-    }
-
-    /**
-     * Constructor.
-     * @param pList the infoList
-     * @param pOwner the set owner
-     * @param pInfoType the info type
-     */
-    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
-                              final O pOwner,
-                              final I pInfoType) {
-        /* Call super-constructor */
-        super(pList);
-
-        /* Save parameters */
-        theOwner = pOwner;
-        theInfoType = pInfoType;
-        theInfoList = pList;
-
-        /* Allocate the list */
-        theLinks = pList.getEmptyList(pList.getStyle());
-    }
-
-    /**
-     * Constructor.
-     * @param pList the infoList
-     * @param pSet the infoLinkSet to clone
-     */
-    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
-                              final DataInfoLinkSet<T, O, I, S, E> pSet) {
-        /* Call standard constructor */
-        this(pList, pSet.getOwner(), pSet.getInfoType());
-
-        /* Iterator through the links */
-        Iterator<T> myIterator = pSet.iterator();
-        while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
-
-            /* Add a copy item */
-            T myNew = pList.addCopyItem(myLink);
-            theLinks.append(myNew);
-            theLocalFields.declareIndexField(theInfoType.getName());
-            theNumFields++;
-        }
     }
 
     /**

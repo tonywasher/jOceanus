@@ -47,18 +47,18 @@ public enum TaxCategorySection {
     private final int theBase;
 
     /**
-     * Get the order base.
-     * @return the order base
-     */
-    protected int getBase() {
-        return theBase;
-    }
-
-    /**
      * Constructor.
      * @param pBase the base
      */
     private TaxCategorySection(final int pBase) {
         theBase = pBase;
+    }
+
+    /**
+     * Get the order base.
+     * @return the order base
+     */
+    protected int getBase() {
+        return theBase;
     }
 }

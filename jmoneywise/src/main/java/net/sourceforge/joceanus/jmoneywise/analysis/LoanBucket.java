@@ -64,38 +64,6 @@ public final class LoanBucket
      */
     private final Boolean isCreditCard;
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        if (FIELD_ISCREDIT.equals(pField)) {
-            return isCreditCard;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the loan category.
-     * @return the loan category
-     */
-    public LoanCategory getCategory() {
-        return theCategory;
-    }
-
-    /**
-     * Is this a creditCard.
-     * @return true/false
-     */
-    public Boolean isCreditCard() {
-        return isCreditCard;
-    }
-
     /**
      * Constructor.
      * @param pAnalysis the analysis
@@ -147,6 +115,38 @@ public final class LoanBucket
         isCreditCard = pBase.isCreditCard();
     }
 
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_CATEGORY.equals(pField)) {
+            return theCategory;
+        }
+        if (FIELD_ISCREDIT.equals(pField)) {
+            return isCreditCard;
+        }
+        return super.getFieldValue(pField);
+    }
+
+    /**
+     * Obtain the loan category.
+     * @return the loan category
+     */
+    public LoanCategory getCategory() {
+        return theCategory;
+    }
+
+    /**
+     * Is this a creditCard.
+     * @return true/false
+     */
+    public Boolean isCreditCard() {
+        return isCreditCard;
+    }
+
     /**
      * Obtain new Spend value.
      * @return the new spend value
@@ -187,11 +187,6 @@ public final class LoanBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.LOAN_LIST.getValue(), AccountBucketList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
@@ -231,6 +226,11 @@ public final class LoanBucket
 
             /* Construct list from base */
             constructFromBase(pBase, pRange);
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

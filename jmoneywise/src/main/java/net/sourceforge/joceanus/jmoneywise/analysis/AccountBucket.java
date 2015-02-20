@@ -108,6 +108,70 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     private final BucketHistory<AccountValues, AccountAttribute> theHistory;
 
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pAccount the account
+     */
+    protected AccountBucket(final Analysis pAnalysis,
+                            final T pAccount) {
+        /* Store the details */
+        theAccount = pAccount;
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Create the history map */
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(new AccountValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    protected AccountBucket(final Analysis pAnalysis,
+                            final AccountBucket<T> pBase,
+                            final JDateDay pDate) {
+        /* Copy details from base */
+        theAccount = pBase.getAccount();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pDate);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    protected AccountBucket(final Analysis pAnalysis,
+                            final AccountBucket<T> pBase,
+                            final JDateDayRange pRange) {
+        /* Copy details from base */
+        theAccount = pBase.getAccount();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pRange);
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
@@ -291,70 +355,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute value */
         return theValues.get(pAttr);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pAccount the account
-     */
-    protected AccountBucket(final Analysis pAnalysis,
-                            final T pAccount) {
-        /* Store the details */
-        theAccount = pAccount;
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Create the history map */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(new AccountValues());
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
-     */
-    protected AccountBucket(final Analysis pAnalysis,
-                            final AccountBucket<T> pBase,
-                            final JDateDay pDate) {
-        /* Copy details from base */
-        theAccount = pBase.getAccount();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pDate);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
-     */
-    protected AccountBucket(final Analysis pAnalysis,
-                            final AccountBucket<T> pBase,
-                            final JDateDayRange pRange) {
-        /* Copy details from base */
-        theAccount = pBase.getAccount();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
-
-        /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pRange);
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -563,11 +563,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucketList.class.getSimpleName());
 
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -577,6 +572,34 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * Analysis field Id.
          */
         private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
+
+        /**
+         * The hidden base total.
+         */
+        private final JMoney theHiddenBaseTotal;
+
+        /**
+         * Construct a top-level List.
+         * @param pClass the bucket class
+         * @param pAnalysis the analysis
+         */
+        protected AccountBucketList(final Class<B> pClass,
+                                    final Analysis pAnalysis) {
+            /* Initialise class */
+            super(pClass);
+            theAnalysis = pAnalysis;
+            theHiddenBaseTotal = new JMoney();
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -588,16 +611,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             }
             return JDataFieldValue.UNKNOWN;
         }
-
-        /**
-         * The analysis.
-         */
-        private final Analysis theAnalysis;
-
-        /**
-         * The hidden base total.
-         */
-        private final JMoney theHiddenBaseTotal;
 
         /**
          * Obtain the analysis.
@@ -615,19 +628,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          */
         protected JMoney getHiddenBaseTotal() {
             return theHiddenBaseTotal;
-        }
-
-        /**
-         * Construct a top-level List.
-         * @param pClass the bucket class
-         * @param pAnalysis the analysis
-         */
-        protected AccountBucketList(final Class<B> pClass,
-                                    final Analysis pAnalysis) {
-            /* Initialise class */
-            super(pClass);
-            theAnalysis = pAnalysis;
-            theHiddenBaseTotal = new JMoney();
         }
 
         /**

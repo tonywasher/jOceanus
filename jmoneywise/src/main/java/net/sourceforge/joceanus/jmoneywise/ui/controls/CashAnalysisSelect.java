@@ -104,19 +104,6 @@ public class CashAnalysisSelect
      */
     private final JScrollButton<CashCategory> theCatButton;
 
-    @Override
-    public CashFilter getFilter() {
-        CashBucket myCash = theState.getCash();
-        return myCash != null
-                             ? new CashFilter(myCash)
-                             : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (theCash != null) && !theCash.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -151,6 +138,19 @@ public class CashAnalysisSelect
         CashListener myListener = new CashListener();
         theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    @Override
+    public CashFilter getFilter() {
+        CashBucket myCash = theState.getCash();
+        return myCash != null
+                             ? new CashFilter(myCash)
+                             : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (theCash != null) && !theCash.isEmpty();
     }
 
     /**
@@ -427,22 +427,6 @@ public class CashAnalysisSelect
         private CashBucket theCash;
 
         /**
-         * Obtain the Cash Bucket.
-         * @return the Cash
-         */
-        private CashBucket getCash() {
-            return theCash;
-        }
-
-        /**
-         * Obtain the Category.
-         * @return the category
-         */
-        private CashCategory getCategory() {
-            return theCategory;
-        }
-
-        /**
          * Constructor.
          */
         private CashState() {
@@ -459,6 +443,22 @@ public class CashAnalysisSelect
             /* Initialise state */
             theCash = pState.getCash();
             theCategory = pState.getCategory();
+        }
+
+        /**
+         * Obtain the Cash Bucket.
+         * @return the Cash
+         */
+        private CashBucket getCash() {
+            return theCash;
+        }
+
+        /**
+         * Obtain the Category.
+         * @return the category
+         */
+        private CashCategory getCategory() {
+            return theCategory;
         }
 
         /**

@@ -251,6 +251,22 @@ public enum TaxCategoryClass implements StaticInterface {
      */
     private final TaxCategorySection theSection;
 
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the order
+     * @param pSection the section
+     */
+    private TaxCategoryClass(final int uId,
+                             final int uOrder,
+                             final TaxCategorySection pSection) {
+        /* Set values */
+        theId = uId;
+        theOrder = pSection.getBase()
+                   + uOrder;
+        theSection = pSection;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -279,22 +295,6 @@ public enum TaxCategoryClass implements StaticInterface {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the order
-     * @param pSection the section
-     */
-    private TaxCategoryClass(final int uId,
-                             final int uOrder,
-                             final TaxCategorySection pSection) {
-        /* Set values */
-        theId = uId;
-        theOrder = pSection.getBase()
-                   + uOrder;
-        theSection = pSection;
     }
 
     /**

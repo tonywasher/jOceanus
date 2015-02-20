@@ -56,11 +56,6 @@ public class ControlData
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Field ID for Data Version.
      */
@@ -75,6 +70,54 @@ public class ControlData
      * Error message for already exists.
      */
     public static final String ERROR_CTLEXISTS = PrometheusDataResource.CONTROLDATA_ERROR_EXISTS.getValue();
+
+    /**
+     * Copy Constructor.
+     * @param pList the associated list
+     * @param pSource The source
+     */
+    protected ControlData(final ControlDataList pList,
+                          final ControlData pSource) {
+        /* Set standard values */
+        super(pList, pSource);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private ControlData(final ControlDataList pList,
+                        final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Version */
+        Object myValue = pValues.getValue(FIELD_DATAVERSION);
+        if (myValue instanceof Integer) {
+            setValueDataVersion((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueDataVersion(Integer.valueOf((String) myValue));
+        }
+
+        /* Store the ControlKey */
+        myValue = pValues.getValue(FIELD_CONTROLKEY);
+        if (myValue instanceof Integer) {
+            /* Store value */
+            Integer myInt = (Integer) myValue;
+            setValueControlKey(myInt);
+
+            /* Resolve the ControlKey */
+            DataSet<?, ?> myData = getDataSet();
+            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     /**
      * Get the data version.
@@ -155,49 +198,6 @@ public class ControlData
         return (ControlDataList) super.getList();
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the associated list
-     * @param pSource The source
-     */
-    protected ControlData(final ControlDataList pList,
-                          final ControlData pSource) {
-        /* Set standard values */
-        super(pList, pSource);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private ControlData(final ControlDataList pList,
-                        final DataValues<CryptographyDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Version */
-        Object myValue = pValues.getValue(FIELD_DATAVERSION);
-        if (myValue instanceof Integer) {
-            setValueDataVersion((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueDataVersion(Integer.valueOf((String) myValue));
-        }
-
-        /* Store the ControlKey */
-        myValue = pValues.getValue(FIELD_CONTROLKEY);
-        if (myValue instanceof Integer) {
-            /* Store value */
-            Integer myInt = (Integer) myValue;
-            setValueControlKey(myInt);
-
-            /* Resolve the ControlKey */
-            DataSet<?, ?> myData = getDataSet();
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-        }
-    }
-
     @Override
     public int compareTo(final ControlData pThat) {
         /* Handle the trivial cases */
@@ -258,6 +258,32 @@ public class ControlData
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE Control Data list.
+         * @param pData the DataSet for the list
+         */
+        protected ControlDataList(final DataSet<?, ?> pData) {
+            this(pData, ListStyle.CORE);
+        }
+
+        /**
+         * Construct an empty generic ControlData list.
+         * @param pData the DataSet for the list
+         * @param pStyle the style of the list
+         */
+        protected ControlDataList(final DataSet<?, ?> pData,
+                                  final ListStyle pStyle) {
+            super(ControlData.class, pData, CryptographyDataType.CONTROLDATA, pStyle);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private ControlDataList(final ControlDataList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -284,32 +310,6 @@ public class ControlData
          */
         public ControlData getControl() {
             return peekFirst();
-        }
-
-        /**
-         * Construct an empty CORE Control Data list.
-         * @param pData the DataSet for the list
-         */
-        protected ControlDataList(final DataSet<?, ?> pData) {
-            this(pData, ListStyle.CORE);
-        }
-
-        /**
-         * Construct an empty generic ControlData list.
-         * @param pData the DataSet for the list
-         * @param pStyle the style of the list
-         */
-        protected ControlDataList(final DataSet<?, ?> pData,
-                                  final ListStyle pStyle) {
-            super(ControlData.class, pData, CryptographyDataType.CONTROLDATA, pStyle);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private ControlDataList(final ControlDataList pSource) {
-            super(pSource);
         }
 
         @Override

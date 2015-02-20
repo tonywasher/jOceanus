@@ -142,6 +142,43 @@ public class JiraProject
     private final Map<JiraIssueType, JiraCimIssueType> theIssueFields;
 
     /**
+     * Constructor.
+     * @param pServer the server
+     * @param pProject the underlying project
+     * @throws JOceanusException on error
+     */
+    protected JiraProject(final JiraServer pServer,
+                          final Project pProject) throws JOceanusException {
+        /* Store parameters */
+        super(pProject, pProject.getName());
+        theServer = pServer;
+        theClient = theServer.getClient();
+
+        /* Access parameters */
+        theKey = pProject.getKey();
+        theDesc = pProject.getDescription();
+
+        /* Determine the project lead */
+        theLead = theServer.getUser(pProject.getLead());
+
+        /* Allocate the lists */
+        theIssues = new ArrayList<JiraIssue>();
+        theIssueTypes = new ArrayList<JiraIssueType>();
+        theComponents = new ArrayList<JiraComponent>();
+        theVersions = new ArrayList<JiraVersion>();
+        theRoles = new ArrayList<JiraProjectRole>();
+
+        /* Create the issue fields map */
+        theIssueFields = new HashMap<JiraIssueType, JiraCimIssueType>();
+
+        /* Load IssueTypes etc */
+        loadIssueTypes();
+        loadComponents();
+        loadVersions();
+        loadRoles();
+    }
+
+    /**
      * Get the key of the project.
      * @return the key
      */
@@ -203,43 +240,6 @@ public class JiraProject
      */
     public Iterator<JiraProjectRole> roleIterator() {
         return theRoles.iterator();
-    }
-
-    /**
-     * Constructor.
-     * @param pServer the server
-     * @param pProject the underlying project
-     * @throws JOceanusException on error
-     */
-    protected JiraProject(final JiraServer pServer,
-                          final Project pProject) throws JOceanusException {
-        /* Store parameters */
-        super(pProject, pProject.getName());
-        theServer = pServer;
-        theClient = theServer.getClient();
-
-        /* Access parameters */
-        theKey = pProject.getKey();
-        theDesc = pProject.getDescription();
-
-        /* Determine the project lead */
-        theLead = theServer.getUser(pProject.getLead());
-
-        /* Allocate the lists */
-        theIssues = new ArrayList<JiraIssue>();
-        theIssueTypes = new ArrayList<JiraIssueType>();
-        theComponents = new ArrayList<JiraComponent>();
-        theVersions = new ArrayList<JiraVersion>();
-        theRoles = new ArrayList<JiraProjectRole>();
-
-        /* Create the issue fields map */
-        theIssueFields = new HashMap<JiraIssueType, JiraCimIssueType>();
-
-        /* Load IssueTypes etc */
-        loadIssueTypes();
-        loadComponents();
-        loadVersions();
-        loadRoles();
     }
 
     /**
@@ -644,6 +644,20 @@ public class JiraProject
         private final JiraUser theLead;
 
         /**
+         * Constructor.
+         * @param pComponent the underlying component
+         * @throws JOceanusException on error
+         */
+        private JiraComponent(final Component pComponent) throws JOceanusException {
+            /* Access the details */
+            super(pComponent, pComponent.getName());
+            theDesc = pComponent.getDescription();
+
+            /* Determine the component lead */
+            theLead = theServer.getUser(pComponent.getLead());
+        }
+
+        /**
          * Get the description of the component.
          * @return the description
          */
@@ -657,20 +671,6 @@ public class JiraProject
          */
         public JiraUser getLead() {
             return theLead;
-        }
-
-        /**
-         * Constructor.
-         * @param pComponent the underlying component
-         * @throws JOceanusException on error
-         */
-        private JiraComponent(final Component pComponent) throws JOceanusException {
-            /* Access the details */
-            super(pComponent, pComponent.getName());
-            theDesc = pComponent.getDescription();
-
-            /* Determine the component lead */
-            theLead = theServer.getUser(pComponent.getLead());
         }
     }
 
@@ -698,6 +698,19 @@ public class JiraProject
          * is the version released.
          */
         private boolean isReleased;
+
+        /**
+         * Constructor.
+         * @param pVersion the underlying version
+         */
+        private JiraVersion(final Version pVersion) {
+            /* Access the details */
+            super(pVersion, pVersion.getName());
+            theDesc = pVersion.getDescription();
+            theReleaseDate = pVersion.getReleaseDate();
+            isArchived = pVersion.isArchived();
+            isReleased = pVersion.isReleased();
+        }
 
         /**
          * Get the description of the version.
@@ -729,19 +742,6 @@ public class JiraProject
          */
         public boolean isReleased() {
             return isReleased;
-        }
-
-        /**
-         * Constructor.
-         * @param pVersion the underlying version
-         */
-        private JiraVersion(final Version pVersion) {
-            /* Access the details */
-            super(pVersion, pVersion.getName());
-            theDesc = pVersion.getDescription();
-            theReleaseDate = pVersion.getReleaseDate();
-            isArchived = pVersion.isArchived();
-            isReleased = pVersion.isReleased();
         }
 
         /**
@@ -833,22 +833,6 @@ public class JiraProject
         private List<JiraRoleActor> theActors;
 
         /**
-         * Get the description of the project role.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
-        }
-
-        /**
-         * Get the list of actors.
-         * @return the iterator
-         */
-        public Iterator<JiraRoleActor> actorIterator() {
-            return theActors.iterator();
-        }
-
-        /**
          * Constructor.
          * @param pRole the underlying role
          * @throws JOceanusException on error
@@ -864,6 +848,22 @@ public class JiraProject
                 /* Add to the list */
                 theActors.add(new JiraRoleActor(myActor));
             }
+        }
+
+        /**
+         * Get the description of the project role.
+         * @return the description
+         */
+        public String getDescription() {
+            return theDesc;
+        }
+
+        /**
+         * Get the list of actors.
+         * @return the iterator
+         */
+        public Iterator<JiraRoleActor> actorIterator() {
+            return theActors.iterator();
         }
     }
 
@@ -890,6 +890,24 @@ public class JiraProject
          * The actor of the actor.
          */
         private final Object theActor;
+
+        /**
+         * Constructor.
+         * @param pActor the underlying role
+         * @throws JOceanusException on error
+         */
+        private JiraRoleActor(final RoleActor pActor) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pActor;
+            theName = pActor.getName();
+            theFullName = pActor.getDisplayName();
+
+            /* Resolve the actor */
+            String myType = pActor.getType();
+            theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
+                                                               ? theServer.getGroup(theName)
+                                                               : theServer.getUser(theName);
+        }
 
         /**
          * Get the underlying role actor.
@@ -942,24 +960,6 @@ public class JiraProject
                                                   ? (JiraGroup) theActor
                                                   : null;
         }
-
-        /**
-         * Constructor.
-         * @param pActor the underlying role
-         * @throws JOceanusException on error
-         */
-        private JiraRoleActor(final RoleActor pActor) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pActor;
-            theName = pActor.getName();
-            theFullName = pActor.getDisplayName();
-
-            /* Resolve the actor */
-            String myType = pActor.getType();
-            theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
-                                                               ? theServer.getGroup(theName)
-                                                               : theServer.getUser(theName);
-        }
     }
 
     /**
@@ -980,6 +980,24 @@ public class JiraProject
          * The field info.
          */
         private Map<String, JiraCimFieldInfo> theFieldMap;
+
+        /**
+         * Constructor.
+         * @param pType the underlying issue type
+         * @throws JOceanusException on error
+         */
+        private JiraCimIssueType(final CimIssueType pType) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pType;
+            theType = theServer.getIssueType(pType.getName());
+            theFieldMap = new LinkedHashMap<String, JiraCimFieldInfo>();
+
+            /* Process the fields */
+            for (CimFieldInfo myInfo : pType.getFields().values()) {
+                /* Add to the map */
+                theFieldMap.put(myInfo.getName(), new JiraCimFieldInfo(myInfo));
+            }
+        }
 
         /**
          * Get the underlying issue type.
@@ -1013,24 +1031,6 @@ public class JiraProject
         public Iterator<JiraCimFieldInfo> fieldIterator() {
             return theFieldMap.values().iterator();
         }
-
-        /**
-         * Constructor.
-         * @param pType the underlying issue type
-         * @throws JOceanusException on error
-         */
-        private JiraCimIssueType(final CimIssueType pType) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pType;
-            theType = theServer.getIssueType(pType.getName());
-            theFieldMap = new LinkedHashMap<String, JiraCimFieldInfo>();
-
-            /* Process the fields */
-            for (CimFieldInfo myInfo : pType.getFields().values()) {
-                /* Add to the map */
-                theFieldMap.put(myInfo.getName(), new JiraCimFieldInfo(myInfo));
-            }
-        }
     }
 
     /**
@@ -1051,6 +1051,18 @@ public class JiraProject
          * The schema of the field.
          */
         private final FieldSchema theSchema;
+
+        /**
+         * Constructor.
+         * @param pInfo the underlying field info
+         * @throws JOceanusException on error
+         */
+        private JiraCimFieldInfo(final CimFieldInfo pInfo) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pInfo;
+            theName = pInfo.getName();
+            theSchema = pInfo.getSchema();
+        }
 
         /**
          * Get the underlying field info.
@@ -1098,18 +1110,6 @@ public class JiraProject
          */
         public Iterator<StandardOperation> operationIterator() {
             return theUnderlying.getOperations().iterator();
-        }
-
-        /**
-         * Constructor.
-         * @param pInfo the underlying field info
-         * @throws JOceanusException on error
-         */
-        private JiraCimFieldInfo(final CimFieldInfo pInfo) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pInfo;
-            theName = pInfo.getName();
-            theSchema = pInfo.getSchema();
         }
     }
 }

@@ -104,19 +104,6 @@ public class LoanAnalysisSelect
      */
     private final JScrollButton<LoanCategory> theCatButton;
 
-    @Override
-    public LoanFilter getFilter() {
-        LoanBucket myLoan = theState.getLoan();
-        return myLoan != null
-                             ? new LoanFilter(myLoan)
-                             : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (theLoans != null) && !theLoans.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -151,6 +138,19 @@ public class LoanAnalysisSelect
         LoanListener myListener = new LoanListener();
         theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+    }
+
+    @Override
+    public LoanFilter getFilter() {
+        LoanBucket myLoan = theState.getLoan();
+        return myLoan != null
+                             ? new LoanFilter(myLoan)
+                             : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (theLoans != null) && !theLoans.isEmpty();
     }
 
     /**
@@ -414,22 +414,6 @@ public class LoanAnalysisSelect
         private LoanBucket theLoan;
 
         /**
-         * Obtain the Loan Bucket.
-         * @return the Loan
-         */
-        private LoanBucket getLoan() {
-            return theLoan;
-        }
-
-        /**
-         * Obtain the Category.
-         * @return the category
-         */
-        private LoanCategory getCategory() {
-            return theCategory;
-        }
-
-        /**
          * Constructor.
          */
         private LoanState() {
@@ -446,6 +430,22 @@ public class LoanAnalysisSelect
             /* Initialise state */
             theLoan = pState.getLoan();
             theCategory = pState.getCategory();
+        }
+
+        /**
+         * Obtain the Loan Bucket.
+         * @return the Loan
+         */
+        private LoanBucket getLoan() {
+            return theLoan;
+        }
+
+        /**
+         * Obtain the Category.
+         * @return the category
+         */
+        private LoanCategory getCategory() {
+            return theCategory;
         }
 
         /**

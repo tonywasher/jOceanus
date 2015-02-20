@@ -268,11 +268,6 @@ public final class SvnBranch
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(SvnBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The parent component.
          */
@@ -288,6 +283,11 @@ public final class SvnBranch
 
             /* Store parent for use by entry handler */
             theComponent = pParent;
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

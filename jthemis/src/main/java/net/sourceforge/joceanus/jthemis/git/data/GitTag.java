@@ -65,25 +65,6 @@ public final class GitTag
      */
     private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponent;
-        }
-
-        /* pass onwards */
-        return super.getFieldValue(pField);
-    }
-
     /**
      * Parent Repository.
      */
@@ -98,14 +79,6 @@ public final class GitTag
      * Object Id of the commit.
      */
     private final ObjectId theCommitId;
-
-    /**
-     * Get the commit id.
-     * @return the commit id
-     */
-    public ObjectId getCommitId() {
-        return theCommitId;
-    }
 
     /**
      * Constructor.
@@ -141,6 +114,33 @@ public final class GitTag
         theCommitId = null;
     }
 
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+        if (FIELD_COMP.equals(pField)) {
+            return theComponent;
+        }
+
+        /* pass onwards */
+        return super.getFieldValue(pField);
+    }
+
+    /**
+     * Get the commit id.
+     * @return the commit id
+     */
+    public ObjectId getCommitId() {
+        return theCommitId;
+    }
+
     /**
      * Get the repository for this tag.
      * @return the repository
@@ -168,11 +168,6 @@ public final class GitTag
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(GitTagList.class.getSimpleName(), ScmTagList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Parent Component.
          */
@@ -190,6 +185,11 @@ public final class GitTag
             theComponent = (pParent == null)
                                             ? null
                                             : pParent.getComponent();
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         @Override

@@ -80,6 +80,62 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      */
     private static final String ERROR_BADDATE = MoneyWiseDataResource.TAXYEAR_ERROR_BADDATE.getValue();
 
+    /**
+     * Copy constructor.
+     * @param pList The List to build into
+     * @param pTaxYear The TaxYear to copy
+     */
+    protected TaxYearBase(final TaxYearBaseList<T> pList,
+                          final TaxYearBase<T> pTaxYear) {
+        super(pList, pTaxYear);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected TaxYearBase(final TaxYearBaseList<T> pList,
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Year */
+            Object myValue = pValues.getValue(FIELD_TAXYEAR);
+            if (myValue instanceof JDateDay) {
+                setValueTaxYear((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueTaxYear(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the Regime */
+            myValue = pValues.getValue(FIELD_REGIME);
+            if (myValue instanceof Integer) {
+                setValueTaxRegime((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueTaxRegime((String) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Edit constructor.
+     * @param pList the list
+     */
+    protected TaxYearBase(final DataList<T, MoneyWiseDataType> pList) {
+        super(pList, 0);
+    }
+
     @Override
     public String formatObject() {
         return toString();
@@ -264,62 +320,6 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
         return new JDateDayRange(myStart, pLastDate);
     }
 
-    /**
-     * Copy constructor.
-     * @param pList The List to build into
-     * @param pTaxYear The TaxYear to copy
-     */
-    protected TaxYearBase(final TaxYearBaseList<T> pList,
-                          final TaxYearBase<T> pTaxYear) {
-        super(pList, pTaxYear);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    protected TaxYearBase(final TaxYearBaseList<T> pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Year */
-            Object myValue = pValues.getValue(FIELD_TAXYEAR);
-            if (myValue instanceof JDateDay) {
-                setValueTaxYear((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDataFormatter myFormatter = getDataSet().getDataFormatter();
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueTaxYear(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store the Regime */
-            myValue = pValues.getValue(FIELD_REGIME);
-            if (myValue instanceof Integer) {
-                setValueTaxRegime((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueTaxRegime((String) myValue);
-            }
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Edit constructor.
-     * @param pList the list
-     */
-    protected TaxYearBase(final DataList<T, MoneyWiseDataType> pList) {
-        super(pList, 0);
-    }
-
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
@@ -442,11 +442,6 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
-        }
-
         /**
          * Construct an empty CORE TaxYear list.
          * @param pData the DataSet for the list
@@ -465,6 +460,11 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          */
         protected TaxYearBaseList(final TaxYearBaseList<T> pSource) {
             super(pSource);
+        }
+
+        @Override
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**

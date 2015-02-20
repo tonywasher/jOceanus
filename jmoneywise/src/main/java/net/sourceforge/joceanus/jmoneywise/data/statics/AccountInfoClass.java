@@ -112,6 +112,20 @@ public enum AccountInfoClass implements DataInfoClass {
      */
     private final DataType theDataType;
 
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     * @param pDataType the data type
+     */
+    private AccountInfoClass(final int uId,
+                             final int uOrder,
+                             final DataType pDataType) {
+        theId = uId;
+        theOrder = uOrder;
+        theDataType = pDataType;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -147,20 +161,6 @@ public enum AccountInfoClass implements DataInfoClass {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the Id
-     * @param uOrder the default order.
-     * @param pDataType the data type
-     */
-    private AccountInfoClass(final int uId,
-                             final int uOrder,
-                             final DataType pDataType) {
-        theId = uId;
-        theOrder = uOrder;
-        theDataType = pDataType;
     }
 
     /**

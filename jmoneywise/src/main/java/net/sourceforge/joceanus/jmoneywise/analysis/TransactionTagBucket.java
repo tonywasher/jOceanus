@@ -65,25 +65,6 @@ public final class TransactionTagBucket
      */
     private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        if (FIELD_TRANSTAG.equals(pField)) {
-            return theTransTag;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHashMap;
-        }
-        return JDataFieldValue.UNKNOWN;
-    }
-
     /**
      * The analysis.
      */
@@ -98,69 +79,6 @@ public final class TransactionTagBucket
      * HashMap.
      */
     private final Map<Integer, Transaction> theHashMap;
-
-    @Override
-    public String formatObject() {
-        return getName();
-    }
-
-    @Override
-    public String toString() {
-        return formatObject();
-    }
-
-    @Override
-    public Integer getOrderedId() {
-        return theTransTag.getId();
-    }
-
-    /**
-     * Obtain name.
-     * @return the name
-     */
-    public String getName() {
-        return theTransTag.getName();
-    }
-
-    /**
-     * Obtain transactionTag.
-     * @return the tag
-     */
-    public TransactionTag getTransTag() {
-        return theTransTag;
-    }
-
-    /**
-     * Obtain the analysis.
-     * @return the analysis
-     */
-    protected Analysis getAnalysis() {
-        return theAnalysis;
-    }
-
-    /**
-     * Obtain date range.
-     * @return the range
-     */
-    public JDateDayRange getDateRange() {
-        return theAnalysis.getDateRange();
-    }
-
-    /**
-     * Obtain map Iterator.
-     * @return the iterator
-     */
-    private Iterator<Transaction> iterator() {
-        return theHashMap.values().iterator();
-    }
-
-    /**
-     * is the bucket idle.
-     * @return true/false
-     */
-    private boolean isIdle() {
-        return theHashMap.isEmpty();
-    }
 
     /**
      * Constructor.
@@ -230,6 +148,88 @@ public final class TransactionTagBucket
                 processTransaction(myTrans);
             }
         }
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ANALYSIS.equals(pField)) {
+            return theAnalysis;
+        }
+        if (FIELD_TRANSTAG.equals(pField)) {
+            return theTransTag;
+        }
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHashMap;
+        }
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return getName();
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
+    public Integer getOrderedId() {
+        return theTransTag.getId();
+    }
+
+    /**
+     * Obtain name.
+     * @return the name
+     */
+    public String getName() {
+        return theTransTag.getName();
+    }
+
+    /**
+     * Obtain transactionTag.
+     * @return the tag
+     */
+    public TransactionTag getTransTag() {
+        return theTransTag;
+    }
+
+    /**
+     * Obtain the analysis.
+     * @return the analysis
+     */
+    protected Analysis getAnalysis() {
+        return theAnalysis;
+    }
+
+    /**
+     * Obtain date range.
+     * @return the range
+     */
+    public JDateDayRange getDateRange() {
+        return theAnalysis.getDateRange();
+    }
+
+    /**
+     * Obtain map Iterator.
+     * @return the iterator
+     */
+    private Iterator<Transaction> iterator() {
+        return theHashMap.values().iterator();
+    }
+
+    /**
+     * is the bucket idle.
+     * @return true/false
+     */
+    private boolean isIdle() {
+        return theHashMap.isEmpty();
     }
 
     @Override
@@ -304,16 +304,6 @@ public final class TransactionTagBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TRANSTAG_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -323,17 +313,6 @@ public final class TransactionTagBucket
          * Analysis field Id.
          */
         private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
 
         /**
          * The analysis.
@@ -405,6 +384,27 @@ public final class TransactionTagBucket
                     add(myBucket);
                 }
             }
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
+            }
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

@@ -90,14 +90,6 @@ public class ErrorPanel
     private final transient DataErrorList<JMetisExceptionWrapper> theErrors;
 
     /**
-     * Do we have an error?
-     * @return true/false
-     */
-    public boolean hasError() {
-        return !theErrors.isEmpty();
-    }
-
-    /**
      * Constructor.
      * @param pManager the data manager
      * @param pParent the parent data entry
@@ -135,6 +127,14 @@ public class ErrorPanel
         /* Set the Error panel to be red and invisible */
         theErrorField.setForeground(Color.red);
         setVisible(false);
+    }
+
+    /**
+     * Do we have an error?
+     * @return true/false
+     */
+    public boolean hasError() {
+        return !theErrors.isEmpty();
     }
 
     /**

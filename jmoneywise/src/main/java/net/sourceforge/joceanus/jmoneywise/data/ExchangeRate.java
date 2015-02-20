@@ -102,6 +102,91 @@ public class ExchangeRate
      */
     private static final String ERROR_DEF = MoneyWiseDataResource.XCHGRATE_ERROR_DEFAULT.getValue();
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pRate The Rate to copy
+     */
+    protected ExchangeRate(final ExchangeRateBaseList<? extends ExchangeRate> pList,
+                           final ExchangeRate pRate) {
+        /* Set standard values */
+        super(pList, pRate);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public ExchangeRate(final ExchangeRateBaseList<? extends ExchangeRate> pList) {
+        super(pList, 0);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private ExchangeRate(final ExchangeRateList pList,
+                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the From currency */
+            myValue = pValues.getValue(FIELD_FROM);
+            if (myValue instanceof Integer) {
+                setValueFromCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueFromCurrency((String) myValue);
+            }
+
+            /* Store the To currency */
+            myValue = pValues.getValue(FIELD_TO);
+            if (myValue instanceof Integer) {
+                setValueToCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueToCurrency((String) myValue);
+            }
+
+            /* Store the Rate */
+            myValue = pValues.getValue(FIELD_RATE);
+            if (myValue instanceof JRatio) {
+                setValueExchangeRate((JRatio) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueExchangeRate(myString);
+                setValueExchangeRate(myFormatter.parseValue(myString, JRatio.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public ExchangeRate(final ExchangeRateList pList) {
+        super(pList, 0);
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -346,91 +431,6 @@ public class ExchangeRate
     @Override
     public ExchangeRateList getList() {
         return (ExchangeRateList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pRate The Rate to copy
-     */
-    protected ExchangeRate(final ExchangeRateBaseList<? extends ExchangeRate> pList,
-                           final ExchangeRate pRate) {
-        /* Set standard values */
-        super(pList, pRate);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public ExchangeRate(final ExchangeRateBaseList<? extends ExchangeRate> pList) {
-        super(pList, 0);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private ExchangeRate(final ExchangeRateList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Date */
-            Object myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
-            }
-
-            /* Store the From currency */
-            myValue = pValues.getValue(FIELD_FROM);
-            if (myValue instanceof Integer) {
-                setValueFromCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueFromCurrency((String) myValue);
-            }
-
-            /* Store the To currency */
-            myValue = pValues.getValue(FIELD_TO);
-            if (myValue instanceof Integer) {
-                setValueToCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueToCurrency((String) myValue);
-            }
-
-            /* Store the Rate */
-            myValue = pValues.getValue(FIELD_RATE);
-            if (myValue instanceof JRatio) {
-                setValueExchangeRate((JRatio) myValue);
-            } else if (myValue instanceof String) {
-                String myString = (String) myValue;
-                setValueExchangeRate(myString);
-                setValueExchangeRate(myFormatter.parseValue(myString, JRatio.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public ExchangeRate(final ExchangeRateList pList) {
-        super(pList, 0);
     }
 
     @Override
@@ -681,6 +681,27 @@ public class ExchangeRate
          */
         private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
+        /**
+         * The default currency.
+         */
+        private AssetCurrency theDefault = null;
+
+        /**
+         * Construct an empty CORE ExchangeRate list.
+         * @param pData the DataSet for the list
+         */
+        protected ExchangeRateList(final MoneyWiseData pData) {
+            super(pData, ExchangeRate.class, MoneyWiseDataType.EXCHANGERATE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected ExchangeRateList(final ExchangeRateList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -696,11 +717,6 @@ public class ExchangeRate
             /* Pass onwards */
             return super.getFieldValue(pField);
         }
-
-        /**
-         * The default currency.
-         */
-        private AssetCurrency theDefault = null;
 
         /**
          * Obtain default currency.
@@ -725,27 +741,11 @@ public class ExchangeRate
             return (MoneyWiseData) super.getDataSet();
         }
 
-        /**
-         * Construct an empty CORE ExchangeRate list.
-         * @param pData the DataSet for the list
-         */
-        protected ExchangeRateList(final MoneyWiseData pData) {
-            super(pData, ExchangeRate.class, MoneyWiseDataType.EXCHANGERATE);
-        }
-
         @Override
         protected ExchangeRateList getEmptyList(final ListStyle pStyle) {
             ExchangeRateList myList = new ExchangeRateList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected ExchangeRateList(final ExchangeRateList pSource) {
-            super(pSource);
         }
 
         /**
@@ -960,6 +960,19 @@ public class ExchangeRate
          */
         public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
+        /**
+         * Map of Maps.
+         */
+        private final Map<AssetCurrency, Map<JDateDay, Integer>> theMapOfMaps;
+
+        /**
+         * Constructor.
+         */
+        public ExchangeRateDataMap() {
+            /* Create the maps */
+            theMapOfMaps = new HashMap<AssetCurrency, Map<JDateDay, Integer>>();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -979,19 +992,6 @@ public class ExchangeRate
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * Map of Maps.
-         */
-        private final Map<AssetCurrency, Map<JDateDay, Integer>> theMapOfMaps;
-
-        /**
-         * Constructor.
-         */
-        public ExchangeRateDataMap() {
-            /* Create the maps */
-            theMapOfMaps = new HashMap<AssetCurrency, Map<JDateDay, Integer>>();
         }
 
         @Override

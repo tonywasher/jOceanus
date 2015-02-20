@@ -75,37 +75,6 @@ public final class MvnProjectId
      */
     private static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
 
-    @Override
-    public String formatObject() {
-        return theGroupId
-               + "_"
-               + theArtifactId
-               + "_"
-               + theVersion;
-    }
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_GROUP.equals(pField)) {
-            return theGroupId;
-        }
-        if (FIELD_ARTIFACT.equals(pField)) {
-            return theArtifactId;
-        }
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
-
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
-    }
-
     /**
      * The groupId.
      */
@@ -135,38 +104,6 @@ public final class MvnProjectId
      * The project dependency.
      */
     private final Dependency theDependency;
-
-    /**
-     * Get GroupId.
-     * @return the groupId
-     */
-    public String getGroupId() {
-        return theGroupId;
-    }
-
-    /**
-     * Get ArtifactId.
-     * @return the artifactId
-     */
-    public String getArtifactId() {
-        return theArtifactId;
-    }
-
-    /**
-     * Get Version.
-     * @return the version
-     */
-    public String getVersion() {
-        return theVersion;
-    }
-
-    /**
-     * Get Version Text.
-     * @return the version text
-     */
-    public String getVersionText() {
-        return theVersionText;
-    }
 
     /**
      * Constructor.
@@ -223,6 +160,69 @@ public final class MvnProjectId
             theVersionText = pProject.getVersionText();
         }
         theVersion = parseVersion();
+    }
+
+    @Override
+    public String formatObject() {
+        return theGroupId
+               + "_"
+               + theArtifactId
+               + "_"
+               + theVersion;
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_GROUP.equals(pField)) {
+            return theGroupId;
+        }
+        if (FIELD_ARTIFACT.equals(pField)) {
+            return theArtifactId;
+        }
+        if (FIELD_VERSION.equals(pField)) {
+            return theVersion;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    /**
+     * Get GroupId.
+     * @return the groupId
+     */
+    public String getGroupId() {
+        return theGroupId;
+    }
+
+    /**
+     * Get ArtifactId.
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+        return theArtifactId;
+    }
+
+    /**
+     * Get Version.
+     * @return the version
+     */
+    public String getVersion() {
+        return theVersion;
+    }
+
+    /**
+     * Get Version Text.
+     * @return the version text
+     */
+    public String getVersionText() {
+        return theVersionText;
     }
 
     /**

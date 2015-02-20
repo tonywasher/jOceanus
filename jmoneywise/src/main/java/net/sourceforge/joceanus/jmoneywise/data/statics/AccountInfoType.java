@@ -53,11 +53,6 @@ public class AccountInfoType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * WebSite length.
      */
@@ -77,40 +72,6 @@ public class AccountInfoType
      * Notes length.
      */
     protected static final int NOTES_LEN = 500;
-
-    /**
-     * Return the Account Info class of the AccountInfoType.
-     * @return the class
-     */
-    public AccountInfoClass getInfoClass() {
-        return super.getStaticClass();
-    }
-
-    /**
-     * Return the Data Type of the AccountInfoType.
-     * @return the data type
-     */
-    public DataType getDataType() {
-        return getInfoClass().getDataType();
-    }
-
-    /**
-     * is this a Link?
-     * @return true/false
-     */
-    public boolean isLink() {
-        return getInfoClass().isLink();
-    }
-
-    @Override
-    public AccountInfoType getBase() {
-        return (AccountInfoType) super.getBase();
-    }
-
-    @Override
-    public AccountInfoTypeList getList() {
-        return (AccountInfoTypeList) super.getList();
-    }
 
     /**
      * Copy Constructor.
@@ -155,6 +116,45 @@ public class AccountInfoType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Account Info class of the AccountInfoType.
+     * @return the class
+     */
+    public AccountInfoClass getInfoClass() {
+        return super.getStaticClass();
+    }
+
+    /**
+     * Return the Data Type of the AccountInfoType.
+     * @return the data type
+     */
+    public DataType getDataType() {
+        return getInfoClass().getDataType();
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+        return getInfoClass().isLink();
+    }
+
+    @Override
+    public AccountInfoType getBase() {
+        return (AccountInfoType) super.getBase();
+    }
+
+    @Override
+    public AccountInfoTypeList getList() {
+        return (AccountInfoTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link AccountInfoType} objects.
      */
@@ -164,6 +164,22 @@ public class AccountInfoType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE account type list.
+         * @param pData the DataSet for the list
+         */
+        public AccountInfoTypeList(final DataSet<?, ?> pData) {
+            super(AccountInfoType.class, pData, MoneyWiseDataType.ACCOUNTINFOTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private AccountInfoTypeList(final AccountInfoTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -183,22 +199,6 @@ public class AccountInfoType
         @Override
         protected Class<AccountInfoClass> getEnumClass() {
             return AccountInfoClass.class;
-        }
-
-        /**
-         * Construct an empty CORE account type list.
-         * @param pData the DataSet for the list
-         */
-        public AccountInfoTypeList(final DataSet<?, ?> pData) {
-            super(AccountInfoType.class, pData, MoneyWiseDataType.ACCOUNTINFOTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private AccountInfoTypeList(final AccountInfoTypeList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -288,11 +288,6 @@ public final class GitComponent
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(GitComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * Parent Repository.
          */
@@ -308,6 +303,11 @@ public final class GitComponent
 
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
         }
 
         /**

@@ -78,6 +78,52 @@ public final class TaxCalcBucket
      */
     private static final Map<JDataField, TaxAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TaxAttribute.class);
 
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
+
+    /**
+     * Tax Category.
+     */
+    private final TaxCategory theTaxCategory;
+
+    /**
+     * Tax Section.
+     */
+    private final TaxCategorySection theTaxSection;
+
+    /**
+     * Attribute Map.
+     */
+    private final Map<TaxAttribute, JDecimal> theAttributes;
+
+    /**
+     * The parent.
+     */
+    private TaxCalcBucket theParent = null;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pTaxCategory the category
+     */
+    private TaxCalcBucket(final Analysis pAnalysis,
+                          final TaxCategory pTaxCategory) {
+        /* Store the parameters */
+        theTaxCategory = pTaxCategory;
+        theAnalysis = pAnalysis;
+
+        /* Determine the tax section */
+        theTaxSection = theTaxCategory.getTaxClass().getClassSection();
+
+        /* Create the attribute map */
+        theAttributes = new EnumMap<TaxAttribute, JDecimal>(TaxAttribute.class);
+
+        /* Create all possible values */
+        setAttribute(TaxAttribute.AMOUNT, new JMoney());
+    }
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -114,31 +160,6 @@ public final class TaxCalcBucket
 
         return JDataFieldValue.UNKNOWN;
     }
-
-    /**
-     * The analysis.
-     */
-    private final Analysis theAnalysis;
-
-    /**
-     * Tax Category.
-     */
-    private final TaxCategory theTaxCategory;
-
-    /**
-     * Tax Section.
-     */
-    private final TaxCategorySection theTaxSection;
-
-    /**
-     * Attribute Map.
-     */
-    private final Map<TaxAttribute, JDecimal> theAttributes;
-
-    /**
-     * The parent.
-     */
-    private TaxCalcBucket theParent = null;
 
     @Override
     public String formatObject() {
@@ -267,27 +288,6 @@ public final class TaxCalcBucket
     public JRate getRateValue(final TaxAttribute pAttr) {
         /* Obtain the attribute */
         return getValue(pAttr, JRate.class);
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pTaxCategory the category
-     */
-    private TaxCalcBucket(final Analysis pAnalysis,
-                          final TaxCategory pTaxCategory) {
-        /* Store the parameters */
-        theTaxCategory = pTaxCategory;
-        theAnalysis = pAnalysis;
-
-        /* Determine the tax section */
-        theTaxSection = theTaxCategory.getTaxClass().getClassSection();
-
-        /* Create the attribute map */
-        theAttributes = new EnumMap<TaxAttribute, JDecimal>(TaxAttribute.class);
-
-        /* Create all possible values */
-        setAttribute(TaxAttribute.AMOUNT, new JMoney());
     }
 
     @Override
@@ -428,16 +428,6 @@ public final class TaxCalcBucket
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXCALC_LIST.getValue());
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
         /**
          * Size Field Id.
          */
@@ -468,6 +458,64 @@ public final class TaxCalcBucket
          */
         private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_ALLOW.getValue());
 
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
+
+        /**
+         * The taxYear.
+         */
+        private final TaxYear theYear;
+
+        /**
+         * The data.
+         */
+        private final MoneyWiseData theData;
+
+        /**
+         * User age.
+         */
+        private Integer theAge = 0;
+
+        /**
+         * Are there Gains slices.
+         */
+        private Boolean hasGainsSlices = Boolean.FALSE;
+
+        /**
+         * Is there a reduced allowance?
+         */
+        private Boolean hasReducedAllow = Boolean.FALSE;
+
+        /**
+         * has tax been calculated?
+         */
+        private boolean taxCalculated = false;
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         * @param pYear the TaxYear
+         */
+        protected TaxCalcBucketList(final Analysis pAnalysis,
+                                    final TaxYear pYear) {
+            super(TaxCalcBucket.class);
+            theAnalysis = pAnalysis;
+            theYear = pYear;
+            theData = theAnalysis.getData();
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
@@ -496,47 +544,12 @@ public final class TaxCalcBucket
         }
 
         /**
-         * The analysis.
-         */
-        private final Analysis theAnalysis;
-
-        /**
-         * The taxYear.
-         */
-        private final TaxYear theYear;
-
-        /**
-         * The data.
-         */
-        private final MoneyWiseData theData;
-
-        /**
          * Obtain the taxYear.
          * @return the year
          */
         public TaxYear getTaxYear() {
             return theYear;
         }
-
-        /**
-         * User age.
-         */
-        private Integer theAge = 0;
-
-        /**
-         * Are there Gains slices.
-         */
-        private Boolean hasGainsSlices = Boolean.FALSE;
-
-        /**
-         * Is there a reduced allowance?
-         */
-        private Boolean hasReducedAllow = Boolean.FALSE;
-
-        /**
-         * has tax been calculated?
-         */
-        private boolean taxCalculated = false;
 
         /**
          * Obtain the user age.
@@ -584,19 +597,6 @@ public final class TaxCalcBucket
          */
         protected void setHasGainsSlices(final Boolean hasSlices) {
             hasGainsSlices = hasSlices;
-        }
-
-        /**
-         * Construct a top-level List.
-         * @param pAnalysis the analysis
-         * @param pYear the TaxYear
-         */
-        protected TaxCalcBucketList(final Analysis pAnalysis,
-                                    final TaxYear pYear) {
-            super(TaxCalcBucket.class);
-            theAnalysis = pAnalysis;
-            theYear = pYear;
-            theData = theAnalysis.getData();
         }
 
         /**

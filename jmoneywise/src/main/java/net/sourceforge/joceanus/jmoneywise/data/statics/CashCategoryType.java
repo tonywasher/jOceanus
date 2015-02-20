@@ -52,38 +52,6 @@ public class CashCategoryType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the Cash class of the CashCategoryType.
-     * @return the class
-     */
-    public CashCategoryClass getCashClass() {
-        return super.getStaticClass();
-    }
-
-    /**
-     * Determine whether the CashCategoryType is the required class.
-     * @param pClass the desired class
-     * @return <code>true</code> if the cash category type is the required class, <code>false</code> otherwise.
-     */
-    public boolean isCashCategory(final CashCategoryClass pClass) {
-        return getCashClass().equals(pClass);
-    }
-
-    @Override
-    public CashCategoryType getBase() {
-        return (CashCategoryType) super.getBase();
-    }
-
-    @Override
-    public CashCategoryTypeList getList() {
-        return (CashCategoryTypeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the Cash Category Type with
@@ -127,6 +95,38 @@ public class CashCategoryType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Cash class of the CashCategoryType.
+     * @return the class
+     */
+    public CashCategoryClass getCashClass() {
+        return super.getStaticClass();
+    }
+
+    /**
+     * Determine whether the CashCategoryType is the required class.
+     * @param pClass the desired class
+     * @return <code>true</code> if the cash category type is the required class, <code>false</code> otherwise.
+     */
+    public boolean isCashCategory(final CashCategoryClass pClass) {
+        return getCashClass().equals(pClass);
+    }
+
+    @Override
+    public CashCategoryType getBase() {
+        return (CashCategoryType) super.getBase();
+    }
+
+    @Override
+    public CashCategoryTypeList getList() {
+        return (CashCategoryTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link CashCategoryType} objects.
      */
@@ -136,6 +136,22 @@ public class CashCategoryType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE account category list.
+         * @param pData the DataSet for the list
+         */
+        public CashCategoryTypeList(final DataSet<?, ?> pData) {
+            super(CashCategoryType.class, pData, MoneyWiseDataType.CASHTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private CashCategoryTypeList(final CashCategoryTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -155,22 +171,6 @@ public class CashCategoryType
         @Override
         protected Class<CashCategoryClass> getEnumClass() {
             return CashCategoryClass.class;
-        }
-
-        /**
-         * Construct an empty CORE account category list.
-         * @param pData the DataSet for the list
-         */
-        public CashCategoryTypeList(final DataSet<?, ?> pData) {
-            super(CashCategoryType.class, pData, MoneyWiseDataType.CASHTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private CashCategoryTypeList(final CashCategoryTypeList pSource) {
-            super(pSource);
         }
 
         @Override

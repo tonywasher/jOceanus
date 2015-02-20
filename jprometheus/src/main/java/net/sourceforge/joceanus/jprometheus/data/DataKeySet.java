@@ -65,11 +65,6 @@ public class DataKeySet
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Field ID for ControlKey.
      */
@@ -109,6 +104,133 @@ public class DataKeySet
      * The Encryption Field Generator.
      */
     private EncryptionGenerator theFieldGenerator = null;
+
+    /**
+     * Copy Constructor.
+     * @param pList the list the copy belongs to
+     * @param pSource The Key to copy
+     */
+    protected DataKeySet(final DataKeySetList pList,
+                         final DataKeySet pSource) {
+        /* Set standard values */
+        super(pList, pSource);
+
+        /* Switch on the LinkStyle */
+        switch (getStyle()) {
+            case CLONE:
+                theSecurityGenerator = pSource.theSecurityGenerator;
+                theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
+                theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
+                theFieldGenerator = new EncryptionGenerator(theCipherSet, getDataSet().getDataFormatter());
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private DataKeySet(final DataKeySetList pList,
+                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access the Security manager */
+        DataSet<?, ?> myData = getDataSet();
+        SecureManager mySecure = myData.getSecurity();
+        JDataFormatter myFormatter = myData.getDataFormatter();
+
+        /* Store the ControlKey */
+        Object myValue = pValues.getValue(FIELD_CONTROLKEY);
+        if (myValue instanceof Integer) {
+            /* Store the integer */
+            Integer myInt = (Integer) myValue;
+            setValueControlKey(myInt);
+
+            /* Resolve the ControlKey */
+            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+
+            /* Resolve the Active HashKey */
+            resolveHashKey();
+
+            /* Record the security generator */
+            theSecurityGenerator = mySecure.getSecurityGenerator();
+
+            /* Create the DataKey Map */
+            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
+
+            /* Create the CipherSet and security generator */
+            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
+            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
+
+            /* Register the DataKeySet */
+            getControlKey().registerDataKeySet(this);
+
+            /* Store the CreationDate */
+            myValue = pValues.getValue(FIELD_CREATEDATE);
+            if (!(myValue instanceof JDateDay)) {
+                myValue = new JDateDay();
+            }
+            setValueCreationDate((JDateDay) myValue);
+
+        } else {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM);
+        }
+    }
+
+    /**
+     * Constructor for a new DataKeySet. This will create a set of DataKeys.
+     * @param pList the list to which to add the keySet to
+     * @param pControlKey the control key
+     * @throws JOceanusException on error
+     */
+    protected DataKeySet(final DataKeySetList pList,
+                         final ControlKey pControlKey) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, 0);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Details */
+            setValueControlKey(pControlKey);
+
+            /* Access the Security manager */
+            DataSet<?, ?> myData = getDataSet();
+            SecureManager mySecure = myData.getSecurity();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
+            /* Record the security generator */
+            theSecurityGenerator = mySecure.getSecurityGenerator();
+
+            /* Create the DataKey Map */
+            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
+
+            /* Create the CipherSet */
+            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
+            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
+
+            /* Set the creationDate */
+            setValueCreationDate(new JDateDay());
+
+            /* Allocate the DataKeys */
+            allocateDataKeys(myData);
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -251,128 +373,6 @@ public class DataKeySet
         return (DataKeySetList) super.getList();
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list the copy belongs to
-     * @param pSource The Key to copy
-     */
-    protected DataKeySet(final DataKeySetList pList,
-                         final DataKeySet pSource) {
-        /* Set standard values */
-        super(pList, pSource);
-
-        /* Switch on the LinkStyle */
-        switch (getStyle()) {
-            case CLONE:
-                theSecurityGenerator = pSource.theSecurityGenerator;
-                theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-                theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-                theFieldGenerator = new EncryptionGenerator(theCipherSet, getDataSet().getDataFormatter());
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private DataKeySet(final DataKeySetList pList,
-                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access the Security manager */
-        DataSet<?, ?> myData = getDataSet();
-        SecureManager mySecure = myData.getSecurity();
-        JDataFormatter myFormatter = myData.getDataFormatter();
-
-        /* Store the ControlKey */
-        Object myValue = pValues.getValue(FIELD_CONTROLKEY);
-        if (myValue instanceof Integer) {
-            /* Store the integer */
-            Integer myInt = (Integer) myValue;
-            setValueControlKey(myInt);
-
-            /* Resolve the ControlKey */
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-
-            /* Resolve the Active HashKey */
-            resolveHashKey();
-
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
-
-            /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-            /* Create the CipherSet and security generator */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
-
-            /* Register the DataKeySet */
-            getControlKey().registerDataKeySet(this);
-
-            /* Store the CreationDate */
-            myValue = pValues.getValue(FIELD_CREATEDATE);
-            if (!(myValue instanceof JDateDay)) {
-                myValue = new JDateDay();
-            }
-            setValueCreationDate((JDateDay) myValue);
-
-        } else {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM);
-        }
-    }
-
-    /**
-     * Constructor for a new DataKeySet. This will create a set of DataKeys.
-     * @param pList the list to which to add the keySet to
-     * @param pControlKey the control key
-     * @throws JOceanusException on error
-     */
-    protected DataKeySet(final DataKeySetList pList,
-                         final ControlKey pControlKey) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Details */
-            setValueControlKey(pControlKey);
-
-            /* Access the Security manager */
-            DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
-
-            /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-            /* Create the CipherSet */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
-
-            /* Set the creationDate */
-            setValueCreationDate(new JDateDay());
-
-            /* Allocate the DataKeys */
-            allocateDataKeys(myData);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
     @Override
     public int compareTo(final DataKeySet pThat) {
         /* Handle the trivial cases */
@@ -488,26 +488,6 @@ public class DataKeySet
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return DataKeySet.FIELD_DEFS;
-        }
-
-        @Override
-        public boolean includeDataXML() {
-            return false;
-        }
-
         /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
@@ -532,6 +512,26 @@ public class DataKeySet
          */
         private DataKeySetList(final DataKeySetList pSource) {
             super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return DataKeySet.FIELD_DEFS;
+        }
+
+        @Override
+        public boolean includeDataXML() {
+            return false;
         }
 
         @Override

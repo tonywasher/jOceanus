@@ -53,37 +53,6 @@ public class TaxYearInfoType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the TaxYear Info class of the TaxYearInfoType.
-     * @return the class
-     */
-    public TaxYearInfoClass getInfoClass() {
-        return super.getStaticClass();
-    }
-
-    /**
-     * Return the Data Type of the TaxYearInfoType.
-     * @return the data type
-     */
-    public DataType getDataType() {
-        return getInfoClass().getDataType();
-    }
-
-    @Override
-    public TaxYearInfoType getBase() {
-        return (TaxYearInfoType) super.getBase();
-    }
-
-    @Override
-    public TaxYearInfoTypeList getList() {
-        return (TaxYearInfoTypeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the TaxYear Info Type with
@@ -127,6 +96,37 @@ public class TaxYearInfoType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the TaxYear Info class of the TaxYearInfoType.
+     * @return the class
+     */
+    public TaxYearInfoClass getInfoClass() {
+        return super.getStaticClass();
+    }
+
+    /**
+     * Return the Data Type of the TaxYearInfoType.
+     * @return the data type
+     */
+    public DataType getDataType() {
+        return getInfoClass().getDataType();
+    }
+
+    @Override
+    public TaxYearInfoType getBase() {
+        return (TaxYearInfoType) super.getBase();
+    }
+
+    @Override
+    public TaxYearInfoTypeList getList() {
+        return (TaxYearInfoTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link TaxYearInfoType} objects.
      */
@@ -136,6 +136,22 @@ public class TaxYearInfoType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE account type list.
+         * @param pData the DataSet for the list
+         */
+        public TaxYearInfoTypeList(final DataSet<?, ?> pData) {
+            super(TaxYearInfoType.class, pData, MoneyWiseDataType.TAXINFOTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxYearInfoTypeList(final TaxYearInfoTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -155,22 +171,6 @@ public class TaxYearInfoType
         @Override
         protected Class<TaxYearInfoClass> getEnumClass() {
             return TaxYearInfoClass.class;
-        }
-
-        /**
-         * Construct an empty CORE account type list.
-         * @param pData the DataSet for the list
-         */
-        public TaxYearInfoTypeList(final DataSet<?, ?> pData) {
-            super(TaxYearInfoType.class, pData, MoneyWiseDataType.TAXINFOTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TaxYearInfoTypeList(final TaxYearInfoTypeList pSource) {
-            super(pSource);
         }
 
         @Override

@@ -191,30 +191,6 @@ public class StatusBar
     private final StatusListener theListener;
 
     /**
-     * Get status panel.
-     * @return the panel
-     */
-    public JPanel getStatusPanel() {
-        return theStatPanel;
-    }
-
-    /**
-     * Get progress panel.
-     * @return the panel
-     */
-    public JPanel getProgressPanel() {
-        return theProgPanel;
-    }
-
-    /**
-     * Get error.
-     * @return the error
-     */
-    public DataErrorList<JMetisExceptionWrapper> getErrors() {
-        return theErrors;
-    }
-
-    /**
      * Constructor.
      * @param pThread the Thread control
      * @param pData the Data control
@@ -291,6 +267,30 @@ public class StatusBar
         theStatPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theStatPanel.add(theStatusLabel);
         theStatPanel.add(Box.createHorizontalGlue());
+    }
+
+    /**
+     * Get status panel.
+     * @return the panel
+     */
+    public JPanel getStatusPanel() {
+        return theStatPanel;
+    }
+
+    /**
+     * Get progress panel.
+     * @return the panel
+     */
+    public JPanel getProgressPanel() {
+        return theProgPanel;
+    }
+
+    /**
+     * Get error.
+     * @return the error
+     */
+    public DataErrorList<JMetisExceptionWrapper> getErrors() {
+        return theErrors;
     }
 
     /**

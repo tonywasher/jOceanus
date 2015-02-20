@@ -39,11 +39,6 @@ public class PortfolioCashBucket
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIOCASH_NAME.getValue(), AccountBucket.FIELD_DEFS);
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Constructor.
      * @param pAnalysis the analysis
@@ -79,6 +74,11 @@ public class PortfolioCashBucket
                                   final JDateDayRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
     }
 
     /**

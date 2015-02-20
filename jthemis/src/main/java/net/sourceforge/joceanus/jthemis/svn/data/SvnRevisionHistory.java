@@ -153,6 +153,95 @@ public class SvnRevisionHistory
     private final SvnSourceDirList theSourceDirs;
 
     /**
+     * Constructor.
+     * @param pOwner the owner
+     * @param pPath the location path
+     * @param pEntry the log source
+     * @throws JOceanusException on error
+     */
+    protected SvnRevisionHistory(final Object pOwner,
+                                 final String pPath,
+                                 final SVNLogEntry pEntry) throws JOceanusException {
+        /* Record details */
+        theOwner = pOwner;
+        theRevision = SVNRevision.create(pEntry.getRevision());
+        theLogMessage = pEntry.getMessage();
+        theDate = pEntry.getDate();
+        theUnderlying = pEntry;
+
+        /* Allocate the sourceDir list */
+        theSourceDirs = new SvnSourceDirList();
+
+        /* Set the revision key */
+        theRevisionKey = new SvnRevisionKey(pPath, theRevision);
+
+        /* Iterate through the file changes */
+        for (Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
+            /* Access the key */
+            String myPath = myEntry.getKey();
+            SVNLogEntryPath myDetail = myEntry.getValue();
+            String myCopyPath = myDetail.getCopyPath();
+
+            /* If the entry starts with our path */
+            if (myPath.startsWith(pPath)) {
+                /* Access the detail */
+                SVNNodeKind myKind = myDetail.getKind();
+
+                /* If this is a file */
+                if (myKind.equals(SVNNodeKind.FILE)) {
+                    /* Record the file change */
+                    hasFileChanges = true;
+
+                    /* else if this is a directory */
+                } else if (myKind.equals(SVNNodeKind.DIR)) {
+                    /* Access the copy path */
+                    String myDir = myDetail.getPath();
+
+                    /* If this a copy of a directory */
+                    if (myCopyPath != null) {
+                        /* If this is an initialisation of the directory */
+                        if (myDir.equals(pPath)) {
+                            /* Check that this is not a second origin */
+                            if (isOrigin) {
+                                throw new JThemisDataException(theRevisionKey, "second origin for path");
+                            }
+
+                            /* Record the origin */
+                            theOrigin = new SvnRevisionKey(myDetail);
+                            theOriginDef = new SvnSourceDefinition(myCopyPath);
+                            isOrigin = true;
+
+                            /* else if this a copy into the directory */
+                        } else if (!myCopyPath.startsWith(pPath)) {
+                            /* Record the copyDir */
+                            theSourceDirs.addItem(new SvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
+                        }
+                    }
+                }
+
+                /* else if this is a copy of a root of the directory */
+            } else if ((pPath.startsWith(myPath))
+                       && (myCopyPath != null)) {
+                /* Check that this is not a second origin */
+                if (isOrigin) {
+                    throw new JThemisDataException(theRevisionKey, "second origin for path");
+                }
+
+                /* Determine the new name for the directory */
+                StringBuilder myBuilder = new StringBuilder(pPath);
+                myBuilder.delete(0, myPath.length());
+                myBuilder.insert(0, myCopyPath);
+
+                /* Record the origin */
+                String myNewPath = myBuilder.toString();
+                theOrigin = new SvnRevisionKey(myNewPath, SVNRevision.create(myDetail.getCopyRevision()));
+                theOriginDef = new SvnSourceDefinition(myNewPath);
+                isOrigin = true;
+            }
+        }
+    }
+
+    /**
      * Obtain the revisionKey.
      * @return the key
      */
@@ -274,95 +363,6 @@ public class SvnRevisionHistory
         return hasFileChanges || isOrigin || !theSourceDirs.isEmpty();
     }
 
-    /**
-     * Constructor.
-     * @param pOwner the owner
-     * @param pPath the location path
-     * @param pEntry the log source
-     * @throws JOceanusException on error
-     */
-    protected SvnRevisionHistory(final Object pOwner,
-                                 final String pPath,
-                                 final SVNLogEntry pEntry) throws JOceanusException {
-        /* Record details */
-        theOwner = pOwner;
-        theRevision = SVNRevision.create(pEntry.getRevision());
-        theLogMessage = pEntry.getMessage();
-        theDate = pEntry.getDate();
-        theUnderlying = pEntry;
-
-        /* Allocate the sourceDir list */
-        theSourceDirs = new SvnSourceDirList();
-
-        /* Set the revision key */
-        theRevisionKey = new SvnRevisionKey(pPath, theRevision);
-
-        /* Iterate through the file changes */
-        for (Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
-            /* Access the key */
-            String myPath = myEntry.getKey();
-            SVNLogEntryPath myDetail = myEntry.getValue();
-            String myCopyPath = myDetail.getCopyPath();
-
-            /* If the entry starts with our path */
-            if (myPath.startsWith(pPath)) {
-                /* Access the detail */
-                SVNNodeKind myKind = myDetail.getKind();
-
-                /* If this is a file */
-                if (myKind.equals(SVNNodeKind.FILE)) {
-                    /* Record the file change */
-                    hasFileChanges = true;
-
-                    /* else if this is a directory */
-                } else if (myKind.equals(SVNNodeKind.DIR)) {
-                    /* Access the copy path */
-                    String myDir = myDetail.getPath();
-
-                    /* If this a copy of a directory */
-                    if (myCopyPath != null) {
-                        /* If this is an initialisation of the directory */
-                        if (myDir.equals(pPath)) {
-                            /* Check that this is not a second origin */
-                            if (isOrigin) {
-                                throw new JThemisDataException(theRevisionKey, "second origin for path");
-                            }
-
-                            /* Record the origin */
-                            theOrigin = new SvnRevisionKey(myDetail);
-                            theOriginDef = new SvnSourceDefinition(myCopyPath);
-                            isOrigin = true;
-
-                            /* else if this a copy into the directory */
-                        } else if (!myCopyPath.startsWith(pPath)) {
-                            /* Record the copyDir */
-                            theSourceDirs.addItem(new SvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
-                        }
-                    }
-                }
-
-                /* else if this is a copy of a root of the directory */
-            } else if ((pPath.startsWith(myPath))
-                       && (myCopyPath != null)) {
-                /* Check that this is not a second origin */
-                if (isOrigin) {
-                    throw new JThemisDataException(theRevisionKey, "second origin for path");
-                }
-
-                /* Determine the new name for the directory */
-                StringBuilder myBuilder = new StringBuilder(pPath);
-                myBuilder.delete(0, myPath.length());
-                myBuilder.insert(0, myCopyPath);
-
-                /* Record the origin */
-                String myNewPath = myBuilder.toString();
-                theOrigin = new SvnRevisionKey(myNewPath, SVNRevision.create(myDetail.getCopyRevision()));
-                theOriginDef = new SvnSourceDefinition(myNewPath);
-                isOrigin = true;
-            }
-        }
-    }
-
     @Override
     public String toString() {
         /* Create a stringBuilder */
@@ -455,22 +455,6 @@ public class SvnRevisionHistory
         private final String thePath;
 
         /**
-         * Obtain the revision.
-         * @return the revision
-         */
-        public SVNRevision getRevision() {
-            return theRevision;
-        }
-
-        /**
-         * Obtain the path.
-         * @return the path
-         */
-        public String getPath() {
-            return thePath;
-        }
-
-        /**
          * Constructor.
          * @param pRevision the SVNRevision
          * @param pPath the path
@@ -490,6 +474,22 @@ public class SvnRevisionHistory
             /* Store parameters */
             theRevision = SVNRevision.create(pEntry.getCopyRevision());
             thePath = pEntry.getCopyPath();
+        }
+
+        /**
+         * Obtain the revision.
+         * @return the revision
+         */
+        public SVNRevision getRevision() {
+            return theRevision;
+        }
+
+        /**
+         * Obtain the path.
+         * @return the path
+         */
+        public String getPath() {
+            return thePath;
         }
 
         @Override
@@ -573,6 +573,22 @@ public class SvnRevisionHistory
         private SvnRevisionHistory theBasedOn;
 
         /**
+         * Constructor.
+         * @param pSource the copyFrom path
+         * @param pRevision the source revision
+         * @throws JOceanusException on error
+         */
+        private SvnSourceDir(final String pSource,
+                             final long pRevision) throws JOceanusException {
+            /* Split according to directory parts */
+            SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
+
+            /* Store details */
+            theComponent = mySource.getComponent();
+            theSource = new SvnRevisionKey(mySource.getSource(), SVNRevision.create(pRevision));
+        }
+
+        /**
          * Obtain the Component.
          * @return the path
          */
@@ -602,22 +618,6 @@ public class SvnRevisionHistory
          */
         protected void setBasedOn(final SvnRevisionHistory pBasedOn) {
             theBasedOn = pBasedOn;
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the copyFrom path
-         * @param pRevision the source revision
-         * @throws JOceanusException on error
-         */
-        private SvnSourceDir(final String pSource,
-                             final long pRevision) throws JOceanusException {
-            /* Split according to directory parts */
-            SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
-
-            /* Store details */
-            theComponent = mySource.getComponent();
-            theSource = new SvnRevisionKey(mySource.getSource(), SVNRevision.create(pRevision));
         }
 
         @Override
@@ -795,30 +795,6 @@ public class SvnRevisionHistory
          */
         private static final JDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
 
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
-        }
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_COMP.equals(pField)) {
-                return theComponent;
-            }
-            if (FIELD_TYPE.equals(pField)) {
-                return theType;
-            }
-            if (FIELD_SOURCE.equals(pField)) {
-                return theSource;
-            }
-            return JDataFieldValue.UNKNOWN;
-        }
-
         /**
          * Component.
          */
@@ -833,30 +809,6 @@ public class SvnRevisionHistory
          * Source.
          */
         private final String theSource;
-
-        /**
-         * Obtain the component.
-         * @return the component
-         */
-        public String getComponent() {
-            return theComponent;
-        }
-
-        /**
-         * Obtain the source type.
-         * @return the type
-         */
-        public SvnSourceType getSourceType() {
-            return theType;
-        }
-
-        /**
-         * Obtain the source.
-         * @return the source
-         */
-        public String getSource() {
-            return theSource;
-        }
 
         /**
          * Constructor.
@@ -918,6 +870,54 @@ public class SvnRevisionHistory
             } else {
                 throw new JThemisDataException(pSource, "invalid source");
             }
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_COMP.equals(pField)) {
+                return theComponent;
+            }
+            if (FIELD_TYPE.equals(pField)) {
+                return theType;
+            }
+            if (FIELD_SOURCE.equals(pField)) {
+                return theSource;
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the component.
+         * @return the component
+         */
+        public String getComponent() {
+            return theComponent;
+        }
+
+        /**
+         * Obtain the source type.
+         * @return the type
+         */
+        public SvnSourceType getSourceType() {
+            return theType;
+        }
+
+        /**
+         * Obtain the source.
+         * @return the source
+         */
+        public String getSource() {
+            return theSource;
         }
     }
 }

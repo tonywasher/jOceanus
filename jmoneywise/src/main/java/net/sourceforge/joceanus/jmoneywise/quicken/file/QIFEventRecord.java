@@ -33,6 +33,17 @@ public abstract class QIFEventRecord<T extends Enum<T> & QLineType>
         extends QIFRecord<T>
         implements Comparable<QIFEventRecord<?>> {
     /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pClass the line type class
+     */
+    protected QIFEventRecord(final QIFFile pFile,
+                             final Class<T> pClass) {
+        /* Call super-constructor */
+        super(pFile, pClass);
+    }
+
+    /**
      * Obtain the date.
      * @return the date.
      */
@@ -43,17 +54,6 @@ public abstract class QIFEventRecord<T extends Enum<T> & QLineType>
      * @return true/false.
      */
     public abstract Boolean isCleared();
-
-    /**
-     * Constructor.
-     * @param pFile the QIF File
-     * @param pClass the line type class
-     */
-    protected QIFEventRecord(final QIFFile pFile,
-                             final Class<T> pClass) {
-        /* Call super-constructor */
-        super(pFile, pClass);
-    }
 
     @Override
     public int compareTo(final QIFEventRecord<?> pThat) {

@@ -142,6 +142,20 @@ public enum TransactionInfoClass implements DataInfoClass {
      */
     private final DataType theDataType;
 
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the default order
+     * @param pDataType the data type
+     */
+    private TransactionInfoClass(final int uId,
+                                 final int uOrder,
+                                 final DataType pDataType) {
+        theId = uId;
+        theOrder = uOrder;
+        theDataType = pDataType;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -183,20 +197,6 @@ public enum TransactionInfoClass implements DataInfoClass {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the default order
-     * @param pDataType the data type
-     */
-    private TransactionInfoClass(final int uId,
-                                 final int uOrder,
-                                 final DataType pDataType) {
-        theId = uId;
-        theOrder = uOrder;
-        theDataType = pDataType;
     }
 
     /**

@@ -45,30 +45,6 @@ public class QIFAccountEvents
     private final List<QIFEventRecord<?>> theEvents;
 
     /**
-     * Obtain the account.
-     * @return the account
-     */
-    public QIFAccount getAccount() {
-        return theAccount;
-    }
-
-    /**
-     * Obtain the events.
-     * @return the events
-     */
-    public List<QIFEventRecord<?>> getEvents() {
-        return theEvents;
-    }
-
-    /**
-     * Event iterator.
-     * @return the iterator
-     */
-    public Iterator<QIFEventRecord<?>> eventIterator() {
-        return theEvents.iterator();
-    }
-
-    /**
      * Constructor.
      * @param pFile the QIF file.
      * @param pAccount the account.
@@ -106,6 +82,30 @@ public class QIFAccountEvents
 
         /* Create the list */
         theEvents = new ArrayList<QIFEventRecord<?>>();
+    }
+
+    /**
+     * Obtain the account.
+     * @return the account
+     */
+    public QIFAccount getAccount() {
+        return theAccount;
+    }
+
+    /**
+     * Obtain the events.
+     * @return the events
+     */
+    public List<QIFEventRecord<?>> getEvents() {
+        return theEvents;
+    }
+
+    /**
+     * Event iterator.
+     * @return the iterator
+     */
+    public Iterator<QIFEventRecord<?>> eventIterator() {
+        return theEvents.iterator();
     }
 
     /**

@@ -121,6 +121,30 @@ public class TableDefinition {
     private PreparedStatement theStatement = null;
 
     /**
+     * Constructor.
+     * @param pDriver the driver
+     * @param pName the table name
+     */
+    protected TableDefinition(final JDBCDriver pDriver,
+                              final String pName) {
+        /* Record the name and driver */
+        theTableName = pName;
+        theDriver = pDriver;
+
+        /* Create the column list */
+        theList = new ArrayList<ColumnDefinition>();
+
+        /* Create the sort list */
+        theSortList = new ArrayList<ColumnDefinition>();
+
+        /* Create the initial column map */
+        theMap = new HashMap<JDataField, ColumnDefinition>();
+
+        /* Add an Id column */
+        theList.add(new IdColumn(this));
+    }
+
+    /**
      * Obtain the table name.
      * @return the table name
      */
@@ -173,30 +197,6 @@ public class TableDefinition {
      */
     protected void setSortOnReference() {
         sortOnReference = true;
-    }
-
-    /**
-     * Constructor.
-     * @param pDriver the driver
-     * @param pName the table name
-     */
-    protected TableDefinition(final JDBCDriver pDriver,
-                              final String pName) {
-        /* Record the name and driver */
-        theTableName = pName;
-        theDriver = pDriver;
-
-        /* Create the column list */
-        theList = new ArrayList<ColumnDefinition>();
-
-        /* Create the sort list */
-        theSortList = new ArrayList<ColumnDefinition>();
-
-        /* Create the initial column map */
-        theMap = new HashMap<JDataField, ColumnDefinition>();
-
-        /* Add an Id column */
-        theList.add(new IdColumn(this));
     }
 
     /**

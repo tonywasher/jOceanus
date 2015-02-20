@@ -54,30 +54,6 @@ public class JDataTableColumn
     private AbstractTableModel theModel = null;
 
     /**
-     * Is the column currently a member?
-     * @return true/false
-     */
-    public boolean isMember() {
-        return isMember;
-    }
-
-    /**
-     * Set whether the column is a member.
-     * @param pMember true/false
-     */
-    public void setMember(final boolean pMember) {
-        isMember = pMember;
-    }
-
-    /**
-     * Set the table model.
-     * @param pModel the table model
-     */
-    public void setModel(final AbstractTableModel pModel) {
-        theModel = pModel;
-    }
-
-    /**
      * Constructor.
      * @param modelIndex model index
      * @param width column width
@@ -104,6 +80,30 @@ public class JDataTableColumn
                             final TableCellRenderer cellRenderer) {
         /* Call super-constructor */
         this(modelIndex, width, cellRenderer, null);
+    }
+
+    /**
+     * Is the column currently a member?
+     * @return true/false
+     */
+    public boolean isMember() {
+        return isMember;
+    }
+
+    /**
+     * Set whether the column is a member.
+     * @param pMember true/false
+     */
+    public void setMember(final boolean pMember) {
+        isMember = pMember;
+    }
+
+    /**
+     * Set the table model.
+     * @param pModel the table model
+     */
+    public void setModel(final AbstractTableModel pModel) {
+        theModel = pModel;
     }
 
     @Override
@@ -194,20 +194,20 @@ public class JDataTableColumn
         private int theDeclaredCount;
 
         /**
-         * Obtain the declared column count.
-         * @return the column count
-         */
-        public int getDeclaredCount() {
-            return theDeclaredCount;
-        }
-
-        /**
          * Constructor.
          * @param pTable the table with which this model is associated
          */
         protected JDataTableColumnModel(final JDataTable<?, E> pTable) {
             /* Access TableModel */
             theModel = pTable.getTableModel();
+        }
+
+        /**
+         * Obtain the declared column count.
+         * @return the column count
+         */
+        public int getDeclaredCount() {
+            return theDeclaredCount;
         }
 
         /**

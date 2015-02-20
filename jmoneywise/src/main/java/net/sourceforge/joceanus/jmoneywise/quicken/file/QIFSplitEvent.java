@@ -24,14 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFRateLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * Split Event Record.
@@ -62,46 +62,6 @@ public class QIFSplitEvent
      * The Comment.
      */
     private String theComment;
-
-    /**
-     * Obtain the event category.
-     * @return the event category.
-     */
-    public QIFEventCategory getCategory() {
-        return theCategory;
-    }
-
-    /**
-     * Obtain the account.
-     * @return the account.
-     */
-    public QIFAccount getAccount() {
-        return theAccount;
-    }
-
-    /**
-     * Obtain the amount.
-     * @return the amount.
-     */
-    public JMoney getAmount() {
-        return theAmount;
-    }
-
-    /**
-     * Obtain the percentage.
-     * @return the percentage.
-     */
-    public JRate getPercentage() {
-        return thePercentage;
-    }
-
-    /**
-     * Obtain the comment.
-     * @return the comment.
-     */
-    public String getComment() {
-        return theComment;
-    }
 
     /**
      * Constructor.
@@ -171,6 +131,46 @@ public class QIFSplitEvent
     }
 
     /**
+     * Obtain the event category.
+     * @return the event category.
+     */
+    public QIFEventCategory getCategory() {
+        return theCategory;
+    }
+
+    /**
+     * Obtain the account.
+     * @return the account.
+     */
+    public QIFAccount getAccount() {
+        return theAccount;
+    }
+
+    /**
+     * Obtain the amount.
+     * @return the amount.
+     */
+    public JMoney getAmount() {
+        return theAmount;
+    }
+
+    /**
+     * Obtain the percentage.
+     * @return the percentage.
+     */
+    public JRate getPercentage() {
+        return thePercentage;
+    }
+
+    /**
+     * Obtain the comment.
+     * @return the comment.
+     */
+    public String getComment() {
+        return theComment;
+    }
+
+    /**
      * Set the split amount.
      * @param pAmount the amount
      */
@@ -205,11 +205,6 @@ public class QIFSplitEvent
      */
     public class QIFEventSplitAccountLine
             extends QIFXferAccountLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SPLITCATEGORY;
-        }
-
         /**
          * Constructor.
          * @param pAccount the account
@@ -229,6 +224,11 @@ public class QIFSplitEvent
             /* Call super-constructor */
             super(pAccount, pClasses);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.SPLITCATEGORY;
+        }
     }
 
     /**
@@ -236,11 +236,6 @@ public class QIFSplitEvent
      */
     public class QIFEventSplitCategoryLine
             extends QIFCategoryLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SPLITCATEGORY;
-        }
-
         /**
          * Constructor.
          * @param pCategory the category
@@ -260,6 +255,11 @@ public class QIFSplitEvent
             /* Call super-constructor */
             super(pCategory, pClasses);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.SPLITCATEGORY;
+        }
     }
 
     /**
@@ -267,9 +267,13 @@ public class QIFSplitEvent
      */
     public class QIFEventSplitAmountLine
             extends QIFMoneyLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SPLITAMOUNT;
+        /**
+         * Constructor.
+         * @param pAmount the amount
+         */
+        protected QIFEventSplitAmountLine(final JMoney pAmount) {
+            /* Call super-constructor */
+            super(pAmount);
         }
 
         /**
@@ -280,13 +284,9 @@ public class QIFSplitEvent
             return getMoney();
         }
 
-        /**
-         * Constructor.
-         * @param pAmount the amount
-         */
-        protected QIFEventSplitAmountLine(final JMoney pAmount) {
-            /* Call super-constructor */
-            super(pAmount);
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.SPLITAMOUNT;
         }
     }
 
@@ -295,9 +295,13 @@ public class QIFSplitEvent
      */
     public class QIFEventSplitPercentLine
             extends QIFRateLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SPLITPERCENT;
+        /**
+         * Constructor.
+         * @param pPercent the percentage
+         */
+        protected QIFEventSplitPercentLine(final JRate pPercent) {
+            /* Call super-constructor */
+            super(pPercent);
         }
 
         /**
@@ -308,13 +312,9 @@ public class QIFSplitEvent
             return getRate();
         }
 
-        /**
-         * Constructor.
-         * @param pPercent the percentage
-         */
-        protected QIFEventSplitPercentLine(final JRate pPercent) {
-            /* Call super-constructor */
-            super(pPercent);
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.SPLITPERCENT;
         }
     }
 
@@ -323,6 +323,15 @@ public class QIFSplitEvent
      */
     public class QIFEventSplitCommentLine
             extends QIFStringLine<QEventLineType> {
+        /**
+         * Constructor.
+         * @param pComment the comment
+         */
+        protected QIFEventSplitCommentLine(final String pComment) {
+            /* Call super-constructor */
+            super(pComment);
+        }
+
         @Override
         public QEventLineType getLineType() {
             return QEventLineType.SPLITCOMMENT;
@@ -334,15 +343,6 @@ public class QIFSplitEvent
          */
         public String getComment() {
             return getValue();
-        }
-
-        /**
-         * Constructor.
-         * @param pComment the comment
-         */
-        protected QIFEventSplitCommentLine(final String pComment) {
-            /* Call super-constructor */
-            super(pComment);
         }
     }
 }

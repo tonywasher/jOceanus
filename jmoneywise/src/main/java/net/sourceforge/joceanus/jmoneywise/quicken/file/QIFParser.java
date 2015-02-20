@@ -60,14 +60,6 @@ public class QIFParser {
     private boolean isPortfolio;
 
     /**
-     * Obtain file.
-     * @return the QIF file.
-     */
-    public QIFFile getFile() {
-        return theFile;
-    }
-
-    /**
      * Constructor.
      * @param pFileType the QIF file type.
      */
@@ -78,6 +70,14 @@ public class QIFParser {
         /* Allocate the formatter and set date format */
         theFormatter = new JDataFormatter();
         theFormatter.setFormat(QIFWriter.QIF_DATEFORMAT);
+    }
+
+    /**
+     * Obtain file.
+     * @return the QIF file.
+     */
+    public QIFFile getFile() {
+        return theFile;
     }
 
     /**

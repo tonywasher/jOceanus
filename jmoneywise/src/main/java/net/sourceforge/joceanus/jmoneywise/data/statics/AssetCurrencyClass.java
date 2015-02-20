@@ -823,6 +823,19 @@ public enum AssetCurrencyClass implements StaticInterface {
      */
     private final Currency theCurrency;
 
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     */
+    private AssetCurrencyClass(final int uId,
+                               final int uOrder) {
+        theId = uId;
+        theOrder = uOrder;
+        String myName = name();
+        theCurrency = Currency.getInstance(myName);
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -839,19 +852,6 @@ public enum AssetCurrencyClass implements StaticInterface {
      */
     public Currency getCurrency() {
         return theCurrency;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the Id
-     * @param uOrder the default order.
-     */
-    private AssetCurrencyClass(final int uId,
-                               final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
-        String myName = name();
-        theCurrency = Currency.getInstance(myName);
     }
 
     /**

@@ -100,29 +100,6 @@ public class TransactionAnalyser
      */
     private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_MANAGER.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        if (FIELD_MANAGER.equals(pField)) {
-            return theManager;
-        }
-
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
@@ -202,22 +179,6 @@ public class TransactionAnalyser
      * The profile.
      */
     private final JDataProfile theProfile;
-
-    /**
-     * Obtain the analysis manager.
-     * @return the analysis manager
-     */
-    public AnalysisManager getAnalysisManager() {
-        return theManager;
-    }
-
-    /**
-     * Obtain the dilutions.
-     * @return the dilutions
-     */
-    public DilutionEventMap getDilutions() {
-        return theDilutions;
-    }
 
     /**
      * Constructor for a full year set of accounts.
@@ -320,6 +281,45 @@ public class TransactionAnalyser
 
         /* Complete the task */
         myTask.end();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ANALYSIS.equals(pField)) {
+            return theAnalysis;
+        }
+        if (FIELD_MANAGER.equals(pField)) {
+            return theManager;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
+
+    /**
+     * Obtain the analysis manager.
+     * @return the analysis manager
+     */
+    public AnalysisManager getAnalysisManager() {
+        return theManager;
+    }
+
+    /**
+     * Obtain the dilutions.
+     * @return the dilutions
+     */
+    public DilutionEventMap getDilutions() {
+        return theDilutions;
     }
 
     /**

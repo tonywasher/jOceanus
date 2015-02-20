@@ -117,16 +117,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected static final String ERROR_RESERVED = MoneyWiseDataResource.ASSET_ERROR_RESERVED.getValue();
 
-    @Override
-    public String formatObject() {
-        return getName();
-    }
-
-    @Override
-    public String toString() {
-        return formatObject();
-    }
-
     /**
      * Close Date.
      */
@@ -146,6 +136,94 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Is this relevant?
      */
     private boolean isRelevant;
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pAsset The Asset to copy
+     */
+    protected AssetBase(final AssetBaseList<T> pList,
+                        final AssetBase<T> pAsset) {
+        /* Set standard values */
+        super(pList, pAsset);
+
+        /* If we are creating an edit copy from core */
+        ListStyle myBaseStyle = pAsset.getList().getStyle();
+        if ((pList.getStyle() == ListStyle.EDIT)
+            && (myBaseStyle == ListStyle.CORE)) {
+            /* Update underlying flags */
+            theCloseDate = pAsset.getCloseDate();
+            theEarliest = pAsset.getEarliest();
+            theLatest = pAsset.getLatest();
+            isRelevant = pAsset.isRelevant();
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected AssetBase(final AssetBaseList<T> pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the closed flag */
+            myValue = pValues.getValue(FIELD_CLOSED);
+            if (myValue instanceof Boolean) {
+                setValueClosed((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public AssetBase(final AssetBaseList<T> pList) {
+        super(pList, 0);
+        setNextDataKeySet();
+    }
+
+    @Override
+    public String formatObject() {
+        return getName();
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -593,84 +671,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
         super.touchItem(pSource);
     }
 
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pAsset The Asset to copy
-     */
-    protected AssetBase(final AssetBaseList<T> pList,
-                        final AssetBase<T> pAsset) {
-        /* Set standard values */
-        super(pList, pAsset);
-
-        /* If we are creating an edit copy from core */
-        ListStyle myBaseStyle = pAsset.getList().getStyle();
-        if ((pList.getStyle() == ListStyle.EDIT)
-            && (myBaseStyle == ListStyle.CORE)) {
-            /* Update underlying flags */
-            theCloseDate = pAsset.getCloseDate();
-            theEarliest = pAsset.getEarliest();
-            theLatest = pAsset.getLatest();
-            isRelevant = pAsset.isRelevant();
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    protected AssetBase(final AssetBaseList<T> pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the name */
-            Object myValue = pValues.getValue(FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
-            }
-
-            /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
-            }
-
-            /* Store the closed flag */
-            myValue = pValues.getValue(FIELD_CLOSED);
-            if (myValue instanceof Boolean) {
-                setValueClosed((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public AssetBase(final AssetBaseList<T> pList) {
-        super(pList, 0);
-        setNextDataKeySet();
-    }
-
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
@@ -808,11 +808,6 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public abstract static class AssetBaseList<T extends AssetBase<T>>
             extends EncryptedList<T, MoneyWiseDataType> {
-        @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
-        }
-
         /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
@@ -831,6 +826,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
          */
         protected AssetBaseList(final AssetBaseList<T> pSource) {
             super(pSource);
+        }
+
+        @Override
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         @Override

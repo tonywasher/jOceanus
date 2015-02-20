@@ -58,6 +58,69 @@ public class CashInfo
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected CashInfo(final CashInfoList pList,
+                       final CashInfo pInfo) {
+        /* Set standard values */
+        super(pList, pInfo);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pCash the cash
+     * @param pType the type
+     */
+    private CashInfo(final CashInfoList pList,
+                     final Cash pCash,
+                     final AccountInfoType pType) {
+        /* Initialise the item */
+        super(pList);
+        setNextDataKeySet();
+
+        /* Record the Detail */
+        setValueInfoType(pType);
+        setValueOwner(pCash);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private CashInfo(final CashInfoList pList,
+                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Resolve links */
+            MoneyWiseData myData = getDataSet();
+            resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getCash());
+
+            /* Set the value */
+            setValue(pValues.getValue(FIELD_VALUE));
+
+            /* Resolve any link value */
+            resolveLink();
+
+            /* Access the CashInfoSet and register this data */
+            CashInfoSet mySet = getOwner().getInfoSet();
+            mySet.registerInfo(this);
+
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -150,69 +213,6 @@ public class CashInfo
     @Override
     public CashInfoList getList() {
         return (CashInfoList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pInfo The Info to copy
-     */
-    protected CashInfo(final CashInfoList pList,
-                       final CashInfo pInfo) {
-        /* Set standard values */
-        super(pList, pInfo);
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     * @param pCash the cash
-     * @param pType the type
-     */
-    private CashInfo(final CashInfoList pList,
-                     final Cash pCash,
-                     final AccountInfoType pType) {
-        /* Initialise the item */
-        super(pList);
-        setNextDataKeySet();
-
-        /* Record the Detail */
-        setValueInfoType(pType);
-        setValueOwner(pCash);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private CashInfo(final CashInfoList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Resolve links */
-            MoneyWiseData myData = getDataSet();
-            resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
-            resolveDataLink(FIELD_OWNER, myData.getCash());
-
-            /* Set the value */
-            setValue(pValues.getValue(FIELD_VALUE));
-
-            /* Resolve any link value */
-            resolveLink();
-
-            /* Access the CashInfoSet and register this data */
-            CashInfoSet mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
-
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     @Override
@@ -374,6 +374,22 @@ public class CashInfo
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE account list.
+         * @param pData the DataSet for the list
+         */
+        protected CashInfoList(final MoneyWiseData pData) {
+            super(CashInfo.class, pData, MoneyWiseDataType.CASHINFO, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private CashInfoList(final CashInfoList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -402,22 +418,6 @@ public class CashInfo
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
-        }
-
-        /**
-         * Construct an empty CORE account list.
-         * @param pData the DataSet for the list
-         */
-        protected CashInfoList(final MoneyWiseData pData) {
-            super(CashInfo.class, pData, MoneyWiseDataType.CASHINFO, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private CashInfoList(final CashInfoList pSource) {
-            super(pSource);
         }
 
         @Override

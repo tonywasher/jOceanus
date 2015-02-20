@@ -56,16 +56,6 @@ public class QIFEvent
      */
     private final Boolean isCleared;
 
-    @Override
-    public JDateDay getDate() {
-        return theDate;
-    }
-
-    @Override
-    public Boolean isCleared() {
-        return isCleared;
-    }
-
     /**
      * Constructor.
      * @param pFile the QIF File
@@ -229,6 +219,16 @@ public class QIFEvent
         /* Build details */
         theDate = myDate;
         isCleared = myCleared;
+    }
+
+    @Override
+    public JDateDay getDate() {
+        return theDate;
+    }
+
+    @Override
+    public Boolean isCleared() {
+        return isCleared;
     }
 
     /**
@@ -414,11 +414,6 @@ public class QIFEvent
      */
     public class QIFEventDateLine
             extends QIFDateLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.DATE;
-        }
-
         /**
          * Constructor.
          * @param pDate the Date
@@ -427,6 +422,11 @@ public class QIFEvent
             /* Call super-constructor */
             super(pDate);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.DATE;
+        }
     }
 
     /**
@@ -434,6 +434,15 @@ public class QIFEvent
      */
     public class QIFEventReferenceLine
             extends QIFStringLine<QEventLineType> {
+        /**
+         * Constructor.
+         * @param pRef the Reference
+         */
+        protected QIFEventReferenceLine(final String pRef) {
+            /* Call super-constructor */
+            super(pRef);
+        }
+
         @Override
         public QEventLineType getLineType() {
             return QEventLineType.REFERENCE;
@@ -446,15 +455,6 @@ public class QIFEvent
         public String getReference() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pRef the Reference
-         */
-        protected QIFEventReferenceLine(final String pRef) {
-            /* Call super-constructor */
-            super(pRef);
-        }
     }
 
     /**
@@ -462,6 +462,15 @@ public class QIFEvent
      */
     public class QIFEventCommentLine
             extends QIFStringLine<QEventLineType> {
+        /**
+         * Constructor.
+         * @param pComment the comment
+         */
+        protected QIFEventCommentLine(final String pComment) {
+            /* Call super-constructor */
+            super(pComment);
+        }
+
         @Override
         public QEventLineType getLineType() {
             return QEventLineType.COMMENT;
@@ -474,15 +483,6 @@ public class QIFEvent
         public String getComment() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pComment the comment
-         */
-        protected QIFEventCommentLine(final String pComment) {
-            /* Call super-constructor */
-            super(pComment);
-        }
     }
 
     /**
@@ -490,11 +490,6 @@ public class QIFEvent
      */
     public class QIFEventClearedLine
             extends QIFClearedLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.CLEARED;
-        }
-
         /**
          * Constructor.
          * @param pCleared is the event cleared?
@@ -503,6 +498,11 @@ public class QIFEvent
             /* Call super-constructor */
             super(pCleared);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.CLEARED;
+        }
     }
 
     /**
@@ -510,11 +510,6 @@ public class QIFEvent
      */
     public class QIFEventPayeeLine
             extends QIFPayeeLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.PAYEE;
-        }
-
         /**
          * Constructor.
          * @param pPayee the payee
@@ -523,6 +518,11 @@ public class QIFEvent
             /* Call super-constructor */
             super(pPayee);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.PAYEE;
+        }
     }
 
     /**
@@ -530,11 +530,6 @@ public class QIFEvent
      */
     public class QIFEventPayeeDescLine
             extends QIFStringLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.PAYEE;
-        }
-
         /**
          * Constructor.
          * @param pPayee the payee description
@@ -543,6 +538,11 @@ public class QIFEvent
             /* Call super-constructor */
             super(pPayee);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.PAYEE;
+        }
     }
 
     /**
@@ -550,6 +550,15 @@ public class QIFEvent
      */
     public class QIFEventAmountLine
             extends QIFMoneyLine<QEventLineType> {
+        /**
+         * Constructor.
+         * @param pAmount the amount
+         */
+        protected QIFEventAmountLine(final JMoney pAmount) {
+            /* Call super-constructor */
+            super(pAmount);
+        }
+
         @Override
         public QEventLineType getLineType() {
             return QEventLineType.AMOUNT;
@@ -562,15 +571,6 @@ public class QIFEvent
         public JMoney getAmount() {
             return getMoney();
         }
-
-        /**
-         * Constructor.
-         * @param pAmount the amount
-         */
-        protected QIFEventAmountLine(final JMoney pAmount) {
-            /* Call super-constructor */
-            super(pAmount);
-        }
     }
 
     /**
@@ -578,11 +578,6 @@ public class QIFEvent
      */
     public class QIFEventAccountLine
             extends QIFXferAccountLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.CATEGORY;
-        }
-
         /**
          * Constructor.
          * @param pAccount the account
@@ -602,6 +597,11 @@ public class QIFEvent
             /* Call super-constructor */
             super(pAccount, pClasses);
         }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.CATEGORY;
+        }
     }
 
     /**
@@ -609,11 +609,6 @@ public class QIFEvent
      */
     public class QIFEventCategoryLine
             extends QIFCategoryLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.CATEGORY;
-        }
-
         /**
          * Constructor.
          * @param pCategory the category
@@ -632,6 +627,11 @@ public class QIFEvent
                                        final List<QIFClass> pClasses) {
             /* Call super-constructor */
             super(pCategory, pClasses);
+        }
+
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.CATEGORY;
         }
     }
 }

@@ -72,6 +72,66 @@ public class SvnRepository
      */
     private static final JDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
 
+    /**
+     * The Preferences.
+     */
+    private final SubVersionPreferences thePreferences;
+
+    /**
+     * Repository Base.
+     */
+    private final String theBase;
+
+    /**
+     * The Client Manager.
+     */
+    private final SvnClientManager theClientMgrPool;
+
+    /**
+     * RevisionHistory Map.
+     */
+    private final SvnRevisionHistoryMap theRevisionHistory;
+
+    /**
+     * Constructor.
+     * @param pPreferenceMgr the preference manager
+     * @param pReport the report object
+     * @throws JOceanusException on error
+     */
+    public SvnRepository(final PreferenceManager pPreferenceMgr,
+                         final ReportStatus pReport) throws JOceanusException {
+        /* Call super constructor */
+        super(pPreferenceMgr);
+
+        /* Access the Repository base */
+        thePreferences = pPreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+
+        /* Access the Repository base */
+        theBase = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
+        setName(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_NAME));
+
+        /* Create a client manager pool */
+        theClientMgrPool = new SvnClientManager(thePreferences);
+
+        /* Create component list */
+        SvnComponentList myComponents = new SvnComponentList(this);
+        setComponents(myComponents);
+
+        /* Create RevisionHistoryMap */
+        theRevisionHistory = new SvnRevisionHistoryMap(this);
+
+        /* Report start of analysis */
+        if (pReport.initTask("Analysing components")) {
+            /* Discover components */
+            myComponents.discover(pReport);
+
+            /* Report completion of pass */
+            if (!pReport.isCancelled()) {
+                pReport.initTask("Component Analysis complete");
+            }
+        }
+    }
+
     @Override
     public String formatObject() {
         return getPath();
@@ -95,26 +155,6 @@ public class SvnRepository
         /* pass call on */
         return super.getFieldValue(pField);
     }
-
-    /**
-     * The Preferences.
-     */
-    private final SubVersionPreferences thePreferences;
-
-    /**
-     * Repository Base.
-     */
-    private final String theBase;
-
-    /**
-     * The Client Manager.
-     */
-    private final SvnClientManager theClientMgrPool;
-
-    /**
-     * RevisionHistory Map.
-     */
-    private final SvnRevisionHistoryMap theRevisionHistory;
 
     /**
      * Obtain the repository base.
@@ -159,46 +199,6 @@ public class SvnRepository
      */
     public SvnRevisionHistoryMap getHistoryMap() {
         return theRevisionHistory;
-    }
-
-    /**
-     * Constructor.
-     * @param pPreferenceMgr the preference manager
-     * @param pReport the report object
-     * @throws JOceanusException on error
-     */
-    public SvnRepository(final PreferenceManager pPreferenceMgr,
-                         final ReportStatus pReport) throws JOceanusException {
-        /* Call super constructor */
-        super(pPreferenceMgr);
-
-        /* Access the Repository base */
-        thePreferences = pPreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
-
-        /* Access the Repository base */
-        theBase = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
-        setName(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_NAME));
-
-        /* Create a client manager pool */
-        theClientMgrPool = new SvnClientManager(thePreferences);
-
-        /* Create component list */
-        SvnComponentList myComponents = new SvnComponentList(this);
-        setComponents(myComponents);
-
-        /* Create RevisionHistoryMap */
-        theRevisionHistory = new SvnRevisionHistoryMap(this);
-
-        /* Report start of analysis */
-        if (pReport.initTask("Analysing components")) {
-            /* Discover components */
-            myComponents.discover(pReport);
-
-            /* Report completion of pass */
-            if (!pReport.isCancelled()) {
-                pReport.initTask("Component Analysis complete");
-            }
-        }
     }
 
     /**

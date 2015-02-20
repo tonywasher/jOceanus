@@ -84,6 +84,36 @@ public class SpotRatesTable
     private static final String NLS_DATAENTRY = MoneyWiseUIResource.RATES_DATAENTRY.getValue();
 
     /**
+     * The Currency column name.
+     */
+    private static final String TITLE_CURRENCY = SpotExchangeRate.FIELD_TO.getName();
+
+    /**
+     * The Symbol column name.
+     */
+    private static final String TITLE_SYMBOL = MoneyWiseUIResource.SPOTRATE_COLUMN_SYMBOL.getValue();
+
+    /**
+     * The Price column name.
+     */
+    private static final String TITLE_RATE = SpotExchangeRate.FIELD_RATE.getName();
+
+    /**
+     * The previous price column name.
+     */
+    private static final String TITLE_PREVRATE = SpotExchangeRate.FIELD_PREVRATE.getName();
+
+    /**
+     * The previous date column name.
+     */
+    private static final String TITLE_PREVDATE = SpotExchangeRate.FIELD_PREVDATE.getName();
+
+    /**
+     * Action Column Title.
+     */
+    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
+
+    /**
      * The data view.
      */
     private final transient View theView;
@@ -149,49 +179,6 @@ public class SpotRatesTable
     private final ErrorPanel theError;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    @Override
-    protected void setError(final JOceanusException pError) {
-        theError.addError(pError);
-    }
-
-    /**
-     * The Currency column name.
-     */
-    private static final String TITLE_CURRENCY = SpotExchangeRate.FIELD_TO.getName();
-
-    /**
-     * The Symbol column name.
-     */
-    private static final String TITLE_SYMBOL = MoneyWiseUIResource.SPOTRATE_COLUMN_SYMBOL.getValue();
-
-    /**
-     * The Price column name.
-     */
-    private static final String TITLE_RATE = SpotExchangeRate.FIELD_RATE.getName();
-
-    /**
-     * The previous price column name.
-     */
-    private static final String TITLE_PREVRATE = SpotExchangeRate.FIELD_PREVRATE.getName();
-
-    /**
-     * The previous date column name.
-     */
-    private static final String TITLE_PREVDATE = SpotExchangeRate.FIELD_PREVDATE.getName();
-
-    /**
-     * Action Column Title.
-     */
-    private static final String TITLE_ACTION = MoneyWiseUIControlResource.COLUMN_ACTION.getValue();
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -255,6 +242,19 @@ public class SpotRatesTable
 
         /* Create the listener */
         new SpotViewListener();
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    @Override
+    protected void setError(final JOceanusException pError) {
+        theError.addError(pError);
     }
 
     /**

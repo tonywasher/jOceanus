@@ -62,19 +62,6 @@ public class RevertWorkingCopy
     private JOceanusException theError;
 
     /**
-     * Obtain the working copy set.
-     * @return the working copy set
-     */
-    public SvnWorkingCopySet getWorkingCopySet() {
-        return theWorkingCopySet;
-    }
-
-    @Override
-    public JOceanusException getError() {
-        return theError;
-    }
-
-    /**
      * Constructor.
      * @param pWorkingSet the working set to update
      * @param pReport the report object
@@ -89,6 +76,19 @@ public class RevertWorkingCopy
         theLocation = pWorkingSet.getLocation();
         theRepository = pWorkingSet.getRepository();
         theReport = pReport;
+    }
+
+    /**
+     * Obtain the working copy set.
+     * @return the working copy set
+     */
+    public SvnWorkingCopySet getWorkingCopySet() {
+        return theWorkingCopySet;
+    }
+
+    @Override
+    public JOceanusException getError() {
+        return theError;
     }
 
     @Override

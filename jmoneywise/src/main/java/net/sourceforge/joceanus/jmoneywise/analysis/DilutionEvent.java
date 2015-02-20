@@ -56,16 +56,6 @@ public final class DilutionEvent
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DILUTION_NAME.getValue());
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public String formatObject() {
-        return getDataFields().getName();
-    }
-
     /**
      * Id Field Id.
      */
@@ -91,26 +81,6 @@ public final class DilutionEvent
      */
     private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_ID.equals(pField)) {
-            return theId;
-        }
-        if (FIELD_SECURITY.equals(pField)) {
-            return theSecurity;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_DILUTION.equals(pField)) {
-            return theDilution;
-        }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTransaction;
-        }
-        return JDataFieldValue.UNKNOWN;
-    }
-
     /**
      * The Id.
      */
@@ -135,6 +105,57 @@ public final class DilutionEvent
      * The Transaction.
      */
     private Transaction theTransaction = null;
+
+    /**
+     * Create a dilution event from a transaction.
+     * @param pId the id for the dilution
+     * @param pTrans the underlying transaction
+     */
+    protected DilutionEvent(final int pId,
+                            final Transaction pTrans) {
+        /* Access the account TODO */
+        TransactionAsset myAsset = pTrans.getAccount();
+        if (!(myAsset instanceof SecurityHolding)) {
+            myAsset = pTrans.getPartner();
+        }
+
+        /* Store the values */
+        theId = pId;
+        theSecurity = SecurityHolding.class.cast(myAsset).getSecurity();
+        theDate = pTrans.getDate();
+        theDilution = pTrans.getDilution();
+        theTransaction = pTrans;
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ID.equals(pField)) {
+            return theId;
+        }
+        if (FIELD_SECURITY.equals(pField)) {
+            return theSecurity;
+        }
+        if (FIELD_DATE.equals(pField)) {
+            return theDate;
+        }
+        if (FIELD_DILUTION.equals(pField)) {
+            return theDilution;
+        }
+        if (FIELD_TRANS.equals(pField)) {
+            return theTransaction;
+        }
+        return JDataFieldValue.UNKNOWN;
+    }
 
     /**
      * Obtain the Security.
@@ -225,27 +246,6 @@ public final class DilutionEvent
             hash ^= getTransaction().hashCode();
         }
         return hash;
-    }
-
-    /**
-     * Create a dilution event from a transaction.
-     * @param pId the id for the dilution
-     * @param pTrans the underlying transaction
-     */
-    protected DilutionEvent(final int pId,
-                            final Transaction pTrans) {
-        /* Access the account TODO */
-        TransactionAsset myAsset = pTrans.getAccount();
-        if (!(myAsset instanceof SecurityHolding)) {
-            myAsset = pTrans.getPartner();
-        }
-
-        /* Store the values */
-        theId = pId;
-        theSecurity = SecurityHolding.class.cast(myAsset).getSecurity();
-        theDate = pTrans.getDate();
-        theDilution = pTrans.getDilution();
-        theTransaction = pTrans;
     }
 
     /**

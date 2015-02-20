@@ -50,27 +50,6 @@ public class QIFClass
      */
     private final String theDesc;
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
-     * Obtain the Name.
-     * @return the Name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    /**
-     * Obtain the Description.
-     * @return the description
-     */
-    public String getDesc() {
-        return theDesc;
-    }
-
     /**
      * Constructor.
      * @param pFile the QIF File
@@ -139,6 +118,27 @@ public class QIFClass
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the Description.
+     * @return the description
+     */
+    public String getDesc() {
+        return theDesc;
+    }
+
+    @Override
     public int compareTo(final QIFClass pThat) {
         return theName.compareTo(pThat.getName());
     }
@@ -148,6 +148,15 @@ public class QIFClass
      */
     public class QIFClassNameLine
             extends QIFStringLine<QClassLineType> {
+        /**
+         * Constructor.
+         * @param pName the Name
+         */
+        protected QIFClassNameLine(final String pName) {
+            /* Call super-constructor */
+            super(pName);
+        }
+
         @Override
         public QClassLineType getLineType() {
             return QClassLineType.NAME;
@@ -160,15 +169,6 @@ public class QIFClass
         public String getName() {
             return getValue();
         }
-
-        /**
-         * Constructor.
-         * @param pName the Name
-         */
-        protected QIFClassNameLine(final String pName) {
-            /* Call super-constructor */
-            super(pName);
-        }
     }
 
     /**
@@ -176,6 +176,15 @@ public class QIFClass
      */
     public class QIFClassDescLine
             extends QIFStringLine<QClassLineType> {
+        /**
+         * Constructor.
+         * @param pDesc the Description
+         */
+        protected QIFClassDescLine(final String pDesc) {
+            /* Call super-constructor */
+            super(pDesc);
+        }
+
         @Override
         public QClassLineType getLineType() {
             return QClassLineType.DESCRIPTION;
@@ -187,15 +196,6 @@ public class QIFClass
          */
         public String getDescription() {
             return getValue();
-        }
-
-        /**
-         * Constructor.
-         * @param pDesc the Description
-         */
-        protected QIFClassDescLine(final String pDesc) {
-            /* Call super-constructor */
-            super(pDesc);
         }
     }
 }

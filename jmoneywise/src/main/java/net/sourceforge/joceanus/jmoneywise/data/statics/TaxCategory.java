@@ -52,34 +52,6 @@ public class TaxCategory
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the Tax class of the Tax Category.
-     * @return the class
-     */
-    public TaxCategoryClass getTaxClass() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public TaxCategory getBase() {
-        return (TaxCategory) super.getBase();
-    }
-
-    @Override
-    public TaxCategoryList getList() {
-        return (TaxCategoryList) super.getList();
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the Tax Category with
@@ -123,6 +95,34 @@ public class TaxCategory
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the Tax class of the Tax Category.
+     * @return the class
+     */
+    public TaxCategoryClass getTaxClass() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public TaxCategory getBase() {
+        return (TaxCategory) super.getBase();
+    }
+
+    @Override
+    public TaxCategoryList getList() {
+        return (TaxCategoryList) super.getList();
+    }
+
+    @Override
+    public boolean isActive() {
+        return true;
+    }
+
     /**
      * Represents a list of {@link TaxCategory} objects.
      */
@@ -132,6 +132,22 @@ public class TaxCategory
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE tax bucket list.
+         * @param pData the DataSet for the list
+         */
+        public TaxCategoryList(final DataSet<?, ?> pData) {
+            super(TaxCategory.class, pData, MoneyWiseDataType.TAXTYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxCategoryList(final TaxCategoryList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -151,22 +167,6 @@ public class TaxCategory
         @Override
         protected Class<TaxCategoryClass> getEnumClass() {
             return TaxCategoryClass.class;
-        }
-
-        /**
-         * Construct an empty CORE tax bucket list.
-         * @param pData the DataSet for the list
-         */
-        public TaxCategoryList(final DataSet<?, ?> pData) {
-            super(TaxCategory.class, pData, MoneyWiseDataType.TAXTYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private TaxCategoryList(final TaxCategoryList pSource) {
-            super(pSource);
         }
 
         @Override

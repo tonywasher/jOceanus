@@ -53,6 +53,15 @@ public abstract class ScmThread
     private JOceanusException theError = null;
 
     /**
+     * Constructor.
+     * @param pReport the report object
+     */
+    protected ScmThread(final ReportTask pReport) {
+        theReport = pReport;
+        theStatus = new ScmStatus();
+    }
+
+    /**
      * Obtain the error.
      * @return the error
      */
@@ -66,15 +75,6 @@ public abstract class ScmThread
      */
     public void setError(final JOceanusException pError) {
         theError = pError;
-    }
-
-    /**
-     * Constructor.
-     * @param pReport the report object
-     */
-    protected ScmThread(final ReportTask pReport) {
-        theReport = pReport;
-        theStatus = new ScmStatus();
     }
 
     @Override

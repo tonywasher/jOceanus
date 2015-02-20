@@ -82,19 +82,6 @@ public class PayeeAnalysisSelect
      */
     private final JScrollButton<PayeeBucket> theButton;
 
-    @Override
-    public PayeeFilter getFilter() {
-        PayeeBucket myPayee = theState.getPayee();
-        return myPayee != null
-                              ? new PayeeFilter(myPayee)
-                              : null;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return (thePayees != null) && !thePayees.isEmpty();
-    }
-
     /**
      * Constructor.
      */
@@ -119,6 +106,19 @@ public class PayeeAnalysisSelect
 
         /* Create the listener */
         theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
+    }
+
+    @Override
+    public PayeeFilter getFilter() {
+        PayeeBucket myPayee = theState.getPayee();
+        return myPayee != null
+                              ? new PayeeFilter(myPayee)
+                              : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (thePayees != null) && !thePayees.isEmpty();
     }
 
     /**
@@ -279,14 +279,6 @@ public class PayeeAnalysisSelect
         private PayeeBucket thePayee;
 
         /**
-         * Obtain the Payee Bucket.
-         * @return the Payee
-         */
-        private PayeeBucket getPayee() {
-            return thePayee;
-        }
-
-        /**
          * Constructor.
          */
         private PayeeState() {
@@ -301,6 +293,14 @@ public class PayeeAnalysisSelect
         private PayeeState(final PayeeState pState) {
             /* Initialise state */
             thePayee = pState.getPayee();
+        }
+
+        /**
+         * Obtain the Payee Bucket.
+         * @return the Payee
+         */
+        private PayeeBucket getPayee() {
+            return thePayee;
         }
 
         /**

@@ -138,6 +138,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final String theValue;
 
+        /**
+         * Constructor.
+         * @param pValue the Value
+         */
+        protected QIFStringLine(final String pValue) {
+            /* Store the value */
+            theValue = pValue;
+        }
+
         @Override
         public String toString() {
             return getValue();
@@ -149,15 +158,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected String getValue() {
             return theValue;
-        }
-
-        /**
-         * Constructor.
-         * @param pValue the Value
-         */
-        protected QIFStringLine(final String pValue) {
-            /* Store the value */
-            theValue = pValue;
         }
 
         @Override
@@ -212,6 +212,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JMoney theMoney;
 
+        /**
+         * Constructor.
+         * @param pMoney the Money
+         */
+        protected QIFMoneyLine(final JMoney pMoney) {
+            /* Store data */
+            theMoney = pMoney;
+        }
+
         @Override
         public String toString() {
             return getMoney().toString();
@@ -223,15 +232,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected JMoney getMoney() {
             return theMoney;
-        }
-
-        /**
-         * Constructor.
-         * @param pMoney the Money
-         */
-        protected QIFMoneyLine(final JMoney pMoney) {
-            /* Store data */
-            theMoney = pMoney;
         }
 
         @Override
@@ -289,6 +289,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JDateDay theDate;
 
+        /**
+         * Constructor.
+         * @param pDate the Date
+         */
+        protected QIFDateLine(final JDateDay pDate) {
+            /* Store the date */
+            theDate = pDate;
+        }
+
         @Override
         public String toString() {
             return getDate().toString();
@@ -300,15 +309,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         public JDateDay getDate() {
             return theDate;
-        }
-
-        /**
-         * Constructor.
-         * @param pDate the Date
-         */
-        protected QIFDateLine(final JDateDay pDate) {
-            /* Store the date */
-            theDate = pDate;
         }
 
         @Override
@@ -363,6 +363,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final Boolean isSet;
 
+        /**
+         * Constructor.
+         * @param pSet is the flag set?
+         */
+        protected QIFFlagLine(final Boolean pSet) {
+            /* Store data */
+            isSet = pSet;
+        }
+
         @Override
         public String toString() {
             return isSet().toString();
@@ -374,15 +383,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected Boolean isSet() {
             return isSet;
-        }
-
-        /**
-         * Constructor.
-         * @param pSet is the flag set?
-         */
-        protected QIFFlagLine(final Boolean pSet) {
-            /* Store data */
-            isSet = pSet;
         }
 
         @Override
@@ -426,20 +426,20 @@ public abstract class QIFLine<T extends QLineType> {
     protected abstract static class QIFClearedLine<X extends QLineType>
             extends QIFFlagLine<X> {
         /**
-         * Obtain Cleared status.
-         * @return true/false
-         */
-        public Boolean isCleared() {
-            return isSet();
-        }
-
-        /**
          * Constructor.
          * @param pSet is the flag set?
          */
         protected QIFClearedLine(final Boolean pSet) {
             /* Call super-constructor */
             super(pSet);
+        }
+
+        /**
+         * Obtain Cleared status.
+         * @return true/false
+         */
+        public Boolean isCleared() {
+            return isSet();
         }
 
         @Override
@@ -464,6 +464,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JPrice thePrice;
 
+        /**
+         * Constructor.
+         * @param pPrice the Price
+         */
+        protected QIFPriceLine(final JPrice pPrice) {
+            /* Store data */
+            thePrice = pPrice;
+        }
+
         @Override
         public String toString() {
             return getPrice().toString();
@@ -475,15 +484,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected JPrice getPrice() {
             return thePrice;
-        }
-
-        /**
-         * Constructor.
-         * @param pPrice the Price
-         */
-        protected QIFPriceLine(final JPrice pPrice) {
-            /* Store data */
-            thePrice = pPrice;
         }
 
         @Override
@@ -541,6 +541,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JUnits theUnits;
 
+        /**
+         * Constructor.
+         * @param pUnits the Units
+         */
+        protected QIFUnitsLine(final JUnits pUnits) {
+            /* Store data */
+            theUnits = pUnits;
+        }
+
         @Override
         public String toString() {
             return getUnits().toString();
@@ -552,15 +561,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected JUnits getUnits() {
             return theUnits;
-        }
-
-        /**
-         * Constructor.
-         * @param pUnits the Units
-         */
-        protected QIFUnitsLine(final JUnits pUnits) {
-            /* Store data */
-            theUnits = pUnits;
         }
 
         @Override
@@ -615,6 +615,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JRate theRate;
 
+        /**
+         * Constructor.
+         * @param pPercent the percentage
+         */
+        protected QIFRateLine(final JRate pPercent) {
+            /* Store data */
+            theRate = pPercent;
+        }
+
         @Override
         public String toString() {
             return getRate().toString();
@@ -626,15 +635,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected JRate getRate() {
             return theRate;
-        }
-
-        /**
-         * Constructor.
-         * @param pPercent the percentage
-         */
-        protected QIFRateLine(final JRate pPercent) {
-            /* Store data */
-            theRate = pPercent;
         }
 
         @Override
@@ -689,6 +689,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JRatio theRatio;
 
+        /**
+         * Constructor.
+         * @param pRatio the Ratio
+         */
+        protected QIFRatioLine(final JRatio pRatio) {
+            /* Store data */
+            theRatio = pRatio;
+        }
+
         @Override
         public String toString() {
             return getRatio().toString();
@@ -700,15 +709,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         protected JRatio getRatio() {
             return theRatio;
-        }
-
-        /**
-         * Constructor.
-         * @param pRatio the Ratio
-         */
-        protected QIFRatioLine(final JRatio pRatio) {
-            /* Store data */
-            theRatio = pRatio;
         }
 
         @Override
@@ -763,6 +763,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final QIFSecurity theSecurity;
 
+        /**
+         * Constructor.
+         * @param pSecurity the Security
+         */
+        protected QIFSecurityLine(final QIFSecurity pSecurity) {
+            /* Store data */
+            theSecurity = pSecurity;
+        }
+
         @Override
         public String toString() {
             return theSecurity.toString();
@@ -774,15 +783,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         public QIFSecurity getSecurity() {
             return theSecurity;
-        }
-
-        /**
-         * Constructor.
-         * @param pSecurity the Security
-         */
-        protected QIFSecurityLine(final QIFSecurity pSecurity) {
-            /* Store data */
-            theSecurity = pSecurity;
         }
 
         @Override
@@ -842,6 +842,26 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final List<QIFClass> theClasses;
 
+        /**
+         * Constructor.
+         * @param pAccount the Account
+         */
+        protected QIFXferAccountLine(final QIFAccount pAccount) {
+            this(pAccount, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pAccount the Account
+         * @param pClasses the classes
+         */
+        protected QIFXferAccountLine(final QIFAccount pAccount,
+                                     final List<QIFClass> pClasses) {
+            /* Store data */
+            theAccount = pAccount;
+            theClasses = pClasses;
+        }
+
         @Override
         public String toString() {
             return theAccount.toString();
@@ -861,26 +881,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         public List<QIFClass> getClassList() {
             return theClasses;
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the Account
-         */
-        protected QIFXferAccountLine(final QIFAccount pAccount) {
-            this(pAccount, null);
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the Account
-         * @param pClasses the classes
-         */
-        protected QIFXferAccountLine(final QIFAccount pAccount,
-                                     final List<QIFClass> pClasses) {
-            /* Store data */
-            theAccount = pAccount;
-            theClasses = pClasses;
         }
 
         @Override
@@ -1049,6 +1049,15 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final QIFPayee thePayee;
 
+        /**
+         * Constructor.
+         * @param pPayee the Payee
+         */
+        protected QIFPayeeLine(final QIFPayee pPayee) {
+            /* Store data */
+            thePayee = pPayee;
+        }
+
         @Override
         public String toString() {
             return thePayee.toString();
@@ -1060,15 +1069,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         public QIFPayee getPayee() {
             return thePayee;
-        }
-
-        /**
-         * Constructor.
-         * @param pPayee the Payee
-         */
-        protected QIFPayeeLine(final QIFPayee pPayee) {
-            /* Store data */
-            thePayee = pPayee;
         }
 
         @Override
@@ -1128,6 +1128,26 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final List<QIFClass> theClasses;
 
+        /**
+         * Constructor.
+         * @param pCategory the Event Category
+         */
+        protected QIFCategoryLine(final QIFEventCategory pCategory) {
+            this(pCategory, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the Event Category
+         * @param pClasses the classes
+         */
+        protected QIFCategoryLine(final QIFEventCategory pCategory,
+                                  final List<QIFClass> pClasses) {
+            /* Store data */
+            theCategory = pCategory;
+            theClasses = pClasses;
+        }
+
         @Override
         public String toString() {
             return theCategory.toString();
@@ -1147,26 +1167,6 @@ public abstract class QIFLine<T extends QLineType> {
          */
         public List<QIFClass> getClassList() {
             return theClasses;
-        }
-
-        /**
-         * Constructor.
-         * @param pCategory the Event Category
-         */
-        protected QIFCategoryLine(final QIFEventCategory pCategory) {
-            this(pCategory, null);
-        }
-
-        /**
-         * Constructor.
-         * @param pCategory the Event Category
-         * @param pClasses the classes
-         */
-        protected QIFCategoryLine(final QIFEventCategory pCategory,
-                                  final List<QIFClass> pClasses) {
-            /* Store data */
-            theCategory = pCategory;
-            theClasses = pClasses;
         }
 
         @Override
@@ -1340,30 +1340,6 @@ public abstract class QIFLine<T extends QLineType> {
         private final List<QIFClass> theClasses;
 
         /**
-         * Obtain event category.
-         * @return the event category
-         */
-        public QIFEventCategory getEventCategory() {
-            return theCategory;
-        }
-
-        /**
-         * Obtain account.
-         * @return the account
-         */
-        public QIFAccount getAccount() {
-            return theAccount;
-        }
-
-        /**
-         * Obtain class list.
-         * @return the class list
-         */
-        public List<QIFClass> getClassList() {
-            return theClasses;
-        }
-
-        /**
          * Constructor.
          * @param pCategory the Event Category
          * @param pAccount the Account
@@ -1386,6 +1362,30 @@ public abstract class QIFLine<T extends QLineType> {
             theCategory = pCategory;
             theAccount = pAccount;
             theClasses = pClasses;
+        }
+
+        /**
+         * Obtain event category.
+         * @return the event category
+         */
+        public QIFEventCategory getEventCategory() {
+            return theCategory;
+        }
+
+        /**
+         * Obtain account.
+         * @return the account
+         */
+        public QIFAccount getAccount() {
+            return theAccount;
+        }
+
+        /**
+         * Obtain class list.
+         * @return the class list
+         */
+        public List<QIFClass> getClassList() {
+            return theClasses;
         }
 
         @Override

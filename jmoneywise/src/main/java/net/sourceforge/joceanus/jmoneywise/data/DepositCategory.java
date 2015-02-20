@@ -62,6 +62,45 @@ public class DepositCategory
      */
     public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSITTYPE.getItemName());
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pCategory The Category to copy
+     */
+    protected DepositCategory(final DepositCategoryList pList,
+                              final DepositCategory pCategory) {
+        /* Set standard values */
+        super(pList, pCategory);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private DepositCategory(final DepositCategoryList pList,
+                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Category Type */
+        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
+        }
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public DepositCategory(final DepositCategoryList pList) {
+        super(pList);
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -151,45 +190,6 @@ public class DepositCategory
     @Override
     public DepositCategoryList getList() {
         return (DepositCategoryList) super.getList();
-    }
-
-    /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pCategory The Category to copy
-     */
-    protected DepositCategory(final DepositCategoryList pList,
-                              final DepositCategory pCategory) {
-        /* Set standard values */
-        super(pList, pCategory);
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private DepositCategory(final DepositCategoryList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public DepositCategory(final DepositCategoryList pList) {
-        super(pList);
     }
 
     /**
@@ -324,6 +324,22 @@ public class DepositCategory
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
+        /**
+         * Construct an empty CORE Category list.
+         * @param pData the DataSet for the list
+         */
+        protected DepositCategoryList(final MoneyWiseData pData) {
+            super(pData, DepositCategory.class, MoneyWiseDataType.DEPOSITCATEGORY);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected DepositCategoryList(final DepositCategoryList pSource) {
+            super(pSource);
+        }
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -339,27 +355,11 @@ public class DepositCategory
             return DepositCategory.FIELD_DEFS;
         }
 
-        /**
-         * Construct an empty CORE Category list.
-         * @param pData the DataSet for the list
-         */
-        protected DepositCategoryList(final MoneyWiseData pData) {
-            super(pData, DepositCategory.class, MoneyWiseDataType.DEPOSITCATEGORY);
-        }
-
         @Override
         protected DepositCategoryList getEmptyList(final ListStyle pStyle) {
             DepositCategoryList myList = new DepositCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected DepositCategoryList(final DepositCategoryList pSource) {
-            super(pSource);
         }
 
         /**

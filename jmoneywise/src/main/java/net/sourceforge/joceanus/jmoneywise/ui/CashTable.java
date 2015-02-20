@@ -202,30 +202,6 @@ public class CashTable
     private transient CashList theCash = null;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
-     * Obtain the filter panel.
-     * @return the filter panel
-     */
-    protected JPanel getFilterPanel() {
-        return theFilterPanel;
-    }
-
-    /**
-     * Are we in the middle of an item edit?
-     * @return true/false
-     */
-    protected boolean isItemEditing() {
-        return theActiveAccount.isEditing();
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
@@ -290,6 +266,30 @@ public class CashTable
 
         /* Create listener */
         new CashListener();
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    /**
+     * Obtain the filter panel.
+     * @return the filter panel
+     */
+    protected JPanel getFilterPanel() {
+        return theFilterPanel;
+    }
+
+    /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveAccount.isEditing();
     }
 
     /**

@@ -80,6 +80,14 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
     private List<SheetDataItem<?, ?>> theSheets = null;
 
     /**
+     * Constructor.
+     * @param pTask the Task control
+     */
+    public SheetReader(final TaskControl<T> pTask) {
+        theTask = pTask;
+    }
+
+    /**
      * get task control.
      * @return the task control
      */
@@ -101,14 +109,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      */
     public T getData() {
         return theData;
-    }
-
-    /**
-     * Constructor.
-     * @param pTask the Task control
-     */
-    public SheetReader(final TaskControl<T> pTask) {
-        theTask = pTask;
     }
 
     /**

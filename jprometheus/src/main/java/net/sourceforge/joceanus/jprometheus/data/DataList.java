@@ -68,28 +68,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATALIST_NAME.getValue());
 
     /**
-     * Instance ReportFields.
-     */
-    private final JDataFields theFields;
-
-    @Override
-    public JDataFields getDataFields() {
-        return theFields;
-    }
-
-    /**
-     * Obtain item fields.
-     * @return the item fields
-     */
-    public abstract JDataFields getItemFields();
-
-    /**
-     * Declare fields.
-     * @return the fields
-     */
-    public abstract JDataFields declareFields();
-
-    /**
      * Size Field Id.
      */
     public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
@@ -143,6 +121,119 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Errors Field Id.
      */
     public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
+
+    /**
+     * Instance ReportFields.
+     */
+    private final JDataFields theFields;
+
+    /**
+     * The style of the list.
+     */
+    private ListStyle theStyle = ListStyle.CORE;
+
+    /**
+     * The edit state of the list.
+     */
+    private EditState theEdit = EditState.CLEAN;
+
+    /**
+     * The DataSet.
+     */
+    private DataSet<?, ?> theDataSet;
+
+    /**
+     * The granularity of the list.
+     */
+    private final int theGranularity;
+
+    /**
+     * The item type.
+     */
+    private final E theItemType;
+
+    /**
+     * The id manager.
+     */
+    private final IdManager<T, E> theMgr;
+
+    /**
+     * The base list (for extracts).
+     */
+    private DataList<? extends DataItem<E>, E> theBase = null;
+
+    /**
+     * DataMap.
+     */
+    private DataMapItem<T, E> theDataMap;
+
+    /**
+     * The generation.
+     */
+    private int theGeneration = 0;
+
+    /**
+     * The version.
+     */
+    private int theVersion = 0;
+
+    /**
+     * Construct a new object.
+     * @param pBaseClass the class of the underlying object
+     * @param pDataSet the owning dataSet
+     * @param pItemType the item type
+     * @param pStyle the new {@link ListStyle}
+     */
+    protected DataList(final Class<T> pBaseClass,
+                       final DataSet<?, ?> pDataSet,
+                       final E pItemType,
+                       final ListStyle pStyle) {
+        super(pBaseClass, new IdManager<T, E>(pDataSet.getGranularity()));
+        theStyle = pStyle;
+        theItemType = pItemType;
+        theDataSet = pDataSet;
+        theGranularity = pDataSet.getGranularity();
+        theGeneration = pDataSet.getGeneration();
+        theMgr = getManagerIndex();
+
+        /* Declare fields (allowing for subclasses) */
+        theFields = declareFields();
+    }
+
+    /**
+     * Construct a clone object.
+     * @param pSource the list to clone
+     */
+    protected DataList(final DataList<T, E> pSource) {
+        super(pSource.getBaseClass(), new IdManager<T, E>(pSource.getGranularity()));
+        theStyle = ListStyle.COPY;
+        theItemType = pSource.getItemType();
+        theMgr = getManagerIndex();
+        theBase = pSource;
+        theDataSet = pSource.getDataSet();
+        theGranularity = pSource.getGranularity();
+        theGeneration = pSource.getGeneration();
+
+        /* Declare fields (allowing for subclasses) */
+        theFields = declareFields();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return theFields;
+    }
+
+    /**
+     * Obtain item fields.
+     * @return the item fields
+     */
+    public abstract JDataFields getItemFields();
+
+    /**
+     * Declare fields.
+     * @return the fields
+     */
+    public abstract JDataFields declareFields();
 
     @Override
     public String formatObject() {
@@ -204,56 +295,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return the ListName
      */
     public abstract String listName();
-
-    /**
-     * The style of the list.
-     */
-    private ListStyle theStyle = ListStyle.CORE;
-
-    /**
-     * The edit state of the list.
-     */
-    private EditState theEdit = EditState.CLEAN;
-
-    /**
-     * The DataSet.
-     */
-    private DataSet<?, ?> theDataSet;
-
-    /**
-     * The granularity of the list.
-     */
-    private final int theGranularity;
-
-    /**
-     * The item type.
-     */
-    private final E theItemType;
-
-    /**
-     * The id manager.
-     */
-    private final IdManager<T, E> theMgr;
-
-    /**
-     * The base list (for extracts).
-     */
-    private DataList<? extends DataItem<E>, E> theBase = null;
-
-    /**
-     * DataMap.
-     */
-    private DataMapItem<T, E> theDataMap;
-
-    /**
-     * The generation.
-     */
-    private int theGeneration = 0;
-
-    /**
-     * The version.
-     */
-    private int theVersion = 0;
 
     /**
      * Get the style of the list.
@@ -415,47 +456,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     @SuppressWarnings("unchecked")
     private IdManager<T, E> getManagerIndex() {
         return (IdManager<T, E>) super.getIndex();
-    }
-
-    /**
-     * Construct a new object.
-     * @param pBaseClass the class of the underlying object
-     * @param pDataSet the owning dataSet
-     * @param pItemType the item type
-     * @param pStyle the new {@link ListStyle}
-     */
-    protected DataList(final Class<T> pBaseClass,
-                       final DataSet<?, ?> pDataSet,
-                       final E pItemType,
-                       final ListStyle pStyle) {
-        super(pBaseClass, new IdManager<T, E>(pDataSet.getGranularity()));
-        theStyle = pStyle;
-        theItemType = pItemType;
-        theDataSet = pDataSet;
-        theGranularity = pDataSet.getGranularity();
-        theGeneration = pDataSet.getGeneration();
-        theMgr = getManagerIndex();
-
-        /* Declare fields (allowing for subclasses) */
-        theFields = declareFields();
-    }
-
-    /**
-     * Construct a clone object.
-     * @param pSource the list to clone
-     */
-    protected DataList(final DataList<T, E> pSource) {
-        super(pSource.getBaseClass(), new IdManager<T, E>(pSource.getGranularity()));
-        theStyle = ListStyle.COPY;
-        theItemType = pSource.getItemType();
-        theMgr = getManagerIndex();
-        theBase = pSource;
-        theDataSet = pSource.getDataSet();
-        theGranularity = pSource.getGranularity();
-        theGeneration = pSource.getGeneration();
-
-        /* Declare fields (allowing for subclasses) */
-        theFields = declareFields();
     }
 
     /**

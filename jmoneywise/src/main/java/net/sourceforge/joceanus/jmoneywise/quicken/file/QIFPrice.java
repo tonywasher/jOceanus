@@ -78,38 +78,6 @@ public class QIFPrice
     private final List<QIFPrice> thePrices;
 
     /**
-     * Obtain the security.
-     * @return the security
-     */
-    public QIFSecurity getSecurity() {
-        return theSecurity;
-    }
-
-    /**
-     * Obtain the date.
-     * @return the date
-     */
-    public JDateDay getDate() {
-        return theDate;
-    }
-
-    /**
-     * Obtain the price.
-     * @return the security
-     */
-    public JPrice getPrice() {
-        return thePrice;
-    }
-
-    /**
-     * Obtain iterator for list.
-     * @return the iterator
-     */
-    public Iterator<QIFPrice> priceIterator() {
-        return thePrices.iterator();
-    }
-
-    /**
      * Constructor.
      * @param pFile the QIF File
      * @param pSecurity the security
@@ -181,6 +149,38 @@ public class QIFPrice
         theSecurity = mySecurity;
         theDate = null;
         thePrice = null;
+    }
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public QIFSecurity getSecurity() {
+        return theSecurity;
+    }
+
+    /**
+     * Obtain the date.
+     * @return the date
+     */
+    public JDateDay getDate() {
+        return theDate;
+    }
+
+    /**
+     * Obtain the price.
+     * @return the security
+     */
+    public JPrice getPrice() {
+        return thePrice;
+    }
+
+    /**
+     * Obtain iterator for list.
+     * @return the iterator
+     */
+    public Iterator<QIFPrice> priceIterator() {
+        return thePrices.iterator();
     }
 
     /**

@@ -55,27 +55,6 @@ public class GitRepository
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
 
-    @Override
-    public String formatObject() {
-        return getName();
-    }
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_BASE.equals(pField)) {
-            return theBase;
-        }
-
-        /* pass call on */
-        return super.getFieldValue(pField);
-    }
-
     /**
      * The Preferences.
      */
@@ -85,27 +64,6 @@ public class GitRepository
      * Repository Base.
      */
     private final String theBase;
-
-    /**
-     * Obtain the repository base.
-     * @return the name
-     */
-    public String getBase() {
-        return theBase;
-    }
-
-    /**
-     * Obtain the preferences.
-     * @return the preferences
-     */
-    public GitPreferences getPreferences() {
-        return thePreferences;
-    }
-
-    @Override
-    public GitComponentList getComponents() {
-        return (GitComponentList) super.getComponents();
-    }
 
     /**
      * Constructor.
@@ -140,6 +98,48 @@ public class GitRepository
                 pReport.initTask("Component Analysis complete");
             }
         }
+    }
+
+    @Override
+    public String formatObject() {
+        return getName();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_BASE.equals(pField)) {
+            return theBase;
+        }
+
+        /* pass call on */
+        return super.getFieldValue(pField);
+    }
+
+    /**
+     * Obtain the repository base.
+     * @return the name
+     */
+    public String getBase() {
+        return theBase;
+    }
+
+    /**
+     * Obtain the preferences.
+     * @return the preferences
+     */
+    public GitPreferences getPreferences() {
+        return thePreferences;
+    }
+
+    @Override
+    public GitComponentList getComponents() {
+        return (GitComponentList) super.getComponents();
     }
 
     @Override

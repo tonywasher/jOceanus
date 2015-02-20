@@ -91,6 +91,20 @@ public enum FrequencyClass implements StaticInterface {
      */
     private final int theAdjust;
 
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the default order
+     * @param uAdjust the adjustment
+     */
+    private FrequencyClass(final int uId,
+                           final int uOrder,
+                           final int uAdjust) {
+        theId = uId;
+        theOrder = uOrder;
+        theAdjust = uAdjust;
+    }
+
     @Override
     public int getClassId() {
         return theId;
@@ -119,20 +133,6 @@ public enum FrequencyClass implements StaticInterface {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the default order
-     * @param uAdjust the adjustment
-     */
-    private FrequencyClass(final int uId,
-                           final int uOrder,
-                           final int uAdjust) {
-        theId = uId;
-        theOrder = uOrder;
-        theAdjust = uAdjust;
     }
 
     /**

@@ -45,6 +45,32 @@ public class QIFParentCategory
      */
     private final OrderedList<QIFEventCategory> theChildren;
 
+    /**
+     * Constructor.
+     * @param pFile the file definition
+     * @param pParent the parent category
+     */
+    protected QIFParentCategory(final QIFFile pFile,
+                                final TransactionCategory pParent) {
+        /* Create self definition */
+        theSelf = new QIFEventCategory(pFile, pParent);
+
+        /* Create child list */
+        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
+    }
+
+    /**
+     * Constructor.
+     * @param pParent the parent category
+     */
+    protected QIFParentCategory(final QIFEventCategory pParent) {
+        /* Record self definition */
+        theSelf = pParent;
+
+        /* Create child list */
+        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
+    }
+
     @Override
     public String toString() {
         return theSelf.toString();
@@ -72,32 +98,6 @@ public class QIFParentCategory
      */
     public List<QIFEventCategory> getChildren() {
         return theChildren;
-    }
-
-    /**
-     * Constructor.
-     * @param pFile the file definition
-     * @param pParent the parent category
-     */
-    protected QIFParentCategory(final QIFFile pFile,
-                                final TransactionCategory pParent) {
-        /* Create self definition */
-        theSelf = new QIFEventCategory(pFile, pParent);
-
-        /* Create child list */
-        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
-    }
-
-    /**
-     * Constructor.
-     * @param pParent the parent category
-     */
-    protected QIFParentCategory(final QIFEventCategory pParent) {
-        /* Record self definition */
-        theSelf = pParent;
-
-        /* Create child list */
-        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
     }
 
     /**

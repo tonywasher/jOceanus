@@ -53,29 +53,6 @@ public class PayeeType
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Return the PayeeTypeClass of the PayeeType.
-     * @return the class
-     */
-    public PayeeTypeClass getPayeeClass() {
-        return super.getStaticClass();
-    }
-
-    @Override
-    public PayeeType getBase() {
-        return (PayeeType) super.getBase();
-    }
-
-    @Override
-    public PayeeTypeList getList() {
-        return (PayeeTypeList) super.getList();
-    }
-
     /**
      * Copy Constructor.
      * @param pList The list to associate the PayeeType with
@@ -119,6 +96,29 @@ public class PayeeType
         super(pList, pValues);
     }
 
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Return the PayeeTypeClass of the PayeeType.
+     * @return the class
+     */
+    public PayeeTypeClass getPayeeClass() {
+        return super.getStaticClass();
+    }
+
+    @Override
+    public PayeeType getBase() {
+        return (PayeeType) super.getBase();
+    }
+
+    @Override
+    public PayeeTypeList getList() {
+        return (PayeeTypeList) super.getList();
+    }
+
     /**
      * Represents a list of {@link PayeeType} objects.
      */
@@ -128,6 +128,22 @@ public class PayeeType
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+
+        /**
+         * Construct an empty CORE payeeType list.
+         * @param pData the DataSet for the list
+         */
+        public PayeeTypeList(final DataSet<?, ?> pData) {
+            super(PayeeType.class, pData, MoneyWiseDataType.PAYEETYPE, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private PayeeTypeList(final PayeeTypeList pSource) {
+            super(pSource);
+        }
 
         @Override
         public JDataFields declareFields() {
@@ -147,22 +163,6 @@ public class PayeeType
         @Override
         protected Class<PayeeTypeClass> getEnumClass() {
             return PayeeTypeClass.class;
-        }
-
-        /**
-         * Construct an empty CORE payeeType list.
-         * @param pData the DataSet for the list
-         */
-        public PayeeTypeList(final DataSet<?, ?> pData) {
-            super(PayeeType.class, pData, MoneyWiseDataType.PAYEETYPE, ListStyle.CORE);
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        private PayeeTypeList(final PayeeTypeList pSource) {
-            super(pSource);
         }
 
         @Override

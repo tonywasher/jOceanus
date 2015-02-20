@@ -348,22 +348,6 @@ public class TransactionTable
     private final transient TransactionBuilder theBuilder;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
-     * Are we in the middle of an item edit?
-     * @return true/false
-     */
-    protected boolean isItemEditing() {
-        return theActiveTrans.isEditing();
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -448,6 +432,22 @@ public class TransactionTable
         theColumns.adjustColumns(theSelect.showColumns()
                                                         ? theSelect.getColumns()
                                                         : AnalysisColumnSet.BALANCE);
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveTrans.isEditing();
     }
 
     /**

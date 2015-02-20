@@ -71,26 +71,6 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
      */
     private static final JDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
 
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_NAME.equals(pField)) {
-            return theName;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponents;
-        }
-        if (FIELD_BRNMAP.equals(pField)) {
-            return theBranchMap;
-        }
-        if (FIELD_TAGMAP.equals(pField)) {
-            return theTagMap;
-        }
-
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
-    }
-
     /**
      * The Preference Manager.
      */
@@ -128,6 +108,26 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
         /* Allocate the maps */
         theBranchMap = new HashMap<MvnProjectId, ScmBranch<?, ?, R>>();
         theTagMap = new HashMap<MvnProjectId, ScmTag<?, ?, ?, R>>();
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_NAME.equals(pField)) {
+            return theName;
+        }
+        if (FIELD_COMP.equals(pField)) {
+            return theComponents;
+        }
+        if (FIELD_BRNMAP.equals(pField)) {
+            return theBranchMap;
+        }
+        if (FIELD_TAGMAP.equals(pField)) {
+            return theTagMap;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**

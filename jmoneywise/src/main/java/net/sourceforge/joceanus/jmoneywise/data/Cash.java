@@ -109,6 +109,86 @@ public class Cash
      */
     private final CashInfoSet theInfoSet;
 
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pCash The Cash to copy
+     */
+    protected Cash(final CashList pList,
+                   final Cash pCash) {
+        /* Set standard values */
+        super(pList, pCash);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
+                theInfoSet.cloneDataInfoSet(pCash.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Cash(final CashList pList,
+                 final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Category */
+        Object myValue = pValues.getValue(FIELD_CATEGORY);
+        if (myValue instanceof Integer) {
+            setValueCategory((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueCategory((String) myValue);
+        }
+
+        /* Store the Currency */
+        myValue = pValues.getValue(FIELD_CURRENCY);
+        if (myValue instanceof Integer) {
+            setValueCurrency((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueCurrency((String) myValue);
+        } else if (myValue instanceof AssetCurrency) {
+            setValueCurrency((AssetCurrency) myValue);
+        }
+
+        /* Create the InfoSet */
+        theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public Cash(final CashList pList) {
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+    }
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -436,86 +516,6 @@ public class Cash
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list
-     * @param pCash The Cash to copy
-     */
-    protected Cash(final CashList pList,
-                   final Cash pCash) {
-        /* Set standard values */
-        super(pList, pCash);
-
-        /* switch on list type */
-        switch (getList().getStyle()) {
-            case EDIT:
-                theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
-                theInfoSet.cloneDataInfoSet(pCash.getInfoSet());
-                hasInfoSet = true;
-                useInfoSet = true;
-                break;
-            case CLONE:
-            case CORE:
-                theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
-                hasInfoSet = true;
-                useInfoSet = false;
-                break;
-            default:
-                theInfoSet = null;
-                hasInfoSet = false;
-                useInfoSet = false;
-                break;
-        }
-    }
-
-    /**
-     * Values constructor.
-     * @param pList the List to add to
-     * @param pValues the values constructor
-     * @throws JOceanusException on error
-     */
-    private Cash(final CashList pList,
-                 final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pValues);
-
-        /* Store the Category */
-        Object myValue = pValues.getValue(FIELD_CATEGORY);
-        if (myValue instanceof Integer) {
-            setValueCategory((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCategory((String) myValue);
-        }
-
-        /* Store the Currency */
-        myValue = pValues.getValue(FIELD_CURRENCY);
-        if (myValue instanceof Integer) {
-            setValueCurrency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCurrency((String) myValue);
-        } else if (myValue instanceof AssetCurrency) {
-            setValueCurrency((AssetCurrency) myValue);
-        }
-
-        /* Create the InfoSet */
-        theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Cash(final CashList pList) {
-        super(pList);
-
-        /* Build InfoSet */
-        theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-    }
-
-    /**
      * Set defaults.
      * @param pUpdateSet the update set
      * @throws JOceanusException on error
@@ -781,11 +781,6 @@ public class Cash
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
         /**
          * The CashInfo List.
          */
@@ -795,6 +790,27 @@ public class Cash
          * The AccountInfoType list.
          */
         private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Construct an empty CORE list.
+         * @param pData the DataSet for the list
+         */
+        public CashList(final MoneyWiseData pData) {
+            super(pData, Cash.class, MoneyWiseDataType.CASH);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected CashList(final CashList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
 
         @Override
         public String listName() {
@@ -833,27 +849,11 @@ public class Cash
             return theInfoTypeList;
         }
 
-        /**
-         * Construct an empty CORE list.
-         * @param pData the DataSet for the list
-         */
-        public CashList(final MoneyWiseData pData) {
-            super(pData, Cash.class, MoneyWiseDataType.CASH);
-        }
-
         @Override
         protected CashList getEmptyList(final ListStyle pStyle) {
             CashList myList = new CashList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        /**
-         * Constructor for a cloned List.
-         * @param pSource the source List
-         */
-        protected CashList(final CashList pSource) {
-            super(pSource);
         }
 
         /**
@@ -991,6 +991,19 @@ public class Cash
         public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Constructor.
+         * @param pDeposits the deposits list
+         */
+        protected CashDataMap(final DepositList pDeposits) {
+            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        }
+
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
@@ -1010,19 +1023,6 @@ public class Cash
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
-        }
-
-        /**
-         * The assetMap.
-         */
-        private AssetDataMap theUnderlyingMap;
-
-        /**
-         * Constructor.
-         * @param pDeposits the deposits list
-         */
-        protected CashDataMap(final DepositList pDeposits) {
-            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
         }
 
         @Override
