@@ -128,7 +128,9 @@ public class PortfolioCashBucket
                                   final AccountValues pSource) {
         /* Add valuation values */
         JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        myValue = new JMoney(myValue);
         JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
+        pTotals.setValue(AccountAttribute.VALUATION, myValue);
     }
 }

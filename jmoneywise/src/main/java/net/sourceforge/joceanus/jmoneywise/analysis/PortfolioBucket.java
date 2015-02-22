@@ -355,6 +355,7 @@ public final class PortfolioBucket
 
         /* Create market fields for the portfolio */
         theValues.setValue(SecurityAttribute.MARKET, new JMoney());
+        theValues.setValue(SecurityAttribute.MARKETPROFIT, new JMoney());
     }
 
     /**
@@ -495,8 +496,8 @@ public final class PortfolioBucket
         myValue.addAmount(mySrcValue);
 
         /* Add profit adjustment values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.PROFITADJUST);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.PROFITADJUST);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.GROWTHADJUST);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.GROWTHADJUST);
         myValue.addAmount(mySrcValue);
 
         /* Add dividends values */
@@ -507,6 +508,13 @@ public final class PortfolioBucket
         /* Add market values */
         myValue = pTotals.getMoneyValue(SecurityAttribute.MARKET);
         mySrcValue = pSource.getMoneyValue(SecurityAttribute.MARKET);
+        if (mySrcValue != null) {
+            myValue.addAmount(mySrcValue);
+        }
+
+        /* Add market profit values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (mySrcValue != null) {
             myValue.addAmount(mySrcValue);
         }

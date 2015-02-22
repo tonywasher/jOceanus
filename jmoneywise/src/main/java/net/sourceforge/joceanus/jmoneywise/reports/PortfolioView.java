@@ -66,7 +66,7 @@ public class PortfolioView
     /**
      * The Adjustment text.
      */
-    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_PROFITADJUST.getValue();
+    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_GROWTHADJUST.getValue();
 
     /**
      * The Value text.
@@ -147,7 +147,7 @@ public class PortfolioView
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
             checkPortfolioProfit(myBucket);
 
@@ -165,7 +165,7 @@ public class PortfolioView
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
         checkPortfolioProfit(myTotals);
 
@@ -219,7 +219,7 @@ public class PortfolioView
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
             checkSecurityProfit(myBucket);
 
@@ -241,6 +241,7 @@ public class PortfolioView
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
@@ -257,6 +258,7 @@ public class PortfolioView
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());

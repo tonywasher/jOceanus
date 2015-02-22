@@ -217,6 +217,7 @@ public class SP800SecureRandomBuilder {
         /**
          * Constructor.
          * @param pGenerator the random generator
+         * @param pRandom the secure random instance
          * @param pEntropy the entropy source
          * @param isPredictionResistant true/false
          */

@@ -79,6 +79,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
 
     /**
+     * Totals bucket name.
+     */
+    private static final String NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS.getValue();
+
+    /**
      * The analysis.
      */
     private final Analysis theAnalysis;
@@ -217,7 +222,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @return the name
      */
     public String getName() {
-        return theAccount.getName();
+        return theAccount == null
+                                 ? NAME_TOTALS
+                                 : theAccount.getName();
     }
 
     /**

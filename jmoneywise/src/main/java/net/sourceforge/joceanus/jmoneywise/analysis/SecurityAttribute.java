@@ -54,9 +54,9 @@ public enum SecurityAttribute implements BucketAttribute {
     GAINS,
 
     /**
-     * ProfitAdjust.
+     * GrowthAdjust.
      */
-    PROFITADJUST,
+    GROWTHADJUST,
 
     /**
      * Invested.
@@ -77,6 +77,11 @@ public enum SecurityAttribute implements BucketAttribute {
      * Profit.
      */
     PROFIT,
+
+    /**
+     * Profit.
+     */
+    MARKETPROFIT,
 
     /**
      * Price.
@@ -106,12 +111,13 @@ public enum SecurityAttribute implements BucketAttribute {
             case UNITS:
             case COST:
             case GAINS:
-            case PROFITADJUST:
+            case GROWTHADJUST:
             case DIVIDEND:
             case INVESTED:
                 return true;
             case MARKET:
             case PROFIT:
+            case MARKETPROFIT:
             case VALUATION:
             case PRICE:
             case DELTA:
@@ -131,10 +137,11 @@ public enum SecurityAttribute implements BucketAttribute {
             case DELTA:
             case COST:
             case GAINS:
-            case PROFITADJUST:
+            case GROWTHADJUST:
             case INVESTED:
             case DIVIDEND:
             case MARKET:
+            case MARKETPROFIT:
             case PROFIT:
             default:
                 return DataType.MONEY;

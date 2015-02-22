@@ -26,9 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
@@ -61,9 +59,6 @@ public class MarketAnalysis {
      * @param pBucket the security bucket.
      */
     protected void processSecurity(final SecurityBucket pBucket) {
-        /* Access the security */
-        Security mySecurity = pBucket.getSecurity();
-
         /* Access market and gains */
         SecurityValues myValues = pBucket.getValues();
         JMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKET);
@@ -71,27 +66,16 @@ public class MarketAnalysis {
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {
-            if (mySecurity.getSecurityTypeClass().isCapitalGains()) {
-                /* Subtract them from the market movement */
-                myMarket.subtractAmount(myGains);
+            /* Subtract them from the market movement */
+            myMarket.subtractAmount(myGains);
 
-                /* Add to Capital Gains income/expense */
-                if (myGains.isPositive()) {
-                    /* Adjust market account */
-                    theMarketIncome.addAmount(myGains);
-                } else {
-                    /* Adjust market account */
-                    theMarketExpense.subtractAmount(myGains);
-                }
-            } else if (mySecurity.isSecurityClass(SecurityTypeClass.LIFEBOND)) {
-                /* Subtract them from the market movement */
-                myMarket.subtractAmount(myGains);
-
-                /* If the gains are positive */
-                if (myGains.isPositive()) {
-                    /* Add the market income */
-                    theMarketIncome.addAmount(myGains);
-                }
+            /* These gains have been allocated separately */
+            if (myGains.isPositive()) {
+                /* Adjust market account */
+                theMarketIncome.addAmount(myGains);
+            } else {
+                /* Adjust market account */
+                theMarketExpense.subtractAmount(myGains);
             }
         }
 

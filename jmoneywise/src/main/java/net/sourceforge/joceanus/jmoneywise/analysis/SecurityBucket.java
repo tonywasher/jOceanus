@@ -562,11 +562,11 @@ public final class SecurityBucket
      * Adjust profit adjustment.
      * @param pDelta the delta
      */
-    protected void adjustProfitDelta(final JMoney pDelta) {
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.PROFITADJUST);
+    protected void adjustGrowthDelta(final JMoney pDelta) {
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
         myValue = new JMoney(myValue);
         myValue.addAmount(pDelta);
-        setValue(SecurityAttribute.PROFITADJUST, myValue);
+        setValue(SecurityAttribute.GROWTHADJUST, myValue);
     }
 
     /**
@@ -626,9 +626,15 @@ public final class SecurityBucket
         JMoney myProfit = new JMoney(myValuation);
         myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
         myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
 
         /* Set the attribute */
         setValue(SecurityAttribute.PROFIT, myProfit);
+
+        /* Calculate the profit minus the dividend */
+        JMoney myMarketProfit = new JMoney(myProfit);
+        myMarketProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        setValue(SecurityAttribute.MARKETPROFIT, myMarketProfit);
     }
 
     /**
@@ -710,7 +716,7 @@ public final class SecurityBucket
             put(SecurityAttribute.COST, new JMoney());
             put(SecurityAttribute.INVESTED, new JMoney());
             put(SecurityAttribute.GAINS, new JMoney());
-            put(SecurityAttribute.PROFITADJUST, new JMoney());
+            put(SecurityAttribute.GROWTHADJUST, new JMoney());
             put(SecurityAttribute.DIVIDEND, new JMoney());
         }
 
@@ -733,7 +739,7 @@ public final class SecurityBucket
             /* Adjust invested/gains values */
             adjustMoneyToBase(pBase, SecurityAttribute.INVESTED);
             adjustMoneyToBase(pBase, SecurityAttribute.GAINS);
-            adjustMoneyToBase(pBase, SecurityAttribute.PROFITADJUST);
+            adjustMoneyToBase(pBase, SecurityAttribute.GROWTHADJUST);
             adjustMoneyToBase(pBase, SecurityAttribute.DIVIDEND);
         }
 
@@ -742,7 +748,7 @@ public final class SecurityBucket
             /* Reset Invested, Gains and Dividend values */
             put(SecurityAttribute.INVESTED, new JMoney());
             put(SecurityAttribute.GAINS, new JMoney());
-            put(SecurityAttribute.PROFITADJUST, new JMoney());
+            put(SecurityAttribute.GROWTHADJUST, new JMoney());
             put(SecurityAttribute.DIVIDEND, new JMoney());
         }
 

@@ -229,6 +229,11 @@ public class ReportSelect
      */
     private final class ReportListener
             implements ActionListener, PropertyChangeListener {
+        /**
+         * Active flag.
+         */
+        private boolean isActive = false;
+
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -238,23 +243,31 @@ public class ReportSelect
                 /* Request a print operation */
                 fireActionPerformed(ACTION_PRINT);
             }
-
         }
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             Object o = evt.getSource();
 
-            /* if this event relates to the Range Select */
-            if (theRangeSelect.equals(o)
-                && (theState.setRange(theRangeSelect))) {
-                /* Notify that the state has changed */
-                fireStateChanged();
+            /* if this event relates to the report button */
+            if (theReportButton.equals(o)) {
+                /* Set active flag */
+                isActive = true;
+
+                /* Look for a changed report type */
+                if (theState.setType(theReportButton.getValue())) {
+                    /* Notify that the state has changed */
+                    fireStateChanged();
+                }
+
+                /* Clear active flag */
+                isActive = false;
             }
 
-            /* if this event relates to the report button */
-            if (theReportButton.equals(o)
-                && (theState.setType(theReportButton.getValue()))) {
+            /* if this event relates to the Range Select */
+            if (theRangeSelect.equals(o)
+                && theState.setRange(theRangeSelect)
+                && !isActive) {
                 /* Notify that the state has changed */
                 fireStateChanged();
             }

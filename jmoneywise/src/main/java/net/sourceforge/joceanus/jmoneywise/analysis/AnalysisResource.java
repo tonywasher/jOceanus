@@ -352,9 +352,9 @@ public enum AnalysisResource implements ResourceId {
     SECURITYATTR_GAINS("SecurityAttr.Gains"),
 
     /**
-     * SecurityAttr ProfitAdjustment.
+     * SecurityAttr GrowthAdjustment.
      */
-    SECURITYATTR_PROFITADJUST("SecurityAttr.ProfitAdjust"),
+    SECURITYATTR_GROWTHADJUST("SecurityAttr.GrowthAdjust"),
 
     /**
      * SecurityAttr Invested.
@@ -370,6 +370,11 @@ public enum AnalysisResource implements ResourceId {
      * SecurityAttr Market.
      */
     SECURITYATTR_MARKET("SecurityAttr.Market"),
+
+    /**
+     * SecurityAttr MarketProfit.
+     */
+    SECURITYATTR_MARKETPROFIT("SecurityAttr.MarketProfit"),
 
     /**
      * SecurityAttr Profit.
@@ -525,14 +530,16 @@ public enum AnalysisResource implements ResourceId {
                 return SECURITYATTR_COST;
             case GAINS:
                 return SECURITYATTR_GAINS;
-            case PROFITADJUST:
-                return SECURITYATTR_PROFITADJUST;
+            case GROWTHADJUST:
+                return SECURITYATTR_GROWTHADJUST;
             case INVESTED:
                 return SECURITYATTR_INVESTED;
             case DIVIDEND:
                 return SECURITYATTR_DIVIDEND;
             case MARKET:
                 return SECURITYATTR_MARKET;
+            case MARKETPROFIT:
+                return SECURITYATTR_MARKETPROFIT;
             case PROFIT:
                 return SECURITYATTR_PROFIT;
             case PRICE:

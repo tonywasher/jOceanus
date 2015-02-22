@@ -71,7 +71,12 @@ public class MarketGrowth
     /**
      * The Adjustment text.
      */
-    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_PROFITADJUST.getValue();
+    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_GROWTHADJUST.getValue();
+
+    /**
+     * The Adjustment text.
+     */
+    private static final String TEXT_GAINS = AnalysisResource.SECURITYATTR_GAINS.getValue();
 
     /**
      * The Base text.
@@ -82,6 +87,11 @@ public class MarketGrowth
      * The Growth text.
      */
     private static final String TEXT_GROWTH = AnalysisResource.SECURITYATTR_MARKET.getValue();
+
+    /**
+     * The Profit text.
+     */
+    private static final String TEXT_PROFIT = AnalysisResource.SECURITYATTR_PROFIT.getValue();
 
     /**
      * HTML builder.
@@ -124,7 +134,9 @@ public class MarketGrowth
         theBuilder.makeTitleCell(myTable, TEXT_BASE);
         theBuilder.makeTitleCell(myTable, TEXT_INVEST);
         theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
+        theBuilder.makeTitleCell(myTable, TEXT_GAINS);
         theBuilder.makeTitleCell(myTable, TEXT_GROWTH);
+        theBuilder.makeTitleCell(myTable, TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
         Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
@@ -137,18 +149,23 @@ public class MarketGrowth
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
 
-            /* Format the Asset */
-            theBuilder.startRow(myTable);
-            theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myBucket.getNonCashValue(false));
-            theBuilder.makeTotalCell(myTable, myBucket.getNonCashValue(true));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
-            checkPortfolioGrowth(myBucket);
+            /* Only declare the entry if we have securities */
+            if (myBucket.securityIterator().hasNext()) {
+                /* Format the Asset */
+                theBuilder.startRow(myTable);
+                theBuilder.makeDelayLinkCell(myTable, myName);
+                theBuilder.makeTotalCell(myTable, myBucket.getNonCashValue(false));
+                theBuilder.makeTotalCell(myTable, myBucket.getNonCashValue(true));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
+                checkPortfolioGrowth(myBucket);
 
-            /* Note the delayed subTable */
-            setDelayedTable(myName, myTable, myBucket);
+                /* Note the delayed subTable */
+                setDelayedTable(myName, myTable, myBucket);
+            }
         }
 
         /* Access values */
@@ -160,8 +177,10 @@ public class MarketGrowth
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(true));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
         checkPortfolioGrowth(myTotals);
 
         /* Return the document */
@@ -213,8 +232,10 @@ public class MarketGrowth
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFITADJUST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
             checkSecurityGrowth(myBucket);
 
             /* Record the filter */
@@ -230,10 +251,21 @@ public class MarketGrowth
      * @param pBucket the portfolio bucket
      */
     private void checkPortfolioGrowth(final PortfolioBucket pBucket) {
+        /* Check market profit */
         SecurityValues myValues = pBucket.getValues();
+        JMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
         JMoney myCalcGrowth = pBucket.getNonCashValue(false);
         myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
+        myCalcGrowth.addAmount(myAdjust);
+        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        if (!myProfit.equals(myCalcGrowth)) {
+            LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getName(), myCalcGrowth);
+        }
+
+        /* Check market growth */
+        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
+        myCalcGrowth.subtractAmount(myAdjust);
         JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
@@ -245,11 +277,22 @@ public class MarketGrowth
      * @param pBucket the security bucket
      */
     private void checkSecurityGrowth(final SecurityBucket pBucket) {
+        /* Check market profit */
         SecurityValues myValues = pBucket.getValues();
         SecurityValues myBaseValues = pBucket.getBaseValues();
+        JMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
         JMoney myCalcGrowth = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
+        myCalcGrowth.addAmount(myAdjust);
+        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        if (!myProfit.equals(myCalcGrowth)) {
+            LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
+        }
+
+        /* Check market growth */
+        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
+        myCalcGrowth.subtractAmount(myAdjust);
         JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);

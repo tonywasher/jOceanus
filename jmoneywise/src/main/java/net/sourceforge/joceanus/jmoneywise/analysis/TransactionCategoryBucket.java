@@ -1100,29 +1100,22 @@ public final class TransactionCategoryBucket
             Security mySecurity = pSource.getSecurity();
             Portfolio myPortfolio = pSource.getPortfolio();
 
-            /* If this is subject to capital gains */
-            if (mySecurity.getSecurityTypeClass().isCapitalGains()) {
-                /* Add to Capital Gains income/expense */
-                if (pGains.isPositive()) {
-                    /* Adjust category */
-                    if (myPortfolio.isTaxFree()) {
-                        theTaxFreeGains.addIncome(pTrans, pGains);
-                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, pGains);
-                    } else {
-                        theCapitalGains.addIncome(pTrans, pGains);
-                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.CAPITALGAINS, pGains);
-                    }
-                } else {
-                    /* Adjust category */
-                    if (myPortfolio.isTaxFree()) {
-                        theTaxFreeGains.subtractExpense(pTrans, pGains);
-                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, pGains);
-                    } else {
-                        theCapitalGains.subtractExpense(pTrans, pGains);
-                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.CAPITALGAINS, pGains);
-                    }
-                }
+            boolean bTaxFreeGains = myPortfolio.isTaxFree()
+                                    || !mySecurity.getSecurityTypeClass().isCapitalGains();
+            TransactionCategoryBucket myCategory = bTaxFreeGains
+                                                                ? theTaxFreeGains
+                                                                : theCapitalGains;
+            TaxBasisClass myTaxBasis = bTaxFreeGains
+                                                    ? TaxBasisClass.TAXFREE
+                                                    : TaxBasisClass.CAPITALGAINS;
+
+            /* Add to Capital Gains income/expense */
+            if (pGains.isPositive()) {
+                myCategory.addIncome(pTrans, pGains);
+            } else {
+                myCategory.subtractExpense(pTrans, pGains);
             }
+            theTaxBasis.adjustValue(pTrans, myTaxBasis, pGains);
         }
 
         /**

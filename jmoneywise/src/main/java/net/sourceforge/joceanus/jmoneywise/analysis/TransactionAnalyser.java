@@ -722,10 +722,10 @@ public class TransactionAnalyser
         /* Allocate current profit between the two stocks */
         JMoney myProfit = new JMoney(myStockValue);
         myProfit.subtractAmount(myCost);
-        pSource.adjustProfitDelta(myProfit);
+        pSource.adjustGrowthDelta(myProfit);
         myProfit = new JMoney(myProfit);
         myProfit.negate();
-        pTarget.adjustProfitDelta(myProfit);
+        pTarget.adjustGrowthDelta(myProfit);
 
         /* Transfer Units/Cost/Invested to target */
         pTarget.adjustUnits(myUnits);
@@ -1392,10 +1392,10 @@ public class TransactionAnalyser
         /* Allocate current profit between the two stocks */
         JMoney myProfit = new JMoney(myDebitValue);
         myProfit.subtractAmount(myDebitCost);
-        myDebitAsset.adjustProfitDelta(myProfit);
+        myDebitAsset.adjustGrowthDelta(myProfit);
         myProfit = new JMoney(myProfit);
         myProfit.negate();
-        myCreditAsset.adjustProfitDelta(myProfit);
+        myCreditAsset.adjustGrowthDelta(myProfit);
 
         /* Adjust cost/units/invested of the credit account */
         myCreditAsset.adjustCost(myDebitCost);
@@ -1514,10 +1514,10 @@ public class TransactionAnalyser
         myProfit.subtractAmount(myAmount);
         myProfit.subtractAmount(myCost);
         myProfit.addAmount(myCostXfer);
-        myDebitAsset.adjustProfitDelta(myProfit);
+        myDebitAsset.adjustGrowthDelta(myProfit);
         myProfit = new JMoney(myProfit);
         myProfit.negate();
-        myCreditAsset.adjustProfitDelta(myProfit);
+        myCreditAsset.adjustGrowthDelta(myProfit);
 
         /* Adjust cost/units/invested of the credit account */
         myCreditAsset.adjustCost(myCostXfer);
