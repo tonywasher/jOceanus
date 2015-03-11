@@ -137,6 +137,26 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    protected AccountBucket(final Analysis pAnalysis,
+                            final AccountBucket<T> pBase) {
+        /* Copy details from base */
+        theAccount = pBase.getAccount();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     protected AccountBucket(final Analysis pAnalysis,
@@ -636,6 +656,41 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected JMoney getHiddenBaseTotal() {
             return theHiddenBaseTotal;
         }
+
+        /**
+         * Construct a view List.
+         * @param pBase the base list
+         */
+        protected void constructFromBase(final AccountBucketList<B, T> pBase) {
+            /* Loop through the buckets */
+            Iterator<B> myIterator = pBase.iterator();
+            while (myIterator.hasNext()) {
+                B myCurr = myIterator.next();
+
+                /* Access the bucket */
+                B myBucket = newBucket(myCurr);
+
+                /* If the bucket is active */
+                if (myBucket.isActive()) {
+                    /* add to list */
+                    append(myBucket);
+
+                    /* Else for inactive buckets */
+                } else {
+                    /* Record any base value (since we are discarding it) */
+                    AccountValues myBaseValues = myBucket.getBaseValues();
+                    JMoney myValue = myBaseValues.getMoneyValue(AccountAttribute.VALUATION);
+                    theHiddenBaseTotal.addAmount(myValue);
+                }
+            }
+        }
+
+        /**
+         * Construct a view bucket.
+         * @param pBase the base bucket
+         * @return the new bucket
+         */
+        protected abstract B newBucket(final B pBase);
 
         /**
          * Construct a dated List.

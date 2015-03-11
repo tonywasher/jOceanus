@@ -54,6 +54,17 @@ public class PortfolioCashBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    protected PortfolioCashBucket(final Analysis pAnalysis,
+                                  final PortfolioCashBucket pBase) {
+        /* Call super-constructor */
+        super(pAnalysis, pBase);
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     protected PortfolioCashBucket(final Analysis pAnalysis,

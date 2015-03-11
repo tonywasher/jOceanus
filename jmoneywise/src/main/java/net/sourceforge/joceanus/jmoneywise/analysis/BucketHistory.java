@@ -77,6 +77,17 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     /**
      * Constructor.
      * @param pHistory the base history
+     */
+    protected BucketHistory(final BucketHistory<T, E> pHistory) {
+        /* Copy the base values */
+        theBaseValues = pHistory.getBaseValues().getSnapShot();
+        theValues = theBaseValues.getSnapShot();
+        theLastValues = theBaseValues;
+    }
+
+    /**
+     * Constructor.
+     * @param pHistory the base history
      * @param pDate the date for history cut-off
      */
     protected BucketHistory(final BucketHistory<T, E> pHistory,

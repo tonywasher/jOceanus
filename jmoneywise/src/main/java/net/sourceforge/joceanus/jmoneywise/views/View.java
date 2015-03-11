@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
@@ -57,9 +58,9 @@ public class View
     private JDateDayRange theRange = null;
 
     /**
-     * The analysis.
+     * The analysis manager.
      */
-    private TransactionAnalyser theAnalyser = null;
+    private AnalysisManager theAnalysisMgr = null;
 
     /**
      * The dilution event map.
@@ -88,19 +89,11 @@ public class View
     }
 
     /**
-     * Obtain the analyser.
-     * @return the analyser.
-     */
-    public TransactionAnalyser getAnalyser() {
-        return theAnalyser;
-    }
-
-    /**
      * Obtain the analysis manager.
      * @return the analyser.
      */
     public AnalysisManager getAnalysisManager() {
-        return theAnalyser.getAnalysisManager();
+        return theAnalysisMgr;
     }
 
     /**
@@ -199,14 +192,20 @@ public class View
         /* Protect against exceptions */
         try {
             /* Analyse the data */
-            theAnalyser = analyseData(theData);
+            TransactionAnalyser myAnalyser = analyseData(theData);
+            Analysis myAnalysis = myAnalyser.getAnalysis();
+            theAnalysisMgr = new AnalysisManager(myAnalysis);
+
+            /* Analyse the basic ranged analysis */
+            myTask.startTask("AnalyseBase");
+            theAnalysisMgr.analyseBase();
 
             /* Update the Data entry */
             JDataEntry myData = getDataEntry(DATA_ANALYSIS);
-            myData.setObject(theAnalyser);
+            myData.setObject(theAnalysisMgr);
 
             /* Access the dilutions */
-            theDilutions = theAnalyser.getDilutions();
+            theDilutions = myAnalyser.getDilutions();
 
             /* Derive the update Set */
             myTask.startTask("deriveUpdates");

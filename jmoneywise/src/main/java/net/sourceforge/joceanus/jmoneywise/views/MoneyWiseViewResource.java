@@ -36,6 +36,21 @@ public enum MoneyWiseViewResource implements ResourceId {
     VIEW_NAME("View.Name"),
 
     /**
+     * AnalysisView Name.
+     */
+    ANALYSISVIEW_NAME("AnalysisView.Name"),
+
+    /**
+     * AnalysisView Base.
+     */
+    ANALYSISVIEW_BASE("AnalysisView.Base"),
+
+    /**
+     * AnalysisView UpdateSet.
+     */
+    ANALYSISVIEW_UPDATESET("AnalysisView.UpdateSet"),
+
+    /**
      * SpotPrice Name.
      */
     SPOTPRICE_NAME("SpotPrice.Name"),

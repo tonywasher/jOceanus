@@ -43,6 +43,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
@@ -57,7 +58,9 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
@@ -262,6 +265,11 @@ public class AnalysisSelect
     private final CardLayout theLayout;
 
     /**
+     * The analysis view.
+     */
+    private final transient AnalysisView theAnalysisView;
+
+    /**
      * Is the control refreshing?
      */
     private boolean isRefreshing = false;
@@ -274,9 +282,11 @@ public class AnalysisSelect
     /**
      * Constructor.
      * @param pView the view
+     * @param pUpdateSet the update set
      * @param pNewButton the new button
      */
     public AnalysisSelect(final View pView,
+                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                           final JButton pNewButton) {
         /* Access the analysis manager */
         theView = pView;
@@ -308,6 +318,9 @@ public class AnalysisSelect
 
         /* Create the panel map */
         theMap = new EnumMap<AnalysisType, AnalysisFilterSelection>(AnalysisType.class);
+
+        /* Create the analysis view */
+        theAnalysisView = new AnalysisView(theView, pUpdateSet);
 
         /* Create the filter selection panels */
         theDepositSelect = new DepositAnalysisSelect();
@@ -570,8 +583,21 @@ public class AnalysisSelect
      * @param pRange the range
      */
     private void setAnalysisRange(final JDateDayRange pRange) {
-        /* Update the filter selection */
+        /* Obtain the new analysis */
         theAnalysis = theManager.getAnalysis(pRange);
+
+        /* Update the analysis view */
+        theAnalysisView.setAnalysis(theAnalysis);
+
+        /* Update filters */
+        setAnalysis();
+    }
+
+    /**
+     * Declare analysis.
+     */
+    private void setAnalysis() {
+        /* Update filters */
         theDepositSelect.setAnalysis(theAnalysis);
         theCashSelect.setAnalysis(theAnalysis);
         theLoanSelect.setAnalysis(theAnalysis);
@@ -752,6 +778,7 @@ public class AnalysisSelect
             theCategorySelect.addChangeListener(this);
             theTaxBasisSelect.addChangeListener(this);
             theTagSelect.addChangeListener(this);
+            theAnalysisView.addChangeListener(this);
 
             /* Access builders */
             theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
@@ -943,6 +970,12 @@ public class AnalysisSelect
             } else if (theColumnMenuBuilder.equals(o)) {
                 /* Build the columns menu */
                 buildColumnsMenu();
+
+                /* If this is the AnalysisView */
+            } else if (theAnalysisView.equals(o)) {
+                /* Declare the analysis */
+                theAnalysis = theAnalysisView.getAnalysis();
+                setAnalysis();
 
                 /* If this is the DepositSelect */
             } else if (theDepositSelect.equals(o)) {

@@ -36,7 +36,6 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 /**
  * Ordered Linked list. Extension of {@link java.util.List} that provides a sorted list implementation. The underlying implementation is that of a linked list,
@@ -345,12 +344,6 @@ public class OrderedList<T extends Comparable<? super T>>
     }
 
     @Override
-    public Stream<T> parallelStream() {
-        /* Throw exception */
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean removeIf(final Predicate<? super T> pCheck) {
         OrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
@@ -359,12 +352,6 @@ public class OrderedList<T extends Comparable<? super T>>
             }
         }
         return false;
-    }
-
-    @Override
-    public Stream<T> stream() {
-        /* Throw exception */
-        throw new UnsupportedOperationException();
     }
 
     @Override

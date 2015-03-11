@@ -68,6 +68,20 @@ public final class CashBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    private CashBucket(final Analysis pAnalysis,
+                       final CashBucket pBase) {
+        /* Call super-constructor */
+        super(pAnalysis, pBase);
+
+        /* Copy details from base */
+        theCategory = pBase.getCategory();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private CashBucket(final Analysis pAnalysis,
@@ -137,6 +151,20 @@ public final class CashBucket
         }
 
         /**
+         * Construct a view List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         */
+        protected CashBucketList(final Analysis pAnalysis,
+                                 final CashBucketList pBase) {
+            /* Initialise class */
+            this(pAnalysis);
+
+            /* Construct list from base */
+            constructFromBase(pBase);
+        }
+
+        /**
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
@@ -176,6 +204,11 @@ public final class CashBucket
         @Override
         protected CashBucket newBucket(final Cash pCash) {
             return new CashBucket(getAnalysis(), pCash);
+        }
+
+        @Override
+        protected CashBucket newBucket(final CashBucket pBase) {
+            return new CashBucket(getAnalysis(), pBase);
         }
 
         @Override

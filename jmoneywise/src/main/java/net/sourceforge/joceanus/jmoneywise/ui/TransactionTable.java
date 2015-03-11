@@ -379,7 +379,7 @@ public class TransactionTable
         theNewButton = MoneyWiseIcons.getNewButton();
 
         /* Create the Analysis Selection */
-        theSelect = new AnalysisSelect(theView, theNewButton);
+        theSelect = new AnalysisSelect(theView, theUpdateSet, theNewButton);
 
         /* Create the action buttons */
         theActionButtons = new ActionButtons(theUpdateSet);

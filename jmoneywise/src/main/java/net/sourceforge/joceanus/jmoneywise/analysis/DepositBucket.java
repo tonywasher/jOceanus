@@ -78,6 +78,21 @@ public final class DepositBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    private DepositBucket(final Analysis pAnalysis,
+                          final DepositBucket pBase) {
+        /* Call super-constructor */
+        super(pAnalysis, pBase);
+
+        /* Copy details from base */
+        theAnalysis = pAnalysis;
+        theCategory = pBase.getCategory();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private DepositBucket(final Analysis pAnalysis,
@@ -185,6 +200,20 @@ public final class DepositBucket
         }
 
         /**
+         * Construct a view List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         */
+        protected DepositBucketList(final Analysis pAnalysis,
+                                    final DepositBucketList pBase) {
+            /* Initialise class */
+            this(pAnalysis);
+
+            /* Construct list from base */
+            constructFromBase(pBase);
+        }
+
+        /**
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
@@ -224,6 +253,11 @@ public final class DepositBucket
         @Override
         protected DepositBucket newBucket(final Deposit pDeposit) {
             return new DepositBucket(getAnalysis(), pDeposit);
+        }
+
+        @Override
+        protected DepositBucket newBucket(final DepositBucket pBase) {
+            return new DepositBucket(getAnalysis(), pBase);
         }
 
         @Override

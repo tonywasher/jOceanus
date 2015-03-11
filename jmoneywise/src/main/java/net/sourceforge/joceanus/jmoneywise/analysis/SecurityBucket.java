@@ -166,6 +166,29 @@ public final class SecurityBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    private SecurityBucket(final Analysis pAnalysis,
+                           final SecurityBucket pBase) {
+        /* Copy details from base */
+        theHolding = pBase.getSecurityHolding();
+        theSecurity = pBase.getSecurity();
+        thePortfolio = pBase.getPortfolio();
+        theCategory = pBase.getSecurityType();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Access the relevant history */
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private SecurityBucket(final Analysis pAnalysis,
@@ -796,6 +819,35 @@ public final class SecurityBucket
         protected SecurityBucketList(final Analysis pAnalysis) {
             super(SecurityBucket.class);
             theAnalysis = pAnalysis;
+        }
+
+        /**
+         * Construct a view List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         */
+        protected SecurityBucketList(final Analysis pAnalysis,
+                                     final SecurityBucketList pBase) {
+            /* Initialise class */
+            super(SecurityBucket.class);
+            theAnalysis = pAnalysis;
+
+            /* Loop through the buckets */
+            Iterator<SecurityBucket> myIterator = pBase.iterator();
+            while (myIterator.hasNext()) {
+                SecurityBucket myCurr = myIterator.next();
+
+                /* Access the bucket */
+                SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr);
+
+                /*
+                 * Ignore idle securities. Note that we must include securities that have been closed in order to adjust Market Growth.
+                 */
+                if (!myBucket.isIdle()) {
+                    /* Add to the list */
+                    append(myBucket);
+                }
+            }
         }
 
         /**

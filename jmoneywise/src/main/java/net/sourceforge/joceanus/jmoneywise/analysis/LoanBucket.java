@@ -85,6 +85,21 @@ public final class LoanBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    private LoanBucket(final Analysis pAnalysis,
+                       final LoanBucket pBase) {
+        /* Call super-constructor */
+        super(pAnalysis, pBase);
+
+        /* Copy details from base */
+        theCategory = pBase.getCategory();
+        isCreditCard = pBase.isCreditCard();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private LoanBucket(final Analysis pAnalysis,
@@ -197,6 +212,20 @@ public final class LoanBucket
         }
 
         /**
+         * Construct a view List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         */
+        protected LoanBucketList(final Analysis pAnalysis,
+                                 final LoanBucketList pBase) {
+            /* Initialise class */
+            this(pAnalysis);
+
+            /* Construct list from base */
+            constructFromBase(pBase);
+        }
+
+        /**
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
@@ -236,6 +265,11 @@ public final class LoanBucket
         @Override
         protected LoanBucket newBucket(final Loan pLoan) {
             return new LoanBucket(getAnalysis(), pLoan);
+        }
+
+        @Override
+        protected LoanBucket newBucket(final LoanBucket pBase) {
+            return new LoanBucket(getAnalysis(), pBase);
         }
 
         @Override

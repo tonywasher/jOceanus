@@ -72,7 +72,7 @@ public class AnalysisManager
      * Constructor.
      * @param pAnalysis the new analysis
      */
-    protected AnalysisManager(final Analysis pAnalysis) {
+    public AnalysisManager(final Analysis pAnalysis) {
         /* Store the parameters */
         theAnalysis = pAnalysis;
 
@@ -157,7 +157,7 @@ public class AnalysisManager
     /**
      * Analyse the base analysis.
      */
-    protected void analyseBase() {
+    public void analyseBase() {
         /* Produce totals for the base analysis */
         produceTotals(theAnalysis);
     }

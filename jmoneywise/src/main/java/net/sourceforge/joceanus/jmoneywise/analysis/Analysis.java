@@ -261,6 +261,40 @@ public class Analysis
     }
 
     /**
+     * Constructor for a view analysis.
+     * @param pSource the base analysis
+     */
+    protected Analysis(final Analysis pSource) {
+        /* Store the data */
+        theData = pSource.getData();
+        thePreferences = pSource.getPreferenceMgr();
+        theDateRange = pSource.getDateRange();
+
+        /* Access the underlying maps/lists */
+        JDateDay myStart = theDateRange.getStart();
+        theCharges = new ChargeableEventList();
+        theDilutions = myStart == null
+                                      ? new DilutionEventMap()
+                                      : new DilutionEventMap(pSource.getDilutions(), myStart);
+
+        /* Create a new set of buckets */
+        theDeposits = new DepositBucketList(this, pSource.getDeposits());
+        theCash = new CashBucketList(this, pSource.getCash());
+        theLoans = new LoanBucketList(this, pSource.getLoans());
+        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios());
+        thePayees = new PayeeBucketList(this);
+        theTaxBasis = new TaxBasisBucketList(this);
+        theTransCategories = new TransactionCategoryBucketList(this);
+        theTransTags = new TransactionTagBucketList(this);
+
+        /* No totalling buckets */
+        theDepositCategories = null;
+        theCashCategories = null;
+        theLoanCategories = null;
+        theTaxCalculations = null;
+    }
+
+    /**
      * Constructor for a dated analysis.
      * @param pSource the base analysis
      * @param pDate the date for the analysis
@@ -282,9 +316,9 @@ public class Analysis
         theLoans = new LoanBucketList(this, pSource.getLoans(), pDate);
         thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
+        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
         theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pDate);
         theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pDate);
-        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
 
         /* Create totalling buckets */
         theDepositCategories = new DepositCategoryBucketList(this);
@@ -315,9 +349,9 @@ public class Analysis
         theLoans = new LoanBucketList(this, pSource.getLoans(), pRange);
         thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
+        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
         theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pRange);
         theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pRange);
-        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
 
         /* Create totalling buckets */
         theDepositCategories = new DepositCategoryBucketList(this);

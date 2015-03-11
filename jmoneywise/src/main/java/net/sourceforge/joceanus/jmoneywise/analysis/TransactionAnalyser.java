@@ -96,11 +96,6 @@ public class TransactionAnalyser
     private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
-     * Analysis Manager field Id.
-     */
-    private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_MANAGER.getValue());
-
-    /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
     private static final JMoney LIMIT_VALUE = JMoney.getWholeUnits(3000);
@@ -113,7 +108,12 @@ public class TransactionAnalyser
     /**
      * The dataSet being analysed.
      */
-    private final MoneyWiseData theData;
+    private final SecurityHoldingMap theHoldingMap;
+
+    /**
+     * The dataSet being analysed.
+     */
+    private final SecurityPriceDataMap<SecurityPrice> thePriceMap;
 
     /**
      * The analysis.
@@ -123,7 +123,7 @@ public class TransactionAnalyser
     /**
      * The analysis manager.
      */
-    private final AnalysisManager theManager;
+    // private final AnalysisManager theManager;
 
     /**
      * The deposit bucket list.
@@ -181,7 +181,7 @@ public class TransactionAnalyser
     private final JDataProfile theProfile;
 
     /**
-     * Constructor for a full year set of accounts.
+     * Constructor for a complete set of accounts.
      * @param pTask the profiled task
      * @param pData the Data to analyse
      * @param pPreferenceMgr the preference manager
@@ -195,16 +195,16 @@ public class TransactionAnalyser
         JDataProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
-        theData = pData;
+        theHoldingMap = pData.getSecurityHoldingsMap();
+        thePriceMap = pData.getSecurityPriceDataMap();
 
         /* Access the lists */
-        TaxYearList myTaxYears = theData.getTaxYears();
-        TransactionList myTrans = theData.getTransactions();
+        TaxYearList myTaxYears = pData.getTaxYears();
+        TransactionList myTrans = pData.getTransactions();
 
         /* Create a new analysis */
         myTask.startTask("Initialise");
-        theAnalysis = new Analysis(theData, pPreferenceMgr);
-        theManager = new AnalysisManager(theAnalysis);
+        theAnalysis = new Analysis(pData, pPreferenceMgr);
 
         /* Access details from the analysis */
         theDepositBuckets = theAnalysis.getDeposits();
@@ -275,9 +275,76 @@ public class TransactionAnalyser
             myTax.touchItem(myCurr);
         }
 
-        /* Analyse the basic ranged analysis */
-        myTask.startTask("AnalyseBase");
-        theManager.analyseBase();
+        /* Complete the task */
+        myTask.end();
+    }
+
+    /**
+     * Constructor for a partially updated view accounts.
+     * @param pTask the profiled task
+     * @param pAnalysis the base analysis
+     * @param pTransactions the edited transactions
+     * @throws JOceanusException on error
+     */
+    public TransactionAnalyser(final JDataProfile pTask,
+                               final Analysis pAnalysis,
+                               final TransactionList pTransactions) throws JOceanusException {
+        /* Start a new task */
+        theProfile = pTask;
+        JDataProfile myTask = theProfile.startTask("analyseTransactions");
+
+        /* Store the parameters */
+        theAnalysis = new Analysis(pAnalysis);
+        MoneyWiseData myData = theAnalysis.getData();
+        theHoldingMap = myData.getSecurityHoldingsMap();
+        thePriceMap = myData.getSecurityPriceDataMap();
+
+        /* Create a new analysis */
+        myTask.startTask("Initialise");
+
+        /* Access details from the analysis */
+        theDepositBuckets = theAnalysis.getDeposits();
+        theCashBuckets = theAnalysis.getCash();
+        theLoanBuckets = theAnalysis.getLoans();
+        thePortfolioBuckets = theAnalysis.getPortfolios();
+        thePayeeBuckets = theAnalysis.getPayees();
+        theCategoryBuckets = theAnalysis.getTransCategories();
+        theTagBuckets = theAnalysis.getTransactionTags();
+        theTaxBasisBuckets = theAnalysis.getTaxBasis();
+        theDilutions = theAnalysis.getDilutions();
+        theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
+
+        /* reset groups */
+        myTask.startTask("ResetGroups");
+        pTransactions.resetGroups();
+
+        /* Loop through the Transactions extracting relevant elements */
+        myTask.startTask("Transactions");
+        Iterator<Transaction> myIterator = pTransactions.listIterator();
+        while (myIterator.hasNext()) {
+            Transaction myCurr = myIterator.next();
+
+            /* Ignore deleted transactions */
+            if (myCurr.isDeleted()) {
+                continue;
+            }
+
+            /* If the transaction has a parent */
+            Transaction myParent = myCurr.getParent();
+            if (myParent != null) {
+                /* Register child against parent */
+                pTransactions.registerChild(myCurr);
+            }
+
+            /* If the event has a dilution factor */
+            if (myCurr.getDilution() != null) {
+                /* Add to the dilution event list */
+                theDilutions.addDilution(myCurr);
+            }
+
+            /* Process the transaction in the report set */
+            processTransaction(myCurr);
+        }
 
         /* Complete the task */
         myTask.end();
@@ -293,9 +360,6 @@ public class TransactionAnalyser
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
-        if (FIELD_MANAGER.equals(pField)) {
-            return theManager;
-        }
 
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
@@ -307,11 +371,11 @@ public class TransactionAnalyser
     }
 
     /**
-     * Obtain the analysis manager.
-     * @return the analysis manager
+     * Obtain the analysis.
+     * @return the analysis
      */
-    public AnalysisManager getAnalysisManager() {
-        return theManager;
+    public Analysis getAnalysis() {
+        return theAnalysis;
     }
 
     /**
@@ -341,7 +405,8 @@ public class TransactionAnalyser
 
         /* Validate transaction groups */
         myTask.startTask("AnalyseGroups");
-        DataErrorList<Transaction> myErrors = theData.getTransactions().validateGroups();
+        MoneyWiseData myData = theAnalysis.getData();
+        DataErrorList<Transaction> myErrors = myData.getTransactions().validateGroups();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
@@ -668,9 +733,6 @@ public class TransactionAnalyser
         PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
         PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
 
-        /* Access the holdings map */
-        SecurityHoldingMap myMap = theData.getSecurityHoldingsMap();
-
         /* Access source cash bucket */
         PortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
         if (mySourceCash.isActive()) {
@@ -687,7 +749,7 @@ public class TransactionAnalyser
             /* If the bucket is active */
             if (myBucket.isActive()) {
                 /* Adjust the Target Bucket */
-                SecurityHolding myTargetHolding = myMap.declareHolding(pTarget, myBucket.getSecurity());
+                SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
                 SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
                 /* Process the Transfer */
@@ -715,8 +777,7 @@ public class TransactionAnalyser
         JMoney myInvested = mySourceValues.getMoneyValue(SecurityAttribute.INVESTED);
 
         /* Determine value of the stock being transferred */
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
-        JPrice myPrice = myPriceMap.getPriceForDate(pSource.getSecurity(), pTrans.getDate());
+        JPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), pTrans.getDate());
         JMoney myStockValue = myUnits.valueAtPrice(myPrice);
 
         /* Allocate current profit between the two stocks */
@@ -768,13 +829,10 @@ public class TransactionAnalyser
         /* Access source security bucket */
         SecurityBucket myBucket = mySource.getSecurityBucket(pSource);
 
-        /* Access the holdings map */
-        SecurityHoldingMap myMap = theData.getSecurityHoldingsMap();
-
         /* If the bucket is active */
         if (myBucket.isActive()) {
             /* Adjust the Target Bucket */
-            SecurityHolding myTargetHolding = myMap.declareHolding(pTarget, myBucket.getSecurity());
+            SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
             SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
             /* Process the Transfer */
@@ -1199,8 +1257,7 @@ public class TransactionAnalyser
         JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Get the appropriate price for the account */
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
-        JPrice myPrice = myPriceMap.getPriceForDate(myDebit, pTrans.getDate());
+        JPrice myPrice = thePriceMap.getPriceForDate(myDebit, pTrans.getDate());
 
         /* Determine value of this stock at the current time */
         JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
@@ -1375,9 +1432,8 @@ public class TransactionAnalyser
         JDateDay myDate = pTrans.getDate();
 
         /* Get the appropriate prices for the stock */
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
-        JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
-        JPrice myDebitPrice = myPriceMap.getPriceForDate(myDebit, myDate);
+        JPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
+        JPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
 
         /* Determine value of the stock in both parts of the takeOver */
         JUnits myCreditUnits = pTrans.getCreditUnits();
@@ -1453,9 +1509,8 @@ public class TransactionAnalyser
         SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate prices for the assets */
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
-        JPrice myDebitPrice = myPriceMap.getPriceForDate(myDebit, myDate);
-        JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
+        JPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
+        JPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
 
         /* Determine value of the base stock */
         JUnits myDebitUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);

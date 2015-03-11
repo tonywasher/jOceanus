@@ -139,6 +139,30 @@ public final class PortfolioBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     */
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final PortfolioBucket pBase) {
+        /* Copy details from base */
+        thePortfolio = pBase.getPortfolio();
+
+        /* Create the cash bucket */
+        theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());
+
+        /* Create the securities list */
+        theSecurities = (thePortfolio != null)
+                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities())
+                                              : null;
+
+        /* Create the value maps and initialise them */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        initValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private PortfolioBucket(final Analysis pAnalysis,
@@ -656,6 +680,34 @@ public final class PortfolioBucket
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
+         */
+        protected PortfolioBucketList(final Analysis pAnalysis,
+                                      final PortfolioBucketList pBase) {
+            /* Initialise class */
+            super(PortfolioBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+
+            /* Loop through the buckets */
+            Iterator<PortfolioBucket> myIterator = pBase.iterator();
+            while (myIterator.hasNext()) {
+                PortfolioBucket myCurr = myIterator.next();
+
+                /* Access the bucket */
+                PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr);
+
+                /* Ignore if portfolio is idle */
+                if (!myBucket.isIdle()) {
+                    /* Add to the list */
+                    append(myBucket);
+                }
+            }
+        }
+
+        /**
+         * Construct a dated List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
          * @param pDate the Date
          */
         protected PortfolioBucketList(final Analysis pAnalysis,
@@ -799,7 +851,7 @@ public final class PortfolioBucket
          */
         private PortfolioBucket allocateTotalsBucket() {
             /* Obtain the totals portfolio */
-            return new PortfolioBucket(theAnalysis, null);
+            return new PortfolioBucket(theAnalysis, (Portfolio) null);
         }
 
         /**

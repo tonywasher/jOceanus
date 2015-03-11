@@ -264,6 +264,51 @@ public final class DilutionEvent
          */
         private int theNextId = 1;
 
+        /**
+         * Constructor.
+         */
+        protected DilutionEventMap() {
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source map
+         * @param pDate the last date
+         */
+        protected DilutionEventMap(final DilutionEventMap pSource,
+                                   final JDateDay pDate) {
+            /* Iterate through the source map */
+            Iterator<Entry<Integer, List<DilutionEvent>>> myIterator = pSource.entrySet().iterator();
+            while (myIterator.hasNext()) {
+                Entry<Integer, List<DilutionEvent>> myEntry = myIterator.next();
+
+                /* Access the id and list iterator */
+                Integer myId = myEntry.getKey();
+                Iterator<DilutionEvent> myEventIterator = myEntry.getValue().iterator();
+                List<DilutionEvent> myList = null;
+
+                /* Loop through the entries */
+                while (myEventIterator.hasNext()) {
+                    DilutionEvent myEvent = myEventIterator.next();
+
+                    /* Check that we are wanting this event */
+                    if (pDate.compareTo(myEvent.getDate()) > 0) {
+                        break;
+                    }
+
+                    /* If this is the first entry */
+                    if (myList == null) {
+                        /* Create new entry */
+                        myList = new ArrayList<DilutionEvent>();
+                        put(myId, myList);
+                    }
+
+                    /* Add the event */
+                    myList.add(myEvent);
+                }
+            }
+        }
+
         @Override
         public String formatObject() {
             return getClass().getSimpleName();
