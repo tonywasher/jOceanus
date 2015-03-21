@@ -273,10 +273,15 @@ public class QIFBuilder {
             /* process as cash recovery */
             processCashRecovery(pPayee, (Cash) pCredit, pTrans);
 
-            /* If this is a income to a security */
+            /* If this is an income to a security */
         } else if (pCredit instanceof SecurityHolding) {
             /* process as income to security */
             thePortBuilder.processIncomeToSecurity(pPayee, (SecurityHolding) pCredit, pTrans);
+
+            /* If this is an income to a portfolio */
+        } else if (pCredit instanceof Portfolio) {
+            /* process as income to portfolio */
+            thePortBuilder.processIncomeToPortfolio(pPayee, (Portfolio) pCredit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -304,10 +309,15 @@ public class QIFBuilder {
             /* process as cash payment */
             processCashPayment(pPayee, (Cash) pDebit, pTrans);
 
-            /* If this is a income to a security */
+            /* If this is an expense from a security */
         } else if (pDebit instanceof SecurityHolding) {
             /* process as expense from security */
             thePortBuilder.processExpenseFromSecurity(pPayee, (SecurityHolding) pDebit, pTrans);
+
+            /* If this is an expense from a portfolio */
+        } else if (pDebit instanceof Portfolio) {
+            /* process as expense from portfolio */
+            thePortBuilder.processExpenseFromPortfolio(pPayee, (Portfolio) pDebit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -349,6 +359,7 @@ public class QIFBuilder {
             /* Handle transfer between securities */
             if (pCredit instanceof SecurityHolding) {
                 /* process as transfer between securities */
+
                 thePortBuilder.processTransferBetweenSecurities((SecurityHolding) pDebit, (SecurityHolding) pCredit, pTrans);
             } else {
                 /* process as transfer from security */
@@ -359,13 +370,24 @@ public class QIFBuilder {
             /* process as transfer to security */
             thePortBuilder.processTransferToSecurity((SecurityHolding) pCredit, pDebit, pTrans);
 
+            /* If this is a transfer from a portfolio */
+        } else if (pDebit instanceof Portfolio) {
+            /* Handle transfer between securities */
+            if (pCredit instanceof Portfolio) {
+                /* process as transfer between portfolios */
+                thePortBuilder.processTransferBetweenPortfolios((Portfolio) pDebit, (Portfolio) pCredit, pTrans);
+            } else {
+                /* process as transfer from portfolio */
+                thePortBuilder.processTransferFromPortfolio((Portfolio) pDebit, pCredit, pTrans);
+            }
+            /* If this is a transfer to a portfolio */
+        } else if (pCredit instanceof Portfolio) {
+            /* process as transfer to portfolio */
+            thePortBuilder.processTransferToPortfolio((Portfolio) pCredit, pDebit, pTrans);
+
         } else {
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
-                case LOYALTYBONUS:
-                    /* Process as loyalty bonus */
-                    processLoyaltyBonus((Portfolio) pDebit, pCredit, pTrans);
-                    break;
                 case CASHBACK:
                     /* Process as cashBack payment */
                     processCashBack(pDebit, pCredit, pTrans);
@@ -386,7 +408,7 @@ public class QIFBuilder {
                     processStandardExpense((Payee) pCredit.getParent(), pDebit, pTrans);
                     break;
                 default:
-                    /* Process as standard expense */
+                    /* Process as standard transfer */
                     processStandardTransfer(pDebit, pCredit, pTrans);
                     break;
             }
@@ -943,29 +965,6 @@ public class QIFBuilder {
 
             /* Add event to event list */
             myAccount.addEvent(myEvent);
-        }
-    }
-
-    /**
-     * Process loyaltyBonus.
-     * @param pPortfolio the portfolio
-     * @param pCredit the credit account
-     * @param pTrans the transaction
-     */
-    protected void processLoyaltyBonus(final Portfolio pPortfolio,
-                                       final TransactionAsset pCredit,
-                                       final Transaction pTrans) {
-        /* Access details */
-        Payee myPayee = pPortfolio.getParent();
-
-        /* if we have additional detail */
-        if (hasXtraDetail(pTrans)) {
-            /* process as detailed income */
-            processDetailedIncome(myPayee, pCredit, pTrans);
-
-        } else {
-            /* process as standard income */
-            processStandardIncome(myPayee, pCredit, pTrans);
         }
     }
 

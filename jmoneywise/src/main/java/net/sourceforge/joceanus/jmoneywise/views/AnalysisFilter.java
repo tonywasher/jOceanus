@@ -94,6 +94,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
 
     /**
+     * Combine groups Field Id.
+     */
+    private static final JDataField FIELD_COMBINE = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_COMBINE.getValue());
+
+    /**
      * The Underlying bucket.
      */
     private final B theBucket;
@@ -109,6 +114,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     private final Class<T> theClass;
 
     /**
+     * Do we combine grouped transactions?
+     */
+    private Boolean doCombineGroups;
+
+    /**
      * Constructor.
      * @param pBucket the underlying bucket
      * @param pClass the attribute class
@@ -117,6 +127,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                              final Class<T> pClass) {
         theBucket = pBucket;
         theClass = pClass;
+        doCombineGroups = Boolean.FALSE;
     }
 
     @Override
@@ -134,6 +145,12 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                                     ? JDataFieldValue.SKIP
                                     : theBucket;
         }
+        if (FIELD_COMBINE.equals(pField)) {
+            return doCombineGroups
+                                  ? doCombineGroups
+                                  : JDataFieldValue.SKIP;
+        }
+
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
     }
@@ -160,6 +177,22 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     /**
+     * Obtain combine groups setting.
+     * @return true/false
+     */
+    public Boolean getCombineGroups() {
+        return doCombineGroups;
+    }
+
+    /**
+     * Set combine groups setting.
+     * @param pCombineGroups true/false
+     */
+    public void setCombineGroups(final Boolean pCombineGroups) {
+        doCombineGroups = pCombineGroups;
+    }
+
+    /**
      * Get Analysis Type.
      * @return the Analysis Type
      */
@@ -180,7 +213,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public boolean filterTransaction(final Transaction pTrans) {
         /* If this is a split event */
-        if (pTrans.isSplit()) {
+        if (doCombineGroups
+            && pTrans.isSplit()) {
             /* Filter out children */
             if (pTrans.isChild()) {
                 return true;
@@ -219,7 +253,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return true/false
      */
-    public boolean filterSingleTransaction(final Transaction pTrans) {
+    protected boolean filterSingleTransaction(final Transaction pTrans) {
         /* Check whether this transaction is registered */
         return !pTrans.isHeader()
                && getValuesForTransaction(pTrans) == null;
@@ -268,7 +302,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     public JDecimal getBalanceForTransaction(final Transaction pTrans) {
         /* If this is a split transaction */
-        if (pTrans.isSplit()) {
+        if (doCombineGroups
+            && pTrans.isSplit()) {
             /* Access the group */
             TransactionList myList = pTrans.getList();
             TransactionGroup myGroup = myList.getGroup(pTrans);
@@ -337,7 +372,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      */
     private JDecimal getDeltaValueForTransaction(final Transaction pTrans) {
         /* If this is a split transaction */
-        if (pTrans.isSplit()) {
+        if (doCombineGroups
+            && pTrans.isSplit()) {
             /* Access the group */
             TransactionList myList = pTrans.getList();
             TransactionGroup myGroup = myList.getGroup(pTrans);
@@ -812,7 +848,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public boolean filterSingleTransaction(final Transaction pTrans) {
+        protected boolean filterSingleTransaction(final Transaction pTrans) {
             return pTrans.isHeader() || !getBucket().hasTransaction(pTrans);
         }
 
@@ -867,7 +903,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public boolean filterSingleTransaction(final Transaction pTrans) {
+        protected boolean filterSingleTransaction(final Transaction pTrans) {
             return pTrans.isHeader();
         }
 

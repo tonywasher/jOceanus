@@ -631,7 +631,7 @@ public class TransactionPanel
             theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_ACCOUNT)) {
             /* Update the Account */
-            myTrans.setAccount(resolveAsset(pUpdate.getValue(AssetBase.class)));
+            myTrans.setAccount(resolveAsset(pUpdate.getValue(TransactionAsset.class)));
             theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_DIRECTION)) {
             /* Update the Direction */
@@ -639,7 +639,7 @@ public class TransactionPanel
             theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_PARTNER)) {
             /* Update the Partner */
-            myTrans.setPartner(resolveAsset(pUpdate.getValue(AssetBase.class)));
+            myTrans.setPartner(resolveAsset(pUpdate.getValue(TransactionAsset.class)));
             theBuilder.autoCorrect(myTrans);
         } else if (myField.equals(Transaction.FIELD_CATEGORY)) {
             /* Update the Category */

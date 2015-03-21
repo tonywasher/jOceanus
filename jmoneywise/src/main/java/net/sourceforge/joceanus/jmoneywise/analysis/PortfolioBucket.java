@@ -801,7 +801,7 @@ public final class PortfolioBucket
          * @param pPortfolio the portfolio
          * @return the bucket
          */
-        protected PortfolioBucket getBucket(final Portfolio pPortfolio) {
+        public PortfolioBucket getBucket(final Portfolio pPortfolio) {
             /* Locate the bucket in the list */
             PortfolioBucket myItem = findItemById(pPortfolio.getId());
 
@@ -823,7 +823,7 @@ public final class PortfolioBucket
          * @param pPortfolio the portfolio
          * @return the bucket
          */
-        protected PortfolioCashBucket getCashBucket(final Portfolio pPortfolio) {
+        public PortfolioCashBucket getCashBucket(final Portfolio pPortfolio) {
             /* Locate the bucket in the list */
             PortfolioBucket myItem = getBucket(pPortfolio);
 

@@ -108,7 +108,12 @@ public enum MoneyWiseViewResource implements ResourceId {
     /**
      * Filter Attribute.
      */
-    FILTER_ATTR("Filter.Attr");
+    FILTER_ATTR("Filter.Attr"),
+
+    /**
+     * Filter Combine Groups.
+     */
+    FILTER_COMBINE("Filter.CombineGroups");
 
     /**
      * The Resource Builder.

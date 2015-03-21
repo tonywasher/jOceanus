@@ -316,8 +316,7 @@ public final class TransactionValidator {
                 return myPartnerType.isValued();
 
             case DIVIDEND:
-                /* Dividend is from Security to Self or valued */
-                return isRecursive || myPartnerType.isValued();
+                return checkDividend(pAccount, pPartner);
 
             case LOYALTYBONUS:
                 return myPartnerType.isSecurityHolding() || myPartnerType.isPortfolio();
@@ -330,17 +329,14 @@ public final class TransactionValidator {
             case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKDEMERGER:
-                /* Must be shares and non-recursive */
-                return !isRecursive && pPartner.isShares();
+                return checkTakeOver(pAccount, pPartner);
 
             case STOCKRIGHTSTAKEN:
             case STOCKRIGHTSWAIVED:
-                /* Must be valued */
-                return myPartnerType.isValued();
+                return checkStockRights(pAccount, pPartner);
 
             case TRANSFER:
-                /* Transfer must be with asset and non-recursive */
-                return !isRecursive && myPartnerType.isAsset();
+                return checkTransfer(pAccount, pPartner);
 
             case EXPENSE:
             case CHARITYDONATION:
@@ -353,10 +349,146 @@ public final class TransactionValidator {
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.TAXMAN);
 
             case PORTFOLIOXFER:
-                return !isRecursive && (pPartner instanceof Portfolio);
+                return checkPortfolioXfer(pAccount, pPartner);
 
             default:
                 return false;
         }
+    }
+
+    /**
+     * Check dividend.
+     * @param pAccount the holding providing the dividend.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkDividend(final TransactionAsset pAccount,
+                                         final TransactionAsset pPartner) {
+        /* Recursive is allowed */
+        if (Difference.isEqual(pAccount, pPartner)) {
+            return true;
+        }
+
+        /* partner must be valued */
+        return pPartner.getAssetType().isValued();
+    }
+
+    /**
+     * Check TakeOver.
+     * @param pAccount the holding being acted on.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkTakeOver(final TransactionAsset pAccount,
+                                         final TransactionAsset pPartner) {
+        /* Must be holding <-> holding */
+        if (!(pAccount instanceof SecurityHolding)
+            || !(pPartner instanceof SecurityHolding)) {
+            return false;
+        }
+
+        /* Recursive is not allowed */
+        if (Difference.isEqual(pAccount, pPartner)) {
+            return false;
+        }
+
+        /* Access holdings */
+        SecurityHolding myAccount = (SecurityHolding) pAccount;
+        SecurityHolding myPartner = (SecurityHolding) pPartner;
+
+        /* Portfolios must be the same */
+        if (!Difference.isEqual(myAccount.getPortfolio(), myPartner.getPortfolio())) {
+            return false;
+        }
+
+        /* Security types must be the same */
+        return Difference.isEqual(myAccount.getSecurity().getSecurityType(), myPartner.getSecurity().getSecurityType());
+    }
+
+    /**
+     * Check stock rights.
+     * @param pAccount the account being transferred.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkStockRights(final TransactionAsset pAccount,
+                                            final TransactionAsset pPartner) {
+        /* If this is security -> portfolio */
+        if ((pAccount instanceof SecurityHolding)
+            && (pPartner instanceof Portfolio)) {
+            /* Must be same portfolios */
+            SecurityHolding myHolding = (SecurityHolding) pAccount;
+            return Difference.isEqual(myHolding.getPortfolio(), pPartner);
+        }
+
+        /* partner must be valued */
+        return pPartner.getAssetType().isValued();
+    }
+
+    /**
+     * Check transfer.
+     * @param pAccount the account being transferred.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkTransfer(final TransactionAsset pAccount,
+                                         final TransactionAsset pPartner) {
+        /* Must not be recursive */
+        if (Difference.isEqual(pAccount, pPartner)) {
+            return false;
+        }
+
+        /* If this is security -> portfolio */
+        if ((pAccount instanceof SecurityHolding)
+            && (pPartner instanceof Portfolio)) {
+            /* Must be same portfolios */
+            SecurityHolding myHolding = (SecurityHolding) pAccount;
+            if (!Difference.isEqual(myHolding.getPortfolio(), pPartner)) {
+                return false;
+            }
+        }
+
+        /* If this is security <- portfolio */
+        if ((pPartner instanceof SecurityHolding)
+            && (pAccount instanceof Portfolio)) {
+            /* Must be same portfolios */
+            SecurityHolding myHolding = (SecurityHolding) pPartner;
+            if (!Difference.isEqual(myHolding.getPortfolio(), pAccount)) {
+                return false;
+            }
+        }
+
+        /* partner must be asset */
+        return pPartner.getAssetType().isAsset();
+    }
+
+    /**
+     * Check portfolioXfer.
+     * @param pAccount the account being transferred.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkPortfolioXfer(final TransactionAsset pAccount,
+                                              final TransactionAsset pPartner) {
+        /* Partner must be portfolio */
+        if (!(pPartner instanceof Portfolio)) {
+            return false;
+        }
+
+        /* If account is portfolio */
+        if (pAccount instanceof Portfolio) {
+            /* Cannot be recursive */
+            return !Difference.isEqual(pAccount, pPartner);
+        }
+
+        /* If account is security holding */
+        if (pAccount instanceof SecurityHolding) {
+            /* Must be different portfolios */
+            SecurityHolding myHolding = (SecurityHolding) pAccount;
+            return !Difference.isEqual(myHolding.getPortfolio(), pPartner);
+        }
+
+        /* Not allowed */
+        return false;
     }
 }

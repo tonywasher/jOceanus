@@ -22,11 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
+import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
@@ -40,6 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -50,10 +55,18 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Portfolio Builder class for QIF File.
  */
 public class QIFPortfolioBuilder {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(QIFPortfolioBuilder.class);
+
     /**
      * The QIF File.
      */
@@ -122,7 +135,7 @@ public class QIFPortfolioBuilder {
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
-        /* Access the base values */
+        /* Access the resulting values */
         SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
         return myValues.getUnitsValue(SecurityAttribute.UNITS);
     }
@@ -141,17 +154,23 @@ public class QIFPortfolioBuilder {
 
         /* Access the base values */
         SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
-        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
-        myUnits = new JUnits(myUnits);
+        if (myValues != null) {
+            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+            myUnits = new JUnits(myUnits);
 
-        /* Determine the delta in units */
-        JUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
-        myUnits.subtractUnits(myDelta);
-        return myUnits;
+            /* Determine the delta in units */
+            JUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
+            if (myDelta != null) {
+                myUnits.subtractUnits(myDelta);
+            }
+            return myUnits;
+        } else {
+            return JUnits.getWholeUnits(0);
+        }
     }
 
     /**
-     * Obtain base units for a security holding.
+     * Obtain delta cost for a security holding.
      * @param pHolding the security holding
      * @param pTrans the transaction
      * @return the delta cost
@@ -164,6 +183,27 @@ public class QIFPortfolioBuilder {
 
         /* Obtain the cost delta for the transaction */
         return myBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.COST);
+    }
+
+    /**
+     * Obtain portfolio cash value.
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     * @return the cash value (or null if none)
+     */
+    private JMoney getPortfolioCashValue(final Portfolio pPortfolio,
+                                         final Transaction pTrans) {
+        /* Access the relevant bucket */
+        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        PortfolioCashBucket myBucket = myPortfolios.getCashBucket(pPortfolio);
+
+        /* Obtain the value delta for the transaction */
+        JMoney myValue = myBucket.getMoneyDeltaForTransaction(pTrans, AccountAttribute.VALUATION);
+        if (myValue != null) {
+            myValue = new JMoney(myValue);
+            myValue.negate();
+        }
+        return myValue;
     }
 
     /**
@@ -325,6 +365,12 @@ public class QIFPortfolioBuilder {
     protected void processTransferToSecurity(final SecurityHolding pHolding,
                                              final TransactionAsset pDebit,
                                              final Transaction pTrans) {
+        /* Handle Loyalty bonus separately */
+        if (TransactionCategoryClass.LOYALTYBONUS.equals(pTrans.getCategoryClass())) {
+            processIncomeToSecurity((Payee) pDebit.getParent(), pHolding, pTrans);
+            return;
+        }
+
         /* Access Portfolio Account */
         Portfolio myPort = pHolding.getPortfolio();
         Security mySecurity = pHolding.getSecurity();
@@ -338,6 +384,14 @@ public class QIFPortfolioBuilder {
         boolean canTradeZeroShares = theFileType.canTradeZeroShares();
         boolean canXferLinked = theFileType.canXferPortfolio();
         boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();
+        hideBalancingSplitXfer &= canXferLinked;
+
+        /* Check for transfer from portfolio */
+        if (pDebit.equals(myPort)) {
+            /* Make sure we don't try to link account */
+            canXferLinked = false;
+            hideBalancingSplitXfer = true;
+        }
 
         /* Obtain classes */
         List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
@@ -385,7 +439,7 @@ public class QIFPortfolioBuilder {
         }
 
         /* If we are not hiding the balancing transfer */
-        if (!hideBalancingSplitXfer || !canXferLinked) {
+        if (!hideBalancingSplitXfer) {
             /* Build output amount */
             JMoney myOutAmount = new JMoney(myAmount);
             myOutAmount.negate();
@@ -435,8 +489,10 @@ public class QIFPortfolioBuilder {
                 processStockTakeOver(pSource, pTarget, pTrans);
                 break;
             case TRANSFER:
-            default:
                 processSecurityExchange(pSource, pTarget, pTrans);
+                break;
+            default:
+                LOGGER.error("Unsupported TransferBetweenSecurities Category: {}", pTrans.getCategoryClass());
                 break;
         }
     }
@@ -454,6 +510,9 @@ public class QIFPortfolioBuilder {
         switch (pTrans.getCategoryClass()) {
             case DIVIDEND:
                 processStockDividend(pHolding, pCredit, pTrans);
+                break;
+            case PORTFOLIOXFER:
+                processPortfolioXferForHolding(pHolding, (Portfolio) pCredit, pTrans);
                 break;
             case TRANSFER:
             case STOCKRIGHTSWAIVED:
@@ -555,6 +614,7 @@ public class QIFPortfolioBuilder {
 
         /* Obtain flags */
         boolean canXferLinked = theFileType.canXferPortfolio();
+        boolean isPortfolio = pCredit.equals(myPortfolio);
 
         /* Access Transaction details */
         QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
@@ -571,6 +631,13 @@ public class QIFPortfolioBuilder {
 
         /* Determine whether we should XferLinked */
         boolean doXferLinked = canXferLinked && myTaxCredit == null;
+
+        /* Check for dividend held in portfolio */
+        if (isPortfolio) {
+            /* Make sure we don't try to link account */
+            doXferLinked = false;
+            canXferLinked = false;
+        }
 
         /* Create a dividend event */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, doXferLinked
@@ -600,14 +667,31 @@ public class QIFPortfolioBuilder {
             myQPortfolio.addEvent(myEvent);
         }
 
-        /* Create the receiving transfer event */
-        QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
-        myXferEvent.recordAmount(myAmount);
-        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
-        myXferEvent.recordAccount(myQPortfolio.getAccount(), myList);
+        /* Don't do if receiving dividend in portfolio */
+        if (!isPortfolio) {
+            /* If the receiving account is a portfolio */
+            if (pCredit instanceof Portfolio) {
+                /* Create the receiving transfer event */
+                QIFPortfolioEvent myXferEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+                myXferEvent.recordAmount(myAmount);
+                myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+                myXferEvent.recordXfer(myQPortfolio.getAccount(), myList, myAmount);
 
-        /* Add to event list */
-        myTarget.addEvent(myXferEvent);
+                /* Add to event list */
+                myTarget.addEvent(myXferEvent);
+
+                /* else standard account */
+            } else {
+                /* Create the receiving transfer event */
+                QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+                myXferEvent.recordAmount(myAmount);
+                myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+                myXferEvent.recordAccount(myQPortfolio.getAccount(), myList);
+
+                /* Add to event list */
+                myTarget.addEvent(myXferEvent);
+            }
+        }
 
         /* If we have a Tax Credit */
         if (myTaxCredit != null) {
@@ -967,6 +1051,14 @@ public class QIFPortfolioBuilder {
         boolean canTradeZeroShares = theFileType.canTradeZeroShares();
         boolean canXferLinked = theFileType.canXferPortfolio();
         boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();
+        hideBalancingSplitXfer &= canXferLinked;
+
+        /* Check for transfer to portfolio */
+        if (pCredit.equals(myPortfolio)) {
+            /* Make sure we don't try to link account */
+            canXferLinked = false;
+            hideBalancingSplitXfer = true;
+        }
 
         /* Obtain classes */
         List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
@@ -1023,7 +1115,7 @@ public class QIFPortfolioBuilder {
         }
 
         /* If we are not hiding the balancing transfer */
-        if (!hideBalancingSplitXfer || !canXferLinked) {
+        if (!hideBalancingSplitXfer) {
             /* Build the source transfer */
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
             myEvent.recordAccount(myQPortfolio.getAccount(), myList);
@@ -1083,5 +1175,374 @@ public class QIFPortfolioBuilder {
 
         /* Add to event list */
         myQPortfolio.addEvent(myPortEvent);
+    }
+
+    /**
+     * Process transfer between portfolios.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processTransferBetweenPortfolios(final Portfolio pSource,
+                                                    final Portfolio pTarget,
+                                                    final Transaction pTrans) {
+        /* Switch on transaction type */
+        switch (pTrans.getCategoryClass()) {
+            case INTEREST:
+            case LOYALTYBONUS:
+                processIncomeToPortfolio(pSource.getParent(), pTarget, pTrans);
+                break;
+            case PORTFOLIOXFER:
+                processPortfolioXferBetweenPortfolios(pSource, pTarget, pTrans);
+                break;
+            case TRANSFER:
+                processCashTransferBetweenPortfolios(pSource, pTarget, pTrans);
+                break;
+            default:
+                LOGGER.error("Unsupported TransferBetweenPortfolios Category: {}", pTrans.getCategoryClass());
+                break;
+        }
+    }
+
+    /**
+     * Process PortfolioXfer between portfolios.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processPortfolioXferBetweenPortfolios(final Portfolio pSource,
+                                                         final Portfolio pTarget,
+                                                         final Transaction pTrans) {
+        /* If there is cash to transfer */
+        JMoney myAmount = getPortfolioCashValue(pSource, pTrans);
+        if (myAmount != null) {
+            /* Access details */
+            QIFAccountEvents mySource = theFile.registerAccount(pSource);
+            QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+
+            /* Obtain classes */
+            List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
+            /* Create an XOut event */
+            QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
+            myEvent.recordAmount(myAmount);
+            myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+            myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
+
+            /* Add to event list */
+            mySource.addEvent(myEvent);
+
+            /* Create an XIn event */
+            myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+            myEvent.recordAmount(myAmount);
+            myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));
+            myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
+
+            /* Add to event list */
+            myTarget.addEvent(myEvent);
+        }
+
+        /* Access the relevant bucket */
+        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        PortfolioBucket myBucket = myPortfolios.getBucket(pSource);
+
+        /* Loop through the securities */
+        Iterator<SecurityBucket> myIterator = myBucket.securityIterator();
+        while (myIterator.hasNext()) {
+            SecurityBucket mySecurity = myIterator.next();
+
+            /* Process transfer for this bucket */
+            processPortfolioXferForHolding(mySecurity.getSecurityHolding(), pTarget, pTrans);
+        }
+    }
+
+    /**
+     * Process PortfolioXfer for Holding.
+     * @param pSource the source holding
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processPortfolioXferForHolding(final SecurityHolding pSource,
+                                                  final Portfolio pTarget,
+                                                  final Transaction pTrans) {
+        /* Determine if this holding was transferred */
+        JUnits myUnits = getBaseUnitsForHolding(pSource, pTrans);
+        if (myUnits.isNonZero()) {
+            /* Access details */
+            Portfolio mySourcePortfolio = pSource.getPortfolio();
+            Security mySecurity = pSource.getSecurity();
+            QIFAccountEvents mySource = theFile.registerAccount(mySourcePortfolio);
+            QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+            QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+            JMoney myCost = getDeltaCostForHolding(pSource, pTrans);
+
+            /* If there is an associated cost */
+            if (myCost != null) {
+                /* Convert cost to positive */
+                myCost = new JMoney(myCost);
+                myCost.negate();
+
+                /* Obtain price for the date */
+                JPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+
+                /* Obtain classes */
+                List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
+                /* Create a sell shares event */
+                QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.SELL);
+                myEvent.recordAmount(myCost);
+                myEvent.recordSecurity(myQSecurity);
+                myEvent.recordQuantity(myUnits);
+                myEvent.recordPrice(myPrice);
+
+                /* Add to event list */
+                mySource.addEvent(myEvent);
+
+                /* Create an XOut event */
+                myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
+                myEvent.recordAmount(myCost);
+                myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+                myEvent.recordXfer(myTarget.getAccount(), myList, myCost);
+
+                /* Add to event list */
+                mySource.addEvent(myEvent);
+
+                /* Create an XIn event */
+                myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+                myEvent.recordAmount(myCost);
+                myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));
+                myEvent.recordXfer(mySource.getAccount(), myList, myCost);
+
+                /* Add to event list */
+                myTarget.addEvent(myEvent);
+
+                /* Create a buy shares event */
+                myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.BUY);
+                myEvent.recordAmount(myCost);
+                myEvent.recordSecurity(myQSecurity);
+                myEvent.recordQuantity(myUnits);
+                myEvent.recordPrice(myPrice);
+
+                /* Add to event list */
+                myTarget.addEvent(myEvent);
+
+                /* else just simple transfer of shares */
+            } else {
+                /* Create an SharesOut event */
+                QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.SHRSOUT);
+                myEvent.recordSecurity(myQSecurity);
+                myEvent.recordQuantity(myUnits);
+
+                /* Add to event list */
+                mySource.addEvent(myEvent);
+
+                /* Create an SharesIn event */
+                myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.SHRSIN);
+                myEvent.recordSecurity(myQSecurity);
+                myEvent.recordQuantity(myUnits);
+
+                /* Add to event list */
+                myTarget.addEvent(myEvent);
+            }
+        }
+    }
+
+    /**
+     * Process Cash Transfer between portfolios.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processCashTransferBetweenPortfolios(final Portfolio pSource,
+                                                        final Portfolio pTarget,
+                                                        final Transaction pTrans) {
+        /* Access details */
+        QIFAccountEvents mySource = theFile.registerAccount(pSource);
+        QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+        JMoney myAmount = pTrans.getAmount();
+
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
+        /* Create an XOut event */
+        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
+        myEvent.recordAmount(myAmount);
+        myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+        myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
+
+        /* Add to event list */
+        mySource.addEvent(myEvent);
+
+        /* Create an XIn event */
+        myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+        myEvent.recordAmount(myAmount);
+        myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));
+        myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
+
+        /* Add to event list */
+        myTarget.addEvent(myEvent);
+    }
+
+    /**
+     * Process transfer to a portfolio.
+     * @param pPortfolio the portfolio
+     * @param pDebit the source account
+     * @param pTrans the transaction
+     */
+    protected void processTransferToPortfolio(final Portfolio pPortfolio,
+                                              final TransactionAsset pDebit,
+                                              final Transaction pTrans) {
+        /* Switch on transaction type */
+        switch (pTrans.getCategoryClass()) {
+            case TRANSFER:
+                processCashTransferToPortfolio(pPortfolio, pDebit, pTrans);
+                break;
+            default:
+                LOGGER.error("Unsupported TransferToPortfolio Category: {}", pTrans.getCategoryClass());
+                break;
+        }
+    }
+
+    /**
+     * Process Cash Transfer to portfolio.
+     * @param pPortfolio the target portfolio
+     * @param pSource the source account
+     * @param pTrans the transaction
+     */
+    protected void processCashTransferToPortfolio(final Portfolio pPortfolio,
+                                                  final TransactionAsset pSource,
+                                                  final Transaction pTrans) {
+        /* Access details */
+        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        QIFAccountEvents mySource = theFile.registerAccount(pSource);
+        JMoney myAmount = pTrans.getAmount();
+
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
+        /* Create an XOut event */
+        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+        myEvent.recordAmount(myAmount);
+        myEvent.recordPayee(theBuilder.buildXferToPayee(pSource));
+        myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
+
+        /* Add to event list */
+        myPortfolio.addEvent(myEvent);
+
+        /* Create the receiving transfer event */
+        QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+        myXferEvent.recordAmount(myAmount);
+        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
+        myXferEvent.recordAccount(myPortfolio.getAccount(), myList);
+
+        /* Add to event list */
+        mySource.addEvent(myXferEvent);
+    }
+
+    /**
+     * Process transfer from a portfolio.
+     * @param pPortfolio the portfolio
+     * @param pCredit the target account
+     * @param pTrans the transaction
+     */
+    protected void processTransferFromPortfolio(final Portfolio pPortfolio,
+                                                final TransactionAsset pCredit,
+                                                final Transaction pTrans) {
+        /* Switch on transaction type */
+        switch (pTrans.getCategoryClass()) {
+            case TRANSFER:
+                processCashTransferFromPortfolio(pPortfolio, pCredit, pTrans);
+                break;
+            default:
+                LOGGER.error("Unsupported TransferFromPortfolio Category: {}", pTrans.getCategoryClass());
+                break;
+        }
+    }
+
+    /**
+     * Process Cash Transfer from portfolio.
+     * @param pPortfolio the source portfolio
+     * @param pTarget the target account
+     * @param pTrans the transaction
+     */
+    protected void processCashTransferFromPortfolio(final Portfolio pPortfolio,
+                                                    final TransactionAsset pTarget,
+                                                    final Transaction pTrans) {
+        /* Access details */
+        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+        JMoney myAmount = pTrans.getAmount();
+
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
+        /* Create an XOut event */
+        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
+        myEvent.recordAmount(myAmount);
+        myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+        myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
+
+        /* Add to event list */
+        myPortfolio.addEvent(myEvent);
+
+        /* Create the receiving transfer event */
+        QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+        myXferEvent.recordAmount(myAmount);
+        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
+        myXferEvent.recordAccount(myPortfolio.getAccount(), myList);
+
+        /* Add to event list */
+        myTarget.addEvent(myXferEvent);
+    }
+
+    /**
+     * Process expense from a portfolio.
+     * @param pCredit the target payee
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     */
+    protected void processExpenseFromPortfolio(final Payee pCredit,
+                                               final Portfolio pPortfolio,
+                                               final Transaction pTrans) {
+        /* Access Details */
+        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        QIFPayee myPayee = theFile.registerPayee(pCredit);
+        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        JMoney myAmount = new JMoney(pTrans.getAmount());
+        myAmount.negate();
+
+        /* Create an expense event */
+        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
+        myEvent.recordAmount(myAmount);
+        myEvent.recordPayee(myPayee);
+        myEvent.recordCategory(myCategory);
+
+        /* Add to event list */
+        myPortfolio.addEvent(myEvent);
+    }
+
+    /**
+     * Process income to a portfolio.
+     * @param pDebit the source payee
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     */
+    protected void processIncomeToPortfolio(final Payee pDebit,
+                                            final Portfolio pPortfolio,
+                                            final Transaction pTrans) {
+        /* Access Details */
+        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        QIFPayee myPayee = theFile.registerPayee(pDebit);
+        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        JMoney myAmount = pTrans.getAmount();
+
+        /* Create an income event */
+        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
+        myEvent.recordAmount(myAmount);
+        myEvent.recordPayee(myPayee);
+        myEvent.recordCategory(myCategory);
+
+        /* Add to event list */
+        myPortfolio.addEvent(myEvent);
     }
 }

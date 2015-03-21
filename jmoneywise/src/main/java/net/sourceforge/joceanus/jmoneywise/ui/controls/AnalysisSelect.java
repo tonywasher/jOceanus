@@ -607,6 +607,27 @@ public class AnalysisSelect
         thePayeeSelect.setAnalysis(theAnalysis);
         theTaxBasisSelect.setAnalysis(theAnalysis);
         theTagSelect.setAnalysis(theAnalysis);
+
+        /* Update the filter */
+        updateFilter();
+    }
+
+    /**
+     * Update the filter.
+     */
+    private void updateFilter() {
+        /* Access the active panel */
+        AnalysisType myType = theState.getType();
+        AnalysisFilterSelection myPanel = theMap.get(myType);
+
+        /* Update filters */
+        if (myPanel != null) {
+            AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            theState.setFilter(myFilter);
+        }
+
+        /* Notify updated filter */
+        fireStateChanged();
     }
 
     /**

@@ -331,6 +331,18 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
+     * Obtain money delta for transaction.
+     * @param pTrans the transaction
+     * @param pAttr the attribute
+     * @return the delta (or null)
+     */
+    public JMoney getMoneyDeltaForTransaction(final Transaction pTrans,
+                                              final AccountAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaMoneyValue(pTrans, pAttr);
+    }
+
+    /**
      * Obtain the history map.
      * @return the history map
      */

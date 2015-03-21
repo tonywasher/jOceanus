@@ -754,6 +754,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
                 myCurr.setValidEdit();
+                myState = myState.combineState(EditState.VALID);
                 continue;
             }
 
@@ -900,6 +901,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
                 myCurr.setValidEdit();
+                myState = myState.combineState(EditState.VALID);
                 continue;
             }
 
