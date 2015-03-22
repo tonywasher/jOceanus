@@ -50,7 +50,7 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.jdatebutton.JDateDialog.JDateEditor;
+import net.sourceforge.jdatebutton.swing.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellEditor;
