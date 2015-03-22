@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.time.LocalDate;
 
-import net.sourceforge.jdatebutton.JDateButton;
+import net.sourceforge.jdatebutton.swing.JDateButton;
 
 /**
  * Extension class for a {@link JDateButton} to handle {@link JDateDay} objects.

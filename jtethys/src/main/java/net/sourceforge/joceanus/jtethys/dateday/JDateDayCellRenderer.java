@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
-import net.sourceforge.jdatebutton.JDateCellRenderer;
+import net.sourceforge.jdatebutton.swing.JDateCellRenderer;
 
 /**
  * Cell renderer for a {@link JDateDay} object extending {@link JDateCellRenderer}.

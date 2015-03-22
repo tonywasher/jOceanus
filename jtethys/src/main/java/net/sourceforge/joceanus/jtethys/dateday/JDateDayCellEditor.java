@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jtethys.dateday;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
-import net.sourceforge.jdatebutton.JDateCellEditor;
+import net.sourceforge.jdatebutton.swing.JDateCellEditor;
 
 /**
  * Cell editor for a {@link JDateDay} object extending {@link JDateCellEditor}.

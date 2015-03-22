@@ -27,7 +27,7 @@ import java.time.LocalDate;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jdatebutton.JDateConfig;
+import net.sourceforge.jdatebutton.swing.JDateConfig;
 
 /**
  * Class that extends {@link JDateConfig} to handle {@link JDateDay} objects.
