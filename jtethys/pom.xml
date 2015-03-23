@@ -8,43 +8,11 @@
   <artifactId>jtethys</artifactId>
   <name>jTethys Java Utilities</name>
   <description>Java Utilities</description>
-  <dependencies>
-    <dependency>
-      <groupId>net.sourceforge.jdatebutton</groupId>
-      <artifactId>jdatebutton-swing</artifactId>
-      <version>${JDateButtonVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.jdatebutton</groupId>
-      <artifactId>jdatebutton-core</artifactId>
-      <version>${JDateButtonVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${SLF4JVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-ext</artifactId>
-      <version>${SLF4JVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${SLF4JVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>${LOG4JVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${LOG4JVersion}</version>
-    </dependency>
-  </dependencies>
+  <packaging>pom</packaging>
+  <modules>
+    <module>jtethys-swing</module>
+    <module>jtethys-core</module>
+  </modules>
   <properties>
     <svnComponent>jtethys</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>

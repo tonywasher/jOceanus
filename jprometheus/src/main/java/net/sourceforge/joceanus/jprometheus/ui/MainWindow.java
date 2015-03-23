@@ -58,8 +58,8 @@ import net.sourceforge.joceanus.jprometheus.threads.UpdatePassword;
 import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.help.HelpModule;
-import net.sourceforge.joceanus.jtethys.help.HelpWindow;
+import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.swing.HelpWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

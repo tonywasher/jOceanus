@@ -57,10 +57,10 @@ import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
-import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

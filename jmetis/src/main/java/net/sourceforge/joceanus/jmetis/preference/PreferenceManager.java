@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

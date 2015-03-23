@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

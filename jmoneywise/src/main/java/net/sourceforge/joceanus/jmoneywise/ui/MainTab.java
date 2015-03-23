@@ -47,11 +47,11 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
-import net.sourceforge.joceanus.jtethys.help.HelpException;
-import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.help.swing.HelpException;
+import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
 
 /**
  * Main Window for jMoneyWise.

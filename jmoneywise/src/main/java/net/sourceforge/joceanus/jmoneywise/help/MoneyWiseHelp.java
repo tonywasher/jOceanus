@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
-import net.sourceforge.joceanus.jtethys.help.HelpException;
-import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.swing.HelpException;
+import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
 
 /**
  * Help Module for FinanceApp.

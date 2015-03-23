@@ -28,7 +28,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 

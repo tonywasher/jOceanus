@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
 
 /**
  * Provides top-level control of data.

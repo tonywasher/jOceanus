@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
 
 /**
  * Wrapper class for java preferences.

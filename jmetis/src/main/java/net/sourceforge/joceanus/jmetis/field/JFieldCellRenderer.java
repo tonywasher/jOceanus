@@ -33,8 +33,8 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellRenderer;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellRenderer;
+import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;

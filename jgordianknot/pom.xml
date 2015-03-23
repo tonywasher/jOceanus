@@ -16,7 +16,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys</artifactId>
+      <artifactId>jtethys-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys-core</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

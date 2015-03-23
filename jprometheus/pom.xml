@@ -31,7 +31,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys</artifactId>
+      <artifactId>jtethys-core</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
