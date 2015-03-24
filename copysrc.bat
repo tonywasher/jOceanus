@@ -12,8 +12,12 @@ goto :docopy
 set projectName=jOceanus
 set source=c:\Users\Tony\%projectName%
 set target=c:\Users\Tony\sourceforge\%projectName%\trunk
-set dirNames=jmetis jprometheus jtethys
-set dirNames=%dirNames% jgordianknot jthemis jmoneywise .
+set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing
+set dirNames=%dirNames% jgordianknot .
+set dirNames=%dirNames% jmetis  
+set dirNames=%dirNames% jprometheus  
+set dirNames=%dirNames% jthemis  
+set dirNames=%dirNames% jmoneywise
 
 :docopy
 rem xcopy /Y %source%\pom.xml %target%\pom.xml

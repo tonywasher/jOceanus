@@ -20,8 +20,8 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
-
 /**
  * Class providing utilities to simplify laying out panels.
  */
+package net.sourceforge.joceanus.jtethys.swing;
+

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing.demo;
+package net.sourceforge.joceanus.jtethys.swing;
 
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -44,7 +44,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
 
 import org.slf4j.Logger;
