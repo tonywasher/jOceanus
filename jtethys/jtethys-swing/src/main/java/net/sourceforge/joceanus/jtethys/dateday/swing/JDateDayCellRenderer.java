@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.dateday.swing;
 
 import net.sourceforge.jdatebutton.swing.JDateCellRenderer;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 
 /**
  * Cell renderer for a {@link JDateDay} object extending {@link JDateCellRenderer}.

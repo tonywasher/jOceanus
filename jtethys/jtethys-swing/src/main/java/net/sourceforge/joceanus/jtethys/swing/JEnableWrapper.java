@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.event.swing;
+package net.sourceforge.joceanus.jtethys.swing;
 
 import java.awt.Component;
 import java.util.ArrayList;

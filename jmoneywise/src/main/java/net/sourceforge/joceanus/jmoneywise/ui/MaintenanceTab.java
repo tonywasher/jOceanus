@@ -60,8 +60,8 @@ import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
 
 /**
  * Maintenance Tab panel.

@@ -26,6 +26,7 @@ import java.time.LocalDate;
 
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 
 /**
  * Extension class for a {@link JDateButton} to handle {@link JDateDay} objects.

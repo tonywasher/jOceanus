@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.swing;
+package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,17 +32,16 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.sourceforge.jdatebutton.JDateFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * Formatter for Date objects.
  * @author Tony Washer
  */
 public class JDateDayFormatter
-        extends JEventObject
-        implements JDateFormatter {
+        implements JDateFormatter, JOceanusEventProvider {
     /**
      * The default format.
      */
@@ -52,6 +51,11 @@ public class JDateDayFormatter
      * One hundred years.
      */
     private static final int YEARS_CENTURY = 100;
+
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
 
     /**
      * The locale.
@@ -89,6 +93,12 @@ public class JDateDayFormatter
         /* Store locale */
         theLocale = pLocale;
         setFormat(DEFAULT_FORMAT);
+        theEventManager = new JOceanusEventManager();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -108,7 +118,7 @@ public class JDateDayFormatter
         theLocalDateFormat = DateTimeFormatter.ofPattern(theFormat, theLocale);
 
         /* Notify of the change */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**

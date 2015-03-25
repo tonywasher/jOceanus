@@ -55,7 +55,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;

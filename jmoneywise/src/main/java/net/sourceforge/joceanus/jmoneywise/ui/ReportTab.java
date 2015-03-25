@@ -59,8 +59,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableScroll;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -65,7 +65,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 
 /**
  * SpotRates panel.

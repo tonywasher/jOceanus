@@ -85,7 +85,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;

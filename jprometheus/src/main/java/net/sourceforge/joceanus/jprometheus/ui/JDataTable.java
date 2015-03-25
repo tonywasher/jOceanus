@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventTable;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 
 /**

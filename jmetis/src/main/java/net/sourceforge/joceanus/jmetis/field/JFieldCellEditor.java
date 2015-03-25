@@ -52,11 +52,11 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.jdatebutton.swing.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellEditor;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventCellEditor;

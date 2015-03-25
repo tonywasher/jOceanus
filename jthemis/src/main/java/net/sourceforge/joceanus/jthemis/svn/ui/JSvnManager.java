@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
