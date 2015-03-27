@@ -30,12 +30,17 @@ public class JDateDayRange
     /**
      * Unbounded range description.
      */
-    public static final String DESC_UNBOUNDED = "Unbounded";
+    protected static final String DESC_UNBOUNDED = JDateDayResource.RANGE_UNBOUNDED.getValue();
 
     /**
      * link range description.
      */
-    public static final String DESC_LINK = " to ";
+    protected static final String DESC_LINK = JDateDayResource.RANGE_TO.getValue();
+
+    /**
+     * link range description.
+     */
+    protected static final char CHAR_BLANK = ' ';
 
     /**
      * The Start Date for the range.
@@ -173,16 +178,19 @@ public class JDateDayRange
     @Override
     public String toString() {
         /* Build range description */
-        String myFormat = (theStart == null)
-                                            ? DESC_UNBOUNDED
-                                            : theStart.toString();
-        myFormat += DESC_LINK;
-        myFormat += (theEnd == null)
-                                    ? DESC_UNBOUNDED
-                                    : theEnd.toString();
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append((theStart == null)
+                                           ? DESC_UNBOUNDED
+                                           : theStart.toString());
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(DESC_LINK);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append((theEnd == null)
+                                         ? DESC_UNBOUNDED
+                                         : theEnd.toString());
 
         /* return the format */
-        return myFormat;
+        return myBuilder.toString();
     }
 
     @Override

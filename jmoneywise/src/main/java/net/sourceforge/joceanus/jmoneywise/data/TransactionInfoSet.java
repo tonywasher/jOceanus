@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;

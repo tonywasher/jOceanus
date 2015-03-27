@@ -8,33 +8,11 @@
   <artifactId>jmetis</artifactId>
   <name>jMetis Data Framework</name>
   <description>jMetis Data Framework</description>
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jgordianknot</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>${ApachePOIVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.odftoolkit</groupId>
-      <artifactId>simple-odf</artifactId>
-      <version>${ApacheODFDOMVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>${XercesVersion}</version>
-    </dependency>
-  </dependencies>
+  <packaging>pom</packaging>
+  <modules>
+    <!--<module>jmetis-swing</module>-->
+    <module>jmetis-core</module>
+  </modules>
   <properties>
     <svnComponent>jmetis</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>

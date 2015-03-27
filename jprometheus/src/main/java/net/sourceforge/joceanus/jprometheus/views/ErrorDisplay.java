@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 
 /**

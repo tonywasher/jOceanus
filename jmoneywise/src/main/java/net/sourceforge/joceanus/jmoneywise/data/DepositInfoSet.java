@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;

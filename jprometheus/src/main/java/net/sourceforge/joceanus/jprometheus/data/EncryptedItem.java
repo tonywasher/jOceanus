@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
+import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

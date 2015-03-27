@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.views;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.viewer.DataState;
-import net.sourceforge.joceanus.jmetis.viewer.EditState;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.DataState;
+import net.sourceforge.joceanus.jmetis.data.EditState;
+import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;

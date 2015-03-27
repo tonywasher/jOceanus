@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.database;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
-                                                                                          extends TableEncrypted<T, E> {
+        extends TableEncrypted<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control

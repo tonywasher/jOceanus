@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
+import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 
 /**
  * Group class for data item.

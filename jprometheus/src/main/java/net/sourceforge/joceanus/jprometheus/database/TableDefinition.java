@@ -34,8 +34,8 @@ import java.util.Map;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BooleanColumn;

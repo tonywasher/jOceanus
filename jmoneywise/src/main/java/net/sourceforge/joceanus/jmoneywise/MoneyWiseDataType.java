@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
+import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldEnum;
 
 /**
  * MoneyWise Item Types.

@@ -143,7 +143,17 @@ public enum JDateDayResource implements ResourceId {
     /**
      * Period AllDates.
      */
-    PERIOD_ALLDATES("period.allDates");
+    PERIOD_ALLDATES("period.allDates"),
+
+    /**
+     * Range unbounded.
+     */
+    RANGE_UNBOUNDED("range.unbounded"),
+
+    /**
+     * Range To.
+     */
+    RANGE_TO("range.to");
 
     /**
      * The Resource Builder.

@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.util.Properties;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.log4j.PropertyConfigurator;

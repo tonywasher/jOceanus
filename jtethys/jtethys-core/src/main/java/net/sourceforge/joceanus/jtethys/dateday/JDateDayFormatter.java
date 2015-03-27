@@ -211,16 +211,19 @@ public class JDateDayFormatter
         JDateDay myEnd = pRange.getEnd();
 
         /* Build range description */
-        String myFormat = (myStart == null)
-                                           ? JDateDayRange.DESC_UNBOUNDED
-                                           : formatDateDay(myStart);
-        myFormat += JDateDayRange.DESC_LINK;
-        myFormat += (myEnd == null)
-                                   ? JDateDayRange.DESC_UNBOUNDED
-                                   : formatDateDay(myEnd);
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append((myStart == null)
+                                          ? JDateDayRange.DESC_UNBOUNDED
+                                          : formatDateDay(myStart));
+        myBuilder.append(JDateDayRange.CHAR_BLANK);
+        myBuilder.append(JDateDayRange.DESC_LINK);
+        myBuilder.append(JDateDayRange.CHAR_BLANK);
+        myBuilder.append((myEnd == null)
+                                        ? JDateDayRange.DESC_UNBOUNDED
+                                        : formatDateDay(myEnd));
 
         /* return the format */
-        return myFormat;
+        return myBuilder.toString();
     }
 
     /**

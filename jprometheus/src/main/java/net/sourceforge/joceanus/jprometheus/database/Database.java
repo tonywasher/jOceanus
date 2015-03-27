@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;

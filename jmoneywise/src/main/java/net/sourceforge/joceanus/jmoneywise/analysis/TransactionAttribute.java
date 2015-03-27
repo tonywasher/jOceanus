@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.viewer.DataType;
+import net.sourceforge.joceanus.jmetis.data.DataType;
 
 /**
  * TransactionAttribute enumeration.

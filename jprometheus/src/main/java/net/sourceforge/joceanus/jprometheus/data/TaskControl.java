@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.viewer.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.
