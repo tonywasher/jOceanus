@@ -36,6 +36,11 @@ import java.util.function.Consumer;
  */
 public class JDataFields {
     /**
+     * Hash Prime.
+     */
+    public static final int HASH_PRIME = 19;
+
+    /**
      * Name of Item.
      */
     private final String theName;

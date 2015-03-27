@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
@@ -405,7 +404,7 @@ public final class SecurityHolding
 
     @Override
     public int hashCode() {
-        int myHash = JDataManager.HASH_PRIME * getPortfolio().hashCode();
+        int myHash = JDataFields.HASH_PRIME * getPortfolio().hashCode();
         return myHash + getSecurity().hashCode();
     }
 

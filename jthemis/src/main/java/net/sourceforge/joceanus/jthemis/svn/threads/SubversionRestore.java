@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.FileSelector;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;

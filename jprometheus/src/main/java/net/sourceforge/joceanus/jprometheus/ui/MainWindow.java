@@ -41,8 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.CreateDatabase;
@@ -330,12 +330,12 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Data Manager.
      */
-    private JDataManager theDataMgr = null;
+    private ViewerManager theDataMgr = null;
 
     /**
      * The Started data window.
      */
-    private JDataWindow theDataWdw = null;
+    private ViewerWindow theDataWdw = null;
 
     /**
      * Constructor.
@@ -1005,7 +1005,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void displayDataMgr() {
         /* Create the data window */
-        theDataWdw = new JDataWindow(theFrame, theDataMgr);
+        theDataWdw = new ViewerWindow(theFrame, theDataMgr);
 
         /* Listen for its closure */
         theDataWdw.addWindowListener(new WindowClose());

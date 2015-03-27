@@ -38,8 +38,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -199,7 +199,7 @@ public class AccountPanel
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
 
         /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = pView.getDataMgr();
+        ViewerManager myDataMgr = pView.getDataMgr();
         JDataEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);

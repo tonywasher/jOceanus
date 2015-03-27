@@ -28,7 +28,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 
 /**
@@ -44,7 +43,7 @@ public class JDataProfile
     /**
      * Task Field Id.
      */
-    private static final String NAME_CLASS = ViewerResource.PROFILE_NAME.getValue();
+    private static final String NAME_CLASS = DataResource.PROFILE_NAME.getValue();
 
     /**
      * Local Report fields.

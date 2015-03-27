@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -930,7 +929,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
         @Override
         public int hashCode() {
-            return JDataManager.HASH_PRIME;
+            return JDataFields.HASH_PRIME;
         }
 
         @Override

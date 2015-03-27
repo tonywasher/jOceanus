@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -198,7 +198,7 @@ public class SpotPricesTable
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
+        ViewerManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         theDataPrice = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataPrice.addAsChildOf(mySection);

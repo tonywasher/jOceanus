@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataValues;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 
 /**
  * ValueSet class.
@@ -300,7 +299,7 @@ public class ValueSet {
             }
 
             /* Adjust existing hash */
-            iHashCode *= JDataManager.HASH_PRIME;
+            iHashCode *= JDataFields.HASH_PRIME;
 
             /* Access value and add hash if non-null */
             Object o = theValues[myField.getIndex()];

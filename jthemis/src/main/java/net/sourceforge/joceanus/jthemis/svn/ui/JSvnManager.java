@@ -36,13 +36,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
@@ -98,7 +98,7 @@ public final class JSvnManager {
     /**
      * The Data Manager.
      */
-    private final JDataManager theDataMgr;
+    private final ViewerManager theDataMgr;
 
     /**
      * The Security Manager.
@@ -168,7 +168,7 @@ public final class JSvnManager {
     /**
      * The Started data window.
      */
-    private JDataWindow theDataWdw = null;
+    private ViewerWindow theDataWdw = null;
 
     /**
      * The Window Close handler.
@@ -196,7 +196,7 @@ public final class JSvnManager {
      */
     protected JSvnManager() throws JOceanusException {
         /* Create the data manager */
-        theDataMgr = new JDataManager();
+        theDataMgr = new ViewerManager();
 
         /* Create the Tabbed Pane */
         JEnableTabbed myTabs = new JEnableTabbed();
@@ -556,7 +556,7 @@ public final class JSvnManager {
             /* If this is the DataManager window */
             if (theShowDataMgr.equals(o)) {
                 /* Create the data window */
-                theDataWdw = new JDataWindow(theFrame, theDataMgr);
+                theDataWdw = new ViewerWindow(theFrame, theDataMgr);
 
                 /* Listen for its closure */
                 theDataWdw.addWindowListener(theCloseHandler);

@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEd
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -180,7 +180,7 @@ public class TaxYearTable
         setUpdateSet(theUpdateSet);
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
-        JDataManager myDataMgr = theView.getDataMgr();
+        ViewerManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);

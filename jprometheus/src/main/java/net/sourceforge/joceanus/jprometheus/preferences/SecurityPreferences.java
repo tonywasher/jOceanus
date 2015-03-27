@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
+import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

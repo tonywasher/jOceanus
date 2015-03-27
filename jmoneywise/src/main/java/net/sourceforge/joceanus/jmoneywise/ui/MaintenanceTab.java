@@ -33,7 +33,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -235,7 +235,7 @@ public class MaintenanceTab
      * Obtain the data manager.
      * @return the manager
      */
-    public JDataManager getDataManager() {
+    public ViewerManager getDataManager() {
         return theView.getDataMgr();
     }
 

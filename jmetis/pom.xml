@@ -10,7 +10,7 @@
   <description>jMetis Data Framework</description>
   <packaging>pom</packaging>
   <modules>
-    <!--<module>jmetis-swing</module>-->
+    <module>jmetis-swing</module>
     <module>jmetis-core</module>
   </modules>
   <properties>

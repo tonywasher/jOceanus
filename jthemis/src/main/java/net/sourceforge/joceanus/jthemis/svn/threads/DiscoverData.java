@@ -29,8 +29,8 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
@@ -117,7 +117,7 @@ public class DiscoverData
      * @param pDataMgr the data manager
      * @param pParent the parent entry
      */
-    public void declareExtractPlans(final JDataManager pDataMgr,
+    public void declareExtractPlans(final ViewerManager pDataMgr,
                                     final JDataEntry pParent) {
         /* Loop through the plans */
         Iterator<SvnExtract> myIterator = theExtractPlanMap.values().iterator();

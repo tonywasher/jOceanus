@@ -8,27 +8,11 @@
   <artifactId>jgordianknot</artifactId>
   <name>jGordianKnot Security Framework</name>
   <description>A Security framework for Java. This embeds the 7Zip SDK v9.20 which is under public domain license</description>
-  <dependencies>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>${BouncyCastleVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-swing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
-  <properties>
-    <svnComponent>jgordianknot</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
-  </properties>
+  <packaging>pom</packaging>
+  <modules>
+    <module>jgordianknot-swing</module>
+    <module>jgordianknot-core</module>
+  </modules>
   <build>
     <plugins>
       <plugin>

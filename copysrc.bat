@@ -13,11 +13,12 @@ set projectName=jOceanus
 set source=c:\Users\Tony\%projectName%
 set target=c:\Users\Tony\sourceforge\%projectName%\trunk
 set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing
-set dirNames=%dirNames% jgordianknot .
-set dirNames=%dirNames% jmetis  
+set dirNames=%dirNames% jgordianknot jgordianknot\jgordianknot-core jgordianknot\jgordianknot-swing
+set dirNames=%dirNames% jmetis jmetis\jmetis-core jmetis\jmetis-swing
 set dirNames=%dirNames% jprometheus  
 set dirNames=%dirNames% jthemis  
 set dirNames=%dirNames% jmoneywise
+set dirNames=%dirNames% .
 
 :docopy
 rem xcopy /Y %source%\pom.xml %target%\pom.xml

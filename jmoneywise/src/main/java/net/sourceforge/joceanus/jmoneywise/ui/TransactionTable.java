@@ -51,8 +51,8 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRe
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -365,7 +365,7 @@ public class TransactionTable
         theBuilder = new TransactionBuilder(theUpdateSet);
 
         /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
+        ViewerManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         JDataEntry myDataRegister = myDataMgr.new JDataEntry(NLS_DATAENTRY);
         myDataRegister.addAsChildOf(mySection);

@@ -29,14 +29,14 @@ import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -121,7 +121,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Data Manager.
      */
-    private JDataManager theDataMgr = null;
+    private ViewerManager theDataMgr = null;
 
     /**
      * The Field Manager.
@@ -164,7 +164,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         thePreferenceMgr = new PreferenceManager();
 
         /* Create the data manager */
-        theDataMgr = new JDataManager();
+        theDataMgr = new ViewerManager();
         initDataMgr();
 
         /* Update the Profile entry */
@@ -354,7 +354,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain Data Manager.
      * @return the Data Manager
      */
-    public JDataManager getDataMgr() {
+    public ViewerManager getDataMgr() {
         return theDataMgr;
     }
 
