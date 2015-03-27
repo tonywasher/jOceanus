@@ -1,0 +1,10 @@
+jMoneyWise Project
+
+  jMoneyWise is a subComponent of the jOceanus project.
+
+  jMoneyWise is a Personal Finance project that provides a single view of personal finances. Data is held on all assets
+and transactions relating to those assets. Reports are provided giving point in time valuations and taxation calculations.
+All taxation is UK tax-based.
+
+  Mechanisms are provided to export to Quicken, MoneyDance and AceMoney and it is intended to provide the functionality
+to import from those applications

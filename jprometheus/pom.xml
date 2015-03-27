@@ -8,38 +8,11 @@
   <artifactId>jprometheus</artifactId>
   <name>jPrometheus Application Framework</name>
   <description>Java Application Framework</description>
-  <dependencies>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>${MySQLVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>${PostGreSQLVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jgordianknot-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-swing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+  <packaging>pom</packaging>
+  <modules>
+    <!--<module>jprometheus-swing</module>-->
+    <module>jprometheus-core</module>
+  </modules>
   <properties>
     <svnComponent>jprometheus</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>

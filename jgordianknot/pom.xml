@@ -13,6 +13,10 @@
     <module>jgordianknot-swing</module>
     <module>jgordianknot-core</module>
   </modules>
+  <properties>
+    <svnComponent>jgordianknot</svnComponent>
+    <packageName>${packageKey}.${svnComponent}</packageName>
+  </properties>
   <build>
     <plugins>
       <plugin>

@@ -8,64 +8,11 @@
   <artifactId>jthemis</artifactId>
   <name>jThemis Project Framework</name>
   <description>Java Project Framework</description>
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jprometheus</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jgordianknot-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>${ApacheMavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.tmatesoft.svnkit</groupId>
-      <artifactId>svnkit</artifactId>
-      <version>${SvnKitVersion}</version>
-    </dependency>  
-    <dependency>
-      <groupId>com.atlassian.jira</groupId>
-      <artifactId>jira-rest-java-client-core</artifactId>
-      <version>${JiraRestVersion}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>stax</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- 
-      *- Need to add the following explicit dependency for JiraRest
-      *- to prevent version 4.1.3 being brought in by jGit.
-      *- Using 4.1.3 causes a failure in the JiraRest connection
-      -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.2.1-atlassian-2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>${JGitVersion}</version>
-    </dependency>   
-  </dependencies>
+  <packaging>pom</packaging>
+  <modules>
+    <!--<module>jthemis-swing</module>-->
+    <module>jthemis-core</module>
+  </modules>
   <properties>
     <appDir>../../backup/</appDir>
     <appLibDir>lib/</appLibDir>

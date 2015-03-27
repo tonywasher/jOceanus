@@ -15,9 +15,9 @@ set target=c:\Users\Tony\sourceforge\%projectName%\trunk
 set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing
 set dirNames=%dirNames% jgordianknot jgordianknot\jgordianknot-core jgordianknot\jgordianknot-swing
 set dirNames=%dirNames% jmetis jmetis\jmetis-core jmetis\jmetis-swing
-set dirNames=%dirNames% jprometheus  
-set dirNames=%dirNames% jthemis  
-set dirNames=%dirNames% jmoneywise
+set dirNames=%dirNames% jprometheus jprometheus\jprometheus-core
+set dirNames=%dirNames% jthemis jthemis\jthemis-core
+set dirNames=%dirNames% jmoneywise jmoneywise\jmoneywise-core
 set dirNames=%dirNames% .
 
 :docopy
