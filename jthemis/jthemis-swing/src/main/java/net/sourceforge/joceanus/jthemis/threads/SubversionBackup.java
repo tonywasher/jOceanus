@@ -20,30 +20,33 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.threads;
+package net.sourceforge.joceanus.jthemis.threads;
 
-import java.time.LocalTime;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
+import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.tasks.BuildGit;
+import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
 /**
- * Thread to handle creation of GitRepo from Subversion component.
+ * Thread to handle subVersion backups.
  * @author Tony Washer
  */
-public class CreateGitRepo
+public class SubversionBackup
         extends ScmThread {
     /**
-     * Preference Manager.
+     * The preference manager.
      */
     private final PreferenceManager thePreferenceMgr;
+
+    /**
+     * The secure manager.
+     */
+    private final SecureManager theSecureMgr;
 
     /**
      * Report object.
@@ -51,50 +54,28 @@ public class CreateGitRepo
     private final ReportTask theReport;
 
     /**
-     * The Component.
-     */
-    private final SvnComponent theSource;
-
-    /**
-     * The Git Repository.
-     */
-    private GitRepository theGitRepo;
-
-    /**
-     * Constructor.
+     * Constructor (Event Thread).
      * @param pReport the report object
-     * @param pSource the source subversion component
      */
-    public CreateGitRepo(final ReportTask pReport,
-                         final SvnComponent pSource) {
+    public SubversionBackup(final ReportTask pReport) {
+        /* Call super-constructor */
         super(pReport);
-        thePreferenceMgr = pReport.getPreferenceMgr();
-        theReport = pReport;
-        theSource = pSource;
-    }
 
-    /**
-     * Obtain the git repository.
-     * @return the git repository
-     */
-    public GitRepository getGitRepo() {
-        return theGitRepo;
+        /* Store passed parameters */
+        theReport = pReport;
+        thePreferenceMgr = pReport.getPreferenceMgr();
+        theSecureMgr = pReport.getSecureMgr();
     }
 
     @Override
-    protected Void doInBackground() throws JOceanusException {
-        /* Access git repository */
-        theGitRepo = new GitRepository(thePreferenceMgr, this);
+    public Void doInBackground() throws JOceanusException {
+        Backup myAccess = null;
 
-        /* Create a new Git repository */
-        BuildGit myBuild = new BuildGit(theSource, theGitRepo);
-        Long myStart = System.nanoTime();
-        myBuild.buildRepository(this);
-        Long myEnd = System.nanoTime();
-        LocalTime myDuration = LocalTime.ofNanoOfDay(myEnd - myStart);
-        setNewStage("Elapsed: " + myDuration);
+        /* Create backup */
+        myAccess = new Backup(this, thePreferenceMgr);
+        myAccess.backUpRepositories(theSecureMgr);
 
-        /* Return null */
+        /* Return nothing */
         return null;
     }
 

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.ui;
+package net.sourceforge.joceanus.jthemis.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
-import net.sourceforge.joceanus.jthemis.svn.threads.ScmThread;
+import net.sourceforge.joceanus.jthemis.threads.ScmThread;
 
 /**
  * Status window for SubVersion operations.

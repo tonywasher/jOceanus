@@ -6,12 +6,12 @@
     <version>v1.4.0-SNAPSHOT</version>   
   </parent>
   <artifactId>jmoneywise-core</artifactId>
-  <name>jMoneyWise Personal Finance Core</name>
+  <name>jMoneyWise Personal Finance - Core</name>
   <description>Personal Finance Application</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jprometheus-core</artifactId>
+      <artifactId>jprometheus-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

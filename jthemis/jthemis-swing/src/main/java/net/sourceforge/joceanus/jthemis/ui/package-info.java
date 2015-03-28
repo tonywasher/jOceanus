@@ -21,8 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * Threads for subversion.
- * @author Tony Washer
+ * Package to handle user interface for JSvnManager.
  */
-package net.sourceforge.joceanus.jthemis.svn.threads;
+package net.sourceforge.joceanus.jthemis.ui;
 

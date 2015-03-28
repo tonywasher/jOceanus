@@ -10,7 +10,7 @@
   <description>Java Project Framework</description>
   <packaging>pom</packaging>
   <modules>
-    <!--<module>jthemis-swing</module>-->
+    <module>jthemis-swing</module>
     <module>jthemis-core</module>
   </modules>
   <properties>

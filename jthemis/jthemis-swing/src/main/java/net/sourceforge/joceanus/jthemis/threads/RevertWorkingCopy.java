@@ -20,42 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.threads;
+package net.sourceforge.joceanus.jthemis.threads;
 
 import java.io.File;
-import java.util.Collection;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
 
-import org.tmatesoft.svn.core.wc.SVNRevision;
-
 /**
- * Thread to handle creation of working copy.
+ * Thread to handle revert of working copy.
  * @author Tony Washer
  */
-public class CreateWorkingCopy
+public class RevertWorkingCopy
         extends ScmThread {
-    /**
-     * Branches.
-     */
-    private final Collection<SvnBranch> theBranches;
-
-    /**
-     * Revision.
-     */
-    private final SVNRevision theRevision;
-
-    /**
-     * Location.
-     */
-    private final File theLocation;
-
     /**
      * Report object.
      */
@@ -67,50 +47,35 @@ public class CreateWorkingCopy
     private final SvnRepository theRepository;
 
     /**
+     * The Location.
+     */
+    private final File theLocation;
+
+    /**
      * The WorkingCopySet.
      */
-    private SvnWorkingCopySet theWorkingCopySet = null;
+    private SvnWorkingCopySet theWorkingCopySet;
 
     /**
      * The Error.
      */
-    private JOceanusException theError = null;
+    private JOceanusException theError;
 
     /**
      * Constructor.
-     * @param pBranches the branches to create the working copy for
-     * @param pRevision the revision to check out
-     * @param pLocation the location to create into
+     * @param pWorkingSet the working set to update
      * @param pReport the report object
      */
-    public CreateWorkingCopy(final SvnBranch[] pBranches,
-                             final SVNRevision pRevision,
-                             final File pLocation,
+    public RevertWorkingCopy(final SvnWorkingCopySet pWorkingSet,
                              final ReportTask pReport) {
         /* Call super-constructor */
         super(pReport);
 
         /* Store parameters */
-        theLocation = pLocation;
-        theRevision = pRevision;
+        theWorkingCopySet = pWorkingSet;
+        theLocation = pWorkingSet.getLocation();
+        theRepository = pWorkingSet.getRepository();
         theReport = pReport;
-        theRepository = pBranches[0].getRepository();
-
-        /* protect against exceptions */
-        try {
-            /* Create new directory for working copy */
-            Directory2.createDirectory(pLocation);
-
-            /* Access branch list for extract */
-            // myBranches = SvnBranch.getBranchMap(pBranches).values();
-        } catch (JOceanusException e) {
-            /* Store the error and cancel thread */
-            theError = e;
-            cancel(true);
-        }
-
-        /* Record branches */
-        theBranches = null;
     }
 
     /**
@@ -130,11 +95,11 @@ public class CreateWorkingCopy
     protected Void doInBackground() {
         /* Protect against exceptions */
         try {
-            /* Check out the branches */
+            /* Update the working copy set */
             CheckOut myCheckOut = new CheckOut(theRepository, this);
-            myCheckOut.checkOutBranches(theBranches, theRevision, theLocation);
+            myCheckOut.revertWorkingCopySet(theWorkingCopySet);
 
-            /* Discover workingSet details */
+            /* Discover new workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
         } catch (JOceanusException e) {
             /* Store the error */

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.threads;
+package net.sourceforge.joceanus.jthemis.threads;
 
 import java.io.File;
 import java.util.Collection;
@@ -31,18 +31,25 @@ import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.svn.tasks.VersionMgr;
+import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
+
+import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
- * Thread to handle creation of branch tags.
+ * Thread to handle creation of working copy.
  * @author Tony Washer
  */
-public class CreateBranchTags
+public class CreateWorkingCopy
         extends ScmThread {
     /**
      * Branches.
      */
     private final Collection<SvnBranch> theBranches;
+
+    /**
+     * Revision.
+     */
+    private final SVNRevision theRevision;
 
     /**
      * Location.
@@ -71,18 +78,21 @@ public class CreateBranchTags
 
     /**
      * Constructor.
-     * @param pBranches the branches to create the tags for
+     * @param pBranches the branches to create the working copy for
+     * @param pRevision the revision to check out
      * @param pLocation the location to create into
      * @param pReport the report object
      */
-    public CreateBranchTags(final SvnBranch[] pBranches,
-                            final File pLocation,
-                            final ReportTask pReport) {
+    public CreateWorkingCopy(final SvnBranch[] pBranches,
+                             final SVNRevision pRevision,
+                             final File pLocation,
+                             final ReportTask pReport) {
         /* Call super-constructor */
         super(pReport);
 
         /* Store parameters */
         theLocation = pLocation;
+        theRevision = pRevision;
         theReport = pReport;
         theRepository = pBranches[0].getRepository();
 
@@ -120,9 +130,9 @@ public class CreateBranchTags
     protected Void doInBackground() {
         /* Protect against exceptions */
         try {
-            /* Create the tags */
-            VersionMgr myVersionMgr = new VersionMgr(theRepository, theLocation, this);
-            myVersionMgr.createTags(theBranches);
+            /* Check out the branches */
+            CheckOut myCheckOut = new CheckOut(theRepository, this);
+            myCheckOut.checkOutBranches(theBranches, theRevision, theLocation);
 
             /* Discover workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);

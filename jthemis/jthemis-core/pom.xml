@@ -38,7 +38,7 @@
       <groupId>org.tmatesoft.svnkit</groupId>
       <artifactId>svnkit</artifactId>
       <version>${SvnKitVersion}</version>
-    </dependency>  
+    </dependency>
     <dependency>
       <groupId>com.atlassian.jira</groupId>
       <artifactId>jira-rest-java-client-core</artifactId>
@@ -64,7 +64,7 @@
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
       <version>${JGitVersion}</version>
-    </dependency>   
+    </dependency>
   </dependencies>
   <properties>
     <appDir>../../backup/</appDir>

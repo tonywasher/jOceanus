@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.ui;
+package net.sourceforge.joceanus.jthemis.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,16 +58,16 @@ import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.svn.threads.CreateBranchTags;
-import net.sourceforge.joceanus.jthemis.svn.threads.CreateGitRepo;
-import net.sourceforge.joceanus.jthemis.svn.threads.CreateNewBranch;
-import net.sourceforge.joceanus.jthemis.svn.threads.CreateTagExtract;
-import net.sourceforge.joceanus.jthemis.svn.threads.CreateWorkingCopy;
-import net.sourceforge.joceanus.jthemis.svn.threads.DiscoverData;
-import net.sourceforge.joceanus.jthemis.svn.threads.RevertWorkingCopy;
-import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
-import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
-import net.sourceforge.joceanus.jthemis.svn.threads.UpdateWorkingCopy;
+import net.sourceforge.joceanus.jthemis.threads.CreateBranchTags;
+import net.sourceforge.joceanus.jthemis.threads.CreateGitRepo;
+import net.sourceforge.joceanus.jthemis.threads.CreateNewBranch;
+import net.sourceforge.joceanus.jthemis.threads.CreateTagExtract;
+import net.sourceforge.joceanus.jthemis.threads.CreateWorkingCopy;
+import net.sourceforge.joceanus.jthemis.threads.DiscoverData;
+import net.sourceforge.joceanus.jthemis.threads.RevertWorkingCopy;
+import net.sourceforge.joceanus.jthemis.threads.SubversionBackup;
+import net.sourceforge.joceanus.jthemis.threads.SubversionRestore;
+import net.sourceforge.joceanus.jthemis.threads.UpdateWorkingCopy;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 

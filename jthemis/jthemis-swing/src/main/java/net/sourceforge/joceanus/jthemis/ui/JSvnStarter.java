@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.ui;
+package net.sourceforge.joceanus.jthemis.ui;
 
 import java.util.Properties;
 

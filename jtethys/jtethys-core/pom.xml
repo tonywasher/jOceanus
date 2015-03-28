@@ -11,11 +11,6 @@
   <dependencies>
     <dependency>
       <groupId>net.sourceforge.jdatebutton</groupId>
-      <artifactId>jdatebutton-swing</artifactId>
-      <version>${JDateButtonVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.jdatebutton</groupId>
       <artifactId>jdatebutton-core</artifactId>
       <version>${JDateButtonVersion}</version>
     </dependency>

@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmoneywise/src/main/java/net/sourceforge/joceanus/jmoneywise/views/AnalysisFilter.java $
- * $Revision: 571 $
- * $Author: Tony $
- * $Date: 2015-02-20 16:24:03 +0000 (Fri, 20 Feb 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 

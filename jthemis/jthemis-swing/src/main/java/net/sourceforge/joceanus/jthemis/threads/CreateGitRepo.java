@@ -20,33 +20,30 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.threads;
+package net.sourceforge.joceanus.jthemis.threads;
 
+import java.time.LocalTime;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
+import net.sourceforge.joceanus.jthemis.svn.tasks.BuildGit;
 
 /**
- * Thread to handle subVersion backups.
+ * Thread to handle creation of GitRepo from Subversion component.
  * @author Tony Washer
  */
-public class SubversionBackup
+public class CreateGitRepo
         extends ScmThread {
     /**
-     * The preference manager.
+     * Preference Manager.
      */
     private final PreferenceManager thePreferenceMgr;
-
-    /**
-     * The secure manager.
-     */
-    private final SecureManager theSecureMgr;
 
     /**
      * Report object.
@@ -54,28 +51,50 @@ public class SubversionBackup
     private final ReportTask theReport;
 
     /**
-     * Constructor (Event Thread).
-     * @param pReport the report object
+     * The Component.
      */
-    public SubversionBackup(final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
+    private final SvnComponent theSource;
 
-        /* Store passed parameters */
-        theReport = pReport;
+    /**
+     * The Git Repository.
+     */
+    private GitRepository theGitRepo;
+
+    /**
+     * Constructor.
+     * @param pReport the report object
+     * @param pSource the source subversion component
+     */
+    public CreateGitRepo(final ReportTask pReport,
+                         final SvnComponent pSource) {
+        super(pReport);
         thePreferenceMgr = pReport.getPreferenceMgr();
-        theSecureMgr = pReport.getSecureMgr();
+        theReport = pReport;
+        theSource = pSource;
+    }
+
+    /**
+     * Obtain the git repository.
+     * @return the git repository
+     */
+    public GitRepository getGitRepo() {
+        return theGitRepo;
     }
 
     @Override
-    public Void doInBackground() throws JOceanusException {
-        Backup myAccess = null;
+    protected Void doInBackground() throws JOceanusException {
+        /* Access git repository */
+        theGitRepo = new GitRepository(thePreferenceMgr, this);
 
-        /* Create backup */
-        myAccess = new Backup(this, thePreferenceMgr);
-        myAccess.backUpRepositories(theSecureMgr);
+        /* Create a new Git repository */
+        BuildGit myBuild = new BuildGit(theSource, theGitRepo);
+        Long myStart = System.nanoTime();
+        myBuild.buildRepository(this);
+        Long myEnd = System.nanoTime();
+        LocalTime myDuration = LocalTime.ofNanoOfDay(myEnd - myStart);
+        setNewStage("Elapsed: " + myDuration);
 
-        /* Return nothing */
+        /* Return null */
         return null;
     }
 

@@ -11,6 +11,11 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>jmoneywise-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jprometheus-swing</artifactId>
       <version>${project.version}</version>
     </dependency>

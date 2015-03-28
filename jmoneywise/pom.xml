@@ -10,7 +10,7 @@
   <description>Personal Finance Application</description>
   <packaging>pom</packaging>
   <modules>
-    <!--<module>jmoneywise-swing</module>-->
+    <module>jmoneywise-swing</module>
     <module>jmoneywise-core</module>
   </modules>
   <properties>

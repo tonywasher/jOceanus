@@ -20,34 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.threads;
+package net.sourceforge.joceanus.jthemis.threads;
 
 import java.io.File;
-import java.util.Collection;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
 
 /**
- * Thread to handle creation of working copy.
+ * Thread to handle update of working copy.
  * @author Tony Washer
  */
-public class CreateTagExtract
+public class UpdateWorkingCopy
         extends ScmThread {
-    /**
-     * Tags.
-     */
-    private final Collection<SvnTag> theTags;
-
-    /**
-     * Location.
-     */
-    private final File theLocation;
-
     /**
      * Report object.
      */
@@ -59,42 +47,43 @@ public class CreateTagExtract
     private final SvnRepository theRepository;
 
     /**
+     * The Location.
+     */
+    private final File theLocation;
+
+    /**
+     * The WorkingCopySet.
+     */
+    private SvnWorkingCopySet theWorkingCopySet;
+
+    /**
      * The Error.
      */
-    private JOceanusException theError = null;
+    private JOceanusException theError;
 
     /**
      * Constructor.
-     * @param pTags the tags to create the extract for
-     * @param pLocation the location to create into
+     * @param pWorkingSet the working set to update
      * @param pReport the report object
      */
-    public CreateTagExtract(final SvnTag[] pTags,
-                            final File pLocation,
-                            final ReportTask pReport) {
+    public UpdateWorkingCopy(final SvnWorkingCopySet pWorkingSet,
+                             final ReportTask pReport) {
         /* Call super-constructor */
         super(pReport);
 
         /* Store parameters */
-        theLocation = pLocation;
+        theWorkingCopySet = pWorkingSet;
+        theLocation = pWorkingSet.getLocation();
+        theRepository = pWorkingSet.getRepository();
         theReport = pReport;
-        theRepository = pTags[0].getRepository();
+    }
 
-        /* protect against exceptions */
-        try {
-            /* Create new directory for extract */
-            Directory2.createDirectory(pLocation);
-
-            /* Access tag list for extract */
-            // myTags = SvnTag.getTagMap(pTags).values();
-        } catch (JOceanusException e) {
-            /* Store the error and cancel thread */
-            theError = e;
-            cancel(true);
-        }
-
-        /* Record tags */
-        theTags = null;
+    /**
+     * Obtain the working copy set.
+     * @return the working copy set
+     */
+    public SvnWorkingCopySet getWorkingCopySet() {
+        return theWorkingCopySet;
     }
 
     @Override
@@ -106,9 +95,12 @@ public class CreateTagExtract
     protected Void doInBackground() {
         /* Protect against exceptions */
         try {
-            /* Check out the branches */
+            /* Update the working copy set */
             CheckOut myCheckOut = new CheckOut(theRepository, this);
-            myCheckOut.exportTags(theTags, theLocation);
+            myCheckOut.updateWorkingCopySet(theWorkingCopySet);
+
+            /* Discover new workingSet details */
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
         } catch (JOceanusException e) {
             /* Store the error */
             theError = e;

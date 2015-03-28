@@ -10,7 +10,7 @@
   <description>Java Application Framework</description>
   <packaging>pom</packaging>
   <modules>
-    <!--<module>jprometheus-swing</module>-->
+    <module>jprometheus-swing</module>
     <module>jprometheus-core</module>
   </modules>
   <properties>
