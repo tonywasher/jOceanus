@@ -25,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -92,6 +91,10 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -713,19 +716,52 @@ public class TransactionTable
      * Listener class.
      */
     private final class AnalysisListener
-            implements ChangeListener, ActionListener {
+            implements ChangeListener, ActionListener, JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
+
+        /**
+         * View Registration.
+         */
+        private final JOceanusChangeRegistration theViewReg;
+
         /**
          * Constructor.
          */
         private AnalysisListener() {
+            /* Register listeners */
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+            theViewReg = theView.getEventRegistrar().addChangeListener(this);
+
+            /* Listen to swing events */
             theError.addChangeListener(this);
-            theView.addChangeListener(this);
             theSelect.addChangeListener(this);
             theActionButtons.addActionListener(this);
             theNewButton.addActionListener(this);
-            theUpdateSet.addChangeListener(this);
             theActiveTrans.addChangeListener(this);
             theActiveTrans.addActionListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the data view */
+            if (theViewReg.isRelevant(pEvent)) {
+                /* Refresh Data */
+                refreshData();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSetReg.isRelevant(pEvent)) {
+                /* Only action if we are not editing */
+                if (!theActiveTrans.isEditing()) {
+                    /* Handle the reWind */
+                    theSelectionModel.handleReWind();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
+            }
         }
 
         @Override
@@ -746,22 +782,6 @@ public class TransactionTable
 
                 /* Lock Action Buttons */
                 theActionButtons.setEnabled(!isError);
-
-                /* If this is the View */
-            } else if (theView.equals(o)) {
-                /* Refresh the data */
-                refreshData();
-
-                /* If we are performing a rewind */
-            } else if (theUpdateSet.equals(o)) {
-                /* Only action if we are not editing */
-                if (!theActiveTrans.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
 
                 /* If we are noting change of edit state */
             } else if (theActiveTrans.equals(o)) {
@@ -1445,7 +1465,7 @@ public class TransactionTable
                     pItem.setDeleted(true);
                     break;
                 case COLUMN_TAGS:
-                    theActiveTrans.updateTag(pItem, (ItemEvent) pValue);
+                    theActiveTrans.updateTag(pItem, (JOceanusItemEvent) pValue);
                     break;
                 default:
                     break;

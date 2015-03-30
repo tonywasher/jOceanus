@@ -43,8 +43,6 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
@@ -59,6 +57,11 @@ import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellEditor;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventCellEditor;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -582,7 +585,7 @@ public final class JFieldCellEditor {
             /* sort out listeners */
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theButtonListener);
-            theMenuBuilder.addChangeListener(theButtonListener);
+            theMenuBuilder.getEventRegistrar().addChangeListener(theButtonListener);
         }
 
         /**
@@ -648,7 +651,7 @@ public final class JFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements PropertyChangeListener, ChangeListener {
+                implements PropertyChangeListener, JOceanusChangeEventListener {
             @Override
             public void propertyChange(final PropertyChangeEvent pEvent) {
                 /* Store value and stop editing */
@@ -662,7 +665,7 @@ public final class JFieldCellEditor {
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
                 if (theMenuBuilder.buildingMenu()) {
                     fireStateChanged();
                 } else {
@@ -771,8 +774,9 @@ public final class JFieldCellEditor {
 
             /* sort out listeners */
             theButton.setFocusPainted(false);
-            theMenuBuilder.addItemListener(theButtonListener);
-            theMenuBuilder.addChangeListener(theButtonListener);
+            JOceanusEventRegistrar myRegistrar = theMenuBuilder.getEventRegistrar();
+            myRegistrar.addItemListener(theButtonListener);
+            myRegistrar.addChangeListener(theButtonListener);
         }
 
         /**
@@ -842,14 +846,14 @@ public final class JFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements ItemListener, ChangeListener {
+                implements JOceanusItemEventListener, JOceanusChangeEventListener {
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
                 fireStateChanged();
             }
 
             @Override
-            public void itemStateChanged(final ItemEvent pEvent) {
+            public void processItemEvent(final JOceanusItemEvent pEvent) {
                 /* Access the table model */
                 TableModel myModel = theTable.getModel();
 

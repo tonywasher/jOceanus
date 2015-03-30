@@ -28,8 +28,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -45,6 +43,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCat
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
@@ -292,7 +293,7 @@ public class CashCategoryPanel
      * Category Listener.
      */
     private final class CategoryListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
         /**
          * The CategoryType Menu Builder.
          */
@@ -304,24 +305,32 @@ public class CashCategoryPanel
         private final JScrollMenuBuilder<CashCategory> theParentMenuBuilder;
 
         /**
+         * ParentMenu Registration.
+         */
+        private final JOceanusChangeRegistration theParentMenuReg;
+
+        /**
+         * TypeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theTypeMenuReg;
+
+        /**
          * Constructor.
          */
         private CategoryListener() {
             /* Access the MenuBuilders */
             theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-            theTypeMenuBuilder.addChangeListener(this);
+            theTypeMenuReg = theTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
             theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuBuilder.addChangeListener(this);
+            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            /* Handle menu type */
-            if (theTypeMenuBuilder.equals(o)) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* Handle menu builders */
+            if (theTypeMenuReg.isRelevant(pEvent)) {
                 buildCategoryTypeMenu(theTypeMenuBuilder, getItem());
-            } else if (theParentMenuBuilder.equals(o)) {
+            } else if (theParentMenuReg.isRelevant(pEvent)) {
                 buildParentMenu(theParentMenuBuilder, getItem());
             }
         }

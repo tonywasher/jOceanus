@@ -31,8 +31,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -42,6 +40,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -105,8 +106,7 @@ public class TransactionTagSelect
         theState.applyState();
 
         /* Create the listener */
-        TagListener myListener = new TagListener();
-        theTagButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new TagListener();
     }
 
     @Override
@@ -201,11 +201,16 @@ public class TransactionTagSelect
      * Listener class.
      */
     private final class TagListener
-            implements PropertyChangeListener, ChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Tag menu builder.
          */
         private final JScrollMenuBuilder<TransactionTagBucket> theTagMenuBuilder;
+
+        /**
+         * TagMenu Registration.
+         */
+        private final JOceanusChangeRegistration theTagMenuReg;
 
         /**
          * Constructor.
@@ -213,16 +218,16 @@ public class TransactionTagSelect
         private TagListener() {
             /* Access builders */
             theTagMenuBuilder = theTagButton.getMenuBuilder();
-            theTagMenuBuilder.addChangeListener(this);
+            theTagMenuReg = theTagMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listener */
+            theTagButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source of the event */
-            Object o = pEvent.getSource();
-
-            /* Handle buttons */
-            if (theTagMenuBuilder.equals(o)) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the TagMenu */
+            if (theTagMenuReg.isRelevant(pEvent)) {
                 buildTagMenu();
             }
         }

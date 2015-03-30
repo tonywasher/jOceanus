@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -476,8 +476,8 @@ public class JFieldSet<T extends JFieldSetItem>
          * @return the value
          * @throws JOceanusException on error
          */
-        public ItemEvent getItemEvent() throws JOceanusException {
-            return getValue(ItemEvent.class);
+        public JOceanusItemEvent getItemEvent() throws JOceanusException {
+            return getValue(JOceanusItemEvent.class);
         }
     }
 }

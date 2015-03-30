@@ -29,8 +29,6 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
@@ -41,6 +39,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
@@ -157,11 +158,6 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* Create the New FieldSet */
         theFieldSet = new JFieldSet<T>(pFieldMgr);
 
-        /* Create listener */
-        FieldListener myListener = new FieldListener();
-        theFieldSet.addActionListener(myListener);
-        theUpdateSet.addChangeListener(myListener);
-
         /* Create the main panel */
         theMainPanel = new JEnablePanel();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -169,6 +165,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* create the action panels */
         theItemActions = new ItemActions<E>(this);
         theEditActions = new ItemEditActions<E>(this);
+
+        /* Create listener */
+        new FieldListener();
     }
 
     /**
@@ -569,14 +568,25 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * FieldListener class.
      */
     private final class FieldListener
-            implements ActionListener, ChangeListener {
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
+            implements ActionListener, JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
 
+        /**
+         * Constructor.
+         */
+        private FieldListener() {
+            /* Listen to correct events */
+            theFieldSet.addActionListener(this);
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* If we are performing a rewind */
-            if (theUpdateSet.equals(o)) {
+            if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Note refresh */
                 refreshAfterUpdate();
             }

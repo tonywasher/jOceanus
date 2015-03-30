@@ -34,7 +34,9 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.event.PopupMenuListener;
 
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * Swing Button which provides a PopUpMenu selection.
@@ -254,8 +256,12 @@ public class JScrollButton<T>
      * @param <T> the object type
      */
     public static final class JScrollMenuBuilder<T>
-            extends JEventObject
-            implements ActionListener {
+            implements ActionListener, JOceanusEventProvider {
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
+
         /**
          * The Button.
          */
@@ -276,9 +282,18 @@ public class JScrollButton<T>
          * @param pButton the button
          */
         private JScrollMenuBuilder(final JScrollButton<T> pButton) {
+            /* Store details */
             theButton = pButton;
             theButton.addActionListener(this);
             theMenu = new JScrollPopupMenu();
+
+            /* Create event manager */
+            theEventManager = new JOceanusEventManager();
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -455,7 +470,7 @@ public class JScrollButton<T>
         public void actionPerformed(final ActionEvent e) {
             /* Ask listeners to provide the menu */
             buildingMenu = true;
-            fireStateChanged();
+            theEventManager.fireStateChanged();
 
             /* If a menu is provided */
             if ((theMenu != null) && (theMenu.getItemCount() > 0)) {
@@ -473,7 +488,7 @@ public class JScrollButton<T>
         private void notifyClosed() {
             /* Ask listeners to provide the menu */
             buildingMenu = false;
-            fireStateChanged();
+            theEventManager.fireStateChanged();
         }
     }
 

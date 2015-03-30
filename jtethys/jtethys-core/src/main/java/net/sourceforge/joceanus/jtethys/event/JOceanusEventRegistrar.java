@@ -28,12 +28,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.ActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.ChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.ItemRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.RegistrationType;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusItemRegistration;
 
 /**
  * EventRegister implementation. This maintains a list of Action/Change/ItemListeners/ActionListeners and allows the caller to fire Action/Change/ItemEvents and
@@ -82,14 +81,6 @@ public class JOceanusEventRegistrar {
     }
 
     /**
-     * Obtain ownerId.
-     * @return the owner Id
-     */
-    public int getOwnerId() {
-        return theOwnerId;
-    }
-
-    /**
      * Obtain registration iterator.
      * @return the iterator
      */
@@ -112,64 +103,67 @@ public class JOceanusEventRegistrar {
     /**
      * Add change Listener to list.
      * @param pListener the listener to add
-     * @return the listener id
+     * @return the registration
      */
-    public int addChangeListener(final JOceanusEventListener pListener) {
+    public JOceanusChangeRegistration addChangeListener(final JOceanusChangeEventListener pListener) {
         /* Create the registration */
-        ChangeRegistration myReg = new ChangeRegistration(pListener);
+        JOceanusChangeRegistration myReg = new JOceanusChangeRegistration(theOwnerId, pListener);
 
         /* Add it to the list */
-        return addToListenerList(myReg);
+        addToListenerList(myReg);
+        return myReg;
     }
 
     /**
      * Add action Listener to list.
      * @param pListener the listener to add
-     * @return the listener id
+     * @return the registration
      */
-    public int addActionListener(final JOceanusActionEventListener pListener) {
+    public JOceanusActionRegistration addActionListener(final JOceanusActionEventListener pListener) {
         /* Create the registration */
-        ActionRegistration myReg = new ActionRegistration(pListener);
+        JOceanusActionRegistration myReg = new JOceanusActionRegistration(theOwnerId, pListener);
 
         /* Add it to the list */
-        return addToListenerList(myReg);
+        addToListenerList(myReg);
+        return myReg;
     }
 
     /**
      * Add item Listener to list.
      * @param pListener the listener to add
-     * @return the listener id
+     * @return the registration
      */
-    public int addItemListener(final JOceanusItemEventListener pListener) {
+    public JOceanusItemRegistration addItemListener(final JOceanusItemEventListener pListener) {
         /* Create the registration */
-        ItemRegistration myReg = new ItemRegistration(pListener);
+        JOceanusItemRegistration myReg = new JOceanusItemRegistration(theOwnerId, pListener);
 
         /* Add it to the list */
-        return addToListenerList(myReg);
+        addToListenerList(myReg);
+        return myReg;
     }
 
     /**
      * Remove Change Listener.
-     * @param pListenerId the listener id to remove
+     * @param pRegistration the registration to remove
      */
-    public void removeChangeListener(final int pListenerId) {
-        removeFromListenerList(pListenerId, RegistrationType.CHANGE);
+    public void removeChangeListener(final JOceanusChangeRegistration pRegistration) {
+        removeFromListenerList(pRegistration);
     }
 
     /**
      * Remove Action Listener.
-     * @param pListenerId the listener id to remove
+     * @param pRegistration the registration to remove
      */
-    public void removeActionListener(final int pListenerId) {
-        removeFromListenerList(pListenerId, RegistrationType.ACTION);
+    public void removeActionListener(final JOceanusActionRegistration pRegistration) {
+        removeFromListenerList(pRegistration);
     }
 
     /**
      * Remove Item Listener.
-     * @param pListenerId the listener id to remove
+     * @param pRegistration the registration to remove
      */
-    public void removeItemListener(final int pListenerId) {
-        removeFromListenerList(pListenerId, RegistrationType.CHANGE);
+    public void removeItemListener(final JOceanusItemRegistration pRegistration) {
+        removeFromListenerList(pRegistration);
     }
 
     /**
@@ -196,11 +190,9 @@ public class JOceanusEventRegistrar {
 
     /**
      * Remove from listener list.
-     * @param pListenerId the registration id
-     * @param pType the type of the registration
+     * @param pRegistration the registration to remove
      */
-    private synchronized void removeFromListenerList(final int pListenerId,
-                                                     final RegistrationType pType) {
+    private synchronized void removeFromListenerList(final JOceanusEventRegistration<?> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
         List<JOceanusEventRegistration<?>> myNew = new ArrayList<JOceanusEventRegistration<?>>(theRegistrations);
 
@@ -210,8 +202,7 @@ public class JOceanusEventRegistrar {
             JOceanusEventRegistration<?> myReg = myIterator.next();
 
             /* If the registration matches */
-            if (myReg.isRegistrationType(pType)
-                && myReg.getId() == pListenerId) {
+            if (myReg.equals(pRegistration)) {
                 /* Remove the registration */
                 myIterator.remove();
 

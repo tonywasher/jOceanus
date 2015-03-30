@@ -56,6 +56,8 @@ import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObjectList;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
@@ -909,7 +911,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Create the listener and attach it */
             ButtonListener myListener = new ButtonListener();
-            theComponent.getMenuBuilder().addItemListener(myListener);
+            theComponent.getMenuBuilder().getEventRegistrar().addItemListener(myListener);
         }
 
         @Override
@@ -921,9 +923,9 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
          * ButtonListener class.
          */
         private final class ButtonListener
-                implements ItemListener {
+                implements JOceanusItemEventListener {
             @Override
-            public void itemStateChanged(final ItemEvent pEvent) {
+            public void processItemEvent(final JOceanusItemEvent pEvent) {
                 /* Record the value */
                 theModel.processValue(pEvent);
             }

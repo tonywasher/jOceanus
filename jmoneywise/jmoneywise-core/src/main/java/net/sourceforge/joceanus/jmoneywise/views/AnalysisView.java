@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -36,7 +33,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +47,7 @@ import org.slf4j.LoggerFactory;
  * Analysis Edit View.
  */
 public class AnalysisView
-        extends JEventObject
-        implements JDataContents {
+        implements JDataContents, JOceanusEventProvider {
     /**
      * Local Report fields.
      */
@@ -71,6 +72,11 @@ public class AnalysisView
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisView.class);
+
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
 
     /**
      * The View.
@@ -103,6 +109,9 @@ public class AnalysisView
         theView = pView;
         theUpdateSet = pUpdateSet;
 
+        /* Create event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create listener */
         new AnalysisListener();
     }
@@ -131,6 +140,11 @@ public class AnalysisView
         return FIELD_DEFS.getName();
     }
 
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
     /**
      * Obtain the active analysis.
      * @return the active analysis
@@ -149,29 +163,31 @@ public class AnalysisView
         theAnalysis = pAnalysis;
 
         /* Notify listeners */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
      * Listener class.
      */
     private final class AnalysisListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
+
         /**
          * Constructor.
          */
         private AnalysisListener() {
             /* Listen to correct events */
-            theUpdateSet.addChangeListener(this);
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* If the updateSet has changed */
-            if (theUpdateSet.equals(o)) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the UpdateSet */
+            if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Protect against exceptions */
                 try {
                     /* Build the new analysis */
@@ -180,7 +196,7 @@ public class AnalysisView
                     theAnalysis = myAnalyser.getAnalysis();
 
                     /* Notify listeners */
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 } catch (JOceanusException e) {
                     LOGGER.error("Failed to analyse changes", e);
                 }

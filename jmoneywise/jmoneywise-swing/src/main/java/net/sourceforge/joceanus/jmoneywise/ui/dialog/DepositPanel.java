@@ -60,6 +60,9 @@ import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -648,7 +651,7 @@ public class DepositPanel
      * Deposit Listener.
      */
     private final class DepositListener
-            implements ChangeListener {
+            implements ChangeListener, JOceanusChangeEventListener {
         /**
          * The Category Menu Builder.
          */
@@ -665,17 +668,44 @@ public class DepositPanel
         private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
         /**
+         * CategoryMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryMenuReg;
+
+        /**
+         * ParentMenu Registration.
+         */
+        private final JOceanusChangeRegistration theParentMenuReg;
+
+        /**
+         * CurrencyMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCurrencyMenuReg;
+
+        /**
          * Constructor.
          */
         private DepositListener() {
             /* Access the MenuBuilders */
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuBuilder.addChangeListener(this);
+            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
             theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuBuilder.addChangeListener(this);
+            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuBuilder.addChangeListener(this);
+            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
             theRates.addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* Handle menu type */
+            if (theCategoryMenuReg.isRelevant(pEvent)) {
+                buildCategoryMenu(theCategoryMenuBuilder, getItem());
+            } else if (theParentMenuReg.isRelevant(pEvent)) {
+                buildParentMenu(theParentMenuBuilder, getItem());
+            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
+                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
+            }
         }
 
         @Override
@@ -683,14 +713,9 @@ public class DepositPanel
             Object o = pEvent.getSource();
 
             /* Handle menu type */
-            if (theCategoryMenuBuilder.equals(o)) {
-                buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuBuilder.equals(o)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            } else if (theRates.equals(o)) {
+            if (theRates.equals(o)) {
                 updateActions();
+                fireStateChanged();
             }
         }
     }

@@ -31,8 +31,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -42,6 +40,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -105,7 +106,7 @@ public class PayeeAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
+        new PayeeListener();
     }
 
     @Override
@@ -196,29 +197,34 @@ public class PayeeAnalysisSelect
     /**
      * Listener class.
      */
-    private final class ButtonListener
-            implements PropertyChangeListener, ChangeListener {
+    private final class PayeeListener
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Payee menu builder.
          */
         private final JScrollMenuBuilder<PayeeBucket> thePayeeMenuBuilder;
 
         /**
+         * PayeeMenu Registration.
+         */
+        private final JOceanusChangeRegistration thePayeeMenuReg;
+
+        /**
          * Constructor.
          */
-        private ButtonListener() {
+        private PayeeListener() {
             /* Access builders */
             thePayeeMenuBuilder = theButton.getMenuBuilder();
-            thePayeeMenuBuilder.addChangeListener(this);
+            thePayeeMenuReg = thePayeeMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
+            theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source of the event */
-            Object o = pEvent.getSource();
-
-            /* Handle builders */
-            if (thePayeeMenuBuilder.equals(o)) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the PayeeMenu */
+            if (thePayeeMenuReg.isRelevant(pEvent)) {
                 buildPayeeMenu();
             }
         }

@@ -65,6 +65,9 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 
 /**
@@ -356,17 +359,43 @@ public class SpotRatesTable
      * SpotView listener class.
      */
     private final class SpotViewListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
+
+        /**
+         * View Registration.
+         */
+        private final JOceanusChangeRegistration theViewReg;
+
         /**
          * Constructor.
          */
         private SpotViewListener() {
-            /* Listen to correct events */
-            theUpdateSet.addChangeListener(this);
+            /* Register listeners */
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+            theViewReg = theView.getEventRegistrar().addChangeListener(this);
+
+            /* Listen to swing events */
             theActionButtons.addActionListener(this);
             theError.addChangeListener(this);
             theSelect.addChangeListener(this);
-            theView.addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the data view */
+            if (theViewReg.isRelevant(pEvent)) {
+                /* Refresh Data */
+                refreshData();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSetReg.isRelevant(pEvent)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
+            }
         }
 
         @Override
@@ -400,16 +429,6 @@ public class SpotRatesTable
                         theSelect.restoreSavePoint();
                     }
                 }
-
-                /* If this is the data view */
-            } else if (theView.equals(o)) {
-                /* Refresh Data */
-                refreshData();
-
-                /* If we are performing a rewind */
-            } else if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
 
                 /* If this is the error panel */
             } else if (theError.equals(o)) {

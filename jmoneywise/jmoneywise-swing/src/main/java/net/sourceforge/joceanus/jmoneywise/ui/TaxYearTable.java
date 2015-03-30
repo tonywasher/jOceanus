@@ -64,6 +64,9 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -445,17 +448,39 @@ public class TaxYearTable
      * Listener class.
      */
     private final class TaxYearListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
+
         /**
          * Constructor.
          */
         private TaxYearListener() {
-            /* Listen to correct events */
-            theUpdateSet.addChangeListener(this);
+            /* Register listeners */
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+
+            /* Listen to swing events */
             theActionButtons.addActionListener(this);
             theError.addChangeListener(this);
             theActiveYear.addChangeListener(this);
             theActiveYear.addActionListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If we are performing a rewind */
+            if (theUpdateSetReg.isRelevant(pEvent)) {
+                /* Only action if we are not editing */
+                if (!theActiveYear.isEditing()) {
+                    /* Handle the reWind */
+                    theSelectionModel.handleReWind();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
+            }
         }
 
         @Override
@@ -473,18 +498,6 @@ public class TaxYearTable
 
                 /* Lock Action Buttons */
                 theActionButtons.setEnabled(!isError);
-            }
-
-            /* If we are performing a rewind */
-            if (theUpdateSet.equals(o)) {
-                /* Only action if we are not editing */
-                if (!theActiveYear.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
             }
 
             /* If we are noting change of edit state */

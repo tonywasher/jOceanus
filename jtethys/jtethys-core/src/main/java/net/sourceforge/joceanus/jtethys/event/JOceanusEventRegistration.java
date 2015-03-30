@@ -24,7 +24,8 @@ package net.sourceforge.joceanus.jtethys.event;
 
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
 
@@ -39,21 +40,38 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
     private final RegistrationType theType;
 
     /**
+     * owner id.
+     */
+    private int theOwnerId;
+
+    /**
      * registration id.
      */
     private int theId;
 
     /**
      * Constructor.
+     * @param pOwnerId the owner Id
      * @param pType the registration type
      */
-    private JOceanusEventRegistration(final RegistrationType pType) {
+    private JOceanusEventRegistration(final int pOwnerId,
+                                      final RegistrationType pType) {
+        theOwnerId = pOwnerId;
         theType = pType;
     }
 
     /**
-     * Obtain the registration id.
+     * Is the event aimed at this registration.
+     * @param pEvent the event
      * @return true/false
+     */
+    public boolean isRelevant(final JOceanusEvent pEvent) {
+        return theOwnerId == pEvent.getSourceId();
+    }
+
+    /**
+     * Obtain the registration id.
+     * @return the id
      */
     protected int getId() {
         return theId;
@@ -107,7 +125,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
     /**
      * ActionRegistration class.
      */
-    protected static class ActionRegistration
+    public static class JOceanusActionRegistration
             extends JOceanusEventRegistration<JOceanusActionEvent> {
         /**
          * Action listener.
@@ -116,10 +134,12 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
 
         /**
          * Constructor.
+         * @param pOwnerId the owner Id
          * @param pListener the listener
          */
-        protected ActionRegistration(final JOceanusActionEventListener pListener) {
-            super(RegistrationType.ACTION);
+        protected JOceanusActionRegistration(final int pOwnerId,
+                                             final JOceanusActionEventListener pListener) {
+            super(pOwnerId, RegistrationType.ACTION);
             theListener = pListener;
         }
 
@@ -132,32 +152,34 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
     /**
      * ChangeRegistration class.
      */
-    protected static class ChangeRegistration
-            extends JOceanusEventRegistration<JOceanusEvent> {
+    public static class JOceanusChangeRegistration
+            extends JOceanusEventRegistration<JOceanusChangeEvent> {
         /**
          * Change listener.
          */
-        private final JOceanusEventListener theListener;
+        private final JOceanusChangeEventListener theListener;
 
         /**
          * Constructor.
+         * @param pOwnerId the owner Id
          * @param pListener the listener
          */
-        protected ChangeRegistration(final JOceanusEventListener pListener) {
-            super(RegistrationType.CHANGE);
+        protected JOceanusChangeRegistration(final int pOwnerId,
+                                             final JOceanusChangeEventListener pListener) {
+            super(pOwnerId, RegistrationType.CHANGE);
             theListener = pListener;
         }
 
         @Override
-        protected void processEvent(final JOceanusEvent pEvent) {
-            theListener.processEvent(pEvent);
+        protected void processEvent(final JOceanusChangeEvent pEvent) {
+            theListener.processChangeEvent(pEvent);
         }
     }
 
     /**
      * ItemRegistration class.
      */
-    protected static class ItemRegistration
+    public static class JOceanusItemRegistration
             extends JOceanusEventRegistration<JOceanusItemEvent> {
         /**
          * Item listener.
@@ -166,10 +188,12 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
 
         /**
          * Constructor.
+         * @param pOwnerId the owner Id
          * @param pListener the listener
          */
-        protected ItemRegistration(final JOceanusItemEventListener pListener) {
-            super(RegistrationType.ITEM);
+        protected JOceanusItemRegistration(final int pOwnerId,
+                                           final JOceanusItemEventListener pListener) {
+            super(pOwnerId, RegistrationType.ITEM);
             theListener = pListener;
         }
 

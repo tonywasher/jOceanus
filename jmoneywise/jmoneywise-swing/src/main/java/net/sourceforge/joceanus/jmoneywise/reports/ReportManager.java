@@ -40,7 +40,9 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ import org.w3c.dom.Node;
  * open/close sections of the document.
  */
 public class ReportManager
-        extends JEventObject {
+        implements JOceanusEventProvider {
     /**
      * Logger.
      */
@@ -68,6 +70,11 @@ public class ReportManager
      * The id attribute.
      */
     private static final String ATTR_ID = HTMLBuilder.ATTR_ID;
+
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
 
     /**
      * The Transformer.
@@ -108,6 +115,9 @@ public class ReportManager
         /* Create the builder */
         theBuilder = new HTMLBuilder(pView);
 
+        /* Create event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Allocate the hashMaps */
         theHiddenMap = new HashMap<String, HiddenElement>();
 
@@ -121,6 +131,11 @@ public class ReportManager
         } catch (Exception e) {
             throw new JMoneyWiseIOException("Failed to create", e);
         }
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -200,7 +215,7 @@ public class ReportManager
 
                 /* Fire Action event if necessary */
                 if (myFilter != null) {
-                    fireActionEvent(ACTION_VIEWFILTER, myFilter);
+                    theEventManager.fireActionEvent(ACTION_VIEWFILTER, myFilter);
                 }
 
                 /* Return immediately */

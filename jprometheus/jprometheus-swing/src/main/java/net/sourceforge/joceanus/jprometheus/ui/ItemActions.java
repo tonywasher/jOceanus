@@ -51,9 +51,10 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -159,18 +160,23 @@ public class ItemActions<E extends Enum<E>>
      * Item Listener.
      */
     private final class ItemListener
-            implements ChangeListener, PropertyChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * MenuBuilder.
          */
         private JScrollMenuBuilder<ActionDetailEvent> theMenuBuilder;
 
         /**
+         * MenuBuilder Registration.
+         */
+        private final JOceanusChangeRegistration theBuilderReg;
+
+        /**
          * Constructor.
          */
         private ItemListener() {
             theMenuBuilder = theGoToButton.getMenuBuilder();
-            theMenuBuilder.addChangeListener(this);
+            theBuilderReg = theMenuBuilder.getEventRegistrar().addChangeListener(this);
             theParent.declareGoToMenuBuilder(theMenuBuilder);
         }
 
@@ -189,9 +195,12 @@ public class ItemActions<E extends Enum<E>>
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            theMenuBuilder.clearMenu();
-            theParent.buildGoToMenu();
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the Builder Menu */
+            if (theBuilderReg.isRelevant(pEvent)) {
+                theMenuBuilder.clearMenu();
+                theParent.buildGoToMenu();
+            }
         }
     }
 }

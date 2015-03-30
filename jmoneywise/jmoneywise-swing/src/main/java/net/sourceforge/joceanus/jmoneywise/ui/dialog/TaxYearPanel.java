@@ -35,8 +35,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -53,6 +51,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -608,11 +609,16 @@ public class TaxYearPanel
      * TaxYear Listener.
      */
     private final class TaxYearListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
         /**
          * The Regime Menu Builder.
          */
         private final JScrollMenuBuilder<TaxRegime> theMenuBuilder;
+
+        /**
+         * RegimeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theRegimeMenuReg;
 
         /**
          * Constructor.
@@ -620,15 +626,13 @@ public class TaxYearPanel
         private TaxYearListener() {
             /* Access the MenuBuilders */
             theMenuBuilder = theRegimeButton.getMenuBuilder();
-            theMenuBuilder.addChangeListener(this);
+            theRegimeMenuReg = theMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle menu type */
-            if (theMenuBuilder.equals(o)) {
+            if (theRegimeMenuReg.isRelevant(pEvent)) {
                 buildRegimeMenu(theMenuBuilder, getItem());
             }
         }

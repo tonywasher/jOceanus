@@ -33,8 +33,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -48,6 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -135,9 +136,7 @@ public class DepositAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        DepositListener myListener = new DepositListener();
-        theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new DepositListener();
     }
 
     @Override
@@ -263,7 +262,7 @@ public class DepositAnalysisSelect
      * Listener class.
      */
     private final class DepositListener
-            implements PropertyChangeListener, ChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Category menu builder.
          */
@@ -275,25 +274,36 @@ public class DepositAnalysisSelect
         private final JScrollMenuBuilder<DepositBucket> theDepositMenuBuilder;
 
         /**
+         * CategoryMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryMenuReg;
+
+        /**
+         * DepositMenu Registration.
+         */
+        private final JOceanusChangeRegistration theDepositMenuReg;
+
+        /**
          * Constructor.
          */
         private DepositListener() {
             /* Access builders */
             theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-            theCategoryMenuBuilder.addChangeListener(this);
+            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
             theDepositMenuBuilder = theDepositButton.getMenuBuilder();
-            theDepositMenuBuilder.addChangeListener(this);
+            theDepositMenuReg = theDepositMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
+            theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source of the event */
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle builders */
-            if (theCategoryMenuBuilder.equals(o)) {
+            if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu();
-            } else if (theDepositMenuBuilder.equals(o)) {
+            } else if (theDepositMenuReg.isRelevant(pEvent)) {
                 buildDepositMenu();
             }
         }

@@ -34,8 +34,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -61,6 +59,9 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -591,7 +592,7 @@ public class CashPanel
      * Cash Listener.
      */
     private final class CashListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
         /**
          * The Category Menu Builder.
          */
@@ -613,32 +614,50 @@ public class CashPanel
         private final JScrollMenuBuilder<Payee> theAutoPayeeMenuBuilder;
 
         /**
+         * CategoryMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryMenuReg;
+
+        /**
+         * CurrencyMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCurrencyMenuReg;
+
+        /**
+         * AutoExpenseMenu Registration.
+         */
+        private final JOceanusChangeRegistration theAutoExpenseMenuReg;
+
+        /**
+         * AutoPayeeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theAutoPayeeMenuReg;
+
+        /**
          * Constructor.
          */
         private CashListener() {
             /* Access the MenuBuilders */
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuBuilder.addChangeListener(this);
+            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuBuilder.addChangeListener(this);
+            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
             theAutoExpenseMenuBuilder = theAutoExpenseButton.getMenuBuilder();
-            theAutoExpenseMenuBuilder.addChangeListener(this);
+            theAutoExpenseMenuReg = theAutoExpenseMenuBuilder.getEventRegistrar().addChangeListener(this);
             theAutoPayeeMenuBuilder = theAutoPayeeButton.getMenuBuilder();
-            theAutoPayeeMenuBuilder.addChangeListener(this);
+            theAutoPayeeMenuReg = theAutoPayeeMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle menu type */
-            if (theCategoryMenuBuilder.equals(o)) {
+            if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theCurrencyMenuBuilder.equals(o)) {
+            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
                 buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            } else if (theAutoExpenseMenuBuilder.equals(o)) {
+            } else if (theAutoExpenseMenuReg.isRelevant(pEvent)) {
                 buildAutoExpenseMenu(theAutoExpenseMenuBuilder, getItem());
-            } else if (theAutoPayeeMenuBuilder.equals(o)) {
+            } else if (theAutoPayeeMenuReg.isRelevant(pEvent)) {
                 buildAutoPayeeMenu(theAutoPayeeMenuBuilder, getItem());
             }
         }

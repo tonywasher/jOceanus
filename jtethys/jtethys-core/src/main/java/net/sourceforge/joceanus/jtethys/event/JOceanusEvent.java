@@ -27,16 +27,16 @@ package net.sourceforge.joceanus.jtethys.event;
  * <p>
  * Additionally listener interfaces for the events
  */
-public class JOceanusEvent {
+public abstract class JOceanusEvent {
     /**
      * Interface for event consumers.
      */
-    public interface JOceanusEventListener {
+    public interface JOceanusChangeEventListener {
         /**
          * Process a JOceanusEvent.
          * @param pEvent the event to process
          */
-        void processEvent(final JOceanusEvent pEvent);
+        void processChangeEvent(final JOceanusChangeEvent pEvent);
     }
 
     /**
@@ -81,6 +81,21 @@ public class JOceanusEvent {
      */
     public int getSourceId() {
         return theSourceId;
+    }
+
+    /**
+     * A generic action event.
+     */
+    public static class JOceanusChangeEvent
+            extends JOceanusEvent {
+        /**
+         * Constructor.
+         * @param pSourceId the id of the source of the event
+         */
+        protected JOceanusChangeEvent(final int pSourceId) {
+            /* Set the details */
+            super(pSourceId);
+        }
     }
 
     /**

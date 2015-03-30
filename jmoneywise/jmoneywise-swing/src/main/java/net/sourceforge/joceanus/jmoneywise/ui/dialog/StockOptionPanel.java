@@ -58,6 +58,9 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -464,11 +467,16 @@ public class StockOptionPanel
      * Options Listener.
      */
     private final class StockOptionListener
-            implements ChangeListener {
+            implements ChangeListener, JOceanusChangeEventListener {
         /**
          * The Holding Menu Builder.
          */
         private final JScrollMenuBuilder<SecurityHolding> theHoldingMenuBuilder;
+
+        /**
+         * HoldingMenu Registration.
+         */
+        private final JOceanusChangeRegistration theHoldingMenuReg;
 
         /**
          * Constructor.
@@ -476,18 +484,23 @@ public class StockOptionPanel
         private StockOptionListener() {
             /* Access the MenuBuilders */
             theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
-            theHoldingMenuBuilder.addChangeListener(this);
+            theHoldingMenuReg = theHoldingMenuBuilder.getEventRegistrar().addChangeListener(this);
             theVests.addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* Handle menu type */
+            if (theHoldingMenuReg.isRelevant(pEvent)) {
+                buildHoldingMenu(theHoldingMenuBuilder, getItem());
+            }
         }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
             Object o = pEvent.getSource();
 
-            /* Handle menu type */
-            if (theHoldingMenuBuilder.equals(o)) {
-                buildHoldingMenu(theHoldingMenuBuilder, getItem());
-            } else if (theVests.equals(o)) {
+            if (theVests.equals(o)) {
                 updateActions();
                 fireStateChanged();
             }

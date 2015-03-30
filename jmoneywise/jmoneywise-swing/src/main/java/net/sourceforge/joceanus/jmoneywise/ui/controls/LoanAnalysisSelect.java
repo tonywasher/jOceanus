@@ -33,8 +33,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -48,6 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -135,9 +136,7 @@ public class LoanAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        LoanListener myListener = new LoanListener();
-        theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new LoanListener();
     }
 
     @Override
@@ -263,7 +262,7 @@ public class LoanAnalysisSelect
      * Listener class.
      */
     private final class LoanListener
-            implements PropertyChangeListener, ChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Category menu builder.
          */
@@ -275,25 +274,36 @@ public class LoanAnalysisSelect
         private final JScrollMenuBuilder<LoanBucket> theLoanMenuBuilder;
 
         /**
+         * CategoryMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryMenuReg;
+
+        /**
+         * LoanMenu Registration.
+         */
+        private final JOceanusChangeRegistration theLoanMenuReg;
+
+        /**
          * Constructor.
          */
         private LoanListener() {
             /* Access builders */
             theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-            theCategoryMenuBuilder.addChangeListener(this);
+            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
             theLoanMenuBuilder = theLoanButton.getMenuBuilder();
-            theLoanMenuBuilder.addChangeListener(this);
+            theLoanMenuReg = theLoanMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
+            theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source of the event */
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle buttons */
-            if (theCategoryMenuBuilder.equals(o)) {
+            if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu();
-            } else if (theLoanMenuBuilder.equals(o)) {
+            } else if (theLoanMenuReg.isRelevant(pEvent)) {
                 buildLoanMenu();
             }
         }

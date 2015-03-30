@@ -58,6 +58,9 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -521,7 +524,7 @@ public class SecurityPanel
      * Security Listener.
      */
     private final class SecurityListener
-            implements ChangeListener {
+            implements ChangeListener, JOceanusChangeEventListener {
         /**
          * The SecurityType Menu Builder.
          */
@@ -538,31 +541,51 @@ public class SecurityPanel
         private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
         /**
+         * TypeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theTypeMenuReg;
+
+        /**
+         * ParentMenu Registration.
+         */
+        private final JOceanusChangeRegistration theParentMenuReg;
+
+        /**
+         * CurrencyMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCurrencyMenuReg;
+
+        /**
          * Constructor.
          */
         private SecurityListener() {
             /* Access the MenuBuilders */
             theSecTypeMenuBuilder = theTypeButton.getMenuBuilder();
-            theSecTypeMenuBuilder.addChangeListener(this);
+            theTypeMenuReg = theSecTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
             theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuBuilder.addChangeListener(this);
+            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuBuilder.addChangeListener(this);
+            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
             thePrices.addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* Handle menu type */
+            if (theTypeMenuReg.isRelevant(pEvent)) {
+                buildSecTypeMenu(theSecTypeMenuBuilder, getItem());
+            } else if (theParentMenuReg.isRelevant(pEvent)) {
+                buildParentMenu(theParentMenuBuilder, getItem());
+            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
+                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
+            }
         }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
             Object o = pEvent.getSource();
 
-            /* Handle menu type */
-            if (theSecTypeMenuBuilder.equals(o)) {
-                buildSecTypeMenu(theSecTypeMenuBuilder, getItem());
-            } else if (theParentMenuBuilder.equals(o)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuBuilder.equals(o)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            } else if (thePrices.equals(o)) {
+            if (thePrices.equals(o)) {
                 updateActions();
                 fireStateChanged();
             }

@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
-import java.awt.event.ItemEvent;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
@@ -40,6 +39,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 
 /**
  * JFieldSet data model abstraction.
@@ -552,7 +552,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process Object value.
          * @param pValue the value
          */
-        protected void processValue(final ItemEvent pValue) {
+        protected void processValue(final JOceanusItemEvent pValue) {
             /* Record new value */
             setValue(pValue);
         }

@@ -48,6 +48,9 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.help.swing.HelpException;
 import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
@@ -506,12 +509,20 @@ public class MainTab
      * The listener class.
      */
     private final class MainListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
+        /**
+         * View Registration.
+         */
+        private final JOceanusChangeRegistration theViewReg;
+
         /**
          * Constructor.
          */
         private MainListener() {
-            theView.addChangeListener(this);
+            /* Register listeners */
+            theViewReg = theView.getEventRegistrar().addChangeListener(this);
+
+            /* Listen to swing events */
             theTabs.addChangeListener(this);
             theRegister.addChangeListener(this);
             theSpotPrices.addChangeListener(this);
@@ -523,6 +534,15 @@ public class MainTab
         }
 
         @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the data view */
+            if (theViewReg.isRelevant(pEvent)) {
+                /* Set Visibility */
+                setVisibility();
+            }
+        }
+
+        @Override
         public void stateChanged(final ChangeEvent e) {
             Object o = e.getSource();
 
@@ -531,11 +551,6 @@ public class MainTab
 
                 /* Determine the focus */
                 determineFocus();
-
-                /* If this is the data view */
-            } else if (theView.equals(o)) {
-                /* Set Visibility */
-                setVisibility();
 
                 /* else if it is one of the sub-panels */
             } else if (theRegister.equals(o)

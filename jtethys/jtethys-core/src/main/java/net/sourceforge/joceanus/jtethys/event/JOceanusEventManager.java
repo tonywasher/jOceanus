@@ -25,11 +25,12 @@ package net.sourceforge.joceanus.jtethys.event;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.ActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.ChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.ItemRegistration;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusItemRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.RegistrationType;
 
 /**
@@ -95,7 +96,7 @@ public class JOceanusEventManager
      */
     public void fireStateChanged() {
         /* Lazily create the event */
-        JOceanusEvent myEvent = null;
+        JOceanusChangeEvent myEvent = null;
 
         /* Loop backwards through the list to notify most recently registered first */
         ListIterator<JOceanusEventRegistration<?>> myIterator = theRegistrar.reverseIterator();
@@ -107,11 +108,11 @@ public class JOceanusEventManager
                 /* If we have not yet created the change event */
                 if (myEvent == null) {
                     /* Create the change event */
-                    myEvent = new JOceanusEvent(theOwnerId);
+                    myEvent = new JOceanusChangeEvent(theOwnerId);
                 }
 
                 /* Fire the event */
-                ChangeRegistration myChange = (ChangeRegistration) myReg;
+                JOceanusChangeRegistration myChange = (JOceanusChangeRegistration) myReg;
                 myChange.processEvent(myEvent);
             }
         }
@@ -165,7 +166,7 @@ public class JOceanusEventManager
                 }
 
                 /* Fire the event */
-                ActionRegistration myAction = (ActionRegistration) myReg;
+                JOceanusActionRegistration myAction = (JOceanusActionRegistration) myReg;
                 myAction.processEvent(myEvent);
             }
         }
@@ -207,7 +208,7 @@ public class JOceanusEventManager
                 }
 
                 /* Fire the event */
-                ItemRegistration myChange = (ItemRegistration) myReg;
+                JOceanusItemRegistration myChange = (JOceanusItemRegistration) myReg;
                 myChange.processEvent(myEvent);
             }
         }

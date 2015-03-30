@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,8 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -85,6 +82,10 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -1127,9 +1128,9 @@ public class TransactionPanel
      * @throws JOceanusException on error
      */
     public void updateTag(final Transaction pTrans,
-                          final ItemEvent pEvent) throws JOceanusException {
+                          final JOceanusItemEvent pEvent) throws JOceanusException {
         /* Determine whether this is a select or not */
-        boolean bSelected = pEvent.getStateChange() == ItemEvent.SELECTED;
+        boolean bSelected = pEvent.isSelected();
 
         /* Access the TransactionTag */
         Object myItem = pEvent.getItem();
@@ -1149,7 +1150,7 @@ public class TransactionPanel
      * Transaction Listener.
      */
     private final class TransactionListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
         /**
          * The Account Menu Builder.
          */
@@ -1171,35 +1172,58 @@ public class TransactionPanel
         private final JScrollMenuBuilder<Deposit> theThirdPartyMenuBuilder;
 
         /**
+         * AccountMenu Registration.
+         */
+        private final JOceanusChangeRegistration theAccountMenuReg;
+
+        /**
+         * PartnerMenu Registration.
+         */
+        private final JOceanusChangeRegistration thePartnerMenuReg;
+
+        /**
+         * CategoryMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryMenuReg;
+
+        /**
+         * ThirdPartyMenu Registration.
+         */
+        private final JOceanusChangeRegistration theThirdPartyMenuReg;
+
+        /**
+         * TagMenu Registration.
+         */
+        private final JOceanusChangeRegistration theTagMenuReg;
+
+        /**
          * Constructor.
          */
         private TransactionListener() {
             /* Access the MenuBuilders */
             theAccountMenuBuilder = theAccountButton.getMenuBuilder();
-            theAccountMenuBuilder.addChangeListener(this);
+            theAccountMenuReg = theAccountMenuBuilder.getEventRegistrar().addChangeListener(this);
             thePartnerMenuBuilder = thePartnerButton.getMenuBuilder();
-            thePartnerMenuBuilder.addChangeListener(this);
+            thePartnerMenuReg = thePartnerMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuBuilder.addChangeListener(this);
+            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
             theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
-            theThirdPartyMenuBuilder.addChangeListener(this);
-            theTagMenuBuilder.addChangeListener(this);
+            theThirdPartyMenuReg = theThirdPartyMenuBuilder.getEventRegistrar().addChangeListener(this);
+            theTagMenuReg = theTagMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle menu type */
-            if (theAccountMenuBuilder.equals(o)) {
+            if (theAccountMenuReg.isRelevant(pEvent)) {
                 buildAccountMenu(theAccountMenuBuilder, getItem());
-            } else if (thePartnerMenuBuilder.equals(o)) {
+            } else if (thePartnerMenuReg.isRelevant(pEvent)) {
                 buildPartnerMenu(thePartnerMenuBuilder, getItem());
-            } else if (theCategoryMenuBuilder.equals(o)) {
+            } else if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theThirdPartyMenuBuilder.equals(o)) {
+            } else if (theThirdPartyMenuReg.isRelevant(pEvent)) {
                 buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem());
-            } else if (theTagMenuBuilder.equals(o)) {
+            } else if (theTagMenuReg.isRelevant(pEvent)) {
                 buildTagMenu(theTagMenuBuilder, getItem());
             }
         }

@@ -58,7 +58,11 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableScroll;
 
@@ -155,13 +159,9 @@ public class ReportTab
         /* Create the report builder */
         theBuilder = new ReportBuilder(theManager);
 
-        /* Create listener */
-        ReportListener myListener = new ReportListener();
-
         /* Create the editor pane as non-editable */
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
-        theEditor.addMouseListener(myListener);
 
         /* Create the print pane for the window */
         thePrint = new JEditorPane();
@@ -197,24 +197,18 @@ public class ReportTab
 
         /* Create the Report Selection panel */
         theSelect = new ReportSelect();
-        theSelect.addChangeListener(myListener);
-        theSelect.addActionListener(myListener);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, myDataReport);
-        theError.addChangeListener(myListener);
-
-        /* Add listener to data */
-        theView.addChangeListener(myListener);
-
-        /* Add listener to manager */
-        theManager.addActionListener(myListener);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(theError);
         add(theSelect);
         add(theScroll);
+
+        /* Create listener */
+        new ReportListener();
     }
 
     @Override
@@ -335,9 +329,33 @@ public class ReportTab
     /**
      * Listener class.
      */
-    private class ReportListener
+    private final class ReportListener
             extends MouseAdapter
-            implements ChangeListener, ActionListener {
+            implements ChangeListener, ActionListener, JOceanusChangeEventListener, JOceanusActionEventListener {
+        /**
+         * View Registration.
+         */
+        private final JOceanusChangeRegistration theViewReg;
+
+        /**
+         * Manager Registration.
+         */
+        private final JOceanusChangeRegistration theManagerReg;
+
+        /**
+         * Constructor.
+         */
+        private ReportListener() {
+            /* Add swing listeners */
+            theError.addChangeListener(this);
+            theSelect.addChangeListener(this);
+            theSelect.addActionListener(this);
+            theEditor.addMouseListener(this);
+
+            /* Listen to correct events */
+            theViewReg = theView.getEventRegistrar().addChangeListener(this);
+            theManagerReg = theManager.getEventRegistrar().addChangeListener(this);
+        }
 
         @Override
         public void mouseClicked(final MouseEvent evt) {
@@ -390,6 +408,30 @@ public class ReportTab
         }
 
         @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the data view */
+            if (theViewReg.isRelevant(pEvent)) {
+                /* Refresh Data */
+                refreshData();
+            }
+        }
+
+        @Override
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* If this is the report manager */
+            if (theManagerReg.isRelevant(pEvent)
+                && (pEvent.getActionId() == ReportManager.ACTION_VIEWFILTER)) {
+                /* Create the details of the report */
+                JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
+                AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
+                StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
+
+                /* Request the action */
+                fireActionEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement);
+            }
+        }
+
+        @Override
         public void stateChanged(final ChangeEvent evt) {
             Object o = evt.getSource();
 
@@ -403,11 +445,6 @@ public class ReportTab
 
                 /* Lock scroll area */
                 theScroll.setEnabled(!isError);
-
-                /* If this is the data view */
-            } else if (theView.equals(o)) {
-                /* Refresh Data */
-                refreshData();
 
                 /* If this is the select panel */
             } else if (theSelect.equals(o)) {
@@ -441,20 +478,6 @@ public class ReportTab
             if (theSelect.equals(o)) {
                 /* Print the report */
                 printIt();
-            }
-
-            /* If this is the report manager */
-            if (theManager.equals(o) && (evt instanceof ActionDetailEvent)) {
-                ActionDetailEvent myEvent = (ActionDetailEvent) evt;
-                if (myEvent.getSubId() == ReportManager.ACTION_VIEWFILTER) {
-                    /* Create the details of the report */
-                    JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
-                    AnalysisFilter<?, ?> myFilter = myEvent.getDetails(AnalysisFilter.class);
-                    StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
-
-                    /* Request the action */
-                    fireActionEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement);
-                }
             }
         }
     }

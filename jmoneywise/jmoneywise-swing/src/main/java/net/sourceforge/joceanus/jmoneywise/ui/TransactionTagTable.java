@@ -60,6 +60,9 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 
@@ -445,25 +448,29 @@ public class TransactionTagTable
      * Listener class.
      */
     private final class TransactionTagListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
+
         /**
          * Constructor.
          */
         private TransactionTagListener() {
-            /* Listen to correct events */
-            theUpdateSet.addChangeListener(this);
+            /* Register listeners */
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+
+            /* Listen to swing events */
             theNewButton.addActionListener(this);
             theActiveTag.addChangeListener(this);
             theActiveTag.addActionListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* If we are performing a rewind */
-            if (theUpdateSet.equals(o)) {
+            if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
                 if (!theActiveTag.isEditing()) {
                     /* handle the ReWind */
@@ -473,6 +480,12 @@ public class TransactionTagTable
                 /* Adjust for changes */
                 notifyChanges();
             }
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
 
             /* If we are noting change of edit state */
             if (theActiveTag.equals(o)) {

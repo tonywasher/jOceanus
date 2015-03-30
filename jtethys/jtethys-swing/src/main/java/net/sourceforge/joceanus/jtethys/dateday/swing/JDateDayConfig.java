@@ -27,8 +27,8 @@ import java.time.LocalDate;
 import net.sourceforge.jdatebutton.swing.JDateConfig;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 
 /**
  * Class that extends {@link JDateConfig} to handle {@link JDateDay} objects.
@@ -187,7 +187,7 @@ public class JDateDayConfig
      * Locale Listener class.
      */
     private final class LocaleListener
-            implements JOceanusEventListener {
+            implements JOceanusChangeEventListener {
         /**
          * The formatter.
          */
@@ -202,7 +202,7 @@ public class JDateDayConfig
         }
 
         @Override
-        public void processEvent(final JOceanusEvent e) {
+        public void processChangeEvent(final JOceanusChangeEvent e) {
             setTheLocale(theFormatter.getLocale());
             refreshText();
         }

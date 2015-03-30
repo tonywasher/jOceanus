@@ -40,7 +40,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +52,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
-        extends JEventObject
-        implements JDataContents, DataListSet<E> {
+        implements JDataContents, JOceanusEventProvider, DataListSet<E> {
     /**
      * Report fields.
      */
@@ -88,6 +89,11 @@ public class UpdateSet<E extends Enum<E>>
     public static final String CMD_RESET = "RESET";
 
     /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
+
+    /**
      * Report fields.
      */
     private final JDataFields theLocalFields;
@@ -116,6 +122,9 @@ public class UpdateSet<E extends Enum<E>>
                      final Class<E> pClass) {
         /* Store the Control */
         theControl = pControl;
+
+        /* Create event manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Create local fields */
         theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
@@ -149,6 +158,11 @@ public class UpdateSet<E extends Enum<E>>
 
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -323,7 +337,7 @@ public class UpdateSet<E extends Enum<E>>
         myTask.startTask("Notify");
 
         /* Fire that we have rewound the updateSet */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
 
         /* Complete the task */
         myTask.end();
@@ -378,7 +392,7 @@ public class UpdateSet<E extends Enum<E>>
             myTask.startTask("Notify");
 
             /* Fire that we have rewound the updateSet */
-            fireStateChanged();
+            theEventManager.fireStateChanged();
 
             /* Complete the task */
             myTask.end();

@@ -28,8 +28,6 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
@@ -49,6 +47,9 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -199,9 +200,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         thePanel.add(getScrollPane());
 
         /* Create the listener */
-        StaticListener myListener = new StaticListener();
-        theUpdateSet.addChangeListener(myListener);
-        theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new StaticListener();
     }
 
     /**
@@ -294,11 +293,20 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * The listener class.
      */
     private final class StaticListener
-            implements PropertyChangeListener, ChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * MenuBuilder.
          */
         private final JScrollMenuBuilder<S> theMenuBuilder;
+
+        /**
+         * Menu Registration.
+         */
+        private final JOceanusChangeRegistration theMenuReg;
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration theUpdateSetReg;
 
         /**
          * Constructor.
@@ -306,22 +314,22 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         private StaticListener() {
             /* Access the builder */
             theMenuBuilder = theNewButton.getMenuBuilder();
-            theMenuBuilder.addChangeListener(this);
+
+            /* Register for events */
+            theMenuReg = theMenuBuilder.getEventRegistrar().addChangeListener(this);
+            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+            theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* If we are performing a rewind */
-            if (theUpdateSet.equals(o)) {
+            if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
-            }
 
-            /* If this is the menu builder */
-            if (theMenuBuilder.equals(o)) {
+                /* If this is the menu builder */
+            } else if (theMenuReg.isRelevant(pEvent)) {
                 /* Create the new menu */
                 buildNewMenu();
             }

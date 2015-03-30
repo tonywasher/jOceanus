@@ -32,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -52,6 +50,9 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -429,11 +430,16 @@ public class PayeePanel
      * Payee Listener.
      */
     private final class PayeeListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
         /**
          * The PayeeType Menu Builder.
          */
         private final JScrollMenuBuilder<PayeeType> theTypeMenuBuilder;
+
+        /**
+         * TypeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theTypeMenuReg;
 
         /**
          * Constructor.
@@ -441,15 +447,13 @@ public class PayeePanel
         private PayeeListener() {
             /* Access the MenuBuilders */
             theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-            theTypeMenuBuilder.addChangeListener(this);
+            theTypeMenuReg = theTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle menu type */
-            if (theTypeMenuBuilder.equals(o)) {
+            if (theTypeMenuReg.isRelevant(pEvent)) {
                 buildPayeeTypeMenu(theTypeMenuBuilder, getItem());
             }
         }

@@ -63,6 +63,9 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
@@ -763,7 +766,7 @@ public class AnalysisSelect
      * Listener.
      */
     private final class AnalysisListener
-            implements PropertyChangeListener, ActionListener, ChangeListener {
+            implements PropertyChangeListener, ActionListener, ChangeListener, JOceanusChangeEventListener {
         /**
          * AnalysisType menu builder.
          */
@@ -778,6 +781,26 @@ public class AnalysisSelect
          * Column menu builder.
          */
         private final JScrollMenuBuilder<AnalysisColumnSet> theColumnMenuBuilder;
+
+        /**
+         * AnalysisView Registration.
+         */
+        private final JOceanusChangeRegistration theAnalysisViewReg;
+
+        /**
+         * TypeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theTypeMenuReg;
+
+        /**
+         * BucketMenu Registration.
+         */
+        private final JOceanusChangeRegistration theBucketMenuReg;
+
+        /**
+         * ColumnMenu Registration.
+         */
+        private final JOceanusChangeRegistration theColumnMenuReg;
 
         /**
          * Constructor.
@@ -799,15 +822,15 @@ public class AnalysisSelect
             theCategorySelect.addChangeListener(this);
             theTaxBasisSelect.addChangeListener(this);
             theTagSelect.addChangeListener(this);
-            theAnalysisView.addChangeListener(this);
+            theAnalysisViewReg = theAnalysisView.getEventRegistrar().addChangeListener(this);
 
             /* Access builders */
             theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
-            theTypeMenuBuilder.addChangeListener(this);
+            theTypeMenuReg = theTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
             theBucketMenuBuilder = theBucketButton.getMenuBuilder();
-            theBucketMenuBuilder.addChangeListener(this);
+            theBucketMenuReg = theBucketMenuBuilder.getEventRegistrar().addChangeListener(this);
             theColumnMenuBuilder = theColumnButton.getMenuBuilder();
-            theColumnMenuBuilder.addChangeListener(this);
+            theColumnMenuReg = theColumnMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         /**
@@ -977,29 +1000,8 @@ public class AnalysisSelect
             /* Obtain source */
             Object o = pEvent.getSource();
 
-            /* If this event relates to the FilterTypeMenuBuilder */
-            if (theTypeMenuBuilder.equals(o)) {
-                /* Build the analysis type menu */
-                buildAnalysisTypeMenu();
-
-                /* If this is the BucketMenuBuilder */
-            } else if (theBucketMenuBuilder.equals(o)) {
-                /* Build the bucket type menu */
-                buildBucketMenu();
-
-                /* If this is the ColumnSetMenuBuilder */
-            } else if (theColumnMenuBuilder.equals(o)) {
-                /* Build the columns menu */
-                buildColumnsMenu();
-
-                /* If this is the AnalysisView */
-            } else if (theAnalysisView.equals(o)) {
-                /* Declare the analysis */
-                theAnalysis = theAnalysisView.getAnalysis();
-                setAnalysis();
-
-                /* If this is the DepositSelect */
-            } else if (theDepositSelect.equals(o)) {
+            /* If this is the DepositSelect */
+            if (theDepositSelect.equals(o)) {
                 /* Create the new filter */
                 DepositFilter myFilter = theDepositSelect.getFilter();
                 myFilter.setCurrentAttribute(theState.getBucket());
@@ -1096,6 +1098,31 @@ public class AnalysisSelect
                 theState.setFilter(myFilter);
                 theState.applyState();
                 fireStateChanged();
+            }
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the AnalysisView */
+            if (theAnalysisViewReg.isRelevant(pEvent)) {
+                /* Declare the analysis */
+                theAnalysis = theAnalysisView.getAnalysis();
+                setAnalysis();
+
+                /* If this is the TypeMenu */
+            } else if (theTypeMenuReg.isRelevant(pEvent)) {
+                /* Build the analysis type menu */
+                buildAnalysisTypeMenu();
+
+                /* If this is the BucketMenu */
+            } else if (theBucketMenuReg.isRelevant(pEvent)) {
+                /* Build the bucket type menu */
+                buildBucketMenu();
+
+                /* If this is the ColumnMenu */
+            } else if (theColumnMenuReg.isRelevant(pEvent)) {
+                /* Build the columns menu */
+                buildColumnsMenu();
             }
         }
     }

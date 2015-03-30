@@ -38,8 +38,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -53,6 +51,9 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -360,11 +361,16 @@ public class SpotPricesSelect
      * Listener class.
      */
     private final class SpotPricesListener
-            implements ActionListener, ChangeListener, PropertyChangeListener, ItemListener {
+            implements ActionListener, JOceanusChangeEventListener, PropertyChangeListener, ItemListener {
         /**
          * The portfolio menu builder.
          */
         private final JScrollMenuBuilder<PortfolioBucket> thePortMenuBuilder;
+
+        /**
+         * PortfolioMenu Registration.
+         */
+        private final JOceanusChangeRegistration thePortMenuReg;
 
         /**
          * Constructor.
@@ -372,7 +378,9 @@ public class SpotPricesSelect
         private SpotPricesListener() {
             /* Access builder */
             thePortMenuBuilder = thePortButton.getMenuBuilder();
-            thePortMenuBuilder.addChangeListener(this);
+            thePortMenuReg = thePortMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
             theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, this);
             theShowClosed.addItemListener(this);
             theNext.addActionListener(this);
@@ -434,7 +442,17 @@ public class SpotPricesSelect
         }
 
         @Override
-        public void stateChanged(final ChangeEvent e) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the PortfolioMenu */
+            if (thePortMenuReg.isRelevant(pEvent)) {
+                buildPortfolioMenu();
+            }
+        }
+
+        /**
+         * Build the portfolio menu.
+         */
+        private void buildPortfolioMenu() {
             /* Reset the popUp menu */
             thePortMenuBuilder.clearMenu();
 

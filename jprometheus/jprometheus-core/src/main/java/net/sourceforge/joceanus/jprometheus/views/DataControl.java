@@ -44,7 +44,9 @@ import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * Provides top-level control of data.
@@ -52,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
  * @param <E> the data type enum class
  */
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
-        extends JEventObject {
+        implements JOceanusEventProvider {
     /**
      * Debug View Name.
      */
@@ -92,6 +94,11 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Active Profile.
      */
     private static final String DATA_PROFILE = PrometheusViewResource.DATAENTRY_PROFILE.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
 
     /**
      * The DataSet.
@@ -160,6 +167,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
 
+        /* Create event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the Preference manager */
         thePreferenceMgr = new PreferenceManager();
 
@@ -186,6 +196,11 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         /* Allocate the FieldManager */
         theFieldMgr = new JFieldManager(theDataMgr, theFieldPreferences.getConfiguration());
         theFieldPreferences.addChangeListener(new PreferenceListener());
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -413,7 +428,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         myTask = myTask.startTask("refreshViews");
 
         /* Refresh the Control */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
 
         /* Complete the task */
         myTask.end();

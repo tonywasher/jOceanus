@@ -48,6 +48,9 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
@@ -361,11 +364,16 @@ public class PreferencesPanel
      * PropertyListener class.
      */
     private final class PropertyListener
-            implements ActionListener, PropertyChangeListener, ChangeListener {
+            implements ActionListener, PropertyChangeListener, ChangeListener, JOceanusChangeEventListener {
         /**
          * Preference menu builder.
          */
         private final JScrollMenuBuilder<PreferenceSetPanel> thePrefMenuBuilder;
+
+        /**
+         * PrefMenu Registration.
+         */
+        private final JOceanusChangeRegistration thePrefMenuReg;
 
         /**
          * Constructor.
@@ -373,7 +381,16 @@ public class PreferencesPanel
         private PropertyListener() {
             /* Access builders */
             thePrefMenuBuilder = theSelectButton.getMenuBuilder();
-            thePrefMenuBuilder.addChangeListener(this);
+            thePrefMenuReg = thePrefMenuBuilder.getEventRegistrar().addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* Handle menu type */
+            if (thePrefMenuReg.isRelevant(pEvent)) {
+                /* Build the preference menu */
+                buildPreferenceMenu();
+            }
         }
 
         /**
@@ -423,18 +440,11 @@ public class PreferencesPanel
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
+            /* Set visibility */
+            setVisibility();
 
-            if (thePrefMenuBuilder.equals(o)) {
-                /* Build the preference menu */
-                buildPreferenceMenu();
-            } else {
-                /* Set visibility */
-                setVisibility();
-
-                /* Notify listeners */
-                fireStateChanged();
-            }
+            /* Notify listeners */
+            fireStateChanged();
         }
 
         @Override

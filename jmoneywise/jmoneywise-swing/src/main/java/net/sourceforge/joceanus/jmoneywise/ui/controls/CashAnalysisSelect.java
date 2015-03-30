@@ -33,8 +33,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -48,6 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -135,9 +136,7 @@ public class CashAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        CashListener myListener = new CashListener();
-        theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new CashListener();
     }
 
     @Override
@@ -263,7 +262,7 @@ public class CashAnalysisSelect
      * Listener class.
      */
     private final class CashListener
-            implements PropertyChangeListener, ChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Category menu builder.
          */
@@ -275,25 +274,40 @@ public class CashAnalysisSelect
         private final JScrollMenuBuilder<CashBucket> theCashMenuBuilder;
 
         /**
+         * CategoryMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryMenuReg;
+
+        /**
+         * CashMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCashMenuReg;
+
+        /**
          * Constructor.
          */
         private CashListener() {
             /* Access builders */
             theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-            theCategoryMenuBuilder.addChangeListener(this);
+            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCashMenuBuilder = theCashButton.getMenuBuilder();
-            theCashMenuBuilder.addChangeListener(this);
+            theCashMenuReg = theCashMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
+            theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source of the event */
-            Object o = pEvent.getSource();
-
-            /* Handle buttons */
-            if (theCategoryMenuBuilder.equals(o)) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the CategoryMenu */
+            if (theCategoryMenuReg.isRelevant(pEvent)) {
+                /* Build the category menu */
                 buildCategoryMenu();
-            } else if (theCashMenuBuilder.equals(o)) {
+
+                /* If this is the CashMenu */
+            } else if (theCashMenuReg.isRelevant(pEvent)) {
+                /* Build the cash menu */
                 buildCashMenu();
             }
         }

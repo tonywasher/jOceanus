@@ -32,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -53,6 +51,9 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
@@ -496,7 +497,7 @@ public class PortfolioPanel
      * Portfolio Listener.
      */
     private final class PortfolioListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
         /**
          * The Parent Menu Builder.
          */
@@ -508,24 +509,32 @@ public class PortfolioPanel
         private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
         /**
+         * ParentMenu Registration.
+         */
+        private final JOceanusChangeRegistration theParentMenuReg;
+
+        /**
+         * CurrencyMenu Registration.
+         */
+        private final JOceanusChangeRegistration theCurrencyMenuReg;
+
+        /**
          * Constructor.
          */
         private PortfolioListener() {
             /* Access the MenuBuilders */
             theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuBuilder.addChangeListener(this);
+            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuBuilder.addChangeListener(this);
+            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Handle menu type */
-            if (theParentMenuBuilder.equals(o)) {
+            if (theParentMenuReg.isRelevant(pEvent)) {
                 buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuBuilder.equals(o)) {
+            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
                 buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
             }
         }

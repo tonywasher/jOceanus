@@ -41,7 +41,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.event.PopupMenuListener;
 
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
@@ -86,8 +88,12 @@ public class JScrollListButton<T>
      * @param <X> the object type
      */
     public static final class JScrollListMenuBuilder<X>
-            extends JEventObject
-            implements ActionListener {
+            implements ActionListener, JOceanusEventProvider {
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
+
         /**
          * The Button.
          */
@@ -103,9 +109,18 @@ public class JScrollListButton<T>
          * @param pButton the button
          */
         public JScrollListMenuBuilder(final JScrollListButton<X> pButton) {
+            /* Store details */
             theButton = pButton;
             theMenu = new JScrollListMenu<X>(this);
             theButton.addActionListener(this);
+
+            /* Create event manager */
+            theEventManager = new JOceanusEventManager();
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -241,7 +256,7 @@ public class JScrollListButton<T>
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* Ask listeners to update selection */
-            fireStateChanged();
+            theEventManager.fireStateChanged();
 
             /* If a menu is provided */
             if ((theMenu != null) && (theMenu.getItemCount() > 0)) {
@@ -249,6 +264,16 @@ public class JScrollListButton<T>
                 Rectangle myLoc = theButton.getBounds();
                 theMenu.show(theButton, 0, myLoc.height);
             }
+        }
+
+        /**
+         * fire item state changed.
+         * @param pItem the item
+         * @param pSelected the new state
+         */
+        private void fireItemStateChanged(final X pItem,
+                                          final boolean pSelected) {
+            theEventManager.fireItemStateChanged(pItem, pSelected);
         }
     }
 
@@ -441,7 +466,7 @@ public class JScrollListButton<T>
                 Object mySource = pEvent.getSource();
                 if (mySource instanceof JCheckBoxMenuItem) {
                     JCheckBoxMenuItem myMenu = (JCheckBoxMenuItem) mySource;
-                    theBuilder.fireItemStateChanged(theBuilder, theItem, myMenu.isSelected());
+                    theBuilder.fireItemStateChanged(theItem, myMenu.isSelected());
                 }
 
                 /* Keep the menu displayed */

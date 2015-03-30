@@ -56,6 +56,9 @@ import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -203,10 +206,6 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
         /* Add the listener for item changes */
         theListener = new StaticListener();
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theListener);
-        theError.addChangeListener(theListener);
-        theActionButtons.addActionListener(theListener);
-        theDisabledCheckBox.addItemListener(theListener);
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
@@ -453,11 +452,16 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Listener class.
      */
     private final class StaticListener
-            implements PropertyChangeListener, ChangeListener, ActionListener, ItemListener {
+            implements PropertyChangeListener, ChangeListener, ActionListener, ItemListener, JOceanusChangeEventListener {
         /**
          * Data menu builder.
          */
         private final JScrollMenuBuilder<StaticDataTable<?, ?, ?, E>> theDataMenuBuilder;
+
+        /**
+         * AutoPayeeMenu Registration.
+         */
+        private final JOceanusChangeRegistration theDataMenuReg;
 
         /**
          * Constructor.
@@ -465,7 +469,25 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         private StaticListener() {
             /* Access builder */
             theDataMenuBuilder = theSelectButton.getMenuBuilder();
-            theDataMenuBuilder.addChangeListener(this);
+            theDataMenuReg = theDataMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
+            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theError.addChangeListener(this);
+            theActionButtons.addActionListener(this);
+            theDisabledCheckBox.addItemListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* Handle menu type */
+            if (theDataMenuReg.isRelevant(pEvent)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* build data menu */
+                buildDataMenu();
+            }
         }
 
         /**
@@ -516,14 +538,6 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
                 /* Lock Action Buttons */
                 theActionButtons.setEnabled(!isError);
-
-                /* if this is the data menu builder reporting */
-            } else if (theDataMenuBuilder.equals(o)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* build data menu */
-                buildDataMenu();
 
                 /* if this is one of the static data panels */
             } else if (o instanceof StaticDataTable) {

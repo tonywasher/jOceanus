@@ -31,8 +31,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -44,6 +42,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -125,9 +126,7 @@ public class SecurityAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        SecurityListener myListener = new SecurityListener();
-        theSecButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        new SecurityListener();
     }
 
     @Override
@@ -262,7 +261,7 @@ public class SecurityAnalysisSelect
      * Listener class.
      */
     private final class SecurityListener
-            implements PropertyChangeListener, ChangeListener {
+            implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Portfolio menu builder.
          */
@@ -274,25 +273,36 @@ public class SecurityAnalysisSelect
         private final JScrollMenuBuilder<SecurityBucket> theSecurityMenuBuilder;
 
         /**
+         * PortfolioMenu Registration.
+         */
+        private final JOceanusChangeRegistration thePortfolioMenuReg;
+
+        /**
+         * SecurityMenu Registration.
+         */
+        private final JOceanusChangeRegistration theSecurityMenuReg;
+
+        /**
          * Constructor.
          */
         private SecurityListener() {
             /* Access builders */
             theSecurityMenuBuilder = theSecButton.getMenuBuilder();
-            theSecurityMenuBuilder.addChangeListener(this);
+            theSecurityMenuReg = theSecurityMenuBuilder.getEventRegistrar().addChangeListener(this);
             thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
-            thePortfolioMenuBuilder.addChangeListener(this);
+            thePortfolioMenuReg = thePortfolioMenuBuilder.getEventRegistrar().addChangeListener(this);
+
+            /* Add swing listeners */
+            theSecButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source of the event */
-            Object o = pEvent.getSource();
-
-            /* Handle buttons */
-            if (thePortfolioMenuBuilder.equals(o)) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the PortfolioMenu */
+            if (thePortfolioMenuReg.isRelevant(pEvent)) {
                 buildPortfolioMenu();
-            } else if (theSecurityMenuBuilder.equals(o)) {
+            } else if (theSecurityMenuReg.isRelevant(pEvent)) {
                 buildSecurityMenu();
             }
         }

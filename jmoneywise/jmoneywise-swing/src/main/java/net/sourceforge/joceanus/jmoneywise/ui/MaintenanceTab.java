@@ -59,6 +59,9 @@ import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
@@ -148,37 +151,24 @@ public class MaintenanceTab
         theView = pTop.getView();
         theParent = pTop;
 
-        /* Create a listener */
-        MaintenanceListener myListener = new MaintenanceListener();
-
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
-        theTabs.addChangeListener(myListener);
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
         theTabs.addTab(TITLE_ACCOUNT, theAccountTab);
-        theAccountTab.addChangeListener(myListener);
-        theAccountTab.addActionListener(myListener);
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
         theTabs.addTab(TITLE_CATEGORY, theCategoryTab);
-        theCategoryTab.addChangeListener(myListener);
-        theCategoryTab.addActionListener(myListener);
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new TaxYearTable(theView);
         theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
-        theTaxYearTab.addChangeListener(myListener);
-        theTaxYearTab.addActionListener(myListener);
 
         /* Create the Static Tab */
         theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
         theTabs.addTab(TITLE_STATIC, theStatic);
-        theStatic.addChangeListener(myListener);
-        theStatic.addActionListener(myListener);
-        theView.addChangeListener(myListener);
 
         /* Add the static elements */
         theStatic.addStatic(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
@@ -200,7 +190,6 @@ public class MaintenanceTab
         PreferenceManager myPrefs = theView.getPreferenceMgr();
         thePreferences = new PreferencesPanel(myPrefs, theView.getFieldMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
-        thePreferences.addChangeListener(myListener);
 
         /* Add interesting preferences */
         myPrefs.getPreferenceSet(DatabasePreferences.class);
@@ -213,6 +202,9 @@ public class MaintenanceTab
 
         /* Set the layout */
         add(theTabs);
+
+        /* Create a listener */
+        new MaintenanceListener();
     }
 
     /**
@@ -488,11 +480,50 @@ public class MaintenanceTab
      * The listener class.
      */
     private final class MaintenanceListener
-            implements ChangeListener, ActionListener {
+            implements ChangeListener, ActionListener, JOceanusChangeEventListener {
+        /**
+         * View Registration.
+         */
+        private final JOceanusChangeRegistration theViewReg;
+
         /**
          * Refreshing flag.
          */
         private boolean refreshing = false;
+
+        /**
+         * Constructor.
+         */
+        private MaintenanceListener() {
+            /* Register listeners */
+            theViewReg = theView.getEventRegistrar().addChangeListener(this);
+
+            /* Listen to swing events */
+            theTabs.addChangeListener(this);
+            theAccountTab.addChangeListener(this);
+            theAccountTab.addActionListener(this);
+            theCategoryTab.addChangeListener(this);
+            theCategoryTab.addActionListener(this);
+            theTaxYearTab.addChangeListener(this);
+            theTaxYearTab.addActionListener(this);
+            theStatic.addChangeListener(this);
+            theStatic.addActionListener(this);
+            thePreferences.addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If this is the data view */
+            if (theViewReg.isRelevant(pEvent)) {
+                /* Refresh the data locking visibility setting for the duration */
+                refreshing = true;
+                refreshData();
+                refreshing = false;
+
+                /* Update visibility */
+                setVisibility();
+            }
+        }
 
         @Override
         public void stateChanged(final ChangeEvent e) {
@@ -502,14 +533,6 @@ public class MaintenanceTab
             if (theTabs.equals(o)) {
                 /* Determine the focus */
                 determineFocus();
-            } else if (theView.equals(o)) {
-                /* Refresh the data locking visibility setting for the duration */
-                refreshing = true;
-                refreshData();
-                refreshing = false;
-
-                /* Update visibility */
-                setVisibility();
 
                 /* Don't set visibility if called from refresh */
             } else if (!refreshing) {
