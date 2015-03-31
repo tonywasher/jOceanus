@@ -29,8 +29,6 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -51,7 +49,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -91,11 +89,14 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
@@ -273,12 +274,12 @@ public class TransactionTable
     /**
      * The analysis data entry.
      */
-    private final transient JDataEntry theDataAnalysis;
+    private final transient ViewerEntry theDataAnalysis;
 
     /**
      * The filter data entry.
      */
-    private final transient JDataEntry theDataFilter;
+    private final transient ViewerEntry theDataFilter;
 
     /**
      * Analysis Selection panel.
@@ -369,12 +370,12 @@ public class TransactionTable
 
         /* Create the top level debug entry for this view */
         ViewerManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        JDataEntry myDataRegister = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        ViewerEntry myDataRegister = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
         myDataRegister.addAsChildOf(mySection);
-        theDataFilter = myDataMgr.new JDataEntry(NLS_FILTERDATAENTRY);
+        theDataFilter = myDataMgr.new ViewerEntry(NLS_FILTERDATAENTRY);
         theDataFilter.addAsChildOf(myDataRegister);
-        theDataAnalysis = myDataMgr.new JDataEntry(NLS_TRANSDATAENTRY);
+        theDataAnalysis = myDataMgr.new ViewerEntry(NLS_TRANSDATAENTRY);
         theDataAnalysis.addAsChildOf(myDataRegister);
         theDataAnalysis.setObject(theUpdateSet);
 
@@ -716,7 +717,7 @@ public class TransactionTable
      * Listener class.
      */
     private final class AnalysisListener
-            implements ChangeListener, ActionListener, JOceanusChangeEventListener {
+            implements ActionListener, JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * UpdateSet Registration.
          */
@@ -728,20 +729,41 @@ public class TransactionTable
         private final JOceanusChangeRegistration theViewReg;
 
         /**
+         * Error Registration.
+         */
+        private final JOceanusChangeRegistration theErrorReg;
+
+        /**
+         * Action Registration.
+         */
+        private final JOceanusActionRegistration theActionReg;
+
+        /**
+         * Selection Registration.
+         */
+        private final JOceanusChangeRegistration theSelectReg;
+
+        /**
+         * TransPanel Change Registration.
+         */
+        private final JOceanusChangeRegistration theTransPanelReg;
+
+        /**
          * Constructor.
          */
         private AnalysisListener() {
             /* Register listeners */
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
+            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
+            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
+            theSelectReg = theSelect.getEventRegistrar().addChangeListener(this);
+            JOceanusEventRegistrar myRegistrar = theActiveTrans.getEventRegistrar();
+            theTransPanelReg = myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
 
             /* Listen to swing events */
-            theError.addChangeListener(this);
-            theSelect.addChangeListener(this);
-            theActionButtons.addActionListener(this);
             theNewButton.addActionListener(this);
-            theActiveTrans.addChangeListener(this);
-            theActiveTrans.addActionListener(this);
         }
 
         @Override
@@ -761,16 +783,20 @@ public class TransactionTable
 
                 /* Adjust for changes */
                 notifyChanges();
-            }
-        }
 
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
+                /* If we are handling transaction panel state */
+            } else if (theTransPanelReg.isRelevant(pEvent)) {
+                /* Only action if we are not editing */
+                if (!theActiveTrans.isEditing()) {
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
+                }
 
-            /* If this is the error panel */
-            if (theError.equals(o)) {
+                /* Note changes */
+                notifyChanges();
+
+                /* If we are handling errors */
+            } else if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 
@@ -783,19 +809,8 @@ public class TransactionTable
                 /* Lock Action Buttons */
                 theActionButtons.setEnabled(!isError);
 
-                /* If we are noting change of edit state */
-            } else if (theActiveTrans.equals(o)) {
-                /* Only action if we are not editing */
-                if (!theActiveTrans.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-
-                /* If this is the Selection */
-            } else if (theSelect.equals(o)) {
+                /* If we are handling selection */
+            } else if (theSelectReg.isRelevant(pEvent)) {
                 /* Set the filter */
                 theFilter = theSelect.getFilter();
 
@@ -819,23 +834,28 @@ public class TransactionTable
         }
 
         @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            /* If this event relates to the action buttons */
-            if (theActionButtons.equals(o)) {
-                /* Cancel any editing */
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            if (theActionReg.isRelevant(pEvent)) {
+                /* Cancel Editing */
                 cancelEditing();
 
                 /* Perform the command */
-                theUpdateSet.processCommand(pEvent.getActionCommand(), theError);
+                theUpdateSet.processCommand(pEvent.getActionId(), theError);
 
-                /* Notify listeners of changes */
+                /* Adjust for changes */
                 notifyChanges();
-            } else if ((theActiveTrans.equals(o))
-                       && (pEvent instanceof ActionDetailEvent)) {
-                cascadeActionEvent((ActionDetailEvent) pEvent);
-            } else if (theNewButton.equals(o)) {
+
+                /* else cascade the event */
+            } else {
+                cascadeActionEvent(pEvent);
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent pEvent) {
+            Object o = pEvent.getSource();
+
+            if (theNewButton.equals(o)) {
                 theModel.addNewItem();
             }
         }
@@ -1678,28 +1698,46 @@ public class TransactionTable
          * EditorListener.
          */
         private final class EditorListener
-                implements ChangeListener {
+                implements JOceanusChangeEventListener {
+            /**
+             * Category Registration.
+             */
+            private final JOceanusChangeRegistration theCategoryReg;
+
+            /**
+             * Account Registration.
+             */
+            private final JOceanusChangeRegistration theAccountReg;
+
+            /**
+             * ThirdParty Registration.
+             */
+            private final JOceanusChangeRegistration theThirdPartyReg;
+
+            /**
+             * Tag Registration.
+             */
+            private final JOceanusChangeRegistration theTagReg;
+
             /**
              * Constructor.
              */
             private EditorListener() {
-                theCategoryEditor.addChangeListener(this);
-                theAccountEditor.addChangeListener(this);
-                theDepositEditor.addChangeListener(this);
-                theTagEditor.addChangeListener(this);
+                theCategoryReg = theCategoryEditor.getEventRegistrar().addChangeListener(this);
+                theAccountReg = theAccountEditor.getEventRegistrar().addChangeListener(this);
+                theThirdPartyReg = theDepositEditor.getEventRegistrar().addChangeListener(this);
+                theTagReg = theTagEditor.getEventRegistrar().addChangeListener(this);
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
-                Object o = pEvent.getSource();
-
-                if (theCategoryEditor.equals(o)) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+                if (theCategoryReg.isRelevant(pEvent)) {
                     buildCategoryMenu();
-                } else if (theAccountEditor.equals(o)) {
+                } else if (theAccountReg.isRelevant(pEvent)) {
                     buildAccountMenu();
-                } else if (theDepositEditor.equals(o)) {
+                } else if (theThirdPartyReg.isRelevant(pEvent)) {
                     buildThirdPartyMenu();
-                } else if (theTagEditor.equals(o)) {
+                } else if (theTagReg.isRelevant(pEvent)) {
                     buildTagMenu();
                 }
             }

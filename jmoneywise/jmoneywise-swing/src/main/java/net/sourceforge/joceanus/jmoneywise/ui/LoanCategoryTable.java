@@ -36,8 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -48,7 +46,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
@@ -70,10 +68,11 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -299,7 +298,7 @@ public class LoanCategoryTable
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final JDataEntry pEntry) {
+    protected void determineFocus(final ViewerEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
@@ -538,7 +537,7 @@ public class LoanCategoryTable
      * Listener class.
      */
     private final class CategoryListener
-            implements PropertyChangeListener, ChangeListener, ActionListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, ActionListener, JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * Category menu builder.
          */
@@ -555,6 +554,11 @@ public class LoanCategoryTable
         private final JOceanusChangeRegistration theCategoryMenuReg;
 
         /**
+         * Category Change Registration.
+         */
+        private final JOceanusChangeRegistration theCatPanelReg;
+
+        /**
          * Constructor.
          */
         private CategoryListener() {
@@ -564,12 +568,12 @@ public class LoanCategoryTable
             /* Register listeners */
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
             theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
+            theCatPanelReg = theActiveCategory.getEventRegistrar().addChangeListener(this);
+            theActiveCategory.getEventRegistrar().addActionListener(this);
 
             /* Listen to swing events */
             theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
             theNewButton.addActionListener(this);
-            theActiveCategory.addChangeListener(this);
-            theActiveCategory.addActionListener(this);
         }
 
         @Override
@@ -595,16 +599,9 @@ public class LoanCategoryTable
                 if (theCategories != null) {
                     buildSelectMenu();
                 }
-            }
-        }
 
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* If we are noting change of edit state */
-            if (theActiveCategory.equals(o)) {
+                /* If we are handling panel state */
+            } else if (theCatPanelReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
                 if (!theActiveCategory.isEditing()) {
                     /* handle the edit transition */
@@ -617,15 +614,17 @@ public class LoanCategoryTable
         }
 
         @Override
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            cascadeActionEvent(pEvent);
+        }
+
+        @Override
         public void actionPerformed(final ActionEvent pEvent) {
             /* Access source */
             Object o = pEvent.getSource();
 
             /* Handle actions */
-            if ((theActiveCategory.equals(o))
-                && (pEvent instanceof ActionDetailEvent)) {
-                cascadeActionEvent((ActionDetailEvent) pEvent);
-            } else if (theNewButton.equals(o)) {
+            if (theNewButton.equals(o)) {
                 theModel.addNewItem();
             }
         }
@@ -935,16 +934,16 @@ public class LoanCategoryTable
          * EditorListener.
          */
         private final class EditorListener
-                implements ChangeListener {
+                implements JOceanusChangeEventListener {
             /**
              * Constructor.
              */
             private EditorListener() {
-                theScrollEditor.addChangeListener(this);
+                theScrollEditor.getEventRegistrar().addChangeListener(this);
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
                 buildCategoryTypeMenu();
             }
 

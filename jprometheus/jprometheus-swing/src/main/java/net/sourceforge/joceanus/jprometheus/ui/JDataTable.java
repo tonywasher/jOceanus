@@ -42,7 +42,10 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventTable;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 
@@ -53,7 +56,8 @@ import net.sourceforge.joceanus.jtethys.swing.TableFilter;
  * @param <E> the data type enum class
  */
 public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends JEventTable {
+        extends JTable
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -73,6 +77,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Default row height.
      */
     protected static final int ROW_HEIGHT = 16;
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * FieldManager.
@@ -123,6 +132,30 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
         /* Set the selection mode */
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Cascade action event.
+     * @param pEvent the event to cascade
+     */
+    protected void cascadeActionEvent(final JOceanusActionEvent pEvent) {
+        /* Fire the event */
+        theEventManager.cascadeActionEvent(pEvent);
+    }
+
+    /**
+     * fire a state changed event.
+     */
+    protected void fireStateChanged() {
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -231,7 +264,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected void notifyChanges() {
         /* Notify listeners */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**

@@ -33,6 +33,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -48,8 +49,10 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -58,8 +61,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
  * Deposit Analysis Selection.
  */
 public class DepositAnalysisSelect
-        extends JEventPanel
-        implements AnalysisFilterSelection {
+        extends JPanel
+        implements AnalysisFilterSelection, JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -74,6 +77,11 @@ public class DepositAnalysisSelect
      * Text for Deposit Label.
      */
     private static final String NLS_DEPOSIT = MoneyWiseDataType.DEPOSIT.getItemName();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The active category bucket list.
@@ -115,6 +123,9 @@ public class DepositAnalysisSelect
         /* Create the category button */
         theCatButton = new JScrollButton<DepositCategory>();
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
         JLabel myDepLabel = new JLabel(NLS_DEPOSIT + JFieldElement.STR_COLON);
@@ -137,6 +148,11 @@ public class DepositAnalysisSelect
 
         /* Create the listener */
         new DepositListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -407,16 +423,15 @@ public class DepositAnalysisSelect
                 /* Select the new category */
                 if (theState.setCategory(theCatButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
-            }
 
-            /* If this is the deposit button */
-            if (theDepositButton.equals(o)) {
+                /* If this is the deposit button */
+            } else if (theDepositButton.equals(o)) {
                 /* Select the new deposit */
                 if (theState.setDeposit(theDepositButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
             }
         }

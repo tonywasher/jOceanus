@@ -23,13 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -42,7 +38,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRe
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
@@ -65,6 +61,8 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
@@ -174,7 +172,7 @@ public class SpotRatesTable
     /**
      * The data entry.
      */
-    private final transient JDataEntry theDataPrice;
+    private final transient ViewerEntry theDataPrice;
 
     /**
      * The error panel.
@@ -198,8 +196,8 @@ public class SpotRatesTable
 
         /* Create the top level debug entry for this view */
         ViewerManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataPrice = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        theDataPrice = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
         theDataPrice.addAsChildOf(mySection);
         theDataPrice.setObject(theUpdateSet);
 
@@ -359,7 +357,7 @@ public class SpotRatesTable
      * SpotView listener class.
      */
     private final class SpotViewListener
-            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
+            implements JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * UpdateSet Registration.
          */
@@ -371,17 +369,25 @@ public class SpotRatesTable
         private final JOceanusChangeRegistration theViewReg;
 
         /**
+         * Error Registration.
+         */
+        private final JOceanusChangeRegistration theErrorReg;
+
+        /**
+         * Selection Registration.
+         */
+        private final JOceanusChangeRegistration theSelectReg;
+
+        /**
          * Constructor.
          */
         private SpotViewListener() {
             /* Register listeners */
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
-
-            /* Listen to swing events */
-            theActionButtons.addActionListener(this);
-            theError.addChangeListener(this);
-            theSelect.addChangeListener(this);
+            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
+            theSelectReg = theSelect.getEventRegistrar().addChangeListener(this);
+            theActionButtons.getEventRegistrar().addActionListener(this);
         }
 
         @Override
@@ -395,15 +401,9 @@ public class SpotRatesTable
             } else if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
-            }
-        }
 
-        @Override
-        public void stateChanged(final ChangeEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this is the selection panel */
-            if (theSelect.equals(o)) {
+                /* If we are changing selection */
+            } else if (theSelectReg.isRelevant(pEvent)) {
                 /* Access selection */
                 JDateDay myDate = theSelect.getDate();
 
@@ -430,8 +430,8 @@ public class SpotRatesTable
                     }
                 }
 
-                /* If this is the error panel */
-            } else if (theError.equals(o)) {
+                /* If we are handling errors */
+            } else if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 
@@ -447,20 +447,15 @@ public class SpotRatesTable
         }
 
         @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* Cancel Editing */
+            cancelEditing();
 
-            /* If this event relates to the action buttons */
-            if (theActionButtons.equals(o)) {
-                /* Cancel Editing */
-                cancelEditing();
+            /* Perform the command */
+            theUpdateSet.processCommand(pEvent.getActionId(), theError);
 
-                /* Perform the command */
-                theUpdateSet.processCommand(evt.getActionCommand(), theError);
-
-                /* Adjust for changes */
-                notifyChanges();
-            }
+            /* Adjust for changes */
+            notifyChanges();
         }
     }
 

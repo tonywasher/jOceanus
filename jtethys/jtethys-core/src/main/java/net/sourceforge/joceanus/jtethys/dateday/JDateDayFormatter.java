@@ -92,8 +92,8 @@ public class JDateDayFormatter
     public JDateDayFormatter(final Locale pLocale) {
         /* Store locale */
         theLocale = pLocale;
-        setFormat(DEFAULT_FORMAT);
         theEventManager = new JOceanusEventManager();
+        setFormat(DEFAULT_FORMAT);
     }
 
     @Override

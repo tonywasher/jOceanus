@@ -52,10 +52,10 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
@@ -81,7 +81,7 @@ public class ItemActions<E extends Enum<E>>
     /**
      * The goTo button.
      */
-    private final JScrollButton<ActionDetailEvent> theGoToButton;
+    private final JScrollButton<JOceanusActionEvent> theGoToButton;
 
     /**
      * The edit button.
@@ -164,7 +164,7 @@ public class ItemActions<E extends Enum<E>>
         /**
          * MenuBuilder.
          */
-        private JScrollMenuBuilder<ActionDetailEvent> theMenuBuilder;
+        private JScrollMenuBuilder<JOceanusActionEvent> theMenuBuilder;
 
         /**
          * MenuBuilder Registration.

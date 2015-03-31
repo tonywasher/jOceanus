@@ -45,6 +45,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
@@ -59,7 +60,9 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.StringPreference
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -70,7 +73,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * @author Tony Washer
  */
 public class PreferenceSetPanel
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -112,6 +116,11 @@ public class PreferenceSetPanel
     private static final String NLS_SELECT = PreferenceResource.UI_HEADER_SELECT.getValue();
 
     /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
+
+    /**
      * The PreferenceSet for this panel.
      */
     private final transient PreferenceSet thePreferences;
@@ -151,6 +160,9 @@ public class PreferenceSetPanel
         /* Options SubPanel */
         JEnablePanel myOptions = null;
         int myRow = 0;
+
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Record the set and manager */
         thePreferences = pSet;
@@ -242,6 +254,11 @@ public class PreferenceSetPanel
     }
 
     @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    @Override
     public String toString() {
         return theName;
     }
@@ -296,7 +313,7 @@ public class PreferenceSetPanel
         updateFields();
 
         /* Notify listeners */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     @Override

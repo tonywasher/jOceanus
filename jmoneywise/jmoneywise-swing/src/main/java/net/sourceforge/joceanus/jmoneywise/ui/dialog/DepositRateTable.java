@@ -28,8 +28,6 @@ import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -59,6 +57,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 
 /**
@@ -644,16 +644,16 @@ public class DepositRateTable
          * EditorListener.
          */
         private final class EditorListener
-                implements ChangeListener {
+                implements JOceanusChangeEventListener {
             /**
              * Constructor.
              */
             private EditorListener() {
-                theDateEditor.addChangeListener(this);
+                theDateEditor.getEventRegistrar().addChangeListener(this);
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
                 /* Access details */
                 Point myCell = theDateEditor.getPoint();
 

@@ -34,8 +34,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
@@ -46,7 +44,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRend
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -75,10 +73,11 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -313,7 +312,7 @@ public class DepositTable
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final JDataEntry pEntry) {
+    protected void determineFocus(final ViewerEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
@@ -533,11 +532,16 @@ public class DepositTable
      * Listener class.
      */
     private final class DepositListener
-            implements ActionListener, ItemListener, ChangeListener, JOceanusChangeEventListener {
+            implements ActionListener, ItemListener, JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * UpdateSet Registration.
          */
         private final JOceanusChangeRegistration theUpdateSetReg;
+
+        /**
+         * Account Change Registration.
+         */
+        private final JOceanusChangeRegistration theActPanelReg;
 
         /**
          * Constructor.
@@ -545,12 +549,12 @@ public class DepositTable
         private DepositListener() {
             /* Register listeners */
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+            theActPanelReg = theActiveAccount.getEventRegistrar().addChangeListener(this);
+            theActiveAccount.getEventRegistrar().addActionListener(this);
 
             /* Listen to swing events */
             theNewButton.addActionListener(this);
             theLockedCheckBox.addItemListener(this);
-            theActiveAccount.addChangeListener(this);
-            theActiveAccount.addActionListener(this);
         }
 
         @Override
@@ -565,16 +569,9 @@ public class DepositTable
 
                 /* Adjust for changes */
                 notifyChanges();
-            }
-        }
 
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* If we are noting change of edit state */
-            if (theActiveAccount.equals(o)) {
+                /* If we are handling panel state */
+            } else if (theActPanelReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
                 if (!theActiveAccount.isEditing()) {
                     /* handle the edit transition */
@@ -599,15 +596,17 @@ public class DepositTable
         }
 
         @Override
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            cascadeActionEvent(pEvent);
+        }
+
+        @Override
         public void actionPerformed(final ActionEvent pEvent) {
             /* Access source */
             Object o = pEvent.getSource();
 
             /* Handle actions */
-            if ((theActiveAccount.equals(o))
-                && (pEvent instanceof ActionDetailEvent)) {
-                cascadeActionEvent((ActionDetailEvent) pEvent);
-            } else if (theNewButton.equals(o)) {
+            if (theNewButton.equals(o)) {
                 theModel.addNewItem();
             }
         }
@@ -933,25 +932,38 @@ public class DepositTable
          * EditorListener.
          */
         private final class EditorListener
-                implements ChangeListener {
+                implements JOceanusChangeEventListener {
+            /**
+             * Category Registration.
+             */
+            private final JOceanusChangeRegistration theCategoryReg;
+
+            /**
+             * Parent Registration.
+             */
+            private final JOceanusChangeRegistration theParentReg;
+
+            /**
+             * Currency Registration.
+             */
+            private final JOceanusChangeRegistration theCurrencyReg;
+
             /**
              * Constructor.
              */
             private EditorListener() {
-                theCategoryEditor.addChangeListener(this);
-                theParentEditor.addChangeListener(this);
-                theCurrencyEditor.addChangeListener(this);
+                theCategoryReg = theCategoryEditor.getEventRegistrar().addChangeListener(this);
+                theParentReg = theParentEditor.getEventRegistrar().addChangeListener(this);
+                theCurrencyReg = theCurrencyEditor.getEventRegistrar().addChangeListener(this);
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
-                Object o = pEvent.getSource();
-
-                if (theCategoryEditor.equals(o)) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+                if (theCategoryReg.isRelevant(pEvent)) {
                     buildCategoryMenu();
-                } else if (theParentEditor.equals(o)) {
+                } else if (theParentReg.isRelevant(pEvent)) {
                     buildParentMenu();
-                } else if (theCurrencyEditor.equals(o)) {
+                } else if (theCurrencyReg.isRelevant(pEvent)) {
                     buildCurrencyMenu();
                 }
             }

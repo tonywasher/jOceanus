@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -158,7 +158,7 @@ public class View
         TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceMgr());
 
         /* Access the top level debug entry for this analysis */
-        JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
+        ViewerEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
         mySection.setObject(myAnalyser);
 
         /* Post process the analysis */
@@ -201,7 +201,7 @@ public class View
             theAnalysisMgr.analyseBase();
 
             /* Update the Data entry */
-            JDataEntry myData = getDataEntry(DATA_ANALYSIS);
+            ViewerEntry myData = getDataEntry(DATA_ANALYSIS);
             myData.setObject(theAnalysisMgr);
 
             /* Access the dilutions */

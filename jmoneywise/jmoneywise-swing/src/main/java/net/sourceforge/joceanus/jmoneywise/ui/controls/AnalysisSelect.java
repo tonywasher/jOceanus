@@ -39,8 +39,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -65,8 +63,10 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -76,7 +76,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * Selection panel for Analysis Statement.
  */
 public class AnalysisSelect
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -131,6 +132,11 @@ public class AnalysisSelect
      * Text for Title.
      */
     private static final String NLS_FILTERTITLE = MoneyWiseUIControlResource.ANALYSIS_FILTER_TITLE.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * View.
@@ -295,6 +301,9 @@ public class AnalysisSelect
         theView = pView;
         theManager = theView.getAnalysisManager();
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the range button */
         theRangeButton = new JButton(ArrowIcon.DOWN);
         theRangeButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -372,6 +381,11 @@ public class AnalysisSelect
 
         /* Create the listener */
         new AnalysisListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -630,7 +644,7 @@ public class AnalysisSelect
         }
 
         /* Notify updated filter */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -766,7 +780,7 @@ public class AnalysisSelect
      * Listener.
      */
     private final class AnalysisListener
-            implements PropertyChangeListener, ActionListener, ChangeListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, ActionListener, JOceanusChangeEventListener {
         /**
          * AnalysisType menu builder.
          */
@@ -803,6 +817,51 @@ public class AnalysisSelect
         private final JOceanusChangeRegistration theColumnMenuReg;
 
         /**
+         * Deposit Registration.
+         */
+        private final JOceanusChangeRegistration theDepositReg;
+
+        /**
+         * Cash Registration.
+         */
+        private final JOceanusChangeRegistration theLoanReg;
+
+        /**
+         * Loan Registration.
+         */
+        private final JOceanusChangeRegistration theCashReg;
+
+        /**
+         * Security Registration.
+         */
+        private final JOceanusChangeRegistration theSecurityReg;
+
+        /**
+         * Portfolio Registration.
+         */
+        private final JOceanusChangeRegistration thePortfolioReg;
+
+        /**
+         * Payee Registration.
+         */
+        private final JOceanusChangeRegistration thePayeeReg;
+
+        /**
+         * Category Registration.
+         */
+        private final JOceanusChangeRegistration theCategoryReg;
+
+        /**
+         * TaxBasis Registration.
+         */
+        private final JOceanusChangeRegistration theBasisReg;
+
+        /**
+         * Tag Registration.
+         */
+        private final JOceanusChangeRegistration theTagReg;
+
+        /**
          * Constructor.
          */
         private AnalysisListener() {
@@ -813,16 +872,18 @@ public class AnalysisSelect
             theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
             theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
             theColumnButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theDepositSelect.addChangeListener(this);
-            theCashSelect.addChangeListener(this);
-            theLoanSelect.addChangeListener(this);
-            theSecuritySelect.addChangeListener(this);
-            thePortfolioSelect.addChangeListener(this);
-            thePayeeSelect.addChangeListener(this);
-            theCategorySelect.addChangeListener(this);
-            theTaxBasisSelect.addChangeListener(this);
-            theTagSelect.addChangeListener(this);
             theAnalysisViewReg = theAnalysisView.getEventRegistrar().addChangeListener(this);
+
+            /* Access selectors */
+            theDepositReg = theDepositSelect.getEventRegistrar().addChangeListener(this);
+            theCashReg = theCashSelect.getEventRegistrar().addChangeListener(this);
+            theLoanReg = theLoanSelect.getEventRegistrar().addChangeListener(this);
+            theSecurityReg = theSecuritySelect.getEventRegistrar().addChangeListener(this);
+            thePortfolioReg = thePortfolioSelect.getEventRegistrar().addChangeListener(this);
+            thePayeeReg = thePayeeSelect.getEventRegistrar().addChangeListener(this);
+            theCategoryReg = theCategorySelect.getEventRegistrar().addChangeListener(this);
+            theBasisReg = theTaxBasisSelect.getEventRegistrar().addChangeListener(this);
+            theTagReg = theTagSelect.getEventRegistrar().addChangeListener(this);
 
             /* Access builders */
             theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
@@ -936,7 +997,7 @@ public class AnalysisSelect
                     setAnalysisRange(getRange());
                     checkType();
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
 
                 /* If this is the filter type button */
@@ -963,7 +1024,7 @@ public class AnalysisSelect
                     theState.setFilter(myFilter);
                     theState.setBucket(myFilter.getCurrentAttribute());
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
 
                 /* If this is the bucket attribute button */
@@ -976,7 +1037,7 @@ public class AnalysisSelect
                         myFilter.setCurrentAttribute(myBucket);
                     }
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
 
                 /* If this is the column set button */
@@ -985,124 +1046,18 @@ public class AnalysisSelect
                 AnalysisColumnSet mySet = theColumnButton.getValue();
                 if (theState.setColumns(mySet)) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
             }
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* Ignore if we are refreshing */
             if (isRefreshing) {
                 return;
             }
 
-            /* Obtain source */
-            Object o = pEvent.getSource();
-
-            /* If this is the DepositSelect */
-            if (theDepositSelect.equals(o)) {
-                /* Create the new filter */
-                DepositFilter myFilter = theDepositSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the CashSelect */
-            } else if (theCashSelect.equals(o)) {
-                /* Create the new filter */
-                CashFilter myFilter = theCashSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the LoanSelect */
-            } else if (theLoanSelect.equals(o)) {
-                /* Create the new filter */
-                LoanFilter myFilter = theLoanSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the security select */
-            } else if (theSecuritySelect.equals(o)) {
-                /* Create the new filter */
-                SecurityFilter myFilter = theSecuritySelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the portfolio select */
-            } else if (thePortfolioSelect.equals(o)) {
-                /* Create the new filter */
-                PortfolioCashFilter myFilter = thePortfolioSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the Payee select */
-            } else if (thePayeeSelect.equals(o)) {
-                /* Create the new filter */
-                PayeeFilter myFilter = thePayeeSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the category select */
-            } else if (theCategorySelect.equals(o)) {
-                /* Create the new filter */
-                TransactionCategoryFilter myFilter = theCategorySelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the tax basis select */
-            } else if (theTaxBasisSelect.equals(o)) {
-                /* Create the new filter */
-                TaxBasisFilter myFilter = theTaxBasisSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-
-                /* If this is the tag select */
-            } else if (theTagSelect.equals(o)) {
-                /* Create the new filter */
-                TagFilter myFilter = theTagSelect.getFilter();
-                myFilter.setCurrentAttribute(null);
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-            }
-        }
-
-        @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* If this is the AnalysisView */
             if (theAnalysisViewReg.isRelevant(pEvent)) {
                 /* Declare the analysis */
@@ -1123,6 +1078,105 @@ public class AnalysisSelect
             } else if (theColumnMenuReg.isRelevant(pEvent)) {
                 /* Build the columns menu */
                 buildColumnsMenu();
+
+                /* If this is the DepositSelect */
+            } else if (theDepositReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                DepositFilter myFilter = theDepositSelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the CashSelect */
+            } else if (theCashReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                CashFilter myFilter = theCashSelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the LoanSelect */
+            } else if (theLoanReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                LoanFilter myFilter = theLoanSelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the security select */
+            } else if (theSecurityReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                SecurityFilter myFilter = theSecuritySelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the portfolio select */
+            } else if (thePortfolioReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                PortfolioCashFilter myFilter = thePortfolioSelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the Payee select */
+            } else if (thePayeeReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                PayeeFilter myFilter = thePayeeSelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the category select */
+            } else if (theCategoryReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                TransactionCategoryFilter myFilter = theCategorySelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the tax basis select */
+            } else if (theBasisReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                TaxBasisFilter myFilter = theTaxBasisSelect.getFilter();
+                myFilter.setCurrentAttribute(theState.getBucket());
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
+
+                /* If this is the tag select */
+            } else if (theTagReg.isRelevant(pEvent)) {
+                /* Create the new filter */
+                TagFilter myFilter = theTagSelect.getFilter();
+                myFilter.setCurrentAttribute(null);
+
+                /* Apply filter and notify changes */
+                theState.setFilter(myFilter);
+                theState.applyState();
+                theEventManager.fireStateChanged();
             }
         }
     }

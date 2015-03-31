@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 
 /**
  * Data Window display class.
@@ -96,7 +96,7 @@ public class ViewerWindow
         theTree.setExpandsSelectedPaths(true);
 
         /* Access the initial id */
-        JDataEntry myEntry = myDataMgr.getFocus();
+        ViewerEntry myEntry = myDataMgr.getFocus();
 
         /* Add the listener for the tree */
         theTree.addTreeSelectionListener(this);
@@ -146,7 +146,7 @@ public class ViewerWindow
      * Display the data.
      * @param pEntry the data entry
      */
-    protected final void displayData(final JDataEntry pEntry) {
+    protected final void displayData(final ViewerEntry pEntry) {
         /* Ignore null entry */
         if (pEntry == null) {
             return;
@@ -165,7 +165,7 @@ public class ViewerWindow
      * Update debug.
      * @param pEntry the debug entry
      */
-    protected void updateData(final JDataEntry pEntry) {
+    protected void updateData(final ViewerEntry pEntry) {
         /* update debug if required */
         theItemPane.updateData(pEntry);
     }
@@ -180,7 +180,7 @@ public class ViewerWindow
         }
 
         /* Access the Data Entry */
-        JDataEntry myData = (JDataEntry) myNode.getUserObject();
+        ViewerEntry myData = (ViewerEntry) myNode.getUserObject();
 
         /* display the node */
         displayData(myData);

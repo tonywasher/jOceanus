@@ -33,6 +33,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -41,7 +42,9 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 
 /**
@@ -49,7 +52,8 @@ import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
  * @author Tony Washer
  */
 public class SpotRatesSelect
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -84,6 +88,11 @@ public class SpotRatesSelect
      * Text for Previous toolTip.
      */
     private static final String NLS_PREVTIP = MoneyWiseUIControlResource.SPOTRATE_PREV.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The data view.
@@ -127,6 +136,9 @@ public class SpotRatesSelect
     public SpotRatesSelect(final View pView) {
         /* Store table and view details */
         theView = pView;
+
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Create Labels */
         JLabel myCurr = new JLabel(NLS_CURRENCY);
@@ -175,6 +187,11 @@ public class SpotRatesSelect
 
         /* Add the listener for item changes */
         new SpotRatesListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -280,13 +297,13 @@ public class SpotRatesSelect
             if (theNext.equals(o)) {
                 /* Set next and notify changes */
                 theState.setNext();
-                fireStateChanged();
+                theEventManager.fireStateChanged();
 
                 /* If this event relates to the previous button */
             } else if (thePrev.equals(o)) {
                 /* Set previous and notify changes */
                 theState.setPrev();
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
         }
 
@@ -297,7 +314,7 @@ public class SpotRatesSelect
             /* if event relates to the Date button */
             if (theDateButton.equals(o)
                 && (theState.setDate(theDateButton))) {
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
         }
     }

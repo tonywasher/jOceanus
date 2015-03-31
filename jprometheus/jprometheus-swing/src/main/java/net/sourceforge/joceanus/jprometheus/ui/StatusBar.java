@@ -38,7 +38,7 @@ import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
@@ -178,7 +178,7 @@ public class StatusBar
     /**
      * Data entry.
      */
-    private final JDataEntry theDataEntry;
+    private final ViewerEntry theDataEntry;
 
     /**
      * Current status.

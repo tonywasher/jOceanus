@@ -33,6 +33,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -46,8 +47,10 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -56,8 +59,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
  * EventCategory Analysis Selection.
  */
 public class TransCategoryAnalysisSelect
-        extends JEventPanel
-        implements AnalysisFilterSelection {
+        extends JPanel
+        implements AnalysisFilterSelection, JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -67,6 +70,11 @@ public class TransCategoryAnalysisSelect
      * Text for TransCategory Label.
      */
     private static final String NLS_CATEGORY = MoneyWiseDataType.TRANSCATEGORY.getItemName();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The active transaction categories bucket list.
@@ -98,6 +106,9 @@ public class TransCategoryAnalysisSelect
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(Box.createHorizontalGlue());
@@ -112,6 +123,11 @@ public class TransCategoryAnalysisSelect
 
         /* Create the listener */
         new CategoryListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -316,7 +332,7 @@ public class TransCategoryAnalysisSelect
                 /* Select the new category */
                 if (theState.setEventCategory(theButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
             }
         }

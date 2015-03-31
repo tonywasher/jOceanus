@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
@@ -220,7 +220,7 @@ public final class JSvnManager {
         /* Create the Preferences Tab */
         JFieldPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(JFieldPreferences.class);
         JFieldManager myFieldMgr = new JFieldManager(theDataMgr, myFieldPrefs.getConfiguration());
-        JDataEntry myMaintEntry = theDataMgr.new JDataEntry("Maintenance");
+        ViewerEntry myMaintEntry = theDataMgr.new ViewerEntry("Maintenance");
         PreferencesPanel myPrefPanel = new PreferencesPanel(thePrefMgr, myFieldMgr, theDataMgr, myMaintEntry);
         myTabs.addTab("Status", theStatusPanel);
         myTabs.addTab("Preferences", myPrefPanel);
@@ -339,20 +339,20 @@ public final class JSvnManager {
      */
     protected void setSubversionData(final DiscoverData pData) {
         /* Declare repository to data manager */
-        JDataEntry myRepEntry = theDataMgr.new JDataEntry("SvnRepository");
+        ViewerEntry myRepEntry = theDataMgr.new ViewerEntry("SvnRepository");
         myRepEntry.addAsRootChild();
         theRepository = pData.getRepository();
         myRepEntry.setObject(theRepository);
         myRepEntry.setFocus();
 
         /* Declare WorkingCopySet to data manager */
-        JDataEntry mySetEntry = theDataMgr.new JDataEntry("WorkingSet");
+        ViewerEntry mySetEntry = theDataMgr.new ViewerEntry("WorkingSet");
         mySetEntry.addAsRootChild();
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
 
         /* Declare Extract Plans to data manager */
-        JDataEntry myPlanEntry = theDataMgr.new JDataEntry("ExtractPlans");
+        ViewerEntry myPlanEntry = theDataMgr.new ViewerEntry("ExtractPlans");
         myPlanEntry.addAsRootChild();
         pData.declareExtractPlans(theDataMgr, myPlanEntry);
 
@@ -381,7 +381,7 @@ public final class JSvnManager {
         /* If we have an error */
         JOceanusException myError = pData.getError();
         if (myError != null) {
-            JDataEntry myErrorEntry = theDataMgr.new JDataEntry("Error");
+            ViewerEntry myErrorEntry = theDataMgr.new ViewerEntry("Error");
             myErrorEntry.addAsRootChild();
             myErrorEntry.setObject(myError);
             myErrorEntry.setFocus();
@@ -394,7 +394,7 @@ public final class JSvnManager {
      */
     protected void setGitData(final CreateGitRepo pGit) {
         /* Declare repository to data manager */
-        JDataEntry myRepEntry = theDataMgr.new JDataEntry("GitRepo");
+        ViewerEntry myRepEntry = theDataMgr.new ViewerEntry("GitRepo");
         myRepEntry.addAsRootChild();
         GitRepository myRepo = pGit.getGitRepo();
         myRepEntry.setObject(myRepo);

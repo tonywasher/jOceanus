@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -53,8 +54,10 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -64,7 +67,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * @author Tony Washer
  */
 public class SpotPricesSelect
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -104,6 +108,11 @@ public class SpotPricesSelect
      * Text for Previous toolTip.
      */
     private static final String NLS_PREVTIP = MoneyWiseUIControlResource.SPOTPRICE_PREV.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The data view.
@@ -168,6 +177,9 @@ public class SpotPricesSelect
         /* Store table and view details */
         theView = pView;
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create Labels */
         JLabel myDate = new JLabel(NLS_DATE);
         JLabel myPort = new JLabel(NLS_PORT);
@@ -220,6 +232,11 @@ public class SpotPricesSelect
 
         /* Add the listener for item changes */
         new SpotPricesListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -396,13 +413,13 @@ public class SpotPricesSelect
             if (theNext.equals(o)) {
                 /* Set next and notify changes */
                 theState.setNext();
-                fireStateChanged();
+                theEventManager.fireStateChanged();
 
                 /* If this event relates to the previous button */
             } else if (thePrev.equals(o)) {
                 /* Set previous and notify changes */
                 theState.setPrev();
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
         }
 
@@ -413,14 +430,14 @@ public class SpotPricesSelect
             /* if event relates to the Date button */
             if (theDateButton.equals(o)
                 && (theState.setDate(theDateButton))) {
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
 
             /* if event relates to the Portfolio button */
             if (thePortButton.equals(o)
                 && (theState.setPortfolio(thePortButton.getValue()))) {
                 theState.applyState();
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
         }
 
@@ -437,7 +454,7 @@ public class SpotPricesSelect
             if (theShowClosed.equals(o)) {
                 /* Note the new criteria and re-build lists */
                 doShowClosed = theShowClosed.isSelected();
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
         }
 

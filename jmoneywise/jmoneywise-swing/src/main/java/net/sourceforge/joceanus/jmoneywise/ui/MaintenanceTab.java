@@ -24,9 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -59,11 +58,14 @@ import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
 
 /**
@@ -71,7 +73,8 @@ import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
  * @author Tony Washer
  */
 public class MaintenanceTab
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * The serial Id.
      */
@@ -101,6 +104,11 @@ public class MaintenanceTab
      * Static tab title.
      */
     private static final String TITLE_STATIC = MoneyWiseUIResource.MAINTENANCE_STATIC.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The Data View.
@@ -150,6 +158,9 @@ public class MaintenanceTab
         /* Store details */
         theView = pTop.getView();
         theParent = pTop;
+
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
@@ -205,6 +216,11 @@ public class MaintenanceTab
 
         /* Create a listener */
         new MaintenanceListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -314,9 +330,9 @@ public class MaintenanceTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    protected void selectMaintenance(final ActionDetailEvent pEvent) {
+    protected void selectMaintenance(final JOceanusActionEvent pEvent) {
         /* Switch on the subId */
-        switch (pEvent.getSubId()) {
+        switch (pEvent.getActionId()) {
         /* View the requested account */
             case MainTab.ACTION_VIEWACCOUNT:
                 /* Select the requested account */
@@ -480,7 +496,7 @@ public class MaintenanceTab
      * The listener class.
      */
     private final class MaintenanceListener
-            implements ChangeListener, ActionListener, JOceanusChangeEventListener {
+            implements ChangeListener, JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * View Registration.
          */
@@ -498,17 +514,23 @@ public class MaintenanceTab
             /* Register listeners */
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
 
+            /* Handle sub-panels */
+            JOceanusEventRegistrar myRegistrar = theAccountTab.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theCategoryTab.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theTaxYearTab.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theStatic.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            thePreferences.getEventRegistrar().addChangeListener(this);
+
             /* Listen to swing events */
             theTabs.addChangeListener(this);
-            theAccountTab.addChangeListener(this);
-            theAccountTab.addActionListener(this);
-            theCategoryTab.addChangeListener(this);
-            theCategoryTab.addActionListener(this);
-            theTaxYearTab.addChangeListener(this);
-            theTaxYearTab.addActionListener(this);
-            theStatic.addChangeListener(this);
-            theStatic.addActionListener(this);
-            thePreferences.addChangeListener(this);
         }
 
         @Override
@@ -522,6 +544,11 @@ public class MaintenanceTab
 
                 /* Update visibility */
                 setVisibility();
+
+                /* Don't set visibility if called from refresh */
+            } else if (!refreshing) {
+                /* Set the visibility */
+                setVisibility();
             }
         }
 
@@ -533,37 +560,28 @@ public class MaintenanceTab
             if (theTabs.equals(o)) {
                 /* Determine the focus */
                 determineFocus();
-
-                /* Don't set visibility if called from refresh */
-            } else if (!refreshing) {
-                /* Set the visibility */
-                setVisibility();
             }
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If this is an ActionDetailEvent */
-            if (e instanceof ActionDetailEvent) {
-                /* Access event and obtain details */
-                ActionDetailEvent evt = (ActionDetailEvent) e;
-                switch (evt.getSubId()) {
-                /* Pass through the event */
-                    case MainTab.ACTION_VIEWSTATEMENT:
-                        cascadeActionEvent(evt);
-                        break;
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* else handle or cascade */
+            switch (pEvent.getActionId()) {
+            /* Pass through the event */
+                case MainTab.ACTION_VIEWSTATEMENT:
+                    theEventManager.cascadeActionEvent(pEvent);
+                    break;
 
-                    /* Access maintenance */
-                    case MainTab.ACTION_VIEWACCOUNT:
-                    case MainTab.ACTION_VIEWTAXYEAR:
-                    case MainTab.ACTION_VIEWCATEGORY:
-                    case MainTab.ACTION_VIEWTAG:
-                    case MainTab.ACTION_VIEWSTATIC:
-                        selectMaintenance(evt);
-                        break;
-                    default:
-                        break;
-                }
+                /* Access maintenance */
+                case MainTab.ACTION_VIEWACCOUNT:
+                case MainTab.ACTION_VIEWTAXYEAR:
+                case MainTab.ACTION_VIEWCATEGORY:
+                case MainTab.ACTION_VIEWTAG:
+                case MainTab.ACTION_VIEWSTATIC:
+                    selectMaintenance(pEvent);
+                    break;
+                default:
+                    break;
             }
         }
     }

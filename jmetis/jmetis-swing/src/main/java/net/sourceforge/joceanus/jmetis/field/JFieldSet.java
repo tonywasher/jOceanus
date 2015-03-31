@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
-import java.awt.event.ActionEvent;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +42,9 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
@@ -53,7 +54,12 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
  * @param <T> the Data Item type
  */
 public class JFieldSet<T extends JFieldSetItem>
-        extends JEventObject {
+        implements JOceanusEventProvider {
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
+
     /**
      * The map of fields.
      */
@@ -83,8 +89,16 @@ public class JFieldSet<T extends JFieldSetItem>
         theRenderMgr = pRenderMgr;
         theFormatter = pRenderMgr.getDataFormatter();
 
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the map */
         theMap = new HashMap<JDataField, JFieldElement<T>>();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -311,7 +325,7 @@ public class JFieldSet<T extends JFieldSetItem>
             FieldUpdate myUpdate = new FieldUpdate(pField, pNewValue);
 
             /* Fire the notification */
-            fireActionEvent(ActionEvent.ACTION_PERFORMED, myUpdate);
+            theEventManager.fireActionEvent(myUpdate);
         }
     }
 

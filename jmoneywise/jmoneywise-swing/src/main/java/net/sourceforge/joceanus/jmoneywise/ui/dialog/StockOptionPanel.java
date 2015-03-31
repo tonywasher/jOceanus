@@ -32,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -467,7 +465,7 @@ public class StockOptionPanel
      * Options Listener.
      */
     private final class StockOptionListener
-            implements ChangeListener, JOceanusChangeEventListener {
+            implements JOceanusChangeEventListener {
         /**
          * The Holding Menu Builder.
          */
@@ -479,13 +477,18 @@ public class StockOptionPanel
         private final JOceanusChangeRegistration theHoldingMenuReg;
 
         /**
+         * Vests panel Registration.
+         */
+        private final JOceanusChangeRegistration theVestsReg;
+
+        /**
          * Constructor.
          */
         private StockOptionListener() {
             /* Access the MenuBuilders */
             theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
             theHoldingMenuReg = theHoldingMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theVests.addChangeListener(this);
+            theVestsReg = theVests.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
@@ -493,14 +496,7 @@ public class StockOptionPanel
             /* Handle menu type */
             if (theHoldingMenuReg.isRelevant(pEvent)) {
                 buildHoldingMenu(theHoldingMenuBuilder, getItem());
-            }
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            if (theVests.equals(o)) {
+            } else if (theVestsReg.isRelevant(pEvent)) {
                 updateActions();
                 fireStateChanged();
             }

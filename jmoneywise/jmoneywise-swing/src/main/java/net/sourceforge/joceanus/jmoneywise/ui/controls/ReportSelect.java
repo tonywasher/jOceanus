@@ -33,13 +33,16 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -48,7 +51,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * @author Tony Washer
  */
 public class ReportSelect
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -58,11 +62,6 @@ public class ReportSelect
      * Strut width.
      */
     private static final int STRUT_WIDTH = 10;
-
-    /**
-     * Print operation string.
-     */
-    private static final String ACTION_PRINT = "PrintRequest";
 
     /**
      * Text for Report Label.
@@ -78,6 +77,11 @@ public class ReportSelect
      * Text for Selection Title.
      */
     private static final String NLS_TITLE = MoneyWiseUIControlResource.REPORT_TITLE.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * Reports scroll button.
@@ -126,6 +130,9 @@ public class ReportSelect
         /* Create the print button */
         thePrintButton = new JButton(NLS_PRINT);
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the selection panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
@@ -145,10 +152,12 @@ public class ReportSelect
         theState.setType(ReportType.NETWORTH);
 
         /* Add the listener for item changes */
-        ReportListener myListener = new ReportListener();
-        thePrintButton.addActionListener(myListener);
-        theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
+        new ReportListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -234,6 +243,15 @@ public class ReportSelect
          */
         private boolean isActive = false;
 
+        /**
+         * Constructor.
+         */
+        private ReportListener() {
+            thePrintButton.addActionListener(this);
+            theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, this);
+        }
+
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -241,7 +259,7 @@ public class ReportSelect
             /* If this event relates to the Print button */
             if (thePrintButton.equals(o)) {
                 /* Request a print operation */
-                fireActionPerformed(ACTION_PRINT);
+                theEventManager.fireActionEvent();
             }
         }
 
@@ -257,7 +275,7 @@ public class ReportSelect
                 /* Look for a changed report type */
                 if (theState.setType(theReportButton.getValue())) {
                     /* Notify that the state has changed */
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
 
                 /* Clear active flag */
@@ -269,7 +287,7 @@ public class ReportSelect
                 && theState.setRange(theRangeSelect)
                 && !isActive) {
                 /* Notify that the state has changed */
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
         }
     }

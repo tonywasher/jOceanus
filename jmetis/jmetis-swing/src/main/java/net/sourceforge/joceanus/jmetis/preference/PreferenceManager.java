@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,9 @@ import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author Tony Washer
  */
 public class PreferenceManager
-        extends JEventObject
-        implements JDataContents {
+        implements JDataContents, JOceanusEventProvider {
     /**
      * Report fields.
      */
@@ -57,6 +57,11 @@ public class PreferenceManager
      * Load error text.
      */
     private static final String ERROR_LOAD = "Failed to load preference Set";
+
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager = new JOceanusEventManager();
 
     /**
      * Map of preferenceSets.
@@ -82,6 +87,11 @@ public class PreferenceManager
         return (mySet == null)
                               ? JDataFieldValue.UNKNOWN
                               : mySet;
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -117,7 +127,8 @@ public class PreferenceManager
                 theFields.declareLocalField(myName);
 
                 /* Fire the action performed */
-                fireActionEvent(ActionEvent.ACTION_PERFORMED, mySet);
+                theEventManager.fireActionEvent(mySet);
+
             } catch (IllegalAccessException e) {
                 LOGGER.error(ERROR_LOAD, e);
                 mySet = null;

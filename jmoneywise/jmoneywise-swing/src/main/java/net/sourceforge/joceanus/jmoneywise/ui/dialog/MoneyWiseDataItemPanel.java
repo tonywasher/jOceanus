@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,7 +42,7 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.ui.DataItemPanel;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
@@ -66,7 +65,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     /**
      * The GoToMenuBuilder.
      */
-    private JScrollMenuBuilder<ActionDetailEvent> theGoToBuilder;
+    private JScrollMenuBuilder<JOceanusActionEvent> theGoToBuilder;
 
     /**
      * The DataItem GoToMenuMap.
@@ -93,7 +92,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     }
 
     @Override
-    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder) {
+    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<JOceanusActionEvent> pBuilder) {
         theGoToBuilder = pBuilder;
     }
 
@@ -208,7 +207,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             }
 
             /* Build the item */
-            ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, myItem);
+            JOceanusActionEvent myEvent = createActionEvent(myId, myItem);
             theGoToBuilder.addItem(myMenu, myEvent, myName);
         }
     }
@@ -237,7 +236,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             int myId = MainTab.ACTION_VIEWSTATEMENT;
 
             /* Build the item */
-            ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, myStatement);
+            JOceanusActionEvent myEvent = createActionEvent(myId, myStatement);
             theGoToBuilder.addItem(myMenu, myEvent, myFilter.getName());
         }
     }

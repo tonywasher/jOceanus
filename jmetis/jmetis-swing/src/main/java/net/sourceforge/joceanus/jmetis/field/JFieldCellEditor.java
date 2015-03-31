@@ -61,8 +61,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventCellEditor;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
@@ -91,12 +92,17 @@ public final class JFieldCellEditor {
      * String Cell Editor.
      */
     public static class StringCellEditor
-            extends JEventCellEditor
-            implements TableCellEditor {
+            extends AbstractCellEditor
+            implements TableCellEditor, JOceanusEventProvider {
         /**
          * Serial Id.
          */
         private static final long serialVersionUID = 2172483058466364800L;
+
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
 
         /**
          * The text field.
@@ -114,6 +120,12 @@ public final class JFieldCellEditor {
         protected StringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
+            theEventManager = new JOceanusEventManager();
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -136,8 +148,9 @@ public final class JFieldCellEditor {
             thePoint = new Point(myCol, myRow);
 
             /* Enable updates to cellEditor */
-            fireStateChanged();
+            theEventManager.fireStateChanged();
 
+            /* Set the text */
             theField.setText(((pValue == null)
                     || (JFieldValue.ERROR.equals(pValue)))
                                                           ? STR_EMPTY
@@ -308,7 +321,7 @@ public final class JFieldCellEditor {
      * @param <T> the object type
      */
     public static class IconButtonCellEditor<T>
-            extends JEventCellEditor
+            extends AbstractCellEditor
             implements TableCellEditor {
         /**
          * Serial Id.
@@ -514,8 +527,8 @@ public final class JFieldCellEditor {
      * @param <T> the object type
      */
     public static class ScrollButtonCellEditor<T>
-            extends JEventCellEditor
-            implements TableCellEditor {
+            extends AbstractCellEditor
+            implements TableCellEditor, JOceanusEventProvider {
         /**
          * Serial Id.
          */
@@ -535,6 +548,11 @@ public final class JFieldCellEditor {
          * The menu Builder.
          */
         private final transient JScrollMenuBuilder<T> theMenuBuilder;
+
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -586,6 +604,9 @@ public final class JFieldCellEditor {
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theButtonListener);
             theMenuBuilder.getEventRegistrar().addChangeListener(theButtonListener);
+
+            /* Create event manager */
+            theEventManager = new JOceanusEventManager();
         }
 
         /**
@@ -594,6 +615,11 @@ public final class JFieldCellEditor {
          */
         public JScrollMenuBuilder<T> getMenuBuilder() {
             return theMenuBuilder;
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -667,7 +693,7 @@ public final class JFieldCellEditor {
             @Override
             public void processChangeEvent(final JOceanusChangeEvent pEvent) {
                 if (theMenuBuilder.buildingMenu()) {
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 } else {
                     cancelCellEditing();
                 }
@@ -719,8 +745,8 @@ public final class JFieldCellEditor {
      * @param <T> the object type
      */
     public static class ScrollListButtonCellEditor<T>
-            extends JEventCellEditor
-            implements TableCellEditor {
+            extends AbstractCellEditor
+            implements TableCellEditor, JOceanusEventProvider {
         /**
          * Serial Id.
          */
@@ -735,6 +761,11 @@ public final class JFieldCellEditor {
          * The menu Builder.
          */
         private final transient JScrollListMenuBuilder<T> theMenuBuilder;
+
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -777,6 +808,9 @@ public final class JFieldCellEditor {
             JOceanusEventRegistrar myRegistrar = theMenuBuilder.getEventRegistrar();
             myRegistrar.addItemListener(theButtonListener);
             myRegistrar.addChangeListener(theButtonListener);
+
+            /* Create event manager */
+            theEventManager = new JOceanusEventManager();
         }
 
         /**
@@ -785,6 +819,11 @@ public final class JFieldCellEditor {
          */
         public JScrollListMenuBuilder<T> getMenuBuilder() {
             return theMenuBuilder;
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -849,7 +888,7 @@ public final class JFieldCellEditor {
                 implements JOceanusItemEventListener, JOceanusChangeEventListener {
             @Override
             public void processChangeEvent(final JOceanusChangeEvent pEvent) {
-                fireStateChanged();
+                theEventManager.fireStateChanged();
             }
 
             @Override
@@ -913,8 +952,8 @@ public final class JFieldCellEditor {
      * @param <T> the object type
      */
     public static class ComboBoxCellEditor<T>
-            extends JEventCellEditor
-            implements TableCellEditor {
+            extends AbstractCellEditor
+            implements TableCellEditor, JOceanusEventProvider {
         /**
          * Serial Id.
          */
@@ -929,6 +968,11 @@ public final class JFieldCellEditor {
          * The class of the object.
          */
         private final Class<T> theClass;
+
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -955,6 +999,9 @@ public final class JFieldCellEditor {
 
             /* Create button and menu builder */
             theCombo = new JComboBox<T>();
+
+            /* Create event manager */
+            theEventManager = new JOceanusEventManager();
         }
 
         /**
@@ -963,6 +1010,11 @@ public final class JFieldCellEditor {
          */
         public JComboBox<T> getComboBox() {
             return theCombo;
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -985,7 +1037,7 @@ public final class JFieldCellEditor {
             thePoint = new Point(myCol, myRow);
 
             /* Enable updates to cellEditor */
-            fireStateChanged();
+            theEventManager.fireStateChanged();
 
             /* Store current value */
             T myValue = theClass.cast(pValue);
@@ -1158,8 +1210,8 @@ public final class JFieldCellEditor {
      * DateDay Cell Editor.
      */
     public static class DateDayCellEditor
-            extends JEventCellEditor
-            implements TableCellEditor, JDateEditor {
+            extends AbstractCellEditor
+            implements TableCellEditor, JDateEditor, JOceanusEventProvider {
         /**
          * Serial Id.
          */
@@ -1169,6 +1221,11 @@ public final class JFieldCellEditor {
          * The Button.
          */
         private transient JDateDayButton theButton;
+
+        /**
+         * The Event Manager.
+         */
+        private final JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -1183,6 +1240,14 @@ public final class JFieldCellEditor {
             /* Create a new button */
             theButton = new JDateDayButton(pFormatter);
             theButton.setEditor(this);
+
+            /* Create event manager */
+            theEventManager = new JOceanusEventManager();
+        }
+
+        @Override
+        public JOceanusEventRegistrar getEventRegistrar() {
+            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -1213,7 +1278,7 @@ public final class JFieldCellEditor {
             thePoint = new Point(myCol, myRow);
 
             /* Enable updates to cellEditor */
-            fireStateChanged();
+            theEventManager.fireStateChanged();
 
             /* If the value is the date */
             if (pValue instanceof JDateDay) {

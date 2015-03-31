@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -49,17 +47,22 @@ import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldEnum;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -70,7 +73,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * @param <E> the data type enum class
  */
 public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -100,6 +104,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Text for Show Disabled.
      */
     private static final String NLS_DISABLED = PrometheusUIResource.STATIC_PROMPT_DISABLED.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The data control.
@@ -164,7 +173,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The data entry.
      */
-    private final transient JDataEntry theDataEntry;
+    private final transient ViewerEntry theDataEntry;
 
     /**
      * The selection listener.
@@ -181,13 +190,16 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /* Store control */
         theControl = pControl;
 
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Build the Update set */
         theUpdateSet = new UpdateSet<E>(pControl, pClass);
 
         /* Create the top level debug entry for this view */
         ViewerManager myDataMgr = theControl.getDataMgr();
-        JDataEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        ViewerEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 
@@ -260,6 +272,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theActionButtons.setVisible(false);
     }
 
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
     /**
      * Obtain the updateList.
      * @return the viewSet
@@ -282,7 +299,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theError, pItemType, pListClass);
 
         /* Add the listener for the panel */
-        myPanel.addChangeListener(theListener);
+        myPanel.getEventRegistrar().addChangeListener(theListener);
 
         /* Access list name */
         String myName = pItemType.getFieldName();
@@ -445,23 +462,33 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         showNewButton();
 
         /* Alert listeners that there has been a change */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
      * Listener class.
      */
     private final class StaticListener
-            implements PropertyChangeListener, ChangeListener, ActionListener, ItemListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, ChangeListener, ItemListener, JOceanusChangeEventListener, JOceanusActionEventListener {
         /**
          * Data menu builder.
          */
         private final JScrollMenuBuilder<StaticDataTable<?, ?, ?, E>> theDataMenuBuilder;
 
         /**
-         * AutoPayeeMenu Registration.
+         * DataMenu Registration.
          */
         private final JOceanusChangeRegistration theDataMenuReg;
+
+        /**
+         * ErrorPanel Registration.
+         */
+        private final JOceanusChangeRegistration theErrorReg;
+
+        /**
+         * ActionPanel Registration.
+         */
+        private final JOceanusActionRegistration theActionReg;
 
         /**
          * Constructor.
@@ -470,11 +497,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             /* Access builder */
             theDataMenuBuilder = theSelectButton.getMenuBuilder();
             theDataMenuReg = theDataMenuBuilder.getEventRegistrar().addChangeListener(this);
+            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
+            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
 
             /* Add swing listeners */
             theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theError.addChangeListener(this);
-            theActionButtons.addActionListener(this);
             theDisabledCheckBox.addItemListener(this);
         }
 
@@ -487,6 +514,20 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
                 /* build data menu */
                 buildDataMenu();
+
+                /* Handle error panel */
+            } else if (theErrorReg.isRelevant(pEvent)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelectButton.setVisible(!isError);
+
+                /* Lock scroll-able area */
+                theTableCard.setEnabled(!isError);
+
+                /* Lock Action Buttons */
+                theActionButtons.setEnabled(!isError);
             }
         }
 
@@ -525,40 +566,22 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             /* Access reporting object */
             Object o = evt.getSource();
 
-            /* If this is the error panel reporting */
-            if (theError.equals(o)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelectButton.setVisible(!isError);
-
-                /* Lock scroll-able area */
-                theTableCard.setEnabled(!isError);
-
-                /* Lock Action Buttons */
-                theActionButtons.setEnabled(!isError);
-
-                /* if this is one of the static data panels */
-            } else if (o instanceof StaticDataTable) {
+            /* if this is one of the static data panels */
+            if (o instanceof StaticDataTable) {
                 /* Adjust visibility */
                 setVisibility();
             }
         }
 
         @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            /* Access reporting object and command */
-            Object o = pEvent.getSource();
-            String myCmd = pEvent.getActionCommand();
-
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
             /* if this is the action buttons reporting */
-            if (theActionButtons.equals(o)) {
+            if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
                 cancelEditing();
 
                 /* Process the command */
-                theUpdateSet.processCommand(myCmd, theError);
+                theUpdateSet.processCommand(pEvent.getActionId(), theError);
 
                 /* Adjust visibility */
                 setVisibility();

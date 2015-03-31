@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -34,12 +32,10 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
@@ -53,8 +49,15 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -63,7 +66,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * Top-level panel for Account/EventCategories.
  */
 public class CategoryPanel
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -93,6 +97,11 @@ public class CategoryPanel
      * Text for Selection Prompt.
      */
     private static final String NLS_DATA = MoneyWiseUIResource.CATEGORY_PROMPT_SELECT.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The Data View.
@@ -162,7 +171,7 @@ public class CategoryPanel
     /**
      * The data entry.
      */
-    private final transient JDataEntry theDataEntry;
+    private final transient ViewerEntry theDataEntry;
 
     /**
      * The action buttons panel.
@@ -187,13 +196,16 @@ public class CategoryPanel
         /* Store details */
         theView = pView;
 
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Build the Update set */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
 
         /* Create the top level debug entry for this view */
         ViewerManager myDataMgr = pView.getDataMgr();
-        JDataEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        ViewerEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 
@@ -271,24 +283,16 @@ public class CategoryPanel
         add(Box.createVerticalGlue());
         add(theCardPanel);
 
-        /* Create the listener */
-        CategoryListener myListener = new CategoryListener();
-        theError.addChangeListener(myListener);
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theDepositTable.addChangeListener(myListener);
-        theDepositTable.addActionListener(myListener);
-        theCashTable.addChangeListener(myListener);
-        theCashTable.addActionListener(myListener);
-        theLoanTable.addChangeListener(myListener);
-        theLoanTable.addActionListener(myListener);
-        theEventTable.addChangeListener(myListener);
-        theEventTable.addActionListener(myListener);
-        theTagTable.addChangeListener(myListener);
-        theTagTable.addActionListener(myListener);
-        theActionButtons.addActionListener(myListener);
-
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
+
+        /* Create the listener */
+        new CategoryListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -527,7 +531,7 @@ public class CategoryPanel
         theFilterCardPanel.setEnabled(!isItemEditing);
 
         /* Alert listeners that there has been a change */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -546,39 +550,72 @@ public class CategoryPanel
      * Listener.
      */
     private final class CategoryListener
-            implements ActionListener, ChangeListener, PropertyChangeListener {
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            Object o = pEvent.getSource();
+            implements JOceanusActionEventListener, JOceanusChangeEventListener, PropertyChangeListener {
+        /**
+         * Error Registration.
+         */
+        private final JOceanusChangeRegistration theErrorReg;
 
+        /**
+         * Action Registration.
+         */
+        private final JOceanusActionRegistration theActionReg;
+
+        /**
+         * Constructor.
+         */
+        private CategoryListener() {
+            /* Handle interesting items */
+            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
+            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
+            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+
+            /* Handle sub-panels */
+            JOceanusEventRegistrar myRegistrar = theDepositTable.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theCashTable.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theLoanTable.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theEventTable.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theTagTable.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+        }
+
+        @Override
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
             /* if this is the action buttons reporting */
-            if (theActionButtons.equals(o)) {
+            if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
                 cancelEditing();
 
                 /* Process the command */
-                String myCmd = pEvent.getActionCommand();
-                theUpdateSet.processCommand(myCmd, theError);
+                theUpdateSet.processCommand(pEvent.getActionId(), theError);
 
-                /* If this is an ActionDetailEvent */
-            } else if (pEvent instanceof ActionDetailEvent) {
+                /* else handle or cascade */
+            } else {
                 /* Access event and obtain details */
-                ActionDetailEvent evt = (ActionDetailEvent) pEvent;
-                switch (evt.getSubId()) {
+                switch (pEvent.getActionId()) {
                 /* Pass through the event */
                     case MainTab.ACTION_VIEWSTATEMENT:
                     case MainTab.ACTION_VIEWACCOUNT:
                     case MainTab.ACTION_VIEWTAXYEAR:
                     case MainTab.ACTION_VIEWSTATIC:
-                        cascadeActionEvent(evt);
+                        theEventManager.cascadeActionEvent(pEvent);
                         break;
 
                     /* Access subPanels */
                     case MainTab.ACTION_VIEWCATEGORY:
-                        selectCategory(evt.getDetails());
+                        selectCategory(pEvent.getDetails());
                         break;
                     case MainTab.ACTION_VIEWTAG:
-                        selectTag(evt.getDetails());
+                        selectTag(pEvent.getDetails());
                         break;
                     default:
                         break;
@@ -587,12 +624,9 @@ public class CategoryPanel
         }
 
         @Override
-        public void stateChanged(final ChangeEvent e) {
-            /* Access reporting object */
-            Object o = e.getSource();
-
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
             /* If this is the error panel reporting */
-            if (theError.equals(o)) {
+            if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 

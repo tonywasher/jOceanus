@@ -33,6 +33,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -48,8 +49,10 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -58,8 +61,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
  * Loan Analysis Selection.
  */
 public class LoanAnalysisSelect
-        extends JEventPanel
-        implements AnalysisFilterSelection {
+        extends JPanel
+        implements AnalysisFilterSelection, JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -74,6 +77,11 @@ public class LoanAnalysisSelect
      * Text for Loan Label.
      */
     private static final String NLS_LOAN = MoneyWiseDataType.LOAN.getItemName();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The active category bucket list.
@@ -115,6 +123,9 @@ public class LoanAnalysisSelect
         /* Create the category button */
         theCatButton = new JScrollButton<LoanCategory>();
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
         JLabel myLoanLabel = new JLabel(NLS_LOAN + JFieldElement.STR_COLON);
@@ -137,6 +148,11 @@ public class LoanAnalysisSelect
 
         /* Create the listener */
         new LoanListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -394,16 +410,15 @@ public class LoanAnalysisSelect
                 /* Select the new category */
                 if (theState.setCategory(theCatButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
-            }
 
-            /* If this is the loan button */
-            if (theLoanButton.equals(o)) {
+                /* If this is the loan button */
+            } else if (theLoanButton.equals(o)) {
                 /* Select the new loan */
                 if (theState.setLoan(theLoanButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
             }
         }

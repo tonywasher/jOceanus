@@ -22,16 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.JPanel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
@@ -41,7 +38,7 @@ import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -62,8 +59,11 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableScroll;
 
 import org.slf4j.Logger;
@@ -74,7 +74,8 @@ import org.w3c.dom.Document;
  * Report panel.
  */
 public class ReportTab
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -89,6 +90,11 @@ public class ReportTab
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportTab.class);
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The Data View.
@@ -118,7 +124,7 @@ public class ReportTab
     /**
      * The Spot Analysis Entry.
      */
-    private final transient JDataEntry theSpotEntry;
+    private final transient ViewerEntry theSpotEntry;
 
     /**
      * The Error Panel.
@@ -144,12 +150,15 @@ public class ReportTab
         /* Store the view */
         theView = pView;
 
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the top level debug entry for this view */
         ViewerManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        JDataEntry myDataReport = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        ViewerEntry myDataReport = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
         myDataReport.addAsChildOf(mySection);
-        theSpotEntry = myDataMgr.new JDataEntry(DataControl.DATA_ANALYSIS);
+        theSpotEntry = myDataMgr.new ViewerEntry(DataControl.DATA_ANALYSIS);
         theSpotEntry.addAsChildOf(myDataReport);
         theSpotEntry.hideEntry();
 
@@ -209,6 +218,11 @@ public class ReportTab
 
         /* Create listener */
         new ReportListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -331,7 +345,7 @@ public class ReportTab
      */
     private final class ReportListener
             extends MouseAdapter
-            implements ChangeListener, ActionListener, JOceanusChangeEventListener, JOceanusActionEventListener {
+            implements JOceanusChangeEventListener, JOceanusActionEventListener {
         /**
          * View Registration.
          */
@@ -340,21 +354,37 @@ public class ReportTab
         /**
          * Manager Registration.
          */
-        private final JOceanusChangeRegistration theManagerReg;
+        private final JOceanusActionRegistration theManagerReg;
+
+        /**
+         * Error Registration.
+         */
+        private final JOceanusChangeRegistration theErrorReg;
+
+        /**
+         * Select Registration.
+         */
+        private final JOceanusChangeRegistration theSelectReg;
+
+        /**
+         * Print Registration.
+         */
+        private final JOceanusActionRegistration thePrintReg;
 
         /**
          * Constructor.
          */
         private ReportListener() {
             /* Add swing listeners */
-            theError.addChangeListener(this);
-            theSelect.addChangeListener(this);
-            theSelect.addActionListener(this);
             theEditor.addMouseListener(this);
 
             /* Listen to correct events */
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
-            theManagerReg = theManager.getEventRegistrar().addChangeListener(this);
+            theManagerReg = theManager.getEventRegistrar().addActionListener(this);
+            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
+            JOceanusEventRegistrar myRegistrar = theSelect.getEventRegistrar();
+            theSelectReg = myRegistrar.addChangeListener(this);
+            thePrintReg = myRegistrar.addActionListener(this);
         }
 
         @Override
@@ -413,30 +443,9 @@ public class ReportTab
             if (theViewReg.isRelevant(pEvent)) {
                 /* Refresh Data */
                 refreshData();
-            }
-        }
 
-        @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
-            /* If this is the report manager */
-            if (theManagerReg.isRelevant(pEvent)
-                && (pEvent.getActionId() == ReportManager.ACTION_VIEWFILTER)) {
-                /* Create the details of the report */
-                JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
-                AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
-                StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
-
-                /* Request the action */
-                fireActionEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement);
-            }
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this is the error panel */
-            if (theError.equals(o)) {
+                /* else if this is the error panel */
+            } else if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 
@@ -446,8 +455,8 @@ public class ReportTab
                 /* Lock scroll area */
                 theScroll.setEnabled(!isError);
 
-                /* If this is the select panel */
-            } else if (theSelect.equals(o)) {
+                /* else if this is the selection panel */
+            } else if (theSelectReg.isRelevant(pEvent)) {
                 /* Protect against exceptions */
                 try {
                     /* build the report */
@@ -471,11 +480,19 @@ public class ReportTab
         }
 
         @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* If this is the report manager */
+            if (theManagerReg.isRelevant(pEvent)) {
+                /* Create the details of the report */
+                JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
+                AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
+                StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 
-            /* If this is the selection panel */
-            if (theSelect.equals(o)) {
+                /* Request the action */
+                theEventManager.fireActionEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement);
+
+                /* If this is the print request */
+            } else if (thePrintReg.isRelevant(pEvent)) {
                 /* Print the report */
                 printIt();
             }

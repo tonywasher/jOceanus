@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -39,11 +37,15 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -53,7 +55,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * @param <E> the data type enum class
  */
 public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -78,6 +81,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Field Height.
      */
     protected static final int FIELD_HEIGHT = 20;
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The DataFormatter.
@@ -152,6 +160,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theUpdateSet = pUpdateSet;
         theError = pError;
 
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Access the formatter */
         theFormatter = pFieldMgr.getDataFormatter();
 
@@ -168,6 +179,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
         /* Create listener */
         new FieldListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -342,7 +358,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         setEditable(true);
 
         /* Note status has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -474,7 +490,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         setEditable(false);
 
         /* Note status has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -516,7 +532,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theSelectedItem = theItem;
 
         /* Note status has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -528,7 +544,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theSelectedItem = theItem;
 
         /* Note status has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -542,21 +558,21 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theUpdateSet.incrementVersion();
 
         /* Note status has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
      * Declare the GoTo menu Builder.
      * @param pBuilder the menu builder
      */
-    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder);
+    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<JOceanusActionEvent> pBuilder);
 
     /**
      * Process goTo request.
      * @param pEvent the goTo request event
      */
-    protected void processGoToRequest(final ActionDetailEvent pEvent) {
-        cascadeActionEvent(pEvent);
+    protected void processGoToRequest(final JOceanusActionEvent pEvent) {
+        theEventManager.cascadeActionEvent(pEvent);
     }
 
     /**
@@ -565,21 +581,44 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     protected abstract void buildGoToMenu();
 
     /**
+     * Create an action event.
+     * @param pActionId the actionId of the event
+     * @param pDetails the details of the event
+     * @return the action event
+     */
+    protected JOceanusActionEvent createActionEvent(final int pActionId,
+                                                    final Object pDetails) {
+        return theEventManager.createActionEvent(pActionId, pDetails);
+    }
+
+    /**
+     * fire a state changed event.
+     */
+    protected void fireStateChanged() {
+        theEventManager.fireStateChanged();
+    }
+
+    /**
      * FieldListener class.
      */
     private final class FieldListener
-            implements ActionListener, JOceanusChangeEventListener {
+            implements JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * UpdateSet Registration.
          */
         private final JOceanusChangeRegistration theUpdateSetReg;
 
         /**
+         * FieldSet Registration.
+         */
+        private final JOceanusActionRegistration theFieldSetReg;
+
+        /**
          * Constructor.
          */
         private FieldListener() {
             /* Listen to correct events */
-            theFieldSet.addActionListener(this);
+            theFieldSetReg = theFieldSet.getEventRegistrar().addActionListener(this);
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
         }
 
@@ -593,18 +632,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            Object o = e.getSource();
-
-            /* If the event relates to the Field Set */
-            if ((theFieldSet.equals(o)) && (e instanceof ActionDetailEvent)) {
-                /* Access event and obtain details */
-                ActionDetailEvent evt = (ActionDetailEvent) e;
-                Object dtl = evt.getDetails();
-                if (dtl instanceof FieldUpdate) {
-                    /* Update the item */
-                    updateItem((FieldUpdate) dtl);
-                }
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* If this is a field update */
+            if (theFieldSetReg.isRelevant(pEvent)) {
+                /* Update the item */
+                FieldUpdate myUpdate = pEvent.getDetails(FieldUpdate.class);
+                updateItem(myUpdate);
             }
         }
 

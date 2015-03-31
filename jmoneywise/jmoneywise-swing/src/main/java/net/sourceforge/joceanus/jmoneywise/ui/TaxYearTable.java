@@ -24,13 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
@@ -40,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRe
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -64,10 +60,13 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -139,7 +138,7 @@ public class TaxYearTable
     /**
      * The data entry.
      */
-    private final transient JDataEntry theDataEntry;
+    private final transient ViewerEntry theDataEntry;
 
     /**
      * The Column Model.
@@ -184,8 +183,8 @@ public class TaxYearTable
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         ViewerManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 
@@ -448,11 +447,26 @@ public class TaxYearTable
      * Listener class.
      */
     private final class TaxYearListener
-            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
+            implements JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * UpdateSet Registration.
          */
         private final JOceanusChangeRegistration theUpdateSetReg;
+
+        /**
+         * Error Registration.
+         */
+        private final JOceanusChangeRegistration theErrorReg;
+
+        /**
+         * Action Registration.
+         */
+        private final JOceanusActionRegistration theActionReg;
+
+        /**
+         * Tax Panel Change Registration.
+         */
+        private final JOceanusChangeRegistration theTaxPanelReg;
 
         /**
          * Constructor.
@@ -460,12 +474,11 @@ public class TaxYearTable
         private TaxYearListener() {
             /* Register listeners */
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-
-            /* Listen to swing events */
-            theActionButtons.addActionListener(this);
-            theError.addChangeListener(this);
-            theActiveYear.addChangeListener(this);
-            theActiveYear.addActionListener(this);
+            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
+            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
+            JOceanusEventRegistrar myRegistrar = theActiveYear.getEventRegistrar();
+            theTaxPanelReg = myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
         }
 
         @Override
@@ -480,16 +493,20 @@ public class TaxYearTable
 
                 /* Adjust for changes */
                 notifyChanges();
-            }
-        }
 
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
+                /* If we are handling tax panel state */
+            } else if (theTaxPanelReg.isRelevant(pEvent)) {
+                /* Only action if we are not editing */
+                if (!theActiveYear.isEditing()) {
+                    /* handle the edit transition */
+                    theSelectionModel.handleEditTransition();
+                }
 
-            /* If this is the error panel */
-            if (theError.equals(o)) {
+                /* Note changes */
+                notifyChanges();
+
+                /* If we are handling errors */
+            } else if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 
@@ -499,40 +516,23 @@ public class TaxYearTable
                 /* Lock Action Buttons */
                 theActionButtons.setEnabled(!isError);
             }
-
-            /* If we are noting change of edit state */
-            if (theActiveYear.equals(o)) {
-                /* Only action if we are not editing */
-                if (!theActiveYear.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-            }
         }
 
         @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            /* If this event relates to the action buttons */
-            if (theActionButtons.equals(o)) {
-                /* Cancel any editing */
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            if (theActionReg.isRelevant(pEvent)) {
+                /* Cancel Editing */
                 cancelEditing();
 
                 /* Perform the command */
-                theUpdateSet.processCommand(pEvent.getActionCommand(), theError);
+                theUpdateSet.processCommand(pEvent.getActionId(), theError);
 
-                /* Notify listeners of changes */
+                /* Adjust for changes */
                 notifyChanges();
-            }
 
-            /* Handle actions */
-            if ((theActiveYear.equals(o))
-                && (pEvent instanceof ActionDetailEvent)) {
-                cascadeActionEvent((ActionDetailEvent) pEvent);
+                /* else cascade the event */
+            } else {
+                cascadeActionEvent(pEvent);
             }
         }
     }
@@ -731,21 +731,17 @@ public class TaxYearTable
          * EditorListener.
          */
         private final class EditorListener
-                implements ChangeListener {
+                implements JOceanusChangeEventListener {
             /**
              * Constructor.
              */
             private EditorListener() {
-                theRegimeEditor.addChangeListener(this);
+                theRegimeEditor.getEventRegistrar().addChangeListener(this);
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
-                Object o = pEvent.getSource();
-
-                if (theRegimeEditor.equals(o)) {
-                    buildRegimeMenu();
-                }
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+                buildRegimeMenu();
             }
 
             /**

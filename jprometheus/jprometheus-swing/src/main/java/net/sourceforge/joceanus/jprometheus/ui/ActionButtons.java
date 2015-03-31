@@ -31,9 +31,12 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 
@@ -42,7 +45,8 @@ import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState
  * @author Tony Washer
  */
 public class ActionButtons
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -57,6 +61,11 @@ public class ActionButtons
      * Text for Box Title.
      */
     private static final String NLS_TITLE = PrometheusUIResource.ACTION_TITLE_SAVE.getValue();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The update set.
@@ -95,6 +104,9 @@ public class ActionButtons
                          final boolean pHorizontal) {
         /* Record the update set */
         theUpdateSet = pUpdateSet;
+
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Create the button states */
         DefaultIconButtonState<Boolean> myCommitState = new DefaultIconButtonState<Boolean>();
@@ -154,6 +166,11 @@ public class ActionButtons
     }
 
     @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    @Override
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
         if (!bEnabled) {
@@ -202,17 +219,17 @@ public class ActionButtons
             /* If this event relates to the OK button */
             if (theCommitButton.equals(o)) {
                 /* Pass command to the table */
-                fireActionPerformed(UpdateSet.CMD_OK);
+                theEventManager.fireActionEvent(UpdateSet.CMD_OK);
 
                 /* If this event relates to the Undo button */
             } else if (theUndoButton.equals(o)) {
                 /* Pass command to the table */
-                fireActionPerformed(UpdateSet.CMD_UNDO);
+                theEventManager.fireActionEvent(UpdateSet.CMD_UNDO);
 
                 /* If this event relates to the Reset button */
             } else if (theResetButton.equals(o)) {
                 /* Pass command to the table */
-                fireActionPerformed(UpdateSet.CMD_RESET);
+                theEventManager.fireActionEvent(UpdateSet.CMD_RESET);
             }
         }
     }

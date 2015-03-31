@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.reports;
 
-import java.awt.event.ActionEvent;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,11 +59,6 @@ public class ReportManager
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
-
-    /**
-     * View Filter statement action event.
-     */
-    public static final int ACTION_VIEWFILTER = ActionEvent.ACTION_PERFORMED + 1;
 
     /**
      * The id attribute.
@@ -215,7 +209,7 @@ public class ReportManager
 
                 /* Fire Action event if necessary */
                 if (myFilter != null) {
-                    theEventManager.fireActionEvent(ACTION_VIEWFILTER, myFilter);
+                    theEventManager.fireActionEvent(myFilter);
                 }
 
                 /* Return immediately */

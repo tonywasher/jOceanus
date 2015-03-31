@@ -32,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -524,7 +522,7 @@ public class SecurityPanel
      * Security Listener.
      */
     private final class SecurityListener
-            implements ChangeListener, JOceanusChangeEventListener {
+            implements JOceanusChangeEventListener {
         /**
          * The SecurityType Menu Builder.
          */
@@ -556,6 +554,11 @@ public class SecurityPanel
         private final JOceanusChangeRegistration theCurrencyMenuReg;
 
         /**
+         * Prices panel Registration.
+         */
+        private final JOceanusChangeRegistration thePricesReg;
+
+        /**
          * Constructor.
          */
         private SecurityListener() {
@@ -566,7 +569,7 @@ public class SecurityPanel
             theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
             theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
-            thePrices.addChangeListener(this);
+            thePricesReg = thePrices.getEventRegistrar().addChangeListener(this);
         }
 
         @Override
@@ -578,14 +581,7 @@ public class SecurityPanel
                 buildParentMenu(theParentMenuBuilder, getItem());
             } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
                 buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            }
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            if (thePrices.equals(o)) {
+            } else if (thePricesReg.isRelevant(pEvent)) {
                 updateActions();
                 fireStateChanged();
             }

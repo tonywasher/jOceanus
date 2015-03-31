@@ -48,7 +48,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public class ViewerItem {
     /**
      * The root entry.
      */
-    private JDataEntry theEntry = null;
+    private ViewerEntry theEntry = null;
 
     /**
      * The active detail.
@@ -195,7 +195,7 @@ public class ViewerItem {
         thePanel.add(myScroll, BorderLayout.CENTER);
 
         /* Create listener */
-        DataListener myListener = new DataListener();
+        ViewerListener myListener = new ViewerListener();
 
         /* Add hyper-link listener */
         theEditor.addHyperlinkListener(myListener);
@@ -253,7 +253,7 @@ public class ViewerItem {
      * Display the data entry.
      * @param pEntry the data entry
      */
-    protected void displayData(final JDataEntry pEntry) {
+    protected void displayData(final ViewerEntry pEntry) {
         /* Record the object */
         theEntry = pEntry;
 
@@ -265,7 +265,7 @@ public class ViewerItem {
      * Update the data entry.
      * @param pEntry the entry
      */
-    protected void updateData(final JDataEntry pEntry) {
+    protected void updateData(final ViewerEntry pEntry) {
         /* Take care if we have no active entry */
         if (theEntry == null) {
             return;
@@ -440,7 +440,7 @@ public class ViewerItem {
     /**
      * Data Listener class.
      */
-    private class DataListener
+    private class ViewerListener
             implements HyperlinkListener, ActionListener, ChangeListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent pEvent) {

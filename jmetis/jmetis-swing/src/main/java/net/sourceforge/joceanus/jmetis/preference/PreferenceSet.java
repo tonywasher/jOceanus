@@ -41,15 +41,16 @@ import net.sourceforge.joceanus.jmetis.field.JFieldState;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * Wrapper class for java preferences.
  * @author Tony Washer
  */
 public abstract class PreferenceSet
-        extends JEventObject
-        implements JFieldSetItem {
+        implements JFieldSetItem, JOceanusEventProvider {
     /**
      * Unknown preference string.
      */
@@ -64,6 +65,11 @@ public abstract class PreferenceSet
      * Font separator.
      */
     private static final String FONT_SEPARATOR = ":";
+
+    /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
 
     /**
      * Report fields.
@@ -94,6 +100,9 @@ public abstract class PreferenceSet
         theHandle = Preferences.userNodeForPackage(this.getClass());
         theHandle = theHandle.node(this.getClass().getSimpleName());
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Allocate the preference map */
         theMap = new LinkedHashMap<String, PreferenceItem>();
 
@@ -114,6 +123,11 @@ public abstract class PreferenceSet
     @Override
     public JDataFields getDataFields() {
         return theFields;
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -566,7 +580,8 @@ public abstract class PreferenceSet
             theHandle.flush();
 
             /* Notify listeners */
-            fireStateChanged();
+            theEventManager.fireStateChanged();
+
         } catch (BackingStoreException e) {
             throw new JMetisDataException("Failed to flush preferences to store", e);
         }

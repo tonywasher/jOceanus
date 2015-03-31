@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -228,18 +228,12 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final JDataEntry pEntry) {
+    protected void determineFocus(final ViewerEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
         pEntry.setFocus(theUpdateEntry.getName());
-    }
-
-    @Override
-    public void notifyChanges() {
-        /* Notify that there have been changes */
-        fireStateChanged();
     }
 
     /**

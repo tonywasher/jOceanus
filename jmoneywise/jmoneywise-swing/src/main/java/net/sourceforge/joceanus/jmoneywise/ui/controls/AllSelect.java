@@ -22,21 +22,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
+import javax.swing.JPanel;
+
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * All transactions Selection.
  */
 public class AllSelect
-        extends JEventPanel
-        implements AnalysisFilterSelection {
+        extends JPanel
+        implements AnalysisFilterSelection, JOceanusEventProvider {
     /**
      * Serial Id.
      */
     private static final long serialVersionUID = 5007037268615984742L;
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The filter.
@@ -49,6 +58,14 @@ public class AllSelect
     public AllSelect() {
         /* Create the filter */
         theFilter = AnalysisFilter.FILTER_ALL;
+
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override

@@ -86,7 +86,7 @@ public class ViewerDetail {
     /**
      * The links.
      */
-    private JDataLink theLinks = null;
+    private ViewerLink theLinks = null;
 
     /**
      * The forward link.
@@ -342,7 +342,7 @@ public class ViewerDetail {
      * @return the corresponding object
      */
     protected ViewerDetail getDataLink(final String pName) {
-        JDataLink myLink = theLinks;
+        ViewerLink myLink = theLinks;
         String myName = pName;
 
         /* Shift over # */
@@ -412,7 +412,7 @@ public class ViewerDetail {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Create the Debug Link */
-        JDataLink myLink = new JDataLink(this, myItem);
+        ViewerLink myLink = new ViewerLink(this, myItem);
 
         /* Add the link into the buffer */
         myBuilder.append("<a href=\"#");
@@ -439,7 +439,7 @@ public class ViewerDetail {
     /**
      * Link Class.
      */
-    private static final class JDataLink {
+    private static final class ViewerLink {
         /**
          * The object itself.
          */
@@ -453,14 +453,14 @@ public class ViewerDetail {
         /**
          * The next link.
          */
-        private final JDataLink theNext;
+        private final ViewerLink theNext;
 
         /**
          * Create standard object link.
          * @param pDetail the detail
          * @param pObject the object linked to
          */
-        private JDataLink(final ViewerDetail pDetail,
+        private ViewerLink(final ViewerDetail pDetail,
                           final Object pObject) {
             /* Store object */
             theObject = pObject;

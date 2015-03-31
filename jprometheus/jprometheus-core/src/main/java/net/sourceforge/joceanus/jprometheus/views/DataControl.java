@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
@@ -36,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,9 +42,12 @@ import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 
 /**
  * Provides top-level control of data.
@@ -153,7 +154,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Data Entry hashMap.
      */
-    private final Map<String, JDataEntry> theMap;
+    private final Map<String, ViewerEntry> theMap;
 
     /**
      * Constructor for default control.
@@ -165,7 +166,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theProfile = pProfile;
 
         /* Create the Debug Map */
-        theMap = new HashMap<String, JDataEntry>();
+        theMap = new HashMap<String, ViewerEntry>();
 
         /* Create event manager */
         theEventManager = new JOceanusEventManager();
@@ -178,7 +179,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         initDataMgr();
 
         /* Update the Profile entry */
-        JDataEntry myData = getDataEntry(DATA_PROFILE);
+        ViewerEntry myData = getDataEntry(DATA_PROFILE);
         myData.setObject(theProfile);
 
         /* Access the Security Preferences */
@@ -195,7 +196,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Allocate the FieldManager */
         theFieldMgr = new JFieldManager(theDataMgr, theFieldPreferences.getConfiguration());
-        theFieldPreferences.addChangeListener(new PreferenceListener());
+
+        /* Create listener */
+        new PreferenceListener();
     }
 
     @Override
@@ -218,7 +221,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theData = pData;
 
         /* Update the Data entry */
-        JDataEntry myData = getDataEntry(DATA_DATASET);
+        ViewerEntry myData = getDataEntry(DATA_DATASET);
         myData.setObject(pData);
 
         /* Analyse the data */
@@ -254,7 +257,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theUpdates = theData.deriveUpdateSet();
 
         /* Update the Data entry */
-        JDataEntry myData = getDataEntry(DATA_UPDATES);
+        ViewerEntry myData = getDataEntry(DATA_UPDATES);
         myData.setObject(theUpdates);
     }
 
@@ -342,14 +345,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void initDataMgr() {
         /* Create Debug Entries */
-        JDataEntry myUnderlying = getDataEntry(DATA_UNDERLYING);
-        JDataEntry myData = getDataEntry(DATA_DATASET);
-        JDataEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
-        JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
-        JDataEntry myViews = getDataEntry(DATA_VIEWS);
-        JDataEntry myMaint = getDataEntry(DATA_MAINT);
-        JDataEntry myError = getDataEntry(DATA_ERROR);
-        JDataEntry myProfile = getDataEntry(DATA_PROFILE);
+        ViewerEntry myUnderlying = getDataEntry(DATA_UNDERLYING);
+        ViewerEntry myData = getDataEntry(DATA_DATASET);
+        ViewerEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
+        ViewerEntry myUpdates = getDataEntry(DATA_UPDATES);
+        ViewerEntry myViews = getDataEntry(DATA_VIEWS);
+        ViewerEntry myMaint = getDataEntry(DATA_MAINT);
+        ViewerEntry myError = getDataEntry(DATA_ERROR);
+        ViewerEntry myProfile = getDataEntry(DATA_PROFILE);
 
         /* Create the structure */
         myProfile.addAsRootChild();
@@ -378,14 +381,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pName the Name of the entry
      * @return the Debug Entry
      */
-    public final JDataEntry getDataEntry(final String pName) {
+    public final ViewerEntry getDataEntry(final String pName) {
         /* Access any existing entry */
-        JDataEntry myEntry = theMap.get(pName);
+        ViewerEntry myEntry = theMap.get(pName);
 
         /* If the entry does not exist */
         if (myEntry == null) {
             /* Build the entry and add to the map */
-            myEntry = theDataMgr.new JDataEntry(pName);
+            myEntry = theDataMgr.new ViewerEntry(pName);
             theMap.put(pName, myEntry);
         }
 
@@ -488,7 +491,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theProfile = new JDataProfile(pTask);
 
         /* Update the Data entry */
-        JDataEntry myData = getDataEntry(DATA_PROFILE);
+        ViewerEntry myData = getDataEntry(DATA_PROFILE);
         myData.setObject(theProfile);
 
         /* Return the new profile */
@@ -527,12 +530,26 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Preference listener class.
      */
     private final class PreferenceListener
-            implements ChangeListener {
+            implements JOceanusChangeEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusChangeRegistration thePrefReg;
+
+        /**
+         * Constructor.
+         */
+        private PreferenceListener() {
+            thePrefReg = theFieldPreferences.getEventRegistrar().addChangeListener(this);
+        }
 
         @Override
-        public void stateChanged(final ChangeEvent evt) {
-            /* Update new configuration */
-            updateFieldConfiguration();
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            /* If we are performing a rewind */
+            if (thePrefReg.isRelevant(pEvent)) {
+                /* Update new configuration */
+                updateFieldConfiguration();
+            }
         }
     }
 }

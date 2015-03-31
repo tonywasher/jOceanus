@@ -31,6 +31,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -42,8 +43,10 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -51,8 +54,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * TaxBasisAnalysis Selection.
  */
 public class TaxBasisAnalysisSelect
-        extends JEventPanel
-        implements AnalysisFilterSelection {
+        extends JPanel
+        implements AnalysisFilterSelection, JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -62,6 +65,11 @@ public class TaxBasisAnalysisSelect
      * Text for TaxBasis Label.
      */
     private static final String NLS_BASIS = MoneyWiseDataType.TAXBASIS.getItemName();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The active tax basis bucket list.
@@ -90,6 +98,9 @@ public class TaxBasisAnalysisSelect
         /* Create the button */
         theButton = new JScrollButton<TaxBasisBucket>();
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_BASIS + JFieldElement.STR_COLON);
 
@@ -106,7 +117,12 @@ public class TaxBasisAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        new BassisListener();
+        new BasisListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -197,7 +213,7 @@ public class TaxBasisAnalysisSelect
     /**
      * Listener class.
      */
-    private final class BassisListener
+    private final class BasisListener
             implements PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Tax menu builder.
@@ -212,7 +228,7 @@ public class TaxBasisAnalysisSelect
         /**
          * Constructor.
          */
-        private BassisListener() {
+        private BasisListener() {
             /* Access builders */
             theTaxMenuBuilder = theButton.getMenuBuilder();
             theBasisMenuReg = theTaxMenuBuilder.getEventRegistrar().addChangeListener(this);
@@ -269,7 +285,7 @@ public class TaxBasisAnalysisSelect
                 /* Select the new basis */
                 if (theState.setTaxBasis(theButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
             }
         }

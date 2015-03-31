@@ -32,23 +32,26 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * Error panel.
  * @author Tony Washer
  */
 public class ErrorPanel
-        extends JEventPanel
-        implements ErrorDisplay {
+        extends JPanel
+        implements ErrorDisplay, JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -70,6 +73,11 @@ public class ErrorPanel
     private static final String NLS_TITLE = PrometheusUIResource.ERROR_TITLE.getValue();
 
     /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
+
+    /**
      * The error field.
      */
     private final JLabel theErrorField;
@@ -82,7 +90,7 @@ public class ErrorPanel
     /**
      * The data entry for the error.
      */
-    private final transient JDataEntry theDataError;
+    private final transient ViewerEntry theDataError;
 
     /**
      * The error itself.
@@ -95,11 +103,14 @@ public class ErrorPanel
      * @param pParent the parent data entry
      */
     public ErrorPanel(final ViewerManager pManager,
-                      final JDataEntry pParent) {
+                      final ViewerEntry pParent) {
         /* Create the error debug entry for this view */
-        theDataError = pManager.new JDataEntry(DataControl.DATA_ERROR);
+        theDataError = pManager.new ViewerEntry(DataControl.DATA_ERROR);
         theDataError.addAsChildOf(pParent);
         theDataError.hideEntry();
+
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Create the error list */
         theErrors = new DataErrorList<JMetisExceptionWrapper>();
@@ -127,6 +138,11 @@ public class ErrorPanel
         /* Set the Error panel to be red and invisible */
         theErrorField.setForeground(Color.red);
         setVisible(false);
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -158,7 +174,7 @@ public class ErrorPanel
         setVisible(true);
 
         /* Notify listeners */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     @Override
@@ -186,7 +202,7 @@ public class ErrorPanel
         }
 
         /* Notify listeners */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -204,7 +220,7 @@ public class ErrorPanel
         setVisible(false);
 
         /* Notify listeners */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     @Override

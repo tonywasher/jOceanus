@@ -353,30 +353,30 @@ public final class ViewerHTML {
      * @param pObject the object to get the type for
      * @return true/false
      */
-    private static JDataType getDataType(final Object pObject) {
+    private static ViewerDataType getDataType(final Object pObject) {
         /* Determine which objects are supported */
         if (pObject == null) {
-            return JDataType.NONE;
+            return ViewerDataType.NONE;
         }
         if (JDataContents.class.isInstance(pObject)) {
-            return JDataType.CONTENTS;
+            return ViewerDataType.CONTENTS;
         }
         if (Map.class.isInstance(pObject)) {
-            return JDataType.MAP;
+            return ViewerDataType.MAP;
         }
-        if (MapSection.class.isInstance(pObject)) {
-            return JDataType.MAPSECTION;
+        if (ViewerMapSection.class.isInstance(pObject)) {
+            return ViewerDataType.MAPSECTION;
         }
         if (Throwable.class.isInstance(pObject)) {
-            return JDataType.EXCEPTION;
+            return ViewerDataType.EXCEPTION;
         }
         if (StackTraceElement[].class.isInstance(pObject)) {
-            return JDataType.STACKTRACE;
+            return ViewerDataType.STACKTRACE;
         }
         if (JDataDifference.class.isInstance(pObject)) {
             return getDataType(((JDataDifference) pObject).getObject());
         }
-        return JDataType.NONE;
+        return ViewerDataType.NONE;
     }
 
     /**
@@ -515,7 +515,7 @@ public final class ViewerHTML {
         }
 
         /* If this needs a linkage */
-        if (getDataType(pValue) != JDataType.NONE) {
+        if (getDataType(pValue) != ViewerDataType.NONE) {
             /* Adjust for linkage */
             myFormat = pDetail.addDataLink(pValue, myFormat);
 
@@ -575,7 +575,7 @@ public final class ViewerHTML {
         /* If we have too many entries */
         if (myMap.size() > (MAP_MAXENTRIES << 1)) {
             /* Build as first section of multiMap */
-            return formatHTMLMapSection(pDetail, new MapSection(myMap, 0));
+            return formatHTMLMapSection(pDetail, new ViewerMapSection(myMap, 0));
         }
 
         /* Loop through the fields */
@@ -651,7 +651,7 @@ public final class ViewerHTML {
 
         /* Format the key */
         String myFormat = theFormatter.formatObject(myKey);
-        if (getDataType(myKey) != JDataType.NONE) {
+        if (getDataType(myKey) != ViewerDataType.NONE) {
             myFormat = pDetail.addDataLink(myKey, myFormat);
         }
         myBuild.append(HTML_CELLSTART);
@@ -661,7 +661,7 @@ public final class ViewerHTML {
 
         /* Format the value */
         myFormat = theFormatter.formatObject(myValue);
-        if (getDataType(myValue) != JDataType.NONE) {
+        if (getDataType(myValue) != ViewerDataType.NONE) {
             myFormat = pDetail.addDataLink(myValue, myFormat);
         }
         myBuild.append(myFormat);
@@ -683,7 +683,7 @@ public final class ViewerHTML {
         StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
 
         /* Access iterator for map */
-        MapSection mySection = MapSection.class.cast(pSection);
+        ViewerMapSection mySection = ViewerMapSection.class.cast(pSection);
         Map<?, ?> myMap = mySection.getMap();
         int myPart = mySection.getPart();
         Iterator<?> myIterator = myMap.entrySet().iterator();
@@ -729,14 +729,14 @@ public final class ViewerHTML {
         /* Handle Backward Link */
         if (hasPrev) {
             myResults.append(HTML_HDRCELLSTART);
-            myResults.append(pDetail.addDataLink(new MapSection(myMap, myPart - 1), LINK_PREV));
+            myResults.append(pDetail.addDataLink(new ViewerMapSection(myMap, myPart - 1), LINK_PREV));
             myResults.append(HTML_HDRCELLEND);
         }
 
         /* Handle Forward Link */
         if (hasMore) {
             myResults.append(HTML_HDRCELLSTART);
-            myResults.append(pDetail.addDataLink(new MapSection(myMap, myPart + 1), LINK_NEXT));
+            myResults.append(pDetail.addDataLink(new ViewerMapSection(myMap, myPart + 1), LINK_NEXT));
             myResults.append(HTML_HDRCELLEND);
         }
 
@@ -798,7 +798,7 @@ public final class ViewerHTML {
     /**
      * Map section class.
      */
-    private static final class MapSection {
+    private static final class ViewerMapSection {
         /**
          * The map.
          */
@@ -814,7 +814,7 @@ public final class ViewerHTML {
          * @param pMap the Map
          * @param pPart the part#
          */
-        private MapSection(final Map<?, ?> pMap,
+        private ViewerMapSection(final Map<?, ?> pMap,
                            final int pPart) {
             theMap = pMap;
             thePart = pPart;
@@ -840,7 +840,7 @@ public final class ViewerHTML {
     /**
      * Data Object types.
      */
-    private enum JDataType {
+    private enum ViewerDataType {
         /**
          * Contents.
          */

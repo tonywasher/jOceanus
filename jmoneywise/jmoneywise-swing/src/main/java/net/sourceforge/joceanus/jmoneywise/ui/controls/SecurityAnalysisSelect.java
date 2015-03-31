@@ -31,6 +31,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldElement;
@@ -44,8 +45,10 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -53,8 +56,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * Security Analysis Selection.
  */
 public class SecurityAnalysisSelect
-        extends JEventPanel
-        implements AnalysisFilterSelection {
+        extends JPanel
+        implements AnalysisFilterSelection, JOceanusEventProvider {
     /**
      * Serial Id.
      */
@@ -69,6 +72,11 @@ public class SecurityAnalysisSelect
      * Text for Security Label.
      */
     private static final String NLS_SECURITY = MoneyWiseDataType.SECURITY.getItemName();
+
+    /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
 
     /**
      * The active portfolio bucket list.
@@ -105,6 +113,9 @@ public class SecurityAnalysisSelect
         /* Create the portfolio button */
         thePortButton = new JScrollButton<PortfolioBucket>();
 
+        /* Create Event Manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + JFieldElement.STR_COLON);
         JLabel mySecLabel = new JLabel(NLS_SECURITY + JFieldElement.STR_COLON);
@@ -127,6 +138,11 @@ public class SecurityAnalysisSelect
 
         /* Create the listener */
         new SecurityListener();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -378,16 +394,15 @@ public class SecurityAnalysisSelect
                 /* Select the new portfolio */
                 if (theState.setPortfolio(thePortButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
-            }
 
-            /* If this is the security button */
-            if (theSecButton.equals(o)) {
+                /* If this is the security button */
+            } else if (theSecButton.equals(o)) {
                 /* Select the new security */
                 if (theState.setSecurity(theSecButton.getValue())) {
                     theState.applyState();
-                    fireStateChanged();
+                    theEventManager.fireStateChanged();
                 }
             }
         }

@@ -40,19 +40,21 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
-import net.sourceforge.joceanus.jtethys.event.swing.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -65,7 +67,8 @@ import org.slf4j.LoggerFactory;
  * @author Tony Washer
  */
 public class PreferencesPanel
-        extends JEventPanel {
+        extends JPanel
+        implements JOceanusEventProvider {
     /**
      * The serial Id.
      */
@@ -112,6 +115,11 @@ public class PreferencesPanel
     private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesPanel.class);
 
     /**
+     * The Event Manager.
+     */
+    private final transient JOceanusEventManager theEventManager;
+
+    /**
      * The field manager.
      */
     private final transient JFieldManager theFieldMgr;
@@ -119,7 +127,7 @@ public class PreferencesPanel
     /**
      * The Data entry.
      */
-    private final transient JDataEntry theDataEntry;
+    private final transient ViewerEntry theDataEntry;
 
     /**
      * The OK button.
@@ -176,9 +184,12 @@ public class PreferencesPanel
     public PreferencesPanel(final PreferenceManager pPreferenceMgr,
                             final JFieldManager pFieldMgr,
                             final ViewerManager pDataMgr,
-                            final JDataEntry pSection) {
+                            final ViewerEntry pSection) {
         /* Access field manager and logger */
         theFieldMgr = pFieldMgr;
+
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
 
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
@@ -231,10 +242,6 @@ public class PreferencesPanel
             registerSet(mySet);
         }
 
-        /* Add a listener for the addition of subsequent propertySets */
-        PropertySetListener mySetListener = new PropertySetListener();
-        pPreferenceMgr.addActionListener(mySetListener);
-
         /* Create a new Scroll Pane and add this table to it */
         JScrollPane myScroll = new JScrollPane();
         myScroll.setViewportView(theProperties);
@@ -252,9 +259,17 @@ public class PreferencesPanel
         setVisibility();
 
         /* Create the debug entry, and attach to correct section */
-        theDataEntry = pDataMgr.new JDataEntry("Preferences");
+        theDataEntry = pDataMgr.new ViewerEntry("Preferences");
         theDataEntry.addAsChildOf(pSection);
         theDataEntry.setObject(pDataMgr);
+
+        /* Add a listener for the addition of subsequent propertySets */
+        new PrefSetListener(pPreferenceMgr);
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -288,7 +303,7 @@ public class PreferencesPanel
         thePanels.add(myPanel);
 
         /* Add listener */
-        myPanel.addChangeListener(theListener);
+        myPanel.getEventRegistrar().addChangeListener(theListener);
     }
 
     /**
@@ -322,7 +337,7 @@ public class PreferencesPanel
         setVisibility();
 
         /* Notify that state has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -336,7 +351,7 @@ public class PreferencesPanel
         setVisibility();
 
         /* Notify that state has changed */
-        fireStateChanged();
+        theEventManager.fireStateChanged();
     }
 
     /**
@@ -364,7 +379,7 @@ public class PreferencesPanel
      * PropertyListener class.
      */
     private final class PropertyListener
-            implements ActionListener, PropertyChangeListener, ChangeListener, JOceanusChangeEventListener {
+            implements ActionListener, PropertyChangeListener, JOceanusChangeEventListener {
         /**
          * Preference menu builder.
          */
@@ -390,6 +405,14 @@ public class PreferencesPanel
             if (thePrefMenuReg.isRelevant(pEvent)) {
                 /* Build the preference menu */
                 buildPreferenceMenu();
+
+                /* else its one of the subPanels */
+            } else {
+                /* Set visibility */
+                setVisibility();
+
+                /* Notify listeners */
+                theEventManager.fireStateChanged();
             }
         }
 
@@ -439,15 +462,6 @@ public class PreferencesPanel
         }
 
         @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Set visibility */
-            setVisibility();
-
-            /* Notify listeners */
-            fireStateChanged();
-        }
-
-        @Override
         public void propertyChange(final PropertyChangeEvent pEvent) {
             /* Access the source */
             Object o = pEvent.getSource();
@@ -468,30 +482,36 @@ public class PreferencesPanel
     }
 
     /**
-     * PropertySetListener class.
+     * PreferenceSetListener class.
      */
-    private final class PropertySetListener
-            implements ActionListener {
+    private final class PrefSetListener
+            implements JOceanusActionEventListener {
+        /**
+         * UpdateSet Registration.
+         */
+        private final JOceanusActionRegistration thePrefSetReg;
+
+        /**
+         * Constructor.
+         * @param pPreferenceMgr the preference manager
+         */
+        private PrefSetListener(final PreferenceManager pPreferenceMgr) {
+            thePrefSetReg = pPreferenceMgr.getEventRegistrar().addActionListener(this);
+        }
+
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If this is an ActionDetailEvent */
-            if (e instanceof ActionDetailEvent) {
-                /* Access event and obtain details */
-                ActionDetailEvent evt = (ActionDetailEvent) e;
-                Object o = evt.getDetails();
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* If this is a new preference set */
+            if (thePrefSetReg.isRelevant(pEvent)) {
+                /* Details is the property set that has been added */
+                PreferenceSet mySet = pEvent.getDetails(PreferenceSet.class);
 
-                /* If the details is a preference set */
-                if (o instanceof PreferenceSet) {
-                    /* Details is the property set that has been added */
-                    PreferenceSet mySet = (PreferenceSet) o;
+                /* Register the set */
+                registerSet(mySet);
 
-                    /* Register the set */
-                    registerSet(mySet);
-
-                    /* Note that the panel should be re-displayed */
-                    setVisibility();
-                    theProperties.invalidate();
-                }
+                /* Note that the panel should be re-displayed */
+                setVisibility();
+                theProperties.invalidate();
             }
         }
     }

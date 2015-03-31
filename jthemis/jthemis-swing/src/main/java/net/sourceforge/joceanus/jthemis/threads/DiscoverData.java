@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
@@ -118,14 +118,14 @@ public class DiscoverData
      * @param pParent the parent entry
      */
     public void declareExtractPlans(final ViewerManager pDataMgr,
-                                    final JDataEntry pParent) {
+                                    final ViewerEntry pParent) {
         /* Loop through the plans */
         Iterator<SvnExtract> myIterator = theExtractPlanMap.values().iterator();
         while (myIterator.hasNext()) {
             SvnExtract myPlan = myIterator.next();
 
             /* Create the data entry */
-            JDataEntry myEntry = pDataMgr.new JDataEntry(myPlan.getName());
+            ViewerEntry myEntry = pDataMgr.new ViewerEntry(myPlan.getName());
             myEntry.addAsChildOf(pParent);
             myEntry.setObject(myPlan);
         }

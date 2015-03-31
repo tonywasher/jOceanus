@@ -136,6 +136,14 @@ public class JOceanusEventManager
 
     /**
      * Fire Action Event to all registered listeners.
+     * @param pDetails the details of the event
+     */
+    public void fireActionEvent(final Object pDetails) {
+        fireActionEvent(DEFAULT_ACTION_ID, pDetails);
+    }
+
+    /**
+     * Fire Action Event to all registered listeners.
      * @param pActionId the actionId of the event
      */
     public void fireActionEvent(final int pActionId) {
@@ -170,6 +178,17 @@ public class JOceanusEventManager
                 myAction.processEvent(myEvent);
             }
         }
+    }
+
+    /**
+     * Create an action event.
+     * @param pActionId the actionId of the event
+     * @param pDetails the details of the event
+     * @return the action event
+     */
+    public JOceanusActionEvent createActionEvent(final int pActionId,
+                                                 final Object pDetails) {
+        return new JOceanusActionEvent(theOwnerId, pActionId, pDetails);
     }
 
     /**

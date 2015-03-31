@@ -34,8 +34,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
@@ -46,7 +44,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRend
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -71,10 +69,11 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -293,7 +292,7 @@ public class PayeeTable
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final JDataEntry pEntry) {
+    protected void determineFocus(final ViewerEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
@@ -507,11 +506,16 @@ public class PayeeTable
      * Listener class.
      */
     private final class PayeeListener
-            implements ActionListener, ItemListener, ChangeListener, JOceanusChangeEventListener {
+            implements ActionListener, ItemListener, JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * UpdateSet Registration.
          */
         private final JOceanusChangeRegistration theUpdateSetReg;
+
+        /**
+         * Account Change Registration.
+         */
+        private final JOceanusChangeRegistration theActPanelReg;
 
         /**
          * Constructor.
@@ -519,12 +523,12 @@ public class PayeeTable
         private PayeeListener() {
             /* Register listeners */
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+            theActPanelReg = theActiveAccount.getEventRegistrar().addChangeListener(this);
+            theActiveAccount.getEventRegistrar().addActionListener(this);
 
             /* Listen to swing events */
             theNewButton.addActionListener(this);
             theLockedCheckBox.addItemListener(this);
-            theActiveAccount.addChangeListener(this);
-            theActiveAccount.addActionListener(this);
         }
 
         @Override
@@ -539,16 +543,9 @@ public class PayeeTable
 
                 /* Adjust for changes */
                 notifyChanges();
-            }
-        }
 
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* If we are noting change of edit state */
-            if (theActiveAccount.equals(o)) {
+                /* If we are handling panel state */
+            } else if (theActPanelReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
                 if (!theActiveAccount.isEditing()) {
                     /* handle the edit transition */
@@ -573,15 +570,17 @@ public class PayeeTable
         }
 
         @Override
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            cascadeActionEvent(pEvent);
+        }
+
+        @Override
         public void actionPerformed(final ActionEvent pEvent) {
             /* Access source */
             Object o = pEvent.getSource();
 
             /* Handle actions */
-            if ((theActiveAccount.equals(o))
-                && (pEvent instanceof ActionDetailEvent)) {
-                cascadeActionEvent((ActionDetailEvent) pEvent);
-            } else if (theNewButton.equals(o)) {
+            if (theNewButton.equals(o)) {
                 theModel.addNewItem();
             }
         }
@@ -859,19 +858,22 @@ public class PayeeTable
          * EditorListener.
          */
         private final class EditorListener
-                implements ChangeListener {
+                implements JOceanusChangeEventListener {
+            /**
+             * Category Registration.
+             */
+            private final JOceanusChangeRegistration theTypeReg;
+
             /**
              * Constructor.
              */
             private EditorListener() {
-                theTypeEditor.addChangeListener(this);
+                theTypeReg = theTypeEditor.getEventRegistrar().addChangeListener(this);
             }
 
             @Override
-            public void stateChanged(final ChangeEvent pEvent) {
-                Object o = pEvent.getSource();
-
-                if (theTypeEditor.equals(o)) {
+            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+                if (theTypeReg.isRelevant(pEvent)) {
                     buildPayeeTypeMenu();
                 }
             }

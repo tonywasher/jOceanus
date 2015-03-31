@@ -71,22 +71,22 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * OK.
      */
-    public static final String CMD_OK = "OK";
+    public static final int CMD_OK = 0;
 
     /**
      * Undo last change.
      */
-    public static final String CMD_UNDO = "UNDO";
+    public static final int CMD_UNDO = 1;
 
     /**
      * Rewind to explicit point.
      */
-    public static final String CMD_REWIND = "REWIND";
+    public static final int CMD_REWIND = 2;
 
     /**
      * Reset all changes.
      */
-    public static final String CMD_RESET = "RESET";
+    public static final int CMD_RESET = 3;
 
     /**
      * The Event Manager.
@@ -603,17 +603,17 @@ public class UpdateSet<E extends Enum<E>>
      * @param pCmd the command.
      * @param pError the error panel
      */
-    public void processCommand(final String pCmd,
+    public void processCommand(final int pCmd,
                                final ErrorDisplay pError) {
         /* Create a new profile */
         JDataProfile myTask = theControl.getNewProfile("EditCommand");
 
         /* Switch on command */
-        if (CMD_OK.equals(pCmd)) {
+        if (CMD_OK == pCmd) {
             applyChanges();
-        } else if (CMD_UNDO.equals(pCmd)) {
+        } else if (CMD_UNDO == pCmd) {
             undoLastChange();
-        } else if (CMD_RESET.equals(pCmd)) {
+        } else if (CMD_RESET == pCmd) {
             resetChanges();
         }
 
@@ -635,18 +635,18 @@ public class UpdateSet<E extends Enum<E>>
      * @param pVersion the version
      * @param pError the error panel
      */
-    public void processEditCommand(final String pCmd,
+    public void processEditCommand(final int pCmd,
                                    final int pVersion,
                                    final ErrorDisplay pError) {
         /* Create a new profile */
         JDataProfile myTask = theControl.getNewProfile("ItemCommand");
 
         /* Switch on command */
-        if (CMD_OK.equals(pCmd)) {
+        if (CMD_OK == pCmd) {
             condenseHistory(pVersion);
-        } else if (CMD_UNDO.equals(pCmd)) {
+        } else if (CMD_UNDO == pCmd) {
             undoLastChange();
-        } else if (CMD_REWIND.equals(pCmd)) {
+        } else if (CMD_REWIND == pCmd) {
             rewindToVersion(pVersion);
         }
 

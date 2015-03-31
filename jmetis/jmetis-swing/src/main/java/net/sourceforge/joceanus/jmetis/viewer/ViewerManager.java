@@ -61,12 +61,12 @@ public class ViewerManager {
     /**
      * The root of the tree.
      */
-    private final JDataEntry theRoot;
+    private final ViewerEntry theRoot;
 
     /**
      * The focused entry.
      */
-    private JDataEntry theFocus = null;
+    private ViewerEntry theFocus = null;
 
     /**
      * The title.
@@ -88,7 +88,7 @@ public class ViewerManager {
      */
     public ViewerManager() {
         /* Create the root node */
-        theRoot = new JDataEntry(WINDOW_TITLE);
+        theRoot = new ViewerEntry(WINDOW_TITLE);
 
         /* Create the tree model */
         theModel = new DefaultTreeModel(theRoot.getNode());
@@ -118,7 +118,7 @@ public class ViewerManager {
      * Get focus.
      * @return the focus
      */
-    public JDataEntry getFocus() {
+    public ViewerEntry getFocus() {
         return theFocus;
     }
 
@@ -175,10 +175,10 @@ public class ViewerManager {
      * @param pObject the object for the child
      * @return the new child entry
      */
-    public JDataEntry addChildEntry(final JDataEntry pParent,
+    public ViewerEntry addChildEntry(final ViewerEntry pParent,
                                     final String pName,
                                     final Object pObject) {
-        JDataEntry myEntry = new JDataEntry(pName);
+        ViewerEntry myEntry = new ViewerEntry(pName);
         myEntry.addAsChildOf(pParent);
         myEntry.setObject(pObject);
         return myEntry;
@@ -187,7 +187,7 @@ public class ViewerManager {
     /**
      * The Data Entry class.
      */
-    public final class JDataEntry {
+    public final class ViewerEntry {
         /**
          * The name of the entry.
          */
@@ -232,7 +232,7 @@ public class ViewerManager {
          * Constructor.
          * @param pName the object name
          */
-        public JDataEntry(final String pName) {
+        public ViewerEntry(final String pName) {
             /* Store name */
             theName = pName;
 
@@ -303,7 +303,7 @@ public class ViewerManager {
          * Add as a child into the tree.
          * @param pParent the parent object
          */
-        public void addAsChildOf(final JDataEntry pParent) {
+        public void addAsChildOf(final ViewerEntry pParent) {
             /* Add as child of parent */
             theParent = pParent.getNode();
             theParent.add(theNode);
@@ -322,7 +322,7 @@ public class ViewerManager {
          * Add as a child into the tree.
          * @param pParent the parent object
          */
-        public void addAsFirstChildOf(final JDataEntry pParent) {
+        public void addAsFirstChildOf(final ViewerEntry pParent) {
             /* Add as child of parent */
             theParent = pParent.getNode();
             theParent.insert(theNode, 0);
@@ -381,7 +381,7 @@ public class ViewerManager {
             for (int i = 0; i < iCount; i++) {
                 /* Access child */
                 DefaultMutableTreeNode myChild = (DefaultMutableTreeNode) theNode.getChildAt(i);
-                JDataEntry myEntry = (JDataEntry) myChild.getUserObject();
+                ViewerEntry myEntry = (ViewerEntry) myChild.getUserObject();
 
                 /* If we match the object */
                 if (pName.equals(myEntry.theName)) {

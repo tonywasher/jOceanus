@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -48,10 +47,11 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.swing.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.swing.HelpException;
 import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
@@ -65,7 +65,7 @@ public class MainTab
     /**
      * View Statement.
      */
-    public static final int ACTION_VIEWSTATEMENT = ActionEvent.ACTION_PERFORMED + 1;
+    public static final int ACTION_VIEWSTATEMENT = 1;
 
     /**
      * View Account.
@@ -378,7 +378,7 @@ public class MainTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    private void selectMaintenance(final ActionDetailEvent pEvent) {
+    private void selectMaintenance(final JOceanusActionEvent pEvent) {
         /* Pass through to the Maintenance view */
         theMaint.selectMaintenance(pEvent);
 
@@ -509,37 +509,31 @@ public class MainTab
      * The listener class.
      */
     private final class MainListener
-            implements ActionListener, ChangeListener, JOceanusChangeEventListener {
-        /**
-         * View Registration.
-         */
-        private final JOceanusChangeRegistration theViewReg;
-
+            implements ChangeListener, JOceanusActionEventListener, JOceanusChangeEventListener {
         /**
          * Constructor.
          */
         private MainListener() {
             /* Register listeners */
-            theViewReg = theView.getEventRegistrar().addChangeListener(this);
+            theView.getEventRegistrar().addChangeListener(this);
+            theReports.getEventRegistrar().addActionListener(this);
+            theSpotPrices.getEventRegistrar().addChangeListener(this);
+            theSpotRates.getEventRegistrar().addChangeListener(this);
+            JOceanusEventRegistrar myRegistrar = theRegister.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
+            myRegistrar = theMaint.getEventRegistrar();
+            myRegistrar.addChangeListener(this);
+            myRegistrar.addActionListener(this);
 
             /* Listen to swing events */
             theTabs.addChangeListener(this);
-            theRegister.addChangeListener(this);
-            theSpotPrices.addChangeListener(this);
-            theSpotRates.addChangeListener(this);
-            theMaint.addChangeListener(this);
-            theRegister.addActionListener(this);
-            theReports.addActionListener(this);
-            theMaint.addActionListener(this);
         }
 
         @Override
         public void processChangeEvent(final JOceanusChangeEvent pEvent) {
-            /* If this is the data view */
-            if (theViewReg.isRelevant(pEvent)) {
-                /* Set Visibility */
-                setVisibility();
-            }
+            /* Set Visibility */
+            setVisibility();
         }
 
         @Override
@@ -551,41 +545,29 @@ public class MainTab
 
                 /* Determine the focus */
                 determineFocus();
-
-                /* else if it is one of the sub-panels */
-            } else if (theRegister.equals(o)
-                       || theMaint.equals(o)
-                       || theSpotPrices.equals(o)
-                       || theSpotRates.equals(o)) {
-                /* Set the visibility */
-                setVisibility();
             }
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If this is an ActionDetailEvent */
-            if (e instanceof ActionDetailEvent) {
-                /* Access event and obtain details */
-                ActionDetailEvent evt = (ActionDetailEvent) e;
-                switch (evt.getSubId()) {
-                /* View the requested statement */
-                    case ACTION_VIEWSTATEMENT:
-                        StatementSelect mySelect = evt.getDetails(StatementSelect.class);
-                        selectStatement(mySelect);
-                        break;
+        public void processActionEvent(final JOceanusActionEvent pEvent) {
+            /* Pass out the request */
+            switch (pEvent.getActionId()) {
+            /* View the requested statement */
+                case ACTION_VIEWSTATEMENT:
+                    StatementSelect mySelect = pEvent.getDetails(StatementSelect.class);
+                    selectStatement(mySelect);
+                    break;
 
-                    /* Access maintenance */
-                    case ACTION_VIEWACCOUNT:
-                    case ACTION_VIEWTAXYEAR:
-                    case ACTION_VIEWCATEGORY:
-                    case ACTION_VIEWTAG:
-                    case ACTION_VIEWSTATIC:
-                        selectMaintenance(evt);
-                        break;
-                    default:
-                        break;
-                }
+                /* Access maintenance */
+                case ACTION_VIEWACCOUNT:
+                case ACTION_VIEWTAXYEAR:
+                case ACTION_VIEWCATEGORY:
+                case ACTION_VIEWTAG:
+                case ACTION_VIEWSTATIC:
+                    selectMaintenance(pEvent);
+                    break;
+                default:
+                    break;
             }
         }
     }
