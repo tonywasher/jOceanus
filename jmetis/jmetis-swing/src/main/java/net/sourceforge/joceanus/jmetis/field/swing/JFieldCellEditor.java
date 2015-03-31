@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -49,6 +49,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.jdatebutton.swing.JDateDialog.JDateEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;

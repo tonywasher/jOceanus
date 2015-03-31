@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jmetis.preference.swing;
 
 import java.awt.Component;
 import java.io.File;

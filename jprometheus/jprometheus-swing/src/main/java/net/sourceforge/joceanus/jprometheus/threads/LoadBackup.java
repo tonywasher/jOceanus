@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jprometheus.threads;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
-import net.sourceforge.joceanus.jmetis.preference.FileSelector;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;

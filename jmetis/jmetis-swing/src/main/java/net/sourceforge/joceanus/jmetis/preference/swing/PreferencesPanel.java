@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jmetis.preference.swing;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -42,9 +42,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceResource;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;

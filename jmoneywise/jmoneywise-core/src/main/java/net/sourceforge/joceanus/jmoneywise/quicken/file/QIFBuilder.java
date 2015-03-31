@@ -925,9 +925,7 @@ public class QIFBuilder {
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Record basic details */
-            myEvent.recordAmount(isRecursive
-                                            ? myAmount
-                                            : new JMoney());
+            myEvent.recordAmount(new JMoney());
             myEvent.recordPayee(myPayee);
 
             /* Add Split event */

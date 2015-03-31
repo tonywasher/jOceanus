@@ -54,7 +54,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * The FieldSet.
      */
-    private final JFieldSet<T> theFieldSet;
+    private final JFieldSetBase<T> theFieldSet;
 
     /**
      * The DataType value.
@@ -77,7 +77,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * @param pField the field for the model
      * @param pClass the class of the model
      */
-    protected JFieldModel(final JFieldSet<T> pFieldSet,
+    protected JFieldModel(final JFieldSetBase<T> pFieldSet,
                           final JDataField pField,
                           final DataType pClass) {
         /* Store values */
@@ -98,7 +98,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * Obtain Value.
      * @return the value
      */
-    protected Object getValue() {
+    public Object getValue() {
         return theValue;
     }
 
@@ -134,7 +134,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * is the value fixed width?
      * @return true/false
      */
-    protected boolean isFixedWidth() {
+    public boolean isFixedWidth() {
         return false;
     }
 
@@ -142,7 +142,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * Load value.
      * @param pItem the item to load the value from
      */
-    protected void loadValue(final T pItem) {
+    public void loadValue(final T pItem) {
         /* Access the value */
         Object myValue = pItem.getFieldValue(theField);
 
@@ -166,7 +166,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * Load value.
      */
-    protected void loadNullValue() {
+    public void loadNullValue() {
         /* Record new value */
         theValue = null;
     }
@@ -174,7 +174,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * String model.
      */
-    protected static class JModelString<T extends JFieldSetItem>
+    public static class JModelString<T extends JFieldSetItem>
             extends JFieldModel<T> {
         /**
          * The Decimal Parser.
@@ -217,9 +217,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        protected JModelString(final JFieldSet<T> pFieldSet,
-                               final JDataField pField,
-                               final DataType pClass) {
+        public JModelString(final JFieldSetBase<T> pFieldSet,
+                            final JDataField pField,
+                            final DataType pClass) {
             /* Pass call onwards */
             super(pFieldSet, pField, pClass);
 
@@ -256,7 +256,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Set the assumed currency.
          * @param pCurrency the assumed currency
          */
-        protected void setAssumedCurrency(final Currency pCurrency) {
+        public void setAssumedCurrency(final Currency pCurrency) {
             theCurrency = pCurrency;
         }
 
@@ -264,7 +264,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * is the value in error?
          * @return true/false
          */
-        protected boolean isError() {
+        public boolean isError() {
             return isError;
         }
 
@@ -272,7 +272,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Get Edit string.
          * @return the edit string
          */
-        protected String getEditString() {
+        public String getEditString() {
             return (isError)
                             ? theError
                             : theEdit;
@@ -282,12 +282,12 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Get Display string.
          * @return the display string
          */
-        protected String getDisplayString() {
+        public String getDisplayString() {
             return theDisplay;
         }
 
         @Override
-        protected boolean isFixedWidth() {
+        public boolean isFixedWidth() {
             /* Switch on class */
             switch (getDataClass()) {
             /* Number classes */
@@ -309,7 +309,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         }
 
         @Override
-        protected void loadValue(final T pItem) {
+        public void loadValue(final T pItem) {
             /* Process the value */
             super.loadValue(pItem);
 
@@ -392,7 +392,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pValue the value
          * @return has the value changed?
          */
-        protected boolean processValue(final String pValue) {
+        public boolean processValue(final String pValue) {
             /* Obtain the text value and trim it */
             String myText = pValue.trim();
             Object myValue = null;
@@ -490,7 +490,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * Object model.
      * @param <I> element type
      */
-    protected static class JModelObject<I, T extends JFieldSetItem>
+    public static class JModelObject<I, T extends JFieldSetItem>
             extends JFieldModel<T> {
         /**
          * Class of object.
@@ -503,9 +503,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        protected JModelObject(final JFieldSet<T> pFieldSet,
-                               final JDataField pField,
-                               final Class<I> pClass) {
+        public JModelObject(final JFieldSetBase<T> pFieldSet,
+                            final JDataField pField,
+                            final Class<I> pClass) {
             /* Pass call onwards */
             super(pFieldSet, pField, null);
 
@@ -517,7 +517,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process Object value.
          * @param pValue the value
          */
-        protected void processValue(final Object pValue) {
+        public void processValue(final Object pValue) {
             /* If this is a new value */
             if (!Difference.isEqual(pValue, getValue())) {
                 /* Record new value */
@@ -526,7 +526,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         }
 
         @Override
-        protected I getValue() {
+        public I getValue() {
             return theClass.cast(super.getValue());
         }
     }
@@ -535,15 +535,15 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * Object List model.
      * @param <I> element type
      */
-    protected static class JModelObjectList<I, T extends JFieldSetItem>
+    public static class JModelObjectList<I, T extends JFieldSetItem>
             extends JFieldModel<T> {
         /**
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
          */
-        protected JModelObjectList(final JFieldSet<T> pFieldSet,
-                                   final JDataField pField) {
+        public JModelObjectList(final JFieldSetBase<T> pFieldSet,
+                                final JDataField pField) {
             /* Pass call onwards */
             super(pFieldSet, pField, null);
         }
@@ -552,13 +552,13 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process Object value.
          * @param pValue the value
          */
-        protected void processValue(final JOceanusItemEvent pValue) {
+        public void processValue(final JOceanusItemEvent pValue) {
             /* Record new value */
             setValue(pValue);
         }
 
         @Override
-        protected I getValue() {
+        public I getValue() {
             return null;
         }
     }
@@ -566,7 +566,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * Boolean model.
      */
-    protected static class JModelBoolean<T extends JFieldSetItem>
+    public static class JModelBoolean<T extends JFieldSetItem>
             extends JFieldModel<T> {
 
         /**
@@ -575,9 +575,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        protected JModelBoolean(final JFieldSet<T> pFieldSet,
-                                final JDataField pField,
-                                final DataType pClass) {
+        public JModelBoolean(final JFieldSetBase<T> pFieldSet,
+                             final JDataField pField,
+                             final DataType pClass) {
             /* Pass call onwards */
             super(pFieldSet, pField, pClass);
 
@@ -598,7 +598,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process value.
          * @param pValue the value
          */
-        protected void processValue(final Boolean pValue) {
+        public void processValue(final Boolean pValue) {
             /* If this is a new value */
             if (!Difference.isEqual(pValue, getValue())) {
                 /* Record new value */
@@ -607,7 +607,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         }
 
         @Override
-        protected Boolean getValue() {
+        public Boolean getValue() {
             return (Boolean) super.getValue();
         }
     }
@@ -615,7 +615,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * DateDay model.
      */
-    protected static class JModelDateDay<T extends JFieldSetItem>
+    public static class JModelDateDay<T extends JFieldSetItem>
             extends JFieldModel<T> {
 
         /**
@@ -624,9 +624,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        protected JModelDateDay(final JFieldSet<T> pFieldSet,
-                                final JDataField pField,
-                                final DataType pClass) {
+        public JModelDateDay(final JFieldSetBase<T> pFieldSet,
+                             final JDataField pField,
+                             final DataType pClass) {
             /* Pass call onwards */
             super(pFieldSet, pField, pClass);
 
@@ -647,7 +647,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process DateDay value.
          * @param pValue the value
          */
-        protected void processValue(final JDateDay pValue) {
+        public void processValue(final JDateDay pValue) {
             /* If this is a new value */
             if (!Difference.isEqual(pValue, getValue())) {
                 /* Record new value */
@@ -656,7 +656,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         }
 
         @Override
-        protected JDateDay getValue() {
+        public JDateDay getValue() {
             return (JDateDay) super.getValue();
         }
     }

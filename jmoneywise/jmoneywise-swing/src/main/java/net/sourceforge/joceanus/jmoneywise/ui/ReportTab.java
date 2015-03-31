@@ -37,8 +37,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;

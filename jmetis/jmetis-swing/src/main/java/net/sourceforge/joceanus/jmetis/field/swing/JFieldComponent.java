@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,11 +49,14 @@ import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelBoolean;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelDateDay;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObject;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObjectList;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
+import net.sourceforge.joceanus.jmetis.field.JFieldState;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;

@@ -38,7 +38,7 @@ import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;

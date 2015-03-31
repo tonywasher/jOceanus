@@ -36,7 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.JFieldElement;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;

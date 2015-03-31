@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.viewer.swing;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -176,8 +176,8 @@ public class ViewerManager {
      * @return the new child entry
      */
     public ViewerEntry addChildEntry(final ViewerEntry pParent,
-                                    final String pName,
-                                    final Object pObject) {
+                                     final String pName,
+                                     final Object pObject) {
         ViewerEntry myEntry = new ViewerEntry(pName);
         myEntry.addAsChildOf(pParent);
         myEntry.setObject(pObject);

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.viewer.swing;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -119,7 +119,7 @@ public class ViewerDetail {
      * @param pObject the object represented
      */
     protected ViewerDetail(final ViewerHTML pFormatter,
-                          final Object pObject) {
+                           final Object pObject) {
         /* Clear child fields */
         thePartnerDetail = null;
         isChild = false;
@@ -155,7 +155,7 @@ public class ViewerDetail {
      * @param pObject the object represented
      */
     protected ViewerDetail(final ViewerDetail pList,
-                          final Object pObject) {
+                           final Object pObject) {
         /* Obtain the detail for this object */
         thePartnerDetail = pList;
         theFormatter = pList.theFormatter;
@@ -461,7 +461,7 @@ public class ViewerDetail {
          * @param pObject the object linked to
          */
         private ViewerLink(final ViewerDetail pDetail,
-                          final Object pObject) {
+                           final Object pObject) {
             /* Store object */
             theObject = pObject;
 

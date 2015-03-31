@@ -41,8 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerWindow;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.CreateDatabase;

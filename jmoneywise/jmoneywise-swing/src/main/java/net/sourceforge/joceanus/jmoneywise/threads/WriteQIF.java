@@ -151,11 +151,6 @@ public class WriteQIF
             }
         }
 
-        /* Check for cancellation */
-        if (!bSuccess) {
-            throw new JMoneyWiseCancelException("Operation Cancelled");
-        }
-
         /* Create the Parser */
         QIFParser myQParser = new QIFParser(myQFile.getFileType());
 

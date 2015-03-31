@@ -20,9 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.Color;
+
+import net.sourceforge.joceanus.jmetis.field.JFieldState;
 
 /**
  * Render configuration.

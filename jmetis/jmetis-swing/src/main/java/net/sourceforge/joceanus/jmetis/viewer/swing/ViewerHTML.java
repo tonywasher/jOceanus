@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.viewer.swing;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -815,7 +815,7 @@ public final class ViewerHTML {
          * @param pPart the part#
          */
         private ViewerMapSection(final Map<?, ?> pMap,
-                           final int pPart) {
+                                 final int pPart) {
             theMap = pMap;
             thePart = pPart;
         }

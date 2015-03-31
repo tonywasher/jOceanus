@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -30,29 +30,31 @@ import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DateDayCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RatioCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollListButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
+import net.sourceforge.joceanus.jmetis.field.JFieldState;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ComboBoxCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.DateDayCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.DilutionCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.RateCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.RatioCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ScrollListButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.UnitsCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
 
 /**
  * Class to determine rendering details for an item.

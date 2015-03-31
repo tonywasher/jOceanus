@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.viewer.swing;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -48,7 +48,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

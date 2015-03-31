@@ -26,8 +26,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
-import net.sourceforge.joceanus.jmetis.preference.FileSelector;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;

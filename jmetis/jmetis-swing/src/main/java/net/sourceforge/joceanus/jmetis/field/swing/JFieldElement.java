@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.CardLayout;
 import java.util.Currency;
@@ -34,7 +34,9 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;

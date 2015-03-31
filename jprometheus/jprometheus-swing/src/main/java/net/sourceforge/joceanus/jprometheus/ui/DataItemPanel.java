@@ -29,9 +29,9 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;

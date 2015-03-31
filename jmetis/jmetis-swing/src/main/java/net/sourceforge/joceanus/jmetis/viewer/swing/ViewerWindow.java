@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.viewer.swing;
 
 import java.awt.Dimension;
 
@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
 
 /**
  * Data Window display class.
@@ -75,7 +75,7 @@ public class ViewerWindow
      * @param pManager the debug manager
      */
     public ViewerWindow(final JFrame pParent,
-                       final ViewerManager pManager) {
+                        final ViewerManager pManager) {
         /* Store the parameters */
         ViewerManager myDataMgr = pManager;
         theTree = new JTree(myDataMgr.getModel());

@@ -37,12 +37,12 @@ import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerWindow;
+import net.sourceforge.joceanus.jmetis.preference.swing.PreferencesPanel;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;

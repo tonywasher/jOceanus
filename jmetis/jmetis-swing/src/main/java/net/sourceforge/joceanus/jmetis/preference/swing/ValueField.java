@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jmetis.preference.swing;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.JFieldValue;
+import net.sourceforge.joceanus.jmetis.preference.ValueClass;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;

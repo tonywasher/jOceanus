@@ -31,9 +31,9 @@ import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;

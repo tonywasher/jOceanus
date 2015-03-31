@@ -31,8 +31,8 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.PreferencesPanel;
+import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;

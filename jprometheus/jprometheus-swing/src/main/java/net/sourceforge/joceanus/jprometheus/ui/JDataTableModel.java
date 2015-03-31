@@ -29,9 +29,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldData;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jmetis.field.JFieldValue;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldData;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;

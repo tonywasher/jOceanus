@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.viewer.swing;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
 import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;

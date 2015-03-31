@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.util.Currency;
 import java.util.HashMap;
@@ -30,20 +30,10 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.JMetisDataException;
 import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetBase;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -54,12 +44,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
  * @param <T> the Data Item type
  */
 public class JFieldSet<T extends JFieldSetItem>
+        extends JFieldSetBase<T>
         implements JOceanusEventProvider {
-    /**
-     * The Event Manager.
-     */
-    private final JOceanusEventManager theEventManager;
-
     /**
      * The map of fields.
      */
@@ -71,51 +57,18 @@ public class JFieldSet<T extends JFieldSetItem>
     private final JFieldManager theRenderMgr;
 
     /**
-     * The Data Formatter.
-     */
-    private final JDataFormatter theFormatter;
-
-    /**
-     * Is the data being refreshed?
-     */
-    private boolean isRefreshing = false;
-
-    /**
      * Constructor.
      * @param pRenderMgr the render manager
      */
     public JFieldSet(final JFieldManager pRenderMgr) {
+        /* Call super constructor */
+        super(pRenderMgr.getDataFormatter());
+
         /* Store the render manager */
         theRenderMgr = pRenderMgr;
-        theFormatter = pRenderMgr.getDataFormatter();
-
-        /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
 
         /* Create the map */
         theMap = new HashMap<JDataField, JFieldElement<T>>();
-    }
-
-    @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Obtain the data formatter.
-     * @return the formatter
-     */
-    public JDataFormatter getDataFormatter() {
-        return theFormatter;
-    }
-
-    /**
-     * Set refreshing data flag.
-     * @param refreshingData true/false
-     */
-    public void setRefreshingData(final boolean refreshingData) {
-        /* Record flag */
-        isRefreshing = refreshingData;
     }
 
     /**
@@ -309,189 +262,6 @@ public class JFieldSet<T extends JFieldSetItem>
         for (JFieldElement<T> myEl : theMap.values()) {
             /* Render the element */
             myEl.renderNullData();
-        }
-    }
-
-    /**
-     * Notify that a field update has occurred.
-     * @param pField the source field
-     * @param pNewValue the new Value
-     */
-    protected void notifyUpdate(final JDataField pField,
-                                final Object pNewValue) {
-        /* If we are not refreshing data */
-        if (!isRefreshing) {
-            /* Create the notification */
-            FieldUpdate myUpdate = new FieldUpdate(pField, pNewValue);
-
-            /* Fire the notification */
-            theEventManager.fireActionEvent(myUpdate);
-        }
-    }
-
-    /**
-     * Field Update Notification.
-     */
-    public static final class FieldUpdate {
-        /**
-         * The field.
-         */
-        private final JDataField theField;
-
-        /**
-         * The new value.
-         */
-        private final Object theValue;
-
-        /**
-         * Constructor.
-         * @param pField the source field
-         * @param pNewValue the new Value
-         */
-        protected FieldUpdate(final JDataField pField,
-                              final Object pNewValue) {
-            theField = pField;
-            theValue = pNewValue;
-        }
-
-        /**
-         * Obtain the source field.
-         * @return the field
-         */
-        public JDataField getField() {
-            return theField;
-        }
-
-        /**
-         * Obtain the value as specific type.
-         * @param <I> the value class
-         * @param pClass the required class
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public <I> I getValue(final Class<I> pClass) throws JOceanusException {
-            try {
-                return pClass.cast(theValue);
-            } catch (ClassCastException e) {
-                throw new JMetisDataException("Invalid dataType", e);
-            }
-        }
-
-        /**
-         * Obtain the value as String.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public String getString() throws JOceanusException {
-            return getValue(String.class);
-        }
-
-        /**
-         * Obtain the value as Character Array.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public char[] getCharArray() throws JOceanusException {
-            return getValue(char[].class);
-        }
-
-        /**
-         * Obtain the value as Short.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public Short getShort() throws JOceanusException {
-            return getValue(Short.class);
-        }
-
-        /**
-         * Obtain the value as Integer.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public Integer getInteger() throws JOceanusException {
-            return getValue(Integer.class);
-        }
-
-        /**
-         * Obtain the value as Long.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public Long getLong() throws JOceanusException {
-            return getValue(Long.class);
-        }
-
-        /**
-         * Obtain the value as Boolean.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public Boolean getBoolean() throws JOceanusException {
-            return getValue(Boolean.class);
-        }
-
-        /**
-         * Obtain the value as DateDay.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JDateDay getDateDay() throws JOceanusException {
-            return getValue(JDateDay.class);
-        }
-
-        /**
-         * Obtain the value as Money.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JMoney getMoney() throws JOceanusException {
-            return getValue(JMoney.class);
-        }
-
-        /**
-         * Obtain the value as Rate.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JRate getRate() throws JOceanusException {
-            return getValue(JRate.class);
-        }
-
-        /**
-         * Obtain the value as Price.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JPrice getPrice() throws JOceanusException {
-            return getValue(JPrice.class);
-        }
-
-        /**
-         * Obtain the value as Units.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JUnits getUnits() throws JOceanusException {
-            return getValue(JUnits.class);
-        }
-
-        /**
-         * Obtain the value as Dilution.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JDilution getDilution() throws JOceanusException {
-            return getValue(JDilution.class);
-        }
-
-        /**
-         * Obtain the value as ItemEvent.
-         * @return the value
-         * @throws JOceanusException on error
-         */
-        public JOceanusItemEvent getItemEvent() throws JOceanusException {
-            return getValue(JOceanusItemEvent.class);
         }
     }
 }

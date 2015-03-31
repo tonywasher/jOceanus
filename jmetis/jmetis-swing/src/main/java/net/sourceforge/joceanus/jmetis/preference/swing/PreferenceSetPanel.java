@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jmetis.preference.swing;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,7 +49,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceResource;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.BooleanPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.ColorPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.DatePreference;
@@ -57,6 +59,8 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.EnumPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.IntegerPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.PreferenceItem;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.StringPreference;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceType;
+import net.sourceforge.joceanus.jmetis.preference.ValueClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
