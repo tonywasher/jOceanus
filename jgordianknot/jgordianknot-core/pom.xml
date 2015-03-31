@@ -20,10 +20,6 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <svnComponent>jgordianknot</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
-  </properties>
   <build>
     <plugins>
       <plugin>

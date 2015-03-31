@@ -86,7 +86,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * FieldManager.
      */
-    private JFieldManager theFieldMgr = null;
+    private transient JFieldManager theFieldMgr = null;
 
     /**
      * Data Table Model.
@@ -101,12 +101,12 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Data List associated with the table.
      */
-    private DataList<T, E> theList = null;
+    private transient DataList<T, E> theList = null;
 
     /**
      * The UpdateSet associated with the table.
      */
-    private UpdateSet<E> theUpdateSet = null;
+    private transient UpdateSet<E> theUpdateSet = null;
 
     /**
      * The Class associated with the table.

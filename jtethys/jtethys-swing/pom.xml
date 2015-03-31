@@ -45,20 +45,8 @@
       <version>${LOG4JVersion}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <svnComponent>jtethys</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
-    <tableMain>${packageName}.swing.demo.DemoFilter</tableMain>
-    <dateMain>${packageName}.dateday.demo.JDateDayExample</dateMain>
-    <appJar>${project.artifactId}-${project.version}</appJar>
-    <appDir>${project.build.directory}/site/demo</appDir>
-  </properties>
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>

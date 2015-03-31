@@ -35,10 +35,6 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <svnComponent>jprometheus</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
-  </properties>
   <build>
     <plugins>
       <plugin>

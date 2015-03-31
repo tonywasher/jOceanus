@@ -35,10 +35,6 @@
       <version>${XercesVersion}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <svnComponent>jmetis</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
-  </properties>
   <build>
     <plugins>
       <plugin>

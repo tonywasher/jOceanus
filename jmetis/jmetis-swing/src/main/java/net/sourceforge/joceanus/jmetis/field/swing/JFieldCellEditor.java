@@ -103,7 +103,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final JOceanusEventManager theEventManager;
+        private final transient JOceanusEventManager theEventManager;
 
         /**
          * The text field.
@@ -553,7 +553,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final JOceanusEventManager theEventManager;
+        private final transient JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -766,7 +766,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final JOceanusEventManager theEventManager;
+        private final transient JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -973,7 +973,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final JOceanusEventManager theEventManager;
+        private final transient JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -1226,7 +1226,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final JOceanusEventManager theEventManager;
+        private final transient JOceanusEventManager theEventManager;
 
         /**
          * The point at which the editor is active.

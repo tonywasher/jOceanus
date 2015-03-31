@@ -36,10 +36,8 @@
     </dependency>
   </dependencies>
   <properties>
-    <appDir>../../backup/</appDir>
+    <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
-    <svnComponent>jmoneywise</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
     <packageMain>${packageName}.ui.Control</packageMain>
     <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/controls/icons/MoneyWiseSplash.png</packageSplash>
   </properties>
@@ -52,10 +50,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <SplashScreen-Image>${packageSplash}</SplashScreen-Image>
+              </manifestEntries>
+            </archive>
+          </configuration>
       </plugin>
     </plugins>
   </build>

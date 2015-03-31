@@ -14,22 +14,7 @@
     <module>jthemis-core</module>
   </modules>
   <properties>
-    <appDir>../../backup/</appDir>
-    <appLibDir>lib/</appLibDir>
     <svnComponent>jthemis</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
-    <packageMain>${packageName}.svn.ui.JSvnStarter</packageMain>
   </properties>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>
