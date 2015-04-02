@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.threads.LoaderThread;
+import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.threads.swing.LoaderThread;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -75,7 +75,7 @@ public class LoadArchive
         theStatus.initTask("Loading Extract");
 
         /* Load workbook */
-        PreferenceManager myMgr = theControl.getPreferenceMgr();
+        PreferenceManager myMgr = theControl.getPreferenceManager();
         ArchiveLoader myLoader = new ArchiveLoader();
         MoneyWiseData myData = myLoader.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
 

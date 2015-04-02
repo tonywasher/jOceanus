@@ -27,27 +27,22 @@ import java.util.Map;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
-import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 
 /**
  * Provides top-level control of data.
@@ -122,29 +117,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     private JFrame theFrame = null;
 
     /**
-     * The Security Manager.
-     */
-    private final SecureManager theSecurity;
-
-    /**
      * The Data Manager.
      */
     private ViewerManager theDataMgr = null;
 
     /**
-     * The Field Manager.
+     * The UtilitySet.
      */
-    private final JFieldManager theFieldMgr;
-
-    /**
-     * The Field Preferences.
-     */
-    private final JFieldPreferences theFieldPreferences;
-
-    /**
-     * The Render Manager.
-     */
-    private final PreferenceManager thePreferenceMgr;
+    private final JOceanusUtilitySet theUtilitySet;
 
     /**
      * The Active Profile.
@@ -158,11 +138,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Constructor for default control.
+     * @param pUtilitySet the utility set
      * @param pProfile the startup profile
      * @throws JOceanusException on error
      */
-    protected DataControl(final JDataProfile pProfile) throws JOceanusException {
-        /* Store the active profile */
+    protected DataControl(final JOceanusUtilitySet pUtilitySet,
+                          final JDataProfile pProfile) throws JOceanusException {
+        /* Store the parameters */
+        theUtilitySet = pUtilitySet;
         theProfile = pProfile;
 
         /* Create the Debug Map */
@@ -170,9 +153,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Create event manager */
         theEventManager = new JOceanusEventManager();
-
-        /* Create the Preference manager */
-        thePreferenceMgr = new PreferenceManager();
 
         /* Create the data manager */
         theDataMgr = new ViewerManager();
@@ -182,23 +162,8 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         ViewerEntry myData = getDataEntry(DATA_PROFILE);
         myData.setObject(theProfile);
 
-        /* Access the Security Preferences */
-        SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);
-
-        /* Create the Secure Manager */
-        theSecurity = mySecurity.getSecurity();
-
         /* Create the error list */
         theErrors = new DataErrorList<JMetisExceptionWrapper>();
-
-        /* Access the Field Preferences */
-        theFieldPreferences = thePreferenceMgr.getPreferenceSet(JFieldPreferences.class);
-
-        /* Allocate the FieldManager */
-        theFieldMgr = new JFieldManager(theDataMgr, theFieldPreferences.getConfiguration());
-
-        /* Create listener */
-        new PreferenceListener();
     }
 
     @Override
@@ -309,35 +274,45 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Obtain Secure Manager.
-     * @return the Secure Manager
+     * Obtain UtilitySet.
+     * @return the UtilitySet
      */
-    public SecureManager getSecurity() {
-        return theSecurity;
+    public JOceanusUtilitySet getUtilitySet() {
+        return theUtilitySet;
     }
 
     /**
-     * Obtain the field manager.
-     * @return the field manager
-     */
-    public JFieldManager getFieldMgr() {
-        return theFieldMgr;
-    }
-
-    /**
-     * Obtain the Data Formatter.
-     * @return the data formatter
+     * Obtain DataFormatter.
+     * @return the DataFormatter
      */
     public JDataFormatter getDataFormatter() {
-        return theFieldMgr.getDataFormatter();
+        return theUtilitySet.getDataFormatter();
     }
 
     /**
-     * Obtain the preference manager.
-     * @return the preference manager
+     * Obtain SecureManager.
+     * @return the SecureManager
      */
-    public PreferenceManager getPreferenceMgr() {
-        return thePreferenceMgr;
+    public SecureManager getSecureManager() {
+        return theUtilitySet.getSecureManager();
+    }
+
+    /**
+     * Obtain PreferenceManager.
+     * @return the PreferenceManager
+     */
+    public PreferenceManager getPreferenceManager() {
+        return theUtilitySet.getPreferenceManager();
+    }
+
+    /**
+     * Obtain UtilitySet.
+     * @param pClass the full class of the utility set
+     * @param <X> the type of the utility set
+     * @return the UtilitySet
+     */
+    public <X extends JOceanusUtilitySet> X getUtilitySet(final Class<X> pClass) {
+        return pClass.cast(theUtilitySet);
     }
 
     /**
@@ -516,40 +491,5 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         return theProfile == null
                                  ? null
                                  : theProfile.getActiveTask();
-    }
-
-    /**
-     * Update after field configuration changes.
-     */
-    protected void updateFieldConfiguration() {
-        /* Store new configuration */
-        theFieldMgr.setConfig(theFieldPreferences.getConfiguration());
-    }
-
-    /**
-     * Preference listener class.
-     */
-    private final class PreferenceListener
-            implements JOceanusChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final JOceanusChangeRegistration thePrefReg;
-
-        /**
-         * Constructor.
-         */
-        private PreferenceListener() {
-            thePrefReg = theFieldPreferences.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (thePrefReg.isRelevant(pEvent)) {
-                /* Update new configuration */
-                updateFieldConfiguration();
-            }
-        }
     }
 }

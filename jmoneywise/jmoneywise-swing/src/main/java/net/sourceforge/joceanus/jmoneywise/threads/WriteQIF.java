@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
+import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class WriteQIF
         boolean bSuccess = false;
 
         /* Load configuration */
-        PreferenceManager myMgr = theView.getPreferenceMgr();
+        PreferenceManager myMgr = theView.getPreferenceManager();
         QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
         /* Create QIF file */

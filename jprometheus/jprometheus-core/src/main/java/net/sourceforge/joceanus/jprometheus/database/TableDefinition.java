@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.RatioColum
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ReferenceColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.StringColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.UnitsColumn;
-import net.sourceforge.joceanus.jprometheus.preferences.JDBCDriver;
+import net.sourceforge.joceanus.jprometheus.preference.JDBCDriver;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;

@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.threads;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
+import net.sourceforge.joceanus.jprometheus.threads.swing.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.ui.swing.StatusBar;
 
 /**
  * Finance Status Thread control.

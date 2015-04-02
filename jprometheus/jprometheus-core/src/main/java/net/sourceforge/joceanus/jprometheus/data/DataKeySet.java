@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;

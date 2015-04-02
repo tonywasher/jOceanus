@@ -264,7 +264,7 @@ public class PreferencesPanel
         /* Create the debug entry, and attach to correct section */
         theDataEntry = pDataMgr.new ViewerEntry("Preferences");
         theDataEntry.addAsChildOf(pSection);
-        theDataEntry.setObject(pDataMgr);
+        theDataEntry.setObject(pPreferenceMgr);
 
         /* Add a listener for the addition of subsequent propertySets */
         new PrefSetListener(pPreferenceMgr);

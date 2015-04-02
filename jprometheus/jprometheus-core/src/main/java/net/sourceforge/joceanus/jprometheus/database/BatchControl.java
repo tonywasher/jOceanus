@@ -29,7 +29,7 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.DataState;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.

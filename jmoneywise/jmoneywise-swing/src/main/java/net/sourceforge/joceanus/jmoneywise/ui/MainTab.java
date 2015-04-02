@@ -44,7 +44,8 @@ import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
@@ -207,7 +208,7 @@ public class MainTab
      */
     public MainTab(final JDataProfile pProfile) throws JOceanusException {
         /* Create the view */
-        theView = new View(pProfile);
+        theView = new View(JOceanusSwingUtilitySet.createDefault(), pProfile);
 
         /* Build the main window */
         buildMainWindow(theView);
@@ -219,32 +220,35 @@ public class MainTab
         JDataProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
+        /* Obtain the utility set */
+        JOceanusSwingUtilitySet myUtilitySet = theView.getUtilitySet(JOceanusSwingUtilitySet.class);
+
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        theReports = new ReportTab(theView);
+        theReports = new ReportTab(theView, myUtilitySet);
         theTabs.addTab(TITLE_REPORT, theReports);
 
         /* Create the Register Tab */
         myTask.startTask("Register");
-        theRegister = new TransactionTable(theView);
+        theRegister = new TransactionTable(theView, myUtilitySet);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
-        theSpotPrices = new SpotPricesTable(theView);
+        theSpotPrices = new SpotPricesTable(theView, myUtilitySet);
         theTabs.addTab(TITLE_SPOTPRICES, theSpotPrices.getPanel());
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
-        theSpotRates = new SpotRatesTable(theView);
+        theSpotRates = new SpotRatesTable(theView, myUtilitySet);
         theTabs.addTab(TITLE_SPOTRATES, theSpotRates.getPanel());
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
-        theMaint = new MaintenanceTab(this);
+        theMaint = new MaintenanceTab(this, myUtilitySet);
         theTabs.addTab(TITLE_MAINT, theMaint);
 
         /* Create listener and initialise focus */

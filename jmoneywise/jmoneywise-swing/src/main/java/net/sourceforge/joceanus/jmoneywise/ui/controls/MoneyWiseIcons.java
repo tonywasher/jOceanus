@@ -30,7 +30,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 
 /**

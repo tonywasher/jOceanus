@@ -53,9 +53,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.Tran
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
+import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.swing.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
@@ -153,8 +154,10 @@ public class MaintenanceTab
     /**
      * Constructor.
      * @param pTop top window
+     * @param pUtilitySet the utility set
      */
-    public MaintenanceTab(final MainTab pTop) {
+    public MaintenanceTab(final MainTab pTop,
+                          final JOceanusSwingUtilitySet pUtilitySet) {
         /* Store details */
         theView = pTop.getView();
         theParent = pTop;
@@ -166,19 +169,19 @@ public class MaintenanceTab
         theTabs = new JEnableTabbed();
 
         /* Create the account Tab and add it */
-        theAccountTab = new AccountPanel(theView);
+        theAccountTab = new AccountPanel(theView, pUtilitySet);
         theTabs.addTab(TITLE_ACCOUNT, theAccountTab);
 
         /* Create the category Tab and add it */
-        theCategoryTab = new CategoryPanel(theView);
+        theCategoryTab = new CategoryPanel(theView, pUtilitySet);
         theTabs.addTab(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the TaxYears Tab */
-        theTaxYearTab = new TaxYearTable(theView);
+        theTaxYearTab = new TaxYearTable(theView, pUtilitySet);
         theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
 
         /* Create the Static Tab */
-        theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, pUtilitySet, MoneyWiseDataType.class);
         theTabs.addTab(TITLE_STATIC, theStatic);
 
         /* Add the static elements */
@@ -198,8 +201,8 @@ public class MaintenanceTab
         theStatic.addStatic(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class);
 
         /* Create the Preferences Tab */
-        PreferenceManager myPrefs = theView.getPreferenceMgr();
-        thePreferences = new PreferencesPanel(myPrefs, theView.getFieldMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
+        PreferenceManager myPrefs = pUtilitySet.getPreferenceManager();
+        thePreferences = new PreferencesPanel(myPrefs, pUtilitySet.getFieldManager(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */

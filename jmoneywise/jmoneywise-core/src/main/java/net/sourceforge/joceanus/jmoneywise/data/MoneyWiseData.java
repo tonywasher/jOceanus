@@ -26,11 +26,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
@@ -79,6 +76,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -137,15 +135,11 @@ public class MoneyWiseData
 
     /**
      * Standard constructor.
-     * @param pSecurity the secure manager
-     * @param pPreferenceMgr the preference manager
-     * @param pFieldMgr the field manager
+     * @param pUtilitySet the utility set
      */
-    public MoneyWiseData(final SecureManager pSecurity,
-                         final PreferenceManager pPreferenceMgr,
-                         final JFieldManager pFieldMgr) {
+    public MoneyWiseData(final JOceanusUtilitySet pUtilitySet) {
         /* Call Super-constructor */
-        super(MoneyWiseDataType.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
+        super(MoneyWiseDataType.class, pUtilitySet);
 
         /* Loop through the list types */
         for (MoneyWiseDataType myType : MoneyWiseDataType.values()) {

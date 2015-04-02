@@ -51,7 +51,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
@@ -114,7 +115,7 @@ public class SecurityTest {
             /* If we are creating a secure zip file */
             if (bSecure) {
                 /* Create new Password Hash */
-                SecureManager myManager = new SecureManager();
+                SecureManager myManager = new SwingSecureManager();
                 PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
 
                 /* Initialise the Zip file */
@@ -189,7 +190,7 @@ public class SecurityTest {
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
                 /* Resolve security and unlock file */
-                SecureManager myManager = new SecureManager();
+                SecureManager myManager = new SwingSecureManager();
                 PasswordHash myHash = myManager.resolvePasswordHash(myHashBytes, pZipFile.getName());
                 myZipFile.setPasswordHash(myHash);
             }
@@ -242,7 +243,7 @@ public class SecurityTest {
      */
     protected static void testSecurity() throws JOceanusException {
         /* Create new Password Hash */
-        SecureManager myManager = new SecureManager();
+        SecureManager myManager = new SwingSecureManager();
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
         SecurityGenerator myGen = myHash.getSecurityGenerator();
 
@@ -285,7 +286,7 @@ public class SecurityTest {
         byte[] myMacSafe = myHash.secureDataMac(myMac);
 
         /* Start a new session */
-        myManager = new SecureManager();
+        myManager = new SwingSecureManager();
         PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
         myGen = myHash.getSecurityGenerator();
 
@@ -414,7 +415,7 @@ public class SecurityTest {
     protected static void checkAlgorithms() throws JOceanusException {
         /* Create new Security Generator */
         SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
-        SecureManager myManager = new SecureManager(myParams);
+        SecureManager myManager = new SwingSecureManager(myParams);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 
         /* Create instance of each digest */

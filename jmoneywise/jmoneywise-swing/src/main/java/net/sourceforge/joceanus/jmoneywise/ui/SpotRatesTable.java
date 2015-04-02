@@ -48,13 +48,14 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotRatesSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.ActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -182,11 +183,13 @@ public class SpotRatesTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUtilitySet the utility set
      */
-    public SpotRatesTable(final View pView) {
+    public SpotRatesTable(final View pView,
+                          final JOceanusSwingUtilitySet pUtilitySet) {
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = theView.getFieldMgr();
+        theFieldMgr = pUtilitySet.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */

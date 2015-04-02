@@ -55,12 +55,16 @@ import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IntegerCel
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.RowCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
 /**
  * Class to determine rendering details for an item.
  * @author Tony Washer
  */
-public class JFieldManager {
+public class JFieldManager
+        implements JOceanusEventProvider {
     /**
      * Money accounting format width.
      */
@@ -127,6 +131,11 @@ public class JFieldManager {
     private static final Font FONT_HI_NUMCHANGED = new Font(FONTFACE_NUMERIC, Font.BOLD + Font.ITALIC, PITCH_HILITE);
 
     /**
+     * The Event Manager.
+     */
+    private final JOceanusEventManager theEventManager;
+
+    /**
      * The Data Manager.
      */
     private final ViewerManager theDataManager;
@@ -157,12 +166,20 @@ public class JFieldManager {
         theDataManager = pManager;
         theConfig = pConfig;
 
+        /* Create the event manager */
+        theEventManager = new JOceanusEventManager();
+
         /* Create data formatter */
         theFormatter = new JDataFormatter();
         theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
 
         /* Process the configuration */
         processConfiguration();
+    }
+
+    @Override
+    public JOceanusEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**

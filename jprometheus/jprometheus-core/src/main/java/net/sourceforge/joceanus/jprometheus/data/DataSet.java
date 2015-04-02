@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.swing.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
@@ -43,7 +44,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
-import net.sourceforge.joceanus.jprometheus.preferences.DataListPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.DataListPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -166,20 +167,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Constructor for new empty DataSet.
      * @param pEnumClass the EnumClass
-     * @param pSecurity the secure manager
-     * @param pPreferenceMgr the preference manager
-     * @param pFormatter the data formatter
+     * @param pUtilitySet the utility set
      */
     protected DataSet(final Class<E> pEnumClass,
-                      final SecureManager pSecurity,
-                      final PreferenceManager pPreferenceMgr,
-                      final JDataFormatter pFormatter) {
+                      final JOceanusUtilitySet pUtilitySet) {
         /* Store the security manager and Enum class */
-        theSecurity = pSecurity;
+        theSecurity = pUtilitySet.getSecureManager();
         theEnumClass = pEnumClass;
 
         /* Access the DataListPreferences */
-        DataListPreferences myPreferences = pPreferenceMgr.getPreferenceSet(DataListPreferences.class);
+        PreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
+        DataListPreferences myPreferences = myPrefMgr.getPreferenceSet(DataListPreferences.class);
         theGranularity = myPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
 
         /* Create the empty security lists */
@@ -192,7 +190,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theListMap = new EnumMap<E, DataList<?, E>>(pEnumClass);
 
         /* record formatter */
-        theFormatter = pFormatter;
+        theFormatter = pUtilitySet.getDataFormatter();
     }
 
     /**

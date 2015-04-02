@@ -50,7 +50,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementS
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -144,9 +145,11 @@ public class ReportTab
     /**
      * Constructor for Report Window.
      * @param pView the data view
+     * @param pUtilitySet the utility set
      * @throws JOceanusException on error
      */
-    public ReportTab(final View pView) throws JOceanusException {
+    public ReportTab(final View pView,
+                     final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
         /* Store the view */
         theView = pView;
 
@@ -163,7 +166,7 @@ public class ReportTab
         theSpotEntry.hideEntry();
 
         /* Create Report Manager */
-        theManager = new ReportManager(theView);
+        theManager = new ReportManager(theView, pUtilitySet);
 
         /* Create the report builder */
         theBuilder = new ReportBuilder(theManager);

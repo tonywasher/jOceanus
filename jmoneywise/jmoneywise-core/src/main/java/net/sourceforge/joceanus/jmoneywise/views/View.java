@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -34,8 +33,9 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -69,12 +69,14 @@ public class View
 
     /**
      * Constructor.
+     * @param pUtilitySet the utility set
      * @param pProfile the startup profile
      * @throws JOceanusException on error
      */
-    public View(final JDataProfile pProfile) throws JOceanusException {
+    public View(final JOceanusUtilitySet pUtilitySet,
+                final JDataProfile pProfile) throws JOceanusException {
         /* Call super-constructor */
-        super(pProfile);
+        super(pUtilitySet, pProfile);
 
         /* Create an empty data set */
         setData(getNewData());
@@ -110,13 +112,12 @@ public class View
      */
     @Override
     public final MoneyWiseData getNewData() {
-        return new MoneyWiseData(getSecurity(), getPreferenceMgr(), getFieldMgr());
+        return new MoneyWiseData(getUtilitySet());
     }
 
     @Override
     public Database<MoneyWiseData> getDatabase() throws JOceanusException {
-        PreferenceManager myMgr = getPreferenceMgr();
-        return new MoneyWiseDatabase(myMgr.getPreferenceSet(DatabasePreferences.class));
+        return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(DatabasePreferences.class));
     }
 
     /**
@@ -155,7 +156,7 @@ public class View
         pData.initialiseAnalysis();
 
         /* Create the analysis */
-        TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceMgr());
+        TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceManager());
 
         /* Access the top level debug entry for this analysis */
         ViewerEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);

@@ -57,14 +57,15 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.LoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
+import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -201,15 +202,17 @@ public class LoanCategoryTable
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
+     * @param pUtilitySet the utility set
      * @param pError the error panel
      */
     public LoanCategoryTable(final View pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final JOceanusSwingUtilitySet pUtilitySet,
                              final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldMgr();
+        theFieldMgr = pUtilitySet.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -302,11 +303,13 @@ public class HTMLBuilder {
     /**
      * Constructor.
      * @param pView the view
+     * @param pUtilitySet the utility set
      * @throws JOceanusException on error
      */
-    public HTMLBuilder(final View pView) throws JOceanusException {
+    public HTMLBuilder(final View pView,
+                       final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
         /* Store the field manager */
-        theFieldManager = pView.getFieldMgr();
+        theFieldManager = pUtilitySet.getFieldManager();
 
         /* Protect against exceptions */
         try {

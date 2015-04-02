@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetBase;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
@@ -44,8 +43,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
  * @param <T> the Data Item type
  */
 public class JFieldSet<T extends JFieldSetItem>
-        extends JFieldSetBase<T>
-        implements JOceanusEventProvider {
+        extends JFieldSetBase<T> {
     /**
      * The map of fields.
      */
