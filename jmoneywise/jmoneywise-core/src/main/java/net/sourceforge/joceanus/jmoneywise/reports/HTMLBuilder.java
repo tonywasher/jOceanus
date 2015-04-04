@@ -136,6 +136,11 @@ public abstract class HTMLBuilder {
     protected static final String CLASS_TITLEVALUE = "titleValue";
 
     /**
+     * Name of linkValue class.
+     */
+    protected static final String CLASS_LINKVALUE = "linkValue";
+
+    /**
      * Name of dataValue class.
      */
     protected static final String CLASS_DATAVALUE = "dataValue";
@@ -361,6 +366,7 @@ public abstract class HTMLBuilder {
         /* Create the cell */
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_ID, myId);
         myLink.setIdAttribute(ATTR_ID, true);
@@ -396,6 +402,7 @@ public abstract class HTMLBuilder {
         /* Create the cell */
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_ID, myId);
         myLink.setIdAttribute(ATTR_ID, true);
@@ -426,6 +433,7 @@ public abstract class HTMLBuilder {
                                       final String pName) {
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_HREF, REF_FILTER
                                        + pLink);

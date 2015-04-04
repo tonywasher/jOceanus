@@ -33,8 +33,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
@@ -46,12 +44,11 @@ import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingHTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingReportManager;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -101,7 +98,7 @@ public class ReportTab
     /**
      * The Data View.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The Scroll Pane.
@@ -146,11 +143,9 @@ public class ReportTab
     /**
      * Constructor for Report Window.
      * @param pView the data view
-     * @param pUtilitySet the utility set
      * @throws JOceanusException on error
      */
-    public ReportTab(final View pView,
-                     final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
+    public ReportTab(final SwingView pView) throws JOceanusException {
         /* Store the view */
         theView = pView;
 
@@ -166,47 +161,24 @@ public class ReportTab
         theSpotEntry.addAsChildOf(myDataReport);
         theSpotEntry.hideEntry();
 
-        /* Create Report Manager */
-        theManager = new SwingReportManager(theView, pUtilitySet);
-
-        /* Create the report builder */
-        theBuilder = new ReportBuilder(theManager);
-
         /* Create the editor pane as non-editable */
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
 
+        /* Create Report Manager */
+        theManager = new SwingReportManager(theView, theEditor);
+
+        /* Create the report builder */
+        theBuilder = new ReportBuilder(theManager);
+
         /* Create the print pane for the window */
         thePrint = new JEditorPane();
         thePrint.setEditable(false);
+        SwingHTMLBuilder.configurePrintPane(thePrint);
 
         /* Create a scroll-pane for the editor */
         theScroll = new JEnableScroll();
         theScroll.setViewportView(theEditor);
-
-        /* Create display editorKit and styleSheet */
-        HTMLEditorKit myDisplayKit = new HTMLEditorKit();
-        StyleSheet myDisplayStyle = new StyleSheet();
-        myDisplayStyle.addStyleSheet(myDisplayKit.getStyleSheet());
-        theManager.buildDisplayStyleSheet(myDisplayStyle);
-
-        /* Create print editorKit and styleSheet */
-        HTMLEditorKit myPrintKit = new HTMLEditorKit();
-        StyleSheet myPrintStyle = new StyleSheet();
-        myPrintStyle.addStyleSheet(myPrintKit.getStyleSheet());
-        SwingHTMLBuilder.buildPrintStyleSheet(myPrintStyle);
-
-        /* Apply styleSheet to display window */
-        myDisplayKit.setStyleSheet(myDisplayStyle);
-        theEditor.setEditorKit(myDisplayKit);
-        javax.swing.text.Document myDoc = myDisplayKit.createDefaultDocument();
-        theEditor.setDocument(myDoc);
-
-        /* Apply styleSheet to print window */
-        myPrintKit.setStyleSheet(myPrintStyle);
-        thePrint.setEditorKit(myPrintKit);
-        myDoc = myPrintKit.createDefaultDocument();
-        thePrint.setDocument(myDoc);
 
         /* Create the Report Selection panel */
         theSelect = new ReportSelect();
@@ -290,7 +262,6 @@ public class ReportTab
      * @throws JOceanusException on error
      */
     private void buildReport() throws JOceanusException {
-
         /* Access the values from the selection */
         ReportType myReportType = theSelect.getReportType();
         JDateDayRange myRange = theSelect.getDateRange();

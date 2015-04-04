@@ -54,13 +54,12 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.SecurityPanel;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -138,7 +137,7 @@ public class SecurityTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The field manager.
@@ -219,17 +218,15 @@ public class SecurityTable
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
-     * @param pUtilitySet the utility set
      * @param pError the error panel
      */
-    public SecurityTable(final View pView,
+    public SecurityTable(final SwingView pView,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final JOceanusSwingUtilitySet pUtilitySet,
                          final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = pUtilitySet.getFieldManager();
+        theFieldMgr = theView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */

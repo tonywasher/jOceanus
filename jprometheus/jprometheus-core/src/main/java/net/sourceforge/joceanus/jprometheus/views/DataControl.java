@@ -308,16 +308,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Obtain UtilitySet.
-     * @param pClass the full class of the utility set
-     * @param <X> the type of the utility set
-     * @return the UtilitySet
-     */
-    public <X extends JOceanusUtilitySet> X getUtilitySet(final Class<X> pClass) {
-        return pClass.cast(theUtilitySet);
-    }
-
-    /**
      * Initialise Data Manager.
      */
     private void initDataMgr() {

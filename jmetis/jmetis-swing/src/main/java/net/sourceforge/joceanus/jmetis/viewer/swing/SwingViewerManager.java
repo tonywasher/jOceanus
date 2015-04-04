@@ -22,12 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer.swing;
 
-import java.awt.Color;
-
 import javax.swing.tree.DefaultTreeModel;
 
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 
 /**
  * Data Manager.
@@ -46,19 +47,31 @@ public class SwingViewerManager
     private final DefaultTreeModel theModel;
 
     /**
+     * The field manager.
+     */
+    private final JFieldManager theFieldManager;
+
+    /**
      * The owning window.
      */
     private ViewerWindow theWindow = null;
 
     /**
      * Constructor.
+     * @param pFieldManager the field manager
      */
-    public SwingViewerManager() {
+    public SwingViewerManager(final JFieldManager pFieldManager) {
+        /* Store the field manager */
+        theFieldManager = pFieldManager;
+
         /* Create the tree model */
         theModel = new DefaultTreeModel(getRoot().getNode());
 
         /* Create the formatters */
-        theHTMLFormatter = new ViewerHTML(getDataFormatter());
+        theHTMLFormatter = new ViewerHTML(pFieldManager.getConfig(), getDataFormatter());
+
+        /* Create the listener */
+        new ViewerListener();
     }
 
     /**
@@ -85,21 +98,6 @@ public class SwingViewerManager
      */
     protected ViewerHTML getHTMLFormatter() {
         return theHTMLFormatter;
-    }
-
-    @Override
-    public void setFormatter(final Color pStandard,
-                             final Color pChanged,
-                             final Color pLink,
-                             final Color pChgLink) {
-        /* Set the colours */
-        theHTMLFormatter.setColors(pStandard, pChanged, pLink, pChgLink);
-
-        /* If we have a data window */
-        if (theWindow != null) {
-            /* Set the new formatter */
-            theWindow.setFormatter(theHTMLFormatter);
-        }
     }
 
     /**
@@ -135,5 +133,37 @@ public class SwingViewerManager
     @Override
     public synchronized SwingViewerEntry newEntry(final String pName) {
         return new SwingViewerEntry(this, pName, nextId());
+    }
+
+    /**
+     * Process field configuration.
+     */
+    private void processFieldConfig() {
+        /* Process the configuration */
+        theHTMLFormatter.processConfig(theFieldManager.getConfig());
+
+        /* If we have a data window */
+        if (theWindow != null) {
+            /* Set the new formatter */
+            theWindow.setFormatter(theHTMLFormatter);
+        }
+    }
+
+    /**
+     * Listener class.
+     */
+    private class ViewerListener
+            implements JOceanusChangeEventListener {
+        /**
+         * Constructor.
+         */
+        private ViewerListener() {
+            theFieldManager.getEventRegistrar().addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            processFieldConfig();
+        }
     }
 }

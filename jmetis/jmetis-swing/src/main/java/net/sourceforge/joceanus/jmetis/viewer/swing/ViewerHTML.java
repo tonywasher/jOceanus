@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataDifference;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.field.swing.JFieldConfig;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 
@@ -90,26 +91,6 @@ public final class ViewerHTML {
      * Maximum Map entry count.
      */
     private static final int MAP_MAXENTRIES = 50;
-
-    /**
-     * Colour for standard elements.
-     */
-    public static final Color COLOR_STANDARD = Color.black;
-
-    /**
-     * Colour for changed elements.
-     */
-    public static final Color COLOR_CHANGED = Color.magenta;
-
-    /**
-     * Colour for standard links.
-     */
-    public static final Color COLOR_LINK = Color.blue;
-
-    /**
-     * Colour for changed link.
-     */
-    public static final Color COLOR_CHGLINK = Color.green;
 
     /**
      * Start header html.
@@ -233,14 +214,16 @@ public final class ViewerHTML {
 
     /**
      * Constructor.
+     * @param pFieldConfig the field configuration
      * @param pFormatter the data formatter
      */
-    protected ViewerHTML(final JDataFormatter pFormatter) {
+    protected ViewerHTML(final JFieldConfig pFieldConfig,
+                         final JDataFormatter pFormatter) {
         /* Record the formatter */
         theFormatter = pFormatter;
 
-        /* Set default colours */
-        setColors(COLOR_STANDARD, COLOR_CHANGED, COLOR_LINK, COLOR_CHGLINK);
+        /* process configuration */
+        processConfig(pFieldConfig);
     }
 
     /**
@@ -250,15 +233,12 @@ public final class ViewerHTML {
      * @param pLink the link colour
      * @param pChgLink the changed link colour
      */
-    protected void setColors(final Color pStandard,
-                             final Color pChanged,
-                             final Color pLink,
-                             final Color pChgLink) {
+    protected void processConfig(final JFieldConfig pFieldConfig) {
         /* Set the colours */
-        theColorStandard = pStandard;
-        theColorChanged = pChanged;
-        theColorLink = pLink;
-        theColorChgLink = pChgLink;
+        theColorStandard = pFieldConfig.getStandardColor();
+        theColorChanged = pFieldConfig.getChangedColor();
+        theColorLink = pFieldConfig.getLinkColor();
+        theColorChgLink = pFieldConfig.getChangedLinkColor();
     }
 
     /**

@@ -46,13 +46,13 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.SpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -187,13 +187,11 @@ public class SpotPricesTable
     /**
      * Constructor.
      * @param pView the data view
-     * @param pUtilitySet the utility set
      */
-    public SpotPricesTable(final View pView,
-                           final JOceanusSwingUtilitySet pUtilitySet) {
+    public SpotPricesTable(final SwingView pView) {
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = pUtilitySet.getFieldManager();
+        theFieldMgr = pView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */

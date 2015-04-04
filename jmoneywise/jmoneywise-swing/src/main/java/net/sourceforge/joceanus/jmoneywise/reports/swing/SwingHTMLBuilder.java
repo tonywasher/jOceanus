@@ -24,14 +24,18 @@ package net.sourceforge.joceanus.jmoneywise.reports.swing;
 
 import java.awt.Color;
 
+import javax.swing.JEditorPane;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 
 /**
  * Build a report document.
@@ -84,9 +88,19 @@ public class SwingHTMLBuilder
     private static final String CSS_ALIGNRIGHT = " text-align: right;";
 
     /**
+     * The align left attribute.
+     */
+    private static final String CSS_ALIGNLEFT = " text-align: left;";
+
+    /**
      * The bold font attribute.
      */
     private static final String CSS_FONTBOLD = " font-weight: bold;";
+
+    /**
+     * The editor pane.
+     */
+    private final JEditorPane theEditor;
 
     /**
      * The field manager.
@@ -96,23 +110,32 @@ public class SwingHTMLBuilder
     /**
      * Constructor.
      * @param pView the view
-     * @param pUtilitySet the utility set
+     * @param pEditor the editor pane
      * @throws JOceanusException on error
      */
-    public SwingHTMLBuilder(final View pView,
-                            final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
+    public SwingHTMLBuilder(final SwingView pView,
+                            final JEditorPane pEditor) throws JOceanusException {
         /* Call super constructor */
-        super(pView, pUtilitySet);
+        super(pView, pView.getUtilitySet());
+
+        /* Store the editor pane */
+        theEditor = pEditor;
 
         /* Store the field manager */
-        theFieldManager = pUtilitySet.getFieldManager();
+        theFieldManager = pView.getFieldManager();
+
+        /* Initialise from field manager */
+        processFieldConfig();
+
+        /* Create listener */
+        new ReportListener();
     }
 
     /**
      * Build display styleSheet.
      * @param pSheet the styleSheet
      */
-    public void buildDisplayStyleSheet(final StyleSheet pSheet) {
+    private void buildDisplayStyleSheet(final StyleSheet pSheet) {
         /* Create builder and access zebra colour */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Color myZebra = theFieldManager.getZebraColor();
@@ -239,6 +262,15 @@ public class SwingHTMLBuilder
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
+        /* Define alignment for link values */
+        myBuilder.append(SEP_DOT);
+        myBuilder.append(CLASS_LINKVALUE);
+        myBuilder.append(SEP_STARTRULE);
+        myBuilder.append(CSS_ALIGNLEFT);
+        myBuilder.append(SEP_ENDRULE);
+        pSheet.addRule(myBuilder.toString());
+        myBuilder.setLength(0);
+
         /* Define colour and alignment for data values */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_DATAVALUE);
@@ -292,7 +324,7 @@ public class SwingHTMLBuilder
      * Build print styleSheet.
      * @param pSheet the styleSheet
      */
-    public static void buildPrintStyleSheet(final StyleSheet pSheet) {
+    private static void buildPrintStyleSheet(final StyleSheet pSheet) {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Define standard font for body and table contents */
@@ -363,5 +395,64 @@ public class SwingHTMLBuilder
         myBuilder.append(" text-decoration: none; color: black; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
+    }
+
+    /**
+     * Process the field configuration.
+     */
+    private void processFieldConfig() {
+        /* Save the active text */
+        String myText = theEditor.getText();
+
+        /* Create display editorKit and styleSheet */
+        HTMLEditorKit myDisplayKit = new HTMLEditorKit();
+        StyleSheet myDisplayStyle = new StyleSheet();
+        myDisplayStyle.addStyleSheet(myDisplayKit.getStyleSheet());
+        buildDisplayStyleSheet(myDisplayStyle);
+
+        /* Apply styleSheet to display window */
+        myDisplayKit.setStyleSheet(myDisplayStyle);
+        theEditor.setEditorKit(myDisplayKit);
+        Document myDoc = myDisplayKit.createDefaultDocument();
+        theEditor.setDocument(myDoc);
+
+        /* Restore the text */
+        theEditor.setText(myText);
+    }
+
+    /**
+     * Build print configuration.
+     * @param pPrintPane the print pane
+     */
+    public static void configurePrintPane(final JEditorPane pPrintPane) {
+        /* Create print editorKit and styleSheet */
+        HTMLEditorKit myPrintKit = new HTMLEditorKit();
+        StyleSheet myPrintStyle = new StyleSheet();
+        myPrintStyle.addStyleSheet(myPrintKit.getStyleSheet());
+        buildPrintStyleSheet(myPrintStyle);
+
+        /* Apply styleSheet to print window */
+        myPrintKit.setStyleSheet(myPrintStyle);
+        pPrintPane.setEditorKit(myPrintKit);
+        Document myDoc = myPrintKit.createDefaultDocument();
+        pPrintPane.setDocument(myDoc);
+    }
+
+    /**
+     * Listener class.
+     */
+    private class ReportListener
+            implements JOceanusChangeEventListener {
+        /**
+         * Constructor.
+         */
+        private ReportListener() {
+            theFieldManager.getEventRegistrar().addChangeListener(this);
+        }
+
+        @Override
+        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            processFieldConfig();
+        }
     }
 }

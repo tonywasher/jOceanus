@@ -54,11 +54,10 @@ import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.CashCategoryPanel;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -127,7 +126,7 @@ public class CashCategoryTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The field manager.
@@ -203,17 +202,15 @@ public class CashCategoryTable
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
-     * @param pUtilitySet the utility set
      * @param pError the error panel
      */
-    public CashCategoryTable(final View pView,
+    public CashCategoryTable(final SwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final JOceanusSwingUtilitySet pUtilitySet,
                              final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = pUtilitySet.getFieldManager();
+        theFieldMgr = theView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */

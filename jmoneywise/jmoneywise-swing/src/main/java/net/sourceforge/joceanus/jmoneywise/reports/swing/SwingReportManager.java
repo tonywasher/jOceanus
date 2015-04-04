@@ -23,14 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.reports.swing;
 
 import javax.swing.JEditorPane;
-import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmoneywise.reports.BasicReport;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.slf4j.Logger;
@@ -55,27 +53,18 @@ public class SwingReportManager
     /**
      * Constructor.
      * @param pView the view
-     * @param pUtilitySet the utility set
+     * @param pEditor the editor pane
      * @throws JOceanusException on error
      */
-    public SwingReportManager(final View pView,
-                              final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
+    public SwingReportManager(final SwingView pView,
+                              final JEditorPane pEditor) throws JOceanusException {
         /* Create the builder */
-        super(pView, pUtilitySet, new SwingHTMLBuilder(pView, pUtilitySet));
+        super(pView, pView.getUtilitySet(), new SwingHTMLBuilder(pView, pEditor));
     }
 
     @Override
     public SwingHTMLBuilder getBuilder() {
         return (SwingHTMLBuilder) super.getBuilder();
-    }
-
-    /**
-     * Build display styleSheet.
-     * @param pSheet the styleSheet
-     */
-    public void buildDisplayStyleSheet(final StyleSheet pSheet) {
-        /* Pass call to HTML builder */
-        getBuilder().buildDisplayStyleSheet(pSheet);
     }
 
     @Override

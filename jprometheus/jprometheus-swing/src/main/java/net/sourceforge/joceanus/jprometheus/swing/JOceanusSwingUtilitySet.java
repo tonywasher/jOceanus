@@ -83,14 +83,14 @@ public class JOceanusSwingUtilitySet
         /* Create secure manager */
         super(new SwingSecureManager(pParameters), pPrefMgr);
 
-        /* Create components */
-        theViewerManager = new SwingViewerManager();
-
         /* Access the Field Preferences */
         theFieldPreferences = pPrefMgr.getPreferenceSet(JFieldPreferences.class);
 
         /* Allocate the FieldManager */
-        theFieldManager = new JFieldManager(theViewerManager, theFieldPreferences.getConfiguration());
+        theFieldManager = new JFieldManager(theFieldPreferences.getConfiguration());
+
+        /* Create components */
+        theViewerManager = new SwingViewerManager(theFieldManager);
 
         /* Create listener */
         new PreferenceListener();

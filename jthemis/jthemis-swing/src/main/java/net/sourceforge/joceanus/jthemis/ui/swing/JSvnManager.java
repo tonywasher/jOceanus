@@ -97,9 +97,9 @@ public final class JSvnManager {
     private final PreferenceManager thePrefMgr;
 
     /**
-     * The Data Manager.
+     * The Viewer Manager.
      */
-    private final SwingViewerManager theDataMgr;
+    private final SwingViewerManager theViewerMgr;
 
     /**
      * The Security Manager.
@@ -196,12 +196,6 @@ public final class JSvnManager {
      * @throws JOceanusException on error
      */
     protected JSvnManager() throws JOceanusException {
-        /* Create the data manager */
-        theDataMgr = new SwingViewerManager();
-
-        /* Create the Tabbed Pane */
-        JEnableTabbed myTabs = new JEnableTabbed();
-
         /* Create the preference manager */
         thePrefMgr = new PreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
@@ -212,17 +206,23 @@ public final class JSvnManager {
         /* Create the Secure Manager */
         theSecureMgr = new SwingSecureManager(mySecurity.getParameters());
 
+        /* Create the fieldManager and viewer manager */
+        JFieldPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(JFieldPreferences.class);
+        JFieldManager myFieldMgr = new JFieldManager(myFieldPrefs.getConfiguration());
+        theViewerMgr = new SwingViewerManager(myFieldMgr);
+
         /* Create the frame */
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
+
+        /* Create the Tabbed Pane */
+        JEnableTabbed myTabs = new JEnableTabbed();
 
         /* Create the panel */
         theStatusPanel = new JSvnStatusWindow(this);
 
         /* Create the Preferences Tab */
-        JFieldPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(JFieldPreferences.class);
-        JFieldManager myFieldMgr = new JFieldManager(theDataMgr, myFieldPrefs.getConfiguration());
-        ViewerEntry myMaintEntry = theDataMgr.newEntry("Maintenance");
-        PreferencesPanel myPrefPanel = new PreferencesPanel(thePrefMgr, myFieldMgr, theDataMgr, myMaintEntry);
+        ViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
+        PreferencesPanel myPrefPanel = new PreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
         myTabs.addTab("Status", theStatusPanel);
         myTabs.addTab("Preferences", myPrefPanel);
 
@@ -340,22 +340,22 @@ public final class JSvnManager {
      */
     protected void setSubversionData(final DiscoverData pData) {
         /* Declare repository to data manager */
-        ViewerEntry myRepEntry = theDataMgr.newEntry("SvnRepository");
+        ViewerEntry myRepEntry = theViewerMgr.newEntry("SvnRepository");
         myRepEntry.addAsRootChild();
         theRepository = pData.getRepository();
         myRepEntry.setObject(theRepository);
         myRepEntry.setFocus();
 
         /* Declare WorkingCopySet to data manager */
-        ViewerEntry mySetEntry = theDataMgr.newEntry("WorkingSet");
+        ViewerEntry mySetEntry = theViewerMgr.newEntry("WorkingSet");
         mySetEntry.addAsRootChild();
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
 
         /* Declare Extract Plans to data manager */
-        ViewerEntry myPlanEntry = theDataMgr.newEntry("ExtractPlans");
+        ViewerEntry myPlanEntry = theViewerMgr.newEntry("ExtractPlans");
         myPlanEntry.addAsRootChild();
-        pData.declareExtractPlans(theDataMgr, myPlanEntry);
+        pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
         /* Enable the git menu */
         theCreateGit.setEnabled(true);
@@ -382,7 +382,7 @@ public final class JSvnManager {
         /* If we have an error */
         JOceanusException myError = pData.getError();
         if (myError != null) {
-            ViewerEntry myErrorEntry = theDataMgr.newEntry("Error");
+            ViewerEntry myErrorEntry = theViewerMgr.newEntry("Error");
             myErrorEntry.addAsRootChild();
             myErrorEntry.setObject(myError);
             myErrorEntry.setFocus();
@@ -395,7 +395,7 @@ public final class JSvnManager {
      */
     protected void setGitData(final CreateGitRepo pGit) {
         /* Declare repository to data manager */
-        ViewerEntry myRepEntry = theDataMgr.newEntry("GitRepo");
+        ViewerEntry myRepEntry = theViewerMgr.newEntry("GitRepo");
         myRepEntry.addAsRootChild();
         GitRepository myRepo = pGit.getGitRepo();
         myRepEntry.setObject(myRepo);
@@ -557,7 +557,7 @@ public final class JSvnManager {
             /* If this is the DataManager window */
             if (theShowDataMgr.equals(o)) {
                 /* Create the data window */
-                theDataWdw = new ViewerWindow(theFrame, theDataMgr);
+                theDataWdw = new ViewerWindow(theFrame, theViewerMgr);
 
                 /* Listen for its closure */
                 theDataWdw.addWindowListener(theCloseHandler);
@@ -673,7 +673,7 @@ public final class JSvnManager {
                 theDataWdw = null;
 
                 /* Notify data manager */
-                theDataMgr.declareWindow(null);
+                theViewerMgr.declareWindow(null);
             }
         }
     }

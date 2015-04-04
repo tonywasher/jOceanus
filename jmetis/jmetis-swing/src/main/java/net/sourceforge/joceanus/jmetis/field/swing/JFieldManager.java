@@ -54,7 +54,6 @@ import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButton
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.RowCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
@@ -136,11 +135,6 @@ public class JFieldManager
     private final JOceanusEventManager theEventManager;
 
     /**
-     * The Data Manager.
-     */
-    private final ViewerManager theDataManager;
-
-    /**
      * General formatter.
      */
     private final JDataFormatter theFormatter;
@@ -160,10 +154,8 @@ public class JFieldManager
      * @param pManager the data manager
      * @param pConfig the render configuration
      */
-    public JFieldManager(final ViewerManager pManager,
-                         final JFieldConfig pConfig) {
+    public JFieldManager(final JFieldConfig pConfig) {
         /* Store the parameters */
-        theDataManager = pManager;
         theConfig = pConfig;
 
         /* Create the event manager */
@@ -172,9 +164,6 @@ public class JFieldManager
         /* Create data formatter */
         theFormatter = new JDataFormatter();
         theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
-
-        /* Process the configuration */
-        processConfiguration();
     }
 
     @Override
@@ -188,6 +177,14 @@ public class JFieldManager
      */
     public JDataFormatter getDataFormatter() {
         return theFormatter;
+    }
+
+    /**
+     * Obtain the configuration.
+     * @return the configuration
+     */
+    public JFieldConfig getConfig() {
+        return theConfig;
     }
 
     /**
@@ -217,24 +214,11 @@ public class JFieldManager
         /* Store the parameters */
         theConfig = pConfig;
 
-        /* Process the configuration */
-        processConfiguration();
-    }
-
-    /**
-     * Process Configuration.
-     */
-    private void processConfiguration() {
-        Color myStdColor = theConfig.getStandardColor();
-        Color myChgColor = theConfig.getChangedColor();
-        Color myLinkColor = theConfig.getLinkColor();
-        Color myChgLinkColor = theConfig.getChangedLinkColor();
-
-        /* Declare preferences to data manager */
-        theDataManager.setFormatter(myStdColor, myChgColor, myLinkColor, myChgLinkColor);
-
         /* Allocate the Error border */
         theErrorBorder = BorderFactory.createLineBorder(theConfig.getErrorColor());
+
+        /* Fire event */
+        theEventManager.fireStateChanged();
     }
 
     /**

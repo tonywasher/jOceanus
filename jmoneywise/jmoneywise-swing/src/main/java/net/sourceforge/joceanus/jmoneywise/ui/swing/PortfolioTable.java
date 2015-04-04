@@ -55,11 +55,10 @@ import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.PortfolioPanel;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -132,7 +131,7 @@ public class PortfolioTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The field manager.
@@ -208,17 +207,15 @@ public class PortfolioTable
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
-     * @param pUtilitySet the utility set
      * @param pError the error panel
      */
-    public PortfolioTable(final View pView,
+    public PortfolioTable(final SwingView pView,
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                          final JOceanusSwingUtilitySet pUtilitySet,
                           final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = pUtilitySet.getFieldManager();
+        theFieldMgr = theView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */

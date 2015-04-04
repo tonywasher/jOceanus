@@ -45,9 +45,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -106,7 +105,7 @@ public class AccountPanel
     /**
      * The Data View.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The select button.
@@ -201,10 +200,8 @@ public class AccountPanel
     /**
      * Constructor.
      * @param pView the data view
-     * @param pUtilitySet the utility set
      */
-    public AccountPanel(final View pView,
-                        final JOceanusSwingUtilitySet pUtilitySet) {
+    public AccountPanel(final SwingView pView) {
         /* Store details */
         theView = pView;
 
@@ -228,13 +225,13 @@ public class AccountPanel
         theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the table panels */
-        thePayeeTable = new PayeeTable(pView, theUpdateSet, pUtilitySet, theError);
-        theSecurityTable = new SecurityTable(pView, theUpdateSet, pUtilitySet, theError);
-        theDepositTable = new DepositTable(pView, theUpdateSet, pUtilitySet, theError);
-        theCashTable = new CashTable(pView, theUpdateSet, pUtilitySet, theError);
-        theLoanTable = new LoanTable(pView, theUpdateSet, pUtilitySet, theError);
-        thePortfolioTable = new PortfolioTable(pView, theUpdateSet, pUtilitySet, theError);
-        theOptionTable = new StockOptionTable(pView, theUpdateSet, pUtilitySet, theError);
+        thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
+        theSecurityTable = new SecurityTable(pView, theUpdateSet, theError);
+        theDepositTable = new DepositTable(pView, theUpdateSet, theError);
+        theCashTable = new CashTable(pView, theUpdateSet, theError);
+        theLoanTable = new LoanTable(pView, theUpdateSet, theError);
+        thePortfolioTable = new PortfolioTable(pView, theUpdateSet, theError);
+        theOptionTable = new StockOptionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);

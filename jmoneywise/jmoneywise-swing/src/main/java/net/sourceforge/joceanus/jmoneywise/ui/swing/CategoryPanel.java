@@ -42,9 +42,8 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -108,7 +107,7 @@ public class CategoryPanel
     /**
      * The Data View.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The select button.
@@ -193,10 +192,8 @@ public class CategoryPanel
     /**
      * Constructor.
      * @param pView the data view
-     * @param pUtilitySet the utility set
      */
-    public CategoryPanel(final View pView,
-                         final JOceanusSwingUtilitySet pUtilitySet) {
+    public CategoryPanel(final SwingView pView) {
         /* Store details */
         theView = pView;
 
@@ -220,11 +217,11 @@ public class CategoryPanel
         theActionButtons = new ActionButtons(theUpdateSet);
 
         /* Create the table panels */
-        theDepositTable = new DepositCategoryTable(pView, theUpdateSet, pUtilitySet, theError);
-        theCashTable = new CashCategoryTable(pView, theUpdateSet, pUtilitySet, theError);
-        theLoanTable = new LoanCategoryTable(pView, theUpdateSet, pUtilitySet, theError);
-        theEventTable = new TransactionCategoryTable(pView, theUpdateSet, pUtilitySet, theError);
-        theTagTable = new TransactionTagTable(pView, theUpdateSet, pUtilitySet, theError);
+        theDepositTable = new DepositCategoryTable(pView, theUpdateSet, theError);
+        theCashTable = new CashCategoryTable(pView, theUpdateSet, theError);
+        theLoanTable = new LoanCategoryTable(pView, theUpdateSet, theError);
+        theEventTable = new TransactionCategoryTable(pView, theUpdateSet, theError);
+        theTagTable = new TransactionTagTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);

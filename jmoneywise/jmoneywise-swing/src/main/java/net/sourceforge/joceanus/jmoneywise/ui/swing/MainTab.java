@@ -39,14 +39,13 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
@@ -138,7 +137,7 @@ public class MainTab
     /**
      * The data view.
      */
-    private final View theView;
+    private final SwingView theView;
 
     /**
      * The tabs.
@@ -186,7 +185,7 @@ public class MainTab
     private MainListener theListener = null;
 
     @Override
-    public View getView() {
+    public SwingView getView() {
         return theView;
     }
 
@@ -215,11 +214,10 @@ public class MainTab
      */
     public MainTab(final JDataProfile pProfile) throws JOceanusException {
         /* Create the view */
-        JOceanusSwingUtilitySet myUtilities = JOceanusSwingUtilitySet.createDefault();
-        theView = new View(myUtilities, pProfile);
+        theView = new SwingView(pProfile);
 
         /* Build the main window */
-        buildMainWindow(theView, myUtilities);
+        buildMainWindow(theView, theView.getUtilitySet());
     }
 
     @Override
@@ -228,35 +226,32 @@ public class MainTab
         JDataProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
-        /* Obtain the utility set */
-        JOceanusSwingUtilitySet myUtilitySet = theView.getUtilitySet(JOceanusSwingUtilitySet.class);
-
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        theReports = new ReportTab(theView, myUtilitySet);
+        theReports = new ReportTab(theView);
         theTabs.addTab(TITLE_REPORT, theReports);
 
         /* Create the Register Tab */
         myTask.startTask("Register");
-        theRegister = new TransactionTable(theView, myUtilitySet);
+        theRegister = new TransactionTable(theView);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
-        theSpotPrices = new SpotPricesTable(theView, myUtilitySet);
+        theSpotPrices = new SpotPricesTable(theView);
         theTabs.addTab(TITLE_SPOTPRICES, theSpotPrices.getPanel());
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
-        theSpotRates = new SpotRatesTable(theView, myUtilitySet);
+        theSpotRates = new SpotRatesTable(theView);
         theTabs.addTab(TITLE_SPOTRATES, theSpotRates.getPanel());
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
-        theMaint = new MaintenanceTab(this, myUtilitySet);
+        theMaint = new MaintenanceTab(this);
         theTabs.addTab(TITLE_MAINT, theMaint);
 
         /* Create listener and initialise focus */

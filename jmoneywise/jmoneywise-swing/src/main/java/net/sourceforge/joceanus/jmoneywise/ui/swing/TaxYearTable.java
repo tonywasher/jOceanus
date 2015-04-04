@@ -44,11 +44,10 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
@@ -105,7 +104,7 @@ public class TaxYearTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final transient SwingView theView;
 
     /**
      * The field manager.
@@ -170,13 +169,11 @@ public class TaxYearTable
     /**
      * Constructor.
      * @param pView the data view
-     * @param pUtilitySet the utility set
      */
-    public TaxYearTable(final View pView,
-                        final JOceanusSwingUtilitySet pUtilitySet) {
+    public TaxYearTable(final SwingView pView) {
         /* Record the view */
         theView = pView;
-        theFieldMgr = pUtilitySet.getFieldManager();
+        theFieldMgr = theView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and Entry */

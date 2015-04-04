@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer;
 
-import java.awt.Color;
-
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 
 /**
@@ -106,18 +104,6 @@ public abstract class ViewerManager {
     public synchronized int nextId() {
         return theNextIndex++;
     }
-
-    /**
-     * Set new formatter.
-     * @param pStandard the standard colour
-     * @param pChanged the changed colour
-     * @param pLink the link colour
-     * @param pChgLink the changed link colour
-     */
-    public abstract void setFormatter(final Color pStandard,
-                                      final Color pChanged,
-                                      final Color pLink,
-                                      final Color pChgLink);
 
     /**
      * Set Focus onto the entry.
