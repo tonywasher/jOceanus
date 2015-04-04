@@ -41,9 +41,11 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.swing.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.swing.CreateDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.swing.CreateXmlFile;
@@ -53,7 +55,6 @@ import net.sourceforge.joceanus.jprometheus.threads.swing.LoadXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.swing.PurgeDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.swing.RenewSecurity;
 import net.sourceforge.joceanus.jprometheus.threads.swing.StoreDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.swing.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.swing.UpdatePassword;
 import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
@@ -72,7 +73,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> the data list enum class
  */
 public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
-        implements ThreadControl, ActionListener {
+        implements ThreadControl {
     /**
      * Logger.
      */
@@ -329,14 +330,19 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private HelpWindow theHelpWdw = null;
 
     /**
-     * The Data Manager.
+     * The Viewer Manager.
      */
-    private ViewerManager theDataMgr = null;
+    private SwingViewerManager theViewerMgr = null;
 
     /**
      * The Started data window.
      */
     private ViewerWindow theDataWdw = null;
+
+    /**
+     * The listener.
+     */
+    private final MainListener theListener;
 
     /**
      * Constructor.
@@ -345,6 +351,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     protected MainWindow() throws JOceanusException {
         /* Create the Executor service */
         theExecutor = Executors.newSingleThreadExecutor();
+
+        /* create listener */
+        theListener = new MainListener();
     }
 
     /**
@@ -402,12 +411,14 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Build the main window.
      * @param pView the Data view
+     * @param pUtilitySet the utility set
      * @throws JOceanusException on error
      */
-    public void buildMainWindow(final DataControl<T, E> pView) throws JOceanusException {
+    public void buildMainWindow(final DataControl<T, E> pView,
+                                final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
         /* Store the view */
         theView = pView;
-        theDataMgr = theView.getDataMgr();
+        theViewerMgr = pUtilitySet.getViewerManager();
 
         /* Obtain the active profile */
         JDataProfile myTask = theView.getActiveTask();
@@ -490,16 +501,16 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     protected void addDataMenuItems(final JMenu pMenu) {
         /* Add Standard Data Menu items */
         theLoadDBase = new JMenuItem(ITEM_LOADDB);
-        theLoadDBase.addActionListener(this);
+        theLoadDBase.addActionListener(theListener);
         pMenu.add(theLoadDBase);
         theSaveDBase = new JMenuItem(ITEM_STOREDB);
-        theSaveDBase.addActionListener(this);
+        theSaveDBase.addActionListener(theListener);
         pMenu.add(theSaveDBase);
         theCreateDBase = new JMenuItem(ITEM_CREATEDB);
-        theCreateDBase.addActionListener(this);
+        theCreateDBase.addActionListener(theListener);
         pMenu.add(theCreateDBase);
         thePurgeDBase = new JMenuItem(ITEM_PURGEDB);
-        thePurgeDBase.addActionListener(this);
+        thePurgeDBase.addActionListener(theListener);
         pMenu.add(thePurgeDBase);
     }
 
@@ -510,10 +521,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     protected void addEditMenuItems(final JMenu pMenu) {
         /* Add Standard Edit Menu items */
         theUndoEdit = new JMenuItem(ITEM_UNDO);
-        theUndoEdit.addActionListener(this);
+        theUndoEdit.addActionListener(theListener);
         pMenu.add(theUndoEdit);
         theResetEdit = new JMenuItem(ITEM_RESET);
-        theResetEdit.addActionListener(this);
+        theResetEdit.addActionListener(theListener);
         pMenu.add(theResetEdit);
     }
 
@@ -524,19 +535,19 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     protected void addBackupMenuItems(final JMenu pMenu) {
         /* Add Standard Backup menu items */
         theWriteBackup = new JMenuItem(ITEM_MAKEBACKUP);
-        theWriteBackup.addActionListener(this);
+        theWriteBackup.addActionListener(theListener);
         pMenu.add(theWriteBackup);
         theLoadBackup = new JMenuItem(ITEM_RESTOREBACK);
-        theLoadBackup.addActionListener(this);
+        theLoadBackup.addActionListener(theListener);
         pMenu.add(theLoadBackup);
         theCreateXml = new JMenuItem(ITEM_CREATEXML);
-        theCreateXml.addActionListener(this);
+        theCreateXml.addActionListener(theListener);
         pMenu.add(theCreateXml);
         theCreateXtract = new JMenuItem(ITEM_CREATEXTRACT);
-        theCreateXtract.addActionListener(this);
+        theCreateXtract.addActionListener(theListener);
         pMenu.add(theCreateXtract);
         theLoadXml = new JMenuItem(ITEM_LOADXML);
-        theLoadXml.addActionListener(this);
+        theLoadXml.addActionListener(theListener);
         pMenu.add(theLoadXml);
     }
 
@@ -547,10 +558,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     protected void addSecurityMenuItems(final JMenu pMenu) {
         /* Add Standard Security menu items */
         theUpdatePass = new JMenuItem(ITEM_CHGPASS);
-        theUpdatePass.addActionListener(this);
+        theUpdatePass.addActionListener(theListener);
         pMenu.add(theUpdatePass);
         theRenewSec = new JMenuItem(ITEM_RENEWSEC);
-        theRenewSec.addActionListener(this);
+        theRenewSec.addActionListener(theListener);
         pMenu.add(theRenewSec);
     }
 
@@ -561,14 +572,14 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     protected void addHelpMenuItems(final JMenu pMenu) {
         /* Create the menu items */
         theHelpMgr = new JMenuItem(ITEM_HELP);
-        theHelpMgr.addActionListener(this);
+        theHelpMgr.addActionListener(theListener);
         pMenu.add(theHelpMgr);
         theShowDataMgr = new JMenuItem(ITEM_DATAMGR);
-        theShowDataMgr.addActionListener(this);
+        theShowDataMgr.addActionListener(theListener);
         pMenu.add(theShowDataMgr);
         pMenu.addSeparator();
         theShowAbout = new JMenuItem(ITEM_ABOUT);
-        theShowAbout.addActionListener(this);
+        theShowAbout.addActionListener(theListener);
         pMenu.add(theShowAbout);
     }
 
@@ -584,154 +595,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Add a window listener */
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        theFrame.addWindowListener(new WindowClose());
+        theFrame.addWindowListener(theListener);
         theView.setFrame(theFrame);
 
         /* Set visibility */
         setVisibility();
-    }
-
-    /**
-     * Window Close Adapter.
-     */
-    private class WindowClose
-            extends WindowAdapter {
-        @Override
-        public void windowClosing(final WindowEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this is the frame that is closing down */
-            if (theFrame.equals(o)) {
-                /* If we have updates or changes */
-                if ((hasUpdates()) || (hasChanges())) {
-                    /* Ask whether to continue */
-                    int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
-
-                    /* Ignore if no was responded */
-                    if (myOption != JOptionPane.YES_OPTION) {
-                        return;
-                    }
-                }
-
-                /* terminate the executor */
-                theExecutor.shutdown();
-
-                /* Dispose of the data/help Windows if they exist */
-                if (theDataWdw != null) {
-                    theDataWdw.dispose();
-                }
-                if (theHelpWdw != null) {
-                    theHelpWdw.dispose();
-                }
-
-                /* Dispose of the frame */
-                theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                theFrame.dispose();
-
-                /* else if this is the Data Window shutting down */
-            } else if (o.equals(theDataWdw)) {
-                /* Re-enable the help menu item */
-                theShowDataMgr.setEnabled(true);
-                theDataWdw.dispose();
-                theDataWdw = null;
-
-                /* Notify data manager */
-                theDataMgr.declareWindow(null);
-
-                /* else if this is the Help Window shutting down */
-            } else if (o.equals(theHelpWdw)) {
-                /* Re-enable the help menu item */
-                theHelpMgr.setEnabled(true);
-                theHelpWdw.dispose();
-                theHelpWdw = null;
-            }
-        }
-    }
-
-    @Override
-    public void actionPerformed(final ActionEvent evt) {
-        Object o = evt.getSource();
-
-        /* If this event relates to the Write Backup item */
-        if (theWriteBackup.equals(o)) {
-            /* Start a write backup operation */
-            writeBackup();
-
-            /* If this event relates to the Save Database item */
-        } else if (theSaveDBase.equals(o)) {
-            /* Start a store database operation */
-            storeDatabase();
-
-            /* If this event relates to the Load Database item */
-        } else if (theLoadDBase.equals(o)) {
-            /* Start a load database operation */
-            loadDatabase();
-
-            /* If this event relates to the Create Database item */
-        } else if (theCreateDBase.equals(o)) {
-            /* Start a load database operation */
-            createDatabase();
-
-            /* If this event relates to the Undo Edit item */
-        } else if (theUndoEdit.equals(o)) {
-            /* Undo the last edit */
-            undoLastEdit();
-
-            /* If this event relates to the Reset Edit item */
-        } else if (theResetEdit.equals(o)) {
-            /* Reset the edit */
-            resetEdit();
-
-            /* If this event relates to the Purge Database item */
-        } else if (thePurgeDBase.equals(o)) {
-            /* Start a load database operation */
-            purgeDatabase();
-
-            /* If this event relates to the Load backup item */
-        } else if (theLoadBackup.equals(o)) {
-            /* Start a restore backup operation */
-            restoreBackup();
-
-            /* If this event relates to the Create Xml Backup item */
-        } else if (theCreateXml.equals(o)) {
-            /* Start a createXmlBackup operation */
-            createXmlBackup();
-
-            /* If this event relates to the Create Xml Xtract item */
-        } else if (theCreateXtract.equals(o)) {
-            /* Start a createXmlXtract operation */
-            createXmlXtract();
-
-            /* If this event relates to the Load Xml item */
-        } else if (theLoadXml.equals(o)) {
-            /* Start a loadXml operation */
-            loadXmlFile();
-
-            /* If this event relates to the Update Password item */
-        } else if (theUpdatePass.equals(o)) {
-            /* Start an Update Password operation */
-            updatePassword();
-
-            /* If this event relates to the Renew Security item */
-        } else if (theRenewSec.equals(o)) {
-            /* Start a reNew Security operation */
-            reNewSecurity();
-
-            /* If this event relates to the Display Data item */
-        } else if (theShowDataMgr.equals(o)) {
-            /* Open the DataMgr window */
-            displayDataMgr();
-
-            /* If this event relates to the Display Help item */
-        } else if (theHelpMgr.equals(o)) {
-            /* Open the help window */
-            displayHelp();
-
-            /* If this event relates to the Display About item */
-        } else if (theShowAbout.equals(o)) {
-            /* Open the help window */
-            displayAbout();
-        }
     }
 
     /**
@@ -1002,14 +870,14 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Display DataMgr.
+     * Display ViewerMgr.
      */
-    private void displayDataMgr() {
-        /* Create the data window */
-        theDataWdw = new ViewerWindow(theFrame, theDataMgr);
+    private void displayViewerMgr() {
+        /* Create the viewer window */
+        theDataWdw = new ViewerWindow(theFrame, theViewerMgr);
 
         /* Listen for its closure */
-        theDataWdw.addWindowListener(new WindowClose());
+        theDataWdw.addWindowListener(theListener);
 
         /* Disable the menu item */
         theShowDataMgr.setEnabled(false);
@@ -1027,7 +895,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             theHelpWdw = new HelpWindow(theFrame, getHelpModule());
 
             /* Listen for its closure */
-            theHelpWdw.addWindowListener(new WindowClose());
+            theHelpWdw.addWindowListener(theListener);
 
             /* Disable the menu item */
             theHelpMgr.setEnabled(false);
@@ -1044,4 +912,148 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Display About Box.
      */
     protected abstract void displayAbout();
+
+    /**
+     * Listener class.
+     */
+    private class MainListener
+            extends WindowAdapter
+            implements ActionListener {
+        @Override
+        public void windowClosing(final WindowEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this is the frame that is closing down */
+            if (theFrame.equals(o)) {
+                /* If we have updates or changes */
+                if ((hasUpdates()) || (hasChanges())) {
+                    /* Ask whether to continue */
+                    int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
+
+                    /* Ignore if no was responded */
+                    if (myOption != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
+                /* terminate the executor */
+                theExecutor.shutdown();
+
+                /* Dispose of the data/help Windows if they exist */
+                if (theDataWdw != null) {
+                    theDataWdw.dispose();
+                }
+                if (theHelpWdw != null) {
+                    theHelpWdw.dispose();
+                }
+
+                /* Dispose of the frame */
+                theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                theFrame.dispose();
+
+                /* else if this is the Data Window shutting down */
+            } else if (o.equals(theDataWdw)) {
+                /* Re-enable the help menu item */
+                theShowDataMgr.setEnabled(true);
+                theDataWdw.dispose();
+                theDataWdw = null;
+
+                /* Notify viewer manager */
+                theViewerMgr.declareWindow(null);
+
+                /* else if this is the Help Window shutting down */
+            } else if (o.equals(theHelpWdw)) {
+                /* Re-enable the help menu item */
+                theHelpMgr.setEnabled(true);
+                theHelpWdw.dispose();
+                theHelpWdw = null;
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this event relates to the Write Backup item */
+            if (theWriteBackup.equals(o)) {
+                /* Start a write backup operation */
+                writeBackup();
+
+                /* If this event relates to the Save Database item */
+            } else if (theSaveDBase.equals(o)) {
+                /* Start a store database operation */
+                storeDatabase();
+
+                /* If this event relates to the Load Database item */
+            } else if (theLoadDBase.equals(o)) {
+                /* Start a load database operation */
+                loadDatabase();
+
+                /* If this event relates to the Create Database item */
+            } else if (theCreateDBase.equals(o)) {
+                /* Start a load database operation */
+                createDatabase();
+
+                /* If this event relates to the Undo Edit item */
+            } else if (theUndoEdit.equals(o)) {
+                /* Undo the last edit */
+                undoLastEdit();
+
+                /* If this event relates to the Reset Edit item */
+            } else if (theResetEdit.equals(o)) {
+                /* Reset the edit */
+                resetEdit();
+
+                /* If this event relates to the Purge Database item */
+            } else if (thePurgeDBase.equals(o)) {
+                /* Start a load database operation */
+                purgeDatabase();
+
+                /* If this event relates to the Load backup item */
+            } else if (theLoadBackup.equals(o)) {
+                /* Start a restore backup operation */
+                restoreBackup();
+
+                /* If this event relates to the Create Xml Backup item */
+            } else if (theCreateXml.equals(o)) {
+                /* Start a createXmlBackup operation */
+                createXmlBackup();
+
+                /* If this event relates to the Create Xml Xtract item */
+            } else if (theCreateXtract.equals(o)) {
+                /* Start a createXmlXtract operation */
+                createXmlXtract();
+
+                /* If this event relates to the Load Xml item */
+            } else if (theLoadXml.equals(o)) {
+                /* Start a loadXml operation */
+                loadXmlFile();
+
+                /* If this event relates to the Update Password item */
+            } else if (theUpdatePass.equals(o)) {
+                /* Start an Update Password operation */
+                updatePassword();
+
+                /* If this event relates to the Renew Security item */
+            } else if (theRenewSec.equals(o)) {
+                /* Start a reNew Security operation */
+                reNewSecurity();
+
+                /* If this event relates to the Display Data item */
+            } else if (theShowDataMgr.equals(o)) {
+                /* Open the ViewerMgr window */
+                displayViewerMgr();
+
+                /* If this event relates to the Display Help item */
+            } else if (theHelpMgr.equals(o)) {
+                /* Open the help window */
+                displayHelp();
+
+                /* If this event relates to the Display About item */
+            } else if (theShowAbout.equals(o)) {
+                /* Open the help window */
+                displayAbout();
+            }
+        }
+    }
 }

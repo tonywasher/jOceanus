@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-swing</artifactId>
+      <artifactId>jmetis-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

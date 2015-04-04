@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
@@ -43,7 +43,7 @@ public class JOceanusSwingUtilitySet
     /**
      * Viewer Manager.
      */
-    private final ViewerManager theViewerManager;
+    private final SwingViewerManager theViewerManager;
 
     /**
      * Field Manager.
@@ -84,7 +84,7 @@ public class JOceanusSwingUtilitySet
         super(new SwingSecureManager(pParameters), pPrefMgr);
 
         /* Create components */
-        theViewerManager = new ViewerManager();
+        theViewerManager = new SwingViewerManager();
 
         /* Access the Field Preferences */
         theFieldPreferences = pPrefMgr.getPreferenceSet(JFieldPreferences.class);
@@ -112,17 +112,14 @@ public class JOceanusSwingUtilitySet
         return new JOceanusSwingUtilitySet(myPrefs.getParameters(), myPrefMgr);
     }
 
-    /**
-     * Obtain the secure manager.
-     * @return the secure manager
-     */
-    public ViewerManager getViewerManager() {
+    @Override
+    public SwingViewerManager getViewerManager() {
         return theViewerManager;
     }
 
     /**
-     * Obtain the preference manager.
-     * @return the preference manager
+     * Obtain the field manager.
+     * @return the field manager
      */
     public JFieldManager getFieldManager() {
         return theFieldManager;

@@ -27,6 +27,7 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataDifference;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
 
 /**
  * Debug Detail class that holds details of links to other objects.
@@ -44,14 +45,29 @@ public class ViewerDetail {
     private static final String HTML_LINK = "<th><a href=\"#";
 
     /**
+     * anchor link end.
+     */
+    private static final String HTML_LINKMID = "\">";
+
+    /**
+     * anchor link end.
+     */
+    private static final String HTML_LINKEND = "</th>";
+
+    /**
+     * link title.
+     */
+    private static final String LINK_TITLE = ViewerResource.VIEWER_LINK_TITLE.getValue();
+
+    /**
      * Forward link.
      */
-    private static final String LINK_FORWARD = "Forward";
+    private static final String LINK_FORWARD = ViewerResource.VIEWER_LINK_FORWARD.getValue();
 
     /**
      * Backward link.
      */
-    private static final String LINK_BACKWARD = "Backward";
+    private static final String LINK_BACKWARD = ViewerResource.VIEWER_LINK_BACKWARD.getValue();
 
     /**
      * Next Id.
@@ -315,20 +331,26 @@ public class ViewerDetail {
 
         /* Build the links */
         myBuilder.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myBuilder.append("<thead><th>Links</th>");
+        myBuilder.append("<thead><th>");
+        myBuilder.append(LINK_TITLE);
+        myBuilder.append(HTML_LINKEND);
 
         /* Handle Backward Link */
         if (theBackward != null) {
             myBuilder.append(HTML_LINK);
             myBuilder.append(LINK_BACKWARD);
-            myBuilder.append("\">Backwards</a></th>");
+            myBuilder.append(HTML_LINKMID);
+            myBuilder.append(LINK_BACKWARD);
+            myBuilder.append(HTML_LINKEND);
         }
 
         /* Handle Forward Link */
         if (theForward != null) {
             myBuilder.append(HTML_LINK);
             myBuilder.append(LINK_FORWARD);
-            myBuilder.append("\">Forwards</a></th>");
+            myBuilder.append(HTML_LINKMID);
+            myBuilder.append(LINK_FORWARD);
+            myBuilder.append(HTML_LINKEND);
         }
 
         /* Return the details */

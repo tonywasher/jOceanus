@@ -31,6 +31,8 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatusControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -41,7 +43,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <T> the result type of the thread
  */
 public abstract class WorkerThread<T>
-        extends SwingWorker<T, StatusData> {
+        extends SwingWorker<T, StatusData>
+        implements ThreadStatusControl {
     /**
      * The Status Bar.
      */
@@ -157,6 +160,7 @@ public abstract class WorkerThread<T>
      * Publish status.
      * @param pStatus the Status to publish
      */
+    @Override
     public void publishIt(final StatusData pStatus) {
         super.publish(pStatus);
     }

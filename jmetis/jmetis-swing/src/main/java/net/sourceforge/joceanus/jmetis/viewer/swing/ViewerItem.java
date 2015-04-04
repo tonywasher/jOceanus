@@ -48,7 +48,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,31 @@ import org.slf4j.LoggerFactory;
  * @author Tony Washer
  */
 public class ViewerItem {
+    /**
+     * The item text.
+     */
+    private static final String TEXT_ITEM = ViewerResource.VIEWER_SELECT_ITEM.getValue();
+
+    /**
+     * The of text.
+     */
+    private static final String TEXT_OF = ViewerResource.VIEWER_SELECT_OF.getValue();
+
+    /**
+     * The showItem text.
+     */
+    private static final String TEXT_SHOWITEMS = ViewerResource.VIEWER_SELECT_SHOWITEMS.getValue();
+
+    /**
+     * The showHdr text.
+     */
+    private static final String TEXT_SHOWHDR = ViewerResource.VIEWER_SELECT_SHOWHDR.getValue();
+
+    /**
+     * Blank character.
+     */
+    private static final char CHAR_BLANK = ' ';
+
     /**
      * Buffer length.
      */
@@ -272,7 +298,7 @@ public class ViewerItem {
         }
 
         /* If we are updating the active object */
-        if (theEntry.getIndex() == pEntry.getIndex()) {
+        if (theEntry.getId() == pEntry.getId()) {
             /* Display the object */
             displayDetail(new ViewerDetail(theFormatter, pEntry.getObject()));
         }
@@ -360,15 +386,22 @@ public class ViewerItem {
         /* Handle tick spacing */
         determineTickSpacing(mySize);
 
+        /* Build the text */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(TEXT_ITEM);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(myPos + 1);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(TEXT_OF);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(mySize);
+
         /* Set the text detail */
-        theLabel.setText("Item "
-                         + (myPos + 1)
-                         + " of "
-                         + mySize);
+        theLabel.setText(myBuilder.toString());
         theSlider.setValue(myPos);
 
         /* Set the text detail */
-        theToggle.setText("Show header");
+        theToggle.setText(TEXT_SHOWHDR);
     }
 
     /**
@@ -434,7 +467,7 @@ public class ViewerItem {
         theLabel.setVisible(false);
 
         /* Set the text detail */
-        theToggle.setText("Show items");
+        theToggle.setText(TEXT_SHOWITEMS);
     }
 
     /**

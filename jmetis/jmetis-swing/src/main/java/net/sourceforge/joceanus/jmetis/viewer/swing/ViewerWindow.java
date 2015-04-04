@@ -35,15 +35,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
 
 /**
  * Data Window display class.
  * @author Tony Washer
  */
 public class ViewerWindow
-        extends JFrame
-        implements TreeSelectionListener {
+        extends JFrame {
     /**
      * Serial Id.
      */
@@ -72,19 +71,18 @@ public class ViewerWindow
     /**
      * Constructor.
      * @param pParent the parent frame
-     * @param pManager the debug manager
+     * @param pManager the viewer manager
      */
     public ViewerWindow(final JFrame pParent,
-                        final ViewerManager pManager) {
+                        final SwingViewerManager pManager) {
         /* Store the parameters */
-        ViewerManager myDataMgr = pManager;
-        theTree = new JTree(myDataMgr.getModel());
+        theTree = new JTree(pManager.getModel());
 
-        /* Notify debug manager */
-        myDataMgr.declareWindow(this);
+        /* Notify viewer manager */
+        pManager.declareWindow(this);
 
         /* Set the title */
-        setTitle(myDataMgr.getTitle());
+        setTitle(pManager.getTitle());
 
         /* Make sure that we have single selection model */
         theTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -96,10 +94,10 @@ public class ViewerWindow
         theTree.setExpandsSelectedPaths(true);
 
         /* Access the initial id */
-        ViewerEntry myEntry = myDataMgr.getFocus();
+        SwingViewerEntry myEntry = pManager.getFocus();
 
-        /* Add the listener for the tree */
-        theTree.addTreeSelectionListener(this);
+        /* Declare listener */
+        new ViewerListener();
 
         /* Create a scroll-pane for the tree */
         JScrollPane myTreeScroll = new JScrollPane(theTree);
@@ -146,7 +144,7 @@ public class ViewerWindow
      * Display the data.
      * @param pEntry the data entry
      */
-    protected final void displayData(final ViewerEntry pEntry) {
+    protected final void displayData(final SwingViewerEntry pEntry) {
         /* Ignore null entry */
         if (pEntry == null) {
             return;
@@ -157,7 +155,7 @@ public class ViewerWindow
         theTree.setSelectionPath(myPath);
         theTree.scrollPathToVisible(myPath);
 
-        /* display the debug in the panel */
+        /* display the entry in the panel */
         theItemPane.displayData(pEntry);
     }
 
@@ -170,19 +168,34 @@ public class ViewerWindow
         theItemPane.updateData(pEntry);
     }
 
-    @Override
-    public void valueChanged(final TreeSelectionEvent e) {
-        DefaultMutableTreeNode myNode = (DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
-
-        /* Ignore if there is no selection */
-        if (myNode == null) {
-            return;
+    /**
+     * Listener class.
+     */
+    private final class ViewerListener
+            implements TreeSelectionListener {
+        /**
+         * Constructor.
+         */
+        private ViewerListener() {
+            /* Add the listener for the tree */
+            theTree.addTreeSelectionListener(this);
         }
 
-        /* Access the Data Entry */
-        ViewerEntry myData = (ViewerEntry) myNode.getUserObject();
+        @Override
+        public void valueChanged(final TreeSelectionEvent e) {
+            /* Access selected node */
+            DefaultMutableTreeNode myNode = (DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
 
-        /* display the node */
-        displayData(myData);
+            /* Ignore if there is no selection */
+            if (myNode == null) {
+                return;
+            }
+
+            /* Access the Data Entry */
+            SwingViewerEntry myData = (SwingViewerEntry) myNode.getUserObject();
+
+            /* display the node */
+            displayData(myData);
+        }
     }
 }

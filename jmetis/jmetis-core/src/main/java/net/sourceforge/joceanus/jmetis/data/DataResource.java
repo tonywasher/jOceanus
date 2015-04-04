@@ -110,7 +110,7 @@ public enum DataResource implements ResourceId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.viewer";
+        return "jMetis.data";
     }
 
     @Override

@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
@@ -262,7 +262,7 @@ public class PreferencesPanel
         setVisibility();
 
         /* Create the debug entry, and attach to correct section */
-        theDataEntry = pDataMgr.new ViewerEntry("Preferences");
+        theDataEntry = pDataMgr.newEntry("Preferences");
         theDataEntry.addAsChildOf(pSection);
         theDataEntry.setObject(pPreferenceMgr);
 

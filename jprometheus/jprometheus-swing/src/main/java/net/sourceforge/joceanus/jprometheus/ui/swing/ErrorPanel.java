@@ -35,8 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -106,7 +106,7 @@ public class ErrorPanel
     public ErrorPanel(final ViewerManager pManager,
                       final ViewerEntry pParent) {
         /* Create the error debug entry for this view */
-        theDataError = pManager.new ViewerEntry(DataControl.DATA_ERROR);
+        theDataError = pManager.newEntry(DataControl.DATA_ERROR);
         theDataError.addAsChildOf(pParent);
         theDataError.hideEntry();
 

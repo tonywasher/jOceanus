@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 
 /**
  * JOceanus Utility Set.
@@ -83,4 +84,10 @@ public abstract class JOceanusUtilitySet {
     public JDataFormatter getDataFormatter() {
         return theFormatter;
     }
+
+    /**
+     * Obtain the viewer manager.
+     * @return the manager
+     */
+    public abstract ViewerManager getViewerManager();
 }

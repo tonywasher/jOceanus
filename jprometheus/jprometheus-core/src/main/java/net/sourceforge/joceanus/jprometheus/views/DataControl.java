@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -117,11 +117,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     private JFrame theFrame = null;
 
     /**
-     * The Data Manager.
-     */
-    private ViewerManager theDataMgr = null;
-
-    /**
      * The UtilitySet.
      */
     private final JOceanusUtilitySet theUtilitySet;
@@ -154,8 +149,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         /* Create event manager */
         theEventManager = new JOceanusEventManager();
 
-        /* Create the data manager */
-        theDataMgr = new ViewerManager();
+        /* initialise the data manager */
         initDataMgr();
 
         /* Update the Profile entry */
@@ -306,6 +300,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
+     * Obtain ViewerManager.
+     * @return the ViewerManager
+     */
+    public ViewerManager getViewerManager() {
+        return theUtilitySet.getViewerManager();
+    }
+
+    /**
      * Obtain UtilitySet.
      * @param pClass the full class of the utility set
      * @param <X> the type of the utility set
@@ -344,15 +346,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Obtain Data Manager.
-     * @return the Data Manager
-     */
-    public ViewerManager getDataMgr() {
-        return theDataMgr;
-    }
-
-    /**
-     * Get Debug Entry.
+     * Get viewer Entry.
      * @param pName the Name of the entry
      * @return the Debug Entry
      */
@@ -363,7 +357,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         /* If the entry does not exist */
         if (myEntry == null) {
             /* Build the entry and add to the map */
-            myEntry = theDataMgr.new ViewerEntry(pName);
+            myEntry = getViewerManager().newEntry(pName);
             theMap.put(pName, myEntry);
         }
 

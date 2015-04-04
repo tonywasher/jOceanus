@@ -46,8 +46,8 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldEnum;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerManager.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
@@ -207,9 +207,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theUpdateSet = new UpdateSet<E>(pControl, pClass);
 
         /* Create the top level debug entry for this view */
-        ViewerManager myDataMgr = theControl.getDataMgr();
+        ViewerManager myDataMgr = theControl.getViewerManager();
         ViewerEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new ViewerEntry(NLS_DATAENTRY);
+        theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 

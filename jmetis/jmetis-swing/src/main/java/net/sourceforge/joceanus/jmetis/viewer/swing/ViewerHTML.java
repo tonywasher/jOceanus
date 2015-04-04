@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataDifference;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 
 /**
@@ -45,6 +46,46 @@ import net.sourceforge.joceanus.jtethys.DataConverter;
  * @author Tony Washer
  */
 public final class ViewerHTML {
+    /**
+     * The field column.
+     */
+    private static final String COLUMN_FIELD = ViewerResource.VIEWER_COLUMN_FIELD.getValue();
+
+    /**
+     * The value column.
+     */
+    private static final String COLUMN_VALUE = ViewerResource.VIEWER_COLUMN_VALUE.getValue();
+
+    /**
+     * The key column.
+     */
+    private static final String COLUMN_KEY = ViewerResource.VIEWER_COLUMN_KEY.getValue();
+
+    /**
+     * Forward link.
+     */
+    private static final String LINK_NEXT = ViewerResource.VIEWER_LINK_NEXT.getValue();
+
+    /**
+     * Backward link.
+     */
+    private static final String LINK_PREV = ViewerResource.VIEWER_LINK_PREV.getValue();
+
+    /**
+     * Map Table.
+     */
+    private static final String TABLE_MAP = ViewerResource.VIEWER_TABLE_MAP.getValue();
+
+    /**
+     * Sections table.
+     */
+    private static final String TABLE_SECTIONS = ViewerResource.VIEWER_TABLE_SECTIONS.getValue();
+
+    /**
+     * Stack Trace table.
+     */
+    private static final String TABLE_STACKTRACE = ViewerResource.VIEWER_TABLE_STACKTRACE.getValue();
+
     /**
      * Maximum Map entry count.
      */
@@ -69,6 +110,11 @@ public final class ViewerHTML {
      * Colour for changed link.
      */
     public static final Color COLOR_CHGLINK = Color.green;
+
+    /**
+     * Start header html.
+     */
+    private static final String HTML_HDRSTART = "<h2 align=\"center\">";
 
     /**
      * Start table html.
@@ -149,21 +195,6 @@ public final class ViewerHTML {
      * Name of security changed cell class.
      */
     private static final String CLASS_SECCHANGED = "security";
-
-    /**
-     * Value header.
-     */
-    private static final String HDR_VALUE = "Value";
-
-    /**
-     * Forward link.
-     */
-    private static final String LINK_NEXT = "Next";
-
-    /**
-     * Backward link.
-     */
-    private static final String LINK_PREV = "Previous";
 
     /**
      * Buffer length.
@@ -460,15 +491,15 @@ public final class ViewerHTML {
 
         /* Initialise results */
         myResults.setLength(0);
-        myResults.append("<h2 align=\"center\">");
+        myResults.append(HTML_HDRSTART);
         myResults.append(myFields.getName());
         myResults.append(HTML_TABSTART);
         myResults.append(HTML_ROWSTART);
         myResults.append(HTML_HDRCELLSTART);
-        myResults.append("Field");
+        myResults.append(COLUMN_FIELD);
         myResults.append(HTML_HDRCELLEND);
         myResults.append(HTML_HDRCELLSTART);
-        myResults.append(HDR_VALUE);
+        myResults.append(COLUMN_VALUE);
         myResults.append(HTML_HDRCELLEND);
         myResults.append(HTML_ROWEND);
         myResults.append(HTML_TABBODY);
@@ -603,14 +634,15 @@ public final class ViewerHTML {
 
         /* Initialise the string with an item name */
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
-        myResults.append("<h2 align=\"center\">Map Elements");
+        myResults.append(HTML_HDRSTART);
+        myResults.append(TABLE_MAP);
         myResults.append(HTML_TABSTART);
         myResults.append(HTML_ROWSTART);
         myResults.append(HTML_HDRCELLSTART);
-        myResults.append("Key");
+        myResults.append(COLUMN_KEY);
         myResults.append(HTML_HDRCELLEND);
         myResults.append(HTML_HDRCELLSTART);
-        myResults.append(HDR_VALUE);
+        myResults.append(COLUMN_VALUE);
         myResults.append(HTML_HDRCELLEND);
         myResults.append(HTML_ROWEND);
         myResults.append(HTML_TABBODY);
@@ -724,7 +756,9 @@ public final class ViewerHTML {
 
         /* Build the links */
         myResults.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myResults.append("<thead><th>Sections</th>");
+        myResults.append("<thead><th>");
+        myResults.append(TABLE_SECTIONS);
+        myResults.append(HTML_HDRCELLEND);
 
         /* Handle Backward Link */
         if (hasPrev) {
@@ -759,11 +793,12 @@ public final class ViewerHTML {
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
 
         /* Add the stack trace */
-        myResults.append("<h2 align=\"center\">Stack Trace");
+        myResults.append(HTML_HDRSTART);
+        myResults.append(TABLE_STACKTRACE);
         myResults.append(HTML_TABSTART);
         myResults.append(HTML_ROWSTART);
         myResults.append(HTML_HDRCELLSTART);
-        myResults.append("Stack Trace");
+        myResults.append(TABLE_STACKTRACE);
         myResults.append(HTML_HDRCELLEND);
         myResults.append(HTML_ROWEND);
         myResults.append(HTML_TABBODY);
