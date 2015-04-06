@@ -780,7 +780,7 @@ public class TaxAnalysis {
 
         /* Add any UnTaxed Interest */
         mySrcBucket = myBasis.getBucket(TaxBasisClass.UNTAXEDINTEREST);
-        myInterest.add(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        myInterest.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueInterest Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TAXDUEINTEREST);
