@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jprometheus</artifactId>
-    <version>v1.4.0-SNAPSHOT</version>   
+    <version>v1.4.0-b1</version>   
   </parent>
   <artifactId>jprometheus-swing</artifactId>
   <name>jPrometheus Swing Application Framework</name>
