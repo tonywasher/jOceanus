@@ -70,15 +70,16 @@
     <BouncyCastleVersion>1.52</BouncyCastleVersion>
     <SvnKitVersion>1.8.8</SvnKitVersion>
     <JGitVersion>3.7.0.201502260915-r</JGitVersion>
-    <JiraRestVersion>2.0.0-m31</JiraRestVersion>
+    <HttpClientVersion>4.3.6</HttpClientVersion>
+    <JSONVersion>20141113</JSONVersion>
     <ApacheMavenVersion>3.3.1</ApacheMavenVersion>
     <MySQLVersion>5.1.33</MySQLVersion>
     <PostGreSQLVersion>9.3-1102-jdbc41</PostGreSQLVersion>
     <ApachePOIVersion>3.11</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.9.1</XercesVersion>
-    <SLF4JVersion>1.7.10</SLF4JVersion>
-    <LOG4JVersion>2.1</LOG4JVersion>
+    <SLF4JVersion>1.7.12</SLF4JVersion>
+    <LOG4JVersion>2.2</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
   <repositories>
@@ -86,11 +87,6 @@
       <id>svnkit</id>
       <name>SubVersion Repository</name>
       <url>http://maven.tmatesoft.com/content/repositories/releases/</url>
-    </repository>
-    <repository>
-      <id>atlassian-public</id>
-      <name>Atlassian Repository</name>
-      <url>https://m2proxy.atlassian.com/repository/public</url>
     </repository>
     <repository>
       <id>jgit-repository</id>

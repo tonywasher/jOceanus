@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
  * @param <T> the Data Item type
  */
 public class JFieldSet<T extends JFieldSetItem>
-        extends JFieldSetBase<T> {
+        extends JFieldSetBase {
     /**
      * The map of fields.
      */

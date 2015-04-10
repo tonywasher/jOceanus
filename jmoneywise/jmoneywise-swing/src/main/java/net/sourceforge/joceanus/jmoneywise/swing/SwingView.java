@@ -39,7 +39,7 @@ public class SwingView
      * @param pProfile the profile
      * @throws JOceanusException on error
      */
-    public SwingView(JDataProfile pProfile) throws JOceanusException {
+    public SwingView(final JDataProfile pProfile) throws JOceanusException {
         super(JOceanusSwingUtilitySet.createDefault(), pProfile);
     }
 

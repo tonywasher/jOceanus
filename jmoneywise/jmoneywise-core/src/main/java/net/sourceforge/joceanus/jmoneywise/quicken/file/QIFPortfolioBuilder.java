@@ -1420,7 +1420,7 @@ public class QIFPortfolioBuilder {
         /* Obtain classes */
         List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
-        /* Create an XOut event */
+        /* Create an XIn event */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(theBuilder.buildXferToPayee(pSource));
@@ -1429,8 +1429,10 @@ public class QIFPortfolioBuilder {
         /* Add to event list */
         myPortfolio.addEvent(myEvent);
 
-        /* Create the receiving transfer event */
+        /* Create the sending transfer event */
         QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+        myAmount = new JMoney(myAmount);
+        myAmount.negate();
         myXferEvent.recordAmount(myAmount);
         myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
         myXferEvent.recordAccount(myPortfolio.getAccount(), myList);

@@ -49,7 +49,7 @@ public class TestJira {
             PropertyConfigurator.configure(myLogProp);
 
             JiraServer myServer = new JiraServer(new PreferenceManager());
-            myServer.getIssue("BOX-1");
+            myServer.getIssue("FIN-47");
             System.exit(0);
         } catch (JOceanusException e) {
         }

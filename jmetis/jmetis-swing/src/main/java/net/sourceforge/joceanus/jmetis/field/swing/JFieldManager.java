@@ -151,7 +151,6 @@ public class JFieldManager
 
     /**
      * Constructor.
-     * @param pManager the data manager
      * @param pConfig the render configuration
      */
     public JFieldManager(final JFieldConfig pConfig) {

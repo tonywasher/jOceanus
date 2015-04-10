@@ -152,7 +152,7 @@ public class SwingViewerManager
     /**
      * Listener class.
      */
-    private class ViewerListener
+    private final class ViewerListener
             implements JOceanusChangeEventListener {
         /**
          * Constructor.

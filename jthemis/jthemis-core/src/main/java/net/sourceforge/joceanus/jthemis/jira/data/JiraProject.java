@@ -25,64 +25,33 @@ package net.sourceforge.joceanus.jthemis.jira.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.http.JiraClient;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraUser;
-import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraEntity;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraIssueType;
-import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraPriority;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedDescIdObject;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedDescObject;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedKeyedIdObject;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedObject;
 
-import org.joda.time.DateTime;
-
-import com.atlassian.jira.rest.client.api.ComponentRestClient;
-import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptions;
-import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptionsBuilder;
-import com.atlassian.jira.rest.client.api.IssueRestClient;
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.ProjectRolesRestClient;
-import com.atlassian.jira.rest.client.api.RestClientException;
-import com.atlassian.jira.rest.client.api.SearchRestClient;
-import com.atlassian.jira.rest.client.api.VersionRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicComponent;
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
-import com.atlassian.jira.rest.client.api.domain.BasicProjectRole;
-import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
-import com.atlassian.jira.rest.client.api.domain.CimIssueType;
-import com.atlassian.jira.rest.client.api.domain.CimProject;
-import com.atlassian.jira.rest.client.api.domain.Component;
-import com.atlassian.jira.rest.client.api.domain.FieldSchema;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.IssueType;
-import com.atlassian.jira.rest.client.api.domain.Project;
-import com.atlassian.jira.rest.client.api.domain.ProjectRole;
-import com.atlassian.jira.rest.client.api.domain.RoleActor;
-import com.atlassian.jira.rest.client.api.domain.StandardOperation;
-import com.atlassian.jira.rest.client.api.domain.Version;
-import com.atlassian.jira.rest.client.api.domain.input.ComponentInput;
-import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
-import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
-import com.atlassian.jira.rest.client.api.domain.input.VersionInput;
-import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Represents a Jira project.
  * @author Tony Washer
  */
 public class JiraProject
-        extends JiraEntity<Project> {
+        extends JiraNamedKeyedIdObject {
     /**
-     * Archive failure error text.
-     */
-    private static final String ERROR_ARCH = "Failed to archive version";
-
-    /**
-     * Group role name (should be public from underlying file).
+     * Group role name.
      */
     private static final String TYPE_ATLASSIAN_GROUP_ROLE = "atlassian-group-role-actor";
 
@@ -94,12 +63,7 @@ public class JiraProject
     /**
      * The client.
      */
-    private final JiraRestClient theClient;
-
-    /**
-     * Key of Project.
-     */
-    private final String theKey;
+    private final JiraClient theClient;
 
     /**
      * Description of Project.
@@ -112,9 +76,14 @@ public class JiraProject
     private final JiraUser theLead;
 
     /**
+     * Issue Keys.
+     */
+    private final List<String> theIssueKeys;
+
+    /**
      * Issues.
      */
-    private final List<JiraIssue> theIssues;
+    private final Map<String, JiraIssue> theIssues;
 
     /**
      * IssueTypes.
@@ -124,22 +93,17 @@ public class JiraProject
     /**
      * Components.
      */
-    private final List<JiraComponent> theComponents;
+    private final Map<String, JiraComponent> theComponents;
 
     /**
      * Versions.
      */
-    private final List<JiraVersion> theVersions;
+    private final Map<String, JiraVersion> theVersions;
 
     /**
      * Roles.
      */
-    private final List<JiraProjectRole> theRoles;
-
-    /**
-     * The create issue field map.
-     */
-    private final Map<JiraIssueType, JiraCimIssueType> theIssueFields;
+    private final Map<String, JiraProjectRole> theRoles;
 
     /**
      * Constructor.
@@ -148,42 +112,40 @@ public class JiraProject
      * @throws JOceanusException on error
      */
     protected JiraProject(final JiraServer pServer,
-                          final Project pProject) throws JOceanusException {
+                          final JSONObject pProject) throws JOceanusException {
         /* Store parameters */
-        super(pProject, pProject.getName());
+        super(pProject);
         theServer = pServer;
         theClient = theServer.getClient();
 
-        /* Access parameters */
-        theKey = pProject.getKey();
-        theDesc = pProject.getDescription();
+        /* Protect against exceptions */
+        try {
+            /* Access parameters */
+            theDesc = pProject.getString(JiraNamedDescIdObject.FIELD_DESC);
 
-        /* Determine the project lead */
-        theLead = theServer.getUser(pProject.getLead());
+            /* Determine the project lead */
+            JSONObject myLeadDtl = pProject.getJSONObject("lead");
+            theLead = theServer.getUser(myLeadDtl.getString(JiraUser.FIELD_NAME));
 
-        /* Allocate the lists */
-        theIssues = new ArrayList<JiraIssue>();
-        theIssueTypes = new ArrayList<JiraIssueType>();
-        theComponents = new ArrayList<JiraComponent>();
-        theVersions = new ArrayList<JiraVersion>();
-        theRoles = new ArrayList<JiraProjectRole>();
+            /* Allocate the maps */
+            theIssues = new HashMap<String, JiraIssue>();
+            theIssueTypes = new ArrayList<JiraIssueType>();
+            theComponents = new HashMap<String, JiraComponent>();
+            theVersions = new HashMap<String, JiraVersion>();
+            theRoles = new HashMap<String, JiraProjectRole>();
 
-        /* Create the issue fields map */
-        theIssueFields = new HashMap<JiraIssueType, JiraCimIssueType>();
+            /* Load project details */
+            loadIssueTypes(pProject);
+            loadComponents();
+            loadVersions();
+            loadRoles(pProject);
 
-        /* Load IssueTypes etc */
-        loadIssueTypes();
-        loadComponents();
-        loadVersions();
-        loadRoles();
-    }
-
-    /**
-     * Get the key of the project.
-     * @return the key
-     */
-    public String getKey() {
-        return theKey;
+            /* Load the issue keys */
+            theIssueKeys = theClient.getIssueKeysForProject(getKey());
+        } catch (JSONException e) {
+            /* Pass the exception on */
+            throw new JThemisIOException("Failed to parse project", e);
+        }
     }
 
     /**
@@ -203,14 +165,6 @@ public class JiraProject
     }
 
     /**
-     * Obtain the issue iterator.
-     * @return the iterator
-     */
-    public Iterator<JiraIssue> issueIterator() {
-        return theIssues.iterator();
-    }
-
-    /**
      * Obtain the issue types iterator.
      * @return the iterator
      */
@@ -223,15 +177,15 @@ public class JiraProject
      * @return the iterator
      */
     public Iterator<JiraComponent> componentIterator() {
-        return theComponents.iterator();
+        return theComponents.values().iterator();
     }
 
     /**
      * Get the versions iterator.
      * @return the iterator
      */
-    public Iterator<JiraVersion> labelIterator() {
-        return theVersions.iterator();
+    public Iterator<JiraVersion> versionIterator() {
+        return theVersions.values().iterator();
     }
 
     /**
@@ -239,107 +193,15 @@ public class JiraProject
      * @return the iterator
      */
     public Iterator<JiraProjectRole> roleIterator() {
-        return theRoles.iterator();
+        return theRoles.values().iterator();
     }
 
     /**
-     * Create issue.
-     * @param pSummary the issue summary
-     * @param pDesc the issue description
-     * @param pIssueType the issue type
-     * @param pPriority the issue priority
-     * @return the new issue
-     * @throws JOceanusException on error
+     * Get the issueKeys iterator.
+     * @return the iterator
      */
-    public JiraIssue createIssue(final String pSummary,
-                                 final String pDesc,
-                                 final JiraIssueType pIssueType,
-                                 final JiraPriority pPriority) throws JOceanusException {
-        /* Access client */
-        IssueRestClient myClient = theClient.getIssueClient();
-
-        /* Protect against exceptions */
-        try {
-            /* Build issue details */
-            IssueInputBuilder myBuilder = new IssueInputBuilder(getUnderlying(), pIssueType.getUnderlying());
-            myBuilder.setSummary(pSummary);
-            myBuilder.setDescription(pDesc);
-            myBuilder.setReporter(theServer.getActiveUser().getUnderlying());
-            myBuilder.setPriority(pPriority.getUnderlying());
-            IssueInput myInput = myBuilder.build();
-
-            /* Create the issue */
-            BasicIssue myIssue = myClient.createIssue(myInput).claim();
-            return getIssue(myIssue.getKey());
-
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to create issue", e);
-        }
-    }
-
-    /**
-     * Obtain field details for the issue type.
-     * @param pIssueType the issue type
-     * @return the issue field details
-     * @throws JOceanusException on error
-     */
-    protected JiraCimIssueType getIssueFields(final JiraIssueType pIssueType) throws JOceanusException {
-        /* Look for an already resolved type */
-        JiraCimIssueType myIssueType = theIssueFields.get(pIssueType);
-        if (myIssueType != null) {
-            return myIssueType;
-        }
-
-        /* Access client */
-        IssueRestClient myClient = theClient.getIssueClient();
-
-        /* Protect against exceptions */
-        try {
-            /* Create the options */
-            GetCreateIssueMetadataOptionsBuilder myBuilder = new GetCreateIssueMetadataOptionsBuilder();
-            myBuilder = myBuilder.withProjectKeys(getKey());
-            myBuilder = myBuilder.withIssueTypeNames(pIssueType.getName());
-            myBuilder = myBuilder.withExpandedIssueTypesFields();
-            GetCreateIssueMetadataOptions myOptions = myBuilder.build();
-
-            /* Process the details */
-            for (CimProject myMetadata : myClient.getCreateIssueMetadata(myOptions).claim()) {
-                for (CimIssueType myType : myMetadata.getIssueTypes()) {
-                    /* Create the issue type */
-                    myIssueType = new JiraCimIssueType(myType);
-                    theIssueFields.put(pIssueType, myIssueType);
-                    return myIssueType;
-                }
-            }
-
-            /* Throw and exception */
-            throw new JThemisIOException("Cannot create issue with Issue type");
-
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to determine fields for issue type", e);
-        }
-    }
-
-    /**
-     * Obtain IssueType.
-     * @param pName the name of the IssueType
-     * @return the IssueType
-     * @throws JOceanusException on error
-     */
-    public JiraIssueType getIssueType(final String pName) throws JOceanusException {
-        /* Return an existing issue type if found in list */
-        Iterator<JiraIssueType> myIterator = theIssueTypes.iterator();
-        while (myIterator.hasNext()) {
-            JiraIssueType myType = myIterator.next();
-            if (pName.equals(myType.getName())) {
-                return myType;
-            }
-        }
-
-        /* throw exception */
-        throw new JThemisLogicException("Invalid IssueType: " + pName);
+    public Iterator<String> issueKeyIterator() {
+        return theIssueKeys.iterator();
     }
 
     /**
@@ -348,29 +210,18 @@ public class JiraProject
      * @return the Component
      * @throws JOceanusException on error
      */
-    public JiraComponent getComponent(final String pName) throws JOceanusException {
-        /* Return an existing component if found in list */
-        Iterator<JiraComponent> myIterator = theComponents.iterator();
-        while (myIterator.hasNext()) {
-            JiraComponent myComp = myIterator.next();
-            if (pName.equals(myComp.getName())) {
-                return myComp;
-            }
+    protected JiraComponent getComponent(final String pName) throws JOceanusException {
+        /* Look up component in the cache */
+        JiraComponent myComp = theComponents.get(pName);
+
+        /* If not in the cache */
+        if (myComp == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid Component: " + pName);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Component: " + pName);
-    }
-
-    /**
-     * Obtain Component.
-     * @param pComponent the basic component
-     * @return the Component
-     * @throws JOceanusException on error
-     */
-    protected JiraComponent getComponent(final BasicComponent pComponent) throws JOceanusException {
-        /* Use name to search */
-        return getComponent(pComponent.getName());
+        /* Return the component */
+        return myComp;
     }
 
     /**
@@ -379,54 +230,18 @@ public class JiraProject
      * @return the Version
      * @throws JOceanusException on error
      */
-    public JiraVersion getVersion(final String pName) throws JOceanusException {
-        /* Return an existing version if found in list */
-        Iterator<JiraVersion> myIterator = theVersions.iterator();
-        while (myIterator.hasNext()) {
-            JiraVersion myVers = myIterator.next();
-            if (pName.equals(myVers.getName())) {
-                return myVers;
-            }
+    protected JiraVersion getVersion(final String pName) throws JOceanusException {
+        /* Look up version in the cache */
+        JiraVersion myVers = theVersions.get(pName);
+
+        /* If not in the cache */
+        if (myVers == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid Version: " + pName);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Version: " + pName);
-    }
-
-    /**
-     * Obtain Version.
-     * @param pVersion the version
-     * @return the Version
-     * @throws JOceanusException on error
-     */
-    protected JiraVersion getVersion(final Version pVersion) throws JOceanusException {
-        /* Use name to search */
-        return getVersion(pVersion.getName());
-    }
-
-    /**
-     * Load Issues.
-     * @throws JOceanusException on error
-     */
-    public void loadAllIssues() throws JOceanusException {
-        /* Access clients */
-        IssueRestClient myIssueClient = theClient.getIssueClient();
-        SearchRestClient mySearchClient = theClient.getSearchClient();
-
-        /* Protect against exceptions */
-        try {
-            /* Loop through all issues in the project */
-            for (BasicIssue myIss : mySearchClient.searchJql("project = \"" + getName() + "\"").claim().getIssues()) {
-                /* Access full details of the issue */
-                Issue myIssue = myIssueClient.getIssue(myIss.getKey()).claim();
-
-                /* Add to the list */
-                theIssues.add(new JiraIssue(theServer, myIssue));
-            }
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to load issues", e);
-        }
+        /* Return the version */
+        return myVers;
     }
 
     /**
@@ -436,49 +251,48 @@ public class JiraProject
      * @throws JOceanusException on error
      */
     public JiraIssue getIssue(final String pKey) throws JOceanusException {
-        /* Return an existing project if found in list */
-        Iterator<JiraIssue> myIterator = issueIterator();
-        while (myIterator.hasNext()) {
-            JiraIssue myIssue = myIterator.next();
-            if (pKey.equals(myIssue.getKey())) {
-                return myIssue;
+        /* Look up issue in the cache */
+        JiraIssue myIssue = theIssues.get(pKey);
+
+        /* If not in the cache */
+        if (myIssue == null) {
+            /* Check that it is a valid issue */
+            if (!theIssueKeys.contains(pKey)) {
+                /* throw exception */
+                throw new JThemisLogicException("Invalid Issue: " + pKey);
             }
+
+            /* Obtain the issue and register it */
+            JSONObject myIssueDtl = theClient.getIssue(pKey);
+            myIssue = new JiraIssue(theServer, myIssueDtl);
+            theIssues.put(pKey, myIssue);
         }
 
-        /* Access client */
-        IssueRestClient myIssueClient = theClient.getIssueClient();
-
-        /* Protect against exceptions */
-        try {
-            /* Access full details of the issue */
-            Issue myIss = myIssueClient.getIssue(pKey).claim();
-
-            /* Add to the list */
-            JiraIssue myIssue = new JiraIssue(theServer, myIss);
-            theIssues.add(myIssue);
-            return myIssue;
-
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to load issue: " + pKey, e);
-        }
+        /* Return the issue */
+        return myIssue;
     }
 
     /**
      * Load IssueTypes.
+     * @param pProject the project details
      * @throws JOceanusException on error
      */
-    private void loadIssueTypes() throws JOceanusException {
+    private void loadIssueTypes(final JSONObject pProject) throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all issueTypes */
-            for (IssueType myType : getUnderlying().getIssueTypes()) {
-                /* Add to the list */
-                theIssueTypes.add(theServer.getIssueType(myType));
+            /* Access the issue types */
+            JSONArray myTypes = pProject.getJSONArray("issueTypes");
+            int myNumTypes = myTypes.length();
+            for (int i = 0; i < myNumTypes; i++) {
+                /* Access the type and register it */
+                JSONObject myTypeDtl = myTypes.getJSONObject(i);
+                String myName = myTypeDtl.getString("name");
+                JiraIssueType myType = theServer.getIssueType(myName);
+                theIssueTypes.add(myType);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
-            throw new JThemisIOException("Failed to load issue types", e);
+            throw new JThemisIOException("Failed to load issueTypes", e);
         }
     }
 
@@ -487,20 +301,18 @@ public class JiraProject
      * @throws JOceanusException on error
      */
     private void loadComponents() throws JOceanusException {
-        /* Access client */
-        ComponentRestClient myClient = theClient.getComponentClient();
-
         /* Protect against exceptions */
         try {
-            /* Loop through all components */
-            for (BasicComponent myComp : getUnderlying().getComponents()) {
-                /* Access component details */
-                Component myComponent = myClient.getComponent(myComp.getSelf()).claim();
-
-                /* Add to the list */
-                theComponents.add(new JiraComponent(myComponent));
+            /* Access the components */
+            JSONArray myComps = theClient.getComponentsForProject(getKey());
+            int myNumComps = myComps.length();
+            for (int i = 0; i < myNumComps; i++) {
+                /* Access the component and register it */
+                JSONObject myCompDtl = myComps.getJSONObject(i);
+                JiraComponent myComp = new JiraComponent(myCompDtl);
+                theComponents.put(myComp.getName(), myComp);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load components", e);
         }
@@ -511,20 +323,18 @@ public class JiraProject
      * @throws JOceanusException on error
      */
     private void loadVersions() throws JOceanusException {
-        /* Access client */
-        VersionRestClient myClient = theClient.getVersionRestClient();
-
         /* Protect against exceptions */
         try {
-            /* Loop through all versions */
-            for (Version myVers : getUnderlying().getVersions()) {
-                /* Access version details */
-                Version myVersion = myClient.getVersion(myVers.getSelf()).claim();
-
-                /* Add to the list */
-                theVersions.add(new JiraVersion(myVersion));
+            /* Access the versions */
+            JSONArray myVers = theClient.getVersionsForProject(getKey());
+            int myNumVers = myVers.length();
+            for (int i = 0; i < myNumVers; i++) {
+                /* Access the version and register it */
+                JSONObject myVersDtl = myVers.getJSONObject(i);
+                JiraVersion myVersion = new JiraVersion(myVersDtl);
+                theVersions.put(myVersion.getName(), myVersion);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load versions", e);
         }
@@ -532,99 +342,26 @@ public class JiraProject
 
     /**
      * Load Roles.
+     * @param pProject the project details
      * @throws JOceanusException on error
      */
-    private void loadRoles() throws JOceanusException {
-        /* Access client */
-        ProjectRolesRestClient myClient = theClient.getProjectRolesRestClient();
-
+    private void loadRoles(final JSONObject pProject) throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all versions */
-            for (BasicProjectRole myBasicRole : getUnderlying().getProjectRoles()) {
-                /* Access version details */
-                ProjectRole myRole = myClient.getRole(myBasicRole.getSelf()).claim();
-
-                /* Add to the list */
-                theRoles.add(new JiraProjectRole(myRole));
+            /* Access the roles */
+            JSONObject myRoles = pProject.getJSONObject("roles");
+            Iterator<String> myIterator = myRoles.keys();
+            while (myIterator.hasNext()) {
+                /* Access the role */
+                String myKey = myIterator.next();
+                String myURL = myRoles.getString(myKey);
+                JSONObject myRoleDtl = theClient.getProjectRoleFromURL(myURL);
+                JiraProjectRole myRole = new JiraProjectRole(myRoleDtl);
+                theRoles.put(myKey, myRole);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
-            throw new JThemisIOException("Failed to load roles", e);
-        }
-    }
-
-    /**
-     * Add new Component.
-     * @param pComponent the component to add
-     * @throws JOceanusException on error
-     */
-    public void addComponent(final String pComponent) throws JOceanusException {
-        /* Check whether the component is already linked */
-        Iterator<JiraComponent> myIterator = theComponents.iterator();
-        while (myIterator.hasNext()) {
-            JiraComponent myComp = myIterator.next();
-            if (pComponent.equals(myComp.getName())) {
-                return;
-            }
-        }
-
-        /* Access client */
-        ComponentRestClient myClient = theClient.getComponentClient();
-
-        /* Protect against exceptions */
-        try {
-            /* Build component details */
-            ComponentInput myInput = new ComponentInput(pComponent, null, theLead.getName(), null);
-
-            /* Create the component for the project */
-            Component myComp = myClient.createComponent(theKey, myInput).claim();
-
-            /* Add the Version */
-            theComponents.add(new JiraComponent(myComp));
-
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to add component", e);
-        }
-    }
-
-    /**
-     * Add new Version.
-     * @param pVersion the version to add
-     * @throws JOceanusException on error
-     */
-    public void addVersion(final String pVersion) throws JOceanusException {
-        /* Check whether the version is already linked */
-        Iterator<JiraVersion> myIterator = theVersions.iterator();
-        while (myIterator.hasNext()) {
-            JiraVersion myVers = myIterator.next();
-            if (pVersion.equals(myVers.getName())) {
-                return;
-            }
-        }
-
-        /* Access client */
-        VersionRestClient myClient = theClient.getVersionRestClient();
-
-        /* Protect against exceptions */
-        try {
-            /* Build version details */
-            VersionInputBuilder myBuilder = new VersionInputBuilder(theKey);
-            myBuilder.setName(pVersion);
-            myBuilder.setArchived(false);
-            myBuilder.setReleased(false);
-            VersionInput myInput = myBuilder.build();
-
-            /* Create the version for the project */
-            Version myVersion = myClient.createVersion(myInput).claim();
-
-            /* Add the Version */
-            theVersions.add(new JiraVersion(myVersion));
-
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to add version", e);
+            throw new JThemisIOException("Failed to load project roles", e);
         }
     }
 
@@ -632,12 +369,7 @@ public class JiraProject
      * Component class.
      */
     public final class JiraComponent
-            extends JiraEntity<Component> {
-        /**
-         * The description of the component.
-         */
-        private final String theDesc;
-
+            extends JiraNamedDescIdObject {
         /**
          * Project Lead.
          */
@@ -648,21 +380,19 @@ public class JiraProject
          * @param pComponent the underlying component
          * @throws JOceanusException on error
          */
-        private JiraComponent(final Component pComponent) throws JOceanusException {
+        private JiraComponent(final JSONObject pComponent) throws JOceanusException {
             /* Access the details */
-            super(pComponent, pComponent.getName());
-            theDesc = pComponent.getDescription();
+            super(pComponent);
 
-            /* Determine the component lead */
-            theLead = theServer.getUser(pComponent.getLead());
-        }
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theLead = theServer.getUser(pComponent.getString("leadUserName"));
 
-        /**
-         * Get the description of the component.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse component", e);
+            }
         }
 
         /**
@@ -678,16 +408,11 @@ public class JiraProject
      * Version class.
      */
     public final class JiraVersion
-            extends JiraEntity<Version> {
-        /**
-         * The description of the version.
-         */
-        private final String theDesc;
-
+            extends JiraNamedDescIdObject {
         /**
          * Release Date of version.
          */
-        private DateTime theReleaseDate;
+        private String theReleaseDate;
 
         /**
          * is the version archived.
@@ -702,29 +427,30 @@ public class JiraProject
         /**
          * Constructor.
          * @param pVersion the underlying version
+         * @throws JOceanusException on error
          */
-        private JiraVersion(final Version pVersion) {
+        private JiraVersion(final JSONObject pVersion) throws JOceanusException {
             /* Access the details */
-            super(pVersion, pVersion.getName());
-            theDesc = pVersion.getDescription();
-            theReleaseDate = pVersion.getReleaseDate();
-            isArchived = pVersion.isArchived();
-            isReleased = pVersion.isReleased();
-        }
+            super(pVersion);
 
-        /**
-         * Get the description of the version.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                isArchived = pVersion.getBoolean("archived");
+                isReleased = pVersion.getBoolean("released");
+                theReleaseDate = pVersion.getString("releaseDate");
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse version", e);
+            }
         }
 
         /**
          * Get the releaseDate of the version.
          * @return the releaseDate
          */
-        public DateTime getReleaseDate() {
+        public String getReleaseDate() {
             return theReleaseDate;
         }
 
@@ -743,90 +469,13 @@ public class JiraProject
         public boolean isReleased() {
             return isReleased;
         }
-
-        /**
-         * Archive the version.
-         * @param doArchive archive/restore version
-         * @throws JOceanusException on error
-         */
-        public void setArchive(final boolean doArchive) throws JOceanusException {
-            /* Access client */
-            VersionRestClient myClient = theClient.getVersionRestClient();
-
-            /* Protect against exceptions */
-            try {
-                /* Ignore if already in correct state */
-                if (doArchive == isArchived) {
-                    return;
-                }
-
-                /* Build version details */
-                VersionInputBuilder myBuilder = new VersionInputBuilder(theKey);
-                myBuilder.setArchived(doArchive);
-                myBuilder.setReleased(isReleased);
-                VersionInput myInput = myBuilder.build();
-
-                /* Apply details to version */
-                Version myVersion = myClient.updateVersion(getURI(), myInput).claim();
-
-                /* Update status */
-                isArchived = myVersion.isArchived();
-                adjustEntity(myVersion);
-
-            } catch (RestClientException e) {
-                /* Pass the exception on */
-                throw new JThemisIOException(ERROR_ARCH, e);
-            }
-        }
-
-        /**
-         * Release the version.
-         * @throws JOceanusException on error
-         */
-        public void setReleased() throws JOceanusException {
-            /* Access client */
-            VersionRestClient myClient = theClient.getVersionRestClient();
-
-            /* Protect against exceptions */
-            try {
-                /* Ignore if already in correct state */
-                if (isReleased) {
-                    return;
-                }
-
-                /* Build version details */
-                VersionInputBuilder myBuilder = new VersionInputBuilder(theKey);
-                myBuilder.setReleaseDate(new DateTime());
-                myBuilder.setArchived(false);
-                myBuilder.setReleased(true);
-                VersionInput myInput = myBuilder.build();
-
-                /* Apply details to version */
-                Version myVersion = myClient.updateVersion(getURI(), myInput).claim();
-
-                /* Adjust values */
-                theReleaseDate = myVersion.getReleaseDate();
-                isArchived = myVersion.isArchived();
-                isReleased = myVersion.isReleased();
-                adjustEntity(myVersion);
-
-            } catch (RestClientException e) {
-                /* Pass the exception on */
-                throw new JThemisIOException(ERROR_ARCH, e);
-            }
-        }
     }
 
     /**
      * ProjectRole class.
      */
     public final class JiraProjectRole
-            extends JiraEntity<ProjectRole> {
-        /**
-         * The description of the project role.
-         */
-        private final String theDesc;
-
+            extends JiraNamedDescObject {
         /**
          * List of actors.
          */
@@ -837,25 +486,27 @@ public class JiraProject
          * @param pRole the underlying role
          * @throws JOceanusException on error
          */
-        private JiraProjectRole(final ProjectRole pRole) throws JOceanusException {
+        private JiraProjectRole(final JSONObject pRole) throws JOceanusException {
             /* Access the details */
-            super(pRole, pRole.getName());
-            theDesc = pRole.getDescription();
-            theActors = new ArrayList<JiraRoleActor>();
+            super(pRole);
 
-            /* Process the actors */
-            for (RoleActor myActor : pRole.getActors()) {
-                /* Add to the list */
-                theActors.add(new JiraRoleActor(myActor));
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theActors = new ArrayList<JiraRoleActor>();
+                JSONArray myActors = pRole.getJSONArray("actors");
+                int myNumActors = myActors.length();
+                for (int i = 0; i < myNumActors; i++) {
+                    /* Access the actor and register it */
+                    JSONObject myActorDtl = myActors.getJSONObject(i);
+                    JiraRoleActor myActor = new JiraRoleActor(myActorDtl);
+                    theActors.add(myActor);
+                }
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse role", e);
             }
-        }
-
-        /**
-         * Get the description of the project role.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
         }
 
         /**
@@ -871,11 +522,6 @@ public class JiraProject
      * RoleActor class.
      */
     public final class JiraRoleActor {
-        /**
-         * The underlying role actor.
-         */
-        private final RoleActor theUnderlying;
-
         /**
          * The name of the actor.
          */
@@ -896,25 +542,22 @@ public class JiraProject
          * @param pActor the underlying role
          * @throws JOceanusException on error
          */
-        private JiraRoleActor(final RoleActor pActor) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pActor;
-            theName = pActor.getName();
-            theFullName = pActor.getDisplayName();
+        private JiraRoleActor(final JSONObject pActor) throws JOceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theName = pActor.getString(JiraNamedObject.FIELD_NAME);
+                theFullName = pActor.getString("displayName");
 
-            /* Resolve the actor */
-            String myType = pActor.getType();
-            theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
-                                                               ? theServer.getGroup(theName)
-                                                               : theServer.getUser(theName);
-        }
-
-        /**
-         * Get the underlying role actor.
-         * @return the actor
-         */
-        protected RoleActor getUnderlying() {
-            return theUnderlying;
+                /* Resolve the actor */
+                String myType = pActor.getString("type");
+                theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
+                                                                   ? theServer.getGroup(theName)
+                                                                   : theServer.getUser(theName);
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse roleActor", e);
+            }
         }
 
         /**
@@ -959,157 +602,6 @@ public class JiraProject
             return (theActor instanceof JiraGroup)
                                                   ? (JiraGroup) theActor
                                                   : null;
-        }
-    }
-
-    /**
-     * Create Issue Status Field Availability.
-     */
-    public final class JiraCimIssueType {
-        /**
-         * The underlying issueType info.
-         */
-        private final CimIssueType theUnderlying;
-
-        /**
-         * The Issue type.
-         */
-        private final JiraIssueType theType;
-
-        /**
-         * The field info.
-         */
-        private Map<String, JiraCimFieldInfo> theFieldMap;
-
-        /**
-         * Constructor.
-         * @param pType the underlying issue type
-         * @throws JOceanusException on error
-         */
-        private JiraCimIssueType(final CimIssueType pType) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pType;
-            theType = theServer.getIssueType(pType.getName());
-            theFieldMap = new LinkedHashMap<String, JiraCimFieldInfo>();
-
-            /* Process the fields */
-            for (CimFieldInfo myInfo : pType.getFields().values()) {
-                /* Add to the map */
-                theFieldMap.put(myInfo.getName(), new JiraCimFieldInfo(myInfo));
-            }
-        }
-
-        /**
-         * Get the underlying issue type.
-         * @return the issue type
-         */
-        protected CimIssueType getUnderlying() {
-            return theUnderlying;
-        }
-
-        /**
-         * Get the issue type.
-         * @return the issue type
-         */
-        public JiraIssueType getIssueType() {
-            return theType;
-        }
-
-        /**
-         * Get the field info for the field.
-         * @param pField the field name
-         * @return the info
-         */
-        public JiraCimFieldInfo getFieldInfo(final String pField) {
-            return theFieldMap.get(pField);
-        }
-
-        /**
-         * Get the field info list iterator.
-         * @return the iterator
-         */
-        public Iterator<JiraCimFieldInfo> fieldIterator() {
-            return theFieldMap.values().iterator();
-        }
-    }
-
-    /**
-     * Create Issue Field Availability.
-     */
-    public static final class JiraCimFieldInfo {
-        /**
-         * The underlying field info.
-         */
-        private final CimFieldInfo theUnderlying;
-
-        /**
-         * The name of the field.
-         */
-        private final String theName;
-
-        /**
-         * The schema of the field.
-         */
-        private final FieldSchema theSchema;
-
-        /**
-         * Constructor.
-         * @param pInfo the underlying field info
-         * @throws JOceanusException on error
-         */
-        private JiraCimFieldInfo(final CimFieldInfo pInfo) throws JOceanusException {
-            /* Access the details */
-            theUnderlying = pInfo;
-            theName = pInfo.getName();
-            theSchema = pInfo.getSchema();
-        }
-
-        /**
-         * Get the underlying field info.
-         * @return the filed info
-         */
-        protected CimFieldInfo getUnderlying() {
-            return theUnderlying;
-        }
-
-        /**
-         * Get the field schema.
-         * @return the schema
-         */
-        public FieldSchema getSchema() {
-            return theSchema;
-        }
-
-        /**
-         * Get the name of the field.
-         * @return the name
-         */
-        public String getName() {
-            return theName;
-        }
-
-        /**
-         * Is the field required?
-         * @return true/false
-         */
-        public boolean isRequired() {
-            return theUnderlying.isRequired();
-        }
-
-        /**
-         * Get the list of allowed values.
-         * @return the iterator
-         */
-        public Iterator<Object> valueIterator() {
-            return theUnderlying.getAllowedValues().iterator();
-        }
-
-        /**
-         * Get the list of allowed operations.
-         * @return the iterator
-         */
-        public Iterator<StandardOperation> operationIterator() {
-            return theUnderlying.getOperations().iterator();
         }
     }
 }

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jprometheus.views.StatusData;
 public interface ThreadStatusControl {
     /**
      * is the thread cancelled?
+     * @return true/false
      */
     boolean isCancelled();
 

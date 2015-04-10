@@ -39,9 +39,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEve
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing the data.
- * @param <T> the Data Item type
  */
-public abstract class JFieldSetBase<T extends JFieldSetItem>
+public abstract class JFieldSetBase
         implements JOceanusEventProvider {
     /**
      * The Event Manager.

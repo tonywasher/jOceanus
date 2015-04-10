@@ -47,6 +47,16 @@ public class JMetisDataException
     }
 
     /**
+     * Create a new Metis Exception object based on an object and a string.
+     * @param o the data object
+     * @param s the description of the exception
+     */
+    public JMetisDataException(final Object o,
+                               final String s) {
+        super(o, s);
+    }
+
+    /**
      * Create a new Metis Exception object based on a string and an underlying exception.
      * @param s the description of the exception
      * @param e the underlying exception

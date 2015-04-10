@@ -169,7 +169,7 @@ public abstract class SwingPreferenceSet
                     Color myColor = Color.decode(myValue);
 
                     /* Set as initial value */
-                    super.setValue(myColor);
+                    setTheValue(myColor);
                 }
             }
 
@@ -180,10 +180,7 @@ public abstract class SwingPreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public Color getValue() {
             return (Color) super.getValue();
         }
@@ -243,7 +240,7 @@ public abstract class SwingPreferenceSet
                         Font myFont = new Font(myName, Font.PLAIN, mySize);
 
                         /* Set as initial value */
-                        super.setValue(myFont);
+                        setTheValue(myFont);
                     }
                 }
             }
@@ -255,10 +252,7 @@ public abstract class SwingPreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public Font getValue() {
             return (Font) super.getValue();
         }

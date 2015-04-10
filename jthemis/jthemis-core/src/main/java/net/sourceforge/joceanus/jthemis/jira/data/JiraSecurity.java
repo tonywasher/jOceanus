@@ -23,18 +23,19 @@
 package net.sourceforge.joceanus.jthemis.jira.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.http.JiraClient;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraEntity;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedObject;
 
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.RestClientException;
-import com.atlassian.jira.rest.client.api.UserRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicUser;
-import com.atlassian.jira.rest.client.api.domain.User;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Handles security for a jira server.
@@ -42,19 +43,19 @@ import com.atlassian.jira.rest.client.api.domain.User;
  */
 public class JiraSecurity {
     /**
-     * User Client.
+     * HTTP Client.
      */
-    private final UserRestClient theUserClient;
+    private final JiraClient theClient;
 
     /**
      * Users.
      */
-    private final List<JiraUser> theUsers;
+    private final Map<String, JiraUser> theUsers;
 
     /**
      * Groups.
      */
-    private final List<JiraGroup> theGroups;
+    private final Map<String, JiraGroup> theGroups;
 
     /**
      * Constructor.
@@ -63,12 +64,11 @@ public class JiraSecurity {
      */
     protected JiraSecurity(final JiraServer pServer) throws JOceanusException {
         /* Access clients */
-        JiraRestClient myClient = pServer.getClient();
-        theUserClient = myClient.getUserClient();
+        theClient = pServer.getClient();
 
         /* Allocate the lists */
-        theUsers = new ArrayList<JiraUser>();
-        theGroups = new ArrayList<JiraGroup>();
+        theUsers = new HashMap<String, JiraUser>();
+        theGroups = new HashMap<String, JiraGroup>();
     }
 
     /**
@@ -78,63 +78,44 @@ public class JiraSecurity {
      * @throws JOceanusException on error
      */
     public JiraUser getUser(final String pName) throws JOceanusException {
-        /* Return an existing user if found in list */
-        Iterator<JiraUser> myIterator = theUsers.iterator();
-        while (myIterator.hasNext()) {
-            JiraUser myUser = myIterator.next();
-            if (pName.equals(myUser.getName())) {
-                return myUser;
-            }
-        }
+        /* Look up user in the cache */
+        JiraUser myUser = theUsers.get(pName);
 
-        /* Protect against exceptions */
-        try {
+        /* If not in the cache */
+        if (myUser == null) {
             /* Access the user details */
-            User myUserDtl = theUserClient.getUser(pName).claim();
+            JSONObject myUserDtl = theClient.getUser(pName);
 
             /* Create User object and add to list */
-            JiraUser myUser = new JiraUser(myUserDtl);
-            theUsers.add(myUser);
-
-            /* Return it */
-            return myUser;
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to load user " + pName, e);
+            myUser = new JiraUser(myUserDtl);
+            theUsers.put(pName, myUser);
         }
-    }
 
-    /**
-     * Obtain User.
-     * @param pUser the basic user
-     * @return the User
-     * @throws JOceanusException on error
-     */
-    protected JiraUser getUser(final BasicUser pUser) throws JOceanusException {
-        /* Use name to search */
-        return getUser(pUser.getName());
+        /* Return the user */
+        return myUser;
     }
 
     /**
      * Obtain Group.
      * @param pName the name of the group
      * @return the Group
+     * @throws JOceanusException on error
      */
-    public JiraGroup getGroup(final String pName) {
-        /* Return an existing group if found in list */
-        Iterator<JiraGroup> myIterator = theGroups.iterator();
-        while (myIterator.hasNext()) {
-            JiraGroup myGroup = myIterator.next();
-            if (pName.equals(myGroup.getName())) {
-                return myGroup;
-            }
+    public JiraGroup getGroup(final String pName) throws JOceanusException {
+        /* Look up group in the cache */
+        JiraGroup myGroup = theGroups.get(pName);
+
+        /* If not in the cache */
+        if (myGroup == null) {
+            /* Access the group details */
+            JSONObject myGroupDtl = theClient.getGroup(pName);
+
+            /* Create Group object and add to list */
+            myGroup = new JiraGroup(myGroupDtl);
+            theGroups.put(pName, myGroup);
         }
 
-        /* Create Group object and add to list */
-        JiraGroup myGroup = new JiraGroup(pName);
-        theGroups.add(myGroup);
-
-        /* Return it */
+        /* Return the group */
         return myGroup;
     }
 
@@ -142,26 +123,49 @@ public class JiraSecurity {
      * User class.
      */
     public final class JiraUser
-            extends JiraEntity<User> {
+            extends JiraNamedObject {
         /**
          * The full name of the user.
          */
         private final String theFullName;
 
         /**
+         * The eMail address of the user.
+         */
+        private final String theEMail;
+
+        /**
+         * The list of groups.
+         */
+        private final List<JiraGroup> theGroups;
+
+        /**
+         * Resolved groups.
+         */
+        private boolean isResolved;
+
+        /**
          * Constructor.
          * @param pUser the underlying user
+         * @throws JOceanusException on error
          */
-        private JiraUser(final User pUser) {
-            /* Access the details */
-            super(pUser, pUser.getName());
-            theFullName = pUser.getDisplayName();
+        private JiraUser(final JSONObject pUser) throws JOceanusException {
+            /* Parse base details */
+            super(pUser);
 
-            /* Loop through the groups */
-            for (String myGroupName : pUser.getGroups().getItems()) {
-                /* Access the group and register with it */
-                JiraGroup myGroup = getGroup(myGroupName);
-                myGroup.registerUser(this);
+            /* Initialise the group list */
+            isResolved = false;
+            theGroups = new ArrayList<JiraGroup>();
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theFullName = pUser.getString("displayName");
+                theEMail = pUser.optString("emailAddress");
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse user", e);
             }
         }
 
@@ -172,52 +176,113 @@ public class JiraSecurity {
         public String getFullname() {
             return theFullName;
         }
+
+        /**
+         * Get the eMail of the user.
+         * @return the eMail
+         */
+        public String getEMail() {
+            return theEMail;
+        }
+
+        /**
+         * Obtain the group iterator.
+         * @return the iterator
+         * @throws JOceanusException on error
+         */
+        public Iterator<JiraGroup> groupIterator() throws JOceanusException {
+            /* If we have not resolved the groups */
+            if (!isResolved) {
+                /* Protect against exceptions */
+                try {
+                    /* Access the users */
+                    JSONObject mySelf = theClient.getUserGroups(getName());
+                    JSONObject myGroups = mySelf.getJSONObject("groups");
+                    JSONArray myItems = myGroups.getJSONArray("items");
+                    int myNumGroups = myGroups.getInt("size");
+                    for (int i = 0; i < myNumGroups; i++) {
+                        /* Access the group and record it */
+                        JSONObject myGroupDtl = myItems.getJSONObject(i);
+                        JiraGroup myGroup = getGroup(myGroupDtl.getString("name"));
+                        theGroups.add(myGroup);
+                    }
+
+                } catch (JSONException e) {
+                    /* Pass the exception on */
+                    throw new JThemisIOException("Failed to parse user groups", e);
+                }
+
+                /* Set resolved flag */
+                isResolved = true;
+            }
+
+            /* return the iterator */
+            return theGroups.iterator();
+        }
     }
 
     /**
      * Group class.
      */
-    public static final class JiraGroup {
-        /**
-         * The name of the group.
-         */
-        private final String theName;
-
+    public final class JiraGroup
+            extends JiraNamedObject {
         /**
          * The list of members.
          */
         private final List<JiraUser> theMembers;
 
         /**
-         * Constructor.
-         * @param pName the group name
+         * Resolved members.
          */
-        private JiraGroup(final String pName) {
-            /* Access the details */
-            theName = pName;
+        private boolean isResolved;
 
-            /* Create the user list */
+        /**
+         * Constructor.
+         * @param pGroup the base group object
+         * @throws JOceanusException on error
+         */
+        private JiraGroup(final JSONObject pGroup) throws JOceanusException {
+            /* Parse base details */
+            super(pGroup);
+
+            /* Initialise the member list */
+            isResolved = false;
             theMembers = new ArrayList<JiraUser>();
         }
 
         /**
-         * Get the name of the group.
-         * @return the name
+         * Obtain the member iterator.
+         * @return the iterator
+         * @throws JOceanusException on error
          */
-        public String getName() {
-            return theName;
-        }
+        public Iterator<JiraUser> memberIterator() throws JOceanusException {
+            /* If we have not resolved the users */
+            if (!isResolved) {
+                /* Protect against exceptions */
+                try {
+                    /* Access the users */
+                    JSONObject mySelf = theClient.getGroupUsers(getName());
+                    JSONObject myUsers = mySelf.getJSONObject("users");
+                    JSONArray myItems = myUsers.getJSONArray("items");
+                    int myNumUsers = myUsers.getInt("size");
+                    for (int i = 0; i < myNumUsers; i++) {
+                        /* Access the user and record it */
+                        JSONObject myUserDtl = myItems.getJSONObject(i);
+                        JiraUser myUser = getUser(myUserDtl.getString("name"));
+                        theMembers.add(myUser);
+                    }
 
-        /**
-         * Register user.
-         * @param pUser the user to register
-         */
-        private void registerUser(final JiraUser pUser) {
-            /* If the user is not registered */
-            if (!theMembers.contains(pUser)) {
-                /* Add the user to the members */
-                theMembers.add(pUser);
+                } catch (JSONException e) {
+                    /* Pass the exception on */
+                    throw new JThemisIOException("Failed to parse group users", e);
+                }
+
+                /* Set resolved flag */
+                isResolved = true;
             }
+
+            /* return the iterator */
+            return theMembers.iterator();
         }
     }
 }

@@ -227,11 +227,8 @@ public final class ViewerHTML {
     }
 
     /**
-     * Constructor.
-     * @param pStandard the standard colour
-     * @param pChanged the changed colour
-     * @param pLink the link colour
-     * @param pChgLink the changed link colour
+     * Process the configuration.
+     * @param pFieldConfig the configuration
      */
     protected void processConfig(final JFieldConfig pFieldConfig) {
         /* Set the colours */

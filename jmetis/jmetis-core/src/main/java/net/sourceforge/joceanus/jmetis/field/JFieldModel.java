@@ -54,7 +54,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * The FieldSet.
      */
-    private final JFieldSetBase<T> theFieldSet;
+    private final JFieldSetBase theFieldSet;
 
     /**
      * The DataType value.
@@ -77,7 +77,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * @param pField the field for the model
      * @param pClass the class of the model
      */
-    protected JFieldModel(final JFieldSetBase<T> pFieldSet,
+    protected JFieldModel(final JFieldSetBase pFieldSet,
                           final JDataField pField,
                           final DataType pClass) {
         /* Store values */
@@ -217,7 +217,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        public JModelString(final JFieldSetBase<T> pFieldSet,
+        public JModelString(final JFieldSetBase pFieldSet,
                             final JDataField pField,
                             final DataType pClass) {
             /* Pass call onwards */
@@ -503,7 +503,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        public JModelObject(final JFieldSetBase<T> pFieldSet,
+        public JModelObject(final JFieldSetBase pFieldSet,
                             final JDataField pField,
                             final Class<I> pClass) {
             /* Pass call onwards */
@@ -542,7 +542,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
          */
-        public JModelObjectList(final JFieldSetBase<T> pFieldSet,
+        public JModelObjectList(final JFieldSetBase pFieldSet,
                                 final JDataField pField) {
             /* Pass call onwards */
             super(pFieldSet, pField, null);
@@ -575,7 +575,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        public JModelBoolean(final JFieldSetBase<T> pFieldSet,
+        public JModelBoolean(final JFieldSetBase pFieldSet,
                              final JDataField pField,
                              final DataType pClass) {
             /* Pass call onwards */
@@ -624,7 +624,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        public JModelDateDay(final JFieldSetBase<T> pFieldSet,
+        public JModelDateDay(final JFieldSetBase pFieldSet,
                              final JDataField pField,
                              final DataType pClass) {
             /* Pass call onwards */

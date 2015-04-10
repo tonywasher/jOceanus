@@ -645,7 +645,7 @@ public abstract class PreferenceSet
          * Set value.
          * @param pValue the value
          */
-        protected void setValue(final Object pValue) {
+        protected void setTheValue(final Object pValue) {
             theValue = pValue;
         }
 
@@ -679,7 +679,7 @@ public abstract class PreferenceSet
                 storeThePreference(theNewValue);
 
                 /* Note the new value and reset changes */
-                setValue(theNewValue);
+                setTheValue(theNewValue);
                 resetChanges();
             }
         }
@@ -731,7 +731,7 @@ public abstract class PreferenceSet
                 int myValue = theHandle.getInt(pName, -1);
 
                 /* Set as initial value */
-                super.setValue(Integer.valueOf(myValue));
+                setTheValue(Integer.valueOf(myValue));
 
                 /* else value does not exist */
             } else {
@@ -740,10 +740,7 @@ public abstract class PreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public Integer getValue() {
             return (Integer) super.getValue();
         }
@@ -788,9 +785,9 @@ public abstract class PreferenceSet
                 boolean myValue = theHandle.getBoolean(pName, false);
 
                 /* Set as initial value */
-                super.setValue(myValue
-                                      ? Boolean.TRUE
-                                      : Boolean.FALSE);
+                setTheValue(myValue
+                                   ? Boolean.TRUE
+                                   : Boolean.FALSE);
 
                 /* else value does not exist */
             } else {
@@ -799,10 +796,7 @@ public abstract class PreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public Boolean getValue() {
             return (Boolean) super.getValue();
         }
@@ -868,7 +862,7 @@ public abstract class PreferenceSet
                 String myValue = theHandle.get(pName, null);
 
                 /* Set as initial value */
-                super.setValue(myValue);
+                setTheValue(myValue);
 
                 /* else value does not exist */
             } else {
@@ -877,10 +871,7 @@ public abstract class PreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public String getValue() {
             return (String) super.getValue();
         }
@@ -932,7 +923,7 @@ public abstract class PreferenceSet
                     JDateDay myDate = new JDateDay(myValue);
 
                     /* Set as initial value */
-                    super.setValue(myDate);
+                    setTheValue(myDate);
                 }
             }
 
@@ -943,10 +934,7 @@ public abstract class PreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public JDateDay getValue() {
             return (JDateDay) super.getValue();
         }
@@ -1020,7 +1008,7 @@ public abstract class PreferenceSet
                     E myEnum = findValue(myValue);
                     bExists = (myEnum != null);
                     if (bExists) {
-                        super.setValue(myEnum);
+                        setTheValue(myEnum);
                     }
                 }
             }
@@ -1032,10 +1020,7 @@ public abstract class PreferenceSet
             }
         }
 
-        /**
-         * Obtain the value of the preference.
-         * @return the value of the preference
-         */
+        @Override
         public E getValue() {
             return theClass.cast(super.getValue());
         }

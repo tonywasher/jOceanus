@@ -22,13 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.jira.data;
 
-import java.awt.Color;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.http.JiraClient;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -36,25 +38,9 @@ import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraUser;
 
-import com.atlassian.jira.rest.client.api.AddressableEntity;
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
-import com.atlassian.jira.rest.client.api.MetadataRestClient;
-import com.atlassian.jira.rest.client.api.ProjectRestClient;
-import com.atlassian.jira.rest.client.api.RestClientException;
-import com.atlassian.jira.rest.client.api.SearchRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicPriority;
-import com.atlassian.jira.rest.client.api.domain.BasicProject;
-import com.atlassian.jira.rest.client.api.domain.BasicUser;
-import com.atlassian.jira.rest.client.api.domain.Filter;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.IssueType;
-import com.atlassian.jira.rest.client.api.domain.IssuelinksType;
-import com.atlassian.jira.rest.client.api.domain.Priority;
-import com.atlassian.jira.rest.client.api.domain.Project;
-import com.atlassian.jira.rest.client.api.domain.Resolution;
-import com.atlassian.jira.rest.client.api.domain.Status;
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Represents a Jira server.
@@ -62,19 +48,14 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
  */
 public class JiraServer {
     /**
-     * The preference manager.
+     * Create date time formatter.
      */
-    private static final String ERROR_SERVICE = "Failed to contact server";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     /**
-     * The Rest Client.
+     * The Http Client.
      */
-    private final JiraRestClient theClient;
-
-    /**
-     * The MetaData Client.
-     */
-    private final MetadataRestClient theDataClient;
+    private final JiraClient theClient;
 
     /**
      * The Security.
@@ -89,37 +70,37 @@ public class JiraServer {
     /**
      * Projects.
      */
-    private final List<JiraProject> theProjects;
+    private final Map<String, JiraProject> theProjects;
 
     /**
      * IssueTypes.
      */
-    private final List<JiraIssueType> theIssueTypes;
+    private final Map<String, JiraIssueType> theIssueTypes;
 
     /**
-     * IssueLinkTypes.
+     * StatusCategories.
      */
-    private final List<JiraIssueLinks> theIssueLinks;
+    private final Map<String, JiraStatusCategory> theStatusCategories;
 
     /**
      * Statuses.
      */
-    private final List<JiraStatus> theStatuses;
+    private final Map<String, JiraStatus> theStatuses;
 
     /**
      * Resolutions.
      */
-    private final List<JiraResolution> theResolutions;
+    private final Map<String, JiraResolution> theResolutions;
 
     /**
      * Priorities.
      */
-    private final List<JiraPriority> thePriorities;
+    private final Map<String, JiraPriority> thePriorities;
 
     /**
-     * Filters.
+     * IssueLinkTypes.
      */
-    private final List<JiraFilter> theFilters;
+    private final Map<String, JiraIssueLinkType> theIssueLinkTypes;
 
     /**
      * Constructor.
@@ -127,54 +108,46 @@ public class JiraServer {
      * @throws JOceanusException on error
      */
     public JiraServer(final PreferenceManager pManager) throws JOceanusException {
-        /* Allocate the lists */
-        theProjects = new ArrayList<JiraProject>();
-        theFilters = new ArrayList<JiraFilter>();
-        theIssueTypes = new ArrayList<JiraIssueType>();
-        theIssueLinks = new ArrayList<JiraIssueLinks>();
-        theStatuses = new ArrayList<JiraStatus>();
-        theResolutions = new ArrayList<JiraResolution>();
-        thePriorities = new ArrayList<JiraPriority>();
+        /* Allocate the maps */
+        theProjects = new HashMap<String, JiraProject>();
+        theIssueLinkTypes = new HashMap<String, JiraIssueLinkType>();
+        theIssueTypes = new HashMap<String, JiraIssueType>();
+        theStatusCategories = new HashMap<String, JiraStatusCategory>();
+        theStatuses = new HashMap<String, JiraStatus>();
+        theResolutions = new HashMap<String, JiraResolution>();
+        thePriorities = new HashMap<String, JiraPriority>();
 
-        /* Protect against exceptions */
-        try {
-            /* Access the Jira preferences */
-            JiraPreferences myPreferences = pManager.getPreferenceSet(JiraPreferences.class);
-            String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER);
+        /* Access the Jira preferences */
+        JiraPreferences myPreferences = pManager.getPreferenceSet(JiraPreferences.class);
+        String myBaseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER);
+        String myUser = myPreferences.getStringValue(JiraPreferences.NAME_USER);
+        String myPass = myPreferences.getStringValue(JiraPreferences.NAME_PASS);
 
-            /* Access the Rest Client */
-            JiraRestClientFactory myFactory = new AsynchronousJiraRestClientFactory();
-            URI myUri = new URI(baseUrl);
-            String myUser = myPreferences.getStringValue(JiraPreferences.NAME_USER);
-            String myPass = myPreferences.getStringValue(JiraPreferences.NAME_PASS);
-            theClient = myFactory.createWithBasicHttpAuthentication(myUri, myUser, myPass);
-            theDataClient = theClient.getMetadataClient();
+        /* Access the Jira Client */
+        String myAuth = myUser + ":" + myPass;
+        theClient = new JiraClient(myBaseUrl, myAuth);
 
-            /* Allocate the security class */
-            theSecurity = new JiraSecurity(this);
-            theActive = getUser(myUser);
+        /* Allocate the security class */
+        theSecurity = new JiraSecurity(this);
+        theActive = getUser(myUser);
 
-            /* Load constants */
-            loadIssueTypes();
-            loadIssueLinks();
-            loadResolutions();
-            loadPriorities();
+        /* Load constants */
+        loadIssueTypes();
+        loadIssueLinkTypes();
+        loadResolutions();
+        loadPriorities();
+        loadStatusCategories();
+        loadStatuses();
 
-            /* Load projects and filters */
-            loadProjects();
-            loadFilters();
-
-        } catch (URISyntaxException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException(ERROR_SERVICE, e);
-        }
+        /* Load projects */
+        loadProjects();
     }
 
     /**
-     * Obtain the service.
-     * @return the service
+     * Obtain the client.
+     * @return the client
      */
-    protected JiraRestClient getClient() {
+    protected JiraClient getClient() {
         return theClient;
     }
 
@@ -191,15 +164,15 @@ public class JiraServer {
      * @return the iterator
      */
     public Iterator<JiraProject> projectIterator() {
-        return theProjects.iterator();
+        return theProjects.values().iterator();
     }
 
     /**
      * Obtain the issue links iterator.
      * @return the iterator
      */
-    public Iterator<JiraIssueLinks> issueLinksIterator() {
-        return theIssueLinks.iterator();
+    public Iterator<JiraIssueLinkType> issueLinkTypeIterator() {
+        return theIssueLinkTypes.values().iterator();
     }
 
     /**
@@ -207,7 +180,7 @@ public class JiraServer {
      * @return the iterator
      */
     public Iterator<JiraIssueType> issueTypeIterator() {
-        return theIssueTypes.iterator();
+        return theIssueTypes.values().iterator();
     }
 
     /**
@@ -215,7 +188,7 @@ public class JiraServer {
      * @return the iterator
      */
     public Iterator<JiraResolution> resolutionIterator() {
-        return theResolutions.iterator();
+        return theResolutions.values().iterator();
     }
 
     /**
@@ -223,85 +196,56 @@ public class JiraServer {
      * @return the iterator
      */
     public Iterator<JiraPriority> priorityIterator() {
-        return thePriorities.iterator();
+        return thePriorities.values().iterator();
     }
 
     /**
-     * Obtain the filter iterator.
+     * Obtain the status iterator.
      * @return the iterator
      */
-    public Iterator<JiraFilter> filterIterator() {
-        return theFilters.iterator();
+    public Iterator<JiraStatus> statusIterator() {
+        return theStatuses.values().iterator();
+    }
+
+    /**
+     * Parse DateTime object.
+     * @param pSource the source string
+     * @return the parsed dateTime (or null)
+     */
+    public static LocalDateTime parseJiraDateTime(final String pSource) {
+        /* Protect against exceptions */
+        try {
+            /* If we have source to parse */
+            LocalDateTime myResult = null;
+            if (pSource != null) {
+                TemporalAccessor myParsed = DATE_FORMATTER.parse(pSource);
+                myResult = LocalDateTime.from(myParsed);
+            }
+
+            return myResult;
+        } catch (DateTimeException e) {
+            return null;
+        }
     }
 
     /**
      * Obtain Project.
-     * @param pName the name of the project
+     * @param pProjectKey the project key
      * @return the Project
      * @throws JOceanusException on error
      */
-    public JiraProject getProject(final String pName) throws JOceanusException {
-        /* Return an existing project if found in list */
-        Iterator<JiraProject> myIterator = theProjects.iterator();
-        while (myIterator.hasNext()) {
-            JiraProject myProject = myIterator.next();
-            if (pName.equals(myProject.getName())) {
-                return myProject;
-            }
+    public JiraProject getProject(final String pProjectKey) throws JOceanusException {
+        /* Look up project in the cache */
+        JiraProject myProject = theProjects.get(pProjectKey);
+
+        /* If not in the cache */
+        if (myProject == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid Project: " + pProjectKey);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Project: " + pName);
-    }
-
-    /**
-     * Obtain Project.
-     * @param pProject the basic project
-     * @return the Project
-     * @throws JOceanusException on error
-     */
-    protected JiraProject getProject(final BasicProject pProject) throws JOceanusException {
-        /* Use name to search */
-        return getProject(pProject.getName());
-    }
-
-    /**
-     * Obtain Filter.
-     * @param pName the name of the filter
-     * @return the Filter
-     * @throws JOceanusException on error
-     */
-    public JiraFilter getFilter(final String pName) throws JOceanusException {
-        /* Return an existing filter if found in list */
-        Iterator<JiraFilter> myIterator = theFilters.iterator();
-        while (myIterator.hasNext()) {
-            JiraFilter myFilter = myIterator.next();
-            if (pName.equals(myFilter.getName())) {
-                return myFilter;
-            }
-        }
-
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Filter: " + pName);
-    }
-
-    /**
-     * Obtain Issues from Filter.
-     * @param pFilter the filter
-     * @return the Issues
-     * @throws JOceanusException on error
-     */
-    public Iterator<JiraIssue> getIssuesFromFilter(final JiraFilter pFilter) throws JOceanusException {
-        /* Create a new list */
-        List<JiraIssue> myList = new ArrayList<JiraIssue>();
-
-        /* Build a list of the issues */
-        for (Issue myIssue : pFilter.getIssues()) {
-            myList.add(getIssue(myIssue.getKey()));
-        }
-
-        /* return the iterator */
-        return myList.iterator();
+        /* Return the project */
+        return myProject;
     }
 
     /**
@@ -317,15 +261,9 @@ public class JiraServer {
             /* Access project key */
             String myKey = pKey.substring(0, iPos);
 
-            /* Look for relevant project */
-            Iterator<JiraProject> myIterator = projectIterator();
-            while (myIterator.hasNext()) {
-                JiraProject myProject = myIterator.next();
-                if (myKey.equals(myProject.getKey())) {
-                    /* Load issue from project */
-                    return myProject.getIssue(pKey);
-                }
-            }
+            /* Look for project and load issue */
+            JiraProject myProject = getProject(myKey);
+            return myProject.getIssue(pKey);
         }
 
         /* Pass the exception on */
@@ -338,20 +276,9 @@ public class JiraServer {
      * @return the User
      * @throws JOceanusException on error
      */
-    public final JiraUser getUser(final String pName) throws JOceanusException {
+    public JiraUser getUser(final String pName) throws JOceanusException {
         /* Pass the call to the security service */
         return theSecurity.getUser(pName);
-    }
-
-    /**
-     * Obtain User.
-     * @param pUser the basic user
-     * @return the User
-     * @throws JOceanusException on error
-     */
-    protected final JiraUser getUser(final BasicUser pUser) throws JOceanusException {
-        /* Pass the call to the security service */
-        return theSecurity.getUser(pUser);
     }
 
     /**
@@ -366,34 +293,63 @@ public class JiraServer {
     }
 
     /**
+     * Obtain IssueLinkType.
+     * @param pName the name of the IssueLinkType
+     * @return the IssueLinkType
+     * @throws JOceanusException on error
+     */
+    public JiraIssueLinkType getIssueLinkType(final String pName) throws JOceanusException {
+        /* Look up issueType in the cache */
+        JiraIssueLinkType myType = theIssueLinkTypes.get(pName);
+
+        /* If not in the cache */
+        if (myType == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid IssueLinkType: " + pName);
+        }
+
+        /* Return the type */
+        return myType;
+    }
+
+    /**
      * Obtain IssueType.
      * @param pName the name of the IssueType
      * @return the IssueType
      * @throws JOceanusException on error
      */
     public JiraIssueType getIssueType(final String pName) throws JOceanusException {
-        /* Return an existing issue type if found in list */
-        Iterator<JiraIssueType> myIterator = theIssueTypes.iterator();
-        while (myIterator.hasNext()) {
-            JiraIssueType myType = myIterator.next();
-            if (pName.equals(myType.getName())) {
-                return myType;
-            }
+        /* Look up issueType in the cache */
+        JiraIssueType myType = theIssueTypes.get(pName);
+
+        /* If not in the cache */
+        if (myType == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid IssueType: " + pName);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid IssueType: " + pName);
+        /* Return the type */
+        return myType;
     }
 
     /**
-     * Obtain IssueType.
-     * @param pType the basic issue type
-     * @return the IssueType
+     * Obtain Status.
+     * @param pName the name of the Status
+     * @return the Status
      * @throws JOceanusException on error
      */
-    protected JiraIssueType getIssueType(final IssueType pType) throws JOceanusException {
-        /* Use name to search */
-        return getIssueType(pType.getName());
+    public JiraStatusCategory getStatusCategory(final String pName) throws JOceanusException {
+        /* Look up status in the cache */
+        JiraStatusCategory myCategory = theStatusCategories.get(pName);
+
+        /* If not in the cache */
+        if (myCategory == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid StatusCategory: " + pName);
+        }
+
+        /* Return the statusCategory */
+        return myCategory;
     }
 
     /**
@@ -403,51 +359,17 @@ public class JiraServer {
      * @throws JOceanusException on error
      */
     public JiraStatus getStatus(final String pName) throws JOceanusException {
-        /* Return an existing status if found in list */
-        Iterator<JiraStatus> myIterator = theStatuses.iterator();
-        while (myIterator.hasNext()) {
-            JiraStatus myStatus = myIterator.next();
-            if (pName.equals(myStatus.getName())) {
-                return myStatus;
-            }
+        /* Look up status in the cache */
+        JiraStatus myStatus = theStatuses.get(pName);
+
+        /* If not in the cache */
+        if (myStatus == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid Status: " + pName);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Status: " + pName);
-    }
-
-    /**
-     * Obtain Status.
-     * @param pStatus the Basic Status
-     * @return the Status
-     * @throws JOceanusException on error
-     */
-    protected JiraStatus getStatus(final Status pStatus) throws JOceanusException {
-        /* Return an existing status if found in list */
-        String myName = pStatus.getName();
-        Iterator<JiraStatus> myIterator = theStatuses.iterator();
-        while (myIterator.hasNext()) {
-            JiraStatus myStatus = myIterator.next();
-            if (myName.equals(myStatus.getName())) {
-                return myStatus;
-            }
-        }
-
-        /* Protect against exceptions */
-        try {
-            /* Access the status details */
-            Status myStatusDtl = theDataClient.getStatus(pStatus.getSelf()).claim();
-
-            /* Create Status object and add to list */
-            JiraStatus myStatus = new JiraStatus(myStatusDtl);
-            theStatuses.add(myStatus);
-
-            /* Return it */
-            return myStatus;
-        } catch (RestClientException e) {
-            /* Pass the exception on */
-            throw new JThemisIOException("Failed to load status " + myName, e);
-        }
+        /* Return the status */
+        return myStatus;
     }
 
     /**
@@ -457,28 +379,17 @@ public class JiraServer {
      * @throws JOceanusException on error
      */
     public JiraResolution getResolution(final String pName) throws JOceanusException {
-        /* Return an existing resolution if found in list */
-        Iterator<JiraResolution> myIterator = theResolutions.iterator();
-        while (myIterator.hasNext()) {
-            JiraResolution myRes = myIterator.next();
-            if (pName.equals(myRes.getName())) {
-                return myRes;
-            }
+        /* Look up resolution in the cache */
+        JiraResolution myResolution = theResolutions.get(pName);
+
+        /* If not in the cache */
+        if (myResolution == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid Resolution: " + pName);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Resolution: " + pName);
-    }
-
-    /**
-     * Obtain Resolution.
-     * @param pResolution the basic resolution
-     * @return the resolution
-     * @throws JOceanusException on error
-     */
-    protected JiraResolution getResolution(final Resolution pResolution) throws JOceanusException {
-        /* Use name to search */
-        return getResolution(pResolution.getName());
+        /* Return the resolution */
+        return myResolution;
     }
 
     /**
@@ -488,28 +399,17 @@ public class JiraServer {
      * @throws JOceanusException on error
      */
     public JiraPriority getPriority(final String pName) throws JOceanusException {
-        /* Return an existing priority if found in list */
-        Iterator<JiraPriority> myIterator = thePriorities.iterator();
-        while (myIterator.hasNext()) {
-            JiraPriority myPriority = myIterator.next();
-            if (pName.equals(myPriority.getName())) {
-                return myPriority;
-            }
+        /* Look up priority in the cache */
+        JiraPriority myPriority = thePriorities.get(pName);
+
+        /* If not in the cache */
+        if (myPriority == null) {
+            /* throw exception */
+            throw new JThemisLogicException("Invalid Priority: " + pName);
         }
 
-        /* throw exception */
-        throw new JThemisLogicException("Invalid Priority: " + pName);
-    }
-
-    /**
-     * Obtain Priority.
-     * @param pPriority the basic priority
-     * @return the priority
-     * @throws JOceanusException on error
-     */
-    protected JiraPriority getPriority(final BasicPriority pPriority) throws JOceanusException {
-        /* Use name to search */
-        return getPriority(pPriority.getName());
+        /* Return the priority */
+        return myPriority;
     }
 
     /**
@@ -517,46 +417,45 @@ public class JiraServer {
      * @throws JOceanusException on error
      */
     private void loadProjects() throws JOceanusException {
-        /* Access client */
-        ProjectRestClient myClient = theClient.getProjectClient();
-
         /* Protect against exceptions */
         try {
-            /* Loop through all projects */
-            for (BasicProject myProj : myClient.getAllProjects().claim()) {
-                /* Access parameters */
-                Project myProject = myClient.getProject(myProj.getSelf()).claim();
-
-                /* Add new project to list */
-                theProjects.add(new JiraProject(this, myProject));
+            /* Access the project keys */
+            JSONArray myProjects = theClient.getProjects();
+            int myNumTypes = myProjects.length();
+            for (int i = 0; i < myNumTypes; i++) {
+                /* Access the type and register it */
+                JSONObject myProjDtl = myProjects.getJSONObject(i);
+                String myKey = myProjDtl.getString(JiraProject.FIELD_KEY);
+                myProjDtl = theClient.getProject(myKey);
+                JiraProject myProject = new JiraProject(this, myProjDtl);
+                theProjects.put(myKey, myProject);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load projects", e);
         }
     }
 
     /**
-     * Load Filters.
+     * Load IssueLinkTypes.
      * @throws JOceanusException on error
      */
-    private void loadFilters() throws JOceanusException {
-        /* Access client */
-        SearchRestClient myClient = theClient.getSearchClient();
-
+    private void loadIssueLinkTypes() throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all projects */
-            for (Filter myFilt : myClient.getFavouriteFilters().claim()) {
-                /* Access parameters */
-                Filter myFilter = myClient.getFilter(myFilt.getSelf()).claim();
-
-                /* Add new filter to list */
-                theFilters.add(new JiraFilter(myFilter));
+            /* Access the issue link types */
+            JSONObject myTypes = theClient.getIssueLinkTypes();
+            JSONArray myEntries = myTypes.getJSONArray("issueLinkTypes");
+            int myNumTypes = myEntries.length();
+            for (int i = 0; i < myNumTypes; i++) {
+                /* Access the type and register it */
+                JSONObject myTypeDtl = myEntries.getJSONObject(i);
+                JiraIssueLinkType myType = new JiraIssueLinkType(myTypeDtl);
+                theIssueLinkTypes.put(myType.getName(), myType);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
-            throw new JThemisIOException("Failed to load filters", e);
+            throw new JThemisIOException("Failed to load issueLinkTypes", e);
         }
     }
 
@@ -567,35 +466,62 @@ public class JiraServer {
     private void loadIssueTypes() throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all issueTypes */
-            for (IssueType myType : theDataClient.getIssueTypes().claim()) {
-                /* Access the issue type details */
-                IssueType myTypeDtl = theDataClient.getIssueType(myType.getSelf()).claim();
-
-                /* Add new type to list */
-                theIssueTypes.add(new JiraIssueType(myTypeDtl));
+            /* Access the issue types */
+            JSONArray myTypes = theClient.getIssueTypes();
+            int myNumTypes = myTypes.length();
+            for (int i = 0; i < myNumTypes; i++) {
+                /* Access the type and register it */
+                JSONObject myTypeDtl = myTypes.getJSONObject(i);
+                JiraIssueType myType = new JiraIssueType(myTypeDtl);
+                theIssueTypes.put(myType.getName(), myType);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load issue types", e);
         }
     }
 
     /**
-     * Load IssueLinks.
+     * Load StatusCategories.
      * @throws JOceanusException on error
      */
-    private void loadIssueLinks() throws JOceanusException {
+    private void loadStatusCategories() throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all issueLinkTypes */
-            for (IssuelinksType myType : theDataClient.getIssueLinkTypes().claim()) {
-                /* Add new type to list */
-                theIssueLinks.add(new JiraIssueLinks(myType));
+            /* Access the categories */
+            JSONArray myCategories = theClient.getStatusCategories();
+            int myNumCats = myCategories.length();
+            for (int i = 0; i < myNumCats; i++) {
+                /* Access the category and register it */
+                JSONObject myCatDtl = myCategories.getJSONObject(i);
+                JiraStatusCategory myCategory = new JiraStatusCategory(myCatDtl);
+                theStatusCategories.put(myCategory.getName(), myCategory);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
-            throw new JThemisIOException("Failed to load issue links", e);
+            throw new JThemisIOException("Failed to load statusCategories", e);
+        }
+    }
+
+    /**
+     * Load Statuses.
+     * @throws JOceanusException on error
+     */
+    private void loadStatuses() throws JOceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Access the statuses */
+            JSONArray myStatuses = theClient.getStatuses();
+            int myNumStatuses = myStatuses.length();
+            for (int i = 0; i < myNumStatuses; i++) {
+                /* Access the status and register it */
+                JSONObject myStatusDtl = myStatuses.getJSONObject(i);
+                JiraStatus myStatus = new JiraStatus(myStatusDtl);
+                theStatuses.put(myStatus.getName(), myStatus);
+            }
+        } catch (JSONException e) {
+            /* Pass the exception on */
+            throw new JThemisIOException("Failed to load statuses", e);
         }
     }
 
@@ -606,15 +532,16 @@ public class JiraServer {
     private void loadResolutions() throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all resolutions */
-            for (Resolution myRes : theDataClient.getResolutions().claim()) {
-                /* Access the resolution details */
-                Resolution myResolution = theDataClient.getResolution(myRes.getSelf()).claim();
-
-                /* Add new resolution to list */
-                theResolutions.add(new JiraResolution(myResolution));
+            /* Access the resolutions */
+            JSONArray myResolutions = theClient.getResolutions();
+            int myNumRes = myResolutions.length();
+            for (int i = 0; i < myNumRes; i++) {
+                /* Access the resolution and register it */
+                JSONObject myResDtl = myResolutions.getJSONObject(i);
+                JiraResolution myRes = new JiraResolution(myResDtl);
+                theResolutions.put(myRes.getName(), myRes);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load resolutions", e);
         }
@@ -627,29 +554,128 @@ public class JiraServer {
     private void loadPriorities() throws JOceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through all priorities */
-            for (Priority myPri : theDataClient.getPriorities().claim()) {
-                /* Access the priority details */
-                Priority myPriority = theDataClient.getPriority(myPri.getSelf()).claim();
-
-                /* Add new priority to list */
-                thePriorities.add(new JiraPriority(myPriority));
+            /* Access the priorities */
+            JSONArray myPriorities = theClient.getPriorities();
+            int myNumPri = myPriorities.length();
+            for (int i = 0; i < myNumPri; i++) {
+                /* Access the priority and register it */
+                JSONObject myPriDtl = myPriorities.getJSONObject(i);
+                JiraPriority myPri = new JiraPriority(myPriDtl);
+                thePriorities.put(myPri.getName(), myPri);
             }
-        } catch (RestClientException e) {
+        } catch (JSONException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load priorities", e);
         }
     }
 
     /**
-     * Generic Jira object type.
-     * @param <T> the object type
+     * Generic Jira object.
      */
-    public abstract static class JiraEntity<T extends AddressableEntity> {
+    public abstract static class JiraObject {
         /**
-         * The underlying entity.
+         * Self reference.
          */
-        private T theEntity;
+        private final String theSelf;
+
+        /**
+         * Base object.
+         */
+        private final JSONObject theBase;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraObject(final JSONObject pBase) throws JOceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theBase = pBase;
+                theSelf = pBase.getString("self");
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse object", e);
+            }
+        }
+
+        /**
+         * Get the Self reference for the object.
+         * @return the reference
+         */
+        public String getSelf() {
+            return theSelf;
+        }
+
+        /**
+         * Get the Base object.
+         * @return the base
+         */
+        public JSONObject getBase() {
+            return theBase;
+        }
+
+        @Override
+        public String toString() {
+            return theBase.toString();
+        }
+    }
+
+    /**
+     * Generic Jira Id object.
+     */
+    public abstract static class JiraIdObject
+            extends JiraObject {
+        /**
+         * The name field.
+         */
+        private static final String FIELD_ID = "id";
+
+        /**
+         * Id.
+         */
+        private final String theId;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraIdObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theId = pBase.getString(FIELD_ID);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse id object", e);
+            }
+        }
+
+        /**
+         * Get the id of the object.
+         * @return the name
+         */
+        public String getId() {
+            return theId;
+        }
+    }
+
+    /**
+     * Generic Jira Named Id object.
+     */
+    public abstract static class JiraNamedObject
+            extends JiraObject {
+        /**
+         * The name field.
+         */
+        public static final String FIELD_NAME = "name";
 
         /**
          * The name of the object.
@@ -657,29 +683,23 @@ public class JiraServer {
         private final String theName;
 
         /**
-         * Object URI.
-         */
-        private final URI theURI;
-
-        /**
          * Constructor.
-         * @param pEntity the underlying entity
-         * @param pName the entity name
+         * @param pBase the base object
+         * @throws JOceanusException on error
          */
-        protected JiraEntity(final T pEntity,
-                             final String pName) {
-            /* Access the details */
-            theEntity = pEntity;
-            theName = pName;
-            theURI = pEntity.getSelf();
-        }
+        protected JiraNamedObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
 
-        /**
-         * Obtain the underlying object.
-         * @return the name
-         */
-        protected T getUnderlying() {
-            return theEntity;
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theName = pBase.getString(FIELD_NAME);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse named object", e);
+            }
         }
 
         /**
@@ -689,21 +709,313 @@ public class JiraServer {
         public String getName() {
             return theName;
         }
+    }
+
+    /**
+     * Generic Jira Named Id object.
+     */
+    public abstract static class JiraKeyedObject
+            extends JiraObject {
+        /**
+         * The key field.
+         */
+        public static final String FIELD_KEY = "key";
 
         /**
-         * Get the URI of the object.
-         * @return the URI
+         * The key of the object.
          */
-        public URI getURI() {
-            return theURI;
+        private final String theKey;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraKeyedObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theKey = pBase.getString(FIELD_KEY);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse keyed object", e);
+            }
         }
 
         /**
-         * Adjust the entity.
-         * @param pEntity the updated entity
+         * Get the key of the object.
+         * @return the key
          */
-        protected void adjustEntity(final T pEntity) {
-            theEntity = pEntity;
+        public String getKey() {
+            return theKey;
+        }
+    }
+
+    /**
+     * Generic Jira Named Id object.
+     */
+    public abstract static class JiraNamedIdObject
+            extends JiraIdObject {
+        /**
+         * The name field.
+         */
+        public static final String FIELD_NAME = JiraNamedObject.FIELD_NAME;
+
+        /**
+         * The name of the object.
+         */
+        private final String theName;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraNamedIdObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theName = pBase.getString(FIELD_NAME);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse named id object", e);
+            }
+        }
+
+        /**
+         * Get the name of the object.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+    }
+
+    /**
+     * Generic Jira Named Id object.
+     */
+    public abstract static class JiraNamedDescObject
+            extends JiraNamedObject {
+        /**
+         * The name field.
+         */
+        public static final String FIELD_DESC = "description";
+
+        /**
+         * The description of the object.
+         */
+        private final String theDesc;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraNamedDescObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theDesc = pBase.getString(FIELD_DESC);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse named description object", e);
+            }
+        }
+
+        /**
+         * Get the description of the object.
+         * @return the description
+         */
+        public String getDescription() {
+            return theDesc;
+        }
+    }
+
+    /**
+     * Generic Jira Named Id object.
+     */
+    public abstract static class JiraNamedDescIdObject
+            extends JiraNamedIdObject {
+        /**
+         * The description field.
+         */
+        public static final String FIELD_DESC = JiraNamedDescObject.FIELD_DESC;
+
+        /**
+         * The description of the object.
+         */
+        private final String theDesc;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraNamedDescIdObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theDesc = pBase.getString(FIELD_DESC);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse named described id object", e);
+            }
+        }
+
+        /**
+         * Get the description of the object.
+         * @return the description
+         */
+        public String getDescription() {
+            return theDesc;
+        }
+    }
+
+    /**
+     * Generic Jira Keyed Id object.
+     */
+    public abstract static class JiraKeyedIdObject
+            extends JiraIdObject {
+        /**
+         * The key field.
+         */
+        public static final String FIELD_KEY = JiraKeyedObject.FIELD_KEY;
+
+        /**
+         * The key of the object.
+         */
+        private final String theKey;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraKeyedIdObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theKey = pBase.getString(FIELD_KEY);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse keyed id object", e);
+            }
+        }
+
+        /**
+         * Get the name of the object.
+         * @return the name
+         */
+        public String getKey() {
+            return theKey;
+        }
+    }
+
+    /**
+     * Generic Jira Named Keyed object.
+     */
+    public abstract static class JiraNamedKeyedObject
+            extends JiraNamedObject {
+        /**
+         * The key field.
+         */
+        public static final String FIELD_KEY = JiraKeyedIdObject.FIELD_KEY;
+
+        /**
+         * The key of the object.
+         */
+        private final String theKey;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraNamedKeyedObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theKey = pBase.getString(FIELD_KEY);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse named keyed object", e);
+            }
+        }
+
+        /**
+         * Get the key of the object.
+         * @return the key
+         */
+        public String getKey() {
+            return theKey;
+        }
+    }
+
+    /**
+     * Generic Jira Named Keyed object.
+     */
+    public abstract static class JiraNamedKeyedIdObject
+            extends JiraNamedIdObject {
+        /**
+         * The key field.
+         */
+        public static final String FIELD_KEY = JiraKeyedIdObject.FIELD_KEY;
+
+        /**
+         * The key of the object.
+         */
+        private final String theKey;
+
+        /**
+         * Constructor.
+         * @param pBase the base object
+         * @throws JOceanusException on error
+         */
+        protected JiraNamedKeyedIdObject(final JSONObject pBase) throws JOceanusException {
+            /* Parse base details */
+            super(pBase);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theKey = pBase.getString(FIELD_KEY);
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse named keyed id object", e);
+            }
+        }
+
+        /**
+         * Get the key of the object.
+         * @return the key
+         */
+        public String getKey() {
+            return theKey;
         }
     }
 
@@ -711,12 +1023,7 @@ public class JiraServer {
      * IssueType class.
      */
     public final class JiraIssueType
-            extends JiraEntity<IssueType> {
-        /**
-         * The description of the issueType.
-         */
-        private final String theDesc;
-
+            extends JiraNamedDescIdObject {
         /**
          * Is this a subTask?
          */
@@ -724,21 +1031,22 @@ public class JiraServer {
 
         /**
          * Constructor.
-         * @param pType the underlying issueType
+         * @param pType the base issueType
+         * @throws JOceanusException on error
          */
-        private JiraIssueType(final IssueType pType) {
-            /* Access the details */
-            super(pType, pType.getName());
-            theDesc = pType.getDescription();
-            isSubTask = pType.isSubtask();
-        }
+        private JiraIssueType(final JSONObject pType) throws JOceanusException {
+            /* Parse base details */
+            super(pType);
 
-        /**
-         * Get the description of the issueType.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                isSubTask = pType.getBoolean("subtask");
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse issueType", e);
+            }
         }
 
         /**
@@ -751,31 +1059,57 @@ public class JiraServer {
     }
 
     /**
+     * StatusCategory class.
+     */
+    public final class JiraStatusCategory
+            extends JiraNamedObject {
+        /**
+         * Constructor.
+         * @param pCategory the underlying status category
+         * @throws JOceanusException on error
+         */
+        private JiraStatusCategory(final JSONObject pCategory) throws JOceanusException {
+            /* Parse base details */
+            super(pCategory);
+        }
+    }
+
+    /**
      * Status class.
      */
     public final class JiraStatus
-            extends JiraEntity<Status> {
+            extends JiraNamedDescIdObject {
         /**
-         * The description of the status.
+         * The statusCategory of the status.
          */
-        private final String theDesc;
+        private final JiraStatusCategory theCategory;
 
         /**
          * Constructor.
          * @param pStatus the underlying status
+         * @throws JOceanusException on error
          */
-        private JiraStatus(final Status pStatus) {
-            /* Access the details */
-            super(pStatus, pStatus.getName());
-            theDesc = pStatus.getDescription();
+        private JiraStatus(final JSONObject pStatus) throws JOceanusException {
+            /* Parse base details */
+            super(pStatus);
+
+            /* Protect against exceptions */
+            try {
+                JSONObject myCat = pStatus.getJSONObject("statusCategory");
+                theCategory = getStatusCategory(myCat.getString("name"));
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse status", e);
+            }
         }
 
         /**
-         * Get the description of the status.
-         * @return the description
+         * Get the statusCategory of the status.
+         * @return the category
          */
-        public String getDescription() {
-            return theDesc;
+        public JiraStatusCategory getCategory() {
+            return theCategory;
         }
     }
 
@@ -783,28 +1117,15 @@ public class JiraServer {
      * Resolution class.
      */
     public final class JiraResolution
-            extends JiraEntity<Resolution> {
-        /**
-         * The description of the resolution.
-         */
-        private final String theDesc;
-
+            extends JiraNamedDescIdObject {
         /**
          * Constructor.
          * @param pResolution the underlying resolution
+         * @throws JOceanusException on error
          */
-        private JiraResolution(final Resolution pResolution) {
-            /* Access the details */
-            super(pResolution, pResolution.getName());
-            theDesc = pResolution.getDescription();
-        }
-
-        /**
-         * Get the description of the resolution.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
+        private JiraResolution(final JSONObject pResolution) throws JOceanusException {
+            /* Parse base details */
+            super(pResolution);
         }
     }
 
@@ -812,41 +1133,36 @@ public class JiraServer {
      * Priority class.
      */
     public final class JiraPriority
-            extends JiraEntity<Priority> {
-        /**
-         * The description of the priority.
-         */
-        private final String theDesc;
-
+            extends JiraNamedDescIdObject {
         /**
          * The colour for this priority.
          */
-        private final Color theColor;
+        private final String theColor;
 
         /**
          * Constructor.
          * @param pPriority the underlying priority
+         * @throws JOceanusException on error
          */
-        private JiraPriority(final Priority pPriority) {
-            /* Access the details */
-            super(pPriority, pPriority.getName());
-            theDesc = pPriority.getDescription();
-            theColor = Color.decode(pPriority.getStatusColor());
-        }
+        private JiraPriority(final JSONObject pPriority) throws JOceanusException {
+            /* Parse base details */
+            super(pPriority);
 
-        /**
-         * Get the description of the priority.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
+            /* Protect against exceptions */
+            try {
+                theColor = pPriority.getString("statusColor");
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse priority", e);
+            }
         }
 
         /**
          * Obtain the colour for this priority.
          * @return the colour
          */
-        public Color getColor() {
+        public String getColor() {
             return theColor;
         }
     }
@@ -854,8 +1170,8 @@ public class JiraServer {
     /**
      * IssueLinks class.
      */
-    public final class JiraIssueLinks
-            extends JiraEntity<IssuelinksType> {
+    public final class JiraIssueLinkType
+            extends JiraNamedIdObject {
         /**
          * The inward link name.
          */
@@ -868,14 +1184,22 @@ public class JiraServer {
 
         /**
          * Constructor.
-         * @param pLink the underlying link
+         * @param pLinkType the underlying link
          * @throws JOceanusException on error
          */
-        private JiraIssueLinks(final IssuelinksType pLink) throws JOceanusException {
-            /* Access the details */
-            super(pLink, pLink.getName());
-            theInward = pLink.getInward();
-            theOutward = pLink.getOutward();
+        private JiraIssueLinkType(final JSONObject pLinkType) throws JOceanusException {
+            /* Parse base details */
+            super(pLinkType);
+
+            /* Protect against exceptions */
+            try {
+                theInward = pLinkType.getString("inward");
+                theOutward = pLinkType.getString("outward");
+
+            } catch (JSONException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to parse issueLinkType", e);
+            }
         }
 
         /**
@@ -892,64 +1216,6 @@ public class JiraServer {
          */
         public String getOutward() {
             return theOutward;
-        }
-    }
-
-    /**
-     * Filter class.
-     */
-    public final class JiraFilter
-            extends JiraEntity<Filter> {
-        /**
-         * The description of the filter.
-         */
-        private final String theDesc;
-
-        /**
-         * The owner of the filter.
-         */
-        private final JiraUser theOwner;
-
-        /**
-         * The query for this filter.
-         */
-        private final String theQuery;
-
-        /**
-         * Constructor.
-         * @param pFilter the underlying filter
-         * @throws JOceanusException on error
-         */
-        private JiraFilter(final Filter pFilter) throws JOceanusException {
-            /* Access the details */
-            super(pFilter, pFilter.getName());
-            theDesc = pFilter.getDescription();
-            theOwner = getUser(pFilter.getOwner());
-            theQuery = pFilter.getJql();
-        }
-
-        /**
-         * Get the description of the priority.
-         * @return the description
-         */
-        public String getDescription() {
-            return theDesc;
-        }
-
-        /**
-         * Obtain the owner for this filter.
-         * @return the owner
-         */
-        public JiraUser getOwner() {
-            return theOwner;
-        }
-
-        /**
-         * Obtain the iterator for the results of this query .
-         * @return the colour
-         */
-        protected Iterable<Issue> getIssues() {
-            return theClient.getSearchClient().searchJql(theQuery).claim().getIssues();
         }
     }
 }

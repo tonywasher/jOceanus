@@ -441,7 +441,7 @@ public class SwingHTMLBuilder
     /**
      * Listener class.
      */
-    private class ReportListener
+    private final class ReportListener
             implements JOceanusChangeEventListener {
         /**
          * Constructor.
