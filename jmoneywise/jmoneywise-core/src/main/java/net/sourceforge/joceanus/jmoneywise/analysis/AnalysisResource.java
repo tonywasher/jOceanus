@@ -327,6 +327,11 @@ public enum AnalysisResource implements ResourceId {
     ACCOUNTATTR_SPEND("AccountAttr.Spend"),
 
     /**
+     * AccountAttr BadDebt.
+     */
+    ACCOUNTATTR_BADDEBT("AccountAttr.BadDebt"),
+
+    /**
      * PayeeAttr Valuation.
      */
     PAYEEATTR_INCOME("PayeeAttr.Income"),
@@ -472,6 +477,8 @@ public enum AnalysisResource implements ResourceId {
                 return ACCOUNTATTR_MATURITY;
             case SPEND:
                 return ACCOUNTATTR_SPEND;
+            case BADDEBT:
+                return ACCOUNTATTR_BADDEBT;
             default:
                 return null;
         }

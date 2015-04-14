@@ -308,11 +308,11 @@ public class TransactionInfoSet
             case LOANINTERESTCHARGED:
                 return JDataFieldRequired.CANEXIST;
             case INTEREST:
+            case LOYALTYBONUS:
                 return (pDebit.isTaxFree() || pDebit.isGross())
                                                                ? JDataFieldRequired.NOTALLOWED
                                                                : JDataFieldRequired.MUSTEXIST;
             case DIVIDEND:
-            case LOYALTYBONUS:
                 return pDebit.isTaxFree()
                                          ? JDataFieldRequired.NOTALLOWED
                                          : JDataFieldRequired.MUSTEXIST;

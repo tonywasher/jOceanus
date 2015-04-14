@@ -51,7 +51,12 @@ public enum AccountAttribute implements BucketAttribute {
     /**
      * Spend.
      */
-    SPEND;
+    SPEND,
+
+    /**
+     * BadDebt.
+     */
+    BADDEBT;
 
     /**
      * The String name.
@@ -75,6 +80,7 @@ public enum AccountAttribute implements BucketAttribute {
         switch (this) {
             case VALUATION:
             case SPEND:
+            case BADDEBT:
                 return true;
             case RATE:
             case MATURITY:
@@ -94,6 +100,7 @@ public enum AccountAttribute implements BucketAttribute {
             case VALUATION:
             case DELTA:
             case SPEND:
+            case BADDEBT:
             default:
                 return DataType.MONEY;
         }

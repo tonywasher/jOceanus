@@ -47,6 +47,11 @@ public enum StaticDataResource implements ResourceId {
     DEPOSITTYPE_SAVINGS("DepositType.Savings"),
 
     /**
+     * DepositType Peer2Peer.
+     */
+    DEPOSITTYPE_PEER2PEER("DepositType.Peer2Peer"),
+
+    /**
      * DepositType Bond.
      */
     DEPOSITTYPE_BOND("DepositType.Bond"),
@@ -272,6 +277,11 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_EXPENSE("TransType.Expense"),
 
     /**
+     * TransType BadDebt.
+     */
+    TRANSTYPE_BADDEBT("TransType.BadDebt"),
+
+    /**
      * TransType LocalTaxes.
      */
     TRANSTYPE_LOCALTAXES("TransType.LocalTaxes"),
@@ -325,6 +335,21 @@ public enum StaticDataResource implements ResourceId {
      * TransType TaxFreeDividend.
      */
     TRANSTYPE_TAXFREEDIVIDEND("TransType.TaxFreeDividend"),
+
+    /**
+     * TransType TaxedLoyaltyBonus.
+     */
+    TRANSTYPE_TAXEDLOYALTYBONUS("TransType.TaxedLoyaltyBonus"),
+
+    /**
+     * TransType TaxFreeLoyaltyBonus.
+     */
+    TRANSTYPE_TAXFREELOYALTYBONUS("TransType.TaxFreeLoyaltyBonus"),
+
+    /**
+     * TransType GrossLoyaltyBonus.
+     */
+    TRANSTYPE_GROSSLOYALTYBONUS("TransType.GrossLoyaltyBonus"),
 
     /**
      * TransType TaxableGain.
@@ -1016,6 +1041,8 @@ public enum StaticDataResource implements ResourceId {
                 return DEPOSITTYPE_CHECKING;
             case SAVINGS:
                 return DEPOSITTYPE_SAVINGS;
+            case PEER2PEER:
+                return DEPOSITTYPE_PEER2PEER;
             case BOND:
                 return DEPOSITTYPE_BOND;
             case PARENT:
@@ -1172,6 +1199,8 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_OPTIONSEXERCISE;
             case EXPENSE:
                 return TRANSTYPE_EXPENSE;
+            case BADDEBT:
+                return TRANSTYPE_BADDEBT;
             case LOCALTAXES:
                 return TRANSTYPE_LOCALTAXES;
             case WRITEOFF:
@@ -1194,6 +1223,12 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_UTDIVIDEND;
             case TAXFREEDIVIDEND:
                 return TRANSTYPE_TAXFREEDIVIDEND;
+            case TAXEDLOYALTYBONUS:
+                return TRANSTYPE_TAXEDLOYALTYBONUS;
+            case TAXFREELOYALTYBONUS:
+                return TRANSTYPE_TAXFREELOYALTYBONUS;
+            case GROSSLOYALTYBONUS:
+                return TRANSTYPE_GROSSLOYALTYBONUS;
             case TAXABLEGAIN:
                 return TRANSTYPE_TAXABLEGAIN;
             case TAXFREEGAIN:

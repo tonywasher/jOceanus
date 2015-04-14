@@ -286,6 +286,15 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     public abstract Transaction buildNewTransaction(final TransactionBuilder pBuilder);
 
     /**
+     * is the counter relevant?
+     * @param pCounter the counter
+     * @return true/false
+     */
+    public boolean isRelevantCounter(final BucketAttribute pCounter) {
+        return true;
+    }
+
+    /**
      * Obtain starting value for attribute.
      * @return the value
      */
@@ -535,6 +544,22 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public AnalysisType getAnalysisType() {
             return AnalysisType.DEPOSIT;
         }
+
+        @Override
+        public boolean isRelevantCounter(final BucketAttribute pCounter) {
+            if (!(pCounter instanceof AccountAttribute)) {
+                return false;
+            }
+
+            switch ((AccountAttribute) pCounter) {
+                case BADDEBT:
+                    return getBucket().isPeer2Peer();
+                case SPEND:
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
 
     /**
@@ -555,6 +580,21 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public AnalysisType getAnalysisType() {
             return AnalysisType.CASH;
         }
+
+        @Override
+        public boolean isRelevantCounter(final BucketAttribute pCounter) {
+            if (!(pCounter instanceof AccountAttribute)) {
+                return false;
+            }
+
+            switch ((AccountAttribute) pCounter) {
+                case BADDEBT:
+                case SPEND:
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
 
     /**
@@ -574,6 +614,22 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public AnalysisType getAnalysisType() {
             return AnalysisType.LOAN;
+        }
+
+        @Override
+        public boolean isRelevantCounter(final BucketAttribute pCounter) {
+            if (!(pCounter instanceof AccountAttribute)) {
+                return false;
+            }
+
+            switch ((AccountAttribute) pCounter) {
+                case SPEND:
+                    return getBucket().isCreditCard();
+                case BADDEBT:
+                    return false;
+                default:
+                    return true;
+            }
         }
     }
 

@@ -997,15 +997,22 @@ public class Deposit
     @Override
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
         /* Switch on category type */
+        TransactionCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
-                TransactionCategoryList myCategories = getDataSet().getTransCategories();
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass((isGross())
                                                                 ? TransactionCategoryClass.GROSSINTEREST
                                                                 : TransactionCategoryClass.TAXEDINTEREST);
+            case LOYALTYBONUS:
+                if (isTaxFree()) {
+                    return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);
+                }
+                return myCategories.getSingularClass((isGross())
+                                                                ? TransactionCategoryClass.GROSSLOYALTYBONUS
+                                                                : TransactionCategoryClass.TAXEDLOYALTYBONUS);
             default:
                 return pCategory;
         }

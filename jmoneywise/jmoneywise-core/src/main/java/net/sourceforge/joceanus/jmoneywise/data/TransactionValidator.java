@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
@@ -93,14 +94,16 @@ public final class TransactionValidator {
                 /* Account must be SecurityHolding */
                 return myType.isSecurityHolding();
 
+            case BADDEBT:
+                /* Account must bee peer2Peer */
+                return (pAccount instanceof Deposit)
+                       && (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
+
             case CASHBACK:
-                /* Account must be creditCard */
-                return (pAccount instanceof Loan)
-                       && ((Loan) pAccount).isLoanClass(LoanCategoryClass.CREDITCARD);
+                return checkCashBack(pAccount);
 
             case LOYALTYBONUS:
-                /* Account must be portfolio */
-                return pAccount instanceof Portfolio;
+                return checkLoyaltyBonus(pAccount);
 
             case RENTALINCOME:
             case ROOMRENTALINCOME:
@@ -319,7 +322,11 @@ public final class TransactionValidator {
                 return checkDividend(pAccount, pPartner);
 
             case LOYALTYBONUS:
-                return myPartnerType.isSecurityHolding() || myPartnerType.isPortfolio();
+                return checkLoyaltyBonus(pAccount, pPartner);
+
+            case BADDEBT:
+                return (pPartner instanceof Payee)
+                       && Difference.isEqual(pPartner, pAccount.getParent());
 
             case UNITSADJUST:
             case STOCKSPLIT:
@@ -423,6 +430,61 @@ public final class TransactionValidator {
 
         /* partner must be valued */
         return pPartner.getAssetType().isValued();
+    }
+
+    /**
+     * Check cashBack.
+     * @param pAccount the account providing cashBack.
+     * @return valid true/false
+     */
+    private static boolean checkCashBack(final TransactionAsset pAccount) {
+        /* If this is deposit then must be peer2peer */
+        if (pAccount instanceof Deposit) {
+            return (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
+        }
+
+        /* If this is loan then must be creditCard */
+        if (pAccount instanceof Loan) {
+            return (((Loan) pAccount).isLoanClass(LoanCategoryClass.CREDITCARD));
+        }
+
+        /* not allowed */
+        return false;
+    }
+
+    /**
+     * Check loyalty bonus.
+     * @param pAccount the account providing bonus.
+     * @return valid true/false
+     */
+    private static boolean checkLoyaltyBonus(final TransactionAsset pAccount) {
+        /* If this is deposit then must be peer2peer */
+        if (pAccount instanceof Deposit) {
+            return (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
+        }
+
+        /* must be portfolio */
+        return pAccount instanceof Portfolio;
+    }
+
+    /**
+     * Check loyalty bonus.
+     * @param pAccount the account providing bonus.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkLoyaltyBonus(final TransactionAsset pAccount,
+                                             final TransactionAsset pPartner) {
+        /* If this is portfolio -> security holding */
+        if ((pAccount instanceof Portfolio)
+            && (pPartner instanceof SecurityHolding)) {
+            /* Must be same portfolios */
+            SecurityHolding myHolding = (SecurityHolding) pPartner;
+            return Difference.isEqual(myHolding.getPortfolio(), pAccount);
+        }
+
+        /* must be recursive */
+        return Difference.isEqual(pAccount, pPartner);
     }
 
     /**

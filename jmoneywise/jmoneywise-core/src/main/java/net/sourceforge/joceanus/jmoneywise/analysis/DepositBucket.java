@@ -30,6 +30,9 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -60,6 +63,11 @@ public final class DepositBucket
     private final DepositCategory theCategory;
 
     /**
+     * Is this a peer2peer.
+     */
+    private final Boolean isPeer2Peer;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pDeposit the deposit
@@ -72,6 +80,9 @@ public final class DepositBucket
         /* Obtain category */
         theAnalysis = pAnalysis;
         theCategory = pDeposit.getCategory();
+
+        /* Determine whether this is a peer2peer */
+        isPeer2Peer = theCategory.isCategoryClass(DepositCategoryClass.PEER2PEER);
     }
 
     /**
@@ -87,6 +98,7 @@ public final class DepositBucket
         /* Copy details from base */
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
+        isPeer2Peer = pBase.isPeer2Peer();
     }
 
     /**
@@ -104,6 +116,7 @@ public final class DepositBucket
         /* Obtain category */
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
+        isPeer2Peer = pBase.isPeer2Peer();
     }
 
     /**
@@ -121,6 +134,7 @@ public final class DepositBucket
         /* Copy details from base */
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
+        isPeer2Peer = pBase.isPeer2Peer();
     }
 
     @Override
@@ -142,6 +156,14 @@ public final class DepositBucket
      */
     public DepositCategory getCategory() {
         return theCategory;
+    }
+
+    /**
+     * Is this a peer2peer.
+     * @return true/false
+     */
+    public Boolean isPeer2Peer() {
+        return isPeer2Peer;
     }
 
     /**
@@ -178,6 +200,57 @@ public final class DepositBucket
 
         /* Store the maturity */
         setValue(AccountAttribute.MATURITY, myDate);
+    }
+
+    /**
+     * Obtain new BadDebt value.
+     * @return the new badDebt value
+     */
+    private JMoney getNewBadDebt() {
+        JMoney myBadDebt = getValues().getMoneyValue(AccountAttribute.BADDEBT);
+        return new JMoney(myBadDebt);
+    }
+
+    @Override
+    protected void adjustForDebit(final Transaction pTrans) {
+        /* If this is a peer2peer and a bad debt transaction */
+        if ((isPeer2Peer)
+            && pTrans.getCategory().isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+            /* Access the amount */
+            JMoney myAmount = pTrans.getAmount();
+
+            /* If we have a non-zero amount */
+            if (myAmount.isNonZero()) {
+                /* Adjust spend */
+                JMoney myBadDebt = getNewBadDebt();
+                myBadDebt.addAmount(myAmount);
+                setValue(AccountAttribute.BADDEBT, myBadDebt);
+            }
+        }
+
+        /* Pass call on */
+        super.adjustForDebit(pTrans);
+    }
+
+    @Override
+    protected void adjustForCredit(final Transaction pTrans) {
+        /* If this is a peer2peer and a bad debt transaction */
+        if ((isPeer2Peer)
+            && pTrans.getCategory().isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+            /* Access the amount */
+            JMoney myAmount = pTrans.getAmount();
+
+            /* If we have a non-zero amount */
+            if (myAmount.isNonZero()) {
+                /* Adjust spend */
+                JMoney myBadDebt = getNewBadDebt();
+                myBadDebt.subtractAmount(myAmount);
+                setValue(AccountAttribute.BADDEBT, myBadDebt);
+            }
+        }
+
+        /* Pass call on */
+        super.adjustForCredit(pTrans);
     }
 
     /**

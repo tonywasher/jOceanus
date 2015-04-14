@@ -47,18 +47,25 @@ public enum DepositCategoryClass implements CategoryInterface {
     SAVINGS(2, 2),
 
     /**
+     * Peer2Peer Deposit.
+     * <p>
+     * This a peer2peer account which is a specialised form of an {@link #SAVINGS} account. LoyaltyBonuses are allowed, and the tax situation varies.
+     */
+    PEER2PEER(3, 3),
+
+    /**
      * Bond Deposit.
      * <p>
      * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an associated maturity date for the account.
      */
-    BOND(3, 3),
+    BOND(4, 4),
 
     /**
      * Parent Category.
      * <p>
      * This is used as a sub-total bucket and is used purely for reporting purposes.
      */
-    PARENT(4, 0);
+    PARENT(5, 0);
 
     /**
      * The String name.
@@ -131,6 +138,7 @@ public enum DepositCategoryClass implements CategoryInterface {
         switch (this) {
             case CHECKING:
             case SAVINGS:
+            case PEER2PEER:
             case BOND:
                 return true;
             default:
@@ -145,6 +153,7 @@ public enum DepositCategoryClass implements CategoryInterface {
     public boolean canTaxFree() {
         switch (this) {
             case SAVINGS:
+            case PEER2PEER:
             case BOND:
                 return true;
             default:

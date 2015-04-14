@@ -470,6 +470,7 @@ public class TransactionAnalyser
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
                 case INTEREST:
+                case LOYALTYBONUS:
                     /* Obtain detailed category */
                     myCat = myDebit.getDetailedCategory(myCat);
 
@@ -481,7 +482,6 @@ public class TransactionAnalyser
                     break;
                 case LOANINTERESTEARNED:
                 case CASHBACK:
-                case LOYALTYBONUS:
                     /* True debit account is the parent of the asset */
                     myDebit = myDebit.getParent();
                     break;

@@ -924,9 +924,10 @@ public class AnalysisSelect
             theBucketMenuBuilder.clearMenu();
 
             /* Loop through the buckets */
+            AnalysisFilter<?, ?> myFilter = theState.getFilter();
             for (BucketAttribute myAttr : theState.getType().getValues()) {
                 /* If the value is a counter */
-                if (myAttr.isCounter()) {
+                if (myAttr.isCounter() && myFilter.isRelevantCounter(myAttr)) {
                     /* Create a new JMenuItem and add it to the popUp */
                     theBucketMenuBuilder.addItem(myAttr);
                 }

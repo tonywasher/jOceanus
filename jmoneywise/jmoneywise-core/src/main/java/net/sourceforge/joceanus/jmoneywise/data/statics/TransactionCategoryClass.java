@@ -156,140 +156,160 @@ public enum TransactionCategoryClass implements CategoryInterface {
     EXPENSE(25, 28),
 
     /**
+     * BadDebt.
+     */
+    BADDEBT(26, 29),
+
+    /**
      * LocalTaxes.
      */
-    LOCALTAXES(26, 29),
+    LOCALTAXES(27, 30),
 
     /**
      * Write Off.
      */
-    WRITEOFF(27, 30),
+    WRITEOFF(28, 31),
 
     /**
      * Interest earned on Loans.
      */
-    LOANINTERESTCHARGED(28, 31),
+    LOANINTERESTCHARGED(29, 32),
 
     /**
      * Tax Relief.
      */
-    TAXRELIEF(29, 32),
+    TAXRELIEF(30, 33),
 
     /**
      * Tax Settlement.
      */
-    TAXSETTLEMENT(30, 33),
+    TAXSETTLEMENT(31, 34),
 
     /**
      * Taxed Interest.
      */
-    TAXEDINTEREST(31, 34),
+    TAXEDINTEREST(32, 35),
 
     /**
      * Gross Interest.
      */
-    GROSSINTEREST(32, 35),
+    GROSSINTEREST(33, 36),
 
     /**
      * Tax Free Interest.
      */
-    TAXFREEINTEREST(33, 36),
+    TAXFREEINTEREST(34, 37),
 
     /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(34, 37),
+    SHAREDIVIDEND(35, 38),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(35, 38),
+    UNITTRUSTDIVIDEND(36, 39),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(36, 39),
+    TAXFREEDIVIDEND(37, 40),
+
+    /**
+     * Taxed Loyalty Bonus
+     */
+    TAXEDLOYALTYBONUS(38, 41),
+
+    /**
+     * Gross LoyaltyBonus.
+     */
+    GROSSLOYALTYBONUS(39, 42),
+
+    /**
+     * Tax Free LoyaltyBonus.
+     */
+    TAXFREELOYALTYBONUS(40, 43),
 
     /**
      * Taxable Gain.
      */
-    TAXABLEGAIN(37, 40),
+    TAXABLEGAIN(41, 44),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(38, 41),
+    CAPITALGAIN(42, 45),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(39, 42),
+    TAXFREEGAIN(43, 46),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(40, 43),
+    MARKETGROWTH(44, 47),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(41, 44),
+    CURRENCYFLUCTUATION(45, 48),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TAXCREDIT(42, 45),
+    TAXCREDIT(46, 49),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(43, 46),
+    NATINSURANCE(47, 50),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DEEMEDBENEFIT(44, 47),
+    DEEMEDBENEFIT(48, 51),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CHARITYDONATION(45, 48),
+    CHARITYDONATION(49, 52),
 
     /**
      * Income Totals.
      * <p>
      * This is used for categories which simply own a set of income sub-categories and is used purely for reporting purposes.
      */
-    INCOMETOTALS(46, 1),
+    INCOMETOTALS(50, 1),
 
     /**
      * Expense Totals.
      * <p>
      * This is used for categories which simply own a set of expense sub-categories and is used purely for reporting purposes.
      */
-    EXPENSETOTALS(47, 2),
+    EXPENSETOTALS(51, 2),
 
     /**
      * Security Parent.
      * <p>
      * This is used for categories which simply own a set of security transfer sub-categories and is used purely for holding purposes.
      */
-    SECURITYPARENT(48, 3),
+    SECURITYPARENT(52, 3),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    TOTALS(49, 0);
+    TOTALS(53, 0);
 
     /**
      * The String name.
@@ -366,6 +386,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
+            case TAXEDLOYALTYBONUS:
+            case GROSSLOYALTYBONUS:
+            case TAXFREELOYALTYBONUS:
             case MARKETGROWTH:
             case CURRENCYFLUCTUATION:
             case TAXCREDIT:
@@ -436,6 +459,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
+            case TAXEDLOYALTYBONUS:
+            case GROSSLOYALTYBONUS:
+            case TAXFREELOYALTYBONUS:
             case MARKETGROWTH:
             case CURRENCYFLUCTUATION:
             case TAXCREDIT:
@@ -464,6 +490,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case BENEFITINCOME:
             case INTEREST:
             case TAXEDINTEREST:
+            case TAXEDLOYALTYBONUS:
             case DIVIDEND:
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
@@ -494,6 +521,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
             case TAXFREEDIVIDEND:
+            case TAXEDLOYALTYBONUS:
+            case GROSSLOYALTYBONUS:
+            case TAXFREELOYALTYBONUS:
             case INHERITED:
             case LOANINTERESTEARNED:
             case RENTALINCOME:

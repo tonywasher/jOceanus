@@ -914,11 +914,13 @@ public final class TaxBasisBucket
                     break;
                 case INTEREST:
                 case TAXEDINTEREST:
+                case TAXEDLOYALTYBONUS:
                     /* Adjust the Gross interest bucket */
                     myBucket = getBucket(TaxBasisClass.TAXEDINTEREST);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case GROSSINTEREST:
+                case GROSSLOYALTYBONUS:
                     /* Adjust the Gross interest bucket */
                     myBucket = getBucket(TaxBasisClass.UNTAXEDINTEREST);
                     myBucket.addIncomeTransaction(pTrans);
@@ -951,12 +953,14 @@ public final class TaxBasisBucket
                 case INHERITED:
                 case CASHBACK:
                 case LOYALTYBONUS:
+                case TAXFREELOYALTYBONUS:
                 case GIFTEDINCOME:
                     /* Adjust the Tax Free bucket */
                     myBucket = getBucket(TaxBasisClass.TAXFREE);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case EXPENSE:
+                case BADDEBT:
                 case LOCALTAXES:
                 case WRITEOFF:
                 case LOANINTERESTCHARGED:
