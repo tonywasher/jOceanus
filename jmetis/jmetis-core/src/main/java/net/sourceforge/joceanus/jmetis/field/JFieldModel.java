@@ -173,6 +173,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
     /**
      * String model.
+     * @param <T> itemType
      */
     public static class JModelString<T extends JFieldSetItem>
             extends JFieldModel<T> {
@@ -489,6 +490,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * Object model.
      * @param <I> element type
+     * @param <T> itemType
      */
     public static class JModelObject<I, T extends JFieldSetItem>
             extends JFieldModel<T> {
@@ -534,6 +536,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * Object List model.
      * @param <I> element type
+     * @param <T> itemType
      */
     public static class JModelObjectList<I, T extends JFieldSetItem>
             extends JFieldModel<T> {
@@ -565,6 +568,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
     /**
      * Boolean model.
+     * @param <T> itemType
      */
     public static class JModelBoolean<T extends JFieldSetItem>
             extends JFieldModel<T> {
@@ -614,6 +618,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
     /**
      * DateDay model.
+     * @param <T> itemType
      */
     public static class JModelDateDay<T extends JFieldSetItem>
             extends JFieldModel<T> {

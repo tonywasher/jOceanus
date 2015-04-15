@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  */
 public abstract class AssetBase<T extends AssetBase<T>>
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<T>, TransactionAsset {
+        implements TransactionAsset {
     /**
      * Local Report fields.
      */
@@ -672,7 +672,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
-    public int compareTo(final T pThat) {
+    public int compareTo(final TransactionAsset pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -681,6 +681,24 @@ public abstract class AssetBase<T extends AssetBase<T>>
             return -1;
         }
 
+        /* If the Asset is not an AssetBase we are first */
+        if (pThat instanceof AssetBase) {
+            return -1;
+        }
+
+        /* Access as AssetBase */
+        AssetBase<?> myThat = (AssetBase<?>) pThat;
+
+        /* Check data type */
+        return getItemType().ordinal() - myThat.getItemType().ordinal();
+    }
+
+    /**
+     * Compare like for like assets.
+     * @param pThat the target asset
+     * @return -1,0,1 as this is before, equal or after that
+     */
+    protected int compareAsset(final T pThat) {
         /* Check the names */
         int iDiff = Difference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {

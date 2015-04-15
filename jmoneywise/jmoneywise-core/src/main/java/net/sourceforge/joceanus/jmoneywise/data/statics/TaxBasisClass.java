@@ -159,4 +159,25 @@ public enum TaxBasisClass implements StaticInterface {
         }
         throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.TAXBASIS.toString() + ":" + id);
     }
+
+    /**
+     * Should we analyse accounts?
+     * @return true/false
+     */
+    public boolean analyseAccounts() {
+        switch (this) {
+            case SALARY:
+            case RENTALINCOME:
+            case TAXEDINTEREST:
+            case UNTAXEDINTEREST:
+            case DIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXABLEGAINS:
+            case CAPITALGAINS:
+            case TAXFREE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

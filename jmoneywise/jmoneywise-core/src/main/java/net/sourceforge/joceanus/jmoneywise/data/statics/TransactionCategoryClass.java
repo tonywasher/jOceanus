@@ -216,7 +216,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
     TAXFREEDIVIDEND(37, 40),
 
     /**
-     * Taxed Loyalty Bonus
+     * Taxed Loyalty Bonus.
      */
     TAXEDLOYALTYBONUS(38, 41),
 

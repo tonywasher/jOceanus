@@ -822,7 +822,7 @@ public class Security
     }
 
     @Override
-    public int compareTo(final Security pThat) {
+    public int compareTo(final TransactionAsset pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -831,14 +831,21 @@ public class Security
             return -1;
         }
 
-        /* Check the security type */
-        int iDiff = Difference.compareObject(getSecurityType(), pThat.getSecurityType());
-        if (iDiff != 0) {
-            return iDiff;
+        /* Compare types of asset */
+        int iDiff = super.compareTo(pThat);
+        if ((iDiff == 0)
+            && (pThat instanceof Security)) {
+            /* Check the security type */
+            Security myThat = (Security) pThat;
+            iDiff = Difference.compareObject(getSecurityType(), myThat.getSecurityType());
+            if (iDiff == 0) {
+                /* Check the underlying base */
+                iDiff = super.compareAsset(myThat);
+            }
         }
 
-        /* Compare the underlying base */
-        return super.compareTo(pThat);
+        /* Return the result */
+        return iDiff;
     }
 
     @Override

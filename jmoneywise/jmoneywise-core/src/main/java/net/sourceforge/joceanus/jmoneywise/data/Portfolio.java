@@ -631,6 +631,29 @@ public class Portfolio
     }
 
     @Override
+    public int compareTo(final TransactionAsset pThat) {
+        /* Handle the trivial cases */
+        if (this.equals(pThat)) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
+        }
+
+        /* Compare types of asset */
+        int iDiff = super.compareTo(pThat);
+        if ((iDiff == 0)
+            && (pThat instanceof Portfolio)) {
+            /* Check the underlying base */
+            Portfolio myThat = (Portfolio) pThat;
+            iDiff = super.compareAsset(myThat);
+        }
+
+        /* Return the result */
+        return iDiff;
+    }
+
+    @Override
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Base details */
         super.resolveDataSetLinks();

@@ -688,7 +688,7 @@ public class Loan
     }
 
     @Override
-    public int compareTo(final Loan pThat) {
+    public int compareTo(final TransactionAsset pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -697,14 +697,21 @@ public class Loan
             return -1;
         }
 
-        /* Check the category */
-        int iDiff = Difference.compareObject(getCategory(), pThat.getCategory());
-        if (iDiff != 0) {
-            return iDiff;
+        /* Compare types of asset */
+        int iDiff = super.compareTo(pThat);
+        if ((iDiff == 0)
+            && (pThat instanceof Loan)) {
+            /* Check the category */
+            Loan myThat = (Loan) pThat;
+            iDiff = Difference.compareObject(getCategory(), myThat.getCategory());
+            if (iDiff == 0) {
+                /* Check the underlying base */
+                iDiff = super.compareAsset(myThat);
+            }
         }
 
-        /* Compare the underlying base */
-        return super.compareTo(pThat);
+        /* Return the result */
+        return iDiff;
     }
 
     @Override

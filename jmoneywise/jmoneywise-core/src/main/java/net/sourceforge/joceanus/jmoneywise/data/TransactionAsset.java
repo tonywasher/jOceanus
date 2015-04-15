@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 /**
  * Interface for objects (Deposits, SecurityHoldings etc.) used in a transaction.
  */
-public interface TransactionAsset {
+public interface TransactionAsset
+        extends Comparable<TransactionAsset> {
     /**
      * Obtain the asset id.
      * @return the id

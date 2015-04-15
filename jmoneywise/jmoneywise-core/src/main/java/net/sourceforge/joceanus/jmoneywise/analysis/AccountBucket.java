@@ -551,6 +551,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             /* Initialise valuation and spend to zero */
             put(AccountAttribute.VALUATION, new JMoney());
             put(AccountAttribute.SPEND, new JMoney());
+            put(AccountAttribute.BADDEBT, new JMoney());
         }
 
         /**

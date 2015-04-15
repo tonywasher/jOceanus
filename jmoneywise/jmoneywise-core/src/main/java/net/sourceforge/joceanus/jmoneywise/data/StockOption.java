@@ -673,7 +673,7 @@ public class StockOption
     }
 
     @Override
-    public int compareTo(final StockOption pThat) {
+    public int compareTo(final TransactionAsset pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -682,20 +682,25 @@ public class StockOption
             return -1;
         }
 
-        /* Check the stock holding */
-        int iDiff = Difference.compareObject(getStockHolding(), pThat.getStockHolding());
-        if (iDiff != 0) {
-            return iDiff;
+        /* Compare types of asset */
+        int iDiff = super.compareTo(pThat);
+        if ((iDiff == 0)
+            && (pThat instanceof StockOption)) {
+            /* Check the category */
+            StockOption myThat = (StockOption) pThat;
+            iDiff = Difference.compareObject(getStockHolding(), myThat.getStockHolding());
+            if (iDiff == 0) {
+                /* Check the grant date */
+                iDiff = Difference.compareObject(getGrantDate(), myThat.getGrantDate());
+            }
+            if (iDiff == 0) {
+                /* Compare the underlying id */
+                iDiff = super.compareId(myThat);
+            }
         }
 
-        /* Check the grant date */
-        iDiff = Difference.compareObject(getGrantDate(), pThat.getGrantDate());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying base */
-        return super.compareTo(pThat);
+        /* Return the result */
+        return iDiff;
     }
 
     /**

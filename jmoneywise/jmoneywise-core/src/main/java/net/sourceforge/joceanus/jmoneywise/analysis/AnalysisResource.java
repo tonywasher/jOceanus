@@ -232,6 +232,16 @@ public enum AnalysisResource implements ResourceId {
     TAXBASIS_LIST("TaxBasis.List"),
 
     /**
+     * TaxBasisAccount Name.
+     */
+    TAXBASIS_ACCOUNTNAME("TaxBasis.AccountName"),
+
+    /**
+     * TaxBasisAccount List.
+     */
+    TAXBASIS_ACCOUNTLIST("TaxBasis.AccountList"),
+
+    /**
      * TaxCalc Name.
      */
     TAXCALC_NAME("TaxCalc.Name"),

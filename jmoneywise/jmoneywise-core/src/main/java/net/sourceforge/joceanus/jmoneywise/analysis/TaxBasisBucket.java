@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAccountBucket.TaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -48,12 +49,12 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 /**
  * The TaxBasis Bucket class.
  */
-public final class TaxBasisBucket
+public class TaxBasisBucket
         implements JDataContents, Comparable<TaxBasisBucket>, OrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_NAME.getValue());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_NAME.getValue());
 
     /**
      * Analysis Field Id.
@@ -74,6 +75,11 @@ public final class TaxBasisBucket
      * History Field Id.
      */
     private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+
+    /**
+     * History Field Id.
+     */
+    private static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXBASIS_ACCOUNTLIST.getValue());
 
     /**
      * Totals bucket name.
@@ -111,18 +117,35 @@ public final class TaxBasisBucket
     private final BucketHistory<TaxBasisValues, TaxBasisAttribute> theHistory;
 
     /**
+     * Do we have accounts.
+     */
+    private final boolean hasAccounts;
+
+    /**
+     * AccountBucketList.
+     */
+    private final TaxBasisAccountBucketList theAccounts;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pTaxBasis the basis
      */
-    private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxBasis pTaxBasis) {
+    protected TaxBasisBucket(final Analysis pAnalysis,
+                             final TaxBasis pTaxBasis) {
         /* Store the parameters */
         theTaxBasis = pTaxBasis;
         theAnalysis = pAnalysis;
 
         /* Create the history map */
         theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(new TaxBasisValues());
+
+        /* Create the account list */
+        hasAccounts = theTaxBasis != null
+                      && theTaxBasis.getTaxClass().analyseAccounts();
+        theAccounts = hasAccounts
+                                 ? new TaxBasisAccountBucketList(theAnalysis, theTaxBasis)
+                                 : null;
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -135,15 +158,21 @@ public final class TaxBasisBucket
      * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
-    private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxBasisBucket pBase,
-                           final JDateDay pDate) {
+    protected TaxBasisBucket(final Analysis pAnalysis,
+                             final TaxBasisBucket pBase,
+                             final JDateDay pDate) {
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
         theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pDate);
+
+        /* Create the account list */
+        hasAccounts = pBase.hasAccounts();
+        theAccounts = hasAccounts
+                                 ? new TaxBasisAccountBucketList(theAnalysis, pBase.getAccounts(), pDate)
+                                 : null;
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -156,15 +185,21 @@ public final class TaxBasisBucket
      * @param pBase the underlying bucket
      * @param pRange the range for the bucket
      */
-    private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxBasisBucket pBase,
-                           final JDateDayRange pRange) {
+    protected TaxBasisBucket(final Analysis pAnalysis,
+                             final TaxBasisBucket pBase,
+                             final JDateDayRange pRange) {
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
         theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pRange);
+
+        /* Create the account list */
+        hasAccounts = pBase.hasAccounts();
+        theAccounts = hasAccounts
+                                 ? new TaxBasisAccountBucketList(theAnalysis, pBase.getAccounts(), pRange)
+                                 : null;
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -186,6 +221,9 @@ public final class TaxBasisBucket
         }
         if (FIELD_HISTORY.equals(pField)) {
             return theHistory;
+        }
+        if (FIELD_ACCOUNTS.equals(pField)) {
+            return theAccounts;
         }
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;
@@ -237,6 +275,32 @@ public final class TaxBasisBucket
      */
     public TaxBasis getTaxBasis() {
         return theTaxBasis;
+    }
+
+    /**
+     * Do we have accounts.
+     * @return true/false
+     */
+    private boolean hasAccounts() {
+        return hasAccounts;
+    }
+
+    /**
+     * Obtain account list.
+     * @return the account list
+     */
+    private TaxBasisAccountBucketList getAccounts() {
+        return theAccounts;
+    }
+
+    /**
+     * Obtain account list iterator.
+     * @return the iterator
+     */
+    public Iterator<TaxBasisAccountBucket> accountIterator() {
+        return hasAccounts
+                          ? theAccounts.iterator()
+                          : null;
     }
 
     /**
@@ -637,7 +701,7 @@ public final class TaxBasisBucket
     /**
      * Adjust to base.
      */
-    private void adjustToBase() {
+    protected void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -664,7 +728,7 @@ public final class TaxBasisBucket
         /**
          * Constructor.
          */
-        private TaxBasisValues() {
+        protected TaxBasisValues() {
             /* Initialise class */
             super(TaxBasisAttribute.class);
 

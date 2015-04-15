@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * Portfolio/Security combination.
  */
 public final class SecurityHolding
-        implements JDataContents, TransactionAsset, Comparable<SecurityHolding> {
+        implements JDataContents, TransactionAsset {
     /**
      * Name separator.
      */
@@ -409,15 +409,32 @@ public final class SecurityHolding
     }
 
     @Override
-    public int compareTo(final SecurityHolding pThat) {
-        /* Compare portfolios */
-        int myResult = getPortfolio().compareTo(pThat.getPortfolio());
-        if (myResult != 0) {
-            return myResult;
+    public int compareTo(final TransactionAsset pThat) {
+        /* Handle the trivial cases */
+        if (this.equals(pThat)) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
         }
 
-        /* Compare securities */
-        return getSecurity().compareTo(pThat.getSecurity());
+        /* If the Asset is not a SecurityHolding we are last */
+        if (pThat instanceof SecurityHolding) {
+            return 1;
+        }
+
+        /* Access as AssetBase */
+        SecurityHolding myThat = (SecurityHolding) pThat;
+
+        /* Compare portfolios */
+        int iDiff = getPortfolio().compareTo(myThat.getPortfolio());
+        if (iDiff == 0) {
+            /* Compare securities */
+            iDiff = getSecurity().compareTo(myThat.getSecurity());
+        }
+
+        /* Return the result */
+        return iDiff;
     }
 
     /**
