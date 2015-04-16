@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
@@ -236,6 +237,16 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     public JRate getRateValue(final E pAttr) {
         /* Obtain the attribute value */
         return getValue(pAttr, JRate.class);
+    }
+
+    /**
+     * Obtain a ratio attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public JRatio getRatioValue(final E pAttr) {
+        /* Obtain the attribute value */
+        return getValue(pAttr, JRatio.class);
     }
 
     /**

@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
@@ -611,6 +612,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
             case DILUTION:
                 bValueOK = setDilutionValue(myParser, pValue);
                 break;
+            case RATIO:
+                bValueOK = setRatioValue(myParser, pValue);
+                break;
             default:
                 break;
         }
@@ -796,7 +800,30 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     }
 
     /**
-     * Set Rate Value.
+     * Set Ratio Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setRatioValue(final JDecimalParser pParser,
+                                  final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof JRatio) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, JRatio.class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(pParser.parseRatioValue((String) pValue));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set Units Value.
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
@@ -819,7 +846,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     }
 
     /**
-     * Set Rate Value.
+     * Set Price Value.
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false

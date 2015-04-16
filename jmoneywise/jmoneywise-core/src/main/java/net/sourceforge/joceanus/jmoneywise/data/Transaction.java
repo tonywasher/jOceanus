@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
@@ -387,6 +388,16 @@ public class Transaction
     public final JMoney getCreditAmount() {
         return hasInfoSet
                          ? theInfoSet.getValue(TransactionInfoClass.CREDITAMOUNT, JMoney.class)
+                         : null;
+    }
+
+    /**
+     * Obtain Exchange Rate.
+     * @return the Donation
+     */
+    public final JRatio getExchangeRate() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, JRatio.class)
                          : null;
     }
 
@@ -776,6 +787,15 @@ public class Transaction
      */
     public final void setCreditAmount(final JMoney pValue) throws JOceanusException {
         setInfoSetValue(TransactionInfoClass.CREDITAMOUNT, pValue);
+    }
+
+    /**
+     * Set a new ExchangeRate.
+     * @param pValue the new exchangeRate
+     * @throws JOceanusException on error
+     */
+    public final void setXchangeRate(final JRate pValue) throws JOceanusException {
+        setInfoSetValue(TransactionInfoClass.XCHANGERATE, pValue);
     }
 
     /**

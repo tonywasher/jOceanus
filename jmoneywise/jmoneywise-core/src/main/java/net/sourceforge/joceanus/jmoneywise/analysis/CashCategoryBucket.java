@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 
 /**
@@ -57,10 +58,12 @@ public final class CashCategoryBucket
 
     /**
      * Constructor.
+     * @param pCurrency the currency
      * @param pCategory the account category
      */
-    protected CashCategoryBucket(final CashCategory pCategory) {
-        /* Store the category */
+    protected CashCategoryBucket(final AssetCurrency pCurrency,
+                                 final CashCategory pCategory) {
+        super(pCurrency);
         theCategory = pCategory;
     }
 
@@ -140,6 +143,11 @@ public final class CashCategoryBucket
         private final Analysis theAnalysis;
 
         /**
+         * The currency.
+         */
+        private final AssetCurrency theCurrency;
+
+        /**
          * The totals.
          */
         private final CashCategoryBucket theTotals;
@@ -152,6 +160,7 @@ public final class CashCategoryBucket
             /* Initialise class */
             super(CashCategoryBucket.class);
             theAnalysis = pAnalysis;
+            theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
         }
 
@@ -193,7 +202,7 @@ public final class CashCategoryBucket
          */
         private CashCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
-            return new CashCategoryBucket(null);
+            return new CashCategoryBucket(theCurrency, null);
         }
 
         /**
@@ -208,7 +217,7 @@ public final class CashCategoryBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new CashCategoryBucket(pCategory);
+                myItem = new CashCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -269,7 +278,7 @@ public final class CashCategoryBucket
                     /* If the bucket is completely new */
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
-                        myTotal = new CashCategoryBucket(myParent);
+                        myTotal = new CashCategoryBucket(theCurrency, myParent);
                         myTotals.add(myTotal);
                     }
                 }

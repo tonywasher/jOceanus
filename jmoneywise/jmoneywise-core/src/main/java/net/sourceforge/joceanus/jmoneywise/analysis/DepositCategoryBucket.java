@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 
 /**
@@ -58,10 +59,12 @@ public final class DepositCategoryBucket
 
     /**
      * Constructor.
+     * @param pCurrency the currency
      * @param pCategory the account category
      */
-    protected DepositCategoryBucket(final DepositCategory pCategory) {
-        /* Store the category */
+    protected DepositCategoryBucket(final AssetCurrency pCurrency,
+                                    final DepositCategory pCategory) {
+        super(pCurrency);
         theCategory = pCategory;
     }
 
@@ -141,6 +144,11 @@ public final class DepositCategoryBucket
         private final Analysis theAnalysis;
 
         /**
+         * The currency.
+         */
+        private final AssetCurrency theCurrency;
+
+        /**
          * The totals.
          */
         private final DepositCategoryBucket theTotals;
@@ -153,6 +161,7 @@ public final class DepositCategoryBucket
             /* Initialise class */
             super(DepositCategoryBucket.class);
             theAnalysis = pAnalysis;
+            theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
         }
 
@@ -194,7 +203,7 @@ public final class DepositCategoryBucket
          */
         private DepositCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
-            return new DepositCategoryBucket(null);
+            return new DepositCategoryBucket(theCurrency, null);
         }
 
         /**
@@ -209,7 +218,7 @@ public final class DepositCategoryBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new DepositCategoryBucket(pCategory);
+                myItem = new DepositCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -270,7 +279,7 @@ public final class DepositCategoryBucket
                     /* If the bucket is completely new */
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
-                        myTotal = new DepositCategoryBucket(myParent);
+                        myTotal = new DepositCategoryBucket(theCurrency, myParent);
                         myTotals.add(myTotal);
                     }
                 }

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.text.DecimalFormatSymbols;
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -32,9 +34,11 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -49,6 +53,11 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 public abstract class AccountBucket<T extends AssetBase<T>>
         implements JDataContents, Comparable<AccountBucket<T>>, OrderedIdItem<Integer> {
     /**
+     * Default currency.
+     */
+    protected static final Currency DEFAULT_CURRENCY = DecimalFormatSymbols.getInstance().getCurrency();
+
+    /**
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
@@ -62,6 +71,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * Account Field Id.
      */
     private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
+
+    /**
+     * Currency Field Id.
+     */
+    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * Base Field Id.
@@ -94,6 +108,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     private final T theAccount;
 
     /**
+     * The currency.
+     */
+    private final AssetCurrency theCurrency;
+
+    /**
      * The dataSet.
      */
     private final MoneyWiseData theData;
@@ -122,11 +141,20 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final T pAccount) {
         /* Store the details */
         theAccount = pAccount;
+
+        /* Determine currency */
+        theCurrency = (pAccount == null)
+                                        ? pAnalysis.getCurrency()
+                                        : pAccount.getAssetCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
         /* Create the history map */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(new AccountValues());
+        Currency myCurrency = theCurrency == null
+                                                 ? DEFAULT_CURRENCY
+                                                 : theCurrency.getCurrency();
+        AccountValues myValues = new AccountValues(myCurrency);
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -142,6 +170,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final AccountBucket<T> pBase) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
+        theCurrency = pBase.getCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -164,6 +193,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final JDateDay pDate) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
+        theCurrency = pBase.getCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -186,6 +216,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final JDateDayRange pRange) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
+        theCurrency = pBase.getCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -204,6 +235,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
         if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
+        }
+        if (FIELD_CURRENCY.equals(pField)) {
+            return theCurrency;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return theHistory;
@@ -253,6 +287,14 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     public T getAccount() {
         return theAccount;
+    }
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    public AssetCurrency getCurrency() {
+        return theCurrency;
     }
 
     @Override
@@ -543,15 +585,16 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
         /**
          * Constructor.
+         * @param pCurrency the account currency
          */
-        protected AccountValues() {
+        protected AccountValues(final Currency pCurrency) {
             /* Initialise class */
             super(AccountAttribute.class);
 
             /* Initialise valuation and spend to zero */
-            put(AccountAttribute.VALUATION, new JMoney());
-            put(AccountAttribute.SPEND, new JMoney());
-            put(AccountAttribute.BADDEBT, new JMoney());
+            put(AccountAttribute.VALUATION, new JMoney(pCurrency));
+            put(AccountAttribute.SPEND, new JMoney(pCurrency));
+            put(AccountAttribute.BADDEBT, new JMoney(pCurrency));
         }
 
         /**
@@ -577,7 +620,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         @Override
         protected void resetBaseValues() {
             /* Reset spend values */
-            put(AccountAttribute.SPEND, new JMoney());
+            JMoney mySpend = getMoneyValue(AccountAttribute.VALUATION);
+            if (mySpend.isNonZero()) {
+                mySpend = new JMoney(mySpend);
+                mySpend.setZero();
+                put(AccountAttribute.SPEND, mySpend);
+            }
         }
 
         /**

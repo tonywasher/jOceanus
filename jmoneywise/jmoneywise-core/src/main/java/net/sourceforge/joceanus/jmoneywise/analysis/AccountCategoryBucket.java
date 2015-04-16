@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
@@ -32,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
@@ -74,11 +76,15 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
 
     /**
      * Constructor.
+     * @param pCurrency the currency
      */
-    protected AccountCategoryBucket() {
+    protected AccountCategoryBucket(final AssetCurrency pCurrency) {
         /* Create the value maps */
-        theValues = new AccountValues();
-        theBaseValues = new AccountValues();
+        Currency myCurrency = pCurrency == null
+                                               ? AccountBucket.DEFAULT_CURRENCY
+                                               : pCurrency.getCurrency();
+        theValues = new AccountValues(myCurrency);
+        theBaseValues = new AccountValues(myCurrency);
     }
 
     @Override

@@ -658,7 +658,6 @@ public class QIFPortfolioBuilder {
             /* Create a transfer out event */
             myAmount = pTrans.getAmount();
             myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
-            myEvent.recordSecurity(myQSecurity);
             myEvent.recordAmount(myAmount);
             myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
             myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);

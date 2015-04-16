@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -71,6 +73,11 @@ public final class SecurityBucket
      * SecurityHolding Field Id.
      */
     private static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
+
+    /**
+     * Currency Field Id.
+     */
+    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * Security Type Field Id.
@@ -113,6 +120,11 @@ public final class SecurityBucket
     private final Portfolio thePortfolio;
 
     /**
+     * The currency.
+     */
+    private final AssetCurrency theCurrency;
+
+    /**
      * The security type.
      */
     private final SecurityType theCategory;
@@ -146,6 +158,7 @@ public final class SecurityBucket
                            final SecurityHolding pHolding) {
         /* Store the details */
         theHolding = pHolding;
+        theCurrency = pHolding.getAssetCurrency();
         theSecurity = pHolding.getSecurity();
         thePortfolio = pHolding.getPortfolio();
         theAnalysis = pAnalysis;
@@ -155,7 +168,8 @@ public final class SecurityBucket
         theCategory = theSecurity.getSecurityType();
 
         /* Create the history map */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(new SecurityValues());
+        SecurityValues myValues = new SecurityValues(theCurrency.getCurrency());
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -171,6 +185,7 @@ public final class SecurityBucket
                            final SecurityBucket pBase) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
+        theCurrency = pBase.getCurrency();
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
@@ -196,6 +211,7 @@ public final class SecurityBucket
                            final JDateDay pDate) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
+        theCurrency = pBase.getCurrency();
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
@@ -221,6 +237,7 @@ public final class SecurityBucket
                            final JDateDayRange pRange) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
+        theCurrency = pBase.getCurrency();
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
@@ -247,6 +264,9 @@ public final class SecurityBucket
         }
         if (FIELD_HOLDING.equals(pField)) {
             return theHolding;
+        }
+        if (FIELD_CURRENCY.equals(pField)) {
+            return theCurrency;
         }
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
@@ -321,6 +341,14 @@ public final class SecurityBucket
      */
     public Portfolio getPortfolio() {
         return thePortfolio;
+    }
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    public AssetCurrency getCurrency() {
+        return theCurrency;
     }
 
     @Override
@@ -729,18 +757,19 @@ public final class SecurityBucket
 
         /**
          * Constructor.
+         * @param pCurrency the account currency
          */
-        protected SecurityValues() {
+        protected SecurityValues(final Currency pCurrency) {
             /* Initialise class */
             super(SecurityAttribute.class);
 
             /* Initialise units etc. to zero */
             put(SecurityAttribute.UNITS, new JUnits());
-            put(SecurityAttribute.COST, new JMoney());
-            put(SecurityAttribute.INVESTED, new JMoney());
-            put(SecurityAttribute.GAINS, new JMoney());
-            put(SecurityAttribute.GROWTHADJUST, new JMoney());
-            put(SecurityAttribute.DIVIDEND, new JMoney());
+            put(SecurityAttribute.COST, new JMoney(pCurrency));
+            put(SecurityAttribute.INVESTED, new JMoney(pCurrency));
+            put(SecurityAttribute.GAINS, new JMoney(pCurrency));
+            put(SecurityAttribute.GROWTHADJUST, new JMoney(pCurrency));
+            put(SecurityAttribute.DIVIDEND, new JMoney(pCurrency));
         }
 
         /**
@@ -768,11 +797,16 @@ public final class SecurityBucket
 
         @Override
         protected void resetBaseValues() {
+            /* Create a zero value in the correct currency */
+            JMoney myValue = getMoneyValue(SecurityAttribute.COST);
+            myValue = new JMoney(myValue);
+            myValue.setZero();
+
             /* Reset Invested, Gains and Dividend values */
-            put(SecurityAttribute.INVESTED, new JMoney());
-            put(SecurityAttribute.GAINS, new JMoney());
-            put(SecurityAttribute.GROWTHADJUST, new JMoney());
-            put(SecurityAttribute.DIVIDEND, new JMoney());
+            put(SecurityAttribute.INVESTED, myValue);
+            put(SecurityAttribute.GAINS, new JMoney(myValue));
+            put(SecurityAttribute.GROWTHADJUST, new JMoney(myValue));
+            put(SecurityAttribute.DIVIDEND, new JMoney(myValue));
         }
 
         /**

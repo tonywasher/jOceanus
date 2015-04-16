@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -60,6 +62,11 @@ public final class PortfolioBucket
      * Portfolio Field Id.
      */
     private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
+
+    /**
+     * Currency Field Id.
+     */
+    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * CashBucket Field Id.
@@ -92,6 +99,11 @@ public final class PortfolioBucket
     private final Portfolio thePortfolio;
 
     /**
+     * The currency.
+     */
+    private final AssetCurrency theCurrency;
+
+    /**
      * The cash bucket.
      */
     private final PortfolioCashBucket theCash;
@@ -118,8 +130,11 @@ public final class PortfolioBucket
      */
     private PortfolioBucket(final Analysis pAnalysis,
                             final Portfolio pPortfolio) {
-        /* Store the category */
+        /* Store the portfolio */
         thePortfolio = pPortfolio;
+        theCurrency = (pPortfolio == null)
+                                          ? pAnalysis.getCurrency()
+                                          : pPortfolio.getAssetCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pPortfolio);
@@ -130,8 +145,11 @@ public final class PortfolioBucket
                                             : null;
 
         /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
+        Currency myCurrency = theCurrency == null
+                                                 ? AccountBucket.DEFAULT_CURRENCY
+                                                 : theCurrency.getCurrency();
+        theValues = new SecurityValues(myCurrency);
+        theBaseValues = new SecurityValues(myCurrency);
         initValues();
     }
 
@@ -144,6 +162,7 @@ public final class PortfolioBucket
                             final PortfolioBucket pBase) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
+        theCurrency = pBase.getCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());
@@ -154,8 +173,9 @@ public final class PortfolioBucket
                                               : null;
 
         /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
+        Currency myCurrency = theCurrency.getCurrency();
+        theValues = new SecurityValues(myCurrency);
+        theBaseValues = new SecurityValues(myCurrency);
         initValues();
     }
 
@@ -170,6 +190,7 @@ public final class PortfolioBucket
                             final JDateDay pDate) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
+        theCurrency = pBase.getCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);
@@ -180,8 +201,9 @@ public final class PortfolioBucket
                                               : null;
 
         /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
+        Currency myCurrency = theCurrency.getCurrency();
+        theValues = new SecurityValues(myCurrency);
+        theBaseValues = new SecurityValues(myCurrency);
         initValues();
     }
 
@@ -196,6 +218,7 @@ public final class PortfolioBucket
                             final JDateDayRange pRange) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
+        theCurrency = pBase.getCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);
@@ -206,8 +229,9 @@ public final class PortfolioBucket
                                               : null;
 
         /* Create the value maps and initialise them */
-        theValues = new SecurityValues();
-        theBaseValues = new SecurityValues();
+        Currency myCurrency = theCurrency.getCurrency();
+        theValues = new SecurityValues(myCurrency);
+        theBaseValues = new SecurityValues(myCurrency);
         initValues();
     }
 
@@ -220,6 +244,9 @@ public final class PortfolioBucket
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
+        }
+        if (FIELD_CURRENCY.equals(pField)) {
+            return theCurrency;
         }
         if (FIELD_CASH.equals(pField)) {
             return theCash;
@@ -277,6 +304,14 @@ public final class PortfolioBucket
      */
     public Portfolio getPortfolio() {
         return thePortfolio;
+    }
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    public AssetCurrency getCurrency() {
+        return theCurrency;
     }
 
     /**

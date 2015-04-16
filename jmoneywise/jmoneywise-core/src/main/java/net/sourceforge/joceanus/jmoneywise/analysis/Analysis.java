@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -68,6 +69,11 @@ public class Analysis
      * Range Field Id.
      */
     private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
+
+    /**
+     * Currency Field Id.
+     */
+    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * DepositBuckets Field Id.
@@ -143,6 +149,11 @@ public class Analysis
      * The DataSet.
      */
     private final MoneyWiseData theData;
+
+    /**
+     * The Currency.
+     */
+    private final AssetCurrency theCurrency;
 
     /**
      * The Preference Manager.
@@ -233,6 +244,7 @@ public class Analysis
                        final PreferenceManager pPreferenceMgr) {
         /* Store the data */
         theData = pData;
+        theCurrency = pData.getDefaultCurrency();
         thePreferences = pPreferenceMgr;
         theDateRange = theData.getDateRange();
 
@@ -267,6 +279,7 @@ public class Analysis
     protected Analysis(final Analysis pSource) {
         /* Store the data */
         theData = pSource.getData();
+        theCurrency = pSource.getCurrency();
         thePreferences = pSource.getPreferenceMgr();
         theDateRange = pSource.getDateRange();
 
@@ -303,6 +316,7 @@ public class Analysis
                        final JDateDay pDate) {
         /* Store the data */
         theData = pSource.getData();
+        theCurrency = pSource.getCurrency();
         thePreferences = pSource.getPreferenceMgr();
         theDateRange = new JDateDayRange(null, pDate);
 
@@ -336,6 +350,7 @@ public class Analysis
                        final JDateDayRange pRange) {
         /* Store the data */
         theData = pSource.getData();
+        theCurrency = pSource.getCurrency();
         thePreferences = pSource.getPreferenceMgr();
         theDateRange = pRange;
 
@@ -377,6 +392,9 @@ public class Analysis
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_RANGE.equals(pField)) {
             return theDateRange;
+        }
+        if (FIELD_CURRENCY.equals(pField)) {
+            return theCurrency;
         }
         if (FIELD_DEPOSITS.equals(pField)) {
             return (theDeposits.isEmpty())
@@ -464,6 +482,14 @@ public class Analysis
      */
     public MoneyWiseData getData() {
         return theData;
+    }
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    public AssetCurrency getCurrency() {
+        return theCurrency;
     }
 
     /**

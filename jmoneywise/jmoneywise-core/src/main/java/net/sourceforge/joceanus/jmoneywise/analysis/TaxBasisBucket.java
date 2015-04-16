@@ -223,7 +223,9 @@ public class TaxBasisBucket
             return theHistory;
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
-            return theAccounts;
+            return hasAccounts
+                              ? theAccounts
+                              : JDataFieldValue.SKIP;
         }
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;

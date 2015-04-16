@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 
 /**
@@ -57,10 +58,12 @@ public final class LoanCategoryBucket
 
     /**
      * Constructor.
+     * @param pCurrency the currency
      * @param pCategory the account category
      */
-    protected LoanCategoryBucket(final LoanCategory pCategory) {
-        /* Store the category */
+    protected LoanCategoryBucket(final AssetCurrency pCurrency,
+                                 final LoanCategory pCategory) {
+        super(pCurrency);
         theCategory = pCategory;
     }
 
@@ -140,6 +143,11 @@ public final class LoanCategoryBucket
         private final Analysis theAnalysis;
 
         /**
+         * The currency.
+         */
+        private final AssetCurrency theCurrency;
+
+        /**
          * The totals.
          */
         private final LoanCategoryBucket theTotals;
@@ -152,6 +160,7 @@ public final class LoanCategoryBucket
             /* Initialise class */
             super(LoanCategoryBucket.class);
             theAnalysis = pAnalysis;
+            theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
         }
 
@@ -193,7 +202,7 @@ public final class LoanCategoryBucket
          */
         private LoanCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
-            return new LoanCategoryBucket(null);
+            return new LoanCategoryBucket(theCurrency, null);
         }
 
         /**
@@ -208,7 +217,7 @@ public final class LoanCategoryBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new LoanCategoryBucket(pCategory);
+                myItem = new LoanCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -269,7 +278,7 @@ public final class LoanCategoryBucket
                     /* If the bucket is completely new */
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
-                        myTotal = new LoanCategoryBucket(myParent);
+                        myTotal = new LoanCategoryBucket(theCurrency, myParent);
                         myTotals.add(myTotal);
                     }
                 }

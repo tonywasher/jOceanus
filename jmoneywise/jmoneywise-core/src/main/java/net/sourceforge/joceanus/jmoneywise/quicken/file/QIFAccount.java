@@ -270,6 +270,7 @@ public class QIFAccount
         /* Add the entries */
         myMap.put(DepositCategoryClass.CHECKING, QIFACT_BANK);
         myMap.put(DepositCategoryClass.SAVINGS, QIFACT_BANK);
+        myMap.put(DepositCategoryClass.PEER2PEER, QIFACT_BANK);
         myMap.put(DepositCategoryClass.BOND, QIFACT_BANK);
         myMap.put(CashCategoryClass.CASH, QIFACT_CASH);
         myMap.put(CashCategoryClass.AUTOEXPENSE, QIFACT_CASH);

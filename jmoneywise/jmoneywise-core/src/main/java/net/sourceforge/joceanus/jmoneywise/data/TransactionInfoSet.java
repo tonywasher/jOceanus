@@ -266,6 +266,7 @@ public class TransactionInfoSet
 
             case PENSION:
             case CREDITAMOUNT:
+            case XCHANGERATE:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -518,6 +519,7 @@ public class TransactionInfoSet
                 case CREDITAMOUNT:
                 case PENSION:
                 case TRANSTAG:
+                case XCHANGERATE:
                 default:
                     break;
             }
