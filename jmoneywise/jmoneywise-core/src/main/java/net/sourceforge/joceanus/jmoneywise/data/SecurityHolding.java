@@ -419,7 +419,7 @@ public final class SecurityHolding
         }
 
         /* If the Asset is not a SecurityHolding we are last */
-        if (pThat instanceof SecurityHolding) {
+        if (!(pThat instanceof SecurityHolding)) {
             return 1;
         }
 

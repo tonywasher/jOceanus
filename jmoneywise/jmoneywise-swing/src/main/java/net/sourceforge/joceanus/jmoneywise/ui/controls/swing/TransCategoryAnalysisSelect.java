@@ -182,7 +182,7 @@ public class TransCategoryAnalysisSelect
         /* If we have a selected Category */
         if (myCategory != null) {
             /* Look for the equivalent bucket */
-            myCategory = theCategories.findItemById(myCategory.getOrderedId());
+            myCategory = getMatchingBucket(myCategory);
         }
 
         /* If we do not have an active bucket and the list is non-empty */
@@ -207,7 +207,7 @@ public class TransCategoryAnalysisSelect
             TransactionCategoryBucket myCategory = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myCategory = theCategories.findItemById(myCategory.getOrderedId());
+            myCategory = getMatchingBucket(myCategory);
 
             /* Set the category */
             theState.setEventCategory(myCategory);
@@ -233,6 +233,26 @@ public class TransCategoryAnalysisSelect
 
         /* No such account */
         return null;
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private TransactionCategoryBucket getMatchingBucket(final TransactionCategoryBucket pBucket) {
+        /* Look up the matching CategoryBucket */
+        TransactionCategory myCategory = pBucket.getTransactionCategory();
+        TransactionCategoryBucket myBucket = theCategories.findItemById(myCategory.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = theCategories.getOrphanBucket(myCategory);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**

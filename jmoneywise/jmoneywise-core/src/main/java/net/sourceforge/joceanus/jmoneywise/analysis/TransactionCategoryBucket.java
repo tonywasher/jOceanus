@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
@@ -141,7 +143,12 @@ public final class TransactionCategoryBucket
                                      : pCategory.getCategoryType();
 
         /* Create the history map */
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(new CategoryValues());
+        AssetCurrency myDefault = theAnalysis.getCurrency();
+        Currency myCurrency = myDefault == null
+                                               ? AccountBucket.DEFAULT_CURRENCY
+                                               : myDefault.getCurrency();
+        CategoryValues myValues = new CategoryValues(myCurrency);
+        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -691,14 +698,15 @@ public final class TransactionCategoryBucket
 
         /**
          * Constructor.
+         * @param pCurrency the reporting currency
          */
-        private CategoryValues() {
+        private CategoryValues(final Currency pCurrency) {
             /* Initialise class */
             super(TransactionAttribute.class);
 
             /* Create all possible values */
-            put(TransactionAttribute.INCOME, new JMoney());
-            put(TransactionAttribute.EXPENSE, new JMoney());
+            put(TransactionAttribute.INCOME, new JMoney(pCurrency));
+            put(TransactionAttribute.EXPENSE, new JMoney(pCurrency));
         }
 
         /**
@@ -741,10 +749,15 @@ public final class TransactionCategoryBucket
 
         @Override
         protected void resetBaseValues() {
+            /* Create a zero value in the correct currency */
+            JMoney myValue = getMoneyValue(TransactionAttribute.INCOME);
+            myValue = new JMoney(myValue);
+            myValue.setZero();
+
             /* Reset Income and expense values */
-            put(TransactionAttribute.INCOME, new JMoney());
-            put(TransactionAttribute.EXPENSE, new JMoney());
-            put(TransactionAttribute.DELTA, new JMoney());
+            put(TransactionAttribute.INCOME, myValue);
+            put(TransactionAttribute.EXPENSE, new JMoney(myValue));
+            put(TransactionAttribute.DELTA, new JMoney(myValue));
         }
 
         /**
@@ -1022,6 +1035,16 @@ public final class TransactionCategoryBucket
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Obtain an orphan CategoryBucket for a given category.
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public TransactionCategoryBucket getOrphanBucket(final TransactionCategory pCategory) {
+            /* Allocate an orphan bucket */
+            return new TransactionCategoryBucket(theAnalysis, pCategory);
         }
 
         /**

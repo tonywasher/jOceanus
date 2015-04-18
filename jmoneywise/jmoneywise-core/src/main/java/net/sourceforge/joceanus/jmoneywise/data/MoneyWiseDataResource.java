@@ -149,6 +149,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     XCHGRATE_RATE("ExchangeRate.Rate"),
 
     /**
+     * ExchangeRate Map Rates.
+     */
+    XCHGRATE_MAP_MAPOFRATES("ExchangeRate.Map.MapOfRates"),
+
+    /**
      * ExchangeRate Circular Error.
      */
     XCHGRATE_ERROR_CIRCLE("ExchangeRate.Error.Circle"),
@@ -384,7 +389,7 @@ public enum MoneyWiseDataResource implements ResourceId {
     DEPOSITRATE_ENDDATE("DepositRate.EndDate"),
 
     /**
-     * DepositRate Map Prices.
+     * DepositRate Map Rates.
      */
     DEPOSITRATE_MAP_MAPOFRATES("DepositRate.Map.MapOfRates"),
 

@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
@@ -212,7 +213,7 @@ public class CashAnalysisSelect
         /* If we have a selected Cash */
         if (myCash != null) {
             /* Look for the equivalent bucket */
-            myCash = theCash.findItemById(myCash.getOrderedId());
+            myCash = getMatchingBucket(myCash);
         }
 
         /* If we do not have an active bucket and the list is non-empty */
@@ -245,7 +246,7 @@ public class CashAnalysisSelect
             CashBucket myCash = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myCash = theCash.findItemById(myCash.getOrderedId());
+            myCash = getMatchingBucket(myCash);
 
             /* Set the cash */
             theState.setCash(myCash);
@@ -272,6 +273,26 @@ public class CashAnalysisSelect
 
         /* No such account */
         return null;
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private CashBucket getMatchingBucket(final CashBucket pBucket) {
+        /* Look up the matching CashBucket */
+        Cash myCash = pBucket.getAccount();
+        CashBucket myBucket = theCash.findItemById(myCash.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = theCash.getOrphanBucket(myCash);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**

@@ -22,20 +22,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * The TaxBasis Account Bucket class.
@@ -45,12 +48,19 @@ public final class TaxBasisAccountBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_ACCOUNTNAME.getValue(), TaxBasisBucket.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(
+            AnalysisResource.TAXBASIS_ACCOUNTNAME.getValue(), TaxBasisBucket.FIELD_DEFS);
 
     /**
      * Parent Field Id.
      */
-    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
+    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS
+            .declareEqualityField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
+
+    /**
+     * Parent.
+     */
+    private final TaxBasisBucket theParent;
 
     /**
      * Account.
@@ -60,43 +70,50 @@ public final class TaxBasisAccountBucket
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pTaxBasis the basis bucket
+     * @param pParent the parent bucket
      * @param pAccount the account
      */
     private TaxBasisAccountBucket(final Analysis pAnalysis,
-                                  final TaxBasis pTaxBasis,
+                                  final TaxBasisBucket pParent,
                                   final TransactionAsset pAccount) {
         /* Store the parameters */
-        super(pAnalysis, pTaxBasis);
+        super(pAnalysis, pParent.getTaxBasis());
         theAccount = pAccount;
+        theParent = pParent;
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
+     * @param pParent the parent bucket
      * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private TaxBasisAccountBucket(final Analysis pAnalysis,
+                                  final TaxBasisBucket pParent,
                                   final TaxBasisAccountBucket pBase,
                                   final JDateDay pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
         theAccount = pBase.getAccount();
+        theParent = pParent;
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
+     * @param pParent the parent bucket
      * @param pBase the underlying bucket
      * @param pRange the range for the bucket
      */
     private TaxBasisAccountBucket(final Analysis pAnalysis,
+                                  final TaxBasisBucket pParent,
                                   final TaxBasisAccountBucket pBase,
                                   final JDateDayRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
         theAccount = pBase.getAccount();
+        theParent = pParent;
     }
 
     @Override
@@ -117,9 +134,21 @@ public final class TaxBasisAccountBucket
         return theAccount.getId();
     }
 
+    /**
+     * Obtain simple name.
+     * @return the simple name
+     */
+    public String getSimpleName() {
+        return theAccount.getName();
+    }
+
     @Override
     public String getName() {
-        return theAccount.getName();
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(getTaxBasis().getName());
+        myBuilder.append(':');
+        myBuilder.append(getSimpleName());
+        return myBuilder.toString();
     }
 
     /**
@@ -128,6 +157,14 @@ public final class TaxBasisAccountBucket
      */
     public TransactionAsset getAccount() {
         return theAccount;
+    }
+
+    /**
+     * Obtain parent.
+     * @return the parent
+     */
+    public TaxBasisBucket getParent() {
+        return theParent;
     }
 
     @Override
@@ -185,27 +222,25 @@ public final class TaxBasisAccountBucket
      * TaxBasisAccountBucketList class.
      */
     public static class TaxBasisAccountBucketList
-            extends OrderedIdList<Integer, TaxBasisAccountBucket>
+            extends OrderedList<TaxBasisAccountBucket>
             implements JDataContents {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_ACCOUNTLIST.getValue());
+        private static final JDataFields FIELD_DEFS = new JDataFields(
+                AnalysisResource.TAXBASIS_ACCOUNTLIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final JDataField FIELD_SIZE = FIELD_DEFS
+                .declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
-
-        /**
-         * Tax Basis Field Id.
-         */
-        private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getItemName());
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS
+                .declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * The analysis.
@@ -213,35 +248,44 @@ public final class TaxBasisAccountBucket
         private final Analysis theAnalysis;
 
         /**
-         * Tax Basis.
+         * Parent.
          */
-        private final TaxBasis theTaxBasis;
+        private final TaxBasisBucket theParent;
+
+        /**
+         * Bucket map.
+         */
+        private final Map<Long, TaxBasisAccountBucket> theMap;
 
         /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
-         * @param pTaxBasis the tax basis
+         * @param pParent the parent bucket
          */
         protected TaxBasisAccountBucketList(final Analysis pAnalysis,
-                                            final TaxBasis pTaxBasis) {
+                                            final TaxBasisBucket pParent) {
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
-            theTaxBasis = pTaxBasis;
+            theParent = pParent;
+            theMap = new HashMap<Long, TaxBasisAccountBucket>();
         }
 
         /**
          * Construct a dated List.
          * @param pAnalysis the analysis
+         * @param pParent the parent bucket
          * @param pBase the base list
          * @param pDate the Date
          */
         protected TaxBasisAccountBucketList(final Analysis pAnalysis,
+                                            final TaxBasisBucket pParent,
                                             final TaxBasisAccountBucketList pBase,
                                             final JDateDay pDate) {
             /* Initialise class */
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
-            theTaxBasis = pBase.getTaxBasis();
+            theParent = pParent;
+            theMap = new HashMap<Long, TaxBasisAccountBucket>();
 
             /* Loop through the buckets */
             Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
@@ -249,12 +293,15 @@ public final class TaxBasisAccountBucket
                 TaxBasisAccountBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, myCurr, pDate);
+                TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, theParent,
+                        myCurr,
+                        pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     add(myBucket);
+                    theMap.put(deriveAssetKey(myBucket), myBucket);
                 }
             }
         }
@@ -262,16 +309,19 @@ public final class TaxBasisAccountBucket
         /**
          * Construct a ranged List.
          * @param pAnalysis the analysis
+         * @param pParent the parent bucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
         protected TaxBasisAccountBucketList(final Analysis pAnalysis,
+                                            final TaxBasisBucket pParent,
                                             final TaxBasisAccountBucketList pBase,
                                             final JDateDayRange pRange) {
             /* Initialise class */
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
-            theTaxBasis = pBase.getTaxBasis();
+            theParent = pParent;
+            theMap = new HashMap<Long, TaxBasisAccountBucket>();
 
             /* Loop through the buckets */
             Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
@@ -279,13 +329,18 @@ public final class TaxBasisAccountBucket
                 TaxBasisAccountBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, myCurr, pRange);
+                TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, theParent,
+                        myCurr,
+                        pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
+
+                    /* Add to list and to map */
                     add(myBucket);
+                    theMap.put(deriveAssetKey(myBucket), myBucket);
                 }
             }
         }
@@ -308,18 +363,31 @@ public final class TaxBasisAccountBucket
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
-            if (FIELD_TAXBASIS.equals(pField)) {
-                return theTaxBasis;
-            }
             return JDataFieldValue.UNKNOWN;
         }
 
         /**
-         * Obtain tax basis.
-         * @return the basis
+         * Register delta transaction value.
+         * @param pTrans the transaction
+         * @param pGross the gross delta value
+         * @param pNett the net delta value
+         * @param pTax the tax delta value
          */
-        private TaxBasis getTaxBasis() {
-            return theTaxBasis;
+        protected void registerDeltaValues(final Transaction pTrans,
+                                           final JMoney pGross,
+                                           final JMoney pNett,
+                                           final JMoney pTax) {
+            /* Determine required asset */
+            TransactionAsset myAsset = pTrans.getPartner();
+            if (!(myAsset instanceof Payee)) {
+                myAsset = pTrans.getAccount();
+            }
+
+            /* Access the relevant account bucket */
+            TaxBasisAccountBucket myBucket = getBucket(myAsset);
+
+            /* register deltas */
+            myBucket.registerDeltaValues(pTrans, pGross, pNett, pTax);
         }
 
         /**
@@ -327,21 +395,65 @@ public final class TaxBasisAccountBucket
          * @param pAccount the account
          * @return the bucket
          */
-        protected TaxBasisAccountBucket getBucket(final TransactionAsset pAccount) {
+        private TaxBasisAccountBucket getBucket(final TransactionAsset pAccount) {
             /* Locate the bucket in the list */
-            TaxBasisAccountBucket myItem = findItemById(pAccount.getId());
+            Long myKey = deriveAssetKey(pAccount);
+            TaxBasisAccountBucket myItem = theMap.get(myKey);
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new TaxBasisAccountBucket(theAnalysis, theTaxBasis, pAccount);
+                myItem = new TaxBasisAccountBucket(theAnalysis, theParent, pAccount);
 
                 /* Add to the list */
                 add(myItem);
+                theMap.put(myKey, myItem);
             }
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Find the TaxBasisAccountBucket for a given account.
+         * @param pAccount the account
+         * @return the bucket (or null)
+         */
+        protected TaxBasisAccountBucket findBucket(final TransactionAsset pAccount) {
+            /* Locate the bucket in the list */
+            Long myKey = deriveAssetKey(pAccount);
+            return theMap.get(myKey);
+        }
+
+        /**
+         * Obtain an orphan TaxBasisAccountBucket for a given account.
+         * @param pAccount the account
+         * @return the bucket
+         */
+        protected TaxBasisAccountBucket getOrphanBucket(final TransactionAsset pAccount) {
+            /* Allocate an orphan bucket */
+            return new TaxBasisAccountBucket(theAnalysis, theParent, pAccount);
+        }
+
+        /**
+         * derive asset key for a bucket.
+         * @param pBucket the bucket
+         * @return the asset key
+         */
+        private static long deriveAssetKey(final TaxBasisAccountBucket pBucket) {
+            /* Calculate the key */
+            return deriveAssetKey(pBucket.getAccount());
+        }
+
+        /**
+         * derive asset key for an asset.
+         * @param pAsset the asset
+         * @return the asset key
+         */
+        private static long deriveAssetKey(final TransactionAsset pAsset) {
+            /* Calculate the key */
+            return (((long) pAsset.getAssetType().getId()) << Integer.SIZE)
+                   + pAsset.getId();
         }
     }
 }

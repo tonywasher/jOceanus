@@ -1042,7 +1042,7 @@ public class DepositRate
             private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
             /**
-             * The security.
+             * The deposit.
              */
             private final transient Deposit theDeposit;
 
@@ -1051,7 +1051,6 @@ public class DepositRate
              * @param pDeposit the deposit
              */
             private RateList(final Deposit pDeposit) {
-                /* Store the security */
                 theDeposit = pDeposit;
             }
 

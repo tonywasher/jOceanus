@@ -430,6 +430,16 @@ public final class TransactionTagBucket
         }
 
         /**
+         * Obtain an orphan TagBucket for a given tag.
+         * @param pTag the tag
+         * @return the bucket
+         */
+        public TransactionTagBucket getOrphanBucket(final TransactionTag pTag) {
+            /* Allocate an orphan bucket */
+            return new TransactionTagBucket(theAnalysis, pTag);
+        }
+
+        /**
          * Process transaction tags.
          * @param pTrans the transaction
          * @param pIterator the transaction tag iterator

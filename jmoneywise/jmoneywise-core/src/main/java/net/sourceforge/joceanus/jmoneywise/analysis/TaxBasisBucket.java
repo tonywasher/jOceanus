@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -36,7 +37,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAccountBucket.TaxBas
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -138,13 +141,19 @@ public class TaxBasisBucket
         theAnalysis = pAnalysis;
 
         /* Create the history map */
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(new TaxBasisValues());
+        AssetCurrency myDefault = theAnalysis.getCurrency();
+        Currency myCurrency = myDefault == null
+                                               ? AccountBucket.DEFAULT_CURRENCY
+                                               : myDefault.getCurrency();
+        TaxBasisValues myValues = new TaxBasisValues(myCurrency);
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(myValues);
 
         /* Create the account list */
         hasAccounts = theTaxBasis != null
+                      && !(this instanceof TaxBasisAccountBucket)
                       && theTaxBasis.getTaxClass().analyseAccounts();
         theAccounts = hasAccounts
-                                 ? new TaxBasisAccountBucketList(theAnalysis, theTaxBasis)
+                                 ? new TaxBasisAccountBucketList(theAnalysis, this)
                                  : null;
 
         /* Access the key value maps */
@@ -171,7 +180,7 @@ public class TaxBasisBucket
         /* Create the account list */
         hasAccounts = pBase.hasAccounts();
         theAccounts = hasAccounts
-                                 ? new TaxBasisAccountBucketList(theAnalysis, pBase.getAccounts(), pDate)
+                                 ? new TaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pDate)
                                  : null;
 
         /* Access the key value maps */
@@ -198,7 +207,7 @@ public class TaxBasisBucket
         /* Create the account list */
         hasAccounts = pBase.hasAccounts();
         theAccounts = hasAccounts
-                                 ? new TaxBasisAccountBucketList(theAnalysis, pBase.getAccounts(), pRange)
+                                 ? new TaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pRange)
                                  : null;
 
         /* Access the key value maps */
@@ -283,7 +292,7 @@ public class TaxBasisBucket
      * Do we have accounts.
      * @return true/false
      */
-    private boolean hasAccounts() {
+    public boolean hasAccounts() {
         return hasAccounts;
     }
 
@@ -302,6 +311,29 @@ public class TaxBasisBucket
     public Iterator<TaxBasisAccountBucket> accountIterator() {
         return hasAccounts
                           ? theAccounts.iterator()
+                          : null;
+    }
+
+    /**
+     * find an account bucket.
+     * @param pAccount the account
+     * @return the bucket
+     */
+    public TaxBasisAccountBucket findAccountBucket(final TransactionAsset pAccount) {
+        return hasAccounts
+                          ? theAccounts.findBucket(pAccount)
+                          : null;
+    }
+
+    /**
+     * Obtain an orphan TaxBasisAccountBucket for a given account.
+     * @param pAccount the account
+     * @return the bucket
+     */
+    public TaxBasisAccountBucket getOrphanAccountBucket(final TransactionAsset pAccount) {
+        /* Allocate an orphan bucket */
+        return hasAccounts
+                          ? theAccounts.getOrphanBucket(pAccount)
                           : null;
     }
 
@@ -494,28 +526,24 @@ public class TaxBasisBucket
             myDir = myDir.reverse();
         }
 
-        /* Access the counters */
+        /* Obtain zeroed counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
-        myNet = new JMoney(myNet);
+        myGross.setZero();
+        JMoney myNett = new JMoney(myGross);
+        JMoney myTax = new JMoney(myGross);
 
         /* If this is an expense */
         if (myDir.isTo()) {
             /* Adjust the gross and net */
             myGross.subtractAmount(myAmount);
-            myNet.subtractAmount(myAmount);
+            myNett.subtractAmount(myAmount);
 
             /* If we have a tax credit */
             if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
-                /* Adjust the tax */
-                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-                myTax = new JMoney(myTax);
-                myTax.subtractAmount(myTaxCredit);
-                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
-
                 /* Adjust the gross */
                 myGross.subtractAmount(myTaxCredit);
+                myTax.subtractAmount(myTaxCredit);
             }
 
             /* If we have a natInsurance payment */
@@ -534,24 +562,20 @@ public class TaxBasisBucket
             if ((myDonation != null) && (myDonation.isNonZero())) {
                 /* Adjust the gross and net */
                 myGross.subtractAmount(myDonation);
-                myNet.subtractAmount(myDonation);
+                myNett.subtractAmount(myDonation);
             }
 
+            /* else this is a standard income */
         } else {
             /* Adjust the gross and net */
             myGross.addAmount(myAmount);
-            myNet.addAmount(myAmount);
+            myNett.addAmount(myAmount);
 
             /* If we have a tax credit */
             if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
-                /* Adjust the tax */
-                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-                myTax = new JMoney(myTax);
-                myTax.addAmount(myTaxCredit);
-                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
-
-                /* Adjust the gross */
+                /* Adjust the values */
                 myGross.addAmount(myTaxCredit);
+                myTax.addAmount(myTaxCredit);
             }
 
             /* If we have a natInsurance payment */
@@ -570,16 +594,18 @@ public class TaxBasisBucket
             if ((myDonation != null) && (myDonation.isNonZero())) {
                 /* Adjust the gross and net */
                 myGross.addAmount(myDonation);
-                myNet.addAmount(myDonation);
+                myNett.addAmount(myDonation);
             }
         }
 
-        /* Set the values */
-        setValue(TaxBasisAttribute.GROSS, myGross);
-        setValue(TaxBasisAttribute.NETT, myNet);
+        /* Register the delta values */
+        registerDeltaValues(pTrans, myGross, myNett, myTax);
 
-        /* Register the transaction */
-        theHistory.registerTransaction(pTrans, theValues);
+        /* If we have accounts */
+        if (hasAccounts) {
+            /* register the changes against the accounts */
+            theAccounts.registerDeltaValues(pTrans, myGross, myNett, myTax);
+        }
     }
 
     /**
@@ -594,53 +620,89 @@ public class TaxBasisBucket
         /* Determine style of event */
         AssetDirection myDir = pTrans.getDirection();
 
-        /* Access the counters */
+        /* Obtain zeroed counters */
         JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
-        myNet = new JMoney(myNet);
+        myGross.setZero();
+        JMoney myNett = new JMoney(myGross);
+        JMoney myTax = new JMoney(myGross);
 
-        /* If this is an income */
+        /* If this is a refunded expense */
         if (myDir.isFrom()) {
             /* Adjust the gross and net */
             myGross.subtractAmount(myAmount);
-            myNet.subtractAmount(myAmount);
+            myNett.subtractAmount(myAmount);
 
             /* If we have a tax relief */
             if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
-                /* Adjust the tax */
-                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-                myTax = new JMoney(myTax);
-                myTax.subtractAmount(myTaxCredit);
-                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
-
-                /* Adjust the gross and net */
+                /* Adjust the values */
                 myGross.subtractAmount(myTaxCredit);
-                myNet.subtractAmount(myTaxCredit);
+                myNett.subtractAmount(myTaxCredit);
+                myTax.subtractAmount(myTaxCredit);
             }
 
+            /* else this is a standard expense */
         } else {
             /* Adjust the gross and net */
             myGross.addAmount(myAmount);
-            myNet.addAmount(myAmount);
+            myNett.addAmount(myAmount);
 
             /* If we have a tax relief */
             if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
-                /* Adjust the tax */
-                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-                myTax = new JMoney(myTax);
-                myTax.addAmount(myTaxCredit);
-                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
-
-                /* Adjust the gross and net */
+                /* Adjust the values */
                 myGross.addAmount(myTaxCredit);
-                myNet.addAmount(myTaxCredit);
+                myNett.addAmount(myTaxCredit);
+                myTax.addAmount(myTaxCredit);
             }
         }
 
-        /* Set the values */
-        setValue(TaxBasisAttribute.GROSS, myGross);
-        setValue(TaxBasisAttribute.NETT, myNet);
+        /* Register the delta values */
+        registerDeltaValues(pTrans, myGross, myNett, myTax);
+
+        /* If we have accounts */
+        if (hasAccounts) {
+            /* register the changes against the accounts */
+            theAccounts.registerDeltaValues(pTrans, myGross, myNett, myTax);
+        }
+    }
+
+    /**
+     * Register delta transaction value.
+     * @param pTrans the transaction
+     * @param pGross the gross delta value
+     * @param pNett the net delta value
+     * @param pTax the tax delta value
+     */
+    protected void registerDeltaValues(final Transaction pTrans,
+                                       final JMoney pGross,
+                                       final JMoney pNett,
+                                       final JMoney pTax) {
+        /* If we have a change to the gross value */
+        if (pGross.isNonZero()) {
+            /* Adjust Gross figure */
+            JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            myGross = new JMoney(myGross);
+            myGross.addAmount(pGross);
+            setValue(TaxBasisAttribute.GROSS, myGross);
+        }
+
+        /* If we have a change to the net value */
+        if (pNett.isNonZero()) {
+            /* Adjust Net figure */
+            JMoney myNett = theValues.getMoneyValue(TaxBasisAttribute.NETT);
+            myNett = new JMoney(myNett);
+            myNett.addAmount(pNett);
+            setValue(TaxBasisAttribute.NETT, myNett);
+        }
+
+        /* If we have a change to the tax value */
+        if (pTax.isNonZero()) {
+            /* Adjust Tax figure */
+            JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
+            myTax = new JMoney(myTax);
+            myTax.addAmount(pTax);
+            setValue(TaxBasisAttribute.TAXCREDIT, myTax);
+        }
 
         /* Register the transaction */
         theHistory.registerTransaction(pTrans, theValues);
@@ -729,15 +791,16 @@ public class TaxBasisBucket
 
         /**
          * Constructor.
+         * @param pCurrency the reporting currency
          */
-        protected TaxBasisValues() {
+        protected TaxBasisValues(final Currency pCurrency) {
             /* Initialise class */
             super(TaxBasisAttribute.class);
 
             /* Create all possible values */
-            put(TaxBasisAttribute.GROSS, new JMoney());
-            put(TaxBasisAttribute.NETT, new JMoney());
-            put(TaxBasisAttribute.TAXCREDIT, new JMoney());
+            put(TaxBasisAttribute.GROSS, new JMoney(pCurrency));
+            put(TaxBasisAttribute.NETT, new JMoney(pCurrency));
+            put(TaxBasisAttribute.TAXCREDIT, new JMoney(pCurrency));
         }
 
         /**
@@ -764,10 +827,15 @@ public class TaxBasisBucket
 
         @Override
         protected void resetBaseValues() {
+            /* Create a zero value in the correct currency */
+            JMoney myValue = getMoneyValue(TaxBasisAttribute.GROSS);
+            myValue = new JMoney(myValue);
+            myValue.setZero();
+
             /* Reset Income and expense values */
-            put(TaxBasisAttribute.GROSS, new JMoney());
-            put(TaxBasisAttribute.NETT, new JMoney());
-            put(TaxBasisAttribute.TAXCREDIT, new JMoney());
+            put(TaxBasisAttribute.GROSS, myValue);
+            put(TaxBasisAttribute.NETT, new JMoney(myValue));
+            put(TaxBasisAttribute.TAXCREDIT, new JMoney(myValue));
         }
 
         /**
@@ -959,6 +1027,16 @@ public class TaxBasisBucket
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Obtain an orphan TaxBasisBucket for a given taxBasis.
+         * @param pBasis the taxBasis
+         * @return the bucket
+         */
+        public TaxBasisBucket getOrphanBucket(final TaxBasis pBasis) {
+            /* Allocate an orphan bucket */
+            return new TaxBasisBucket(theAnalysis, pBasis);
         }
 
         /**

@@ -27,11 +27,13 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -104,10 +106,13 @@ public class TaxationBasis
         while (myIterator.hasNext()) {
             TaxBasisBucket myBucket = myIterator.next();
 
+            /* Access the tax basis */
+            boolean hasAccounts = myBucket.hasAccounts();
+
             /* Access the amount */
             TaxBasisValues myValues = myBucket.getValues();
             JMoney myGross = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
-            JMoney myNet = myValues.getMoneyValue(TaxBasisAttribute.NETT);
+            JMoney myNett = myValues.getMoneyValue(TaxBasisAttribute.NETT);
 
             /* If we have a non-zero value */
             if (myGross.isNonZero()) {
@@ -116,12 +121,20 @@ public class TaxationBasis
 
                 /* Format the detail */
                 theBuilder.startRow(myTable);
-                theBuilder.makeFilterLinkCell(myTable, myName);
-                theBuilder.makeValueCell(myTable, myNet);
+                if (hasAccounts) {
+                    theBuilder.makeDelayLinkCell(myTable, myName);
+                } else {
+                    theBuilder.makeFilterLinkCell(myTable, myName);
+                }
+                theBuilder.makeValueCell(myTable, myNett);
                 theBuilder.makeValueCell(myTable, myGross);
 
-                /* Record the filter */
-                setFilterForId(myName, myBucket);
+                /* Create links */
+                if (hasAccounts) {
+                    setDelayedTable(myName, myTable, myBucket);
+                } else {
+                    setFilterForId(myName, myBucket);
+                }
             }
         }
 
@@ -138,8 +151,57 @@ public class TaxationBasis
     }
 
     @Override
-    protected TaxBasisFilter processFilter(final Object pSource) {
-        /* If this is a TaxBasisBucket */
+    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+        Object mySource = pTable.getSource();
+        if (mySource instanceof TaxBasisBucket) {
+            TaxBasisBucket mySourceBucket = (TaxBasisBucket) mySource;
+            return createDelayedAccounts(pTable.getParent(), mySourceBucket);
+        }
+
+        /* Return the null table */
+        return null;
+    }
+
+    /**
+     * Create a delayed accounts table.
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    protected HTMLTable createDelayedAccounts(final HTMLTable pParent,
+                                              final TaxBasisBucket pSource) {
+        /* Create an embedded table */
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* Loop through the Account Buckets */
+        Iterator<TaxBasisAccountBucket> myIterator = pSource.accountIterator();
+        while (myIterator.hasNext()) {
+            TaxBasisAccountBucket myBucket = myIterator.next();
+
+            /* Access bucket name */
+            String myName = myBucket.getName();
+            String mySimpleName = myBucket.getSimpleName();
+
+            /* Access values */
+            TaxBasisValues myValues = myBucket.getValues();
+
+            /* Create the SubCategory row */
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myName, mySimpleName);
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.NETT));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.GROSS));
+
+            /* Record the selection */
+            setFilterForId(myName, myBucket);
+        }
+
+        /* Return the table */
+        return myTable;
+    }
+
+    @Override
+    protected AnalysisFilter<?, TaxBasisAttribute> processFilter(final Object pSource) {
         if (pSource instanceof TaxBasisBucket) {
             /* Create the new filter */
             return new TaxBasisFilter((TaxBasisBucket) pSource);

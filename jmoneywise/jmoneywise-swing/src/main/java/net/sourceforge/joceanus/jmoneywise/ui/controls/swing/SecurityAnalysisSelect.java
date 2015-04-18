@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
@@ -196,42 +197,37 @@ public class SecurityAnalysisSelect
         thePortfolios = pAnalysis.getPortfolios();
 
         /* Obtain the current security */
+        PortfolioBucket myPortfolio = theState.getPortfolio();
         SecurityBucket mySecurity = theState.getSecurity();
 
         /* If we have a selected Security */
         if (mySecurity != null) {
-            /* Access the portfolio */
-            Portfolio myPortfolio = mySecurity.getPortfolio();
-
-            /* Look for the equivalent bucket */
-            PortfolioBucket myPortBucket = thePortfolios.findItemById(myPortfolio.getOrderedId());
-            mySecurity = (myPortBucket == null)
-                                               ? null
-                                               : myPortBucket.findSecurityBucket(mySecurity.getSecurity());
+            /* Look for the equivalent buckets */
+            myPortfolio = getMatchingPortfolioBucket(mySecurity.getPortfolio());
+            mySecurity = getMatchingSecurityBucket(myPortfolio, mySecurity);
         }
 
         /* If we do not have an active bucket */
         if (mySecurity == null) {
             /* Check for a security in the same portfolio */
-            PortfolioBucket myPortBucket = theState.getPortfolio();
-            myPortBucket = (myPortBucket == null)
-                                                 ? null
-                                                 : thePortfolios.findItemById(myPortBucket.getOrderedId());
+            myPortfolio = (myPortfolio == null)
+                                               ? null
+                                               : thePortfolios.findItemById(myPortfolio.getOrderedId());
 
             /* If the portfolio no longer exists */
-            if (myPortBucket == null) {
+            if (myPortfolio == null) {
                 /* Access the first portfolio */
-                myPortBucket = thePortfolios.peekFirst();
+                myPortfolio = thePortfolios.peekFirst();
             }
 
             /* Use the first security for portfolio */
-            mySecurity = (myPortBucket == null)
-                                               ? null
-                                               : getFirstSecurity(myPortBucket);
+            mySecurity = (myPortfolio == null)
+                                              ? null
+                                              : getFirstSecurity(myPortfolio);
         }
 
         /* Set the security */
-        theState.setSecurity(mySecurity);
+        theState.setSecurity(myPortfolio, mySecurity);
         theState.applyState();
     }
 
@@ -245,17 +241,12 @@ public class SecurityAnalysisSelect
             /* Obtain the filter bucket */
             SecurityBucket mySecurity = myFilter.getBucket();
 
-            /* Access the portfolio */
-            Portfolio myPortfolio = mySecurity.getPortfolio();
-
-            /* Look for the equivalent bucket */
-            PortfolioBucket myPortBucket = thePortfolios.findItemById(myPortfolio.getOrderedId());
-            mySecurity = (myPortBucket == null)
-                                               ? null
-                                               : myPortBucket.findSecurityBucket(mySecurity.getSecurity());
+            /* Look for the equivalent buckets */
+            PortfolioBucket myPortfolio = getMatchingPortfolioBucket(mySecurity.getPortfolio());
+            mySecurity = getMatchingSecurityBucket(myPortfolio, mySecurity);
 
             /* Set the security */
-            theState.setSecurity(mySecurity);
+            theState.setSecurity(myPortfolio, mySecurity);
             theState.applyState();
         }
     }
@@ -271,6 +262,47 @@ public class SecurityAnalysisSelect
         return myIterator.hasNext()
                                    ? myIterator.next()
                                    : null;
+    }
+
+    /**
+     * Obtain matching portfolio bucket.
+     * @param pPortfolio the portfolio
+     * @return the matching bucket
+     */
+    private PortfolioBucket getMatchingPortfolioBucket(final Portfolio pPortfolio) {
+        /* Look up the matching PortfolioBucket */
+        PortfolioBucket myBucket = thePortfolios.findItemById(pPortfolio.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = thePortfolios.getOrphanBucket(pPortfolio);
+        }
+
+        /* return the bucket */
+        return myBucket;
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pPortfolio the portfolio bucket
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private SecurityBucket getMatchingSecurityBucket(final PortfolioBucket pPortfolio,
+                                                     final SecurityBucket pBucket) {
+        /* Look up the matching SecurityBucket */
+        Security mySecurity = pBucket.getSecurity();
+        SecurityBucket myBucket = pPortfolio.findSecurityBucket(mySecurity);
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = pPortfolio.getOrphanSecurityBucket(pBucket.getSecurityHolding());
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**
@@ -468,17 +500,22 @@ public class SecurityAnalysisSelect
                 /* Store the security */
                 theSecurity = pSecurity;
 
-                /* Access portfolio for security */
-                thePortfolio = null;
-                if (theSecurity != null) {
-                    Portfolio myPortfolio = theSecurity.getPortfolio();
-                    thePortfolio = thePortfolios.findItemById(myPortfolio.getId());
-                }
-
                 /* We have changed */
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set new Security.
+         * @param pPortfolio the Portfolio
+         * @param pSecurity the Security
+         */
+        private void setSecurity(final PortfolioBucket pPortfolio,
+                                 final SecurityBucket pSecurity) {
+            /* Store the portfolio and security */
+            thePortfolio = pPortfolio;
+            theSecurity = pSecurity;
         }
 
         /**

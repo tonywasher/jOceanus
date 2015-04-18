@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
@@ -212,7 +213,7 @@ public class LoanAnalysisSelect
         /* If we have a selected Loan */
         if (myLoan != null) {
             /* Look for the equivalent bucket */
-            myLoan = theLoans.findItemById(myLoan.getOrderedId());
+            myLoan = getMatchingBucket(myLoan);
         }
 
         /* If we do not have an active bucket and the list is non-empty */
@@ -245,7 +246,7 @@ public class LoanAnalysisSelect
             LoanBucket myLoan = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myLoan = theLoans.findItemById(myLoan.getOrderedId());
+            myLoan = getMatchingBucket(myLoan);
 
             /* Set the loan */
             theState.setLoan(myLoan);
@@ -272,6 +273,26 @@ public class LoanAnalysisSelect
 
         /* No such account */
         return null;
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private LoanBucket getMatchingBucket(final LoanBucket pBucket) {
+        /* Look up the matching LoanBucket */
+        Loan myLoan = pBucket.getAccount();
+        LoanBucket myBucket = theLoans.findItemById(myLoan.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = theLoans.getOrphanBucket(myLoan);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**

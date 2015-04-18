@@ -323,6 +323,16 @@ public final class DepositBucket
             return FIELD_DEFS;
         }
 
+        /**
+         * Obtain an orphan DepositBucket for a given deposit account.
+         * @param pDeposit the deposit account
+         * @return the bucket
+         */
+        public DepositBucket getOrphanBucket(final Deposit pDeposit) {
+            /* Allocate an orphan bucket */
+            return newBucket(pDeposit);
+        }
+
         @Override
         protected DepositBucket newBucket(final Deposit pDeposit) {
             return new DepositBucket(getAnalysis(), pDeposit);

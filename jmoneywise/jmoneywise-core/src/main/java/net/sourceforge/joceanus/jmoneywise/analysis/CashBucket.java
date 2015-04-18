@@ -201,6 +201,16 @@ public final class CashBucket
             return FIELD_DEFS;
         }
 
+        /**
+         * Obtain an orphan CashBucket for a given cash account.
+         * @param pCash the cash account
+         * @return the bucket
+         */
+        public CashBucket getOrphanBucket(final Cash pCash) {
+            /* Allocate an orphan bucket */
+            return newBucket(pCash);
+        }
+
         @Override
         protected CashBucket newBucket(final Cash pCash) {
             return new CashBucket(getAnalysis(), pCash);

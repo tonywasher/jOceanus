@@ -428,6 +428,16 @@ public final class PortfolioBucket
     }
 
     /**
+     * Obtain an orphan SecurityBucket from this portfolio for a security holding.
+     * @param pHolding the security holding
+     * @return the bucket
+     */
+    public SecurityBucket getOrphanSecurityBucket(final SecurityHolding pHolding) {
+        /* Return the security bucket for the portfolio's list */
+        return theSecurities.getOrphanBucket(pHolding);
+    }
+
+    /**
      * Obtain the SecurityBucket from this portfolio for a security.
      * @param pSecurity the security
      * @return the bucket
@@ -864,6 +874,16 @@ public final class PortfolioBucket
 
             /* Return the bucket */
             return myItem.getPortfolioCash();
+        }
+
+        /**
+         * Obtain an orphan PortfolioBucket for a given portfolio account.
+         * @param pPortfolio the portfolio account
+         * @return the bucket
+         */
+        public PortfolioBucket getOrphanBucket(final Portfolio pPortfolio) {
+            /* Allocate an orphan bucket */
+            return new PortfolioBucket(theAnalysis, pPortfolio);
         }
 
         /**

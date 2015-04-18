@@ -262,6 +262,16 @@ public final class LoanBucket
             return FIELD_DEFS;
         }
 
+        /**
+         * Obtain an orphan LoanBucket for a given loan account.
+         * @param pLoan the loan account
+         * @return the bucket
+         */
+        public LoanBucket getOrphanBucket(final Loan pLoan) {
+            /* Allocate an orphan bucket */
+            return newBucket(pLoan);
+        }
+
         @Override
         protected LoanBucket newBucket(final Loan pLoan) {
             return new LoanBucket(getAnalysis(), pLoan);

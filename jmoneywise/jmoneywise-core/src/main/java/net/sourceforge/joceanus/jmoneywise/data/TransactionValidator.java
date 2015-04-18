@@ -440,12 +440,12 @@ public final class TransactionValidator {
     private static boolean checkCashBack(final TransactionAsset pAccount) {
         /* If this is deposit then must be peer2peer */
         if (pAccount instanceof Deposit) {
-            return (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
+            return ((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER);
         }
 
         /* If this is loan then must be creditCard */
         if (pAccount instanceof Loan) {
-            return (((Loan) pAccount).isLoanClass(LoanCategoryClass.CREDITCARD));
+            return ((Loan) pAccount).isLoanClass(LoanCategoryClass.CREDITCARD);
         }
 
         /* not allowed */
@@ -460,7 +460,7 @@ public final class TransactionValidator {
     private static boolean checkLoyaltyBonus(final TransactionAsset pAccount) {
         /* If this is deposit then must be peer2peer */
         if (pAccount instanceof Deposit) {
-            return (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
+            return ((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER);
         }
 
         /* must be portfolio */

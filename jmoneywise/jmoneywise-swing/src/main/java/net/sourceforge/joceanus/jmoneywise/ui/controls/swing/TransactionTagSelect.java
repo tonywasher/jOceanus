@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
@@ -180,7 +181,7 @@ public class TransactionTagSelect
         /* If we have a selected Tag */
         if (myTag != null) {
             /* Look for the equivalent tag */
-            myTag = theTags.findItemById(myTag.getOrderedId());
+            myTag = getMatchingBucket(myTag);
         }
 
         /* If we do not have an active tag and the list is non-empty */
@@ -205,12 +206,32 @@ public class TransactionTagSelect
             TransactionTagBucket myTag = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myTag = theTags.findItemById(myTag.getOrderedId());
+            myTag = getMatchingBucket(myTag);
 
             /* Set the tag */
             theState.setTag(myTag);
             theState.applyState();
         }
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private TransactionTagBucket getMatchingBucket(final TransactionTagBucket pBucket) {
+        /* Look up the matching TagBucket */
+        TransactionTag myTag = pBucket.getTransTag();
+        TransactionTagBucket myBucket = theTags.findItemById(myTag.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = theTags.getOrphanBucket(myTag);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**

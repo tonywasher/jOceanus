@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -127,7 +129,12 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Create the history map */
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(new PayeeValues());
+        AssetCurrency myDefault = theAnalysis.getCurrency();
+        Currency myCurrency = myDefault == null
+                                               ? AccountBucket.DEFAULT_CURRENCY
+                                               : myDefault.getCurrency();
+        PayeeValues myValues = new PayeeValues(myCurrency);
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -775,14 +782,15 @@ public final class PayeeBucket
 
         /**
          * Constructor.
+         * @param pCurrency the reporting currency
          */
-        private PayeeValues() {
+        private PayeeValues(final Currency pCurrency) {
             /* Initialise class */
             super(PayeeAttribute.class);
 
             /* Initialise income/expense to zero */
-            put(PayeeAttribute.INCOME, new JMoney());
-            put(PayeeAttribute.EXPENSE, new JMoney());
+            put(PayeeAttribute.INCOME, new JMoney(pCurrency));
+            put(PayeeAttribute.EXPENSE, new JMoney(pCurrency));
         }
 
         /**
@@ -809,10 +817,15 @@ public final class PayeeBucket
 
         @Override
         protected void resetBaseValues() {
+            /* Create a zero value in the correct currency */
+            JMoney myValue = getMoneyValue(PayeeAttribute.INCOME);
+            myValue = new JMoney(myValue);
+            myValue.setZero();
+
             /* Reset Income and expense values */
-            put(PayeeAttribute.INCOME, new JMoney());
-            put(PayeeAttribute.EXPENSE, new JMoney());
-            put(PayeeAttribute.DELTA, new JMoney());
+            put(PayeeAttribute.INCOME, myValue);
+            put(PayeeAttribute.EXPENSE, new JMoney(myValue));
+            put(PayeeAttribute.DELTA, new JMoney(myValue));
         }
 
         /**
@@ -1041,6 +1054,16 @@ public final class PayeeBucket
 
             /* Return the bucket */
             return getBucket(myPayee);
+        }
+
+        /**
+         * Obtain an orphan PayeeBucket for a given payee account.
+         * @param pPayee the payee account
+         * @return the bucket
+         */
+        public PayeeBucket getOrphanBucket(final Payee pPayee) {
+            /* Allocate an orphan bucket */
+            return new PayeeBucket(theAnalysis, pPayee);
         }
 
         /**

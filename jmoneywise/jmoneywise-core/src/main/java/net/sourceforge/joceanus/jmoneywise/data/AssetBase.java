@@ -682,7 +682,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         /* If the Asset is not an AssetBase we are first */
-        if (pThat instanceof AssetBase) {
+        if (!(pThat instanceof AssetBase)) {
             return -1;
         }
 

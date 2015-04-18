@@ -878,7 +878,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     /**
-     * TransactionTag filter class.
+     * --== * TransactionTag filter class.
      */
     public static class TagFilter
             extends AnalysisFilter<TransactionTagBucket, AccountAttribute> {

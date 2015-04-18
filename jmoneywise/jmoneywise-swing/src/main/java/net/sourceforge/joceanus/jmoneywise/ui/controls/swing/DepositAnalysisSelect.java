@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
@@ -212,7 +213,7 @@ public class DepositAnalysisSelect
         /* If we have a selected Deposit */
         if (myDeposit != null) {
             /* Look for the equivalent bucket */
-            myDeposit = theDeposits.findItemById(myDeposit.getOrderedId());
+            myDeposit = getMatchingBucket(myDeposit);
         }
 
         /* If we do not have an active bucket and the list is non-empty */
@@ -245,7 +246,7 @@ public class DepositAnalysisSelect
             DepositBucket myDeposit = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myDeposit = theDeposits.findItemById(myDeposit.getOrderedId());
+            myDeposit = getMatchingBucket(myDeposit);
 
             /* Set the deposit */
             theState.setDeposit(myDeposit);
@@ -272,6 +273,26 @@ public class DepositAnalysisSelect
 
         /* No such account */
         return null;
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private DepositBucket getMatchingBucket(final DepositBucket pBucket) {
+        /* Look up the matching DepositBucket */
+        Deposit myDeposit = pBucket.getAccount();
+        DepositBucket myBucket = theDeposits.findItemById(myDeposit.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = theDeposits.getOrphanBucket(myDeposit);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**

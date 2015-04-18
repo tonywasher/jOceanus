@@ -990,6 +990,16 @@ public final class SecurityBucket
         }
 
         /**
+         * Obtain an orphan SecurityBucket for a given security holding.
+         * @param pHolding the security holding
+         * @return the bucket
+         */
+        public SecurityBucket getOrphanBucket(final SecurityHolding pHolding) {
+            /* Allocate an orphan bucket */
+            return new SecurityBucket(theAnalysis, pHolding);
+        }
+
+        /**
          * Mark active securities.
          * @return true/false are there active securities?
          * @throws JOceanusException on error

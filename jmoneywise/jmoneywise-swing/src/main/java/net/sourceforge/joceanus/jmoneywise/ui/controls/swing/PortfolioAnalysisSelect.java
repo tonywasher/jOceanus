@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
@@ -180,7 +181,7 @@ public class PortfolioAnalysisSelect
         /* If we have a selected Portfolio */
         if (myPortfolio != null) {
             /* Look for the equivalent bucket */
-            myPortfolio = thePortfolios.findItemById(myPortfolio.getOrderedId());
+            myPortfolio = getMatchingBucket(myPortfolio);
         }
 
         /* If we do not have an active bucket */
@@ -205,12 +206,32 @@ public class PortfolioAnalysisSelect
             PortfolioBucket myPortfolio = myFilter.getPortfolioBucket();
 
             /* Look for the equivalent bucket */
-            myPortfolio = thePortfolios.findItemById(myPortfolio.getOrderedId());
+            myPortfolio = getMatchingBucket(myPortfolio);
 
             /* Set the portfolio */
             theState.setPortfolio(myPortfolio);
             theState.applyState();
         }
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private PortfolioBucket getMatchingBucket(final PortfolioBucket pBucket) {
+        /* Look up the matching PortfolioBucket */
+        Portfolio myPortfolio = pBucket.getPortfolio();
+        PortfolioBucket myBucket = thePortfolios.findItemById(myPortfolio.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = thePortfolios.getOrphanBucket(myPortfolio);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**

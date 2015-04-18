@@ -975,7 +975,6 @@ public class SecurityPrice
              * @param pSecurity the security
              */
             private PriceList(final Security pSecurity) {
-                /* Store the security */
                 theSecurity = pSecurity;
             }
 

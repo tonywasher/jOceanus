@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
@@ -177,7 +178,7 @@ public class PayeeAnalysisSelect
         /* If we have a selected Payee */
         if (myPayee != null) {
             /* Look for the equivalent bucket */
-            myPayee = thePayees.findItemById(myPayee.getOrderedId());
+            myPayee = getMatchingBucket(myPayee);
         }
 
         /* If we do not have an active bucket and the list is non-empty */
@@ -202,12 +203,32 @@ public class PayeeAnalysisSelect
             PayeeBucket myPayee = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myPayee = thePayees.findItemById(myPayee.getOrderedId());
+            myPayee = getMatchingBucket(myPayee);
 
             /* Set the payee */
             theState.setPayee(myPayee);
             theState.applyState();
         }
+    }
+
+    /**
+     * Obtain matching bucket.
+     * @param pBucket the original bucket
+     * @return the matching bucket
+     */
+    private PayeeBucket getMatchingBucket(final PayeeBucket pBucket) {
+        /* Look up the matching PayeeBucket */
+        Payee myPayee = pBucket.getPayee();
+        PayeeBucket myBucket = thePayees.findItemById(myPayee.getOrderedId());
+
+        /* If there is no such bucket in the analysis */
+        if (myBucket == null) {
+            /* Allocate an orphan bucket */
+            myBucket = thePayees.getOrphanBucket(myPayee);
+        }
+
+        /* return the bucket */
+        return myBucket;
     }
 
     /**
