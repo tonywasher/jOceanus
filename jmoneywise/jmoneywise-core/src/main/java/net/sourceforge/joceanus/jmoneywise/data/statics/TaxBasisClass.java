@@ -72,29 +72,34 @@ public enum TaxBasisClass implements StaticInterface {
     CAPITALGAINS(8, 7),
 
     /**
-     * Total Tax Paid.
+     * Tax Free Income.
      */
-    TAXPAID(9, 8),
+    TAXFREE(9, 8),
+
+    /**
+     * BadDebt.
+     */
+    BADDEBT(10, 9),
 
     /**
      * Market Growth.
      */
-    MARKET(10, 9),
+    MARKET(11, 10),
 
     /**
-     * Tax Free Income.
+     * Total Tax Paid.
      */
-    TAXFREE(11, 10),
+    TAXPAID(12, 11),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(12, 11),
+    EXPENSE(13, 12),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(13, 12);
+    VIRTUAL(14, 13);
 
     /**
      * The String name.
@@ -175,6 +180,23 @@ public enum TaxBasisClass implements StaticInterface {
             case TAXABLEGAINS:
             case CAPITALGAINS:
             case TAXFREE:
+            case BADDEBT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is the basis an expense basis?
+     * @return true/false
+     */
+    public boolean isExpense() {
+        switch (this) {
+            case BADDEBT:
+            case EXPENSE:
+            case TAXPAID:
+            case VIRTUAL:
                 return true;
             default:
                 return false;

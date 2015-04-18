@@ -457,6 +457,11 @@ public enum StaticDataResource implements ResourceId {
     TAXBASIS_CAPITALGAINS("TaxBasis.CapitalGains"),
 
     /**
+     * TaxBasis BadDebt.
+     */
+    TAXBASIS_BADDEBT("TaxBasis.BadDebt"),
+
+    /**
      * TaxBasis TaxPaid.
      */
     TAXBASIS_TAXPAID("TaxBasis.TaxPaid"),
@@ -1288,6 +1293,8 @@ public enum StaticDataResource implements ResourceId {
                 return TAXBASIS_TAXABLEGAINS;
             case CAPITALGAINS:
                 return TAXBASIS_CAPITALGAINS;
+            case BADDEBT:
+                return TAXBASIS_BADDEBT;
             case TAXPAID:
                 return TAXBASIS_TAXPAID;
             case MARKET:

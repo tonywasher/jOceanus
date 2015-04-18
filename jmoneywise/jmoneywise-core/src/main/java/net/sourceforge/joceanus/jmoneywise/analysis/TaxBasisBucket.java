@@ -120,9 +120,14 @@ public class TaxBasisBucket
     private final BucketHistory<TaxBasisValues, TaxBasisAttribute> theHistory;
 
     /**
-     * Do we have accounts.
+     * Do we have accounts?
      */
     private final boolean hasAccounts;
+
+    /**
+     * Are we an expense bucket?
+     */
+    private final boolean isExpense;
 
     /**
      * AccountBucketList.
@@ -139,6 +144,8 @@ public class TaxBasisBucket
         /* Store the parameters */
         theTaxBasis = pTaxBasis;
         theAnalysis = pAnalysis;
+        isExpense = theTaxBasis != null
+                    && theTaxBasis.getTaxClass().isExpense();
 
         /* Create the history map */
         AssetCurrency myDefault = theAnalysis.getCurrency();
@@ -173,6 +180,7 @@ public class TaxBasisBucket
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
+        isExpense = pBase.isExpense();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pDate);
@@ -200,6 +208,7 @@ public class TaxBasisBucket
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
+        isExpense = pBase.isExpense();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pRange);
@@ -294,6 +303,14 @@ public class TaxBasisBucket
      */
     public boolean hasAccounts() {
         return hasAccounts;
+    }
+
+    /**
+     * Is this an expense bucket.
+     * @return true/false
+     */
+    public boolean isExpense() {
+        return isExpense;
     }
 
     /**
@@ -630,20 +647,6 @@ public class TaxBasisBucket
         /* If this is a refunded expense */
         if (myDir.isFrom()) {
             /* Adjust the gross and net */
-            myGross.subtractAmount(myAmount);
-            myNett.subtractAmount(myAmount);
-
-            /* If we have a tax relief */
-            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
-                /* Adjust the values */
-                myGross.subtractAmount(myTaxCredit);
-                myNett.subtractAmount(myTaxCredit);
-                myTax.subtractAmount(myTaxCredit);
-            }
-
-            /* else this is a standard expense */
-        } else {
-            /* Adjust the gross and net */
             myGross.addAmount(myAmount);
             myNett.addAmount(myAmount);
 
@@ -653,6 +656,20 @@ public class TaxBasisBucket
                 myGross.addAmount(myTaxCredit);
                 myNett.addAmount(myTaxCredit);
                 myTax.addAmount(myTaxCredit);
+            }
+
+            /* else this is a standard expense */
+        } else {
+            /* Adjust the gross and net */
+            myGross.subtractAmount(myAmount);
+            myNett.subtractAmount(myAmount);
+
+            /* If we have a tax relief */
+            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+                /* Adjust the values */
+                myGross.subtractAmount(myTaxCredit);
+                myNett.subtractAmount(myTaxCredit);
+                myTax.subtractAmount(myTaxCredit);
             }
         }
 
@@ -713,13 +730,19 @@ public class TaxBasisBucket
      * @param pTrans the transaction
      * @param pValue the value
      */
-    private void adjustValue(final Transaction pTrans,
-                             final JMoney pValue) {
+    protected void adjustValue(final Transaction pTrans,
+                               final JMoney pValue) {
         /* Adjust the value */
         adjustValue(pValue);
 
         /* Register the transaction */
         theHistory.registerTransaction(pTrans, theValues);
+        /* If we have accounts */
+
+        if (hasAccounts) {
+            /* register the adjustment against the accounts */
+            theAccounts.adjustValue(pTrans, pValue);
+        }
     }
 
     /**
@@ -733,9 +756,16 @@ public class TaxBasisBucket
         JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
         myNet = new JMoney(myNet);
 
-        /* Adjust the gross and net */
-        myGross.addAmount(pValue);
-        myNet.addAmount(pValue);
+        /* If we are an expense bucket */
+        if (isExpense) {
+            /* Adjust the gross and net */
+            myGross.subtractAmount(pValue);
+            myNet.subtractAmount(pValue);
+        } else {
+            /* Adjust the gross and net */
+            myGross.addAmount(pValue);
+            myNet.addAmount(pValue);
+        }
 
         /* Set the values */
         setValue(TaxBasisAttribute.GROSS, myGross);
@@ -747,19 +777,11 @@ public class TaxBasisBucket
      * @param pBucket tax category bucket
      */
     protected void addValues(final TaxBasisBucket pBucket) {
-        /* Adjust the value */
+        /* Add the values */
         JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myAmount.addAmount(pBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-    }
-
-    /**
-     * subtract values.
-     * @param pBucket tax category bucket
-     */
-    protected void subtractValues(final TaxBasisBucket pBucket) {
-        /* Adjust the value */
-        JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-        myAmount.subtractAmount(pBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        myAmount = theValues.getMoneyValue(TaxBasisAttribute.NETT);
+        myAmount.addAmount(pBucket.getMoneyValue(TaxBasisAttribute.NETT));
     }
 
     /**
@@ -1103,8 +1125,12 @@ public class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.TAXFREE);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
-                case EXPENSE:
                 case BADDEBT:
+                    /* Adjust the BadDebt bucket */
+                    myBucket = getBucket(TaxBasisClass.BADDEBT);
+                    myBucket.addExpenseTransaction(pTrans);
+                    break;
+                case EXPENSE:
                 case LOCALTAXES:
                 case WRITEOFF:
                 case LOANINTERESTCHARGED:
@@ -1186,32 +1212,9 @@ public class TaxBasisBucket
             Iterator<TaxBasisBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
                 TaxBasisBucket myBucket = myIterator.next();
-                TaxBasis myBasis = myBucket.getTaxBasis();
 
-                /* Switch on the tax basis */
-                switch (myBasis.getTaxClass()) {
-                    case SALARY:
-                    case TAXEDINTEREST:
-                    case UNTAXEDINTEREST:
-                    case DIVIDEND:
-                    case UNITTRUSTDIVIDEND:
-                    case RENTALINCOME:
-                    case TAXABLEGAINS:
-                    case CAPITALGAINS:
-                    case MARKET:
-                    case TAXFREE:
-                        /* Adjust the Total Profit buckets */
-                        theTotals.addValues(myBucket);
-                        break;
-                    case TAXPAID:
-                    case EXPENSE:
-                    case VIRTUAL:
-                        /* Adjust the Total profits buckets */
-                        theTotals.subtractValues(myBucket);
-                        break;
-                    default:
-                        break;
-                }
+                /* Adjust the Total Profit buckets */
+                theTotals.addValues(myBucket);
             }
         }
 

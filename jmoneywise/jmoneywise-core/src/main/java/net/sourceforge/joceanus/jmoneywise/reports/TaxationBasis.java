@@ -144,6 +144,7 @@ public class TaxationBasis
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.NETT));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Return the document */

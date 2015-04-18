@@ -93,7 +93,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  */
 public class ArchiveLoader {
     /**
-     * Number of base archive load areas. 14xStatic,TransactionTags,2*Category,Schedule,Rate,Price,Account,TaxYear,Range+Transaction.
+     * Number of base archive load areas.
+     * 14xStatic,TransactionTags,2*Category,Schedule,Rate,Price,Account,TaxYear,Range+Transaction.
      */
     private static final int NUM_ARCHIVE_AREAS = 24;
 
@@ -295,11 +296,14 @@ public class ArchiveLoader {
 
             /* Access the workbook from the stream */
             DataWorkBook myWorkbook = new DataWorkBook(pStream, pType);
+            boolean bContinue = !pTask.isCancelled();
 
             /* Determine Year Range */
             JDataProfile myStage = myTask.startTask("LoadSheets");
-            myStage.startTask("Range");
-            boolean bContinue = loadArchive(pTask, myWorkbook, myData);
+            if (bContinue) {
+                myStage.startTask("Range");
+                bContinue = loadArchive(pTask, myWorkbook, myData);
+            }
 
             /* Load Tables */
             if (bContinue) {

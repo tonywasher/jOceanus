@@ -378,16 +378,46 @@ public final class TaxBasisAccountBucket
                                            final JMoney pNett,
                                            final JMoney pTax) {
             /* Determine required asset */
-            TransactionAsset myAsset = pTrans.getPartner();
-            if (!(myAsset instanceof Payee)) {
-                myAsset = pTrans.getAccount();
-            }
+            TransactionAsset myAsset = deriveAsset(pTrans);
 
             /* Access the relevant account bucket */
             TaxBasisAccountBucket myBucket = getBucket(myAsset);
 
             /* register deltas */
             myBucket.registerDeltaValues(pTrans, pGross, pNett, pTax);
+        }
+
+        /**
+         * Adjust value.
+         * @param pTrans the transaction
+         * @param pGross the gross delta value
+         */
+        protected void adjustValue(final Transaction pTrans,
+                                   final JMoney pGross) {
+            /* Determine required asset */
+            TransactionAsset myAsset = deriveAsset(pTrans);
+
+            /* Access the relevant account bucket */
+            TaxBasisAccountBucket myBucket = getBucket(myAsset);
+
+            /* adjust value */
+            myBucket.adjustValue(pTrans, pGross);
+        }
+
+        /**
+         * Adjust value.
+         * @param pTrans the transaction
+         * @return the relevant asset
+         */
+        private TransactionAsset deriveAsset(final Transaction pTrans) {
+            /* Determine required asset */
+            TransactionAsset myAsset = pTrans.getPartner();
+            if (!(myAsset instanceof Payee)) {
+                myAsset = pTrans.getAccount();
+            }
+
+            /* return the asset */
+            return myAsset;
         }
 
         /**
