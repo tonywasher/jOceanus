@@ -357,6 +357,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
         /* Set editable */
         setEditable(true);
+        theUpdateSet.setEditing(Boolean.TRUE);
 
         /* Note status has changed */
         theEventManager.fireStateChanged();
@@ -489,6 +490,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
         /* Stop element being editable */
         setEditable(false);
+        theUpdateSet.setEditing(Boolean.FALSE);
 
         /* Note status has changed */
         theEventManager.fireStateChanged();
@@ -520,6 +522,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Request commit.
      */
     protected void requestCommit() {
+        /* Allow analysis */
+        theUpdateSet.setEditing(Boolean.FALSE);
+
         /* If we have any updates */
         if (isNew || hasUpdates()) {
             /* Condense history to a single update */
@@ -542,6 +547,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     protected void requestEdit() {
         /* Start editing */
         setEditable(true);
+        theUpdateSet.setEditing(Boolean.TRUE);
         theSelectedItem = theItem;
 
         /* Note status has changed */

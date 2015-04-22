@@ -53,14 +53,11 @@ import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
@@ -72,6 +69,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.Stat
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
@@ -82,7 +80,6 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -263,16 +260,6 @@ public class TransactionTable
     private final transient JFieldManager theFieldMgr;
 
     /**
-     * The event entry.
-     */
-    private final transient UpdateEntry<Transaction, MoneyWiseDataType> theTransEntry;
-
-    /**
-     * The info entry.
-     */
-    private final transient UpdateEntry<TransactionInfo, MoneyWiseDataType> theInfoEntry;
-
-    /**
      * The analysis data entry.
      */
     private final transient ViewerEntry theDataAnalysis;
@@ -281,6 +268,11 @@ public class TransactionTable
      * The filter data entry.
      */
     private final transient ViewerEntry theDataFilter;
+
+    /**
+     * Analysis View.
+     */
+    private final transient AnalysisView theAnalysisView;
 
     /**
      * Analysis Selection panel.
@@ -364,8 +356,6 @@ public class TransactionTable
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
-        theTransEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTION);
-        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
         setUpdateSet(theUpdateSet);
         theBuilder = new TransactionBuilder(theUpdateSet);
 
@@ -383,8 +373,11 @@ public class TransactionTable
         /* Create new button */
         theNewButton = MoneyWiseIcons.getNewButton();
 
+        /* Create the Analysis View */
+        theAnalysisView = new AnalysisView(theView, theUpdateSet);
+
         /* Create the Analysis Selection */
-        theSelect = new AnalysisSelect(theView, theUpdateSet, theNewButton);
+        theSelect = new AnalysisSelect(theView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
         theActionButtons = new ActionButtons(theUpdateSet);
@@ -482,9 +475,8 @@ public class TransactionTable
                                                         ? theSelect.getColumns()
                                                         : AnalysisColumnSet.BALANCE);
 
-        /* Set the selection */
-        theRange = null;
-        setSelection(theSelect.getRange());
+        /* Update the lists */
+        updateList();
         theSelectionModel.handleNewFilter();
     }
 
@@ -502,9 +494,8 @@ public class TransactionTable
         /* Set the filter */
         theFilter = theSelect.getFilter();
 
-        /* Set the selection */
-        theRange = null;
-        setSelection(theSelect.getRange());
+        /* Update the list */
+        updateList();
 
         /* Complete the task */
         myTask.end();
@@ -525,30 +516,33 @@ public class TransactionTable
         theActionButtons.setEnabled(true);
         theActionButtons.setVisible(hasUpdates && !isItemEditing);
         theSelect.setEnabled(!hasUpdates && !isItemEditing);
+        theNewButton.setEnabled(!isItemEditing);
 
         /* Adjust enable of the table */
         setEnabled(!isItemEditing);
 
-        /* Update the top level tabs */
-        fireStateChanged();
+        /* Pass call on */
+        super.notifyChanges();
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnable) {
+        /* Ensure that we are disabled whilst editing */
+        super.setEnabled(bEnable && !isItemEditing());
     }
 
     /**
-     * Set Selection to the specified date range.
-     * @param pRange the Date range for the extract
+     * Update lists.
      */
-    public void setSelection(final JDateDayRange pRange) {
-        theRange = pRange;
-        theTransactions = null;
+    private void updateList() {
+        /* Access the transactions */
+        theTransactions = theAnalysisView.getTransactions();
+        theRange = theAnalysisView.getRange();
         theHeader = null;
-        TransactionInfoList myInfo = null;
-        if (theRange != null) {
-            /* Get the Events edit list */
-            MoneyWiseData myData = theView.getData();
-            TransactionList myTransactions = myData.getTransactions();
-            theTransactions = myTransactions.deriveEditList(pRange);
+
+        if (theTransactions != null) {
+            /* Create the header */
             theHeader = new AnalysisHeader(theTransactions);
-            myInfo = theTransactions.getTransactionInfo();
 
             /* Update the column editors */
             theColumns.refreshData();
@@ -558,13 +552,11 @@ public class TransactionTable
             theActiveTrans.updateEditors(theRange);
 
             /* Notify the builder */
-            theBuilder.setParameters(theTransactions, pRange);
+            theBuilder.setParameters(theTransactions, theRange);
         }
 
         /* Update lists */
         setList(theTransactions);
-        theTransEntry.setDataList(theTransactions);
-        theInfoEntry.setDataList(myInfo);
         theActionButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
         fireStateChanged();
@@ -828,8 +820,8 @@ public class TransactionTable
                     theSelectionModel.handleNewFilter();
                     theDataFilter.setObject(theFilter);
                 } else {
-                    /* Select a new date range */
-                    setSelection(myRange);
+                    /* Update new lists */
+                    updateList();
                 }
             }
         }

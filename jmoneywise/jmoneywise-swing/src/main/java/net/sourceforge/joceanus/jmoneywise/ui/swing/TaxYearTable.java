@@ -313,6 +313,12 @@ public class TaxYearTable
     }
 
     @Override
+    public void setEnabled(final boolean bEnable) {
+        /* Ensure that we are disabled whilst editing */
+        super.setEnabled(bEnable && !isItemEditing());
+    }
+
+    @Override
     public void cancelEditing() {
         /* Cancel editing on table */
         super.cancelEditing();

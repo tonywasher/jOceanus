@@ -81,7 +81,8 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         /* Notify new data */
         theTableModel.fireNewDataEvents();
 
-        /* TODO Look to retain current selection if still visible */
+        /* Recover the selected item */
+        recoverSelectedItem();
 
         /* Set default selection */
         theTable.selectRowWithScroll(defaultSelectIndex());

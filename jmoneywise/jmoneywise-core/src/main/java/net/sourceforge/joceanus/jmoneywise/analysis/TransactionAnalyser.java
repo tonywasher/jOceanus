@@ -106,12 +106,12 @@ public class TransactionAnalyser
     private static final JRate LIMIT_RATE = JRate.getWholePercentage(5);
 
     /**
-     * The dataSet being analysed.
+     * The security holding map.
      */
     private final SecurityHoldingMap theHoldingMap;
 
     /**
-     * The dataSet being analysed.
+     * The security price map.
      */
     private final SecurityPriceDataMap<SecurityPrice> thePriceMap;
 
@@ -119,11 +119,6 @@ public class TransactionAnalyser
      * The analysis.
      */
     private final Analysis theAnalysis;
-
-    /**
-     * The analysis manager.
-     */
-    // private final AnalysisManager theManager;
 
     /**
      * The deposit bucket list.
@@ -320,7 +315,7 @@ public class TransactionAnalyser
 
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
-        Iterator<Transaction> myIterator = pTransactions.listIterator();
+        Iterator<Transaction> myIterator = pTransactions.iterator();
         while (myIterator.hasNext()) {
             Transaction myCurr = myIterator.next();
 
@@ -938,8 +933,8 @@ public class TransactionAnalyser
     /**
      * Process a dividend transaction.
      * <p>
-     * This capital event relates to the only to Debit account, although the Credit account may be identical to the credit account in which case the dividend is
-     * re-invested
+     * This capital event relates to the only to Debit account, although the Credit account may be
+     * identical to the credit account in which case the dividend is re-invested
      * @param pHolding the debit security holding
      * @param pCredit the credit account
      * @param pTrans the transaction
@@ -1387,7 +1382,8 @@ public class TransactionAnalyser
     /**
      * Process a transaction that is StockTakeover.
      * <p>
-     * This can be accomplished using a cash portion (to a ThirdParty account) and these workings are split out.
+     * This can be accomplished using a cash portion (to a ThirdParty account) and these workings
+     * are split out.
      * @param pDebit the debit holding
      * @param pCredit the credit holding
      * @param pTrans the transaction
@@ -1487,7 +1483,8 @@ public class TransactionAnalyser
     /**
      * Process a transaction that is StockAndCashTakeover.
      * <p>
-     * This capital event relates to both the Credit and Debit accounts. In particular it makes reference to the CashTakeOver aspect of the debit account
+     * This capital event relates to both the Credit and Debit accounts. In particular it makes
+     * reference to the CashTakeOver aspect of the debit account
      * @param pDebit the debit holding
      * @param pCredit the credit holding
      * @param pTrans the transaction

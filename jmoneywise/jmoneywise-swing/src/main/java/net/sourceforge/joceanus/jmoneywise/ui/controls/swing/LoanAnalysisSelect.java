@@ -231,7 +231,7 @@ public class LoanAnalysisSelect
         }
 
         /* Set the loan */
-        theState.setLoan(myLoan);
+        theState.setTheLoan(myLoan);
         theState.applyState();
     }
 
@@ -249,7 +249,7 @@ public class LoanAnalysisSelect
             myLoan = getMatchingBucket(myLoan);
 
             /* Set the loan */
-            theState.setLoan(myLoan);
+            theState.setTheLoan(myLoan);
             theState.applyState();
         }
     }
@@ -514,6 +514,20 @@ public class LoanAnalysisSelect
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the Loan.
+         * @param pLoan the Loan
+         */
+        private void setTheLoan(final LoanBucket pLoan) {
+            /* Store the loan */
+            theLoan = pLoan;
+
+            /* Access category for account */
+            theCategory = (theLoan == null)
+                                           ? null
+                                           : theLoan.getCategory();
         }
 
         /**

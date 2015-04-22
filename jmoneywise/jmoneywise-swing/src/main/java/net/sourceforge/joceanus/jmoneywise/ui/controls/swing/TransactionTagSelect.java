@@ -191,7 +191,7 @@ public class TransactionTagSelect
         }
 
         /* Set the tag */
-        theState.setTag(myTag);
+        theState.setTheTag(myTag);
         theState.applyState();
     }
 
@@ -209,7 +209,7 @@ public class TransactionTagSelect
             myTag = getMatchingBucket(myTag);
 
             /* Set the tag */
-            theState.setTag(myTag);
+            theState.setTheTag(myTag);
             theState.applyState();
         }
     }
@@ -358,12 +358,21 @@ public class TransactionTagSelect
             /* Adjust the selected tag */
             if (!Difference.isEqual(pTag, theTransTag)) {
                 /* Store the tag */
-                theTransTag = pTag;
+                setTheTag(pTag);
 
                 /* We have changed */
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the Tag.
+         * @param pTag the Tag
+         */
+        private void setTheTag(final TransactionTagBucket pTag) {
+            /* Store the tag */
+            theTransTag = pTag;
         }
 
         /**

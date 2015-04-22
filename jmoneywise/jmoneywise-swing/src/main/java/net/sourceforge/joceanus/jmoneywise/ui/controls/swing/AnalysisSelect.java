@@ -41,9 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
@@ -60,7 +58,6 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
@@ -144,11 +141,6 @@ public class AnalysisSelect
      * View.
      */
     private final transient View theView;
-
-    /**
-     * Analysis Manager.
-     */
-    private AnalysisManager theManager;
 
     /**
      * Analysis.
@@ -293,15 +285,15 @@ public class AnalysisSelect
     /**
      * Constructor.
      * @param pView the view
-     * @param pUpdateSet the update set
+     * @param pAnalysisView the analysis view
      * @param pNewButton the new button
      */
     public AnalysisSelect(final View pView,
-                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                          final AnalysisView pAnalysisView,
                           final JButton pNewButton) {
         /* Access the analysis manager */
         theView = pView;
-        theManager = theView.getAnalysisManager();
+        theAnalysisView = pAnalysisView;
 
         /* Create Event Manager */
         theEventManager = new JOceanusEventManager();
@@ -332,9 +324,6 @@ public class AnalysisSelect
 
         /* Create the panel map */
         theMap = new EnumMap<AnalysisType, AnalysisFilterSelection>(AnalysisType.class);
-
-        /* Create the analysis view */
-        theAnalysisView = new AnalysisView(theView, pUpdateSet);
 
         /* Create the filter selection panels */
         theDepositSelect = new DepositAnalysisSelect();
@@ -554,9 +543,12 @@ public class AnalysisSelect
         if (mySelect != null) {
             theRangeSelect.setSelection(mySelect);
             theRangeSelect.lockPeriod(false);
+            theState.setRange(mySelect);
 
-            /* Update analysis for filter panels */
-            setAnalysisRange(mySelect.getRange());
+            /* Update the analysis */
+            theAnalysisView.setRange(mySelect.getRange());
+            theAnalysis = theAnalysisView.getAnalysis();
+            setAnalysis();
         }
 
         /* Access the filter and the selection panel */
@@ -579,56 +571,37 @@ public class AnalysisSelect
      * Refresh data.
      */
     public void refreshData() {
-        /* Set refreshing flag */
-        isRefreshing = true;
-
-        /* Access the analysis manager */
-        theManager = theView.getAnalysisManager();
-
         /* Update the range selection */
         JDateDayRange myRange = theView.getRange();
         theRangeSelect.setOverallRange(myRange);
 
+        /* Refresh the analysisView */
+        theAnalysisView.refreshData();
+
         /* Update the filter selection */
-        setAnalysisRange(getRange());
         checkType();
-
-        /* Clear refreshing flag */
-        isRefreshing = false;
-    }
-
-    /**
-     * Declare analysis.
-     * @param pRange the range
-     */
-    private void setAnalysisRange(final JDateDayRange pRange) {
-        /* Obtain the new analysis */
-        theAnalysis = theManager.getAnalysis(pRange);
-
-        /* Update the analysis view */
-        theAnalysisView.setAnalysis(theAnalysis);
-
-        /* Update filters */
-        setAnalysis();
     }
 
     /**
      * Declare analysis.
      */
     private void setAnalysis() {
-        /* Update filters */
-        theDepositSelect.setAnalysis(theAnalysis);
-        theCashSelect.setAnalysis(theAnalysis);
-        theLoanSelect.setAnalysis(theAnalysis);
-        theSecuritySelect.setAnalysis(theAnalysis);
-        thePortfolioSelect.setAnalysis(theAnalysis);
-        theCategorySelect.setAnalysis(theAnalysis);
-        thePayeeSelect.setAnalysis(theAnalysis);
-        theTaxBasisSelect.setAnalysis(theAnalysis);
-        theTagSelect.setAnalysis(theAnalysis);
+        /* Only update if we have an analysis */
+        if (theAnalysis != null) {
+            /* Update filters */
+            theDepositSelect.setAnalysis(theAnalysis);
+            theCashSelect.setAnalysis(theAnalysis);
+            theLoanSelect.setAnalysis(theAnalysis);
+            theSecuritySelect.setAnalysis(theAnalysis);
+            thePortfolioSelect.setAnalysis(theAnalysis);
+            theCategorySelect.setAnalysis(theAnalysis);
+            thePayeeSelect.setAnalysis(theAnalysis);
+            theTaxBasisSelect.setAnalysis(theAnalysis);
+            theTagSelect.setAnalysis(theAnalysis);
 
-        /* Update the filter */
-        updateFilter();
+            /* Update the filter */
+            updateFilter();
+        }
     }
 
     /**
@@ -678,6 +651,7 @@ public class AnalysisSelect
             /* Enable filter detail */
             theFilterDetail.setVisible(true);
             theFilterButton.setEnabled(bEnabled);
+            theColumnButton.setEnabled(bEnabled);
             theBucketButton.setEnabled(bEnabled);
 
             /* If we are disabling */
@@ -996,10 +970,20 @@ public class AnalysisSelect
             if (theRangeSelect.equals(o)) {
                 /* If we have a change to the range */
                 if (theState.setRange(theRangeSelect)) {
-                    /* Declare new analysis */
-                    setAnalysisRange(getRange());
+                    /* Note that we are refreshing */
+                    isRefreshing = true;
+
+                    /* Obtain new analysis */
+                    theAnalysisView.setRange(getRange());
+                    theAnalysis = theAnalysisView.getAnalysis();
+                    setAnalysis();
+
+                    /* Validate state and apply */
                     checkType();
                     theState.applyState();
+
+                    /* Remove refreshing flag and notify listeners */
+                    isRefreshing = false;
                     theEventManager.fireStateChanged();
                 }
 
@@ -1066,6 +1050,13 @@ public class AnalysisSelect
                 /* Declare the analysis */
                 theAnalysis = theAnalysisView.getAnalysis();
                 setAnalysis();
+
+                /* Validate state and apply */
+                checkType();
+                theState.applyState();
+
+                /* Notify listeners */
+                theEventManager.fireStateChanged();
 
                 /* If this is the TypeMenu */
             } else if (theTypeMenuReg.isRelevant(pEvent)) {

@@ -191,8 +191,8 @@ public class TransCategoryAnalysisSelect
             myCategory = getFirstCategory();
         }
 
-        /* Set the payee */
-        theState.setEventCategory(myCategory);
+        /* Set the category */
+        theState.setTheCategory(myCategory);
         theState.applyState();
     }
 
@@ -210,7 +210,7 @@ public class TransCategoryAnalysisSelect
             myCategory = getMatchingBucket(myCategory);
 
             /* Set the category */
-            theState.setEventCategory(myCategory);
+            theState.setTheCategory(myCategory);
             theState.applyState();
         }
     }
@@ -350,7 +350,7 @@ public class TransCategoryAnalysisSelect
             /* If this is the category button */
             if (theButton.equals(o)) {
                 /* Select the new category */
-                if (theState.setEventCategory(theButton.getValue())) {
+                if (theState.setCategory(theButton.getValue())) {
                     theState.applyState();
                     theEventManager.fireStateChanged();
                 }
@@ -394,16 +394,25 @@ public class TransCategoryAnalysisSelect
 
         /**
          * Set new Category.
-         * @param pCategory the Event Category
+         * @param pCategory the Category
          * @return true/false did a change occur
          */
-        private boolean setEventCategory(final TransactionCategoryBucket pCategory) {
+        private boolean setCategory(final TransactionCategoryBucket pCategory) {
             /* Adjust the selected category */
             if (!Difference.isEqual(pCategory, theCategory)) {
-                theCategory = pCategory;
+                setTheCategory(pCategory);
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the Category.
+         * @param pCategory the Category
+         */
+        private void setTheCategory(final TransactionCategoryBucket pCategory) {
+            /* Store the selected category */
+            theCategory = pCategory;
         }
 
         /**

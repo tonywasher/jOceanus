@@ -52,7 +52,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
@@ -129,14 +128,14 @@ public class Transaction
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+                theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
                 theInfoSet.cloneDataInfoSet(pTransaction.getInfoSet());
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
             case CLONE:
             case CORE:
-                theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+                theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
                 break;
@@ -170,7 +169,7 @@ public class Transaction
         setValueAmount(pSchedule.getAmountField());
 
         /* Set up info set */
-        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+        theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
         hasInfoSet = true;
         useInfoSet = true;
 
@@ -190,7 +189,7 @@ public class Transaction
         super(pList);
 
         /* Build InfoSet */
-        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+        theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
         hasInfoSet = true;
         useInfoSet = true;
     }
@@ -207,7 +206,7 @@ public class Transaction
         super(pList, pValues);
 
         /* Create the InfoSet */
-        theInfoSet = new TransactionInfoSet(this, pList.getEventInfoTypes(), pList.getTransactionInfo());
+        theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
         hasInfoSet = true;
         useInfoSet = false;
     }
@@ -957,7 +956,7 @@ public class Transaction
         private TransactionInfoList theInfoList = null;
 
         /**
-         * The EventInfoType list.
+         * The TransactionInfoType list.
          */
         private TransactionInfoTypeList theInfoTypeList = null;
 
@@ -1017,14 +1016,30 @@ public class Transaction
         }
 
         /**
-         * Obtain the eventInfoTypeList.
-         * @return the event info type list
+         * Set the transactionInfoTypeList.
+         * @param pInfoList the info type list
          */
-        public TransactionInfoTypeList getEventInfoTypes() {
+        protected void setTransactionInfo(final TransactionInfoList pInfoList) {
+            theInfoList = pInfoList;
+        }
+
+        /**
+         * Obtain the transactionInfoTypeList.
+         * @return the transaction info type list
+         */
+        public TransactionInfoTypeList getTransInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getDataSet().getTransInfoTypes();
             }
             return theInfoTypeList;
+        }
+
+        /**
+         * Set the transactionInfoTypeList.
+         * @param pInfoTypeList the info type list
+         */
+        protected void setTransInfoTypes(final TransactionInfoTypeList pInfoTypeList) {
+            theInfoTypeList = pInfoTypeList;
         }
 
         @Override
@@ -1048,58 +1063,6 @@ public class Transaction
         }
 
         /**
-         * Get an EditList for a range.
-         * @param pRange the range
-         * @return the edit list
-         */
-        public TransactionList deriveEditList(final JDateDayRange pRange) {
-            /* Build an empty List */
-            TransactionList myList = getEmptyList(ListStyle.EDIT);
-            myList.setRange(pRange);
-
-            /* Store InfoType list */
-            myList.theInfoTypeList = theInfoTypeList;
-
-            /* Create info List */
-            TransactionInfoList myTransInfo = getTransactionInfo();
-            myList.theInfoList = myTransInfo.getEmptyList(ListStyle.EDIT);
-
-            /* Loop through the Transactions extracting relevant elements */
-            Iterator<Transaction> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                Transaction myCurr = myIterator.next();
-
-                /* Ignore deleted events */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* Check the range */
-                int myResult = pRange.compareTo(myCurr.getDate());
-
-                /* Handle out of range */
-                if (myResult > 0) {
-                    continue;
-                } else if (myResult < 0) {
-                    break;
-                }
-
-                /* Build the new linked transaction and add it to the list */
-                Transaction myTrans = new Transaction(myList, myCurr);
-                myList.append(myTrans);
-
-                /* If this is a child transaction */
-                if (myTrans.isChild()) {
-                    /* Register child against parent (in this edit list) */
-                    myList.registerChild(myTrans);
-                }
-            }
-
-            /* Return the List */
-            return myList;
-        }
-
-        /**
          * Get an EditList for a new TaxYear.
          * @param pTaxYear the new TaxYear
          * @return the edit list
@@ -1111,11 +1074,11 @@ public class Transaction
             myList.setRange(pTaxYear.getDateRange());
 
             /* Store InfoType list */
-            myList.theInfoTypeList = theInfoTypeList;
+            myList.setTransInfoTypes(theInfoTypeList);
 
             /* Create info List */
             TransactionInfoList myTransInfo = getTransactionInfo();
-            myList.theInfoList = myTransInfo.getEmptyList(ListStyle.EDIT);
+            myList.setTransactionInfo(myTransInfo.getEmptyList(ListStyle.EDIT));
 
             /* Loop through the Schedules */
             ScheduleList mySchedules = getDataSet().getSchedules();

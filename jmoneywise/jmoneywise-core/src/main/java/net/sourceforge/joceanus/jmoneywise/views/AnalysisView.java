@@ -22,23 +22,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
+import java.util.Iterator;
+
+import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,19 +91,44 @@ public class AnalysisView
     private final View theView;
 
     /**
-     * The Underlying analysis.
-     */
-    private Analysis theBaseAnalysis;
-
-    /**
      * The UpdateSet.
      */
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
+     * The event entry.
+     */
+    private final UpdateEntry<Transaction, MoneyWiseDataType> theTransEntry;
+
+    /**
+     * The info entry.
+     */
+    private final UpdateEntry<TransactionInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
+     * The Underlying analysis.
+     */
+    private Analysis theBaseAnalysis;
+
+    /**
+     * The transactions.
+     */
+    private TransactionView theTransactions;
+
+    /**
+     * Analysis Manager.
+     */
+    private AnalysisManager theManager;
+
+    /**
      * The active analysis.
      */
     private Analysis theAnalysis;
+
+    /**
+     * The current range.
+     */
+    private JDateDayRange theRange;
 
     /**
      * Constructor.
@@ -109,11 +141,12 @@ public class AnalysisView
         theView = pView;
         theUpdateSet = pUpdateSet;
 
+        /* Register data entries */
+        theTransEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTION);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
+
         /* Create event manager */
         theEventManager = new JOceanusEventManager();
-
-        /* Create listener */
-        new AnalysisListener();
     }
 
     @Override
@@ -154,52 +187,165 @@ public class AnalysisView
     }
 
     /**
-     * Set the analysis.
-     * @param pAnalysis the new analysis
+     * Obtain the transaction list.
+     * @return the transaction list
      */
-    public void setAnalysis(final Analysis pAnalysis) {
-        /* Store analysis */
-        theBaseAnalysis = pAnalysis;
-        theAnalysis = pAnalysis;
+    public TransactionList getTransactions() {
+        return theTransactions;
+    }
+
+    /**
+     * Obtain the range.
+     * @return the range
+     */
+    public JDateDayRange getRange() {
+        return theRange;
+    }
+
+    /**
+     * Refresh data.
+     */
+    public void refreshData() {
+        /* Access the new analysis manager */
+        theManager = theView.getAnalysisManager();
+
+        /* If we have a range */
+        if (theRange != null) {
+            /* Obtain the required analysis and reset to it */
+            theBaseAnalysis = theManager.getAnalysis(theRange);
+            theAnalysis = theBaseAnalysis;
+
+            /* Create the new transaction list */
+            MoneyWiseData myData = theView.getData();
+            theTransactions = new TransactionView(myData.getTransactions(), theRange);
+        } else {
+            /* Set nulls */
+            theBaseAnalysis = null;
+            theAnalysis = null;
+            theTransactions = null;
+        }
+
+        /* register the lists */
+        registerLists();
 
         /* Notify listeners */
         theEventManager.fireStateChanged();
     }
 
     /**
-     * Listener class.
+     * Set the selected date range.
+     * @param pRange the date range
      */
-    private final class AnalysisListener
-            implements JOceanusChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+    public void setRange(final JDateDayRange pRange) {
+        /* If we have changed the range */
+        if (!Difference.isEqual(theRange, pRange)) {
+            /* Obtain the required analysis and reset to it */
+            theRange = pRange;
+            theBaseAnalysis = theManager != null
+                                                ? theManager.getAnalysis(theRange)
+                                                : null;
+            theAnalysis = theBaseAnalysis;
 
+            /* Create the new transaction list */
+            MoneyWiseData myData = theView.getData();
+            theTransactions = new TransactionView(myData.getTransactions(), theRange);
+
+            /* register the lists */
+            registerLists();
+
+            /* Notify listeners */
+            theEventManager.fireStateChanged();
+        }
+    }
+
+    /**
+     * /** Register lists.
+     */
+    private void registerLists() {
+        /* If we have transactions */
+        if (theTransactions != null) {
+            TransactionInfoList myInfo = theTransactions.getTransactionInfo();
+            theTransEntry.setDataList(theTransactions);
+            theInfoEntry.setDataList(myInfo);
+        } else {
+            theTransEntry.setDataList(null);
+            theInfoEntry.setDataList(null);
+        }
+    }
+
+    /**
+     * TransactionView class.
+     */
+    private final class TransactionView
+            extends TransactionList {
         /**
          * Constructor.
+         * @param pSource the source transaction list
+         * @param pRange the date range
          */
-        private AnalysisListener() {
-            /* Listen to correct events */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+        private TransactionView(final TransactionList pSource,
+                                final JDateDayRange pRange) {
+            /* Initialise as edit list */
+            super(pSource);
+            setStyle(ListStyle.EDIT);
+            setRange(pRange);
+
+            /* Store InfoType list */
+            setTransInfoTypes(pSource.getTransInfoTypes());
+
+            /* Create and store info List */
+            TransactionInfoList myTransInfo = pSource.getTransactionInfo();
+            setTransactionInfo(myTransInfo.getEmptyList(ListStyle.EDIT));
+
+            /* Loop through the Transactions extracting relevant elements */
+            Iterator<Transaction> myIterator = pSource.iterator();
+            while (myIterator.hasNext()) {
+                Transaction myCurr = myIterator.next();
+
+                /* Ignore deleted events */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Check the range */
+                int myResult = pRange.compareTo(myCurr.getDate());
+
+                /* Handle out of range */
+                if (myResult > 0) {
+                    continue;
+                } else if (myResult < 0) {
+                    break;
+                }
+
+                /* Build the new linked transaction and add it to the list */
+                Transaction myTrans = new Transaction(this, myCurr);
+                append(myTrans);
+
+                /* If this is a child transaction */
+                if (myTrans.isChild()) {
+                    /* Register child against parent (in this edit list) */
+                    registerChild(myTrans);
+                }
+            }
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
-            /* If this is the UpdateSet */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Protect against exceptions */
-                try {
-                    /* Build the new analysis */
-                    TransactionList myTrans = theUpdateSet.getDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
-                    TransactionAnalyser myAnalyser = new TransactionAnalyser(theView.getActiveProfile(), theBaseAnalysis, myTrans);
-                    theAnalysis = myAnalyser.getAnalysis();
+        public void postProcessOnUpdate() {
+            /* Pass call on */
+            super.postProcessOnUpdate();
 
-                    /* Notify listeners */
-                    theEventManager.fireStateChanged();
-                } catch (JOceanusException e) {
-                    LOGGER.error("Failed to analyse changes", e);
-                }
+            /* Protect against exceptions */
+            try {
+                /* Build the new analysis */
+                TransactionAnalyser myAnalyser = new TransactionAnalyser(theView.getActiveProfile(), theBaseAnalysis, this);
+                theAnalysis = myAnalyser.getAnalysis();
+
+                /* Notify listeners */
+                theEventManager.fireStateChanged();
+
+                /* Catch exceptions */
+            } catch (JOceanusException e) {
+                LOGGER.error("Failed to analyse changes", e);
             }
         }
     }

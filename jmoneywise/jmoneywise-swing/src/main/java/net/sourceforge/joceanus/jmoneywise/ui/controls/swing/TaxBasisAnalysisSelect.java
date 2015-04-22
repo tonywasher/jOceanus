@@ -216,7 +216,7 @@ public class TaxBasisAnalysisSelect
         }
 
         /* Set the basis */
-        theState.setTaxBasis(myBasis);
+        theState.setTheTaxBasis(myBasis);
         theState.applyState();
     }
 
@@ -231,7 +231,7 @@ public class TaxBasisAnalysisSelect
             TaxBasisBucket myTaxBasis = getMatchingBucket(myFilter.getBucket());
 
             /* Set the taxBasis */
-            theState.setTaxBasis(myTaxBasis);
+            theState.setTheTaxBasis(myTaxBasis);
             theState.applyState();
         }
     }
@@ -464,18 +464,27 @@ public class TaxBasisAnalysisSelect
         private boolean setTaxBasis(final TaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
             if (!Difference.isEqual(pTaxBasis, theBasis)) {
-                if (pTaxBasis instanceof TaxBasisAccountBucket) {
-                    theAccount = (TaxBasisAccountBucket) pTaxBasis;
-                    theBasis = theAccount.getParent();
-                } else if (pTaxBasis == null) {
-                    theAccount = null;
-                } else {
-                    theBasis = pTaxBasis;
-                    theAccount = null;
-                }
+                setTheTaxBasis(pTaxBasis);
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the TaxBasis.
+         * @param pTaxBasis the TaxBasis
+         */
+        private void setTheTaxBasis(final TaxBasisBucket pTaxBasis) {
+            /* Adjust the selected taxBasis */
+            if (pTaxBasis instanceof TaxBasisAccountBucket) {
+                theAccount = (TaxBasisAccountBucket) pTaxBasis;
+                theBasis = theAccount.getParent();
+            } else if (pTaxBasis == null) {
+                theAccount = null;
+            } else {
+                theBasis = pTaxBasis;
+                theAccount = null;
+            }
         }
 
         /**

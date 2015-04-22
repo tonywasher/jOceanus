@@ -191,7 +191,7 @@ public class PortfolioAnalysisSelect
         }
 
         /* Set the portfolio */
-        theState.setPortfolio(myPortfolio);
+        theState.setThePortfolio(myPortfolio);
         theState.applyState();
     }
 
@@ -209,7 +209,7 @@ public class PortfolioAnalysisSelect
             myPortfolio = getMatchingBucket(myPortfolio);
 
             /* Set the portfolio */
-            theState.setPortfolio(myPortfolio);
+            theState.setThePortfolio(myPortfolio);
             theState.applyState();
         }
     }
@@ -357,10 +357,19 @@ public class PortfolioAnalysisSelect
         private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!Difference.isEqual(pPortfolio, thePortfolio)) {
-                thePortfolio = pPortfolio;
+                setThePortfolio(pPortfolio);
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the Portfolio.
+         * @param pPortfolio the Portfolio
+         */
+        private void setThePortfolio(final PortfolioBucket pPortfolio) {
+            /* Set the selected portfolio */
+            thePortfolio = pPortfolio;
         }
 
         /**

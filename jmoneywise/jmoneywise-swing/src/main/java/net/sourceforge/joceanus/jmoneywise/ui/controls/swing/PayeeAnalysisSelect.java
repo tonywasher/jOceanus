@@ -188,7 +188,7 @@ public class PayeeAnalysisSelect
         }
 
         /* Set the payee */
-        theState.setPayee(myPayee);
+        theState.setThePayee(myPayee);
         theState.applyState();
     }
 
@@ -206,7 +206,7 @@ public class PayeeAnalysisSelect
             myPayee = getMatchingBucket(myPayee);
 
             /* Set the payee */
-            theState.setPayee(myPayee);
+            theState.setThePayee(myPayee);
             theState.applyState();
         }
     }
@@ -354,10 +354,19 @@ public class PayeeAnalysisSelect
         private boolean setPayee(final PayeeBucket pPayee) {
             /* Adjust the selected payee */
             if (!Difference.isEqual(pPayee, thePayee)) {
-                thePayee = pPayee;
+                setThePayee(pPayee);
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the Payee.
+         * @param pPayee the Payee
+         */
+        private void setThePayee(final PayeeBucket pPayee) {
+            /* Store the payee */
+            thePayee = pPayee;
         }
 
         /**

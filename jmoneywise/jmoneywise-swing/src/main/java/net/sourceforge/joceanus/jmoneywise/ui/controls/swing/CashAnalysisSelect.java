@@ -231,7 +231,7 @@ public class CashAnalysisSelect
         }
 
         /* Set the cash */
-        theState.setCash(myCash);
+        theState.setTheCash(myCash);
         theState.applyState();
     }
 
@@ -249,7 +249,7 @@ public class CashAnalysisSelect
             myCash = getMatchingBucket(myCash);
 
             /* Set the cash */
-            theState.setCash(myCash);
+            theState.setTheCash(myCash);
             theState.applyState();
         }
     }
@@ -520,17 +520,23 @@ public class CashAnalysisSelect
             /* Adjust the selected cash */
             if (!Difference.isEqual(pCash, theCash)) {
                 /* Store the cash */
-                theCash = pCash;
-
-                /* Access category for cash */
-                theCategory = (theCash == null)
-                                               ? null
-                                               : theCash.getCategory();
-
-                /* We have changed */
-                return true;
+                setTheCash(pCash);
             }
             return false;
+        }
+
+        /**
+         * Set the Cash.
+         * @param pCash the Cash
+         */
+        private void setTheCash(final CashBucket pCash) {
+            /* Store the cash */
+            theCash = pCash;
+
+            /* Access category for account */
+            theCategory = (theCash == null)
+                                           ? null
+                                           : theCash.getCategory();
         }
 
         /**

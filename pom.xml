@@ -239,6 +239,7 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>3.4</version>
         <configuration>
+           <configLocation>src/main/pmd/pmd.xml</configLocation>
            <linkXref>true</linkXref>
            <aggregate>true</aggregate>
            <targetJdk>1.8</targetJdk>

@@ -231,7 +231,7 @@ public class DepositAnalysisSelect
         }
 
         /* Set the account */
-        theState.setDeposit(myDeposit);
+        theState.setTheDeposit(myDeposit);
         theState.applyState();
     }
 
@@ -249,7 +249,7 @@ public class DepositAnalysisSelect
             myDeposit = getMatchingBucket(myDeposit);
 
             /* Set the deposit */
-            theState.setDeposit(myDeposit);
+            theState.setTheDeposit(myDeposit);
             theState.applyState();
         }
     }
@@ -516,17 +516,23 @@ public class DepositAnalysisSelect
             /* Adjust the selected deposit */
             if (!Difference.isEqual(pDeposit, theDeposit)) {
                 /* Store the deposit */
-                theDeposit = pDeposit;
-
-                /* Access category for account */
-                theCategory = (theDeposit == null)
-                                                  ? null
-                                                  : theDeposit.getCategory();
-
-                /* We have changed */
-                return true;
+                setTheDeposit(pDeposit);
             }
             return false;
+        }
+
+        /**
+         * Set the Deposit.
+         * @param pDeposit the Deposit
+         */
+        private void setTheDeposit(final DepositBucket pDeposit) {
+            /* Store the deposit */
+            theDeposit = pDeposit;
+
+            /* Access category for account */
+            theCategory = (theDeposit == null)
+                                              ? null
+                                              : theDeposit.getCategory();
         }
 
         /**

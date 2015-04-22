@@ -114,6 +114,11 @@ public class UpdateSet<E extends Enum<E>>
     private int theVersion = 0;
 
     /**
+     * Are we editing?
+     */
+    private Boolean itemEditing = Boolean.FALSE;
+
+    /**
      * Constructor for an update list.
      * @param pControl the Data Control
      * @param pClass the enum class
@@ -163,6 +168,14 @@ public class UpdateSet<E extends Enum<E>>
     @Override
     public JOceanusEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Set editing flag.
+     * @param pFlag the editing flag
+     */
+    public void setEditing(final Boolean pFlag) {
+        itemEditing = pFlag;
     }
 
     /**
@@ -278,7 +291,9 @@ public class UpdateSet<E extends Enum<E>>
                 myDataList.setVersion(theVersion);
 
                 /* postProcess */
-                myDataList.postProcessOnUpdate();
+                if (!itemEditing) {
+                    myDataList.postProcessOnUpdate();
+                }
             }
         }
 
@@ -329,7 +344,9 @@ public class UpdateSet<E extends Enum<E>>
                 mySubTask.startTask(myDataList.listName());
 
                 /* postProcess */
-                myDataList.postProcessOnUpdate();
+                if (!itemEditing) {
+                    myDataList.postProcessOnUpdate();
+                }
             }
         }
 
@@ -561,7 +578,7 @@ public class UpdateSet<E extends Enum<E>>
             UpdateEntry<?, E> myEntry = myIterator.next();
             DataList<?, E> myDataList = myEntry.getDataList();
 
-            /* Combine states if list exists */
+            /* if list exists */
             if (myDataList != null) {
                 /* Note the new step */
                 myTask.startTask(myDataList.listName());
