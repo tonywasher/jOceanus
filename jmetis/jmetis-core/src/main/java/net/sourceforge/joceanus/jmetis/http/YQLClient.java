@@ -168,6 +168,12 @@ public class YQLClient
         myBuilder.append(pSymbol);
         myBuilder.append(YQLSEL_END);
 
+        /* Determine price divisor */
+        int myDivisor = 1;
+        for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
+            myDivisor *= JDecimal.RADIX_TEN;
+        }
+
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
 
@@ -180,14 +186,18 @@ public class YQLClient
             /* Access the single result */
             JSONArray myArray = myJSON.getJSONArray(YQLRES_QUOTE);
             JSONObject myEntry = myArray.getJSONObject(0);
-            String myStrPrice = myEntry.getString(YQLFLD_PRICE);
+            String myStrPrice = myEntry.optString(YQLFLD_PRICE, null);
 
-            /* Parse the price and convert from minor units */
-            JPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
-            for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
-                myPrice.divide(JDecimal.RADIX_TEN);
+            /* If we found the price */
+            if (myStrPrice != null) {
+                /* Parse the price and convert from minor units */
+                JPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                myPrice.divide(myDivisor);
+                return myPrice;
             }
-            return myPrice;
+
+            /* No price found */
+            return null;
 
         } catch (JSONException e) {
             /* Notify of failure */
@@ -210,6 +220,12 @@ public class YQLClient
         myBuilder.append(YQLDB_PRICES);
         myBuilder.append(YQLSEL_SYMBOL);
 
+        /* Determine price divisor */
+        int myDivisor = 1;
+        for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
+            myDivisor *= JDecimal.RADIX_TEN;
+        }
+
         /* Build the symbol set */
         Iterator<String> myIterator = pSymbols.iterator();
         boolean bFirst = true;
@@ -222,6 +238,9 @@ public class YQLClient
             bFirst = false;
         }
         myBuilder.append(YQLSEL_END);
+
+        /* Note that we will be expecting large responses */
+        expectLargeResponses(true);
 
         /* Create the result map */
         Map<String, JPrice> myMap = new HashMap<String, JPrice>();
@@ -241,17 +260,18 @@ public class YQLClient
             for (int i = 0; i < myNumPrices; i++) {
                 /* Access the details */
                 JSONObject myEntry = myArray.getJSONObject(i);
-                String mySymbol = myEntry.getString(YQLFLD_SYMBOL);
-                String myStrPrice = myEntry.getString(YQLFLD_PRICE);
+                String myStrPrice = myEntry.optString(YQLFLD_PRICE, null);
 
-                /* Parse the price and convert from minor units */
-                JPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
-                for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
-                    myPrice.divide(JDecimal.RADIX_TEN);
+                /* If we have a price */
+                if (myStrPrice != null) {
+                    /* Parse and convert to proper units */
+                    JPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                    myPrice.divide(myDivisor);
+
+                    /* Add the the map */
+                    String mySymbol = myEntry.getString(YQLFLD_SYMBOL);
+                    myMap.put(mySymbol, myPrice);
                 }
-
-                /* Add the the map */
-                myMap.put(mySymbol, myPrice);
             }
 
             /* Return the map */
@@ -293,10 +313,12 @@ public class YQLClient
             /* Access the single result */
             JSONArray myArray = myJSON.getJSONArray(YQLRES_RATE);
             JSONObject myEntry = myArray.getJSONObject(0);
-            String myRate = myEntry.getString(YQLFLD_RATE);
+            String myRate = myEntry.optString(YQLFLD_RATE, null);
 
-            /* Parse the rate */
-            return new JRatio(myRate);
+            /* return parsed rate if possible */
+            return (myRate != null)
+                                   ? new JRatio(myRate)
+                                   : null;
 
         } catch (JSONException e) {
             /* Notify of failure */
@@ -352,16 +374,19 @@ public class YQLClient
             for (int i = 0; i < myNumPrices; i++) {
                 /* Access the details */
                 JSONObject myEntry = myArray.getJSONObject(i);
-                String myId = myEntry.getString(YQLFLD_ID);
-                String myStrRate = myEntry.getString(YQLFLD_RATE);
+                String myStrRate = myEntry.optString(YQLFLD_RATE, null);
 
-                /* Determine currency and rate */
-                myId = myId.substring(myFrom.length());
-                Currency myCurr = Currency.getInstance(myId);
-                JRatio myRate = new JRatio(myStrRate);
+                /* If we have a rate */
+                if (myStrRate != null) {
+                    /* Determine currency and rate */
+                    String myId = myEntry.getString(YQLFLD_ID);
+                    myId = myId.substring(myFrom.length());
+                    Currency myCurr = Currency.getInstance(myId);
+                    JRatio myRate = new JRatio(myStrRate);
 
-                /* Add the the map */
-                myMap.put(myCurr, myRate);
+                    /* Add the the map */
+                    myMap.put(myCurr, myRate);
+                }
             }
 
             /* Return the map */

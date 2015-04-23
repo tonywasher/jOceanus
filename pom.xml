@@ -70,14 +70,14 @@
     <BouncyCastleVersion>1.52</BouncyCastleVersion>
     <SvnKitVersion>1.8.8</SvnKitVersion>
     <JGitVersion>3.7.0.201502260915-r</JGitVersion>
-    <HttpClientVersion>4.3.6</HttpClientVersion>
+    <HttpClientVersion>4.4.1</HttpClientVersion>
     <JSONVersion>20141113</JSONVersion>
     <ApacheMavenVersion>3.3.1</ApacheMavenVersion>
-    <MySQLVersion>5.1.33</MySQLVersion>
-    <PostGreSQLVersion>9.3-1102-jdbc41</PostGreSQLVersion>
+    <MySQLVersion>5.1.35</MySQLVersion>
+    <PostGreSQLVersion>9.4-1201-jdbc41</PostGreSQLVersion>
     <ApachePOIVersion>3.11</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
-    <XercesVersion>2.9.1</XercesVersion>
+    <XercesVersion>2.11.0</XercesVersion>
     <SLF4JVersion>1.7.12</SLF4JVersion>
     <LOG4JVersion>2.2</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

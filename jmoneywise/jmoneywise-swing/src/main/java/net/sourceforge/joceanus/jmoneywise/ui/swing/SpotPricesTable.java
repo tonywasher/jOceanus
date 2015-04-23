@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.SpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -70,6 +71,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 
@@ -362,6 +365,27 @@ public class SpotPricesTable
     }
 
     /**
+     * Download prices.
+     */
+    private void downloadPrices() {
+        /* Protect against exceptions */
+        try {
+            /* Download Prices */
+            if (YQLDownloader.downloadPrices(thePrices)) {
+                /* Increment data version */
+                incrementVersion();
+
+                /* Update components to reflect changes */
+                theModel.fireNewDataEvents();
+                notifyChanges();
+            }
+        } catch (JOceanusException e) {
+            /* Show the error */
+            setError(e);
+        }
+    }
+
+    /**
      * SpotView listener class.
      */
     private final class SpotViewListener
@@ -387,6 +411,16 @@ public class SpotPricesTable
         private final JOceanusChangeRegistration theSelectReg;
 
         /**
+         * Download Registration.
+         */
+        private final JOceanusActionRegistration theDownloadReg;
+
+        /**
+         * Action Registration.
+         */
+        private final JOceanusActionRegistration theActionReg;
+
+        /**
          * Constructor.
          */
         private SpotViewListener() {
@@ -394,8 +428,10 @@ public class SpotPricesTable
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
             theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            theSelectReg = theSelect.getEventRegistrar().addChangeListener(this);
-            theActionButtons.getEventRegistrar().addActionListener(this);
+            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
+            JOceanusEventRegistrar myRegistrar = theSelect.getEventRegistrar();
+            theSelectReg = myRegistrar.addChangeListener(this);
+            theDownloadReg = myRegistrar.addActionListener(this);
         }
 
         @Override
@@ -463,11 +499,19 @@ public class SpotPricesTable
             /* Cancel Editing */
             cancelEditing();
 
-            /* Perform the command */
-            theUpdateSet.processCommand(pEvent.getActionId(), theError);
+            /* If this is the action buttons */
+            if (theActionReg.isRelevant(pEvent)) {
+                /* Perform the command */
+                theUpdateSet.processCommand(pEvent.getActionId(), theError);
 
-            /* Adjust for changes */
-            notifyChanges();
+                /* Adjust for changes */
+                notifyChanges();
+
+                /* If this is the download request */
+            } else if (theDownloadReg.isRelevant(pEvent)) {
+                /* Download prices */
+                downloadPrices();
+            }
         }
     }
 

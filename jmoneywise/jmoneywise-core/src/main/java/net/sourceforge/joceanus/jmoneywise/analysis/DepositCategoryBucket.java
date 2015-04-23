@@ -154,6 +154,11 @@ public final class DepositCategoryBucket
         private final DepositCategoryBucket theTotals;
 
         /**
+         * Do we have a foreign deposit account?
+         */
+        private Boolean haveForeignCurrency = Boolean.FALSE;
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -195,6 +200,14 @@ public final class DepositCategoryBucket
          */
         public DepositCategoryBucket getTotals() {
             return theTotals;
+        }
+
+        /**
+         * Do we have a foreign currency?
+         * @return true/false
+         */
+        public Boolean haveForeignCurrency() {
+            return haveForeignCurrency;
         }
 
         /**
@@ -246,6 +259,26 @@ public final class DepositCategoryBucket
                 /* Access category bucket and add values */
                 DepositCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
+
+                /* Note foreign currency */
+                if (myCurr.isForeignCurrency()) {
+                    haveForeignCurrency = Boolean.TRUE;
+                }
+            }
+        }
+
+        /**
+         * Build categories.
+         * @param pDeposits the deposit account buckets
+         */
+        protected void buildCategories(final DepositBucketList pDeposits) {
+            /* Loop through the buckets */
+            Iterator<DepositBucket> myIterator = pDeposits.iterator();
+            while (myIterator.hasNext()) {
+                /* Access bucket and category */
+                DepositBucket myCurr = myIterator.next();
+                DepositCategory myCategory = myCurr.getCategory();
+                getBucket(myCategory);
             }
         }
 

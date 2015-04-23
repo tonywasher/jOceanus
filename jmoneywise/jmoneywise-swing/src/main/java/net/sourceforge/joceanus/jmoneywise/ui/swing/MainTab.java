@@ -402,22 +402,26 @@ public class MainTab
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker && hasControl);
 
-        /* Enable/Disable the register tab */
-        int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
-
+        /* Note insert point */
+        int iInsert = 0;
         /* Enable/Disable the reports tab */
-        iIndex = theTabs.indexOfTab(TITLE_REPORT);
+        int iIndex = theTabs.indexOfTab(TITLE_REPORT);
         if (iIndex != -1) {
             boolean doEnabled = !hasWorker && !hasSession;
             if (doEnabled != theTabs.isEnabledAt(iIndex)) {
                 theTabs.setEnabledAt(iIndex, doEnabled);
             }
+            iInsert = iIndex + 1;
+        }
+
+        /* Enable/Disable the register tab */
+        iIndex = theTabs.indexOfTab(TITLE_REGISTER);
+        if (iIndex != -1) {
+            boolean doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
+            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
+                theTabs.setEnabledAt(iIndex, doEnabled);
+            }
+            iInsert = iIndex + 1;
         }
 
         /* Enable/Disable the spotPrices tab */
@@ -427,6 +431,19 @@ public class MainTab
             if (doEnabled != theTabs.isEnabledAt(iIndex)) {
                 theTabs.setEnabledAt(iIndex, doEnabled);
             }
+
+            /* Hide the tab if necessary */
+            if (!theView.hasActiveSecurities()) {
+                theTabs.removeTabAt(iIndex);
+            } else {
+                iInsert = iIndex + 1;
+            }
+
+            /* else if we need to display the tab */
+        } else if (theView.hasActiveSecurities()) {
+            /* Insert it correctly */
+            theTabs.insertTab(TITLE_SPOTPRICES, null, theSpotPrices.getPanel(), null, iInsert);
+            iInsert++;
         }
 
         /* Enable/Disable the spotRates tab */
@@ -436,6 +453,16 @@ public class MainTab
             if (doEnabled != theTabs.isEnabledAt(iIndex)) {
                 theTabs.setEnabledAt(iIndex, doEnabled);
             }
+
+            /* Hide the tab if necessary */
+            if (!theView.hasMultipleCurrencies()) {
+                theTabs.removeTabAt(iIndex);
+            }
+
+            /* else if we need to display the tab */
+        } else if (theView.hasMultipleCurrencies()) {
+            /* Insert it correctly */
+            theTabs.insertTab(TITLE_SPOTRATES, null, theSpotRates.getPanel(), null, iInsert);
         }
 
         /* Enable/Disable the maintenance tab */

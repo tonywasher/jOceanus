@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -63,9 +64,14 @@ public final class DepositBucket
     private final DepositCategory theCategory;
 
     /**
-     * Is this a peer2peer.
+     * Is this a peer2peer?
      */
     private final Boolean isPeer2Peer;
+
+    /**
+     * Is this a foreign currency?
+     */
+    private final Boolean isForeignCurrency;
 
     /**
      * Constructor.
@@ -83,6 +89,9 @@ public final class DepositBucket
 
         /* Determine whether this is a peer2peer */
         isPeer2Peer = theCategory.isCategoryClass(DepositCategoryClass.PEER2PEER);
+
+        /* Determine whether the deposit is a foreign currency */
+        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), pDeposit.getAssetCurrency());
     }
 
     /**
@@ -99,6 +108,7 @@ public final class DepositBucket
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         isPeer2Peer = pBase.isPeer2Peer();
+        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -117,6 +127,7 @@ public final class DepositBucket
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         isPeer2Peer = pBase.isPeer2Peer();
+        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -135,6 +146,7 @@ public final class DepositBucket
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         isPeer2Peer = pBase.isPeer2Peer();
+        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     @Override
@@ -159,11 +171,19 @@ public final class DepositBucket
     }
 
     /**
-     * Is this a peer2peer.
+     * Is this a peer2peer?
      * @return true/false
      */
     public Boolean isPeer2Peer() {
         return isPeer2Peer;
+    }
+
+    /**
+     * Is this a foreign currency?
+     * @return true/false
+     */
+    public Boolean isForeignCurrency() {
+        return isForeignCurrency;
     }
 
     /**

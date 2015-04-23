@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
@@ -60,9 +61,14 @@ public final class LoanBucket
     private final LoanCategory theCategory;
 
     /**
-     * Is this a creditCard.
+     * Is this a creditCard?
      */
     private final Boolean isCreditCard;
+
+    /**
+     * Is this a foreign currency?
+     */
+    private final Boolean isForeignCurrency;
 
     /**
      * Constructor.
@@ -79,6 +85,9 @@ public final class LoanBucket
 
         /* Determine whether this is a credit card */
         isCreditCard = theCategory.isCategoryClass(LoanCategoryClass.CREDITCARD);
+
+        /* Determine whether the deposit is a foreign currency */
+        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), pLoan.getAssetCurrency());
     }
 
     /**
@@ -94,6 +103,7 @@ public final class LoanBucket
         /* Copy details from base */
         theCategory = pBase.getCategory();
         isCreditCard = pBase.isCreditCard();
+        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -111,6 +121,7 @@ public final class LoanBucket
         /* Copy details from base */
         theCategory = pBase.getCategory();
         isCreditCard = pBase.isCreditCard();
+        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -128,6 +139,7 @@ public final class LoanBucket
         /* Copy details from base */
         theCategory = pBase.getCategory();
         isCreditCard = pBase.isCreditCard();
+        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     @Override
@@ -155,11 +167,19 @@ public final class LoanBucket
     }
 
     /**
-     * Is this a creditCard.
+     * Is this a creditCard?
      * @return true/false
      */
     public Boolean isCreditCard() {
         return isCreditCard;
+    }
+
+    /**
+     * Is this a foreign currency?
+     * @return true/false
+     */
+    public Boolean isForeignCurrency() {
+        return isForeignCurrency;
     }
 
     /**

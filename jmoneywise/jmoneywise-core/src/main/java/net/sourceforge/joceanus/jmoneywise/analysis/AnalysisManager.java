@@ -69,6 +69,16 @@ public class AnalysisManager
     private final transient JDateDay theFirstDate;
 
     /**
+     * Do we have active securities?
+     */
+    private Boolean haveActiveSecurities = Boolean.FALSE;
+
+    /**
+     * Do we have a foreign account?
+     */
+    private Boolean haveForeignCurrency = Boolean.FALSE;
+
+    /**
      * Constructor.
      * @param pAnalysis the new analysis
      */
@@ -101,6 +111,22 @@ public class AnalysisManager
      */
     public Analysis getAnalysis() {
         return theAnalysis;
+    }
+
+    /**
+     * Do we have a foreign currency?
+     * @return true/false
+     */
+    public Boolean haveForeignCurrency() {
+        return haveForeignCurrency;
+    }
+
+    /**
+     * Do we have active securities?
+     * @return true/false
+     */
+    public Boolean haveActiveSecurities() {
+        return haveActiveSecurities;
     }
 
     /**
@@ -172,22 +198,27 @@ public class AnalysisManager
         DepositCategoryBucketList myDepositCategories = pAnalysis.getDepositCategories();
         myDepositCategories.analyseDeposits(myDeposits);
         myDepositCategories.produceTotals();
+        haveForeignCurrency = myDepositCategories.haveForeignCurrency();
 
         /* Analyse the cash */
         CashBucketList myCash = pAnalysis.getCash();
         CashCategoryBucketList myCashCategories = pAnalysis.getCashCategories();
         myCashCategories.analyseCash(myCash);
         myCashCategories.produceTotals();
+        haveForeignCurrency |= myCashCategories.haveForeignCurrency();
 
         /* Analyse the loans */
         LoanBucketList myLoans = pAnalysis.getLoans();
         LoanCategoryBucketList myLoanCategories = pAnalysis.getLoanCategories();
         myLoanCategories.analyseLoans(myLoans);
         myLoanCategories.produceTotals();
+        haveForeignCurrency |= myLoanCategories.haveForeignCurrency();
 
         /* Analyse the securities */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
         myPortfolios.analyseSecurities();
+        haveForeignCurrency |= myPortfolios.haveForeignCurrency();
+        haveActiveSecurities = myPortfolios.haveActiveSecurities();
 
         /* Analyse the Payees */
         PayeeBucketList myPayees = pAnalysis.getPayees();

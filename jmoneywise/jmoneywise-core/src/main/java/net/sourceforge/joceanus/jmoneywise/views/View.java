@@ -68,6 +68,16 @@ public class View
     private DilutionEventMap theDilutions = null;
 
     /**
+     * Do we have security buckets?.
+     */
+    private boolean hasActiveSecurities = false;
+
+    /**
+     * Do we have multiple currencies?
+     */
+    private boolean hasMultiCurrency = false;
+
+    /**
      * Constructor.
      * @param pUtilitySet the utility set
      * @param pProfile the startup profile
@@ -104,6 +114,22 @@ public class View
      */
     public DilutionEventMap getDilutions() {
         return theDilutions;
+    }
+
+    /**
+     * Do we have active securities?
+     * @return true/false.
+     */
+    public boolean hasActiveSecurities() {
+        return hasActiveSecurities;
+    }
+
+    /**
+     * Do we have multiple currencies?
+     * @return true/false.
+     */
+    public boolean hasMultipleCurrencies() {
+        return hasMultiCurrency;
     }
 
     /**
@@ -158,10 +184,6 @@ public class View
         /* Create the analysis */
         TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceManager());
 
-        /* Access the top level debug entry for this analysis */
-        ViewerEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
-        mySection.setObject(myAnalyser);
-
         /* Post process the analysis */
         myAnalyser.postProcessAnalysis();
         pData.adjustSecurityMap();
@@ -200,6 +222,8 @@ public class View
             /* Analyse the basic ranged analysis */
             myTask.startTask("AnalyseBase");
             theAnalysisMgr.analyseBase();
+            hasMultiCurrency = theAnalysisMgr.haveForeignCurrency();
+            hasActiveSecurities = theAnalysisMgr.haveActiveSecurities();
 
             /* Update the Data entry */
             ViewerEntry myData = getDataEntry(DATA_ANALYSIS);

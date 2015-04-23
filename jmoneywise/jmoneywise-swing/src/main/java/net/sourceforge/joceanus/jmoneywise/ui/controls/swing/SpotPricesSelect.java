@@ -141,6 +141,11 @@ public class SpotPricesSelect
     private final JButton thePrev;
 
     /**
+     * The download button.
+     */
+    private final JButton theDownloadButton;
+
+    /**
      * The portfolio button.
      */
     private final JScrollButton<PortfolioBucket> thePortButton;
@@ -192,6 +197,9 @@ public class SpotPricesSelect
         /* Create the DateButton */
         theDateButton = new JDateDayButton();
 
+        /* Create the Download Button */
+        theDownloadButton = MoneyWiseIcons.getDownloadButton();
+
         /* Create the Buttons */
         theNext = new JButton(ArrowIcon.RIGHT);
         thePrev = new JButton(ArrowIcon.LEFT);
@@ -223,6 +231,9 @@ public class SpotPricesSelect
         add(thePortButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theShowClosed);
+        add(Box.createHorizontalGlue());
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theDownloadButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Initialise the data from the view */
@@ -343,6 +354,7 @@ public class SpotPricesSelect
         thePrev.setEnabled(bEnabled && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
         thePortButton.setEnabled(bEnabled);
+        theDownloadButton.setEnabled(bEnabled);
     }
 
     /**
@@ -403,6 +415,7 @@ public class SpotPricesSelect
             theShowClosed.addItemListener(this);
             theNext.addActionListener(this);
             thePrev.addActionListener(this);
+            theDownloadButton.addActionListener(this);
             thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
         }
 
@@ -421,6 +434,11 @@ public class SpotPricesSelect
                 /* Set previous and notify changes */
                 theState.setPrev();
                 theEventManager.fireStateChanged();
+
+                /* If this event relates to the download button */
+            } else if (theDownloadButton.equals(o)) {
+                /* fire an action event */
+                theEventManager.fireActionEvent();
             }
         }
 
@@ -646,6 +664,10 @@ public class SpotPricesSelect
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
             thePortButton.setValue(thePortfolio);
+
+            /* Determine whether we are todays date */
+            boolean isToday = Difference.isEqual(theDate, new JDateDay());
+            theDownloadButton.setVisible(isToday);
         }
     }
 }

@@ -300,10 +300,10 @@ public class Analysis
         theTransCategories = new TransactionCategoryBucketList(this);
         theTransTags = new TransactionTagBucketList(this);
 
-        /* No totalling buckets */
-        theDepositCategories = null;
-        theCashCategories = null;
-        theLoanCategories = null;
+        /* Create totalling buckets */
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
         theTaxCalculations = null;
     }
 

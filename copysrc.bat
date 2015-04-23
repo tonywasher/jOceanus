@@ -2,10 +2,11 @@
 setlocal
 
 if ".%1" == "." goto :default
-set projectName=JDateButton
+set projectName=jdatebutton
 set source=c:\Users\Tony\jOceanus\%projectName%
-set target=c:\Users\Tony\sourceforge\%projectName%\branches\v1.3.0
-set dirNames=.
+set target=c:\Users\Tony\sourceforge\%projectName%\trunk
+set dirNames=jdatebutton-core jdatebutton-swing jdatebutton-javafx
+set dirNames=%dirNames% .
 goto :docopy
 
 :default
@@ -21,20 +22,14 @@ set dirNames=%dirNames% jmoneywise jmoneywise\jmoneywise-core jmoneywise\jmoneyw
 set dirNames=%dirNames% .
 
 :docopy
-rem xcopy /Y %source%\pom.xml %target%\pom.xml
 for %%a IN (%dirNames%) do call :copySrcDir %%a
 goto :end
 
 :copySrcDir
 set dirName=%1
-rem xcopy /Y %source%\%dirName%\pom.xml %target%\%dirName%\pom.xml
 xcopy /S /Y %source%\%dirName%\src %target%\%dirName%\src
-goto :eof
-
-:setProject
-set projectName=%1
-set source=c:\Users\Tony\%projectName%
-set target=c:\Users\Tony\sourceforge\%projectName%\trunk
+if "%dirName%" == "." goto :eof
+xcopy /Y %source%\%dirName%\pom.xml %target%\%dirName%\pom.xml
 goto :eof
 
 :end

@@ -70,6 +70,11 @@ public enum MoneyWiseUIResource implements ResourceId {
     ICON_DIRFROM("icons.Tip.DirectionFrom"),
 
     /**
+     * Download ToolTip.
+     */
+    ICON_DOWNLOAD("icons.Tip.Download"),
+
+    /**
      * Report Prompt.
      */
     REPORT_PROMPT("report.Prompt.Select"),

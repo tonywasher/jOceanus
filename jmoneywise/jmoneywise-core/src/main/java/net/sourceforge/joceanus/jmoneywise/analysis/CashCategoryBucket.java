@@ -153,6 +153,11 @@ public final class CashCategoryBucket
         private final CashCategoryBucket theTotals;
 
         /**
+         * Do we have a foreign cash account?
+         */
+        private Boolean haveForeignCurrency = Boolean.FALSE;
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -186,6 +191,14 @@ public final class CashCategoryBucket
                 return theTotals;
             }
             return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Do we have a foreign currency?
+         * @return true/false
+         */
+        public Boolean haveForeignCurrency() {
+            return haveForeignCurrency;
         }
 
         /**
@@ -245,6 +258,26 @@ public final class CashCategoryBucket
                 /* Access category bucket and add values */
                 CashCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
+
+                /* Note foreign currency */
+                if (myCurr.isForeignCurrency()) {
+                    haveForeignCurrency = Boolean.TRUE;
+                }
+            }
+        }
+
+        /**
+         * Build categories.
+         * @param pCash the cash account buckets
+         */
+        protected void buildCategories(final CashBucketList pCash) {
+            /* Loop through the buckets */
+            Iterator<CashBucket> myIterator = pCash.iterator();
+            while (myIterator.hasNext()) {
+                /* Access bucket and category */
+                CashBucket myCurr = myIterator.next();
+                CashCategory myCategory = myCurr.getCategory();
+                getBucket(myCategory);
             }
         }
 

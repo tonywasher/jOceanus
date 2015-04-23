@@ -386,6 +386,11 @@ public final class SpotSecurityPrice
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
+        }
+
         /**
          * Obtain the next date.
          * @return the date

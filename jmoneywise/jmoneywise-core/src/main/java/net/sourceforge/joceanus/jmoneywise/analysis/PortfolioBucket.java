@@ -26,6 +26,7 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -124,6 +125,11 @@ public final class PortfolioBucket
     private final SecurityValues theBaseValues;
 
     /**
+     * Is this a foreign currency?
+     */
+    private final Boolean isForeignCurrency;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pPortfolio the portfolio account
@@ -151,6 +157,9 @@ public final class PortfolioBucket
         theValues = new SecurityValues(myCurrency);
         theBaseValues = new SecurityValues(myCurrency);
         initValues();
+
+        /* Determine whether the portfolio is a foreign currency */
+        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), theCurrency);
     }
 
     /**
@@ -163,6 +172,7 @@ public final class PortfolioBucket
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
         theCurrency = pBase.getCurrency();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());
@@ -191,6 +201,7 @@ public final class PortfolioBucket
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
         theCurrency = pBase.getCurrency();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);
@@ -219,6 +230,7 @@ public final class PortfolioBucket
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
         theCurrency = pBase.getCurrency();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);
@@ -281,6 +293,14 @@ public final class PortfolioBucket
     @Override
     public String toString() {
         return formatObject();
+    }
+
+    /**
+     * Is this a foreign currency?
+     * @return true/false
+     */
+    public Boolean isForeignCurrency() {
+        return isForeignCurrency;
     }
 
     /**
@@ -711,6 +731,16 @@ public final class PortfolioBucket
         private final PortfolioBucket theTotals;
 
         /**
+         * Do we have a foreign portfolio account?
+         */
+        private Boolean haveForeignCurrency = Boolean.FALSE;
+
+        /**
+         * Do we have active securities?
+         */
+        private Boolean haveActiveSecurities = Boolean.FALSE;
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -842,6 +872,22 @@ public final class PortfolioBucket
         }
 
         /**
+         * Do we have a foreign currency?
+         * @return true/false
+         */
+        public Boolean haveForeignCurrency() {
+            return haveForeignCurrency;
+        }
+
+        /**
+         * Do we have active securities?
+         * @return true/false
+         */
+        public Boolean haveActiveSecurities() {
+            return haveActiveSecurities;
+        }
+
+        /**
          * Obtain the PortfolioBucket for a given portfolio.
          * @param pPortfolio the portfolio
          * @return the bucket
@@ -930,6 +976,11 @@ public final class PortfolioBucket
                 theTotals.addValues(myCash);
                 myCashTotals.addValues(myCash);
 
+                /* Note foreign currency */
+                if (myPortfolio.isForeignCurrency()) {
+                    haveForeignCurrency = Boolean.TRUE;
+                }
+
                 /* Loop through the buckets */
                 Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();
                 while (mySecIterator.hasNext()) {
@@ -945,6 +996,9 @@ public final class PortfolioBucket
                     /* Add to the portfolio bucket and add values */
                     myPortfolio.addValues(myCurr);
                     theTotals.addValues(myCurr);
+
+                    /* Note active security */
+                    haveActiveSecurities = Boolean.TRUE;
                 }
 
                 /* Calculate delta for the portfolio */

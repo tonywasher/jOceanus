@@ -33,9 +33,12 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
@@ -340,6 +343,14 @@ public class TransactionAnalyser
             /* Process the transaction in the report set */
             processTransaction(myCurr);
         }
+
+        /* Build category buckets */
+        CashCategoryBucketList myCash = theAnalysis.getCashCategories();
+        myCash.buildCategories(theCashBuckets);
+        DepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
+        myDeposits.buildCategories(theDepositBuckets);
+        LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
+        myLoans.buildCategories(theLoanBuckets);
 
         /* Complete the task */
         myTask.end();

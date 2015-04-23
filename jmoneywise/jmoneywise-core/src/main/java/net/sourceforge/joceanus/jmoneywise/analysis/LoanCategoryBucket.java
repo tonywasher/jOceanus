@@ -153,6 +153,11 @@ public final class LoanCategoryBucket
         private final LoanCategoryBucket theTotals;
 
         /**
+         * Do we have a foreign loan account?
+         */
+        private Boolean haveForeignCurrency = Boolean.FALSE;
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -194,6 +199,14 @@ public final class LoanCategoryBucket
          */
         public LoanCategoryBucket getTotals() {
             return theTotals;
+        }
+
+        /**
+         * Do we have a foreign currency?
+         * @return true/false
+         */
+        public Boolean haveForeignCurrency() {
+            return haveForeignCurrency;
         }
 
         /**
@@ -245,6 +258,26 @@ public final class LoanCategoryBucket
                 /* Access category bucket and add values */
                 LoanCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
+
+                /* Note foreign currency */
+                if (myCurr.isForeignCurrency()) {
+                    haveForeignCurrency = Boolean.TRUE;
+                }
+            }
+        }
+
+        /**
+         * Build categories.
+         * @param pLoans the loan account buckets
+         */
+        protected void buildCategories(final LoanBucketList pLoans) {
+            /* Loop through the buckets */
+            Iterator<LoanBucket> myIterator = pLoans.iterator();
+            while (myIterator.hasNext()) {
+                /* Access bucket and category */
+                LoanBucket myCurr = myIterator.next();
+                LoanCategory myCategory = myCurr.getCategory();
+                getBucket(myCategory);
             }
         }
 

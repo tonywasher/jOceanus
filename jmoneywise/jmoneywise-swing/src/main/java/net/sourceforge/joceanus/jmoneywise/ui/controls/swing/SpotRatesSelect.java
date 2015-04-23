@@ -121,6 +121,11 @@ public class SpotRatesSelect
     private final JButton thePrev;
 
     /**
+     * The download button.
+     */
+    private final JButton theDownloadButton;
+
+    /**
      * The current state.
      */
     private transient SpotRatesState theState = null;
@@ -147,6 +152,9 @@ public class SpotRatesSelect
 
         /* Create the DateButton */
         theDateButton = new JDateDayButton();
+
+        /* Create the Download Button */
+        theDownloadButton = MoneyWiseIcons.getDownloadButton();
 
         /* Create the Currency indication */
         theCurrLabel = new JLabel();
@@ -178,6 +186,9 @@ public class SpotRatesSelect
         add(theDateButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theNext);
+        add(Box.createHorizontalGlue());
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theDownloadButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Initialise the data from the view */
@@ -243,6 +254,7 @@ public class SpotRatesSelect
         theNext.setEnabled(bEnabled && (theState.getNextDate() != null));
         thePrev.setEnabled(bEnabled && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
+        theDownloadButton.setEnabled(bEnabled);
     }
 
     /**
@@ -286,6 +298,7 @@ public class SpotRatesSelect
         private SpotRatesListener() {
             /* Declare listener */
             theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, this);
+            theDownloadButton.addActionListener(this);
             theNext.addActionListener(this);
             thePrev.addActionListener(this);
         }
@@ -305,6 +318,11 @@ public class SpotRatesSelect
                 /* Set previous and notify changes */
                 theState.setPrev();
                 theEventManager.fireStateChanged();
+
+                /* If this event relates to the download button */
+            } else if (theDownloadButton.equals(o)) {
+                /* fire an action event */
+                theEventManager.fireActionEvent();
             }
         }
 
@@ -439,6 +457,10 @@ public class SpotRatesSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
+
+            /* Determine whether we are todays date */
+            boolean isToday = Difference.isEqual(theDate, new JDateDay());
+            theDownloadButton.setVisible(isToday);
         }
     }
 }
