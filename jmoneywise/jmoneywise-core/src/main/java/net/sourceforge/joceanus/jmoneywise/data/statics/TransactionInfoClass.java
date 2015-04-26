@@ -88,9 +88,9 @@ public enum TransactionInfoClass implements DataInfoClass {
     CHARITYDONATION(11, 10, DataType.MONEY),
 
     /**
-     * Credit Amount.
+     * Partner Amount.
      */
-    CREDITAMOUNT(12, 11, DataType.MONEY),
+    PARTNERAMOUNT(12, 11, DataType.MONEY),
 
     /**
      * ThirdParty.

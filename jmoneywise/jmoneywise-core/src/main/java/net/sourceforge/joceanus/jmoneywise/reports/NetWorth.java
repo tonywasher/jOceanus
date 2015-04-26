@@ -519,7 +519,7 @@ public class NetWorth
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.RATE));
+            theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.DEPOSITRATE));
             theBuilder.makeValueCell(myTable, myValues.getDateValue(AccountAttribute.MATURITY));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
 

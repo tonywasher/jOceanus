@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -32,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
@@ -264,8 +266,10 @@ public class TransactionInfoSet
             case THIRDPARTY:
                 return isThirdPartyClassRequired(myTransaction, myClass);
 
+            case PARTNERAMOUNT:
+                return isPartnerAmountClassRequired(myAccount, myPartner);
+
             case PENSION:
-            case CREDITAMOUNT:
             case XCHANGERATE:
             default:
                 return JDataFieldRequired.NOTALLOWED;
@@ -416,12 +420,32 @@ public class TransactionInfoSet
     }
 
     /**
+     * Determine if a PartnerAmount infoSet class is required.
+     * @param pAccount the account
+     * @param pPartner the partner
+     * @return the status
+     */
+    protected static JDataFieldRequired isPartnerAmountClassRequired(final TransactionAsset pAccount,
+                                                                     final TransactionAsset pPartner) {
+        /* If Partner currency is null or the same as Account then Partner amount is not allowed */
+        AssetCurrency myCurrency = pAccount.getAssetCurrency();
+        AssetCurrency myPartnerCurrency = pPartner.getAssetCurrency();
+        if ((myCurrency == null) || (myPartnerCurrency == null)) {
+            return JDataFieldRequired.NOTALLOWED;
+        }
+        return Difference.isEqual(myCurrency, myPartnerCurrency)
+                                                                ? JDataFieldRequired.NOTALLOWED
+                                                                : JDataFieldRequired.MUSTEXIST;
+    }
+
+    /**
      * Validate the infoSet.
      */
     protected void validate() {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
         TransactionAsset myAccount = myTransaction.getAccount();
+        TransactionAsset myPartner = myTransaction.getPartner();
         Currency myCurrency = myAccount.getCurrency();
 
         /* Loop through the classes */
@@ -490,6 +514,23 @@ public class TransactionInfoSet
                         myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
+                case PARTNERAMOUNT:
+                    /* Check value */
+                    myAmount = myInfo.getValue(JMoney.class);
+                    if (myAmount.isZero()) {
+                        myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
+                    } else if (!myAmount.isPositive()) {
+                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
+                    } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
+                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
+                    }
+                    break;
+                case THIRDPARTY:
+                    Deposit myThirdParty = myInfo.getDeposit();
+                    if (!myCurrency.equals(myThirdParty.getCurrency())) {
+                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
+                    }
+                    break;
                 case CREDITUNITS:
                 case DEBITUNITS:
                     /* Check value */
@@ -515,8 +556,6 @@ public class TransactionInfoSet
                         myTransaction.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
-                case THIRDPARTY:
-                case CREDITAMOUNT:
                 case PENSION:
                 case TRANSTAG:
                 case XCHANGERATE:

@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import java.util.Currency;
+
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
@@ -66,11 +67,6 @@ public final class LoanBucket
     private final Boolean isCreditCard;
 
     /**
-     * Is this a foreign currency?
-     */
-    private final Boolean isForeignCurrency;
-
-    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pLoan the loan
@@ -85,9 +81,6 @@ public final class LoanBucket
 
         /* Determine whether this is a credit card */
         isCreditCard = theCategory.isCategoryClass(LoanCategoryClass.CREDITCARD);
-
-        /* Determine whether the deposit is a foreign currency */
-        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), pLoan.getAssetCurrency());
     }
 
     /**
@@ -103,7 +96,6 @@ public final class LoanBucket
         /* Copy details from base */
         theCategory = pBase.getCategory();
         isCreditCard = pBase.isCreditCard();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -121,7 +113,6 @@ public final class LoanBucket
         /* Copy details from base */
         theCategory = pBase.getCategory();
         isCreditCard = pBase.isCreditCard();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -139,7 +130,6 @@ public final class LoanBucket
         /* Copy details from base */
         theCategory = pBase.getCategory();
         isCreditCard = pBase.isCreditCard();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     @Override
@@ -174,12 +164,19 @@ public final class LoanBucket
         return isCreditCard;
     }
 
-    /**
-     * Is this a foreign currency?
-     * @return true/false
-     */
-    public Boolean isForeignCurrency() {
-        return isForeignCurrency;
+    @Override
+    protected AccountValues allocateStandardValues(final Currency pCurrency) {
+        return getAccount().isLoanClass(LoanCategoryClass.CREDITCARD)
+                                                                     ? new CreditCardValues(pCurrency)
+                                                                     : super.allocateStandardValues(pCurrency);
+    }
+
+    @Override
+    protected AccountValues allocateForeignValues(final Currency pCurrency,
+                                                  final Currency pReportingCurrency) {
+        return getAccount().isLoanClass(LoanCategoryClass.CREDITCARD)
+                                                                     ? new CreditCardValues(pCurrency, pReportingCurrency)
+                                                                     : super.allocateForeignValues(pCurrency, pReportingCurrency);
     }
 
     /**
@@ -209,6 +206,74 @@ public final class LoanBucket
 
         /* Pass call on */
         super.adjustForDebit(pTrans);
+    }
+
+    /**
+     * CreditCardValues class.
+     */
+    public static final class CreditCardValues
+            extends AccountValues {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -3340482670174694323L;
+
+        /**
+         * Constructor.
+         * @param pCurrency the account currency
+         */
+        private CreditCardValues(final Currency pCurrency) {
+            /* Initialise class */
+            super(pCurrency);
+
+            /* Initialise spend to zero */
+            put(AccountAttribute.SPEND, new JMoney(pCurrency));
+        }
+
+        /**
+         * Constructor.
+         * @param pCurrency the account currency
+         * @param pReportingCurrency the reporting currency
+         */
+        private CreditCardValues(final Currency pCurrency,
+                                 final Currency pReportingCurrency) {
+            /* Initialise class */
+            super(pCurrency, pReportingCurrency);
+
+            /* Initialise spend to zero */
+            put(AccountAttribute.SPEND, new JMoney(pCurrency));
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source map.
+         */
+        private CreditCardValues(final CreditCardValues pSource) {
+            /* Initialise class */
+            super(pSource);
+        }
+
+        @Override
+        protected CreditCardValues getSnapShot() {
+            return new CreditCardValues(this);
+        }
+
+        @Override
+        protected void adjustToBaseValues(final AccountValues pBase) {
+            /* Adjust spend values */
+            adjustMoneyToBase(pBase, AccountAttribute.SPEND);
+        }
+
+        @Override
+        protected void resetBaseValues() {
+            /* Reset spend values */
+            JMoney mySpend = getMoneyValue(AccountAttribute.SPEND);
+            if (mySpend.isNonZero()) {
+                mySpend = new JMoney(mySpend);
+                mySpend.setZero();
+                put(AccountAttribute.SPEND, mySpend);
+            }
+        }
     }
 
     /**

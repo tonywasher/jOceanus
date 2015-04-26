@@ -774,6 +774,26 @@ public final class SecurityBucket
 
         /**
          * Constructor.
+         * @param pCurrency the account currency
+         * @param pReportingCurrency the reporting currency
+         */
+        protected SecurityValues(final Currency pCurrency,
+                                 final Currency pReportingCurrency) {
+            /* Initialise class */
+            super(SecurityAttribute.class);
+
+            /* Initialise units etc. to zero */
+            put(SecurityAttribute.UNITS, new JUnits());
+            put(SecurityAttribute.COST, new JMoney(pCurrency));
+            put(SecurityAttribute.INVESTED, new JMoney(pCurrency));
+            put(SecurityAttribute.LOCALINVESTED, new JMoney(pReportingCurrency));
+            put(SecurityAttribute.GAINS, new JMoney(pCurrency));
+            put(SecurityAttribute.GROWTHADJUST, new JMoney(pCurrency));
+            put(SecurityAttribute.DIVIDEND, new JMoney(pCurrency));
+        }
+
+        /**
+         * Constructor.
          * @param pSource the source map.
          */
         private SecurityValues(final SecurityValues pSource) {
@@ -786,6 +806,14 @@ public final class SecurityBucket
             return new SecurityValues(this);
         }
 
+        /**
+         * Is this a foreign security?
+         * @return true/false
+         */
+        private boolean isForeignSecurity() {
+            return get(SecurityAttribute.LOCALINVESTED) != null;
+        }
+
         @Override
         protected void adjustToBaseValues(final SecurityValues pBase) {
             /* Adjust invested/gains values */
@@ -793,6 +821,11 @@ public final class SecurityBucket
             adjustMoneyToBase(pBase, SecurityAttribute.GAINS);
             adjustMoneyToBase(pBase, SecurityAttribute.GROWTHADJUST);
             adjustMoneyToBase(pBase, SecurityAttribute.DIVIDEND);
+
+            /* If we are a foreign security */
+            if (isForeignSecurity()) {
+                adjustMoneyToBase(pBase, SecurityAttribute.LOCALINVESTED);
+            }
         }
 
         @Override
@@ -807,6 +840,15 @@ public final class SecurityBucket
             put(SecurityAttribute.GAINS, new JMoney(myValue));
             put(SecurityAttribute.GROWTHADJUST, new JMoney(myValue));
             put(SecurityAttribute.DIVIDEND, new JMoney(myValue));
+
+            /* If we are a foreign security */
+            if (isForeignSecurity()) {
+                /* Create a zero value in the correct currency */
+                myValue = getMoneyValue(SecurityAttribute.LOCALINVESTED);
+                myValue = new JMoney(myValue);
+                myValue.setZero();
+                put(SecurityAttribute.LOCALINVESTED, myValue);
+            }
         }
 
         /**
@@ -875,7 +917,8 @@ public final class SecurityBucket
                 SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr);
 
                 /*
-                 * Ignore idle securities. Note that we must include securities that have been closed in order to adjust Market Growth.
+                 * Ignore idle securities. Note that we must include securities that have been
+                 * closed in order to adjust Market Growth.
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
@@ -906,7 +949,8 @@ public final class SecurityBucket
                 SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pDate);
 
                 /*
-                 * Ignore idle securities. Note that we must include securities that have been closed in order to adjust Market Growth.
+                 * Ignore idle securities. Note that we must include securities that have been
+                 * closed in order to adjust Market Growth.
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */

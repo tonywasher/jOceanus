@@ -27,6 +27,7 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -73,11 +73,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
 
     /**
-     * Currency Field Id.
-     */
-    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
-
-    /**
      * Base Field Id.
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
@@ -108,9 +103,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     private final T theAccount;
 
     /**
-     * The currency.
+     * Is this a foreign currency?
      */
-    private final AssetCurrency theCurrency;
+    private final Boolean isForeignCurrency;
 
     /**
      * The dataSet.
@@ -143,17 +138,22 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         theAccount = pAccount;
 
         /* Determine currency */
-        theCurrency = (pAccount == null)
-                                        ? pAnalysis.getCurrency()
-                                        : pAccount.getAssetCurrency();
+        AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
+        AssetCurrency myAccountCurrency = (pAccount == null)
+                                                            ? myReportingCurrency
+                                                            : pAccount.getAssetCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
+        /* Determine whether we are a foreign currency */
+        isForeignCurrency = !Difference.isEqual(myReportingCurrency, myAccountCurrency);
+        Currency myCurrency = deriveCurrency(myAccountCurrency);
+        Currency myRepCurrency = deriveCurrency(myReportingCurrency);
+
         /* Create the history map */
-        Currency myCurrency = theCurrency == null
-                                                 ? DEFAULT_CURRENCY
-                                                 : theCurrency.getCurrency();
-        AccountValues myValues = new AccountValues(myCurrency);
+        AccountValues myValues = isForeignCurrency
+                                                  ? allocateForeignValues(myCurrency, myRepCurrency)
+                                                  : allocateStandardValues(myCurrency);
         theHistory = new BucketHistory<AccountValues, AccountAttribute>(myValues);
 
         /* Access the key value maps */
@@ -170,9 +170,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final AccountBucket<T> pBase) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
-        theCurrency = pBase.getCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap());
@@ -193,9 +193,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final JDateDay pDate) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
-        theCurrency = pBase.getCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pDate);
@@ -216,9 +216,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final JDateDayRange pRange) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
-        theCurrency = pBase.getCurrency();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pRange);
@@ -235,9 +235,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
         if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
-        }
-        if (FIELD_CURRENCY.equals(pField)) {
-            return theCurrency;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return theHistory;
@@ -272,6 +269,37 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
+     * derive currency.
+     * @param pAssetCurrency the asset currency
+     * @return the actual currency to use
+     */
+    protected static Currency deriveCurrency(final AssetCurrency pAssetCurrency) {
+        return pAssetCurrency == null
+                                     ? DEFAULT_CURRENCY
+                                     : pAssetCurrency.getCurrency();
+    }
+
+    /**
+     * allocate standard values.
+     * @param pCurrency the asset currency
+     * @return the actual currency to use
+     */
+    protected AccountValues allocateStandardValues(final Currency pCurrency) {
+        return new AccountValues(pCurrency);
+    }
+
+    /**
+     * allocate foreign values.
+     * @param pCurrency the asset currency
+     * @param pReportingCurrency the reporting currency
+     * @return the actual currency to use
+     */
+    protected AccountValues allocateForeignValues(final Currency pCurrency,
+                                                  final Currency pReportingCurrency) {
+        return new AccountValues(pCurrency, pReportingCurrency);
+    }
+
+    /**
      * Obtain the name.
      * @return the name
      */
@@ -290,11 +318,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
-     * Obtain the currency.
-     * @return the currency
+     * Is this a foreign currency?
+     * @return true/false
      */
-    public AssetCurrency getCurrency() {
-        return theCurrency;
+    public Boolean isForeignCurrency() {
+        return isForeignCurrency;
     }
 
     @Override
@@ -593,15 +621,29 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
             /* Initialise valuation and spend to zero */
             put(AccountAttribute.VALUATION, new JMoney(pCurrency));
-            put(AccountAttribute.SPEND, new JMoney(pCurrency));
-            put(AccountAttribute.BADDEBT, new JMoney(pCurrency));
+        }
+
+        /**
+         * Constructor.
+         * @param pCurrency the account currency
+         * @param pReportingCurrency the reporting currency
+         */
+        protected AccountValues(final Currency pCurrency,
+                                final Currency pReportingCurrency) {
+            /* Initialise class */
+            super(AccountAttribute.class);
+
+            /* Initialise valuation and spend to zero */
+            put(AccountAttribute.VALUATION, new JMoney(pReportingCurrency));
+            put(AccountAttribute.LOCALVALUATION, new JMoney(pCurrency));
+            put(AccountAttribute.FOREIGNVALUATION, new JMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
          */
-        private AccountValues(final AccountValues pSource) {
+        protected AccountValues(final AccountValues pSource) {
             /* Initialise class */
             super(pSource);
         }
@@ -609,23 +651,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         @Override
         protected AccountValues getSnapShot() {
             return new AccountValues(this);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final AccountValues pBase) {
-            /* Adjust spend values */
-            adjustMoneyToBase(pBase, AccountAttribute.SPEND);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Reset spend values */
-            JMoney mySpend = getMoneyValue(AccountAttribute.VALUATION);
-            if (mySpend.isNonZero()) {
-                mySpend = new JMoney(mySpend);
-                mySpend.setZero();
-                put(AccountAttribute.SPEND, mySpend);
-            }
         }
 
         /**
@@ -711,7 +736,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         /**
          * Obtain the hidden base totals.
          * <p>
-         * These base totals are missing because we discarded them for a dated analysis. However they are needed to ensure that totals balance.
+         * These base totals are missing because we discarded them for a dated analysis. However
+         * they are needed to ensure that totals balance.
          * @return the hidden base totals
          */
         protected JMoney getHiddenBaseTotal() {

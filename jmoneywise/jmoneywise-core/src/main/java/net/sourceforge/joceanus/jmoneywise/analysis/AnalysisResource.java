@@ -317,14 +317,29 @@ public enum AnalysisResource implements ResourceId {
     ACCOUNTATTR_VALUATION("AccountAttr.Valuation"),
 
     /**
-     * AccountAttr Rate.
+     * AccountAttr ForeignValuation.
      */
-    ACCOUNTATTR_RATE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE),
+    ACCOUNTATTR_FOREIGNVALUATION("AccountAttr.ForeignValuation"),
+
+    /**
+     * AccountAttr DepositRate.
+     */
+    ACCOUNTATTR_DEPOSITRATE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE),
 
     /**
      * AccountAttr Delta.
      */
     ACCOUNTATTR_DELTA("AccountAttr.Delta"),
+
+    /**
+     * AccountAttr Local Valuation.
+     */
+    ACCOUNTATTR_LOCALVALUATION("AccountAttr.LocalValuation"),
+
+    /**
+     * AccountAttr ExchangeRate.
+     */
+    ACCOUNTATTR_EXCHANGERATE(MoneyWiseDataTypeResource.XCHGRATE_NAME),
 
     /**
      * AccountAttr Maturity.
@@ -375,6 +390,11 @@ public enum AnalysisResource implements ResourceId {
      * SecurityAttr Invested.
      */
     SECURITYATTR_INVESTED("SecurityAttr.Invested"),
+
+    /**
+     * SecurityAttr Local Invested.
+     */
+    SECURITYATTR_LOCALINVESTED("SecurityAttr.LocalInvested"),
 
     /**
      * SecurityAttr Dividend.
@@ -479,8 +499,14 @@ public enum AnalysisResource implements ResourceId {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
-            case RATE:
-                return ACCOUNTATTR_RATE;
+            case FOREIGNVALUATION:
+                return ACCOUNTATTR_FOREIGNVALUATION;
+            case LOCALVALUATION:
+                return ACCOUNTATTR_LOCALVALUATION;
+            case DEPOSITRATE:
+                return ACCOUNTATTR_DEPOSITRATE;
+            case EXCHANGERATE:
+                return ACCOUNTATTR_EXCHANGERATE;
             case DELTA:
                 return ACCOUNTATTR_DELTA;
             case MATURITY:
@@ -539,8 +565,12 @@ public enum AnalysisResource implements ResourceId {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
+            case FOREIGNVALUATION:
+                return ACCOUNTATTR_FOREIGNVALUATION;
             case DELTA:
                 return ACCOUNTATTR_DELTA;
+            case EXCHANGERATE:
+                return ACCOUNTATTR_EXCHANGERATE;
             case UNITS:
                 return SECURITYATTR_UNITS;
             case COST:
@@ -551,6 +581,8 @@ public enum AnalysisResource implements ResourceId {
                 return SECURITYATTR_GROWTHADJUST;
             case INVESTED:
                 return SECURITYATTR_INVESTED;
+            case LOCALINVESTED:
+                return SECURITYATTR_LOCALINVESTED;
             case DIVIDEND:
                 return SECURITYATTR_DIVIDEND;
             case MARKET:

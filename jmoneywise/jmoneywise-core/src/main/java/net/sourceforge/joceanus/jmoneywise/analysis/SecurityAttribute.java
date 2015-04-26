@@ -39,9 +39,24 @@ public enum SecurityAttribute implements BucketAttribute {
     VALUATION,
 
     /**
+     * Foreign Valuation.
+     */
+    FOREIGNVALUATION,
+
+    /**
      * Valuation Delta.
      */
     DELTA,
+
+    /**
+     * Local Invested Amount.
+     */
+    LOCALINVESTED,
+
+    /**
+     * Exchange Rate.
+     */
+    EXCHANGERATE,
 
     /**
      * Cost.
@@ -114,11 +129,14 @@ public enum SecurityAttribute implements BucketAttribute {
             case GROWTHADJUST:
             case DIVIDEND:
             case INVESTED:
+            case LOCALINVESTED:
                 return true;
             case MARKET:
             case PROFIT:
             case MARKETPROFIT:
             case VALUATION:
+            case FOREIGNVALUATION:
+            case EXCHANGERATE:
             case PRICE:
             case DELTA:
             default:
@@ -133,7 +151,11 @@ public enum SecurityAttribute implements BucketAttribute {
                 return DataType.UNITS;
             case PRICE:
                 return DataType.PRICE;
+            case EXCHANGERATE:
+                return DataType.RATIO;
             case VALUATION:
+            case FOREIGNVALUATION:
+            case LOCALINVESTED:
             case DELTA:
             case COST:
             case GAINS:

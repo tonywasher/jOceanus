@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -52,11 +51,6 @@ public final class CashBucket
     private final CashCategory theCategory;
 
     /**
-     * Is this a foreign currency?
-     */
-    private final Boolean isForeignCurrency;
-
-    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pCash the cash account
@@ -68,9 +62,6 @@ public final class CashBucket
 
         /* Obtain category */
         theCategory = pCash.getCategory();
-
-        /* Determine whether the deposit is a foreign currency */
-        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), pCash.getAssetCurrency());
     }
 
     /**
@@ -85,7 +76,6 @@ public final class CashBucket
 
         /* Copy details from base */
         theCategory = pBase.getCategory();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -102,7 +92,6 @@ public final class CashBucket
 
         /* Copy details from base */
         theCategory = pBase.getCategory();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -119,7 +108,6 @@ public final class CashBucket
 
         /* Copy details from base */
         theCategory = pBase.getCategory();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     @Override
@@ -141,14 +129,6 @@ public final class CashBucket
      */
     public CashCategory getCategory() {
         return theCategory;
-    }
-
-    /**
-     * Is this a foreign currency?
-     * @return true/false
-     */
-    public Boolean isForeignCurrency() {
-        return isForeignCurrency;
     }
 
     /**

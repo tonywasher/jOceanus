@@ -312,13 +312,18 @@ public class TransactionPanel
         JTextField myComments = new JTextField();
         JTextField myReference = new JTextField();
 
+        /* Allocate fields */
+        JTextField myAmount = new JTextField();
+
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
+        restrictField(myAmount, myWidth);
         restrictField(myComments, myWidth);
         restrictField(myReference, myWidth);
         restrictField(theTagButton, myWidth);
 
         /* Build the FieldSet */
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), DataType.MONEY, myAmount);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), DataType.STRING, myComments);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), DataType.STRING, myReference);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
@@ -503,9 +508,17 @@ public class TransactionPanel
             theTagButton.setText(myTrans.getTagNameList());
         }
 
+        /* Determine whether the partnerAmount field should be visible */
+        JDataField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
+        boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERAMOUNT);
+        bShowField = bEditField || myTrans.getPartnerAmount() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myTrans.getPartner().getCurrency());
+
         /* Determine whether the taxCredit field should be visible */
-        JDataField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
-        boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
         bShowField = bEditField || myTrans.getTaxCredit() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
@@ -562,6 +575,7 @@ public class TransactionPanel
         bShowField = bEditField || myTrans.getThirdParty() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the years field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS);
@@ -660,6 +674,9 @@ public class TransactionPanel
                     break;
                 case TRANSTAG:
                     updateTag(myTrans, pUpdate.getItemEvent());
+                    break;
+                case PARTNERAMOUNT:
+                    myTrans.setPartnerAmount(pUpdate.getMoney());
                     break;
                 case CREDITUNITS:
                     myTrans.setCreditUnits(pUpdate.getUnits());

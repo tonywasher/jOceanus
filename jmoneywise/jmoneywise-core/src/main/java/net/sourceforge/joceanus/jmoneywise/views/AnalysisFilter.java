@@ -554,6 +554,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             switch ((AccountAttribute) pCounter) {
                 case BADDEBT:
                     return getBucket().isPeer2Peer();
+                case FOREIGNVALUATION:
+                    return getBucket().isForeignCurrency();
                 case SPEND:
                     return false;
                 default:
@@ -591,6 +593,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                 case BADDEBT:
                 case SPEND:
                     return false;
+                case FOREIGNVALUATION:
+                    return getBucket().isForeignCurrency();
                 default:
                     return true;
             }
@@ -627,6 +631,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                     return getBucket().isCreditCard();
                 case BADDEBT:
                     return false;
+                case FOREIGNVALUATION:
+                    return getBucket().isForeignCurrency();
                 default:
                     return true;
             }

@@ -393,6 +393,7 @@ public class QIFBuilder {
                     processCashBack(pDebit, pCredit, pTrans);
                     break;
                 case INTEREST:
+                case LOYALTYBONUS:
                     /* Process as interest payment */
                     processInterest(pDebit, pCredit, pTrans);
                     break;

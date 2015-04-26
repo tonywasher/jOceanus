@@ -798,7 +798,7 @@ public class TransactionAnalyser
         pTarget.adjustUnits(myUnits);
         pTarget.adjustCost(myCost);
         pTarget.adjustInvested(myInvested);
-        pTarget.registerTransaction(pTrans);
+        myTargetValues = pTarget.registerTransaction(pTrans);
         myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
         myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
 
@@ -812,7 +812,7 @@ public class TransactionAnalyser
         myInvested = new JMoney(myInvested);
         myInvested.negate();
         pSource.adjustInvested(myInvested);
-        pSource.registerTransaction(pTrans);
+        mySourceValues = pSource.registerTransaction(pTrans);
         mySourceValues.setValue(SecurityAttribute.PRICE, myPrice);
         mySourceValues.setValue(SecurityAttribute.VALUATION, myStockValue);
     }
@@ -1486,7 +1486,7 @@ public class TransactionAnalyser
         myDebitAsset.adjustInvested(myInvested);
 
         /* Register the transaction */
-        myDebitAsset.registerTransaction(pTrans);
+        myDebitValues = myDebitAsset.registerTransaction(pTrans);
         myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
         myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
     }

@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import java.util.Currency;
+
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -69,11 +70,6 @@ public final class DepositBucket
     private final Boolean isPeer2Peer;
 
     /**
-     * Is this a foreign currency?
-     */
-    private final Boolean isForeignCurrency;
-
-    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pDeposit the deposit
@@ -89,9 +85,6 @@ public final class DepositBucket
 
         /* Determine whether this is a peer2peer */
         isPeer2Peer = theCategory.isCategoryClass(DepositCategoryClass.PEER2PEER);
-
-        /* Determine whether the deposit is a foreign currency */
-        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), pDeposit.getAssetCurrency());
     }
 
     /**
@@ -108,7 +101,6 @@ public final class DepositBucket
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         isPeer2Peer = pBase.isPeer2Peer();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -127,7 +119,6 @@ public final class DepositBucket
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         isPeer2Peer = pBase.isPeer2Peer();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     /**
@@ -146,7 +137,6 @@ public final class DepositBucket
         theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         isPeer2Peer = pBase.isPeer2Peer();
-        isForeignCurrency = pBase.isForeignCurrency();
     }
 
     @Override
@@ -178,12 +168,19 @@ public final class DepositBucket
         return isPeer2Peer;
     }
 
-    /**
-     * Is this a foreign currency?
-     * @return true/false
-     */
-    public Boolean isForeignCurrency() {
-        return isForeignCurrency;
+    @Override
+    protected AccountValues allocateStandardValues(final Currency pCurrency) {
+        return getAccount().isDepositClass(DepositCategoryClass.PEER2PEER)
+                                                                          ? new Peer2PeerValues(pCurrency)
+                                                                          : super.allocateStandardValues(pCurrency);
+    }
+
+    @Override
+    protected AccountValues allocateForeignValues(final Currency pCurrency,
+                                                  final Currency pReportingCurrency) {
+        return getAccount().isDepositClass(DepositCategoryClass.PEER2PEER)
+                                                                          ? new Peer2PeerValues(pCurrency, pReportingCurrency)
+                                                                          : super.allocateForeignValues(pCurrency, pReportingCurrency);
     }
 
     /**
@@ -215,7 +212,7 @@ public final class DepositBucket
             }
 
             /* Store the rate */
-            setValue(AccountAttribute.RATE, myRate.getRate());
+            setValue(AccountAttribute.DEPOSITRATE, myRate.getRate());
         }
 
         /* Store the maturity */
@@ -271,6 +268,57 @@ public final class DepositBucket
 
         /* Pass call on */
         super.adjustForCredit(pTrans);
+    }
+
+    /**
+     * Peer2PeerValues class.
+     */
+    public static final class Peer2PeerValues
+            extends AccountValues {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 5567633911931855603L;
+
+        /**
+         * Constructor.
+         * @param pCurrency the account currency
+         */
+        private Peer2PeerValues(final Currency pCurrency) {
+            /* Initialise class */
+            super(pCurrency);
+
+            /* Initialise BadDebt to zero */
+            put(AccountAttribute.BADDEBT, new JMoney(pCurrency));
+        }
+
+        /**
+         * Constructor.
+         * @param pCurrency the account currency
+         * @param pReportingCurrency the reporting currency
+         */
+        private Peer2PeerValues(final Currency pCurrency,
+                                final Currency pReportingCurrency) {
+            /* Initialise class */
+            super(pCurrency, pReportingCurrency);
+
+            /* Initialise BadDebt to zero */
+            put(AccountAttribute.BADDEBT, new JMoney(pCurrency));
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source map.
+         */
+        private Peer2PeerValues(final Peer2PeerValues pSource) {
+            /* Initialise class */
+            super(pSource);
+        }
+
+        @Override
+        protected Peer2PeerValues getSnapShot() {
+            return new Peer2PeerValues(this);
+        }
     }
 
     /**

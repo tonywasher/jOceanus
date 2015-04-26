@@ -932,9 +932,9 @@ public enum StaticDataResource implements ResourceId {
     TRANSINFO_CREDITDATE("TransInfoType.CreditDate"),
 
     /**
-     * TransInfo CreditAmount.
+     * TransInfo PartnerAmount.
      */
-    TRANSINFO_CREDITAMOUNT("TransInfoType.CreditAmount"),
+    TRANSINFO_PARTNERAMOUNT("TransInfoType.PartnerAmount"),
 
     /**
      * TransInfo Dilution.
@@ -1559,8 +1559,8 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSINFO_CREDITUNITS;
             case DEBITUNITS:
                 return TRANSINFO_DEBITUNITS;
-            case CREDITAMOUNT:
-                return TRANSINFO_CREDITAMOUNT;
+            case PARTNERAMOUNT:
+                return TRANSINFO_PARTNERAMOUNT;
             case CREDITDATE:
                 return TRANSINFO_CREDITDATE;
             case DILUTION:

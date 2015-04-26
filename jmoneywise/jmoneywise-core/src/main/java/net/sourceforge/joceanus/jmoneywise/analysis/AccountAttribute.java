@@ -34,14 +34,29 @@ public enum AccountAttribute implements BucketAttribute {
     VALUATION,
 
     /**
-     * Rate.
+     * Foreign Currency Valuation.
      */
-    RATE,
+    FOREIGNVALUATION,
+
+    /**
+     * Deposit Rate.
+     */
+    DEPOSITRATE,
+
+    /**
+     * Exchange Rate.
+     */
+    EXCHANGERATE,
 
     /**
      * Valuation Delta.
      */
     DELTA,
+
+    /**
+     * Local Valuation.
+     */
+    LOCALVALUATION,
 
     /**
      * Maturity.
@@ -79,10 +94,13 @@ public enum AccountAttribute implements BucketAttribute {
     public boolean isCounter() {
         switch (this) {
             case VALUATION:
+            case FOREIGNVALUATION:
             case SPEND:
             case BADDEBT:
+            case LOCALVALUATION:
                 return true;
-            case RATE:
+            case DEPOSITRATE:
+            case EXCHANGERATE:
             case MATURITY:
             case DELTA:
             default:
@@ -93,11 +111,15 @@ public enum AccountAttribute implements BucketAttribute {
     @Override
     public DataType getDataType() {
         switch (this) {
-            case RATE:
+            case DEPOSITRATE:
                 return DataType.RATE;
+            case EXCHANGERATE:
+                return DataType.RATIO;
             case MATURITY:
                 return DataType.DATEDAY;
             case VALUATION:
+            case FOREIGNVALUATION:
+            case LOCALVALUATION:
             case DELTA:
             case SPEND:
             case BADDEBT:

@@ -47,11 +47,17 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     private static final long serialVersionUID = 9160258241035845846L;
 
     /**
+     * Enum class.
+     */
+    private final Class<E> theClass;
+
+    /**
      * Constructor.
      * @param pClass the Enum class
      */
     protected BucketValues(final Class<E> pClass) {
         super(pClass);
+        theClass = pClass;
     }
 
     /**
@@ -59,12 +65,32 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pSource the source values
      */
     protected BucketValues(final T pSource) {
-        super(pSource);
+        this(pSource.getEnumClass());
+
+        /* Loop through the constants */
+        for (E myKey : theClass.getEnumConstants()) {
+            /* If the constant is a counter */
+            if (myKey.isCounter()) {
+                /* Copy non-null values */
+                Object myValue = pSource.get(myKey);
+                if (myValue != null) {
+                    put(myKey, myValue);
+                }
+            }
+        }
     }
 
     @Override
     public String formatObject() {
         return getClass().getSimpleName();
+    }
+
+    /**
+     * Obtain EnumClass.
+     * @return the class.
+     */
+    protected Class<E> getEnumClass() {
+        return theClass;
     }
 
     /**

@@ -381,12 +381,12 @@ public class Transaction
     }
 
     /**
-     * Obtain Credit Amount.
-     * @return the Credit Amount
+     * Obtain Partner Amount.
+     * @return the Partner Amount
      */
-    public final JMoney getCreditAmount() {
+    public final JMoney getPartnerAmount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.CREDITAMOUNT, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.PARTNERAMOUNT, JMoney.class)
                          : null;
     }
 
@@ -780,12 +780,12 @@ public class Transaction
     }
 
     /**
-     * Set a new Credit Amount.
-     * @param pValue the new credit amount
+     * Set a new Partner Amount.
+     * @param pValue the new partner amount
      * @throws JOceanusException on error
      */
-    public final void setCreditAmount(final JMoney pValue) throws JOceanusException {
-        setInfoSetValue(TransactionInfoClass.CREDITAMOUNT, pValue);
+    public final void setPartnerAmount(final JMoney pValue) throws JOceanusException {
+        setInfoSetValue(TransactionInfoClass.PARTNERAMOUNT, pValue);
     }
 
     /**
