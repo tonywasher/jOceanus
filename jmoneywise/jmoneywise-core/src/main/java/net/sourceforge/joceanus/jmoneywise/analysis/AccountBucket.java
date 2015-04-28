@@ -692,11 +692,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         private final Analysis theAnalysis;
 
         /**
-         * The hidden base total.
-         */
-        private final JMoney theHiddenBaseTotal;
-
-        /**
          * Construct a top-level List.
          * @param pClass the bucket class
          * @param pAnalysis the analysis
@@ -706,7 +701,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             /* Initialise class */
             super(pClass);
             theAnalysis = pAnalysis;
-            theHiddenBaseTotal = new JMoney();
         }
 
         @Override
@@ -734,17 +728,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         /**
-         * Obtain the hidden base totals.
-         * <p>
-         * These base totals are missing because we discarded them for a dated analysis. However
-         * they are needed to ensure that totals balance.
-         * @return the hidden base totals
-         */
-        protected JMoney getHiddenBaseTotal() {
-            return theHiddenBaseTotal;
-        }
-
-        /**
          * Construct a view List.
          * @param pBase the base list
          */
@@ -757,17 +740,10 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 /* Access the bucket */
                 B myBucket = newBucket(myCurr);
 
-                /* If the bucket is active */
-                if (myBucket.isActive()) {
+                /* If the bucket is non-idle or active */
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* add to list */
                     append(myBucket);
-
-                    /* Else for inactive buckets */
-                } else {
-                    /* Record any base value (since we are discarding it) */
-                    AccountValues myBaseValues = myBucket.getBaseValues();
-                    JMoney myValue = myBaseValues.getMoneyValue(AccountAttribute.VALUATION);
-                    theHiddenBaseTotal.addAmount(myValue);
                 }
             }
         }
@@ -794,18 +770,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 /* Access the bucket for this date */
                 B myBucket = newBucket(myCurr, pDate);
 
-                /* If the bucket is active */
-                if (myBucket.isActive()) {
+                /* If the bucket is non-idle or active */
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
                     append(myBucket);
-
-                    /* Else for inactive buckets */
-                } else {
-                    /* Record any base value (since we are discarding it) */
-                    AccountValues myBaseValues = myBucket.getBaseValues();
-                    JMoney myValue = myBaseValues.getMoneyValue(AccountAttribute.VALUATION);
-                    theHiddenBaseTotal.addAmount(myValue);
                 }
             }
         }

@@ -517,6 +517,7 @@ public class DepositAnalysisSelect
             if (!Difference.isEqual(pDeposit, theDeposit)) {
                 /* Store the deposit */
                 setTheDeposit(pDeposit);
+                return true;
             }
             return false;
         }

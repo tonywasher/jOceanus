@@ -239,7 +239,6 @@ public class AnalysisManager
      */
     private void checkTotals(final Analysis pAnalysis) {
         /* Obtain Totals bucket */
-        DepositBucketList myDeposit = pAnalysis.getDeposits();
         DepositCategoryBucket myDepCat = pAnalysis.getDepositCategories().getTotals();
         CashCategoryBucket myCashCat = pAnalysis.getCashCategories().getTotals();
         LoanCategoryBucket myLoanCat = pAnalysis.getLoanCategories().getTotals();
@@ -264,13 +263,6 @@ public class AnalysisManager
 
         /* Create a copy */
         myDepTotal = new JMoney(myDepTotal);
-
-        /* Adjust for Hidden Base Totals */
-        JMoney myHiddenBase = myDeposit.getHiddenBaseTotal();
-        if (myHiddenBase != null) {
-            myDepTotal = new JMoney(myDepTotal);
-            myDepTotal.subtractAmount(myHiddenBase);
-        }
 
         /* Add sub-accounts */
         myDepTotal.addAmount(myCashTotal);

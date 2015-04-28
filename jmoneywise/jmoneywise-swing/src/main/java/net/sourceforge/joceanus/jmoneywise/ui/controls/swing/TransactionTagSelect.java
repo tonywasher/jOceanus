@@ -359,8 +359,6 @@ public class TransactionTagSelect
             if (!Difference.isEqual(pTag, theTransTag)) {
                 /* Store the tag */
                 setTheTag(pTag);
-
-                /* We have changed */
                 return true;
             }
             return false;

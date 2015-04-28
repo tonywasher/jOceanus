@@ -58,6 +58,11 @@ public final class DepositCategoryBucket
     private final DepositCategory theCategory;
 
     /**
+     * Is the category active?
+     */
+    private boolean isActive;
+
+    /**
      * Constructor.
      * @param pCurrency the currency
      * @param pCategory the account category
@@ -98,6 +103,14 @@ public final class DepositCategoryBucket
         return theCategory;
     }
 
+    /**
+     * Is the bucket active?
+     * @return true/false
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+
     @Override
     public int compareTo(final AccountCategoryBucket<Deposit, DepositCategory> pThat) {
         /* Handle the trivial cases */
@@ -110,6 +123,22 @@ public final class DepositCategoryBucket
 
         /* Compare the AccountCategories */
         return getAccountCategory().compareTo(pThat.getAccountCategory());
+    }
+
+    /**
+     * Update active flag for Deposit Bucket.
+     * @param pBucket the Deposit bucket
+     */
+    private void updateActive(final DepositBucket pBucket) {
+        isActive |= pBucket.isActive();
+    }
+
+    /**
+     * Update active flag for Deposit Category Bucket.
+     * @param pBucket the Deposit category bucket
+     */
+    private void updateActive(final DepositCategoryBucket pBucket) {
+        isActive |= pBucket.isActive();
     }
 
     /**
@@ -259,6 +288,7 @@ public final class DepositCategoryBucket
                 /* Access category bucket and add values */
                 DepositCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
+                myBucket.updateActive(myCurr);
 
                 /* Note foreign currency */
                 if (myCurr.isForeignCurrency()) {
@@ -279,6 +309,9 @@ public final class DepositCategoryBucket
                 DepositBucket myCurr = myIterator.next();
                 DepositCategory myCategory = myCurr.getCategory();
                 getBucket(myCategory);
+
+                /* Access parent category */
+                getBucket(myCategory.getParentCategory());
             }
         }
 
@@ -319,6 +352,7 @@ public final class DepositCategoryBucket
 
                 /* Add the bucket to the totals */
                 myTotal.addValues(myCurr);
+                myTotal.updateActive(myCurr);
 
                 /* Add to totals bucket */
                 theTotals.addValues(myCurr);

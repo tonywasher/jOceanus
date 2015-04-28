@@ -57,6 +57,11 @@ public final class LoanCategoryBucket
     private final LoanCategory theCategory;
 
     /**
+     * Is the category active?
+     */
+    private boolean isActive;
+
+    /**
      * Constructor.
      * @param pCurrency the currency
      * @param pCategory the account category
@@ -97,6 +102,14 @@ public final class LoanCategoryBucket
         return theCategory;
     }
 
+    /**
+     * Is the bucket active?
+     * @return true/false
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+
     @Override
     public int compareTo(final AccountCategoryBucket<Loan, LoanCategory> pThat) {
         /* Handle the trivial cases */
@@ -109,6 +122,22 @@ public final class LoanCategoryBucket
 
         /* Compare the AccountCategories */
         return getAccountCategory().compareTo(pThat.getAccountCategory());
+    }
+
+    /**
+     * Update active flag for Loan Bucket.
+     * @param pBucket the Loan bucket
+     */
+    private void updateActive(final LoanBucket pBucket) {
+        isActive |= pBucket.isActive();
+    }
+
+    /**
+     * Update active flag for Loan Category Bucket.
+     * @param pBucket the Loan category bucket
+     */
+    private void updateActive(final LoanCategoryBucket pBucket) {
+        isActive |= pBucket.isActive();
     }
 
     /**
@@ -258,6 +287,7 @@ public final class LoanCategoryBucket
                 /* Access category bucket and add values */
                 LoanCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
+                myBucket.updateActive(myCurr);
 
                 /* Note foreign currency */
                 if (myCurr.isForeignCurrency()) {
@@ -278,6 +308,9 @@ public final class LoanCategoryBucket
                 LoanBucket myCurr = myIterator.next();
                 LoanCategory myCategory = myCurr.getCategory();
                 getBucket(myCategory);
+
+                /* Access parent category */
+                getBucket(myCategory.getParentCategory());
             }
         }
 
@@ -318,6 +351,7 @@ public final class LoanCategoryBucket
 
                 /* Add the bucket to the totals */
                 myTotal.addValues(myCurr);
+                myTotal.updateActive(myCurr);
 
                 /* Add to totals bucket */
                 theTotals.addValues(myCurr);

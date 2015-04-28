@@ -502,15 +502,8 @@ public class LoanAnalysisSelect
         private boolean setLoan(final LoanBucket pLoan) {
             /* Adjust the selected loan */
             if (!Difference.isEqual(pLoan, theLoan)) {
-                /* Store the loan */
-                theLoan = pLoan;
-
-                /* Access category for loan */
-                theCategory = (theLoan == null)
-                                               ? null
-                                               : theLoan.getCategory();
-
-                /* We have changed */
+                /* Set the Loan */
+                setTheLoan(pLoan);
                 return true;
             }
             return false;

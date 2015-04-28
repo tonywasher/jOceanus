@@ -521,6 +521,7 @@ public class CashAnalysisSelect
             if (!Difference.isEqual(pCash, theCash)) {
                 /* Store the cash */
                 setTheCash(pCash);
+                return true;
             }
             return false;
         }

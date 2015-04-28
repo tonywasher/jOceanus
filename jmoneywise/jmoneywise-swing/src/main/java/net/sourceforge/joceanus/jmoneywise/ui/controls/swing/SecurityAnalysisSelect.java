@@ -499,8 +499,6 @@ public class SecurityAnalysisSelect
             if (!Difference.isEqual(pSecurity, theSecurity)) {
                 /* Store the security */
                 theSecurity = pSecurity;
-
-                /* We have changed */
                 return true;
             }
             return false;

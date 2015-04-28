@@ -167,8 +167,9 @@ public class NetWorth
             while (myIterator.hasNext()) {
                 DepositCategoryBucket myBucket = myIterator.next();
 
-                /* Only process subTotal items */
-                if (!myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
+                /* Only process active subTotal items */
+                if (!myBucket.isActive()
+                    || !myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
                     continue;
                 }
 
@@ -199,8 +200,9 @@ public class NetWorth
             while (myIterator.hasNext()) {
                 CashCategoryBucket myBucket = myIterator.next();
 
-                /* Only process subTotal items */
-                if (!myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
+                /* Only process active subTotal items */
+                if (!myBucket.isActive()
+                    || !myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
                     continue;
                 }
 
@@ -250,8 +252,9 @@ public class NetWorth
             while (myIterator.hasNext()) {
                 LoanCategoryBucket myBucket = myIterator.next();
 
-                /* Only process subTotal items */
-                if (!myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
+                /* Only process active subTotal items */
+                if (!myBucket.isActive()
+                    || !myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
                     continue;
                 }
 
@@ -303,9 +306,10 @@ public class NetWorth
         while (myIterator.hasNext()) {
             DepositCategoryBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
+            /* Skip record if inactive or incorrect category */
             DepositCategory myCurr = myBucket.getAccountCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!myBucket.isActive()
+                || !Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -347,9 +351,10 @@ public class NetWorth
         while (myIterator.hasNext()) {
             CashCategoryBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
+            /* Skip record if inactive or incorrect category */
             CashCategory myCurr = myBucket.getAccountCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!myBucket.isActive()
+                || !Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -391,9 +396,10 @@ public class NetWorth
         while (myIterator.hasNext()) {
             LoanCategoryBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
+            /* Skip record if inactive or incorrect category */
             LoanCategory myCurr = myBucket.getAccountCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!myBucket.isActive()
+                || !Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -505,8 +511,9 @@ public class NetWorth
         while (myIterator.hasNext()) {
             DepositBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getCategory(), myCategory)) {
+            /* Skip record if inactive or incorrect category */
+            if (!myBucket.isActive()
+                || !Difference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -551,8 +558,9 @@ public class NetWorth
         while (myIterator.hasNext()) {
             CashBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getCategory(), myCategory)) {
+            /* Skip record if inactive or incorrect category */
+            if (!myBucket.isActive()
+                || !Difference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -595,8 +603,9 @@ public class NetWorth
         while (myIterator.hasNext()) {
             LoanBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getCategory(), myCategory)) {
+            /* Skip record if inactive or incorrect category */
+            if (!myBucket.isActive()
+                || !Difference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
