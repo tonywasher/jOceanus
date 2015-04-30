@@ -221,7 +221,7 @@ public class TaxAnalysis {
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXPAID);
 
         /* Calculate the tax profit */
-        myTax.subtractAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.GROSS));
+        myTax.addAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Build the TaxProfitBucket */
         myBucket = myList.getBucket(TaxCategoryClass.TAXPROFITLOSS);
@@ -1050,7 +1050,8 @@ public class TaxAnalysis {
         }
 
         /*
-         * If we are not finished but either have no basic band left or are prevented from top-slicing due to using age allowances
+         * If we are not finished but either have no basic band left or are prevented from
+         * top-slicing due to using age allowances
          */
         if ((!isFinished)
             && ((!pBands.theBasicBand.isNonZero()) || (hasAgeAllowance))) {

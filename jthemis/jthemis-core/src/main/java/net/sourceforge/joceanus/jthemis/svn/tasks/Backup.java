@@ -124,7 +124,7 @@ public class Backup {
 
         /* Access a default client manager */
         theAuth = SVNWCUtil.createDefaultAuthenticationManager(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER),
-                thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS));
+                thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS).toCharArray());
 
         /* Access a default client manager */
         SVNClientManager myManager = SVNClientManager.newInstance();

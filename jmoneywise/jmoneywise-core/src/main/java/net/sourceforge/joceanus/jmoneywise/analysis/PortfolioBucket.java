@@ -65,11 +65,6 @@ public final class PortfolioBucket
     private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
-     * Currency Field Id.
-     */
-    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
-
-    /**
      * CashBucket Field Id.
      */
     private static final JDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemName());
@@ -100,7 +95,7 @@ public final class PortfolioBucket
     private final Portfolio thePortfolio;
 
     /**
-     * The currency.
+     * The reporting currency.
      */
     private final AssetCurrency theCurrency;
 
@@ -138,9 +133,7 @@ public final class PortfolioBucket
                             final Portfolio pPortfolio) {
         /* Store the portfolio */
         thePortfolio = pPortfolio;
-        theCurrency = (pPortfolio == null)
-                                          ? pAnalysis.getCurrency()
-                                          : pPortfolio.getAssetCurrency();
+        theCurrency = pAnalysis.getCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pPortfolio);
@@ -256,9 +249,6 @@ public final class PortfolioBucket
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
-        }
-        if (FIELD_CURRENCY.equals(pField)) {
-            return theCurrency;
         }
         if (FIELD_CASH.equals(pField)) {
             return theCash;
@@ -424,17 +414,22 @@ public final class PortfolioBucket
      * InitialiseValues.
      */
     private void initValues() {
+        /* Determine currency */
+        Currency myCurrency = theCurrency == null
+                                                 ? AccountBucket.DEFAULT_CURRENCY
+                                                 : theCurrency.getCurrency();
+
         /* Create valuation fields for the portfolio */
-        theValues.setValue(SecurityAttribute.VALUATION, new JMoney());
-        theBaseValues.setValue(SecurityAttribute.VALUATION, new JMoney());
+        theValues.setValue(SecurityAttribute.VALUATION, new JMoney(myCurrency));
+        theBaseValues.setValue(SecurityAttribute.VALUATION, new JMoney(myCurrency));
 
         /* Create profit fields for the portfolio */
-        theValues.setValue(SecurityAttribute.PROFIT, new JMoney());
-        theBaseValues.setValue(SecurityAttribute.PROFIT, new JMoney());
+        theValues.setValue(SecurityAttribute.PROFIT, new JMoney(myCurrency));
+        theBaseValues.setValue(SecurityAttribute.PROFIT, new JMoney(myCurrency));
 
         /* Create market fields for the portfolio */
-        theValues.setValue(SecurityAttribute.MARKET, new JMoney());
-        theValues.setValue(SecurityAttribute.MARKETPROFIT, new JMoney());
+        theValues.setValue(SecurityAttribute.MARKET, new JMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.MARKETPROFIT, new JMoney(myCurrency));
     }
 
     /**
@@ -517,7 +512,7 @@ public final class PortfolioBucket
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(SecurityAttribute.DELTA, myValue);
+        setValue(SecurityAttribute.VALUEDELTA, myValue);
     }
 
     /**

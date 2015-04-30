@@ -68,8 +68,8 @@
     <appLibDir/>
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.52</BouncyCastleVersion>
-    <SvnKitVersion>1.8.8</SvnKitVersion>
-    <JGitVersion>3.7.0.201502260915-r</JGitVersion>
+    <SvnKitVersion>1.8.9</SvnKitVersion>
+    <JGitVersion>3.7.1.201504261725-r</JGitVersion>
     <HttpClientVersion>4.4.1</HttpClientVersion>
     <JSONVersion>20141113</JSONVersion>
     <ApacheMavenVersion>3.3.1</ApacheMavenVersion>
@@ -82,17 +82,6 @@
     <LOG4JVersion>2.2</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
-  <repositories>
-    <repository>
-      <id>svnkit</id>
-      <name>SubVersion Repository</name>
-      <url>http://maven.tmatesoft.com/content/repositories/releases/</url>
-    </repository>
-    <repository>
-      <id>jgit-repository</id>
-      <url>https://repo.eclipse.org/content/groups/releases/</url>
-    </repository>
-  </repositories>
   <build>
     <resources>
       <resource>

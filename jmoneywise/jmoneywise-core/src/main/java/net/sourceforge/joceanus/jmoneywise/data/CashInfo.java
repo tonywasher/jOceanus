@@ -225,7 +225,8 @@ public class CashInfo
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The AccountInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
@@ -472,12 +473,6 @@ public class CashInfo
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new JMoneyWiseDataException(pCash, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
-            }
-
-            /* If we are setting autoExpense */
-            if (AccountInfoClass.AUTOEXPENSE.equals(pInfoClass)) {
-                /* Clear currency on the account */
-                pCash.setAssetCurrency(null);
             }
 
             /* Create the values */

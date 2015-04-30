@@ -29,11 +29,6 @@ import net.sourceforge.joceanus.jmetis.data.DataType;
  */
 public enum TransactionAttribute implements BucketAttribute {
     /**
-     * IncomeDelta.
-     */
-    DELTA,
-
-    /**
      * Income.
      */
     INCOME,
@@ -41,7 +36,12 @@ public enum TransactionAttribute implements BucketAttribute {
     /**
      * Expense.
      */
-    EXPENSE;
+    EXPENSE,
+
+    /**
+     * Profit (NetIncome).
+     */
+    PROFIT;
 
     /**
      * The String name.

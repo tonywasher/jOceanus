@@ -44,7 +44,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.TransactionTagBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -633,15 +635,43 @@ public class Analysis
      */
     private void addOpeningBalances() {
         /* Iterate through the deposits */
-        Iterator<Deposit> myIterator = theData.getDeposits().iterator();
-        while (myIterator.hasNext()) {
-            Deposit myDeposit = myIterator.next();
+        Iterator<Deposit> myDepIterator = theData.getDeposits().iterator();
+        while (myDepIterator.hasNext()) {
+            Deposit myDeposit = myDepIterator.next();
 
             /* If the deposit has an opening balance */
             JMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual deposit bucket */
                 DepositBucket myBucket = theDeposits.getBucket(myDeposit);
+                myBucket.setOpeningBalance(myBalance);
+            }
+        }
+
+        /* Iterate through the cash */
+        Iterator<Cash> myCashIterator = theData.getCash().iterator();
+        while (myCashIterator.hasNext()) {
+            Cash myCash = myCashIterator.next();
+
+            /* If the cash has an opening balance */
+            JMoney myBalance = myCash.getOpeningBalance();
+            if (myBalance != null) {
+                /* Obtain the actual cash bucket */
+                CashBucket myBucket = theCash.getBucket(myCash);
+                myBucket.setOpeningBalance(myBalance);
+            }
+        }
+
+        /* Iterate through the loans */
+        Iterator<Loan> myLoanIterator = theData.getLoans().iterator();
+        while (myLoanIterator.hasNext()) {
+            Loan myLoan = myLoanIterator.next();
+
+            /* If the loan has an opening balance */
+            JMoney myBalance = myLoan.getOpeningBalance();
+            if (myBalance != null) {
+                /* Obtain the actual loan bucket */
+                LoanBucket myBucket = theLoans.getBucket(myLoan);
                 myBucket.setOpeningBalance(myBalance);
             }
         }

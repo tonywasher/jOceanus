@@ -439,35 +439,30 @@ public final class TransactionCategoryBucket
     }
 
     /**
-     * Obtain new Income value.
-     * @return the new income value
+     * Adjust counter.
+     * @param pAttr the attribute
+     * @param pDelta the delta
      */
-    private JMoney getNewIncome() {
-        JMoney myIncome = theValues.getMoneyValue(TransactionAttribute.INCOME);
-        return new JMoney(myIncome);
-    }
-
-    /**
-     * Obtain new Expense value.
-     * @return the new expense value
-     */
-    private JMoney getNewExpense() {
-        JMoney myExpense = theValues.getMoneyValue(TransactionAttribute.EXPENSE);
-        return new JMoney(myExpense);
+    protected void adjustCounter(final TransactionAttribute pAttr,
+                                 final JMoney pDelta) {
+        JMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new JMoney(myValue);
+        myValue.addAmount(pDelta);
+        setValue(pAttr, myValue);
     }
 
     /**
      * Add income value.
-     * @param pTrans the transaction causing the expense
+     * @param pTrans the transaction helper
      * @param pValue the value to add
      */
-    protected void addIncome(final Transaction pTrans,
+    protected void addIncome(final TransactionHelper pTrans,
                              final JMoney pValue) {
         /* Add the expense */
         addIncome(pValue);
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
@@ -477,9 +472,7 @@ public final class TransactionCategoryBucket
     protected void addIncome(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myIncome = getNewIncome();
-            myIncome.addAmount(pValue);
-            setValue(TransactionAttribute.INCOME, myIncome);
+            adjustCounter(TransactionAttribute.INCOME, pValue);
         }
     }
 
@@ -490,24 +483,24 @@ public final class TransactionCategoryBucket
     protected void subtractIncome(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myIncome = getNewIncome();
-            myIncome.subtractAmount(pValue);
-            setValue(TransactionAttribute.INCOME, myIncome);
+            JMoney myIncome = new JMoney(pValue);
+            myIncome.negate();
+            adjustCounter(TransactionAttribute.INCOME, myIncome);
         }
     }
 
     /**
      * Add expense value.
-     * @param pTrans the transaction causing the expense
+     * @param pTrans the transaction helper
      * @param pValue the value to add
      */
-    protected void addExpense(final Transaction pTrans,
+    protected void addExpense(final TransactionHelper pTrans,
                               final JMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
@@ -517,9 +510,7 @@ public final class TransactionCategoryBucket
     protected void addExpense(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myExpense = getNewExpense();
-            myExpense.addAmount(pValue);
-            setValue(TransactionAttribute.EXPENSE, myExpense);
+            adjustCounter(TransactionAttribute.EXPENSE, pValue);
         }
     }
 
@@ -528,13 +519,13 @@ public final class TransactionCategoryBucket
      * @param pTrans the transaction causing the expense
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final Transaction pTrans,
+    protected void subtractExpense(final TransactionHelper pTrans,
                                    final JMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
         /* Register the event in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
@@ -544,23 +535,23 @@ public final class TransactionCategoryBucket
     protected void subtractExpense(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myExpense = getNewExpense();
-            myExpense.subtractAmount(pValue);
-            setValue(TransactionAttribute.EXPENSE, myExpense);
+            JMoney myExpense = new JMoney(pValue);
+            myExpense.negate();
+            adjustCounter(TransactionAttribute.EXPENSE, myExpense);
         }
     }
 
     /**
      * Add transaction to totals.
-     * @param pTrans the transaction
+     * @param pTrans the transaction helper
      * @return isIncome true/false
      */
-    private boolean adjustValues(final Transaction pTrans) {
+    private boolean adjustValues(final TransactionHelper pTrans) {
         /* Analyse the event */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         AssetDirection myDir = pTrans.getDirection();
         boolean isExpense = myClass.isExpense();
-        JMoney myAmount = new JMoney(pTrans.getAmount());
+        JMoney myAmount = new JMoney(pTrans.getLocalDebitAmount());
 
         /* If this is an expense */
         if (isExpense) {
@@ -575,17 +566,13 @@ public final class TransactionCategoryBucket
                 /* If this is a recovered expense */
                 if (myDir.isFrom()) {
                     /* Add as income */
-                    JMoney myIncome = getNewIncome();
-                    myIncome.addAmount(myAmount);
-                    setValue(TransactionAttribute.INCOME, myIncome);
+                    adjustCounter(TransactionAttribute.INCOME, myAmount);
                     isExpense = false;
 
                     /* else its standard expense */
                 } else {
                     /* Add as expense */
-                    JMoney myExpense = getNewExpense();
-                    myExpense.addAmount(myAmount);
-                    setValue(TransactionAttribute.EXPENSE, myExpense);
+                    adjustCounter(TransactionAttribute.EXPENSE, myAmount);
                 }
             }
 
@@ -626,25 +613,19 @@ public final class TransactionCategoryBucket
                 /* If this is a returned income */
                 if (myDir.isTo()) {
                     /* Add as expense */
-                    JMoney myExpense = getNewExpense();
-                    myExpense.addAmount(myAmount);
-                    setValue(TransactionAttribute.EXPENSE, myExpense);
+                    adjustCounter(TransactionAttribute.EXPENSE, myAmount);
 
                     /* else standard income */
                 } else {
                     /* Add as income */
-                    JMoney myIncome = getNewIncome();
-                    myIncome.addAmount(myAmount);
-
-                    /* Store the value */
-                    setValue(TransactionAttribute.INCOME, myIncome);
+                    adjustCounter(TransactionAttribute.INCOME, myAmount);
                     isExpense = false;
                 }
             }
         }
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
 
         /* Return the income flag */
         return !isExpense;
@@ -684,6 +665,15 @@ public final class TransactionCategoryBucket
         myValue = theValues.getMoneyValue(TransactionAttribute.EXPENSE);
         mySrcValue = mySource.getMoneyValue(TransactionAttribute.EXPENSE);
         myValue.addAmount(mySrcValue);
+    }
+
+    /**
+     * Register the transaction.
+     * @param pTrans the transaction helper
+     */
+    protected void registerTransaction(final TransactionHelper pTrans) {
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans.getTransaction(), theValues);
     }
 
     /**
@@ -744,7 +734,7 @@ public final class TransactionCategoryBucket
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            put(TransactionAttribute.DELTA, myDelta);
+            put(TransactionAttribute.PROFIT, myDelta);
         }
 
         @Override
@@ -757,7 +747,7 @@ public final class TransactionCategoryBucket
             /* Reset Income and expense values */
             put(TransactionAttribute.INCOME, myValue);
             put(TransactionAttribute.EXPENSE, new JMoney(myValue));
-            put(TransactionAttribute.DELTA, new JMoney(myValue));
+            put(TransactionAttribute.PROFIT, new JMoney(myValue));
         }
 
         /**
@@ -1062,10 +1052,10 @@ public final class TransactionCategoryBucket
 
         /**
          * Adjust category buckets.
-         * @param pTrans the transaction
+         * @param pTrans the transaction helper
          * @param pCategory primary category
          */
-        protected void adjustCategories(final Transaction pTrans,
+        protected void adjustCategories(final TransactionHelper pTrans,
                                         final TransactionCategory pCategory) {
             /* Adjust the primary category bucket */
             TransactionCategoryBucket myCatBucket = getBucket(pCategory);
@@ -1112,11 +1102,11 @@ public final class TransactionCategoryBucket
 
         /**
          * Adjust for Standard Gains.
-         * @param pTrans the transaction
+         * @param pTrans the transaction helper
          * @param pSource the source security holding
          * @param pGains the gains
          */
-        protected void adjustStandardGain(final Transaction pTrans,
+        protected void adjustStandardGain(final TransactionHelper pTrans,
                                           final SecurityHolding pSource,
                                           final JMoney pGains) {
             /* Access security and portfolio */
@@ -1143,17 +1133,17 @@ public final class TransactionCategoryBucket
 
         /**
          * Adjust for Taxable Gains.
-         * @param pTrans the transaction
+         * @param pTrans the transaction helper
          * @param pReduction the income reduction
          */
-        protected void adjustTaxableGain(final Transaction pTrans,
+        protected void adjustTaxableGain(final TransactionHelper pTrans,
                                          final JMoney pReduction) {
             /* Adjust Taxable Gains */
             theTaxableGains.subtractIncome(pReduction);
             theTaxableGains.adjustValues(pTrans);
 
             /* Obtain normalised value */
-            JMoney myGains = new JMoney(pTrans.getAmount());
+            JMoney myGains = new JMoney(pTrans.getLocalDebitAmount());
             myGains.subtractAmount(pReduction);
 
             /* Adjust for Tax Credit */

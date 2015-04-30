@@ -119,7 +119,7 @@ public class IncomeExpense
             theBuilder.makeDelayLinkCell(myTable, myName);
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.PROFIT));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -133,7 +133,7 @@ public class IncomeExpense
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.DELTA));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.PROFIT));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -189,7 +189,7 @@ public class IncomeExpense
             theBuilder.makeFilterLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.PROFIT));
 
             /* Record the selection */
             setFilterForId(myName, myBucket);

@@ -41,17 +41,17 @@ public enum SecurityAttribute implements BucketAttribute {
     /**
      * Foreign Valuation.
      */
-    FOREIGNVALUATION,
+    FOREIGNVALUE,
 
     /**
      * Valuation Delta.
      */
-    DELTA,
+    VALUEDELTA,
 
     /**
-     * Local Invested Amount.
+     * Foreign Valuation Delta.
      */
-    LOCALINVESTED,
+    FOREIGNVALUEDELTA,
 
     /**
      * Exchange Rate.
@@ -69,6 +69,16 @@ public enum SecurityAttribute implements BucketAttribute {
     GAINS,
 
     /**
+     * Local Gains.
+     */
+    LOCALGAINS,
+
+    /**
+     * Foreign Gains.
+     */
+    FOREIGNGAINS,
+
+    /**
      * GrowthAdjust.
      */
     GROWTHADJUST,
@@ -79,9 +89,29 @@ public enum SecurityAttribute implements BucketAttribute {
     INVESTED,
 
     /**
+     * Local Invested Amount.
+     */
+    LOCALINVESTED,
+
+    /**
+     * Foreign Invested Amount.
+     */
+    FOREIGNINVESTED,
+
+    /**
      * Dividend.
      */
     DIVIDEND,
+
+    /**
+     * Local Dividend Amount.
+     */
+    LOCALDIVIDEND,
+
+    /**
+     * Foreign Dividend Amount.
+     */
+    FOREIGNDIVIDEND,
 
     /**
      * Market.
@@ -126,19 +156,25 @@ public enum SecurityAttribute implements BucketAttribute {
             case UNITS:
             case COST:
             case GAINS:
+            case LOCALGAINS:
+            case FOREIGNGAINS:
             case GROWTHADJUST:
             case DIVIDEND:
+            case LOCALDIVIDEND:
+            case FOREIGNDIVIDEND:
             case INVESTED:
             case LOCALINVESTED:
+            case FOREIGNINVESTED:
                 return true;
             case MARKET:
             case PROFIT:
             case MARKETPROFIT:
             case VALUATION:
-            case FOREIGNVALUATION:
+            case FOREIGNVALUE:
             case EXCHANGERATE:
             case PRICE:
-            case DELTA:
+            case VALUEDELTA:
+            case FOREIGNVALUEDELTA:
             default:
                 return false;
         }
@@ -154,14 +190,20 @@ public enum SecurityAttribute implements BucketAttribute {
             case EXCHANGERATE:
                 return DataType.RATIO;
             case VALUATION:
-            case FOREIGNVALUATION:
-            case LOCALINVESTED:
-            case DELTA:
+            case FOREIGNVALUE:
+            case VALUEDELTA:
+            case FOREIGNVALUEDELTA:
             case COST:
             case GAINS:
+            case LOCALGAINS:
+            case FOREIGNGAINS:
             case GROWTHADJUST:
             case INVESTED:
+            case LOCALINVESTED:
+            case FOREIGNINVESTED:
             case DIVIDEND:
+            case LOCALDIVIDEND:
+            case FOREIGNDIVIDEND:
             case MARKET:
             case MARKETPROFIT:
             case PROFIT:

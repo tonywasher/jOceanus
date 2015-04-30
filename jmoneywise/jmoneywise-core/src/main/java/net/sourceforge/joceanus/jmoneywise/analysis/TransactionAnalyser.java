@@ -124,6 +124,11 @@ public class TransactionAnalyser
     private final Analysis theAnalysis;
 
     /**
+     * The transaction helper.
+     */
+    private final TransactionHelper theHelper;
+
+    /**
      * The deposit bucket list.
      */
     private final DepositBucketList theDepositBuckets;
@@ -203,6 +208,9 @@ public class TransactionAnalyser
         /* Create a new analysis */
         myTask.startTask("Initialise");
         theAnalysis = new Analysis(pData, pPreferenceMgr);
+
+        /* Create new helper */
+        theHelper = new TransactionHelper(pData);
 
         /* Access details from the analysis */
         theDepositBuckets = theAnalysis.getDeposits();
@@ -296,6 +304,9 @@ public class TransactionAnalyser
         MoneyWiseData myData = theAnalysis.getData();
         theHoldingMap = myData.getSecurityHoldingsMap();
         thePriceMap = myData.getSecurityPriceDataMap();
+
+        /* Create new helper */
+        theHelper = new TransactionHelper(myData);
 
         /* Create a new analysis */
         myTask.startTask("Initialise");
@@ -427,16 +438,12 @@ public class TransactionAnalyser
      * @throws JOceanusException on error
      */
     private void processTransaction(final Transaction pTrans) throws JOceanusException {
+        /* Declare to helper */
+        theHelper.setTransaction(pTrans);
+
         /* Access key details */
-        TransactionAsset myAccount = pTrans.getAccount();
-        TransactionAsset myPartner = pTrans.getPartner();
-        boolean bFrom = pTrans.getDirection().isFrom();
-        TransactionAsset myDebitAsset = bFrom
-                                             ? myPartner
-                                             : myAccount;
-        TransactionAsset myCreditAsset = bFrom
-                                              ? myAccount
-                                              : myPartner;
+        TransactionAsset myDebitAsset = theHelper.getDebitAsset();
+        TransactionAsset myCreditAsset = theHelper.getCreditAsset();
 
         /* Look for tags */
         Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
@@ -448,20 +455,20 @@ public class TransactionAnalyser
         /* If the event relates to a security item, split out the workings */
         if (myDebitAsset instanceof SecurityHolding) {
             /* Process as a Security transaction */
-            processDebitSecurityTransaction((SecurityHolding) myDebitAsset, myCreditAsset, pTrans);
+            processDebitSecurityTransaction((SecurityHolding) myDebitAsset, myCreditAsset);
 
             /* If the event relates to a security item, split out the workings */
         } else if (myCreditAsset instanceof SecurityHolding) {
             /* Process as a Security transaction */
-            processCreditSecurityTransaction(myDebitAsset, (SecurityHolding) myCreditAsset, pTrans);
+            processCreditSecurityTransaction(myDebitAsset, (SecurityHolding) myCreditAsset);
 
-            /* Else handle the portfolio xfer */
+            /* Else handle the portfolio transfer */
         } else if ((myDebitAsset instanceof Portfolio)
                    && (myCreditAsset instanceof Portfolio)
                    && (pTrans.getCategoryClass() == TransactionCategoryClass.PORTFOLIOXFER)
-                   && !myAccount.equals(myPartner)) {
+                   && !myDebitAsset.equals(myCreditAsset)) {
             /* Process portfolio transfer */
-            processPortfolioXfer((Portfolio) myDebitAsset, (Portfolio) myCreditAsset, pTrans);
+            processPortfolioXfer((Portfolio) myDebitAsset, (Portfolio) myCreditAsset);
 
             /* Else handle the event normally */
         } else if ((myDebitAsset instanceof AssetBase)
@@ -518,12 +525,12 @@ public class TransactionAnalyser
 
                 /* Subtract expense from Payee bucket */
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-                myPayee.subtractExpense(pTrans, myAmount);
+                myPayee.subtractExpense(theHelper, myAmount);
 
                 /* Subtract expense from Category bucket */
                 TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
-                myCatBucket.subtractExpense(pTrans, myAmount);
-                theTaxBasisBuckets.adjustAutoExpense(pTrans, false);
+                myCatBucket.subtractExpense(theHelper, myAmount);
+                theTaxBasisBuckets.adjustAutoExpense(theHelper, false);
 
                 /* else handle normally */
             } else {
@@ -531,11 +538,11 @@ public class TransactionAnalyser
                 switch (myDebit.getAssetType()) {
                     case PAYEE:
                         PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-                        myPayee.adjustForDebit(pTrans);
+                        myPayee.adjustForDebit(theHelper);
                         break;
                     default:
                         AccountBucket<?> myBucket = getAccountBucket(myDebit);
-                        myBucket.adjustForDebit(pTrans);
+                        myBucket.adjustForDebit(theHelper);
                         break;
                 }
             }
@@ -550,12 +557,12 @@ public class TransactionAnalyser
 
                 /* Add expense to Payee bucket */
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
-                myPayee.addExpense(pTrans, myAmount);
+                myPayee.addExpense(theHelper, myAmount);
 
                 /* Adjust the relevant category bucket */
                 TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
-                myCatBucket.addExpense(pTrans, myAmount);
-                theTaxBasisBuckets.adjustAutoExpense(pTrans, true);
+                myCatBucket.addExpense(theHelper, myAmount);
+                theTaxBasisBuckets.adjustAutoExpense(theHelper, true);
 
                 /* else handle normally */
             } else {
@@ -563,11 +570,11 @@ public class TransactionAnalyser
                 switch (myCredit.getAssetType()) {
                     case PAYEE:
                         PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
-                        myPayee.adjustForCredit(pTrans);
+                        myPayee.adjustForCredit(theHelper);
                         break;
                     default:
                         AccountBucket<?> myBucket = getAccountBucket(myCredit);
-                        myBucket.adjustForCredit(pTrans);
+                        myBucket.adjustForCredit(theHelper);
                         break;
                 }
             }
@@ -580,12 +587,12 @@ public class TransactionAnalyser
             }
 
             /* Adjust the tax payments */
-            theTaxMan.adjustForTaxPayments(pTrans);
+            theTaxMan.adjustForTaxPayments(theHelper);
 
             /* If the event category is not a transfer */
             if (!myCat.isTransfer()) {
                 /* Adjust the relevant category buckets */
-                theCategoryBuckets.adjustCategories(pTrans, myCat);
+                theCategoryBuckets.adjustCategories(theHelper, myCat);
             }
 
             /* Unknown combination */
@@ -599,32 +606,30 @@ public class TransactionAnalyser
      * Process a debit security transaction.
      * @param pDebit the debit security
      * @param pCredit the credit account
-     * @param pTrans the transaction to process
      * @throws JOceanusException on error
      */
     private void processDebitSecurityTransaction(final SecurityHolding pDebit,
-                                                 final TransactionAsset pCredit,
-                                                 final Transaction pTrans) throws JOceanusException {
+                                                 final TransactionAsset pCredit) throws JOceanusException {
         /* If credit account is also SecurityHolding */
         if (pCredit instanceof SecurityHolding) {
             /* Split out working */
-            processDebitCreditSecurityTransaction(pDebit, (SecurityHolding) pCredit, pTrans);
+            processDebitCreditSecurityTransaction(pDebit, (SecurityHolding) pCredit);
             return;
         }
 
         /* Switch on the category */
-        TransactionCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process a stock right taken */
             case STOCKRIGHTSWAIVED:
-                processStockRightWaived(pDebit, (AssetBase<?>) pCredit, pTrans);
+                processStockRightWaived(pDebit, (AssetBase<?>) pCredit);
                 break;
             /* Process a dividend */
             case DIVIDEND:
-                processDividend(pDebit, pCredit, pTrans);
+                processDividend(pDebit, pCredit);
                 break;
             case PORTFOLIOXFER:
-                processPortfolioXfer(pDebit, (Portfolio) pCredit, pTrans);
+                processPortfolioXfer(pDebit, (Portfolio) pCredit);
                 break;
             /* Process standard transfer in/out */
             case TRANSFER:
@@ -632,9 +637,9 @@ public class TransactionAnalyser
             case INHERITED:
             case OTHERINCOME:
                 if (pDebit.getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)) {
-                    processTaxableGain(pDebit, (AssetBase<?>) pCredit, pTrans);
+                    processTaxableGain(pDebit, (AssetBase<?>) pCredit);
                 } else {
-                    processTransferOut(pDebit, (AssetBase<?>) pCredit, pTrans);
+                    processTransferOut(pDebit, (AssetBase<?>) pCredit);
                 }
                 break;
             /* Throw an Exception */
@@ -648,39 +653,37 @@ public class TransactionAnalyser
      * Process a debit+credit security transaction.
      * @param pDebit the debit security
      * @param pCredit the credit security
-     * @param pTrans the transaction to process
      * @throws JOceanusException on error
      */
     private void processDebitCreditSecurityTransaction(final SecurityHolding pDebit,
-                                                       final SecurityHolding pCredit,
-                                                       final Transaction pTrans) throws JOceanusException {
+                                                       final SecurityHolding pCredit) throws JOceanusException {
         /* Switch on the category */
-        TransactionCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process a stock split */
             case STOCKSPLIT:
             case UNITSADJUST:
-                processUnitsAdjust(pDebit, pTrans);
+                processUnitsAdjust(pDebit);
                 break;
             /* Process a stock DeMerger */
             case STOCKDEMERGER:
-                processStockDeMerger(pDebit, pCredit, pTrans);
+                processStockDeMerger(pDebit, pCredit);
                 break;
             /* Process a Stock TakeOver */
             case SECURITYREPLACE:
             case STOCKTAKEOVER:
-                processStockTakeover(pDebit, pCredit, pTrans);
+                processStockTakeover(pDebit, pCredit);
                 break;
             /* Process a dividend */
             case DIVIDEND:
-                processDividend(pDebit, pCredit, pTrans);
+                processDividend(pDebit, pCredit);
                 break;
             /* Process standard transfer in/out */
             case TRANSFER:
             case EXPENSE:
             case INHERITED:
             case OTHERINCOME:
-                processStockXchange(pDebit, (SecurityHolding) pCredit, pTrans);
+                processStockXchange(pDebit, (SecurityHolding) pCredit);
                 break;
             /* Throw an Exception */
             default:
@@ -693,12 +696,10 @@ public class TransactionAnalyser
      * Process a credit security transaction.
      * @param pDebit the debit account
      * @param pCredit the credit security holding
-     * @param pTrans the transaction to process
      * @throws JOceanusException on error
      */
     private void processCreditSecurityTransaction(final TransactionAsset pDebit,
-                                                  final SecurityHolding pCredit,
-                                                  final Transaction pTrans) throws JOceanusException {
+                                                  final SecurityHolding pCredit) throws JOceanusException {
         /* Input asset must be AssetBase */
         if (!(pDebit instanceof AssetBase)) {
             throw new JMoneyWiseLogicException("Invalid Debit Asset: "
@@ -707,7 +708,7 @@ public class TransactionAnalyser
         AssetBase<?> myDebit = (AssetBase<?>) pDebit;
 
         /* Switch on the category */
-        TransactionCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process standard transfer in/out */
             case STOCKRIGHTSTAKEN:
@@ -715,7 +716,7 @@ public class TransactionAnalyser
             case EXPENSE:
             case INHERITED:
             case OTHERINCOME:
-                processTransferIn(myDebit, pCredit, pTrans);
+                processTransferIn(myDebit, pCredit);
                 break;
             /* Throw an Exception */
             default:
@@ -730,11 +731,9 @@ public class TransactionAnalyser
      * This capital event relates only to both Debit and credit accounts.
      * @param pSource the source portfolio
      * @param pTarget the target portfolio
-     * @param pTrans the transaction
      */
     private void processPortfolioXfer(final Portfolio pSource,
-                                      final Portfolio pTarget,
-                                      final Transaction pTrans) {
+                                      final Portfolio pTarget) {
         /* Access the portfolio buckets */
         PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
         PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
@@ -744,7 +743,7 @@ public class TransactionAnalyser
         if (mySourceCash.isActive()) {
             /* Transfer any cash element */
             PortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();
-            myTargetCash.adjustForXfer(mySourceCash, pTrans);
+            myTargetCash.adjustForXfer(mySourceCash, theHelper);
         }
 
         /* Loop through the source portfolio */
@@ -759,7 +758,7 @@ public class TransactionAnalyser
                 SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
                 /* Process the Transfer */
-                processPortfolioXfer(myBucket, myTargetBucket, pTrans);
+                processPortfolioXfer(myBucket, myTargetBucket);
             }
         }
 
@@ -770,11 +769,9 @@ public class TransactionAnalyser
      * Process a portfolio transfer.
      * @param pSource the source holding
      * @param pTarget the target holding
-     * @param pTrans the transaction
      */
     private void processPortfolioXfer(final SecurityBucket pSource,
-                                      final SecurityBucket pTarget,
-                                      final Transaction pTrans) {
+                                      final SecurityBucket pTarget) {
         /* Access source details */
         SecurityValues mySourceValues = pSource.getValues();
         SecurityValues myTargetValues = pTarget.getValues();
@@ -783,36 +780,36 @@ public class TransactionAnalyser
         JMoney myInvested = mySourceValues.getMoneyValue(SecurityAttribute.INVESTED);
 
         /* Determine value of the stock being transferred */
-        JPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), pTrans.getDate());
+        JPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
         JMoney myStockValue = myUnits.valueAtPrice(myPrice);
 
         /* Allocate current profit between the two stocks */
         JMoney myProfit = new JMoney(myStockValue);
         myProfit.subtractAmount(myCost);
-        pSource.adjustGrowthDelta(myProfit);
+        pSource.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
         myProfit = new JMoney(myProfit);
         myProfit.negate();
-        pTarget.adjustGrowthDelta(myProfit);
+        pTarget.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
 
         /* Transfer Units/Cost/Invested to target */
-        pTarget.adjustUnits(myUnits);
-        pTarget.adjustCost(myCost);
-        pTarget.adjustInvested(myInvested);
-        myTargetValues = pTarget.registerTransaction(pTrans);
+        pTarget.adjustCounter(SecurityAttribute.UNITS, myUnits);
+        pTarget.adjustCounter(SecurityAttribute.COST, myCost);
+        pTarget.adjustCounter(SecurityAttribute.INVESTED, myInvested);
+        myTargetValues = pTarget.registerTransaction(theHelper);
         myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
         myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
 
         /* Adjust the Source Units/Cost/Invested to zero */
         myUnits = new JUnits(myUnits);
         myUnits.negate();
-        pSource.adjustUnits(myUnits);
+        pSource.adjustCounter(SecurityAttribute.UNITS, myUnits);
         myCost = new JMoney(myCost);
         myCost.negate();
-        pSource.adjustCost(myCost);
+        pSource.adjustCounter(SecurityAttribute.COST, myCost);
         myInvested = new JMoney(myInvested);
         myInvested.negate();
-        pSource.adjustInvested(myInvested);
-        mySourceValues = pSource.registerTransaction(pTrans);
+        pSource.adjustCounter(SecurityAttribute.INVESTED, myInvested);
+        mySourceValues = pSource.registerTransaction(theHelper);
         mySourceValues.setValue(SecurityAttribute.PRICE, myPrice);
         mySourceValues.setValue(SecurityAttribute.VALUATION, myStockValue);
     }
@@ -823,11 +820,9 @@ public class TransactionAnalyser
      * This capital event relates only to both Debit and credit accounts.
      * @param pSource the source holding
      * @param pTarget the target portfolio
-     * @param pTrans the transaction
      */
     private void processPortfolioXfer(final SecurityHolding pSource,
-                                      final Portfolio pTarget,
-                                      final Transaction pTrans) {
+                                      final Portfolio pTarget) {
         /* Access the portfolio buckets */
         PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource.getPortfolio());
         PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
@@ -842,7 +837,7 @@ public class TransactionAnalyser
             SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
             /* Process the Transfer */
-            processPortfolioXfer(myBucket, myTargetBucket, pTrans);
+            processPortfolioXfer(myBucket, myTargetBucket);
         }
 
         /* PortfolioXfer is a transfer, so no need to update the categories */
@@ -853,23 +848,21 @@ public class TransactionAnalyser
      * <p>
      * This capital event relates only to the Debit Account since the credit account is the same.
      * @param pHolding the security holding
-     * @param pTrans the transaction
      */
-    private void processUnitsAdjust(final SecurityHolding pHolding,
-                                    final Transaction pTrans) {
+    private void processUnitsAdjust(final SecurityHolding pHolding) {
         /* Access the units */
-        JUnits myDelta = pTrans.getCreditUnits();
+        JUnits myDelta = theHelper.getCreditUnits();
         if (myDelta == null) {
-            myDelta = new JUnits(pTrans.getDebitUnits());
+            myDelta = new JUnits(theHelper.getDebitUnits());
             myDelta.negate();
         }
 
         /* Adjust the Security Units */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-        myAsset.adjustUnits(myDelta);
+        myAsset.adjustCounter(SecurityAttribute.UNITS, myDelta);
 
         /* Register the transaction */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
 
         /* StockSplit/Adjust is a transfer, so no need to update the categories */
     }
@@ -880,65 +873,61 @@ public class TransactionAnalyser
      * This capital event relates only to the Credit Account.
      * @param pDebit the debit account
      * @param pCredit the credit security holding
-     * @param pTrans the transaction
      */
     private void processTransferIn(final AssetBase<?> pDebit,
-                                   final SecurityHolding pCredit,
-                                   final Transaction pTrans) {
+                                   final SecurityHolding pCredit) {
         /* Access debit account and category */
-        TransactionCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = theHelper.getCategory();
 
         /* Adjust the credit transfer details */
-        processCreditXferIn(pCredit, pTrans);
+        processCreditXferIn(pCredit);
 
         /* Adjust the tax payments */
-        theTaxMan.adjustForTaxPayments(pTrans);
+        theTaxMan.adjustForTaxPayments(theHelper);
 
         /* Determine the type of the debit account */
         switch (pDebit.getAssetType()) {
             case PAYEE:
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(pDebit);
-                myPayee.adjustForDebit(pTrans);
+                myPayee.adjustForDebit(theHelper);
                 break;
             default:
                 AccountBucket<?> myAccount = getAccountBucket(pDebit);
-                myAccount.adjustForDebit(pTrans);
+                myAccount.adjustForDebit(theHelper);
                 break;
         }
 
         /* If the event category is not a transfer */
         if (!myCat.isTransfer()) {
             /* Adjust the relevant category buckets */
-            theCategoryBuckets.adjustCategories(pTrans, myCat);
+            theCategoryBuckets.adjustCategories(theHelper, myCat);
         }
     }
 
     /**
      * Process the credit side of a transfer in transaction.
      * @param pHolding the credit holding
-     * @param pTrans the transaction
      */
-    private void processCreditXferIn(final SecurityHolding pHolding,
-                                     final Transaction pTrans) {
+    private void processCreditXferIn(final SecurityHolding pHolding) {
         /* Transfer is to the credit account and may or may not have a change to the units */
-        JUnits myDeltaUnits = pTrans.getCreditUnits();
-        JMoney myAmount = pTrans.getAmount();
+        JUnits myDeltaUnits = theHelper.getCreditUnits();
+        JMoney myAmount = theHelper.getCreditAmount();
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
 
         /* Adjust the cost and investment */
-        myAsset.adjustCost(myAmount);
-        myAsset.adjustInvested(myAmount);
+        myAsset.adjustCounter(SecurityAttribute.COST, myAmount);
+        myAsset.adjustCounter(SecurityAttribute.INVESTED, myAmount);
 
         /* If we have new units */
         if (myDeltaUnits != null) {
             /* Record change in units */
-            myAsset.adjustUnits(myDeltaUnits);
+            myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
         }
 
         /* Register the transaction */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
     }
 
     /**
@@ -948,20 +937,18 @@ public class TransactionAnalyser
      * identical to the credit account in which case the dividend is re-invested
      * @param pHolding the debit security holding
      * @param pCredit the credit account
-     * @param pTrans the transaction
      */
     private void processDividend(final SecurityHolding pHolding,
-                                 final TransactionAsset pCredit,
-                                 final Transaction pTrans) {
+                                 final TransactionAsset pCredit) {
         /* The main security that we are interested in is the debit account */
         Portfolio myPortfolio = pHolding.getPortfolio();
         Security mySecurity = pHolding.getSecurity();
-        JMoney myAmount = pTrans.getAmount();
-        JMoney myTaxCredit = pTrans.getTaxCredit();
-        JUnits myDeltaUnits = pTrans.getCreditUnits();
+        JMoney myAmount = theHelper.getDebitAmount();
+        JMoney myTaxCredit = theHelper.getTaxCredit();
+        JUnits myDeltaUnits = theHelper.getCreditUnits();
 
         /* Obtain detailed category */
-        TransactionCategory myCat = myPortfolio.getDetailedCategory(pTrans.getCategory());
+        TransactionCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory());
         myCat = mySecurity.getDetailedCategory(myCat);
 
         /* True debit account is the parent */
@@ -969,7 +956,7 @@ public class TransactionAnalyser
 
         /* Adjust the debit payee bucket */
         PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-        myPayee.adjustForDebit(pTrans);
+        myPayee.adjustForDebit(theHelper);
 
         /* Access the Asset Account Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
@@ -977,21 +964,21 @@ public class TransactionAnalyser
         /* If this is a re-investment */
         if (pCredit instanceof SecurityHolding) {
             /* This amount is added to the cost, so record as the delta cost */
-            myAsset.adjustCost(myAmount);
+            myAsset.adjustCounter(SecurityAttribute.COST, myAmount);
 
             /* Record the investment */
-            myAsset.adjustInvested(myAmount);
+            myAsset.adjustCounter(SecurityAttribute.INVESTED, myAmount);
 
             /* If we have new units */
             if (myDeltaUnits != null) {
                 /* Record delta units */
-                myAsset.adjustUnits(myDeltaUnits);
+                myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
             }
 
             /* If we have a tax credit */
             if (myTaxCredit != null) {
                 /* The Tax Credit is viewed as a received dividend from the account */
-                myAsset.adjustDividend(myTaxCredit);
+                myAsset.adjustCounter(SecurityAttribute.DIVIDEND, myTaxCredit);
             }
 
             /* else we are paying out to another account */
@@ -1005,21 +992,21 @@ public class TransactionAnalyser
             }
 
             /* The Dividend is viewed as a dividend from the account */
-            myAsset.adjustDividend(myAdjust);
+            myAsset.adjustCounter(SecurityAttribute.DIVIDEND, myAdjust);
 
             /* Adjust the credit account bucket */
             AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) pCredit);
-            myBucket.adjustForCredit(pTrans);
+            myBucket.adjustForCredit(theHelper);
         }
 
         /* Register the transaction */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
 
         /* Adjust the tax payments */
-        theTaxMan.adjustForTaxPayments(pTrans);
+        theTaxMan.adjustForTaxPayments(theHelper);
 
         /* Adjust the relevant category buckets */
-        theCategoryBuckets.adjustCategories(pTrans, myCat);
+        theCategoryBuckets.adjustCategories(theHelper, myCat);
     }
 
     /**
@@ -1028,25 +1015,23 @@ public class TransactionAnalyser
      * This capital event relates only to the Debit Account
      * @param pHolding the debit holding
      * @param pCredit the credit account
-     * @param pTrans the transaction
      */
     private void processTransferOut(final SecurityHolding pHolding,
-                                    final AssetBase<?> pCredit,
-                                    final Transaction pTrans) {
+                                    final AssetBase<?> pCredit) {
         /* Access credit account and category */
-        TransactionCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = theHelper.getCategory();
 
         /* Adjust the debit transfer details */
-        processDebitXferOut(pHolding, pTrans);
+        processDebitXferOut(pHolding);
 
         /* Adjust the credit account bucket */
         AccountBucket<?> myBucket = getAccountBucket(pCredit);
-        myBucket.adjustForCredit(pTrans);
+        myBucket.adjustForCredit(theHelper);
 
         /* If the event category is not a transfer */
         if (!myCat.isTransfer()) {
             /* Adjust the relevant category buckets */
-            theCategoryBuckets.adjustCategories(pTrans, myCat);
+            theCategoryBuckets.adjustCategories(theHelper, myCat);
         }
     }
 
@@ -1055,13 +1040,11 @@ public class TransactionAnalyser
      * <p>
      * This capital event relates only to the Debit Account
      * @param pHolding the debit holding
-     * @param pTrans the transaction
      */
-    private void processDebitXferOut(final SecurityHolding pHolding,
-                                     final Transaction pTrans) {
+    private void processDebitXferOut(final SecurityHolding pHolding) {
         /* Transfer out is from the debit account and may or may not have units */
-        JMoney myAmount = pTrans.getAmount();
-        JUnits myDeltaUnits = pTrans.getDebitUnits();
+        JMoney myAmount = theHelper.getDebitAmount();
+        JUnits myDeltaUnits = theHelper.getDebitUnits();
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
@@ -1070,7 +1053,7 @@ public class TransactionAnalyser
         /* Record the delta investment */
         JMoney myDelta = new JMoney(myAmount);
         myDelta.negate();
-        myAsset.adjustInvested(myDelta);
+        myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
         /* Assume the the cost reduction is the full value */
         JMoney myReduction = new JMoney(myAmount);
@@ -1087,7 +1070,7 @@ public class TransactionAnalyser
             myDeltaUnits.negate();
 
             /* Record delta to units */
-            myAsset.adjustUnits(myDeltaUnits);
+            myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
         }
 
         /* If the reduction is greater than the total cost */
@@ -1103,7 +1086,7 @@ public class TransactionAnalyser
         /* If we have a delta to the cost */
         if (myDeltaCost.isNonZero()) {
             /* Adjust the cost */
-            myAsset.adjustCost(myDeltaCost);
+            myAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
         }
 
         /* Determine the delta to the gains */
@@ -1113,14 +1096,14 @@ public class TransactionAnalyser
         /* If we have a delta to the gains */
         if (myDeltaGains.isNonZero()) {
             /* Adjust the gains */
-            myAsset.adjustGains(myDeltaGains);
+            myAsset.adjustCounter(SecurityAttribute.GAINS, myDeltaGains);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(pTrans, pHolding, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(theHelper, pHolding, myDeltaGains);
         }
 
         /* Register the transaction */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
     }
 
     /**
@@ -1129,16 +1112,14 @@ public class TransactionAnalyser
      * This represent a transfer out from the debit account and a transfer in to the credit account
      * @param pDebit the debit holding
      * @param pCredit the credit holding
-     * @param pTrans the transaction
      */
     private void processStockXchange(final SecurityHolding pDebit,
-                                     final SecurityHolding pCredit,
-                                     final Transaction pTrans) {
+                                     final SecurityHolding pCredit) {
         /* Adjust the debit transfer details */
-        processDebitXferOut(pDebit, pTrans);
+        processDebitXferOut(pDebit);
 
         /* Adjust the credit transfer details */
-        processCreditXferIn(pCredit, pTrans);
+        processCreditXferIn(pCredit);
     }
 
     /**
@@ -1147,15 +1128,13 @@ public class TransactionAnalyser
      * This capital event relates only to the Debit Asset
      * @param pHolding the debit security holding
      * @param pCredit the credit account
-     * @param pTrans the transaction
      */
     private void processTaxableGain(final SecurityHolding pHolding,
-                                    final AssetBase<?> pCredit,
-                                    final Transaction pTrans) {
+                                    final AssetBase<?> pCredit) {
         /* Taxable Gain is from the debit account and may or may not have units */
         Security myDebit = pHolding.getSecurity();
-        JMoney myAmount = pTrans.getAmount();
-        JUnits myDeltaUnits = pTrans.getDebitUnits();
+        JMoney myAmount = theHelper.getDebitAmount();
+        JUnits myDeltaUnits = theHelper.getDebitUnits();
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
@@ -1164,7 +1143,7 @@ public class TransactionAnalyser
         /* Record the delta investment */
         JMoney myDelta = new JMoney(myAmount);
         myDelta.negate();
-        myAsset.adjustInvested(myDelta);
+        myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
         /* Assume the the cost reduction is the full value */
         JMoney myReduction = new JMoney(myAmount);
@@ -1181,7 +1160,7 @@ public class TransactionAnalyser
             myDeltaUnits.negate();
 
             /* Record delta to units */
-            myAsset.adjustUnits(myDeltaUnits);
+            myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
         }
 
         /* If the reduction is greater than the total cost */
@@ -1197,7 +1176,7 @@ public class TransactionAnalyser
         /* If we have a delta to the cost */
         if (myDeltaCost.isNonZero()) {
             /* Adjust the cost */
-            myAsset.adjustCost(myDeltaCost);
+            myAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
         }
 
         /* Determine the delta to the gains */
@@ -1207,31 +1186,31 @@ public class TransactionAnalyser
         /* If we have a delta to the gains */
         if (myDeltaGains.isNonZero()) {
             /* Adjust the gains */
-            myAsset.adjustGains(myDeltaGains);
+            myAsset.adjustCounter(SecurityAttribute.GAINS, myDeltaGains);
         }
 
         /* Register the event */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
 
         /* True debit account is the parent */
         AssetBase<?> myParent = myDebit.getParent();
 
         /* Adjust the debit account bucket */
         PayeeBucket myPayee = thePayeeBuckets.getBucket(myParent);
-        myPayee.adjustForTaxCredit(pTrans);
+        myPayee.adjustForTaxCredit(theHelper);
 
         /* Adjust the credit account bucket */
         AccountBucket<?> myBucket = getAccountBucket(pCredit);
-        myBucket.adjustForCredit(pTrans);
+        myBucket.adjustForCredit(theHelper);
 
         /* Adjust the taxableGains category bucket */
-        theCategoryBuckets.adjustTaxableGain(pTrans, myReduction);
+        theCategoryBuckets.adjustTaxableGain(theHelper, myReduction);
 
         /* Adjust the TaxMan account for the tax credit */
-        theTaxMan.adjustForTaxPayments(pTrans);
+        theTaxMan.adjustForTaxPayments(theHelper);
 
         /* Add the chargeable event */
-        theAnalysis.getCharges().addTransaction(pTrans, myDeltaGains);
+        theAnalysis.getCharges().addTransaction(theHelper.getTransaction(), myDeltaGains);
     }
 
     /**
@@ -1240,14 +1219,12 @@ public class TransactionAnalyser
      * This capital event relates only to the Debit Account
      * @param pHolding the debit holding
      * @param pCredit the credit account
-     * @param pTrans the transaction
      */
     private void processStockRightWaived(final SecurityHolding pHolding,
-                                         final AssetBase<?> pCredit,
-                                         final Transaction pTrans) {
+                                         final AssetBase<?> pCredit) {
         /* Stock Right Waived is from the debit account */
         Security myDebit = pHolding.getSecurity();
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = theHelper.getDebitAmount();
         JMoney myReduction;
 
         /* Access the Asset Security Bucket */
@@ -1257,13 +1234,13 @@ public class TransactionAnalyser
         /* Record the delta investment */
         JMoney myDelta = new JMoney(myAmount);
         myDelta.negate();
-        myAsset.adjustInvested(myDelta);
+        myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
         /* Access the current cost */
         JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Get the appropriate price for the account */
-        JPrice myPrice = thePriceMap.getPriceForDate(myDebit, pTrans.getDate());
+        JPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
 
         /* Determine value of this stock at the current time */
         JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
@@ -1299,7 +1276,7 @@ public class TransactionAnalyser
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
-        myAsset.adjustCost(myDeltaCost);
+        myAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
 
         /* Determine the delta gains */
         JMoney myDeltaGains = new JMoney(myAmount);
@@ -1308,14 +1285,14 @@ public class TransactionAnalyser
         /* If we have some gains */
         if (myDeltaGains.isNonZero()) {
             /* Record the delta gains */
-            myAsset.adjustGains(myDeltaGains);
+            myAsset.adjustCounter(SecurityAttribute.GAINS, myDeltaGains);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(pTrans, pHolding, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(theHelper, pHolding, myDeltaGains);
         }
 
         /* Register the event */
-        myValues = myAsset.registerTransaction(pTrans);
+        myValues = myAsset.registerTransaction(theHelper);
 
         /* Record additional details to the registered event values */
         myValues.setValue(SecurityAttribute.PRICE, myPrice);
@@ -1323,7 +1300,7 @@ public class TransactionAnalyser
 
         /* Adjust the credit account bucket */
         AccountBucket<?> myBucket = getAccountBucket(pCredit);
-        myBucket.adjustForCredit(pTrans);
+        myBucket.adjustForCredit(theHelper);
 
         /* StockRightWaived is a transfer, so no need to update the categories */
     }
@@ -1334,13 +1311,11 @@ public class TransactionAnalyser
      * This capital event relates to both the Credit and Debit accounts
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pTrans the transaction
      */
     private void processStockDeMerger(final SecurityHolding pDebit,
-                                      final SecurityHolding pCredit,
-                                      final Transaction pTrans) {
-        JDilution myDilution = pTrans.getDilution();
-        JUnits myDeltaUnits = pTrans.getDebitUnits();
+                                      final SecurityHolding pCredit) {
+        JDilution myDilution = theHelper.getDilution();
+        JUnits myDeltaUnits = theHelper.getDebitUnits();
 
         /* Access the Debit Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
@@ -1355,19 +1330,19 @@ public class TransactionAnalyser
         myDeltaCost.subtractAmount(myCost);
 
         /* Record the delta cost/investment */
-        myAsset.adjustCost(myDeltaCost);
-        myAsset.adjustInvested(myDeltaCost);
+        myAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
+        myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
 
         /* If we reduced the units */
         if (myDeltaUnits != null) {
             /* Record the delta units */
             myDeltaUnits = new JUnits(myDeltaUnits);
             myDeltaUnits.negate();
-            myAsset.adjustUnits(myDeltaUnits);
+            myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
         }
 
         /* Register the event */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
 
         /* Access the Credit Asset Account Bucket */
         myAsset = thePortfolioBuckets.getBucket(pCredit);
@@ -1377,15 +1352,15 @@ public class TransactionAnalyser
         myDeltaCost.negate();
 
         /* Record the delta cost/investment */
-        myAsset.adjustCost(myDeltaCost);
-        myAsset.adjustInvested(myDeltaCost);
+        myAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
+        myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
 
         /* Record the current/delta units */
-        myDeltaUnits = pTrans.getCreditUnits();
-        myAsset.adjustUnits(myDeltaUnits);
+        myDeltaUnits = theHelper.getCreditUnits();
+        myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
 
         /* Register the transaction */
-        myAsset.registerTransaction(pTrans);
+        myAsset.registerTransaction(theHelper);
 
         /* StockDeMerger is a transfer, so no need to update the categories */
     }
@@ -1397,22 +1372,20 @@ public class TransactionAnalyser
      * are split out.
      * @param pDebit the debit holding
      * @param pCredit the credit holding
-     * @param pTrans the transaction
      */
     private void processStockTakeover(final SecurityHolding pDebit,
-                                      final SecurityHolding pCredit,
-                                      final Transaction pTrans) {
-        JMoney myAmount = pTrans.getAmount();
-        Deposit myThirdParty = pTrans.getThirdParty();
+                                      final SecurityHolding pCredit) {
+        JMoney myAmount = theHelper.getDebitAmount();
+        Deposit myThirdParty = theHelper.getThirdParty();
 
         /* If we have a ThirdParty cash part of the transaction */
         if ((myThirdParty != null)
             && (myAmount.isNonZero())) {
             /* Process a Stock And Cash TakeOver */
-            processStockAndCashTakeOver(pDebit, pCredit, pTrans);
+            processStockAndCashTakeOver(pDebit, pCredit);
         } else {
             /* Process a StockOnly TakeOver */
-            processStockOnlyTakeOver(pDebit, pCredit, pTrans);
+            processStockOnlyTakeOver(pDebit, pCredit);
         }
     }
 
@@ -1422,11 +1395,9 @@ public class TransactionAnalyser
      * This capital event relates to both the Credit and Debit accounts
      * @param pDebit the debit holding
      * @param pCredit the credit holding
-     * @param pTrans the transaction
      */
     private void processStockOnlyTakeOver(final SecurityHolding pDebit,
-                                          final SecurityHolding pCredit,
-                                          final Transaction pTrans) {
+                                          final SecurityHolding pCredit) {
         /* Access details */
         Security myCredit = pCredit.getSecurity();
         Security myDebit = pDebit.getSecurity();
@@ -1436,14 +1407,14 @@ public class TransactionAnalyser
         SecurityValues myDebitValues = myDebitAsset.getValues();
         SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
         SecurityValues myCreditValues = myCreditAsset.getValues();
-        JDateDay myDate = pTrans.getDate();
+        JDateDay myDate = theHelper.getDate();
 
         /* Get the appropriate prices for the stock */
         JPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
         JPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
 
         /* Determine value of the stock in both parts of the takeOver */
-        JUnits myCreditUnits = pTrans.getCreditUnits();
+        JUnits myCreditUnits = theHelper.getCreditUnits();
         JMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
         JUnits myDebitUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
         JMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
@@ -1455,38 +1426,38 @@ public class TransactionAnalyser
         /* Allocate current profit between the two stocks */
         JMoney myProfit = new JMoney(myDebitValue);
         myProfit.subtractAmount(myDebitCost);
-        myDebitAsset.adjustGrowthDelta(myProfit);
+        myDebitAsset.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
         myProfit = new JMoney(myProfit);
         myProfit.negate();
-        myCreditAsset.adjustGrowthDelta(myProfit);
+        myCreditAsset.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
 
         /* Adjust cost/units/invested of the credit account */
-        myCreditAsset.adjustCost(myDebitCost);
-        myCreditAsset.adjustUnits(myCreditUnits);
-        myCreditAsset.adjustInvested(myInvested);
+        myCreditAsset.adjustCounter(SecurityAttribute.COST, myDebitCost);
+        myCreditAsset.adjustCounter(SecurityAttribute.UNITS, myCreditUnits);
+        myCreditAsset.adjustCounter(SecurityAttribute.INVESTED, myInvested);
 
         /* Register the transaction */
-        myCreditValues = myCreditAsset.registerTransaction(pTrans);
+        myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
         myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
 
         /* Drive debit cost down to zero */
         myDebitCost = new JMoney(myDebitCost);
         myDebitCost.negate();
-        myDebitAsset.adjustCost(myDebitCost);
+        myDebitAsset.adjustCounter(SecurityAttribute.COST, myDebitCost);
 
         /* Drive debit units down to zero */
         myDebitUnits = new JUnits(myDebitUnits);
         myDebitUnits.negate();
-        myDebitAsset.adjustUnits(myDebitUnits);
+        myDebitAsset.adjustCounter(SecurityAttribute.UNITS, myDebitUnits);
 
         /* Adjust debit Invested amount */
         myInvested = new JMoney(myInvested);
         myInvested.negate();
-        myDebitAsset.adjustInvested(myInvested);
+        myDebitAsset.adjustCounter(SecurityAttribute.INVESTED, myInvested);
 
         /* Register the transaction */
-        myDebitValues = myDebitAsset.registerTransaction(pTrans);
+        myDebitValues = myDebitAsset.registerTransaction(theHelper);
         myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
         myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
     }
@@ -1498,17 +1469,15 @@ public class TransactionAnalyser
      * reference to the CashTakeOver aspect of the debit account
      * @param pDebit the debit holding
      * @param pCredit the credit holding
-     * @param pTrans the transaction
      */
     private void processStockAndCashTakeOver(final SecurityHolding pDebit,
-                                             final SecurityHolding pCredit,
-                                             final Transaction pTrans) {
+                                             final SecurityHolding pCredit) {
         /* Access details */
         Security myDebit = pDebit.getSecurity();
         Security myCredit = pCredit.getSecurity();
-        JDateDay myDate = pTrans.getDate();
-        Deposit myThirdParty = pTrans.getThirdParty();
-        JMoney myAmount = pTrans.getAmount();
+        JDateDay myDate = theHelper.getDate();
+        Deposit myThirdParty = theHelper.getThirdParty();
+        JMoney myAmount = theHelper.getDebitAmount();
 
         /* Access the Asset Security Buckets */
         SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
@@ -1525,7 +1494,7 @@ public class TransactionAnalyser
         JMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
 
         /* Determine value of the stock part of the takeOver */
-        JUnits myCreditUnits = pTrans.getCreditUnits();
+        JUnits myCreditUnits = theHelper.getCreditUnits();
         JMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
 
         /* Access the current debit cost */
@@ -1566,10 +1535,10 @@ public class TransactionAnalyser
         /* If we have some gains */
         if (myDeltaGains.isNonZero()) {
             /* Record the delta gains */
-            myDebitAsset.adjustGains(myDeltaGains);
+            myDebitAsset.adjustCounter(SecurityAttribute.GAINS, myDeltaGains);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(pTrans, pDebit, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(theHelper, pDebit, myDeltaGains);
         }
 
         /* Allocate current profit between the two stocks */
@@ -1577,30 +1546,30 @@ public class TransactionAnalyser
         myProfit.subtractAmount(myAmount);
         myProfit.subtractAmount(myCost);
         myProfit.addAmount(myCostXfer);
-        myDebitAsset.adjustGrowthDelta(myProfit);
+        myDebitAsset.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
         myProfit = new JMoney(myProfit);
         myProfit.negate();
-        myCreditAsset.adjustGrowthDelta(myProfit);
+        myCreditAsset.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
 
         /* Adjust cost/units/invested of the credit account */
-        myCreditAsset.adjustCost(myCostXfer);
-        myCreditAsset.adjustUnits(myCreditUnits);
-        myCreditAsset.adjustInvested(myCostXfer);
+        myCreditAsset.adjustCounter(SecurityAttribute.COST, myCostXfer);
+        myCreditAsset.adjustCounter(SecurityAttribute.UNITS, myCreditUnits);
+        myCreditAsset.adjustCounter(SecurityAttribute.INVESTED, myCostXfer);
 
         /* Register the transaction */
-        myCreditValues = myCreditAsset.registerTransaction(pTrans);
+        myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
         myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
 
         /* Drive debit cost down to zero */
         JMoney myDeltaCost = new JMoney(myCost);
         myDeltaCost.negate();
-        myDebitAsset.adjustCost(myDeltaCost);
+        myDebitAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
 
         /* Drive debit units down to zero */
         myDebitUnits = new JUnits(myDebitUnits);
         myDebitUnits.negate();
-        myDebitAsset.adjustUnits(myDebitUnits);
+        myDebitAsset.adjustCounter(SecurityAttribute.UNITS, myDebitUnits);
 
         /* Adjust debit Invested amount */
         JMoney myInvested = myDebitValues.getMoneyValue(SecurityAttribute.INVESTED);
@@ -1608,16 +1577,16 @@ public class TransactionAnalyser
         myInvested.negate();
         myInvested.subtractAmount(myAmount);
         myInvested.addAmount(myCostXfer);
-        myDebitAsset.adjustInvested(myInvested);
+        myDebitAsset.adjustCounter(SecurityAttribute.INVESTED, myInvested);
 
         /* Register the transaction */
-        myDebitValues = myDebitAsset.registerTransaction(pTrans);
+        myDebitValues = myDebitAsset.registerTransaction(theHelper);
         myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
         myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
 
         /* Adjust the ThirdParty account bucket */
         AccountBucket<?> myBucket = getAccountBucket(myThirdParty);
-        myBucket.adjustForCredit(pTrans);
+        myBucket.adjustForCredit(theHelper);
     }
 
     /**

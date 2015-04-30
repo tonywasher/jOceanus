@@ -65,7 +65,7 @@ public class SvnClientManager {
         /* Access UserId and password */
         String myUser = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);
         String myPass = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS);
-        theAuth = SVNWCUtil.createDefaultAuthenticationManager(myUser, myPass);
+        theAuth = SVNWCUtil.createDefaultAuthenticationManager(myUser, myPass.toCharArray());
     }
 
     /**

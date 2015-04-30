@@ -253,12 +253,12 @@ public class AnalysisManager
         }
 
         /* Access totals */
-        JMoney myDepTotal = myDepCat.getValues().getMoneyValue(AccountAttribute.DELTA);
-        JMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.DELTA);
-        JMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.DELTA);
-        JMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.DELTA);
-        JMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.DELTA);
-        JMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.DELTA);
+        JMoney myDepTotal = myDepCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        JMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        JMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        JMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.VALUEDELTA);
+        JMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.PROFIT);
+        JMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.PROFIT);
         JMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
 
         /* Create a copy */

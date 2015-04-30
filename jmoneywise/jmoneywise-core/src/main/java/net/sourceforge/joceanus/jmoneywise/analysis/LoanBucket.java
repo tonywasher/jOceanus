@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -179,28 +178,17 @@ public final class LoanBucket
                                                                      : super.allocateForeignValues(pCurrency, pReportingCurrency);
     }
 
-    /**
-     * Obtain new Spend value.
-     * @return the new spend value
-     */
-    private JMoney getNewSpend() {
-        JMoney mySpend = getValues().getMoneyValue(AccountAttribute.SPEND);
-        return new JMoney(mySpend);
-    }
-
     @Override
-    protected void adjustForDebit(final Transaction pTrans) {
+    protected void adjustForDebit(final TransactionHelper pTrans) {
         /* If this is a credit card */
         if (isCreditCard) {
             /* Access the amount */
-            JMoney myAmount = pTrans.getAmount();
+            JMoney myAmount = pTrans.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* Adjust spend */
-                JMoney mySpend = getNewSpend();
-                mySpend.addAmount(myAmount);
-                setValue(AccountAttribute.SPEND, mySpend);
+                adjustCounter(AccountAttribute.SPEND, myAmount);
             }
         }
 

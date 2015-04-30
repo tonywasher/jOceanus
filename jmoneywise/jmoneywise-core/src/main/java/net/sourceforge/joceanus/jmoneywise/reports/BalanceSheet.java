@@ -157,7 +157,7 @@ public class BalanceSheet
                 theBuilder.makeTableLinkCell(myTable, myBucket.getName());
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
                 theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
                 /* Add the category report */
                 makeCategoryReport(myTable, myBucket);
@@ -171,7 +171,7 @@ public class BalanceSheet
             /* Add to running totals */
             myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
             myBase.addAmount(myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            myDelta.addAmount(myValues.getMoneyValue(AccountAttribute.DELTA));
+            myDelta.addAmount(myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
         }
 
         /* If we have cash */
@@ -195,7 +195,7 @@ public class BalanceSheet
                 theBuilder.makeTableLinkCell(myTable, myBucket.getName());
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
                 theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
                 /* Add the category report */
                 makeCategoryReport(myTable, myBucket);
@@ -209,7 +209,7 @@ public class BalanceSheet
             /* Add to running totals */
             myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
             myBase.addAmount(myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            myDelta.addAmount(myValues.getMoneyValue(AccountAttribute.DELTA));
+            myDelta.addAmount(myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
         }
 
         /* If we have portfolios */
@@ -222,7 +222,7 @@ public class BalanceSheet
             /* Access interesting values */
             JMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
             JMoney myBaseValuation = myBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
-            JMoney myDeltaValuation = myValues.getMoneyValue(SecurityAttribute.DELTA);
+            JMoney myDeltaValuation = myValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);
@@ -261,7 +261,7 @@ public class BalanceSheet
                 theBuilder.makeTableLinkCell(myTable, myBucket.getName());
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
                 theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
                 /* Add the category report */
                 makeCategoryReport(myTable, myBucket);
@@ -275,7 +275,7 @@ public class BalanceSheet
             /* Add to running totals */
             myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
             myBase.addAmount(myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            myDelta.addAmount(myValues.getMoneyValue(AccountAttribute.DELTA));
+            myDelta.addAmount(myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
         }
 
         /* Format the total */
@@ -326,7 +326,7 @@ public class BalanceSheet
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -373,7 +373,7 @@ public class BalanceSheet
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -420,7 +420,7 @@ public class BalanceSheet
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -458,7 +458,7 @@ public class BalanceSheet
             theBuilder.makeDelayLinkCell(myTable, myName);
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
             theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.DELTA));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUEDELTA));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -527,7 +527,7 @@ public class BalanceSheet
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -574,7 +574,7 @@ public class BalanceSheet
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -621,7 +621,7 @@ public class BalanceSheet
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -660,7 +660,7 @@ public class BalanceSheet
             theBuilder.makeFilterLinkCell(myTable, myName, TEXT_CASH);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
             /* Record the filter */
             setFilterForId(myName, pSource);
@@ -683,7 +683,7 @@ public class BalanceSheet
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DELTA));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUEDELTA));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);

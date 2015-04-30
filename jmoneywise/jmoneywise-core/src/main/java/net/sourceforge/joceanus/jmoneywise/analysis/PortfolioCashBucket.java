@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -95,27 +94,23 @@ public class PortfolioCashBucket
     /**
      * Adjust account for transfer.
      * @param pSource the source portfolio
-     * @param pTrans the transaction causing the credit
+     * @param pTrans the transaction helper
      */
     protected void adjustForXfer(final PortfolioCashBucket pSource,
-                                 final Transaction pTrans) {
+                                 final TransactionHelper pTrans) {
         /* Access transfer amount */
         AccountValues myValues = pSource.getValues();
         JMoney myAmount = myValues.getMoneyValue(AccountAttribute.VALUATION);
 
         /* Adjust this valuation */
-        JMoney myValuation = getNewValuation();
-        myValuation.addAmount(myAmount);
-        setValue(AccountAttribute.VALUATION, myValuation);
+        adjustCounter(AccountAttribute.VALUATION, myAmount);
+        registerTransaction(pTrans);
 
         /* Adjust source valuation */
-        myValuation = pSource.getNewValuation();
-        myValuation.subtractAmount(myAmount);
-        pSource.setValue(AccountAttribute.VALUATION, myValuation);
-
-        /* Register the transaction in the histories */
+        myAmount = new JMoney(myAmount);
+        myAmount.negate();
+        pSource.adjustCounter(AccountAttribute.VALUATION, myAmount);
         pSource.registerTransaction(pTrans);
-        registerTransaction(pTrans);
     }
 
     /**

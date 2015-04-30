@@ -136,14 +136,14 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                             final T pAccount) {
         /* Store the details */
         theAccount = pAccount;
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
 
         /* Determine currency */
         AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
         AssetCurrency myAccountCurrency = (pAccount == null)
                                                             ? myReportingCurrency
                                                             : pAccount.getAssetCurrency();
-        theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
 
         /* Determine whether we are a foreign currency */
         isForeignCurrency = !Difference.isEqual(myReportingCurrency, myAccountCurrency);
@@ -509,52 +509,73 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
-     * Obtain new Valuation value.
-     * @return the new valuation value
+     * Adjust counter.
+     * @param pAttr the attribute
+     * @param pDelta the delta
      */
-    protected JMoney getNewValuation() {
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
-        return new JMoney(myValue);
+    protected void adjustCounter(final AccountAttribute pAttr,
+                                 final JMoney pDelta) {
+        JMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new JMoney(myValue);
+        myValue.addAmount(pDelta);
+        setValue(pAttr, myValue);
     }
 
     /**
      * Adjust account for debit.
-     * @param pTrans the transaction causing the debit
+     * @param pTrans the transaction helper
      */
-    protected void adjustForDebit(final Transaction pTrans) {
+    protected void adjustForDebit(final TransactionHelper pTrans) {
         /* Access event amount */
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = pTrans.getDebitAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* Adjust valuation */
-            JMoney myValuation = getNewValuation();
-            myValuation.subtractAmount(myAmount);
-            setValue(AccountAttribute.VALUATION, myValuation);
+            myAmount = new JMoney(myAmount);
+            myAmount.negate();
+            adjustCounter(AccountAttribute.VALUATION, myAmount);
         }
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
      * Adjust account for credit.
-     * @param pTrans the transaction causing the credit
+     * @param pTrans the transaction helper
      */
-    protected void adjustForCredit(final Transaction pTrans) {
+    protected void adjustForCredit(final TransactionHelper pTrans) {
         /* Access event amount */
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = pTrans.getCreditAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* Adjust valuation */
-            JMoney myValuation = getNewValuation();
-            myValuation.addAmount(pTrans.getAmount());
-            setValue(AccountAttribute.VALUATION, myValuation);
+            adjustCounter(AccountAttribute.VALUATION, myAmount);
         }
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
+    }
+
+    /**
+     * Set opening balance.
+     * @param pBalance the opening balance
+     */
+    protected void setOpeningBalance(final JMoney pBalance) {
+        /* Set the base value (this will set the current value as well) */
+        JMoney myBaseValue = getBaseValues().getMoneyValue(AccountAttribute.VALUATION);
+        myBaseValue.addAmount(pBalance);
+    }
+
+    /**
+     * Register the transaction.
+     * @param pTrans the transaction helper
+     */
+    protected void registerTransaction(final TransactionHelper pTrans) {
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans.getTransaction(), theValues);
     }
 
     /**
@@ -579,7 +600,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(AccountAttribute.DELTA, myValue);
+        setValue(AccountAttribute.VALUEDELTA, myValue);
 
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
@@ -634,9 +655,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             super(AccountAttribute.class);
 
             /* Initialise valuation and spend to zero */
-            put(AccountAttribute.VALUATION, new JMoney(pReportingCurrency));
-            put(AccountAttribute.LOCALVALUATION, new JMoney(pCurrency));
-            put(AccountAttribute.FOREIGNVALUATION, new JMoney(pCurrency));
+            put(AccountAttribute.LOCALVALUE, new JMoney(pReportingCurrency));
+            put(AccountAttribute.FOREIGNVALUE, new JMoney(pCurrency));
         }
 
         /**

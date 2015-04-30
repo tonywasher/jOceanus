@@ -228,7 +228,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(AccountAttribute.DELTA, myValue);
+        setValue(AccountAttribute.VALUEDELTA, myValue);
     }
 
     /**

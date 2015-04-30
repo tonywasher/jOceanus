@@ -822,7 +822,6 @@ public class CashTable
                     break;
                 case COLUMN_CURR:
                     pItem.setAssetCurrency((AssetCurrency) pValue);
-                    pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);

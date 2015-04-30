@@ -29,11 +29,6 @@ import net.sourceforge.joceanus.jmetis.data.DataType;
  */
 public enum PayeeAttribute implements BucketAttribute {
     /**
-     * Delta.
-     */
-    DELTA,
-
-    /**
      * Income.
      */
     INCOME,
@@ -41,7 +36,12 @@ public enum PayeeAttribute implements BucketAttribute {
     /**
      * Expense.
      */
-    EXPENSE;
+    EXPENSE,
+
+    /**
+     * Profit (NetIncome).
+     */
+    PROFIT;
 
     /**
      * The String name.

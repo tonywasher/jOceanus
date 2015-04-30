@@ -525,9 +525,9 @@ public class TaxBasisBucket
      * Add income transaction.
      * @param pTrans the transaction
      */
-    private void addIncomeTransaction(final Transaction pTrans) {
+    private void addIncomeTransaction(final TransactionHelper pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = pTrans.getCreditAmount();
         JMoney myTaxCredit = pTrans.getTaxCredit();
         JMoney myNatIns = pTrans.getNatInsurance();
         JMoney myBenefit = pTrans.getDeemedBenefit();
@@ -629,9 +629,9 @@ public class TaxBasisBucket
      * Add expense transaction.
      * @param pTrans the transaction
      */
-    private void addExpenseTransaction(final Transaction pTrans) {
+    private void addExpenseTransaction(final TransactionHelper pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = pTrans.getDebitAmount();
         JMoney myTaxCredit = pTrans.getTaxCredit();
 
         /* Determine style of event */
@@ -685,12 +685,12 @@ public class TaxBasisBucket
 
     /**
      * Register delta transaction value.
-     * @param pTrans the transaction
+     * @param pTrans the transaction helper
      * @param pGross the gross delta value
      * @param pNett the net delta value
      * @param pTax the tax delta value
      */
-    protected void registerDeltaValues(final Transaction pTrans,
+    protected void registerDeltaValues(final TransactionHelper pTrans,
                                        final JMoney pGross,
                                        final JMoney pNett,
                                        final JMoney pTax) {
@@ -722,7 +722,7 @@ public class TaxBasisBucket
         }
 
         /* Register the transaction */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
@@ -730,15 +730,15 @@ public class TaxBasisBucket
      * @param pTrans the transaction
      * @param pValue the value
      */
-    protected void adjustValue(final Transaction pTrans,
+    protected void adjustValue(final TransactionHelper pTrans,
                                final JMoney pValue) {
         /* Adjust the value */
         adjustValue(pValue);
 
         /* Register the transaction */
-        theHistory.registerTransaction(pTrans, theValues);
-        /* If we have accounts */
+        registerTransaction(pTrans);
 
+        /* If we have accounts */
         if (hasAccounts) {
             /* register the adjustment against the accounts */
             theAccounts.adjustValue(pTrans, pValue);
@@ -770,6 +770,15 @@ public class TaxBasisBucket
         /* Set the values */
         setValue(TaxBasisAttribute.GROSS, myGross);
         setValue(TaxBasisAttribute.NETT, myNet);
+    }
+
+    /**
+     * Register the transaction.
+     * @param pTrans the transaction helper
+     */
+    protected void registerTransaction(final TransactionHelper pTrans) {
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans.getTransaction(), theValues);
     }
 
     /**
@@ -1063,10 +1072,10 @@ public class TaxBasisBucket
 
         /**
          * Adjust basis buckets.
-         * @param pTrans the transaction
+         * @param pTrans the transaction helper
          * @param pCategory primary category
          */
-        protected void adjustBasis(final Transaction pTrans,
+        protected void adjustBasis(final TransactionHelper pTrans,
                                    final TransactionCategory pCategory) {
             /* Switch on the category type */
             TaxBasisBucket myBucket;
@@ -1161,7 +1170,7 @@ public class TaxBasisBucket
          * @param pClass the class
          * @param pIncome the income
          */
-        protected void adjustValue(final Transaction pTrans,
+        protected void adjustValue(final TransactionHelper pTrans,
                                    final TaxBasisClass pClass,
                                    final JMoney pIncome) {
             /* Access the bucket and adjust it */
@@ -1174,10 +1183,10 @@ public class TaxBasisBucket
          * @param pTrans the transaction
          * @param isExpense true/false
          */
-        protected void adjustAutoExpense(final Transaction pTrans,
+        protected void adjustAutoExpense(final TransactionHelper pTrans,
                                          final boolean isExpense) {
             /* Determine value */
-            JMoney myAmount = pTrans.getAmount();
+            JMoney myAmount = pTrans.getLocalDebitAmount();
             if (!isExpense) {
                 myAmount = new JMoney(myAmount);
                 myAmount.negate();

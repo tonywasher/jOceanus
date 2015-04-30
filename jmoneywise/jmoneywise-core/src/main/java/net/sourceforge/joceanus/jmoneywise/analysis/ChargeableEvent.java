@@ -242,8 +242,8 @@ public final class ChargeableEvent
     }
 
     /**
-     * Apply taxation of total slice to the individual events. This tax is first split proportionally among the slices and then multiplied by the years of each
-     * individual event
+     * Apply taxation of total slice to the individual events. This tax is first split
+     * proportionally among the slices and then multiplied by the years of each individual event
      * @param pTax the calculated taxation for the slice
      * @param pTotal the slice total of the event list
      */
@@ -344,8 +344,8 @@ public final class ChargeableEvent
         }
 
         /**
-         * Get the SliceTotal of the chargeable event list. Each slice is the Value of the event divided by the number of years that the charge is to be sliced
-         * over
+         * Get the SliceTotal of the chargeable event list. Each slice is the Value of the event
+         * divided by the number of years that the charge is to be sliced over
          * @return the slice total of the chargeable event list
          */
         public JMoney getSliceTotal() {
@@ -366,7 +366,8 @@ public final class ChargeableEvent
         }
 
         /**
-         * Get the TaxTotal of the chargeable event list. This is the total of the tax that has been apportioned to each slice
+         * Get the TaxTotal of the chargeable event list. This is the total of the tax that has been
+         * apportioned to each slice
          * @return the tax total of the chargeable event list
          */
         public JMoney getTaxTotal() {
@@ -387,8 +388,8 @@ public final class ChargeableEvent
         }
 
         /**
-         * Get the GainsTotal of the chargeable event list. Each slice is the Value of the event divided by the number of years that the charge is to be sliced
-         * over
+         * Get the GainsTotal of the chargeable event list. Each slice is the Value of the event
+         * divided by the number of years that the charge is to be sliced over
          * @return the slice total of the chargeable event list
          */
         public JMoney getGainsTotal() {
@@ -409,8 +410,8 @@ public final class ChargeableEvent
         }
 
         /**
-         * Apply taxation of total slice to the individual events. This tax is first split proportionally among the slices and then multiplied by the years of
-         * each individual event
+         * Apply taxation of total slice to the individual events. This tax is first split
+         * proportionally among the slices and then multiplied by the years of each individual event
          * @param pTax the calculated taxation for the slice
          * @param pTotal the slice total of the event list
          */

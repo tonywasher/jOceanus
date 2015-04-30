@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -368,12 +367,12 @@ public final class TaxBasisAccountBucket
 
         /**
          * Register delta transaction value.
-         * @param pTrans the transaction
+         * @param pTrans the transaction helper
          * @param pGross the gross delta value
          * @param pNett the net delta value
          * @param pTax the tax delta value
          */
-        protected void registerDeltaValues(final Transaction pTrans,
+        protected void registerDeltaValues(final TransactionHelper pTrans,
                                            final JMoney pGross,
                                            final JMoney pNett,
                                            final JMoney pTax) {
@@ -392,7 +391,7 @@ public final class TaxBasisAccountBucket
          * @param pTrans the transaction
          * @param pGross the gross delta value
          */
-        protected void adjustValue(final Transaction pTrans,
+        protected void adjustValue(final TransactionHelper pTrans,
                                    final JMoney pGross) {
             /* Determine required asset */
             TransactionAsset myAsset = deriveAsset(pTrans);
@@ -409,7 +408,7 @@ public final class TaxBasisAccountBucket
          * @param pTrans the transaction
          * @return the relevant asset
          */
-        private TransactionAsset deriveAsset(final Transaction pTrans) {
+        private TransactionAsset deriveAsset(final TransactionHelper pTrans) {
             /* Determine required asset */
             TransactionAsset myAsset = pTrans.getPartner();
             if (!(myAsset instanceof Payee)) {

@@ -420,28 +420,23 @@ public final class PayeeBucket
     }
 
     /**
-     * Obtain new Income value.
-     * @return the new income value
+     * Adjust counter.
+     * @param pAttr the attribute
+     * @param pDelta the delta
      */
-    private JMoney getNewIncome() {
-        JMoney myIncome = theValues.getMoneyValue(PayeeAttribute.INCOME);
-        return new JMoney(myIncome);
-    }
-
-    /**
-     * Obtain new Expense value.
-     * @return the new expense value
-     */
-    private JMoney getNewExpense() {
-        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.EXPENSE);
-        return new JMoney(myExpense);
+    protected void adjustCounter(final PayeeAttribute pAttr,
+                                 final JMoney pDelta) {
+        JMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new JMoney(myValue);
+        myValue.addAmount(pDelta);
+        setValue(pAttr, myValue);
     }
 
     /**
      * Adjust account for debit.
-     * @param pTrans the transaction causing the debit
+     * @param pTrans the transaction helper
      */
-    protected void adjustForDebit(final Transaction pTrans) {
+    protected void adjustForDebit(final TransactionHelper pTrans) {
         /* Access the class */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         boolean isIncome = myClass.isIncome();
@@ -449,19 +444,18 @@ public final class PayeeBucket
         JMoney myExpense = null;
 
         /* Access amount */
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = pTrans.getLocalDebitAmount();
         if (myAmount.isNonZero()) {
             /* If this is an income */
             if (isIncome) {
-                /* Update the income */
-                myIncome = getNewIncome();
-                myIncome.addAmount(myAmount);
+                /* Allocate the income */
+                myIncome = new JMoney(myAmount);
 
                 /* else this is a refunded expense */
             } else {
                 /* Update the expense */
-                myExpense = getNewExpense();
-                myExpense.subtractAmount(myAmount);
+                myExpense = new JMoney(myAmount);
+                myExpense.negate();
             }
         }
 
@@ -471,14 +465,17 @@ public final class PayeeBucket
             /* Adjust for Tax Credit */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = getNewIncome();
+                    myIncome = new JMoney(myTaxCred);
+                } else {
+                    myIncome.addAmount(myTaxCred);
                 }
-                myIncome.addAmount(myTaxCred);
             } else {
                 if (myExpense == null) {
-                    myExpense = getNewIncome();
+                    myExpense = new JMoney(myTaxCred);
+                    myExpense.negate();
+                } else {
+                    myExpense.subtractAmount(myTaxCred);
                 }
-                myExpense.subtractAmount(myTaxCred);
             }
         }
 
@@ -488,53 +485,68 @@ public final class PayeeBucket
             /* Adjust for National Insurance */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = getNewIncome();
+                    myIncome = new JMoney(myNatIns);
+                } else {
+                    myIncome.addAmount(myNatIns);
                 }
-                myIncome.addAmount(myNatIns);
             } else {
                 if (myExpense == null) {
-                    myExpense = getNewIncome();
+                    myExpense = new JMoney(myNatIns);
+                    myExpense.negate();
+                } else {
+                    myExpense.subtractAmount(myNatIns);
                 }
-                myExpense.subtractAmount(myNatIns);
             }
         }
 
         /* If there is Charity Donation */
         JMoney myDonation = pTrans.getCharityDonation();
-        if (myDonation != null) {
+        if ((myDonation != null) && (myDonation.isNonZero())) {
             /* Adjust for Charity Donation */
-            if (myIncome == null) {
-                myIncome = getNewIncome();
-            }
-            if (myExpense == null) {
-                myExpense = getNewExpense();
-            }
             if (isIncome) {
-                myIncome.addAmount(myDonation);
-                myExpense.addAmount(myDonation);
+                if (myIncome == null) {
+                    myIncome = new JMoney(myDonation);
+                } else {
+                    myIncome.addAmount(myDonation);
+                }
+                if (myExpense == null) {
+                    myExpense = new JMoney(myDonation);
+                } else {
+                    myExpense.addAmount(myDonation);
+                }
             } else {
-                myIncome.subtractAmount(myDonation);
-                myExpense.subtractAmount(myDonation);
+                if (myIncome == null) {
+                    myIncome = new JMoney(myDonation);
+                    myIncome.negate();
+                } else {
+                    myIncome.subtractAmount(myDonation);
+                }
+                if (myExpense == null) {
+                    myExpense = new JMoney(myAmount);
+                    myExpense.negate();
+                } else {
+                    myExpense.subtractAmount(myDonation);
+                }
             }
         }
 
         /* Set new values */
         if (myIncome != null) {
-            setValue(PayeeAttribute.INCOME, myIncome);
+            adjustCounter(PayeeAttribute.INCOME, myIncome);
         }
         if (myExpense != null) {
-            setValue(PayeeAttribute.EXPENSE, myExpense);
+            adjustCounter(PayeeAttribute.EXPENSE, myExpense);
         }
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
      * Adjust account for credit.
-     * @param pTrans the transaction causing the credit
+     * @param pTrans the transaction helper
      */
-    protected void adjustForCredit(final Transaction pTrans) {
+    protected void adjustForCredit(final TransactionHelper pTrans) {
         /* Analyse the transaction */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         boolean isExpense = !myClass.isIncome();
@@ -542,17 +554,18 @@ public final class PayeeBucket
         JMoney myIncome = null;
 
         /* Access amount */
-        JMoney myAmount = pTrans.getAmount();
+        JMoney myAmount = pTrans.getLocalCreditAmount();
         if (myAmount.isNonZero()) {
             /* If this is an expense */
             if (isExpense) {
-                /* Update the expense */
-                myExpense = getNewExpense();
-                myExpense.addAmount(myAmount);
+                /* Allocate the expense */
+                myExpense = new JMoney(myAmount);
+
+                /* else this is a refunded income */
             } else {
                 /* Update the income */
-                myIncome = getNewIncome();
-                myIncome.subtractAmount(myAmount);
+                myIncome = new JMoney(myAmount);
+                myIncome.negate();
             }
         }
 
@@ -562,96 +575,102 @@ public final class PayeeBucket
             /* Adjust for Tax Credit */
             if (isExpense) {
                 if (myExpense == null) {
-                    myExpense = getNewExpense();
+                    myExpense = new JMoney(myTaxCred);
+                } else {
+                    myExpense.addAmount(myTaxCred);
                 }
-                myExpense.addAmount(myTaxCred);
             } else {
                 if (myIncome == null) {
-                    myIncome = getNewIncome();
+                    myIncome = new JMoney(myTaxCred);
+                    myIncome.negate();
+                } else {
+                    myIncome.subtractAmount(myTaxCred);
                 }
-                myIncome.subtractAmount(myTaxCred);
             }
         }
 
         /* If we have an expense */
         if (myExpense != null) {
             /* Record it */
-            setValue(PayeeAttribute.EXPENSE, myExpense);
+            adjustCounter(PayeeAttribute.EXPENSE, myExpense);
         }
         if (myIncome != null) {
             /* Record it */
-            setValue(PayeeAttribute.INCOME, myIncome);
+            adjustCounter(PayeeAttribute.INCOME, myIncome);
         }
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
      * Adjust account for tax credit.
-     * @param pTrans the transaction causing the credit
+     * @param pTrans the transaction helper
      */
-    protected void adjustForTaxCredit(final Transaction pTrans) {
+    protected void adjustForTaxCredit(final TransactionHelper pTrans) {
         /* Access amount */
-        JMoney myAmount = pTrans.getTaxCredit();
-        if (myAmount.isNonZero()) {
+        JMoney myTaxCred = pTrans.getTaxCredit();
+        if (myTaxCred.isNonZero()) {
             TransactionCategoryClass myClass = pTrans.getCategoryClass();
             if (myClass.isExpense()) {
                 /* Update the expense */
-                JMoney myExpense = getNewExpense();
-                myExpense.addAmount(myAmount);
-                setValue(PayeeAttribute.EXPENSE, myExpense);
+                adjustCounter(PayeeAttribute.EXPENSE, myTaxCred);
             } else {
                 /* Update the income */
-                JMoney myIncome = getNewIncome();
-                myIncome.addAmount(myAmount);
-                setValue(PayeeAttribute.INCOME, myIncome);
+                adjustCounter(PayeeAttribute.INCOME, myTaxCred);
             }
         }
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
      * Adjust account for tax payments.
      * @param pTrans the transaction causing the payments
      */
-    protected void adjustForTaxPayments(final Transaction pTrans) {
+    protected void adjustForTaxPayments(final TransactionHelper pTrans) {
         /* Determine transaction type */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
-        JMoney myValue = null;
+        JMoney myAmount = null;
 
         /* Adjust for Tax credit */
         JMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
-            myValue = new JMoney(myTaxCred);
+            myAmount = new JMoney(myTaxCred);
         }
 
         /* Adjust for national insurance */
         JMoney myNatIns = pTrans.getNatInsurance();
-        if (myNatIns != null) {
-            if (myValue == null) {
-                myValue = new JMoney(myNatIns);
+        if ((myNatIns != null) && (myNatIns.isNonZero())) {
+            if (myAmount == null) {
+                myAmount = new JMoney(myNatIns);
             } else {
-                myValue.addAmount(myNatIns);
+                myAmount.addAmount(myNatIns);
             }
         }
 
         /* If we have payments */
-        if (myValue != null) {
+        if (myAmount != null) {
             /* Adjust correct bucket */
             if (myClass.isExpense()) {
-                myValue.addAmount(theValues.getMoneyValue(PayeeAttribute.INCOME));
-                setValue(PayeeAttribute.INCOME, myValue);
+                adjustCounter(PayeeAttribute.INCOME, myAmount);
             } else {
-                myValue.addAmount(theValues.getMoneyValue(PayeeAttribute.EXPENSE));
-                setValue(PayeeAttribute.EXPENSE, myValue);
+                adjustCounter(PayeeAttribute.EXPENSE, myAmount);
             }
 
             /* Register the transaction in the history */
-            theHistory.registerTransaction(pTrans, theValues);
+            registerTransaction(pTrans);
         }
+    }
+
+    /**
+     * Register the transaction.
+     * @param pTrans the transaction helper
+     */
+    protected void registerTransaction(final TransactionHelper pTrans) {
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans.getTransaction(), theValues);
     }
 
     /**
@@ -661,9 +680,7 @@ public final class PayeeBucket
     protected void addIncome(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myIncome = getNewIncome();
-            myIncome.addAmount(pValue);
-            setValue(PayeeAttribute.INCOME, myIncome);
+            adjustCounter(PayeeAttribute.INCOME, pValue);
         }
     }
 
@@ -674,8 +691,8 @@ public final class PayeeBucket
     protected void subtractIncome(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myIncome = getNewIncome();
-            myIncome.subtractAmount(pValue);
+            JMoney myIncome = new JMoney(pValue);
+            myIncome.negate();
             setValue(PayeeAttribute.INCOME, myIncome);
         }
     }
@@ -685,13 +702,13 @@ public final class PayeeBucket
      * @param pTrans the transaction causing the expense
      * @param pValue the value to add
      */
-    protected void addExpense(final Transaction pTrans,
+    protected void addExpense(final TransactionHelper pTrans,
                               final JMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
@@ -701,9 +718,7 @@ public final class PayeeBucket
     protected void addExpense(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myExpense = getNewExpense();
-            myExpense.addAmount(pValue);
-            setValue(PayeeAttribute.EXPENSE, myExpense);
+            adjustCounter(PayeeAttribute.EXPENSE, pValue);
         }
     }
 
@@ -712,13 +727,13 @@ public final class PayeeBucket
      * @param pTrans the transaction causing the expense
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final Transaction pTrans,
+    protected void subtractExpense(final TransactionHelper pTrans,
                                    final JMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans, theValues);
+        registerTransaction(pTrans);
     }
 
     /**
@@ -728,9 +743,9 @@ public final class PayeeBucket
     protected void subtractExpense(final JMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myExpense = getNewExpense();
-            myExpense.subtractAmount(pValue);
-            setValue(PayeeAttribute.EXPENSE, myExpense);
+            JMoney myExpense = new JMoney(pValue);
+            myExpense.negate();
+            adjustCounter(PayeeAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -825,7 +840,7 @@ public final class PayeeBucket
             /* Reset Income and expense values */
             put(PayeeAttribute.INCOME, myValue);
             put(PayeeAttribute.EXPENSE, new JMoney(myValue));
-            put(PayeeAttribute.DELTA, new JMoney(myValue));
+            put(PayeeAttribute.PROFIT, new JMoney(myValue));
         }
 
         /**
@@ -841,7 +856,7 @@ public final class PayeeBucket
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            put(PayeeAttribute.DELTA, myDelta);
+            put(PayeeAttribute.PROFIT, myDelta);
         }
 
         /**

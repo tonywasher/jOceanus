@@ -125,6 +125,11 @@ public final class SecurityBucket
     private final AssetCurrency theCurrency;
 
     /**
+     * Is this a foreign currency?
+     */
+    private final Boolean isForeignCurrency;
+
+    /**
      * The security type.
      */
     private final SecurityType theCategory;
@@ -167,8 +172,21 @@ public final class SecurityBucket
         /* Obtain category */
         theCategory = theSecurity.getSecurityType();
 
+        /* Determine currency */
+        AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
+        AssetCurrency myHoldingCurrency = (pHolding == null)
+                                                            ? myReportingCurrency
+                                                            : pHolding.getAssetCurrency();
+
+        /* Determine whether we are a foreign currency */
+        isForeignCurrency = !Difference.isEqual(myReportingCurrency, myHoldingCurrency);
+        Currency myCurrency = AccountBucket.deriveCurrency(myHoldingCurrency);
+        Currency myRepCurrency = AccountBucket.deriveCurrency(myReportingCurrency);
+
         /* Create the history map */
-        SecurityValues myValues = new SecurityValues(theCurrency.getCurrency());
+        SecurityValues myValues = isForeignCurrency
+                                                   ? new SecurityValues(myCurrency, myRepCurrency)
+                                                   : new SecurityValues(myCurrency);
         theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(myValues);
 
         /* Access the key value maps */
@@ -191,6 +209,7 @@ public final class SecurityBucket
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap());
@@ -217,6 +236,7 @@ public final class SecurityBucket
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pDate);
@@ -243,6 +263,7 @@ public final class SecurityBucket
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
+        isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
         theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pRange);
@@ -349,6 +370,14 @@ public final class SecurityBucket
      */
     public AssetCurrency getCurrency() {
         return theCurrency;
+    }
+
+    /**
+     * Is this a foreign currency?
+     * @return true/false
+     */
+    public Boolean isForeignCurrency() {
+        return isForeignCurrency;
     }
 
     @Override
@@ -566,69 +595,29 @@ public final class SecurityBucket
     }
 
     /**
-     * Adjust security units.
+     * Adjust counter.
+     * @param pAttr the attribute
      * @param pDelta the delta
      */
-    protected void adjustUnits(final JUnits pDelta) {
-        JUnits myUnits = theValues.getUnitsValue(SecurityAttribute.UNITS);
-        myUnits = new JUnits(myUnits);
-        myUnits.addUnits(pDelta);
-        setValue(SecurityAttribute.UNITS, myUnits);
-    }
-
-    /**
-     * Adjust security cost.
-     * @param pDelta the delta
-     */
-    protected void adjustCost(final JMoney pDelta) {
-        JMoney myCost = theValues.getMoneyValue(SecurityAttribute.COST);
-        myCost = new JMoney(myCost);
-        myCost.addAmount(pDelta);
-        setValue(SecurityAttribute.COST, myCost);
-    }
-
-    /**
-     * Adjust security invested.
-     * @param pDelta the delta
-     */
-    protected void adjustInvested(final JMoney pDelta) {
-        JMoney myInvested = theValues.getMoneyValue(SecurityAttribute.INVESTED);
-        myInvested = new JMoney(myInvested);
-        myInvested.addAmount(pDelta);
-        setValue(SecurityAttribute.INVESTED, myInvested);
-    }
-
-    /**
-     * Adjust security gains.
-     * @param pDelta the delta
-     */
-    protected void adjustGains(final JMoney pDelta) {
-        JMoney myGains = theValues.getMoneyValue(SecurityAttribute.GAINS);
-        myGains = new JMoney(myGains);
-        myGains.addAmount(pDelta);
-        setValue(SecurityAttribute.GAINS, myGains);
-    }
-
-    /**
-     * Adjust profit adjustment.
-     * @param pDelta the delta
-     */
-    protected void adjustGrowthDelta(final JMoney pDelta) {
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
+    protected void adjustCounter(final SecurityAttribute pAttr,
+                                 final JMoney pDelta) {
+        JMoney myValue = theValues.getMoneyValue(pAttr);
         myValue = new JMoney(myValue);
         myValue.addAmount(pDelta);
-        setValue(SecurityAttribute.GROWTHADJUST, myValue);
+        setValue(pAttr, myValue);
     }
 
     /**
-     * Adjust security dividends.
+     * Adjust counter.
+     * @param pAttr the attribute
      * @param pDelta the delta
      */
-    protected void adjustDividend(final JMoney pDelta) {
-        JMoney myDividend = theValues.getMoneyValue(SecurityAttribute.DIVIDEND);
-        myDividend = new JMoney(myDividend);
-        myDividend.addAmount(pDelta);
-        setValue(SecurityAttribute.DIVIDEND, myDividend);
+    protected void adjustCounter(final SecurityAttribute pAttr,
+                                 final JUnits pDelta) {
+        JUnits myValue = theValues.getUnitsValue(pAttr);
+        myValue = new JUnits(myValue);
+        myValue.addUnits(pDelta);
+        setValue(pAttr, myValue);
     }
 
     /**
@@ -636,9 +625,9 @@ public final class SecurityBucket
      * @param pTrans the transaction
      * @return the registered values
      */
-    protected SecurityValues registerTransaction(final Transaction pTrans) {
+    protected SecurityValues registerTransaction(final TransactionHelper pTrans) {
         /* Register the event in the history */
-        return theHistory.registerTransaction(pTrans, theValues);
+        return theHistory.registerTransaction(pTrans.getTransaction(), theValues);
     }
 
     /**
@@ -673,7 +662,7 @@ public final class SecurityBucket
      */
     protected void calculateProfit() {
         /* Calculate the profit */
-        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.DELTA);
+        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
         JMoney myProfit = new JMoney(myValuation);
         myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
         myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
@@ -704,7 +693,7 @@ public final class SecurityBucket
         myValue.subtractAmount(theBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
 
         /* Set the delta */
-        setValue(SecurityAttribute.DELTA, myValue);
+        setValue(SecurityAttribute.VALUEDELTA, myValue);
 
         /* Calculate the profit */
         calculateProfit();
@@ -727,7 +716,7 @@ public final class SecurityBucket
      */
     private void calculateMarket() {
         /* Obtain the delta value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.DELTA);
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
         myValue = new JMoney(myValue);
 
         /* Subtract the investment */
@@ -785,11 +774,13 @@ public final class SecurityBucket
             /* Initialise units etc. to zero */
             put(SecurityAttribute.UNITS, new JUnits());
             put(SecurityAttribute.COST, new JMoney(pCurrency));
-            put(SecurityAttribute.INVESTED, new JMoney(pCurrency));
+            put(SecurityAttribute.FOREIGNINVESTED, new JMoney(pCurrency));
             put(SecurityAttribute.LOCALINVESTED, new JMoney(pReportingCurrency));
-            put(SecurityAttribute.GAINS, new JMoney(pCurrency));
+            put(SecurityAttribute.FOREIGNGAINS, new JMoney(pCurrency));
+            put(SecurityAttribute.LOCALGAINS, new JMoney(pReportingCurrency));
             put(SecurityAttribute.GROWTHADJUST, new JMoney(pCurrency));
-            put(SecurityAttribute.DIVIDEND, new JMoney(pCurrency));
+            put(SecurityAttribute.FOREIGNDIVIDEND, new JMoney(pCurrency));
+            put(SecurityAttribute.LOCALDIVIDEND, new JMoney(pReportingCurrency));
         }
 
         /**
@@ -835,19 +826,28 @@ public final class SecurityBucket
             myValue = new JMoney(myValue);
             myValue.setZero();
 
-            /* Reset Invested, Gains and Dividend values */
-            put(SecurityAttribute.INVESTED, myValue);
-            put(SecurityAttribute.GAINS, new JMoney(myValue));
+            /* Reset Growth Adjust values */
             put(SecurityAttribute.GROWTHADJUST, new JMoney(myValue));
-            put(SecurityAttribute.DIVIDEND, new JMoney(myValue));
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
-                /* Create a zero value in the correct currency */
+                /* Reset Invested, Gains and Dividend values */
+                put(SecurityAttribute.FOREIGNINVESTED, myValue);
+                put(SecurityAttribute.FOREIGNGAINS, new JMoney(myValue));
+                put(SecurityAttribute.FOREIGNDIVIDEND, new JMoney(myValue));
+
+                /* Create a zero value in the reporting currency */
                 myValue = getMoneyValue(SecurityAttribute.LOCALINVESTED);
                 myValue = new JMoney(myValue);
                 myValue.setZero();
+                put(SecurityAttribute.LOCALDIVIDEND, myValue);
+                put(SecurityAttribute.LOCALGAINS, myValue);
                 put(SecurityAttribute.LOCALINVESTED, myValue);
+            } else {
+                /* Reset Invested, Gains and Dividend values */
+                put(SecurityAttribute.INVESTED, myValue);
+                put(SecurityAttribute.GAINS, new JMoney(myValue));
+                put(SecurityAttribute.DIVIDEND, new JMoney(myValue));
             }
         }
 

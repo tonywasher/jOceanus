@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -183,18 +182,6 @@ public final class DepositBucket
                                                                           : super.allocateForeignValues(pCurrency, pReportingCurrency);
     }
 
-    /**
-     * Set opening balance.
-     * @param pBalance the opening balance
-     */
-    protected void setOpeningBalance(final JMoney pBalance) {
-        JMoney myValue = getNewValuation();
-        JMoney myBaseValue = getBaseValues().getMoneyValue(AccountAttribute.VALUATION);
-        myValue.addAmount(pBalance);
-        myBaseValue.addAmount(pBalance);
-        setValue(AccountAttribute.VALUATION, myValue);
-    }
-
     @Override
     protected void recordRate(final JDateDay pDate) {
         /* Obtain the appropriate rate record */
@@ -216,32 +203,23 @@ public final class DepositBucket
         }
 
         /* Store the maturity */
-        setValue(AccountAttribute.MATURITY, myDate);
-    }
-
-    /**
-     * Obtain new BadDebt value.
-     * @return the new badDebt value
-     */
-    private JMoney getNewBadDebt() {
-        JMoney myBadDebt = getValues().getMoneyValue(AccountAttribute.BADDEBT);
-        return new JMoney(myBadDebt);
+        if (myDate != null) {
+            setValue(AccountAttribute.MATURITY, myDate);
+        }
     }
 
     @Override
-    protected void adjustForDebit(final Transaction pTrans) {
+    protected void adjustForDebit(final TransactionHelper pTrans) {
         /* If this is a peer2peer and a bad debt transaction */
         if ((isPeer2Peer)
-            && pTrans.getCategory().isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+            && pTrans.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
             /* Access the amount */
-            JMoney myAmount = pTrans.getAmount();
+            JMoney myAmount = pTrans.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
-                /* Adjust spend */
-                JMoney myBadDebt = getNewBadDebt();
-                myBadDebt.addAmount(myAmount);
-                setValue(AccountAttribute.BADDEBT, myBadDebt);
+                /* Adjust counter */
+                adjustCounter(AccountAttribute.BADDEBT, myAmount);
             }
         }
 
@@ -250,19 +228,19 @@ public final class DepositBucket
     }
 
     @Override
-    protected void adjustForCredit(final Transaction pTrans) {
+    protected void adjustForCredit(final TransactionHelper pTrans) {
         /* If this is a peer2peer and a bad debt transaction */
         if ((isPeer2Peer)
-            && pTrans.getCategory().isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+            && pTrans.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
             /* Access the amount */
-            JMoney myAmount = pTrans.getAmount();
+            JMoney myAmount = pTrans.getCreditAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
-                /* Adjust spend */
-                JMoney myBadDebt = getNewBadDebt();
-                myBadDebt.subtractAmount(myAmount);
-                setValue(AccountAttribute.BADDEBT, myBadDebt);
+                /* Adjust bad debt */
+                myAmount = new JMoney(myAmount);
+                myAmount.negate();
+                adjustCounter(AccountAttribute.BADDEBT, myAmount);
             }
         }
 

@@ -554,8 +554,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             switch ((AccountAttribute) pCounter) {
                 case BADDEBT:
                     return getBucket().isPeer2Peer();
-                case FOREIGNVALUATION:
+                case FOREIGNVALUE:
+                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
+                case VALUATION:
+                    return !getBucket().isForeignCurrency();
                 case SPEND:
                     return false;
                 default:
@@ -593,8 +596,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                 case BADDEBT:
                 case SPEND:
                     return false;
-                case FOREIGNVALUATION:
+                case FOREIGNVALUE:
+                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
+                case VALUATION:
+                    return !getBucket().isForeignCurrency();
                 default:
                     return true;
             }
@@ -631,8 +637,11 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                     return getBucket().isCreditCard();
                 case BADDEBT:
                     return false;
-                case FOREIGNVALUATION:
+                case FOREIGNVALUE:
+                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
+                case VALUATION:
+                    return !getBucket().isForeignCurrency();
                 default:
                     return true;
             }
@@ -682,6 +691,29 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
             return pBuilder.buildTransaction(getBucket().getSecurityHolding());
+        }
+
+        @Override
+        public boolean isRelevantCounter(final BucketAttribute pCounter) {
+            if (!(pCounter instanceof SecurityAttribute)) {
+                return false;
+            }
+
+            switch ((SecurityAttribute) pCounter) {
+                case FOREIGNINVESTED:
+                case LOCALINVESTED:
+                case FOREIGNDIVIDEND:
+                case LOCALDIVIDEND:
+                case FOREIGNGAINS:
+                case LOCALGAINS:
+                    return getBucket().isForeignCurrency();
+                case INVESTED:
+                case DIVIDEND:
+                case GAINS:
+                    return !getBucket().isForeignCurrency();
+                default:
+                    return true;
+            }
         }
     }
 
@@ -742,6 +774,26 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         @Override
         public Transaction buildNewTransaction(final TransactionBuilder pBuilder) {
             return pBuilder.buildTransaction(getBucket().getAccount());
+        }
+
+        @Override
+        public boolean isRelevantCounter(final BucketAttribute pCounter) {
+            if (!(pCounter instanceof AccountAttribute)) {
+                return false;
+            }
+
+            switch ((AccountAttribute) pCounter) {
+                case FOREIGNVALUE:
+                case LOCALVALUE:
+                    return getBucket().isForeignCurrency();
+                case VALUATION:
+                    return !getBucket().isForeignCurrency();
+                case BADDEBT:
+                case SPEND:
+                    return false;
+                default:
+                    return true;
+            }
         }
     }
 

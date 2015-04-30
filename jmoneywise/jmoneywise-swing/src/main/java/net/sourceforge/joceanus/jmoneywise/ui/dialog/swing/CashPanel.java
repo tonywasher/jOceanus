@@ -300,9 +300,6 @@ public class CashPanel
         boolean bShowDesc = isEditable || myCash.getDesc() != null;
         theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
-        /* Currency is hidden if we are autoExpense */
-        theFieldSet.setVisibility(Cash.FIELD_CURRENCY, !isAutoExpense);
-
         /* AutoExpense/Payee is hidden unless we are autoExpense */
         JDataField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
         JDataField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);

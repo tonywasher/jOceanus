@@ -524,6 +524,7 @@ public class Cash
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCashCategory(getDefaultCategory());
+        setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         autoCorrect(pUpdateSet);
     }
@@ -534,16 +535,6 @@ public class Cash
      * @throws JOceanusException on error
      */
     public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-        /* If we are autoExpense */
-        if (isAutoExpense()) {
-            /* We must not have a currency */
-            setAssetCurrency(null);
-
-            /* Else standard cash account so ensure we have a currency */
-        } else if (getAssetCurrency() == null) {
-            setAssetCurrency(getDataSet().getDefaultCurrency());
-        }
-
         /* autoCorrect the infoSet */
         theInfoSet.autoCorrect(pUpdateSet);
     }
@@ -685,10 +676,7 @@ public class Cash
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
-        AssetCurrency myCurrency = getAssetCurrency();
-        if (myCurrency != null) {
-            myCurrency.touchItem(this);
-        }
+        getAssetCurrency().touchItem(this);
 
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
@@ -715,13 +703,9 @@ public class Cash
             addError(ERROR_BADCATEGORY, FIELD_CATEGORY);
         }
 
-        /* Currency must be non-null and enabled for nonAutoExpense and must be null otherwise */
+        /* Currency must be non-null and enabled */
         if (myCurrency == null) {
-            if (!isAutoExpense()) {
-                addError(ERROR_MISSING, FIELD_CURRENCY);
-            }
-        } else if (isAutoExpense()) {
-            addError(ERROR_EXIST, FIELD_CURRENCY);
+            addError(ERROR_MISSING, FIELD_CURRENCY);
         } else if (!myCurrency.getEnabled()) {
             addError(ERROR_DISABLED, FIELD_CURRENCY);
         }
@@ -762,7 +746,7 @@ public class Cash
             setValueCategory(myCash.getCategory());
         }
 
-        /* Update the deposit currency if required */
+        /* Update the currency if required */
         if (!Difference.isEqual(getAssetCurrency(), myCash.getAssetCurrency())) {
             setValueCurrency(myCash.getAssetCurrency());
         }

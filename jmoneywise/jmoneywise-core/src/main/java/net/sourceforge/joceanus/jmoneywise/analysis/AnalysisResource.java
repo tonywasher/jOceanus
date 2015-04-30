@@ -319,7 +319,7 @@ public enum AnalysisResource implements ResourceId {
     /**
      * AccountAttr ForeignValuation.
      */
-    ACCOUNTATTR_FOREIGNVALUATION("AccountAttr.ForeignValuation"),
+    ACCOUNTATTR_FOREIGNVALUE("AccountAttr.ForeignValue"),
 
     /**
      * AccountAttr DepositRate.
@@ -329,12 +329,27 @@ public enum AnalysisResource implements ResourceId {
     /**
      * AccountAttr Delta.
      */
-    ACCOUNTATTR_DELTA("AccountAttr.Delta"),
+    ACCOUNTATTR_VALUEDELTA("AccountAttr.ValueDelta"),
+
+    /**
+     * AccountAttr Profit.
+     */
+    ACCOUNTATTR_PROFIT("AccountAttr.Profit"),
+
+    /**
+     * AccountAttr ForeignDelta.
+     */
+    ACCOUNTATTR_FOREIGNVALUEDELTA("AccountAttr.ForeignValueDelta"),
 
     /**
      * AccountAttr Local Valuation.
      */
-    ACCOUNTATTR_LOCALVALUATION("AccountAttr.LocalValuation"),
+    ACCOUNTATTR_LOCALVALUE("AccountAttr.LocalValue"),
+
+    /**
+     * AccountAttr CurrencyFluctuation.
+     */
+    ACCOUNTATTR_CURRENCYFLUCT("AccountAttr.CurrencyFluct"),
 
     /**
      * AccountAttr ExchangeRate.
@@ -382,6 +397,16 @@ public enum AnalysisResource implements ResourceId {
     SECURITYATTR_GAINS("SecurityAttr.Gains"),
 
     /**
+     * SecurityAttr Local Gains.
+     */
+    SECURITYATTR_LOCALGAINS("SecurityAttr.LocalGains"),
+
+    /**
+     * SecurityAttr Foreign Gains.
+     */
+    SECURITYATTR_FOREIGNGAINS("SecurityAttr.ForeignGains"),
+
+    /**
      * SecurityAttr GrowthAdjustment.
      */
     SECURITYATTR_GROWTHADJUST("SecurityAttr.GrowthAdjust"),
@@ -397,9 +422,24 @@ public enum AnalysisResource implements ResourceId {
     SECURITYATTR_LOCALINVESTED("SecurityAttr.LocalInvested"),
 
     /**
+     * SecurityAttr Foreign Invested.
+     */
+    SECURITYATTR_FOREIGNINVESTED("SecurityAttr.ForeignInvested"),
+
+    /**
      * SecurityAttr Dividend.
      */
     SECURITYATTR_DIVIDEND("SecurityAttr.Dividend"),
+
+    /**
+     * SecurityAttr Local Dividend.
+     */
+    SECURITYATTR_LOCALDIVIDEND("SecurityAttr.LocalDividend"),
+
+    /**
+     * SecurityAttr Foreign Dividend.
+     */
+    SECURITYATTR_FOREIGNDIVIDEND("SecurityAttr.ForeignDividend"),
 
     /**
      * SecurityAttr Market.
@@ -499,16 +539,20 @@ public enum AnalysisResource implements ResourceId {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
-            case FOREIGNVALUATION:
-                return ACCOUNTATTR_FOREIGNVALUATION;
-            case LOCALVALUATION:
-                return ACCOUNTATTR_LOCALVALUATION;
+            case FOREIGNVALUE:
+                return ACCOUNTATTR_FOREIGNVALUE;
+            case LOCALVALUE:
+                return ACCOUNTATTR_LOCALVALUE;
             case DEPOSITRATE:
                 return ACCOUNTATTR_DEPOSITRATE;
             case EXCHANGERATE:
                 return ACCOUNTATTR_EXCHANGERATE;
-            case DELTA:
-                return ACCOUNTATTR_DELTA;
+            case VALUEDELTA:
+                return ACCOUNTATTR_VALUEDELTA;
+            case FOREIGNVALUEDELTA:
+                return ACCOUNTATTR_FOREIGNVALUEDELTA;
+            case CURRENCYFLUCT:
+                return ACCOUNTATTR_CURRENCYFLUCT;
             case MATURITY:
                 return ACCOUNTATTR_MATURITY;
             case SPEND:
@@ -531,8 +575,8 @@ public enum AnalysisResource implements ResourceId {
                 return PAYEEATTR_INCOME;
             case EXPENSE:
                 return PAYEEATTR_EXPENSE;
-            case DELTA:
-                return ACCOUNTATTR_DELTA;
+            case PROFIT:
+                return ACCOUNTATTR_PROFIT;
             default:
                 return null;
         }
@@ -549,8 +593,8 @@ public enum AnalysisResource implements ResourceId {
                 return PAYEEATTR_INCOME;
             case EXPENSE:
                 return PAYEEATTR_EXPENSE;
-            case DELTA:
-                return ACCOUNTATTR_DELTA;
+            case PROFIT:
+                return ACCOUNTATTR_PROFIT;
             default:
                 return null;
         }
@@ -565,10 +609,12 @@ public enum AnalysisResource implements ResourceId {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
-            case FOREIGNVALUATION:
-                return ACCOUNTATTR_FOREIGNVALUATION;
-            case DELTA:
-                return ACCOUNTATTR_DELTA;
+            case FOREIGNVALUE:
+                return ACCOUNTATTR_FOREIGNVALUE;
+            case VALUEDELTA:
+                return ACCOUNTATTR_VALUEDELTA;
+            case FOREIGNVALUEDELTA:
+                return ACCOUNTATTR_FOREIGNVALUEDELTA;
             case EXCHANGERATE:
                 return ACCOUNTATTR_EXCHANGERATE;
             case UNITS:
@@ -577,14 +623,24 @@ public enum AnalysisResource implements ResourceId {
                 return SECURITYATTR_COST;
             case GAINS:
                 return SECURITYATTR_GAINS;
+            case LOCALGAINS:
+                return SECURITYATTR_LOCALGAINS;
+            case FOREIGNGAINS:
+                return SECURITYATTR_FOREIGNGAINS;
             case GROWTHADJUST:
                 return SECURITYATTR_GROWTHADJUST;
             case INVESTED:
                 return SECURITYATTR_INVESTED;
             case LOCALINVESTED:
                 return SECURITYATTR_LOCALINVESTED;
+            case FOREIGNINVESTED:
+                return SECURITYATTR_FOREIGNINVESTED;
             case DIVIDEND:
                 return SECURITYATTR_DIVIDEND;
+            case LOCALDIVIDEND:
+                return SECURITYATTR_LOCALDIVIDEND;
+            case FOREIGNDIVIDEND:
+                return SECURITYATTR_FOREIGNDIVIDEND;
             case MARKET:
                 return SECURITYATTR_MARKET;
             case MARKETPROFIT:

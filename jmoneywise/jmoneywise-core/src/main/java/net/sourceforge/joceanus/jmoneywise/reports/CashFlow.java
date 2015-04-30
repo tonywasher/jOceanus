@@ -104,7 +104,7 @@ public class CashFlow
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.DELTA));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.PROFIT));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -118,7 +118,7 @@ public class CashFlow
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.DELTA));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.PROFIT));
 
         /* Return the document */
         return theBuilder.getDocument();
