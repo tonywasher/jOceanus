@@ -22,6 +22,8 @@
         <dt>v1.3.0-b2</dt> <dd>add stockOptions</dd>
         <dt>v1.3.0-b3</dt> <dd>consolidate transaction panels</dd>
         <dt>v1.3.1-b1</dt> <dd>rework transaction structure</dd>
+        <dt>v1.4.0-b1</dt> <dd>repackage into core/swing/javaFX</dd>
+        <dt>v1.4.0-b2</dt> <dd>rework tax basis report</dd>
       </dl>
     </section>
   </body>
