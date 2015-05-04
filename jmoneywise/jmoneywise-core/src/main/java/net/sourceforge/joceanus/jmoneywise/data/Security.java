@@ -107,11 +107,6 @@ public class Security
     public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
-     * initialPrice Field Id.
-     */
-    private static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.SECURITY_INITIALPRICE.getValue());
-
-    /**
      * SecurityInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
@@ -273,11 +268,6 @@ public class Security
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
-        if (FIELD_INITPRC.equals(pField)) {
-            return (theInitPrice != null)
-                                         ? theInitPrice
-                                         : JDataFieldValue.SKIP;
-        }
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                              ? theInfoSet

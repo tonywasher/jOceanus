@@ -108,6 +108,62 @@ public class Frequency
         return super.getStaticClass();
     }
 
+    /**
+     * Is this a base frequency?
+     * @return true/false
+     */
+    public boolean isBaseFrequency() {
+        FrequencyClass myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.isBaseFrequency();
+    }
+
+    /**
+     * Is this a valid repeat for frequency?
+     * @param pFrequency the overall frequency
+     * @return true/false
+     */
+    public boolean isValidRepeat(final Frequency pFrequency) {
+        FrequencyClass myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.isValidRepeat(pFrequency.getFrequency());
+    }
+
+    /**
+     * Do we have a repeat frequency?
+     * @return true/false
+     */
+    public boolean hasRepeatFrequency() {
+        FrequencyClass myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.hasRepeatFrequency();
+    }
+
+    /**
+     * Do we have a repeat interval?
+     * @return true/false
+     */
+    public boolean hasRepeatInterval() {
+        FrequencyClass myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.hasRepeatInterval();
+    }
+
+    /**
+     * Do we have a pattern?
+     * @return true/false
+     */
+    public boolean hasPattern() {
+        FrequencyClass myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.hasPattern();
+    }
+
     @Override
     public Frequency getBase() {
         return (Frequency) super.getBase();

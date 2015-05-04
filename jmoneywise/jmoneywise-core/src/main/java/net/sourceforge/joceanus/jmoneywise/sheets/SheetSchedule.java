@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -34,56 +34,41 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetSchedule
-        extends SheetEncrypted<Schedule, MoneyWiseDataType> {
+        extends SheetDataItem<Schedule, MoneyWiseDataType> {
     /**
      * NamedArea for Schedules.
      */
     private static final String AREA_SCHEDULES = Schedule.LIST_NAME;
 
     /**
-     * Date column.
+     * StartDate column.
      */
-    private static final int COL_DATE = COL_KEYSETID + 1;
+    private static final int COL_STARTDATE = COL_ID + 1;
 
     /**
-     * Pair column.
+     * EndDate column.
      */
-    private static final int COL_PAIR = COL_DATE + 1;
-
-    /**
-     * Debit column.
-     */
-    private static final int COL_ACCOUNT = COL_PAIR + 1;
-
-    /**
-     * Account column.
-     */
-    private static final int COL_PARTNER = COL_ACCOUNT + 1;
-
-    /**
-     * Partner column.
-     */
-    private static final int COL_AMOUNT = COL_PARTNER + 1;
-
-    /**
-     * Category column.
-     */
-    private static final int COL_CATEGORY = COL_AMOUNT + 1;
+    private static final int COL_ENDDATE = COL_STARTDATE + 1;
 
     /**
      * Frequency column.
      */
-    private static final int COL_FREQ = COL_CATEGORY + 1;
+    private static final int COL_FREQ = COL_ENDDATE + 1;
 
     /**
-     * Split column.
+     * Repeat Frequency column.
      */
-    private static final int COL_SPLIT = COL_CATEGORY + 1;
+    private static final int COL_REPFREQ = COL_FREQ + 1;
 
     /**
-     * Reconciled column.
+     * Pattern column.
      */
-    private static final int COL_PARENT = COL_SPLIT + 1;
+    private static final int COL_PATTERN = COL_REPFREQ + 1;
+
+    /**
+     * NextDate column.
+     */
+    private static final int COL_NEXTDATE = COL_PATTERN + 1;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -115,15 +100,12 @@ public class SheetSchedule
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
-        myValues.addValue(Schedule.FIELD_DATE, loadDate(COL_DATE));
-        myValues.addValue(Schedule.FIELD_PAIR, loadInteger(COL_PAIR));
-        myValues.addValue(Schedule.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
-        myValues.addValue(Schedule.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
-        myValues.addValue(Schedule.FIELD_PARTNER, loadInteger(COL_PARTNER));
-        myValues.addValue(Schedule.FIELD_AMOUNT, loadBytes(COL_AMOUNT));
-        myValues.addValue(Schedule.FIELD_SPLIT, loadBoolean(COL_SPLIT));
-        myValues.addValue(Schedule.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(Schedule.FIELD_STARTDATE, loadDate(COL_STARTDATE));
+        myValues.addValue(Schedule.FIELD_ENDDATE, loadDate(COL_ENDDATE));
         myValues.addValue(Schedule.FIELD_FREQ, loadInteger(COL_FREQ));
+        myValues.addValue(Schedule.FIELD_REPFREQ, loadInteger(COL_REPFREQ));
+        myValues.addValue(Schedule.FIELD_PATTERN, loadInteger(COL_PATTERN));
+        myValues.addValue(Schedule.FIELD_NEXTDATE, loadDate(COL_NEXTDATE));
 
         /* Return the values */
         return myValues;
@@ -133,20 +115,17 @@ public class SheetSchedule
     protected void insertSecureItem(final Schedule pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeDate(COL_DATE, pItem.getDate());
-        writeInteger(COL_PAIR, pItem.getAssetPairId());
-        writeInteger(COL_ACCOUNT, pItem.getAccountId());
-        writeInteger(COL_PARTNER, pItem.getPartnerId());
-        writeInteger(COL_CATEGORY, pItem.getCategoryId());
+        writeDate(COL_STARTDATE, pItem.getStartDate());
+        writeDate(COL_ENDDATE, pItem.getEndDate());
         writeInteger(COL_FREQ, pItem.getFrequencyId());
-        writeBytes(COL_AMOUNT, pItem.getAmountBytes());
-        writeBoolean(COL_SPLIT, pItem.isSplit());
-        writeInteger(COL_PARENT, pItem.getParentId());
+        writeInteger(COL_REPFREQ, pItem.getRepeatFrequencyId());
+        writeInteger(COL_PATTERN, pItem.getPatternValue());
+        writeDate(COL_NEXTDATE, pItem.getNextDate());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_PARENT;
+        return COL_NEXTDATE;
     }
 }

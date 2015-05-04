@@ -148,40 +148,6 @@ public class Transaction
     }
 
     /**
-     * Construct a new transaction from a Schedule.
-     * @param pList the list to build into
-     * @param pSchedule The schedule to copy
-     * @throws JOceanusException on error
-     */
-    protected Transaction(final TransactionList pList,
-                          final Schedule pSchedule) throws JOceanusException {
-        /* Set standard values */
-        super(pList);
-
-        /* Copy underlying values */
-        setDate(pSchedule.getDate());
-        setValueAssetPair(pSchedule.getAssetPair());
-        setValueAccount(pSchedule.getAccount());
-        setValuePartner(pSchedule.getPartner());
-        setCategory(pSchedule.getCategory());
-        setReconciled(Boolean.FALSE);
-        setSplit(Boolean.FALSE);
-        setValueAmount(pSchedule.getAmountField());
-
-        /* Set up info set */
-        theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
-        hasInfoSet = true;
-        useInfoSet = true;
-
-        /* If we need a tax Credit */
-        if (TransactionInfoSet.isTaxCreditClassRequired(getAccount(),
-                getCategory().getCategoryTypeClass()) == JDataFieldRequired.MUSTEXIST) {
-            /* Calculate the tax credit */
-            setTaxCredit(calculateTaxCredit());
-        }
-    }
-
-    /**
      * Edit constructor.
      * @param pList the list
      */

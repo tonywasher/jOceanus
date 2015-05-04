@@ -707,14 +707,14 @@ public enum StaticDataResource implements ResourceId {
     TAXREGIME_ADDBAND("TaxRegime.AdditionalBand"),
 
     /**
+     * Frequency Daily.
+     */
+    FREQUENCY_DAILY("Frequency.Daily"),
+
+    /**
      * Frequency Weekly.
      */
     FREQUENCY_WEEKLY("Frequency.Weekly"),
-
-    /**
-     * Frequency Fortnightly.
-     */
-    FREQUENCY_FORTNIGHTLY("Frequency.Fortnightly"),
 
     /**
      * Frequency Monthly.
@@ -722,29 +722,64 @@ public enum StaticDataResource implements ResourceId {
     FREQUENCY_MONTHLY("Frequency.Monthly"),
 
     /**
-     * Frequency EndOfMonth.
-     */
-    FREQUENCY_ENDOFMONTH("Frequency.EndOfMonth"),
-
-    /**
-     * Frequency Quarterly.
-     */
-    FREQUENCY_QUARTERLY("Frequency.Quarterly"),
-
-    /**
-     * Frequency HalfYearly.
-     */
-    FREQUENCY_HALFYEARLY("Frequency.HalfYearly"),
-
-    /**
      * Frequency Annually.
      */
     FREQUENCY_ANNUALLY("Frequency.Annually"),
 
     /**
-     * Frequency Maturity.
+     * Repeat Frequency Every.
      */
-    FREQUENCY_MATURITY("Frequency.Maturity"),
+    FREQUENCY_EVERY("Frequency.Repeat.Every"),
+
+    /**
+     * Repeat Frequency Alternate.
+     */
+    FREQUENCY_ALTERNATE("Frequency.Repeat.Alternate"),
+
+    /**
+     * Repeat Frequency Every Third.
+     */
+    FREQUENCY_EVERYTHIRD("Frequency.Repeat.EveryThird"),
+
+    /**
+     * Repeat Frequency Every Fourth.
+     */
+    FREQUENCY_EVERYFOURTH("Frequency.Repeat.EveryFourth"),
+
+    /**
+     * Repeat Frequency Every Fifth.
+     */
+    FREQUENCY_EVERYFIFTH("Frequency.Repeat.EveryFifth"),
+
+    /**
+     * Repeat Frequency Every Sixth.
+     */
+    FREQUENCY_EVERYSIXTH("Frequency.Repeat.EverySixth"),
+
+    /**
+     * Repeat Frequency FirstWeek.
+     */
+    FREQUENCY_FIRSTWEEK("Frequency.Week.First"),
+
+    /**
+     * Repeat Frequency SecondWeek.
+     */
+    FREQUENCY_SECONDWEEK("Frequency.Week.Second"),
+
+    /**
+     * Repeat Frequency ThirdWeek.
+     */
+    FREQUENCY_THIRDWEEK("Frequency.Week.Third"),
+
+    /**
+     * Repeat Frequency FourthWeek.
+     */
+    FREQUENCY_FOURTHWEEK("Frequency.Week.Fourth"),
+
+    /**
+     * Repeat Frequency LastWeek.
+     */
+    FREQUENCY_LASTWEEK("Frequency.Week.Last"),
 
     /**
      * Currency Default.
@@ -1429,22 +1464,34 @@ public enum StaticDataResource implements ResourceId {
      */
     protected static StaticDataResource getKeyForFrequency(final FrequencyClass pValue) {
         switch (pValue) {
+            case DAILY:
+                return FREQUENCY_DAILY;
             case WEEKLY:
                 return FREQUENCY_WEEKLY;
-            case FORTNIGHTLY:
-                return FREQUENCY_FORTNIGHTLY;
             case MONTHLY:
                 return FREQUENCY_MONTHLY;
-            case ENDOFMONTH:
-                return FREQUENCY_ENDOFMONTH;
-            case QUARTERLY:
-                return FREQUENCY_QUARTERLY;
-            case HALFYEARLY:
-                return FREQUENCY_HALFYEARLY;
             case ANNUALLY:
                 return FREQUENCY_ANNUALLY;
-            case MATURITY:
-                return FREQUENCY_MATURITY;
+            case EVERY:
+                return FREQUENCY_EVERY;
+            case ALTERNATE:
+                return FREQUENCY_ALTERNATE;
+            case EVERYTHIRD:
+                return FREQUENCY_EVERYTHIRD;
+            case EVERYFOURTH:
+                return FREQUENCY_EVERYFOURTH;
+            case EVERYSIXTH:
+                return FREQUENCY_EVERYSIXTH;
+            case FIRSTWEEK:
+                return FREQUENCY_FIRSTWEEK;
+            case SECONDWEEK:
+                return FREQUENCY_SECONDWEEK;
+            case THIRDWEEK:
+                return FREQUENCY_THIRDWEEK;
+            case FOURTHWEEK:
+                return FREQUENCY_FOURTHWEEK;
+            case LASTWEEK:
+                return FREQUENCY_LASTWEEK;
             default:
                 return null;
         }

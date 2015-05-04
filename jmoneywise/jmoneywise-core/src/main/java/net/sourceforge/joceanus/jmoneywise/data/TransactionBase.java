@@ -478,17 +478,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Obtain AccountName.
-     * @return the accountName
-     */
-    public String getAccountName() {
-        TransactionAsset myAccount = getAccount();
-        return (myAccount == null)
-                                  ? null
-                                  : myAccount.getName();
-    }
-
-    /**
      * Obtain Partner asset.
      * @return the partner
      */
@@ -505,17 +494,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         return (myPartner == null)
                                   ? null
                                   : myPartner.getId();
-    }
-
-    /**
-     * Obtain PartnerName.
-     * @return the partnerName
-     */
-    public String getPartnerName() {
-        TransactionAsset myPartner = getPartner();
-        return (myPartner == null)
-                                  ? null
-                                  : myPartner.getName();
     }
 
     /**
@@ -882,7 +860,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Compare this event to another to establish sort order.
      * @param pThat The Event to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final T pThat) {

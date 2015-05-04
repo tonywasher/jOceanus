@@ -895,9 +895,9 @@ public class SecurityPrice
                 }
             }
 
-            /* return zero price */
+            /* return single unit price */
             Currency myCurrency = mySecurity.getCurrency();
-            return new JPrice(myCurrency);
+            return JPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
         }
 
         /**
@@ -910,7 +910,7 @@ public class SecurityPrice
                                           final JDateDayRange pRange) {
             /* Set price */
             Currency myCurrency = pSecurity.getCurrency();
-            JPrice myFirst = new JPrice(myCurrency);
+            JPrice myFirst = JPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
             JPrice myLatest = null;
 
             /* Access list for security */

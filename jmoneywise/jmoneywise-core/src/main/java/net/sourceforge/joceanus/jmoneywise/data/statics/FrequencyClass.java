@@ -32,44 +32,79 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public enum FrequencyClass implements StaticInterface {
     /**
-     * Weekly Frequency.
+     * Once.
      */
-    WEEKLY(1, 0, 7),
+    ONCE(1, 0),
 
     /**
-     * Fortnightly Frequency.
+     * Daily Frequency.
      */
-    FORTNIGHTLY(2, 1, 14),
+    DAILY(2, 1),
+
+    /**
+     * Weekly Frequency.
+     */
+    WEEKLY(3, 2),
 
     /**
      * Monthly Frequency.
      */
-    MONTHLY(3, 2, 1),
-
-    /**
-     * Monthly Frequency (at end of month).
-     */
-    ENDOFMONTH(4, 3, 1),
-
-    /**
-     * Quarterly Frequency.
-     */
-    QUARTERLY(5, 4, 3),
-
-    /**
-     * Half Yearly Frequency.
-     */
-    HALFYEARLY(6, 5, 6),
+    MONTHLY(4, 3),
 
     /**
      * Annual Frequency.
      */
-    ANNUALLY(7, 6, 0),
+    ANNUALLY(5, 4),
 
     /**
-     * Only on Maturity.
+     * Every Week/Month.
      */
-    MATURITY(8, 7, 0);
+    EVERY(6, 5),
+
+    /**
+     * Alternate Week/Month.
+     */
+    ALTERNATE(7, 6),
+
+    /**
+     * Every Third Week/Month.
+     */
+    EVERYTHIRD(8, 7),
+
+    /**
+     * Every Fourth Day/Week/Month.
+     */
+    EVERYFOURTH(9, 8),
+
+    /**
+     * Every Sixth Day/Week/Month.
+     */
+    EVERYSIXTH(10, 9),
+
+    /**
+     * First Week in month.
+     */
+    FIRSTWEEK(11, 10),
+
+    /**
+     * Second Week in month.
+     */
+    SECONDWEEK(12, 11),
+
+    /**
+     * Third Week in month.
+     */
+    THIRDWEEK(13, 12),
+
+    /**
+     * Fourth Week in month.
+     */
+    FOURTHWEEK(14, 13),
+
+    /**
+     * Last Week in month.
+     */
+    LASTWEEK(15, 14);
 
     /**
      * The String name.
@@ -87,22 +122,14 @@ public enum FrequencyClass implements StaticInterface {
     private final int theOrder;
 
     /**
-     * Adjustment factor.
-     */
-    private final int theAdjust;
-
-    /**
      * Constructor.
      * @param uId the id
      * @param uOrder the default order
-     * @param uAdjust the adjustment
      */
     private FrequencyClass(final int uId,
-                           final int uOrder,
-                           final int uAdjust) {
+                           final int uOrder) {
         theId = uId;
         theOrder = uOrder;
-        theAdjust = uAdjust;
     }
 
     @Override
@@ -113,14 +140,6 @@ public enum FrequencyClass implements StaticInterface {
     @Override
     public int getOrder() {
         return theOrder;
-    }
-
-    /**
-     * Obtain Adjustment.
-     * @return the adjustment
-     */
-    public int getAdjustment() {
-        return theAdjust;
     }
 
     @Override
@@ -148,5 +167,118 @@ public enum FrequencyClass implements StaticInterface {
             }
         }
         throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.FREQUENCY.toString() + ":" + id);
+    }
+
+    /**
+     * Is this a base frequency?
+     * @return true/false
+     */
+    public boolean isBaseFrequency() {
+        switch (this) {
+            case ONCE:
+            case DAILY:
+            case WEEKLY:
+            case MONTHLY:
+            case ANNUALLY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Does this have a repeat frequency?
+     * @return true/false
+     */
+    public boolean hasRepeatFrequency() {
+        switch (this) {
+            case WEEKLY:
+            case MONTHLY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Does this have a repeat interval?
+     * @return true/false
+     */
+    public boolean hasRepeatInterval() {
+        switch (this) {
+            case DAILY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Does this have a pattern?
+     * @return true/false
+     */
+    public boolean hasPattern() {
+        switch (this) {
+            case WEEKLY:
+            case MONTHLY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this a valid repeat for frequency?
+     * @param pFrequency the overall frequency
+     * @return true/false
+     */
+    public boolean isValidRepeat(final FrequencyClass pFrequency) {
+        switch (pFrequency) {
+            case WEEKLY:
+                return isValidWeeklyRepeat();
+            case MONTHLY:
+                return isValidMonthlyRepeat();
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this a valid weekly repeat frequency?
+     * @return true/false
+     */
+    private boolean isValidWeeklyRepeat() {
+        switch (this) {
+            case ONCE:
+            case EVERY:
+            case ALTERNATE:
+            case EVERYFOURTH:
+            case FIRSTWEEK:
+            case SECONDWEEK:
+            case THIRDWEEK:
+            case FOURTHWEEK:
+            case LASTWEEK:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this a valid monthly repeat frequency?
+     * @return true/false
+     */
+    private boolean isValidMonthlyRepeat() {
+        switch (this) {
+            case ONCE:
+            case EVERY:
+            case ALTERNATE:
+            case EVERYTHIRD:
+            case EVERYFOURTH:
+            case EVERYSIXTH:
+                return true;
+            default:
+                return false;
+        }
     }
 }

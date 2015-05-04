@@ -319,11 +319,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     SECURITY_SYMBOL("Security.Symbol"),
 
     /**
-     * Security InitialPrice.
-     */
-    SECURITY_INITIALPRICE("Security.InitialPrice"),
-
-    /**
      * Security InfoSet.
      */
     SECURITY_INFOSET("Security.InfoSet"),
@@ -591,7 +586,57 @@ public enum MoneyWiseDataResource implements ResourceId {
     /**
      * Transaction MultiplePortfolios Error.
      */
-    TRANSACTION_ERROR_MULTPORT("Transaction.Error.MultiplePortfolios");
+    TRANSACTION_ERROR_MULTPORT("Transaction.Error.MultiplePortfolios"),
+
+    /**
+     * Schedule Start Date.
+     */
+    SCHEDULE_STARTDATE("Schedule.StartDate"),
+
+    /**
+     * Schedule End Date.
+     */
+    SCHEDULE_ENDDATE("Schedule.EndDate"),
+
+    /**
+     * Schedule Repeat Frequency.
+     */
+    SCHEDULE_REPEATFREQ("Schedule.RepeatFrequency"),
+
+    /**
+     * Schedule Pattern.
+     */
+    SCHEDULE_PATTERN("Schedule.Pattern"),
+
+    /**
+     * Schedule Pattern None.
+     */
+    SCHEDULE_PATTERN_NONE("Schedule.Pattern.None"),
+
+    /**
+     * Schedule Pattern Last.
+     */
+    SCHEDULE_PATTERN_LAST("Schedule.Pattern.Last"),
+
+    /**
+     * Schedule Next Date.
+     */
+    SCHEDULE_NEXTDATE("Schedule.NextDate"),
+
+    /**
+     * Schedule Invalid Frequency Error.
+     */
+    SCHEDULE_ERROR_FREQINVALID("Schedule.Error.BadFrequency"),
+
+    /**
+     * Schedule Before StartDate Error.
+     */
+    SCHEDULE_ERROR_BEFORESTARTDATE("Schedule.Error.BeforeStartDate"),
+
+    /**
+     * Schedule After EndDate Error.
+     */
+    SCHEDULE_ERROR_AFTERENDDATE("Schedule.Error.AfterEndDate");
 
     /**
      * The Resource Builder.

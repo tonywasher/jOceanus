@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,7 +52,6 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
-import net.sourceforge.joceanus.jmoneywise.data.Schedule;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
@@ -87,6 +85,7 @@ import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
 
 /**
  * Class to load an archive SpreadSheet.
@@ -607,7 +606,9 @@ public class ArchiveLoader {
             }
 
             /* Create the date */
-            theDate = new JDateDay(myYear, Month.APRIL, Schedule.END_OF_MONTH_DAY);
+            JFiscalYear myFiscal = JFiscalYear.UK;
+            theDate = new JDateDay(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());
+            theDate.adjustDay(-1);
         }
 
         /**

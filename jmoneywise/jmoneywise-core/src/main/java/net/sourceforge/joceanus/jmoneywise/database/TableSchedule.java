@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -33,8 +32,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -42,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableSchedule
-        extends TableEncrypted<Schedule, MoneyWiseDataType> {
+        extends DatabaseTable<Schedule, MoneyWiseDataType> {
     /**
      * The name of the Schedules table.
      */
@@ -57,15 +56,12 @@ public class TableSchedule
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(Schedule.FIELD_DATE);
-        myTableDef.addIntegerColumn(Schedule.FIELD_PAIR);
-        myTableDef.addIntegerColumn(Schedule.FIELD_ACCOUNT);
-        myTableDef.addIntegerColumn(Schedule.FIELD_PARTNER);
-        myTableDef.addEncryptedColumn(Schedule.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        myTableDef.addReferenceColumn(Schedule.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
+        myTableDef.addDateColumn(Schedule.FIELD_STARTDATE);
+        myTableDef.addNullDateColumn(Schedule.FIELD_ENDDATE);
         myTableDef.addReferenceColumn(Schedule.FIELD_FREQ, TableFrequency.TABLE_NAME);
-        myTableDef.addBooleanColumn(Schedule.FIELD_SPLIT);
-        myTableDef.addNullReferenceColumn(Schedule.FIELD_PARENT, TABLE_NAME);
+        myTableDef.addNullIntegerColumn(Schedule.FIELD_REPFREQ);
+        myTableDef.addNullIntegerColumn(Schedule.FIELD_PATTERN);
+        ColumnDefinition myDateCol = myTableDef.addNullDateColumn(Schedule.FIELD_NEXTDATE);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -84,15 +80,12 @@ public class TableSchedule
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
-        myValues.addValue(Schedule.FIELD_DATE, myTableDef.getDateValue(Schedule.FIELD_DATE));
-        myValues.addValue(Schedule.FIELD_PAIR, myTableDef.getIntegerValue(Schedule.FIELD_PAIR));
-        myValues.addValue(Schedule.FIELD_CATEGORY, myTableDef.getIntegerValue(Schedule.FIELD_CATEGORY));
-        myValues.addValue(Schedule.FIELD_ACCOUNT, myTableDef.getIntegerValue(Schedule.FIELD_ACCOUNT));
-        myValues.addValue(Schedule.FIELD_PARTNER, myTableDef.getIntegerValue(Schedule.FIELD_PARTNER));
-        myValues.addValue(Schedule.FIELD_AMOUNT, myTableDef.getBinaryValue(Schedule.FIELD_AMOUNT));
-        myValues.addValue(Schedule.FIELD_SPLIT, myTableDef.getBooleanValue(Schedule.FIELD_SPLIT));
-        myValues.addValue(Schedule.FIELD_PARENT, myTableDef.getIntegerValue(Schedule.FIELD_PARENT));
+        myValues.addValue(Schedule.FIELD_STARTDATE, myTableDef.getDateValue(Schedule.FIELD_STARTDATE));
+        myValues.addValue(Schedule.FIELD_ENDDATE, myTableDef.getDateValue(Schedule.FIELD_ENDDATE));
         myValues.addValue(Schedule.FIELD_FREQ, myTableDef.getIntegerValue(Schedule.FIELD_FREQ));
+        myValues.addValue(Schedule.FIELD_REPFREQ, myTableDef.getIntegerValue(Schedule.FIELD_REPFREQ));
+        myValues.addValue(Schedule.FIELD_PATTERN, myTableDef.getIntegerValue(Schedule.FIELD_PATTERN));
+        myValues.addValue(Schedule.FIELD_NEXTDATE, myTableDef.getDateValue(Schedule.FIELD_NEXTDATE));
 
         /* Return the values */
         return myValues;
@@ -103,24 +96,18 @@ public class TableSchedule
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (Schedule.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getDate());
-        } else if (Schedule.FIELD_PAIR.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getAssetPairId());
-        } else if (Schedule.FIELD_AMOUNT.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getAmountBytes());
-        } else if (Schedule.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getAccountId());
-        } else if (Schedule.FIELD_PARTNER.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getPartnerId());
-        } else if (Schedule.FIELD_CATEGORY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getCategoryId());
+        if (Schedule.FIELD_STARTDATE.equals(iField)) {
+            myTableDef.setDateValue(iField, pItem.getStartDate());
+        } else if (Schedule.FIELD_ENDDATE.equals(iField)) {
+            myTableDef.setDateValue(iField, pItem.getEndDate());
         } else if (Schedule.FIELD_FREQ.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getFrequencyId());
-        } else if (Schedule.FIELD_SPLIT.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isSplit());
-        } else if (Schedule.FIELD_PARENT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getParentId());
+        } else if (Schedule.FIELD_REPFREQ.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getRepeatFrequencyId());
+        } else if (Schedule.FIELD_PATTERN.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getPatternValue());
+        } else if (Schedule.FIELD_NEXTDATE.equals(iField)) {
+            myTableDef.setDateValue(iField, pItem.getNextDate());
         } else {
             super.setFieldValue(pItem, iField);
         }

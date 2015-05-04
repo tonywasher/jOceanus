@@ -1,5 +1,5 @@
 /*******************************************************************************
-+ * jMoneyWise: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,35 +22,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.time.Month;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 
 /**
- * Pattern data type.
+ * Scheduled event.
  * @author Tony Washer
  */
 public class Schedule
-        extends TransactionBase<Schedule> {
+        extends DataItem<MoneyWiseDataType>
+        implements Comparable<Schedule> {
     /**
      * The name of the object.
      */
@@ -62,30 +59,54 @@ public class Schedule
     public static final String LIST_NAME = MoneyWiseDataType.SCHEDULE.getListName();
 
     /**
-     * Interesting TaxYear.
-     */
-    public static final int BASE_TAXYEAR = 2000;
-
-    /**
-     * Interesting TaxYear.
-     */
-    public static final int END_OF_MONTH_DAY = 5;
-
-    /**
-     * The interesting date range.
-     */
-    public static final JDateDayRange RANGE_SCHEDULE = new JDateDayRange(new JDateDay(BASE_TAXYEAR - 1, Month.APRIL, END_OF_MONTH_DAY + 1),
-            new JDateDay(BASE_TAXYEAR, Month.APRIL, END_OF_MONTH_DAY));
-
-    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+
+    /**
+     * StartDate Field Id.
+     */
+    public static final JDataField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue());
+
+    /**
+     * EndDate Field Id.
+     */
+    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue());
 
     /**
      * Frequency Field Id.
      */
     public static final JDataField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName());
+
+    /**
+     * RepeatFrequency Field Id.
+     */
+    public static final JDataField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue());
+
+    /**
+     * Pattern Field Id.
+     */
+    public static final JDataField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue());
+
+    /**
+     * NextDate Field Id.
+     */
+    public static final JDataField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue());
+
+    /**
+     * Bad Frequency error.
+     */
+    private static final String ERROR_BADFREQ = MoneyWiseDataResource.SCHEDULE_ERROR_FREQINVALID.getValue();
+
+    /**
+     * Before Start Date error.
+     */
+    private static final String ERROR_BEFORESTART = MoneyWiseDataResource.SCHEDULE_ERROR_BEFORESTARTDATE.getValue();
+
+    /**
+     * After End Date error.
+     */
+    private static final String ERROR_AFTEREND = MoneyWiseDataResource.SCHEDULE_ERROR_AFTERENDDATE.getValue();
 
     /**
      * Copy Constructor.
@@ -99,50 +120,6 @@ public class Schedule
     }
 
     /**
-     * Edit Constructor.
-     * @param pList the list
-     */
-    public Schedule(final ScheduleList pList) {
-        /* Initialise as Transaction */
-        super(pList);
-    }
-
-    /**
-     * Construct a new pattern from a Transaction.
-     * @param pList the list
-     * @param pTrans the transaction
-     */
-    public Schedule(final ScheduleList pList,
-                    final Transaction pTrans) {
-        /* Set standard values */
-        super(pList);
-
-        /* Adjust the date so that it is in the correct range */
-        JDateDay myDate = new JDateDay(pTrans.getDate());
-        while (myDate.compareTo(RANGE_SCHEDULE.getEnd()) > 0) {
-            myDate.adjustYear(-1);
-        }
-        while (myDate.compareTo(RANGE_SCHEDULE.getStart()) < 0) {
-            myDate.adjustYear(1);
-        }
-        setDate(myDate);
-
-        /* Copy underlying values */
-        setValueAssetPair(pTrans.getAssetPair());
-        setValueAccount(pTrans.getAccount());
-        setValuePartner(pTrans.getPartner());
-        setCategory(pTrans.getCategory());
-        setReconciled(Boolean.FALSE);
-        setSplit(Boolean.FALSE);
-        setValueAmount(pTrans.getAmountField());
-
-        /* Default to monthly frequency */
-        MoneyWiseData myData = getDataSet();
-        FrequencyList myFrequencies = myData.getFrequencys();
-        setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.MONTHLY));
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values
@@ -153,12 +130,68 @@ public class Schedule
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Store the Frequency */
-        Object myValue = pValues.getValue(FIELD_FREQ);
-        if (myValue instanceof Integer) {
-            setValueFrequency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueFrequency((String) myValue);
+        /* Access parsers */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        JDateDayFormatter myParser = myFormatter.getDateFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Frequency */
+            Object myValue = pValues.getValue(FIELD_FREQ);
+            if (myValue instanceof Frequency) {
+                setValueFrequency((Frequency) myValue);
+            } else if (myValue instanceof Integer) {
+                setValueFrequency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueFrequency((String) myValue);
+            }
+
+            /* Store the Repeat Frequency */
+            myValue = pValues.getValue(FIELD_REPFREQ);
+            if (myValue instanceof Frequency) {
+                setValueRepeatFrequency((Frequency) myValue);
+            } else if (myValue instanceof Integer) {
+                setValueRepeatFrequency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueRepeatFrequency((String) myValue);
+            }
+
+            /* Store the Pattern */
+            myValue = pValues.getValue(FIELD_PATTERN);
+            if (myValue instanceof String) {
+                setValuePattern((String) myValue);
+            } else if (myValue instanceof Integer) {
+                setValuePattern((Integer) myValue);
+            }
+
+            /* Store the Date */
+            myValue = pValues.getValue(FIELD_STARTDATE);
+            if (myValue instanceof JDateDay) {
+                setValueStartDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                setValueStartDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the EndDate */
+            myValue = pValues.getValue(FIELD_ENDDATE);
+            if (myValue instanceof JDateDay) {
+                setValueEndDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                setValueEndDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the NextDate */
+            myValue = pValues.getValue(FIELD_NEXTDATE);
+            if (myValue instanceof JDateDay) {
+                setValueNextDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                setValueNextDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -170,7 +203,22 @@ public class Schedule
     @Override
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
+        if (FIELD_STARTDATE.equals(pField)) {
+            return true;
+        }
         if (FIELD_FREQ.equals(pField)) {
+            return true;
+        }
+        if (FIELD_REPFREQ.equals(pField)) {
+            return hasRepeatFrequency() || hasRepeatInterval();
+        }
+        if (FIELD_PATTERN.equals(pField)) {
+            return hasPattern();
+        }
+        if (FIELD_ENDDATE.equals(pField)) {
+            return true;
+        }
+        if (FIELD_NEXTDATE.equals(pField)) {
             return true;
         }
 
@@ -179,9 +227,57 @@ public class Schedule
     }
 
     @Override
-    public Iterator<Schedule> childIterator() {
-        /* No iterator at present */
-        return null;
+    public final MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
+    }
+
+    /**
+     * Obtain StartDate.
+     * @return the date
+     */
+    public JDateDay getStartDate() {
+        return getStartDate(getValueSet());
+    }
+
+    /**
+     * Obtain EndDate.
+     * @return the date
+     */
+    public JDateDay getEndDate() {
+        return getEndDate(getValueSet());
+    }
+
+    /**
+     * Do we have a repeat frequency?
+     * @return true/false
+     */
+    public boolean hasRepeatFrequency() {
+        Frequency myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.hasRepeatFrequency();
+    }
+
+    /**
+     * Do we have a frequency interval?
+     * @return true/false
+     */
+    public boolean hasRepeatInterval() {
+        Frequency myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.hasRepeatInterval();
+    }
+
+    /**
+     * Do we have a pattern?
+     * @return true/false
+     */
+    public boolean hasPattern() {
+        Frequency myFreq = getFrequency();
+        return (myFreq == null)
+                               ? false
+                               : myFreq.hasPattern();
     }
 
     /**
@@ -204,14 +300,79 @@ public class Schedule
     }
 
     /**
-     * Obtain frequencyName.
-     * @return the frequencyName
+     * Obtain Repeat Frequency.
+     * @return the repeat frequency
      */
-    public String getFrequencyName() {
-        Frequency myFreq = getFrequency();
+    public Frequency getRepeatFrequency() {
+        return hasRepeatFrequency()
+                                   ? getRepeatFrequency(getValueSet())
+                                   : null;
+    }
+
+    /**
+     * Obtain RepeatFrequencyId.
+     * @return the repeat frequencyId
+     */
+    public Integer getRepeatFrequencyId() {
+        Frequency myFreq = getRepeatFrequency();
         return (myFreq == null)
-                               ? null
-                               : myFreq.getName();
+                               ? getRepeatInterval()
+                               : myFreq.getId();
+    }
+
+    /**
+     * Obtain Repeat Interval.
+     * @return the repeat interval
+     */
+    public Integer getRepeatInterval() {
+        return hasRepeatInterval()
+                                  ? getRepeatInterval(getValueSet())
+                                  : null;
+    }
+
+    /**
+     * Obtain Pattern.
+     * @return the pattern
+     */
+    public SchedulePattern getPattern() {
+        return getPattern(getValueSet());
+    }
+
+    /**
+     * Obtain FrequencyId.
+     * @return the frequencyId
+     */
+    public Integer getPatternValue() {
+        SchedulePattern myPattern = getPattern();
+        return (myPattern == null)
+                                  ? null
+                                  : myPattern.getPatternValue();
+    }
+
+    /**
+     * Obtain NextDate.
+     * @return the date
+     */
+    public JDateDay getNextDate() {
+        return getNextDate(getValueSet());
+    }
+
+    /**
+     * Obtain StartDate.
+     * @param pValueSet the valueSet
+     * @return the date
+     */
+    public static JDateDay getStartDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_STARTDATE, JDateDay.class);
+    }
+
+    /**
+     * Obtain NextDate.
+     * @param pValueSet the valueSet
+     * @return the date
+     */
+    public static JDateDay getEndDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ENDDATE, JDateDay.class);
     }
 
     /**
@@ -221,6 +382,58 @@ public class Schedule
      */
     public static Frequency getFrequency(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_FREQ, Frequency.class);
+    }
+
+    /**
+     * Obtain Repeat Frequency.
+     * @param pValueSet the valueSet
+     * @return the Repeat Frequency
+     */
+    public static Frequency getRepeatFrequency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_REPFREQ, Frequency.class);
+    }
+
+    /**
+     * Obtain Repeat Interval.
+     * @param pValueSet the valueSet
+     * @return the Frequency Interval
+     */
+    public static Integer getRepeatInterval(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_REPFREQ, Integer.class);
+    }
+
+    /**
+     * Obtain Pattern.
+     * @param pValueSet the valueSet
+     * @return the Pattern
+     */
+    public static SchedulePattern getPattern(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PATTERN, SchedulePattern.class);
+    }
+
+    /**
+     * Obtain NextDate.
+     * @param pValueSet the valueSet
+     * @return the date
+     */
+    public static JDateDay getNextDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NEXTDATE, JDateDay.class);
+    }
+
+    /**
+     * Set start date value.
+     * @param pValue the start date
+     */
+    private void setValueStartDate(final JDateDay pValue) {
+        getValueSet().setValue(FIELD_STARTDATE, pValue);
+    }
+
+    /**
+     * Set end date value.
+     * @param pValue the end date
+     */
+    private void setValueEndDate(final JDateDay pValue) {
+        getValueSet().setValue(FIELD_ENDDATE, pValue);
     }
 
     /**
@@ -247,6 +460,70 @@ public class Schedule
         getValueSet().setValue(FIELD_FREQ, pName);
     }
 
+    /**
+     * Set repeat frequency value.
+     * @param pValue the frequency
+     */
+    private void setValueRepeatFrequency(final Frequency pValue) {
+        getValueSet().setValue(FIELD_REPFREQ, pValue);
+    }
+
+    /**
+     * Set repeat frequency value.
+     * @param pValue the frequency
+     */
+    private void setValueRepeatFrequency(final Integer pValue) {
+        getValueSet().setValue(FIELD_REPFREQ, pValue);
+    }
+
+    /**
+     * Set repeat frequency value.
+     * @param pValue the frequency
+     */
+    private void setValueRepeatFrequency(final String pValue) {
+        getValueSet().setValue(FIELD_REPFREQ, pValue);
+    }
+
+    /**
+     * Set frequency interval value.
+     * @param pValue the interval
+     */
+    private void setValueRepeatInterval(final Integer pValue) {
+        getValueSet().setValue(FIELD_REPFREQ, pValue);
+    }
+
+    /**
+     * Set pattern value.
+     * @param pValue the pattern
+     */
+    private void setValuePattern(final SchedulePattern pValue) {
+        getValueSet().setValue(FIELD_PATTERN, pValue);
+    }
+
+    /**
+     * Set pattern value.
+     * @param pValue the pattern
+     */
+    private void setValuePattern(final Integer pValue) {
+        getValueSet().setValue(FIELD_PATTERN, pValue);
+    }
+
+    /**
+     * Set pattern value.
+     * @param pValue the pattern
+     */
+    private void setValuePattern(final String pValue) {
+        getValueSet().setValue(FIELD_PATTERN, pValue);
+    }
+
+    /**
+     * Set start date value.
+     * @param pValue the start date
+     */
+    private void setValueNextDate(final JDateDay pValue) {
+        getValueSet().setValue(FIELD_NEXTDATE, pValue);
+    }
+
     @Override
     public Schedule getBase() {
         return (Schedule) super.getBase();
@@ -258,32 +535,156 @@ public class Schedule
     }
 
     @Override
+    public int compareTo(final Schedule pThat) {
+        /* Handle the trivial cases */
+        if (this.equals(pThat)) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
+        }
+
+        /* Check the next date */
+        int iDiff = Difference.compareObject(getNextDate(), pThat.getNextDate());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Check the start date */
+        iDiff = Difference.compareObject(getStartDate(), pThat.getStartDate());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Check the frequency */
+        iDiff = Difference.compareObject(getFrequency(), pThat.getFrequency());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Compare IDs if all else fails */
+        return super.compareId(pThat);
+    }
+
+    @Override
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Event details */
         super.resolveDataSetLinks();
 
-        /* Resolve data links */
+        /* Access data */
         MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_FREQ, myData.getFrequencys());
-        resolveDataLink(FIELD_PARENT, getList());
+        JDataFormatter myFormatter = myData.getDataFormatter();
+        FrequencyList myFreqs = myData.getFrequencys();
+        ValueSet myValues = getValueSet();
+
+        /* Resolve dataLinks */
+        resolveDataLink(FIELD_FREQ, myFreqs);
+        if (hasRepeatFrequency()) {
+            resolveDataLink(FIELD_REPFREQ, myFreqs);
+
+            /* resolve repeat interval */
+        } else if (hasRepeatInterval()) {
+            Object myValue = myValues.getValue(FIELD_REPFREQ);
+            if (myValue instanceof String) {
+                Integer myInt = myFormatter.parseValue((String) myValue, Integer.class);
+                setValueRepeatInterval(myInt);
+            }
+        }
+
+        /* Resolve Pattern */
+        Object myValue = myValues.getValue(FIELD_PATTERN);
+        if (myValue instanceof Integer) {
+            /* Store pattern */
+            SchedulePattern myPattern = SchedulePattern.allocatePattern(getFrequency(), (Integer) myValue);
+            setValuePattern(myPattern);
+        } else if (myValue instanceof String) {
+            /* Store pattern */
+            SchedulePattern myPattern = SchedulePattern.parsePattern(getFrequency(), (String) myValue);
+            setValuePattern(myPattern);
+        }
     }
 
     @Override
     public void validate() {
         /* Access data */
+        JDateDay myStart = getStartDate();
+        JDateDay myEnd = getEndDate();
+        JDateDay myNext = getNextDate();
         Frequency myFrequency = getFrequency();
 
-        /* Check that frequency is non-null */
-        if (getFrequency() == null) {
-            addError(ERROR_MISSING, FIELD_FREQ);
-        } else if (!getFrequency().getEnabled()) {
-            addError("Frequency must be enabled", FIELD_FREQ);
-        } else if (myFrequency.getFrequency() == FrequencyClass.MATURITY) {
-            TransactionAsset myDebit = getAccount();
-            if ((!(myDebit instanceof Deposit))
-                || (!((Deposit) myDebit).isDepositClass(DepositCategoryClass.BOND))) {
-                addError("Maturity only allowed for Bonds", FIELD_FREQ);
+        /* Check that startDate is non-null */
+        if (myStart == null) {
+            addError(ERROR_MISSING, FIELD_STARTDATE);
+
+            /* If startDate exists */
+        } else {
+            /* If there is an endDate, it must not be earlier than the startDate */
+            if (myEnd != null
+                && myEnd.compareTo(myStart) < 0) {
+                addError(ERROR_BEFORESTART, FIELD_ENDDATE);
             }
+
+            /* If there is a nextDate */
+            if (myNext != null) {
+                /* It must not be earlier than the startDate */
+                if (myNext.compareTo(myStart) < 0) {
+                    addError(ERROR_BEFORESTART, FIELD_NEXTDATE);
+                }
+
+                /* It must not be later than the endDate */
+                if (myEnd != null
+                    && myNext.compareTo(myEnd) > 0) {
+                    addError(ERROR_AFTEREND, FIELD_NEXTDATE);
+                }
+            }
+        }
+
+        /* Check that frequency is non-null, enabled and base */
+        if (myFrequency == null) {
+            addError(ERROR_MISSING, FIELD_FREQ);
+        } else if (!myFrequency.getEnabled()) {
+            addError(ERROR_DISABLED, FIELD_FREQ);
+        } else if (!myFrequency.isBaseFrequency()) {
+            addError(ERROR_BADFREQ, FIELD_FREQ);
+        }
+
+        /* If we have a repeat frequency */
+        if (hasRepeatFrequency()) {
+            /* Check that frequency is non-null, enabled and relevant */
+            Frequency myRepeat = getRepeatFrequency();
+            if (myRepeat == null) {
+                addError(ERROR_MISSING, FIELD_REPFREQ);
+            } else if (!myRepeat.getEnabled()) {
+                addError(ERROR_DISABLED, FIELD_REPFREQ);
+            } else if (myRepeat.isValidRepeat(myFrequency)) {
+                addError(ERROR_BADFREQ, FIELD_REPFREQ);
+            }
+
+            /* else if we have a repeat interval */
+        } else if (hasRepeatInterval()) {
+            /* Check that interval is non-null, nonZero and positive */
+            Integer myInterval = getRepeatInterval();
+            if (myInterval == null) {
+                addError(ERROR_MISSING, FIELD_REPFREQ);
+            } else if (myInterval < 0) {
+                addError(ERROR_NEGATIVE, FIELD_REPFREQ);
+            }
+
+            /* else must be null */
+        } else if (getRepeatFrequencyId() != null) {
+            addError(ERROR_EXIST, FIELD_REPFREQ);
+        }
+
+        /* If we have a repeat frequency */
+        SchedulePattern myPattern = getPattern();
+        if (hasPattern()) {
+            if (myPattern == null) {
+                addError(ERROR_MISSING, FIELD_PATTERN);
+            }
+
+            /* else must be null */
+        } else if (myPattern != null) {
+            addError(ERROR_EXIST, FIELD_PATTERN);
         }
 
         /* Validate it */
@@ -291,94 +692,19 @@ public class Schedule
     }
 
     /**
-     * Adjust date that is built from a schedule.
-     * @param pTransactions the transaction list
-     * @param pTaxYear the new tax year
-     * @param pDate the date for the event
-     * @return the new transaction
-     * @throws JOceanusException on error
+     * Set a new start date.
+     * @param pDate the date
      */
-    public Transaction nextTransaction(final TransactionList pTransactions,
-                                       final TaxYear pTaxYear,
-                                       final JDateDay pDate) throws JOceanusException {
-        /* Access the frequency */
-        FrequencyClass myFreq = getFrequency().getFrequency();
-        JDateDay myDate = null;
-        int iAdjust;
+    public void setStartDate(final JDateDay pDate) {
+        setValueStartDate(pDate);
+    }
 
-        /* Access the Tax Year list */
-        MoneyWiseData myData = getDataSet();
-        TaxYearList myList = myData.getTaxYears();
-
-        /* If this is the first request for an event */
-        if (pDate.compareTo(getDate()) == 0) {
-            /* If the frequency is maturity */
-            if (myFreq == FrequencyClass.MATURITY) {
-                /* Access the maturity date */
-                TransactionAsset myDebit = getAccount();
-                if (myDebit instanceof Deposit) {
-                    myDate = ((Deposit) myDebit).getMaturity();
-                }
-
-                /* Obtain the relevant tax year */
-                TaxYear myBase = myList.findTaxYearForDate(getDate());
-
-                /* Ignore if no maturity or else not this year */
-                if ((myDate == null) || (myBase == null) || (myBase.compareTo(pTaxYear) != 0)) {
-                    return null;
-                }
-            }
-
-            /* Calculate the difference in years */
-            iAdjust = pTaxYear.getTaxYear().getYear() - RANGE_SCHEDULE.getEnd().getYear();
-
-            /* Adjust the date to fall into the tax year */
-            pDate.copyDate(getDate());
-            pDate.adjustYear(iAdjust);
-
-            /* else this is a secondary access */
-        } else {
-            /* switch on frequency type */
-            switch (myFreq) {
-            /* Weekly etc add relevant days */
-                case WEEKLY:
-                case FORTNIGHTLY:
-                    pDate.adjustDay(myFreq.getAdjustment());
-                    break;
-
-                /* Monthly etc add relevant months */
-                case MONTHLY:
-                case QUARTERLY:
-                case HALFYEARLY:
-                    pDate.adjustMonth(myFreq.getAdjustment());
-                    break;
-
-                /* EndMonthly shift to end of next month */
-                case ENDOFMONTH:
-                    pDate.endNextMonth();
-                    break;
-                /* Annual and maturity patterns only generate single event */
-                case ANNUALLY:
-                case MATURITY:
-                default:
-                    return null;
-            }
-
-            /* If we are beyond the end of the year we have finished */
-            if (pDate.compareTo(pTaxYear.getTaxYear()) > 0) {
-                return null;
-            }
-        }
-
-        /* Build the new linked transaction */
-        Transaction myTrans = new Transaction(pTransactions, this);
-        myTrans.setNewVersion();
-
-        /* Set the date for this transaction */
-        myTrans.setDate(new JDateDay(pDate));
-
-        /* Return the new transaction */
-        return myTrans;
+    /**
+     * Set a new end date.
+     * @param pDate the date
+     */
+    public void setEndDate(final JDateDay pDate) {
+        setValueEndDate(pDate);
     }
 
     /**
@@ -387,6 +713,38 @@ public class Schedule
      */
     public void setFrequency(final Frequency pFrequency) {
         setValueFrequency(pFrequency);
+    }
+
+    /**
+     * Set a new repeat frequency.
+     * @param pFrequency the frequency
+     */
+    public void setRepeatFrequency(final Frequency pFrequency) {
+        setValueRepeatFrequency(pFrequency);
+    }
+
+    /**
+     * Set a new repeat interval.
+     * @param pInterval the interval
+     */
+    public void setRepeatInterval(final Integer pInterval) {
+        setValueRepeatInterval(pInterval);
+    }
+
+    /**
+     * Set a new pattern.
+     * @param pPattern the pattern
+     */
+    public void setPattern(final SchedulePattern pPattern) {
+        setValuePattern(pPattern);
+    }
+
+    /**
+     * Set a new next date.
+     * @param pDate the date
+     */
+    protected void setNextDate(final JDateDay pDate) {
+        setValueNextDate(pDate);
     }
 
     /**
@@ -406,12 +764,35 @@ public class Schedule
         /* Store the current detail into history */
         pushHistory();
 
-        /* Apply basic changes */
-        applyBasicChanges(mySchedule);
+        /* Update the start/end dates if required */
+        if (!Difference.isEqual(getStartDate(), mySchedule.getStartDate())) {
+            setStartDate(mySchedule.getStartDate());
+        }
+        if (!Difference.isEqual(getEndDate(), mySchedule.getEndDate())) {
+            setEndDate(mySchedule.getEndDate());
+        }
 
         /* Update the frequency if required */
         if (!Difference.isEqual(getFrequency(), mySchedule.getFrequency())) {
             setFrequency(mySchedule.getFrequency());
+        }
+
+        /* Update the repeat frequency if required */
+        if (!Difference.isEqual(getRepeatFrequency(), mySchedule.getRepeatFrequency())) {
+            setRepeatFrequency(mySchedule.getRepeatFrequency());
+        }
+        if (!Difference.isEqual(getRepeatInterval(), mySchedule.getRepeatInterval())) {
+            setRepeatInterval(mySchedule.getRepeatInterval());
+        }
+
+        /* Update the pattern if required */
+        if (!Difference.isEqual(getPattern(), mySchedule.getPattern())) {
+            setPattern(mySchedule.getPattern());
+        }
+
+        /* Update the next date if required */
+        if (!Difference.isEqual(getNextDate(), mySchedule.getNextDate())) {
+            setNextDate(mySchedule.getNextDate());
         }
 
         /* Check for changes */
@@ -431,7 +812,7 @@ public class Schedule
      * The list.
      */
     public static class ScheduleList
-            extends TransactionBaseList<Schedule> {
+            extends DataList<Schedule, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -442,7 +823,7 @@ public class Schedule
          * @param pData the DataSet for the list
          */
         protected ScheduleList(final MoneyWiseData pData) {
-            super(pData, Schedule.class, MoneyWiseDataType.SCHEDULE);
+            super(Schedule.class, pData, MoneyWiseDataType.SCHEDULE, ListStyle.CORE);
         }
 
         /**
@@ -466,11 +847,6 @@ public class Schedule
         @Override
         public JDataFields getItemFields() {
             return Schedule.FIELD_DEFS;
-        }
-
-        @Override
-        public JDateDayRange getValidDateRange() {
-            return RANGE_SCHEDULE;
         }
 
         @Override
@@ -522,28 +898,8 @@ public class Schedule
             return mySchedule;
         }
 
-        /**
-         * Add a new item to the edit list.
-         * @return the newly added item
-         */
-        @Override
-        public Schedule addNewItem() {
-            Schedule mySchedule = new Schedule(this);
-
-            /* Set the Date as the start of the range */
-            mySchedule.setDate(RANGE_SCHEDULE.getStart());
-            add(mySchedule);
-            return mySchedule;
-        }
-
         @Override
         public Schedule addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-            /* If the item has children */
-            if (pValues.hasChildren()) {
-                /* Note that the item is split */
-                pValues.addValue(FIELD_SPLIT, Boolean.TRUE);
-            }
-
             /* Create the schedule */
             Schedule mySchedule = new Schedule(this, pValues);
 
@@ -555,26 +911,6 @@ public class Schedule
 
             /* Add to the list */
             append(mySchedule);
-
-            /* Loop through the children */
-            if (pValues.hasChildren()) {
-                /* Loop through the items */
-                Iterator<DataValues<MoneyWiseDataType>> myIterator = pValues.childIterator();
-                while (myIterator.hasNext()) {
-                    DataValues<MoneyWiseDataType> myValues = myIterator.next();
-
-                    /* Note that the item is split */
-                    myValues.addValue(FIELD_SPLIT, Boolean.TRUE);
-                    myValues.addValue(FIELD_PARENT, mySchedule);
-
-                    /* Copy missing values from parent */
-                    myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
-                    myValues.addValue(FIELD_ACCOUNT, pValues.getValue(FIELD_ACCOUNT));
-
-                    /* Build item */
-                    addValuesItem(myValues);
-                }
-            }
 
             /* Return it */
             return mySchedule;
@@ -599,6 +935,12 @@ public class Schedule
         @Override
         protected void ensureMap() {
             /* Null operation */
+        }
+
+        @Override
+        public Schedule addNewItem() {
+            /* Unused */
+            throw new UnsupportedOperationException();
         }
     }
 }
