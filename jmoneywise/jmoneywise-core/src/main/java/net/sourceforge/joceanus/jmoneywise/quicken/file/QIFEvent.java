@@ -104,7 +104,7 @@ public class QIFEvent
         /* Add the lines */
         addLine(new QIFEventDateLine(theDate));
         addLine(new QIFEventClearedLine(isCleared));
-        addLine(new QIFEventPayeeDescLine("OpeningBalance"));
+        addLine(new QIFEventPayeeDescLine("Opening Balance"));
     }
 
     /**

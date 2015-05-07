@@ -64,8 +64,6 @@ public class TableTransaction
         myTableDef.addEncryptedColumn(Transaction.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
-        myTableDef.addBooleanColumn(Transaction.FIELD_SPLIT);
-        myTableDef.addNullReferenceColumn(Transaction.FIELD_PARENT, TABLE_NAME);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -92,8 +90,6 @@ public class TableTransaction
         myValues.addValue(Transaction.FIELD_PARTNER, myTableDef.getIntegerValue(Transaction.FIELD_PARTNER));
         myValues.addValue(Transaction.FIELD_AMOUNT, myTableDef.getBinaryValue(Transaction.FIELD_AMOUNT));
         myValues.addValue(Transaction.FIELD_RECONCILED, myTableDef.getBooleanValue(Transaction.FIELD_RECONCILED));
-        myValues.addValue(Transaction.FIELD_SPLIT, myTableDef.getBooleanValue(Transaction.FIELD_SPLIT));
-        myValues.addValue(Transaction.FIELD_PARENT, myTableDef.getIntegerValue(Transaction.FIELD_PARENT));
 
         /* Return the values */
         return myValues;
@@ -118,10 +114,6 @@ public class TableTransaction
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Transaction.FIELD_RECONCILED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isReconciled());
-        } else if (Transaction.FIELD_SPLIT.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isSplit());
-        } else if (Transaction.FIELD_PARENT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else {
             super.setFieldValue(pItem, iField);
         }

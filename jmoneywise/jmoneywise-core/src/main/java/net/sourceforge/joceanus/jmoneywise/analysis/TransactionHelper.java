@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
@@ -36,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
@@ -46,7 +48,12 @@ public class TransactionHelper {
     /**
      * Currency Cursor.
      */
-    private final ExchangeRateCursor theCursor;
+    private final ExchangeRateCursor theRateCursor;
+
+    /**
+     * Security Cursor.
+     */
+    private final SecurityPriceCursor thePriceCursor;
 
     /**
      * Reporting currency.
@@ -73,8 +80,9 @@ public class TransactionHelper {
      * @param pData the dataSet
      */
     protected TransactionHelper(final MoneyWiseData pData) {
-        /* Create the cursor */
-        theCursor = new ExchangeRateCursor(pData);
+        /* Create the cursors */
+        theRateCursor = new ExchangeRateCursor(pData);
+        thePriceCursor = new SecurityPriceCursor(pData);
 
         /* Note the reporting currency */
         theCurrency = pData.getDefaultCurrency();
@@ -287,6 +295,22 @@ public class TransactionHelper {
     }
 
     /**
+     * Obtain debit price.
+     * @return the debit price
+     */
+    public JPrice getDebitPrice() {
+        return theAccountDetail.getDebitPrice();
+    }
+
+    /**
+     * Obtain credit price.
+     * @return the credit price
+     */
+    public JPrice getCreditPrice() {
+        return theAccountDetail.getCreditPrice();
+    }
+
+    /**
      * Transaction Detail class.
      */
     private final class TransactionDetail {
@@ -361,6 +385,16 @@ public class TransactionHelper {
         private final JDilution theDilution;
 
         /**
+         * The account price.
+         */
+        private final JPrice theAccountPrice;
+
+        /**
+         * The partner price.
+         */
+        private final JPrice thePartnerPrice;
+
+        /**
          * The foreign account details.
          */
         private final ForeignAccountDetail theForeignAccount;
@@ -390,8 +424,16 @@ public class TransactionHelper {
             theCreditUnits = theCurrent.getCreditUnits();
             theDilution = theCurrent.getDilution();
 
+            /* Determine account prices */
+            theAccountPrice = (theAccount instanceof SecurityHolding)
+                                                                     ? thePriceCursor.getSecurityPrice(((SecurityHolding) theAccount).getSecurity(), theDate)
+                                                                     : null;
+            thePartnerPrice = (thePartner instanceof SecurityHolding)
+                                                                     ? thePriceCursor.getSecurityPrice(((SecurityHolding) thePartner).getSecurity(), theDate)
+                                                                     : null;
+
             /* Determine foreign account detail */
-            AssetCurrency myActCurrency = theCurrent.getAccount().getAssetCurrency();
+            AssetCurrency myActCurrency = theAccount.getAssetCurrency();
             theForeignAccount = Difference.isEqual(myActCurrency, theCurrency)
                                                                               ? null
                                                                               : new ForeignAccountDetail(this, myActCurrency);
@@ -399,7 +441,7 @@ public class TransactionHelper {
             /* If we have a partner amount */
             if (thePartnerAmount != null) {
                 /* Determine foreign partner detail */
-                myActCurrency = theCurrent.getPartner().getAssetCurrency();
+                myActCurrency = thePartner.getAssetCurrency();
                 theForeignPartner = Difference.isEqual(myActCurrency, theCurrency)
                                                                                   ? null
                                                                                   : new ForeignPartnerDetail(this, myActCurrency);
@@ -566,6 +608,26 @@ public class TransactionHelper {
         }
 
         /**
+         * Obtain debit price.
+         * @return the debit price
+         */
+        private JPrice getDebitPrice() {
+            return theDirection.isFrom()
+                                        ? thePartnerPrice
+                                        : theAccountPrice;
+        }
+
+        /**
+         * Obtain credit price.
+         * @return the credit price
+         */
+        private JPrice getCreditPrice() {
+            return theDirection.isTo()
+                                      ? thePartnerPrice
+                                      : theAccountPrice;
+        }
+
+        /**
          * Obtain taxCredit.
          * @return the tax credit
          */
@@ -672,7 +734,7 @@ public class TransactionHelper {
         private ForeignAccountDetail(final TransactionDetail pTrans,
                                      final AssetCurrency pCurrency) {
             /* Obtain the required exchange rate */
-            theExchangeRate = theCursor.getExchangeRate(pCurrency, theDate);
+            theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
             JRatio myRate = theExchangeRate.getInverseRatio();
             Currency myCurrency = theCurrency.getCurrency();
 
@@ -727,7 +789,7 @@ public class TransactionHelper {
         private ForeignPartnerDetail(final TransactionDetail pTrans,
                                      final AssetCurrency pCurrency) {
             /* Obtain the required exchange rate */
-            theExchangeRate = theCursor.getExchangeRate(pCurrency, theDate);
+            theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
             JRatio myRate = theExchangeRate.getInverseRatio();
             Currency myCurrency = theCurrency.getCurrency();
 

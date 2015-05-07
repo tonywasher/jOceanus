@@ -774,8 +774,6 @@ public class ArchiveLoader {
             myValues.addValue(Transaction.FIELD_PARTNER, thePartner);
             myValues.addValue(Transaction.FIELD_AMOUNT, pAmount);
             myValues.addValue(Transaction.FIELD_RECONCILED, pReconciled);
-            myValues.addValue(Transaction.FIELD_SPLIT, isSplit);
-            myValues.addValue(Transaction.FIELD_PARENT, theParent);
 
             /* Add the value into the list */
             Transaction myTrans = theList.addValuesItem(myValues);
@@ -857,7 +855,6 @@ public class ArchiveLoader {
             /* Note that there is a split */
             isSplit = Boolean.TRUE;
             theParent = theLastParent;
-            theLastParent.setSplit(Boolean.TRUE);
 
             /* Resolve the debit and credit */
             Object myDebit = (pDebit == null)

@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
@@ -42,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 
@@ -249,10 +251,84 @@ public final class DilutionEvent
     }
 
     /**
+     * List of dilutions for a security.
+     */
+    public static final class DilutionEventList
+            extends ArrayList<DilutionEvent>
+            implements JDataContents {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 6952350898773468201L;
+
+        /**
+         * Report fields.
+         */
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.DILUTION_LIST.getValue());
+
+        /**
+         * Security Field Id.
+         */
+        private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getFieldName());
+
+        /**
+         * Size Field Id.
+         */
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+
+        /**
+         * Security.
+         */
+        private final transient Security theSecurity;
+
+        /**
+         * Constructor.
+         * @param pSecurity the security
+         */
+        private DilutionEventList(final Security pSecurity) {
+            theSecurity = pSecurity;
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(theSecurity.formatObject());
+            myBuilder.append("(");
+            myBuilder.append(size());
+            myBuilder.append(")");
+            return myBuilder.toString();
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SECURITY.equals(pField)) {
+                return theSecurity;
+            }
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain security.
+         * @return the security
+         */
+        public Security getSecurity() {
+            return theSecurity;
+        }
+    }
+
+    /**
      * Map of DilutionLists indexed by Security Id.
      */
     public static class DilutionEventMap
-            extends NestedHashMap<Integer, List<DilutionEvent>>
+            extends NestedHashMap<Integer, DilutionEventList>
             implements JDataFormat {
         /**
          * Serial Id.
@@ -278,14 +354,15 @@ public final class DilutionEvent
         protected DilutionEventMap(final DilutionEventMap pSource,
                                    final JDateDay pDate) {
             /* Iterate through the source map */
-            Iterator<Entry<Integer, List<DilutionEvent>>> myIterator = pSource.entrySet().iterator();
+            Iterator<Entry<Integer, DilutionEventList>> myIterator = pSource.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Entry<Integer, List<DilutionEvent>> myEntry = myIterator.next();
+                Entry<Integer, DilutionEventList> myEntry = myIterator.next();
 
                 /* Access the id and list iterator */
                 Integer myId = myEntry.getKey();
-                Iterator<DilutionEvent> myEventIterator = myEntry.getValue().iterator();
-                List<DilutionEvent> myList = null;
+                DilutionEventList mySource = myEntry.getValue();
+                Iterator<DilutionEvent> myEventIterator = mySource.iterator();
+                DilutionEventList myList = null;
 
                 /* Loop through the entries */
                 while (myEventIterator.hasNext()) {
@@ -299,7 +376,7 @@ public final class DilutionEvent
                     /* If this is the first entry */
                     if (myList == null) {
                         /* Create new entry */
-                        myList = new ArrayList<DilutionEvent>();
+                        myList = new DilutionEventList(mySource.getSecurity());
                         put(myId, myList);
                     }
 
@@ -324,10 +401,10 @@ public final class DilutionEvent
 
             /* Look for the list associated with the security */
             Security mySecurity = myDilution.getSecurity();
-            List<DilutionEvent> myList = get(mySecurity.getId());
+            DilutionEventList myList = get(mySecurity.getId());
             if (myList == null) {
                 /* allocate new list if necessary */
-                myList = new ArrayList<DilutionEvent>();
+                myList = new DilutionEventList(mySecurity);
                 put(mySecurity.getId(), myList);
             }
 
@@ -338,7 +415,8 @@ public final class DilutionEvent
         /**
          * Does this security have diluted prices?
          * @param pSecurity the security to test
-         * @return <code>true</code> if the security has diluted prices, <code>false</code> otherwise
+         * @return <code>true</code> if the security has diluted prices, <code>false</code>
+         * otherwise
          */
         public boolean hasDilution(final Security pSecurity) {
             /* Check for dilutions for this security */
@@ -360,10 +438,10 @@ public final class DilutionEvent
             }
 
             /* Loop through the items */
-            Iterator<DilutionEvent> myIterator = myList.iterator();
+            ListIterator<DilutionEvent> myIterator = myList.listIterator(myList.size());
             JDilution myDilution = new JDilution(JDilution.MAX_DILUTION);
-            while (myIterator.hasNext()) {
-                DilutionEvent myEvent = myIterator.next();
+            while (myIterator.hasPrevious()) {
+                DilutionEvent myEvent = myIterator.previous();
 
                 /* If the event is earlier than we are interested in */
                 if (pDate.compareTo(myEvent.getDate()) > 0) {

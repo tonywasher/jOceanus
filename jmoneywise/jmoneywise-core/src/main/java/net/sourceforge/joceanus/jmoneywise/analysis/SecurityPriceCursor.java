@@ -22,70 +22,72 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
+import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
- * Quick access to dated exchange Rates on an analysis pass.
+ * Quick access to dated security Prices on an analysis pass.
  */
-public class ExchangeRateCursor {
+public class SecurityPriceCursor {
     /**
-     * ExchangeRate data map.
+     * SecurityPrice data map.
      */
-    private final ExchangeRateDataMap<ExchangeRate> theDataMap;
+    private final SecurityPriceDataMap<SecurityPrice> theDataMap;
 
     /**
      * Cursor map.
      */
-    private final Map<AssetCurrency, CurrencyCursor> theCursorMap;
+    private final Map<Security, SecurityCursor> theCursorMap;
 
     /**
      * Constructor.
      * @param pData the dataSet
      */
-    protected ExchangeRateCursor(final MoneyWiseData pData) {
+    protected SecurityPriceCursor(final MoneyWiseData pData) {
         /* Obtain the data map */
-        theDataMap = pData.getExchangeRates().getDataMap();
+        theDataMap = pData.getSecurityPriceDataMap();
 
         /* Create the cursor map */
-        theCursorMap = new HashMap<AssetCurrency, CurrencyCursor>();
+        theCursorMap = new HashMap<Security, SecurityCursor>();
     }
 
     /**
-     * Obtain exchange rate for currency and date.
-     * @param pCurrency the currency
+     * Obtain price for security and date.
+     * @param pSecurity the security
      * @param pDate the date
-     * @return the exchange rate
+     * @return the security price
      */
-    public JRatio getExchangeRate(final AssetCurrency pCurrency,
-                                  final JDateDay pDate) {
+    public JPrice getSecurityPrice(final Security pSecurity,
+                                   final JDateDay pDate) {
         /* Access cursor and return rate */
-        CurrencyCursor myCursor = getCursor(pCurrency);
-        return myCursor.getExchangeRate(pDate);
+        SecurityCursor myCursor = getCursor(pSecurity);
+        return myCursor.getSecurityPrice(pDate);
     }
 
     /**
-     * Obtain currency cursor.
-     * @param pCurrency the currency
+     * Obtain security cursor.
+     * @param pSecurity the security
      * @return the cursor
      */
-    private CurrencyCursor getCursor(final AssetCurrency pCurrency) {
+    private SecurityCursor getCursor(final Security pSecurity) {
         /* Look for existing cursor */
-        CurrencyCursor myCursor = theCursorMap.get(pCurrency);
+        SecurityCursor myCursor = theCursorMap.get(pSecurity);
 
         /* If we do not have a cursor */
         if (myCursor == null) {
             /* Allocate new cursor */
-            myCursor = new CurrencyCursor(pCurrency);
-            theCursorMap.put(pCurrency, myCursor);
+            myCursor = new SecurityCursor(pSecurity);
+            theCursorMap.put(pSecurity, myCursor);
         }
 
         /* return the cursor */
@@ -93,18 +95,18 @@ public class ExchangeRateCursor {
     }
 
     /**
-     * Currency Cursor class.
+     * Security Cursor class.
      */
-    private final class CurrencyCursor {
+    private final class SecurityCursor {
         /**
-         * Exchange Rate iterator.
+         * SecurityPrice iterator.
          */
-        private final Iterator<ExchangeRate> theIterator;
+        private final ListIterator<SecurityPrice> theIterator;
 
         /**
-         * The current exchange rate.
+         * The current price.
          */
-        private JRatio theCurrent = JRatio.ONE;
+        private JPrice theCurrent;
 
         /**
          * The next date.
@@ -112,17 +114,21 @@ public class ExchangeRateCursor {
         private JDateDay theNextDate = null;
 
         /**
-         * The next exchange rate.
+         * The next price.
          */
-        private JRatio theNextRate = null;
+        private JPrice theNextPrice = null;
 
         /**
          * Constructor.
-         * @param pCurrency the currency
+         * @param pSecurity the security
          */
-        private CurrencyCursor(final AssetCurrency pCurrency) {
-            /* Access the Rate list */
-            theIterator = theDataMap.rateIterator(pCurrency);
+        private SecurityCursor(final Security pSecurity) {
+            /* Create the default price */
+            Currency myCurrency = pSecurity.getCurrency();
+            theCurrent = JPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
+
+            /* Access the Price list */
+            theIterator = theDataMap.priceIterator(pSecurity);
 
             /* If we have an iterator */
             if (theIterator != null) {
@@ -136,36 +142,36 @@ public class ExchangeRateCursor {
          */
         private void moveCursor() {
             /* If we have an iterator */
-            if (theIterator.hasNext()) {
+            if (theIterator.hasPrevious()) {
                 /* access next rate and record */
-                ExchangeRate myRate = theIterator.next();
-                theNextRate = myRate.getExchangeRate();
-                theNextDate = myRate.getDate();
+                SecurityPrice myPrice = theIterator.previous();
+                theNextPrice = myPrice.getPrice();
+                theNextDate = myPrice.getDate();
             } else {
                 theNextDate = null;
-                theNextRate = null;
+                theNextPrice = null;
             }
         }
 
         /**
-         * Obtain exchange rate for date.
+         * Obtain security price for date.
          * @param pDate the date
-         * @return the exchange rate
+         * @return the security price
          */
-        private JRatio getExchangeRate(final JDateDay pDate) {
-            /* if we have a later rate */
+        private JPrice getSecurityPrice(final JDateDay pDate) {
+            /* if we have a later price */
             if (theNextDate != null) {
                 /* while we need to move the cursor */
                 while (pDate.compareTo(theNextDate) >= 0) {
-                    /* store rate */
-                    theCurrent = theNextRate;
+                    /* store price */
+                    theCurrent = theNextPrice;
 
                     /* move the cursor */
                     moveCursor();
                 }
             }
 
-            /* Return the rate */
+            /* Return the price */
             return theCurrent;
         }
     }

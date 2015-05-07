@@ -707,6 +707,11 @@ public enum StaticDataResource implements ResourceId {
     TAXREGIME_ADDBAND("TaxRegime.AdditionalBand"),
 
     /**
+     * Frequency Once.
+     */
+    FREQUENCY_ONCE("Frequency.Once"),
+
+    /**
      * Frequency Daily.
      */
     FREQUENCY_DAILY("Frequency.Daily"),
@@ -745,11 +750,6 @@ public enum StaticDataResource implements ResourceId {
      * Repeat Frequency Every Fourth.
      */
     FREQUENCY_EVERYFOURTH("Frequency.Repeat.EveryFourth"),
-
-    /**
-     * Repeat Frequency Every Fifth.
-     */
-    FREQUENCY_EVERYFIFTH("Frequency.Repeat.EveryFifth"),
 
     /**
      * Repeat Frequency Every Sixth.
@@ -1464,6 +1464,8 @@ public enum StaticDataResource implements ResourceId {
      */
     protected static StaticDataResource getKeyForFrequency(final FrequencyClass pValue) {
         switch (pValue) {
+            case ONCE:
+                return FREQUENCY_ONCE;
             case DAILY:
                 return FREQUENCY_DAILY;
             case WEEKLY:

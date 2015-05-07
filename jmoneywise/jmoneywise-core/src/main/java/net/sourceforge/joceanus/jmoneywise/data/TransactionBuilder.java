@@ -80,6 +80,14 @@ public class TransactionBuilder {
     }
 
     /**
+     * Obtain range.
+     * @return the date range
+     */
+    public JDateDayRange getRange() {
+        return theRange;
+    }
+
+    /**
      * Set parameters.
      * @param pList the transaction list
      * @param pRange the date range
@@ -188,58 +196,13 @@ public class TransactionBuilder {
     }
 
     /**
-     * Obtain adjusted range.
-     * @param pTrans the transaction
-     * @return the adjusted range
-     */
-    public JDateDayRange getAdjustedRange(final Transaction pTrans) {
-        /* Access standard range */
-        JDateDayRange myRange = theRange;
-
-        /* If the account is a security holding */
-        TransactionAsset myAccount = pTrans.getAccount();
-        if (myAccount instanceof SecurityHolding) {
-            /* Adjust range if necessary */
-            myRange = adjustRange(myRange, (SecurityHolding) myAccount);
-        }
-
-        /* If the partner is a security holding */
-        myAccount = pTrans.getPartner();
-        if (myAccount instanceof SecurityHolding) {
-            /* Adjust range if necessary */
-            myRange = adjustRange(myRange, (SecurityHolding) myAccount);
-        }
-
-        /* Return the range */
-        return myRange;
-    }
-
-    /**
-     * Adjust range.
-     * @param pRange the initial range
-     * @param pHolding the holding
-     * @return the adjusted range
-     */
-    private JDateDayRange adjustRange(final JDateDayRange pRange,
-                                      final SecurityHolding pHolding) {
-        /* Access relevant dates */
-        JDateDay myDate = pHolding.getEarliestDate();
-        JDateDay myEarliest = pRange.getStart();
-
-        /* Adjust range if necessary */
-        return myDate.compareTo(myEarliest) > 0
-                                               ? new JDateDayRange(myDate, pRange.getEnd())
-                                               : pRange;
-    }
-
-    /**
      * Build standard details.
      * @param pTrans the transaction to build
      * @throws JOceanusException on error
      */
     private void buildStandardDetails(final Transaction pTrans) throws JOceanusException {
-        /* Access adjusted range */
-        JDateDayRange myRange = getAdjustedRange(pTrans);
+        /* Access standard range */
+        JDateDayRange myRange = theRange;
 
         /* Determine date */
         JDateDay myDate = new JDateDay();
@@ -694,13 +657,6 @@ public class TransactionBuilder {
                 while (myExistIterator.hasNext()) {
                     SecurityHolding myHolding = myExistIterator.next();
 
-                    /* check that initial price is not too late */
-                    JDateDay myEarliest = myHolding.getEarliestDate();
-                    if (myEarliest == null
-                        || theRange.compareTo(myEarliest) < 0) {
-                        continue;
-                    }
-
                     /* Check whether the asset is allowable for the combination */
                     if (TransactionValidator.isValidCategory(myHolding, pCategory)) {
                         return myHolding;
@@ -744,13 +700,6 @@ public class TransactionBuilder {
                 /* Loop through them */
                 while (myExistIterator.hasNext()) {
                     SecurityHolding myHolding = myExistIterator.next();
-
-                    /* check that initial price is not too late */
-                    JDateDay myEarliest = myHolding.getEarliestDate();
-                    if (myEarliest == null
-                        || theRange.compareTo(myEarliest) < 0) {
-                        continue;
-                    }
 
                     /* Check whether the asset is allowable for the combination */
                     if (TransactionValidator.isValidPartner(pAccount, pCategory, myHolding)) {

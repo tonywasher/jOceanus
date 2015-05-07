@@ -320,12 +320,6 @@ public class AnalysisView
                 /* Build the new linked transaction and add it to the list */
                 Transaction myTrans = new Transaction(this, myCurr);
                 append(myTrans);
-
-                /* If this is a child transaction */
-                if (myTrans.isChild()) {
-                    /* Register child against parent (in this edit list) */
-                    registerChild(myTrans);
-                }
             }
         }
 

@@ -123,7 +123,9 @@ public final class ChargeableEvent
             return theSlice;
         }
         if (FIELD_TAXATION.equals(pField)) {
-            return theTaxation;
+            return theTaxation == null
+                                      ? JDataFieldValue.SKIP
+                                      : theTaxation;
         }
         if (FIELD_TRANS.equals(pField)) {
             return theTransaction;
@@ -315,10 +317,12 @@ public final class ChargeableEvent
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(getDataFields().getName());
+            myBuilder.append("(");
+            myBuilder.append(size());
+            myBuilder.append(")");
+            return myBuilder.toString();
         }
 
         @Override

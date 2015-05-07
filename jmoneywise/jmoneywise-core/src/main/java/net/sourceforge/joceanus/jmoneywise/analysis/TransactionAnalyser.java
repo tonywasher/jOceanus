@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
@@ -67,8 +66,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -224,10 +221,6 @@ public class TransactionAnalyser
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
 
-        /* reset groups */
-        myTask.startTask("ResetGroups");
-        myTrans.resetGroups();
-
         /* Initialise data */
         TaxYear myTax = null;
         JDateDay myDate = null;
@@ -260,13 +253,6 @@ public class TransactionAnalyser
 
             /* Touch underlying items */
             myCurr.touchUnderlyingItems();
-
-            /* If the transaction has a parent */
-            Transaction myParent = myCurr.getParent();
-            if (myParent != null) {
-                /* Register child against parent */
-                myTrans.registerChild(myCurr);
-            }
 
             /* If the event has a dilution factor */
             if (myCurr.getDilution() != null) {
@@ -323,10 +309,6 @@ public class TransactionAnalyser
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
 
-        /* reset groups */
-        myTask.startTask("ResetGroups");
-        pTransactions.resetGroups();
-
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
         Iterator<Transaction> myIterator = pTransactions.iterator();
@@ -336,13 +318,6 @@ public class TransactionAnalyser
             /* Ignore deleted transactions */
             if (myCurr.isDeleted()) {
                 continue;
-            }
-
-            /* If the transaction has a parent */
-            Transaction myParent = myCurr.getParent();
-            if (myParent != null) {
-                /* Register child against parent */
-                pTransactions.registerChild(myCurr);
             }
 
             /* If the event has a dilution factor */
@@ -419,14 +394,6 @@ public class TransactionAnalyser
 
         /* Mark relevant securities */
         thePortfolioBuckets.markActiveSecurities();
-
-        /* Validate transaction groups */
-        myTask.startTask("AnalyseGroups");
-        MoneyWiseData myData = theAnalysis.getData();
-        DataErrorList<Transaction> myErrors = myData.getTransactions().validateGroups();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
 
         /* Complete the task */
         myTask.end();

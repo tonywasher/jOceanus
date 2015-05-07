@@ -201,7 +201,7 @@ public class Cash
             return true;
         }
         if (FIELD_CURRENCY.equals(pField)) {
-            return getAssetCurrency() != null;
+            return true;
         }
 
         /* Pass call on */

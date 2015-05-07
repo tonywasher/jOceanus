@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.DataState;
 import net.sourceforge.joceanus.jmetis.data.Difference;
@@ -33,16 +31,16 @@ import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
@@ -52,6 +50,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
@@ -81,6 +81,16 @@ public class Transaction
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
 
     /**
+     * Date Field Id.
+     */
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+
+    /**
+     * Reconciled Field Id.
+     */
+    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
+
+    /**
      * EventInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
@@ -89,11 +99,6 @@ public class Transaction
      * Bad InfoSet Error Text.
      */
     private static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
-
-    /**
-     * Early Date Error Text.
-     */
-    private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADPRICEDATE.getValue();
 
     /**
      * Circular update Error Text.
@@ -153,6 +158,7 @@ public class Transaction
      */
     public Transaction(final TransactionList pList) {
         super(pList);
+        setValueReconciled(Boolean.FALSE);
 
         /* Build InfoSet */
         theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
@@ -171,6 +177,34 @@ public class Transaction
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
+            }
+
+            /* Store the reconciled flag */
+            myValue = pValues.getValue(FIELD_RECONCILED);
+            if (myValue instanceof Boolean) {
+                setValueReconciled((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+
         /* Create the InfoSet */
         theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
         hasInfoSet = true;
@@ -180,6 +214,20 @@ public class Transaction
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_DATE.equals(pField)) {
+            return true;
+        }
+        if (FIELD_RECONCILED.equals(pField)) {
+            return isReconciled();
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
     }
 
     @Override
@@ -201,19 +249,59 @@ public class Transaction
         return super.getFieldValue(pField);
     }
 
-    @Override
-    public TransactionInfoSet getInfoSet() {
-        return theInfoSet;
+    /**
+     * Obtain Date.
+     * @return the date
+     */
+    public JDateDay getDate() {
+        return getDate(getValueSet());
+    }
+
+    /**
+     * Obtain Reconciled State.
+     * @return the reconciled state
+     */
+    public Boolean isReconciled() {
+        return isReconciled(getValueSet());
+    }
+
+    /**
+     * Obtain Date.
+     * @param pValueSet the valueSet
+     * @return the Date
+     */
+    public static JDateDay getDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATE, JDateDay.class);
+    }
+
+    /**
+     * Obtain Reconciled State.
+     * @param pValueSet the valueSet
+     * @return the Reconciled State
+     */
+    public static Boolean isReconciled(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
+    }
+
+    /**
+     * Set date value.
+     * @param pValue the value
+     */
+    private void setValueDate(final JDateDay pValue) {
+        getValueSet().setValue(FIELD_DATE, pValue);
+    }
+
+    /**
+     * Set reconciled state.
+     * @param pValue the value
+     */
+    protected final void setValueReconciled(final Boolean pValue) {
+        getValueSet().setValue(FIELD_RECONCILED, pValue);
     }
 
     @Override
-    public Iterator<Transaction> childIterator() {
-        /* No iterator if we are not a group or else we are a child */
-        if (!isSplit() || isChild()) {
-            return null;
-        }
-
-        return getList().getGroup(this).iterator();
+    public TransactionInfoSet getInfoSet() {
+        return theInfoSet;
     }
 
     /**
@@ -517,13 +605,50 @@ public class Transaction
         return (TransactionList) super.getList();
     }
 
+    /**
+     * Compare this event to another to establish sort order.
+     * @param pThat The Event to compare to
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
+     */
+    @Override
+    public int compareTo(final Transaction pThat) {
+        /* Handle the trivial cases */
+        if (this.equals(pThat)) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
+        }
+
+        /* If header settings differ */
+        if (isHeader() != pThat.isHeader()) {
+            return isHeader()
+                             ? -1
+                             : 1;
+        }
+
+        /* If the dates differ */
+        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Compare the underlying details */
+        return super.compareTo(pThat);
+    }
+
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Transaction details */
         super.resolveDataSetLinks();
 
-        /* Resolve data links */
-        resolveDataLink(FIELD_PARENT, getList());
+        /* Adjust Reconciled */
+        ValueSet myValues = getValueSet();
+        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
+        if (myReconciled == null) {
+            setValueReconciled(Boolean.FALSE);
+        }
 
         /* Sort linkSets */
         if (hasInfoSet) {
@@ -559,33 +684,20 @@ public class Transaction
             return;
         }
 
+        /* Determine date range to check for */
+        TransactionList myList = getList();
+        JDateDayRange myRange = myList.getValidDateRange();
+
+        /* The date must be non-null */
+        if (myDate == null) {
+            addError(ERROR_MISSING, FIELD_DATE);
+            /* The date must be in-range */
+        } else if (myRange.compareTo(myDate) != 0) {
+            addError(ERROR_RANGE, FIELD_DATE);
+        }
+
         /* Perform underlying checks */
         super.validate();
-
-        /* If the event has a parent */
-        Transaction myParent = getParent();
-        if (myParent != null) {
-            /* Register child against parent */
-            getList().registerChild(this);
-        }
-
-        /* Check for valid account security */
-        if ((myAccount != null) && (myAccount instanceof SecurityHolding)) {
-            /* Access earliest date */
-            JDateDay myEarliest = ((SecurityHolding) myAccount).getEarliestDate();
-            if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
-                addError(ERROR_BADDATE, FIELD_ACCOUNT);
-            }
-        }
-
-        /* Check for valid partner security */
-        if ((myPartner != null) && (myPartner instanceof SecurityHolding)) {
-            /* Access earliest date */
-            JDateDay myEarliest = ((SecurityHolding) myPartner).getEarliestDate();
-            if ((myEarliest == null) || (myDate.compareTo(myEarliest) < 0)) {
-                addError(ERROR_BADDATE, FIELD_PARTNER);
-            }
-        }
 
         /* Cannot have Credit and Debit if securities are identical */
         if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myAccount, myPartner))) {
@@ -653,6 +765,24 @@ public class Transaction
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
+    }
+
+    /**
+     * Set a new date.
+     * @param pDate the new date
+     */
+    public void setDate(final JDateDay pDate) {
+        setValueDate((pDate == null)
+                                    ? null
+                                    : new JDateDay(pDate));
+    }
+
+    /**
+     * Set a reconciled indication.
+     * @param pReconciled the reconciled state
+     */
+    public void setReconciled(final Boolean pReconciled) {
+        setValueReconciled(pReconciled);
     }
 
     /**
@@ -889,6 +1019,16 @@ public class Transaction
         /* Store the current detail into history */
         pushHistory();
 
+        /* Update the Date if required */
+        if (!Difference.isEqual(getDate(), myTrans.getDate())) {
+            setValueDate(myTrans.getDate());
+        }
+
+        /* Update the reconciled state if required */
+        if (!Difference.isEqual(isReconciled(), myTrans.isReconciled())) {
+            setValueReconciled(myTrans.isReconciled());
+        }
+
         /* Apply basic changes */
         applyBasicChanges(myTrans);
 
@@ -905,16 +1045,6 @@ public class Transaction
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
-
-        /**
-         * EventGroupList field Id.
-         */
-        private static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.TRANSACTION_GROUPS.getValue());
-
-        /**
-         * EventGroupMap.
-         */
-        private final Map<Integer, TransactionGroup> theGroups = new LinkedHashMap<Integer, TransactionGroup>();
 
         /**
          * The TransactionInfo List.
@@ -955,19 +1085,6 @@ public class Transaction
         @Override
         public JDataFields getItemFields() {
             return Transaction.FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_EVENTGROUPS.equals(pField)) {
-                return theGroups.isEmpty()
-                                          ? JDataFieldValue.SKIP
-                                          : theGroups;
-            }
-
-            /* Pass onwards */
-            return super.getFieldValue(pField);
         }
 
         /**
@@ -1016,147 +1133,6 @@ public class Transaction
         }
 
         /**
-         * Get an EditList for a range.
-         * @return the edit list
-         */
-        public TransactionList getViewList() {
-            /* Build an empty List */
-            TransactionList myList = getEmptyList(ListStyle.COPY);
-            myList.setStyle(ListStyle.COPY);
-
-            /* Return it */
-            return myList;
-        }
-
-        /**
-         * Get an EditList for a new TaxYear.
-         * @param pTaxYear the new TaxYear
-         * @return the edit list
-         * @throws JOceanusException on error
-         */
-        public TransactionList deriveEditList(final TaxYear pTaxYear) throws JOceanusException {
-            /* Build an empty List */
-            TransactionList myList = getEmptyList(ListStyle.EDIT);
-            myList.setRange(pTaxYear.getDateRange());
-
-            /* Store InfoType list */
-            myList.setTransInfoTypes(theInfoTypeList);
-
-            /* Create info List */
-            TransactionInfoList myTransInfo = getTransactionInfo();
-            myList.setTransactionInfo(myTransInfo.getEmptyList(ListStyle.EDIT));
-
-            /* Loop through the Schedules */
-            ScheduleList mySchedules = getDataSet().getSchedules();
-            Iterator<Schedule> myIterator = mySchedules.iterator();
-            while (myIterator.hasNext()) {
-                Schedule myCurr = myIterator.next();
-
-                /* Ignore deleted patterns */
-                if (myCurr.isDeleted()) {
-                    continue;
-                }
-
-                /* Access a copy of the base date */
-                // JDateDay myDate = new JDateDay(myCurr.getDate());
-
-                /* Loop while we have an event to add */
-                // for (;;) {
-                /* Access next event and break loop if no more */
-                // Event myEvent = myCurr.nextEvent(myList, pTaxYear, myDate);
-                // if (myEvent == null) {
-                // break;
-                // }
-
-                /* Add it to the extract */
-                // myList.append(myEvent);
-
-                /* If this is a child event */
-                // if (myEvent.isChild()) {
-                // /* Register child against parent (in this edit list) */
-                // myList.registerChild(myEvent);
-                // }
-                // }
-            }
-
-            /* Sort the list */
-            myList.reSort();
-
-            /* Return the List */
-            return myList;
-        }
-
-        /**
-         * Register child into event group.
-         * @param pChild the child to register
-         */
-        public void registerChild(final Transaction pChild) {
-            /* Access parent */
-            Transaction myParent = pChild.getParent();
-            Integer myId = myParent.getId();
-            myParent = findItemById(myId);
-
-            /* Access TransactionGroup */
-            TransactionGroup myGroup = theGroups.get(myId);
-            if (myGroup == null) {
-                myGroup = new TransactionGroup(myParent);
-                theGroups.put(myId, myGroup);
-            }
-
-            /* Register the child */
-            myGroup.registerChild(pChild);
-        }
-
-        /**
-         * Obtain the group for a parent.
-         * @param pParent the parent event
-         * @return the group
-         */
-        public TransactionGroup getGroup(final Transaction pParent) {
-            return theGroups.get(pParent.getId());
-        }
-
-        /**
-         * Reset groups.
-         */
-        public void resetGroups() {
-            theGroups.clear();
-        }
-
-        /**
-         * Validate groups.
-         * @return the error list (or null if no errors)
-         */
-        public DataErrorList<Transaction> validateGroups() {
-            /* Note error list */
-            DataErrorList<Transaction> myErrorList = null;
-
-            /* Loop through the groups */
-            Iterator<TransactionGroup> myIterator = theGroups.values().iterator();
-            while (myIterator.hasNext()) {
-                TransactionGroup myGroup = myIterator.next();
-
-                /* Validate the group */
-                DataErrorList<Transaction> myErrors = myGroup.validate();
-
-                /* If we have any errors */
-                if (myErrors != null) {
-                    /* If this is the first error */
-                    if (myErrorList == null) {
-                        /* Record as error list */
-                        myErrorList = myErrors;
-                    } else {
-                        /* Add to the error list */
-                        myErrorList.addAll(myErrors);
-                    }
-                }
-            }
-
-            /* Return the error list */
-            return myErrorList;
-        }
-
-        /**
          * Add a new item to the list.
          * @param pItem the item to add
          * @return the newly added item
@@ -1190,12 +1166,6 @@ public class Transaction
 
         @Override
         public Transaction addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-            /* If the item has children */
-            if (pValues.hasChildren()) {
-                /* Note that the item is split */
-                pValues.addValue(FIELD_SPLIT, Boolean.TRUE);
-            }
-
             /* Create the transaction */
             Transaction myTrans = new Transaction(this, pValues);
 
@@ -1218,31 +1188,6 @@ public class Transaction
                     /* Build info */
                     DataValues<MoneyWiseDataType> myValues = myItem.getValues(myTrans);
                     getTransactionInfo().addValuesItem(myValues);
-                }
-            }
-
-            /* Loop through the children */
-            if (pValues.hasChildren()) {
-                /* Loop through the items */
-                Iterator<DataValues<MoneyWiseDataType>> myIterator = pValues.childIterator();
-                while (myIterator.hasNext()) {
-                    DataValues<MoneyWiseDataType> myValues = myIterator.next();
-
-                    /* Note that the item is split */
-                    myValues.addValue(FIELD_SPLIT, Boolean.TRUE);
-                    myValues.addValue(FIELD_PARENT, myTrans);
-
-                    /* Copy missing values from parent */
-                    myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
-                    if (myValues.getValue(FIELD_ACCOUNT) == null) {
-                        myValues.addValue(FIELD_ACCOUNT, pValues.getValue(FIELD_ACCOUNT));
-                    }
-                    if (myValues.getValue(FIELD_PARTNER) == null) {
-                        myValues.addValue(FIELD_PARTNER, pValues.getValue(FIELD_PARTNER));
-                    }
-
-                    /* Build item */
-                    addValuesItem(myValues);
                 }
             }
 

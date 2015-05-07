@@ -38,12 +38,8 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
@@ -54,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  */
 public abstract class TransactionBase<T extends TransactionBase<T>>
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<T>, GroupedItem<MoneyWiseDataType> {
+        implements Comparable<T> {
     /**
      * Object name.
      */
@@ -69,11 +65,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Local Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
-
-    /**
-     * Date Field Id.
-     */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * AssetPair Field Id.
@@ -106,34 +97,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
-     * Reconciled Field Id.
-     */
-    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
-
-    /**
-     * Split Event Field Id.
-     */
-    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_SPLIT.getValue());
-
-    /**
-     * Parent Field Id.
-     */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
-
-    /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
     private static final String ERROR_COMBO = MoneyWiseDataResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
-
-    /**
-     * Invalid Parent Error Text.
-     */
-    private static final String ERROR_BADPARENT = MoneyWiseDataResource.TRANSACTION_ERROR_BADPARENT.getValue();
-
-    /**
-     * Parent Date Error Text.
-     */
-    private static final String ERROR_PARENTDATE = MoneyWiseDataResource.TRANSACTION_ERROR_PARENTDATE.getValue();
 
     /**
      * Zero Amount Error Text.
@@ -164,7 +130,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super(pList, 0);
         setNextDataKeySet();
         setValueAssetPair(getAssetPairManager().getDefaultPair());
-        setValueReconciled(Boolean.FALSE);
     }
 
     /**
@@ -173,7 +138,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    @SuppressWarnings("unchecked")
     protected TransactionBase(final TransactionBaseList<T> pList,
                               final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
@@ -184,17 +148,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         /* Protect against exceptions */
         try {
-            /* Store the Date */
-            Object myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
-            } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
-            }
-
             /* Store the AssetPair */
-            myValue = pValues.getValue(FIELD_PAIR);
+            Object myValue = pValues.getValue(FIELD_PAIR);
             if (myValue instanceof Integer) {
                 setValueAssetPair((Integer) myValue);
             } else if (myValue instanceof String) {
@@ -245,30 +200,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 setValueAmount(myFormatter.parseValue(myString, JMoney.class));
             }
 
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof TransactionBase) {
-                setValueParent((T) myValue);
-            }
-
-            /* Store the reconciled flag */
-            myValue = pValues.getValue(FIELD_RECONCILED);
-            if (myValue instanceof Boolean) {
-                setValueReconciled((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Store the split flag */
-            myValue = pValues.getValue(FIELD_SPLIT);
-            if (myValue instanceof Boolean) {
-                setValueSplit((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueSplit(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
             /* Catch Exceptions */
         } catch (IllegalArgumentException
                 | JOceanusException e) {
@@ -278,22 +209,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public boolean skipField(final JDataField pField) {
-        if ((FIELD_SPLIT.equals(pField)) && !isSplit()) {
-            return true;
-        }
-        if ((FIELD_PARENT.equals(pField)) && (!isSplit() || (!isChild()))) {
-            return true;
-        }
-        return super.skipField(pField);
-    }
-
-    @Override
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
-        if (FIELD_DATE.equals(pField)) {
-            return !isChild();
-        }
         if (FIELD_PAIR.equals(pField)) {
             return true;
         }
@@ -301,18 +218,13 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             return true;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
-            return !isChild()
-                   || !Difference.isEqual(getAccount(), getParent().getAccount());
+            return true;
         }
         if (FIELD_PARTNER.equals(pField)) {
-            return !isChild()
-                   || !Difference.isEqual(getPartner(), getParent().getPartner());
+            return true;
         }
         if (FIELD_AMOUNT.equals(pField)) {
             return true;
-        }
-        if (FIELD_RECONCILED.equals(pField)) {
-            return isReconciled();
         }
 
         /* Pass call on */
@@ -356,14 +268,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         /* return it */
         return myBuilder.toString();
-    }
-
-    /**
-     * Obtain Date.
-     * @return the date
-     */
-    public JDateDay getDate() {
-        return getDate(getValueSet());
     }
 
     /**
@@ -508,84 +412,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Obtain Reconciled State.
-     * @return the reconciled state
-     */
-    public Boolean isReconciled() {
-        return isReconciled(getValueSet());
-    }
-
-    /**
-     * Obtain Split State.
-     * @return the split state
-     */
-    public Boolean isSplit() {
-        Boolean isSplit = isSplit(getValueSet());
-        return isSplit != null
-                              ? isSplit
-                              : Boolean.FALSE;
-    }
-
-    /**
-     * Obtain Parent.
-     * @return the parent
-     */
-    @SuppressWarnings("unchecked")
-    public T getParent() {
-        return (T) getParent(getValueSet());
-    }
-
-    @Override
-    public boolean isChild() {
-        return getParent() != null;
-    }
-
-    /**
-     * Obtain ParentId.
-     * @return the parentId
-     */
-    @SuppressWarnings("unchecked")
-    public Integer getParentId() {
-        T myParent = (T) getParent(getValueSet());
-        return (myParent == null)
-                                 ? null
-                                 : myParent.getId();
-    }
-
-    /**
-     * Obtain Date.
-     * @param pValueSet the valueSet
-     * @return the Date
-     */
-    public static JDateDay getDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATE, JDateDay.class);
-    }
-
-    /**
      * Obtain AssetPair.
      * @param pValueSet the valueSet
      * @return the AssetPair
      */
     protected static AssetPair getAssetPair(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PAIR, AssetPair.class);
-    }
-
-    /**
-     * Obtain Reconciled State.
-     * @param pValueSet the valueSet
-     * @return the Reconciled State
-     */
-    public static Boolean isReconciled(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
-    }
-
-    /**
-     * Obtain Split State.
-     * @param pValueSet the valueSet
-     * @return the Split State
-     */
-    public static Boolean isSplit(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_SPLIT, Boolean.class);
     }
 
     /**
@@ -643,25 +475,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Obtain Parent Event.
-     * @param pValueSet the valueSet
-     * @param <T> the transaction data type
-     * @return the Parent Event
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends TransactionBase<T>> TransactionBase<T> getParent(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, TransactionBase.class);
-    }
-
-    /**
-     * Set date value.
-     * @param pValue the value
-     */
-    private void setValueDate(final JDateDay pValue) {
-        getValueSet().setValue(FIELD_DATE, pValue);
-    }
-
-    /**
      * Set assetPair.
      * @param pValue the value
      */
@@ -685,22 +498,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     private void setValueAssetPair(final String pValue) {
         getValueSet().setValue(FIELD_PAIR, pValue);
-    }
-
-    /**
-     * Set reconciled state.
-     * @param pValue the value
-     */
-    protected final void setValueReconciled(final Boolean pValue) {
-        getValueSet().setValue(FIELD_RECONCILED, pValue);
-    }
-
-    /**
-     * Set split state.
-     * @param pValue the value
-     */
-    protected final void setValueSplit(final Boolean pValue) {
-        getValueSet().setValue(FIELD_SPLIT, pValue);
     }
 
     /**
@@ -809,22 +606,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         getValueSet().setValue(FIELD_PARTNER, pName);
     }
 
-    /**
-     * Set parent value.
-     * @param pValue the value
-     */
-    protected final void setValueParent(final T pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pId the value
-     */
-    private void setValueParent(final Integer pId) {
-        getValueSet().setValue(FIELD_PARENT, pId);
-    }
-
     @Override
     public final MoneyWiseData getDataSet() {
         return (MoneyWiseData) super.getDataSet();
@@ -873,62 +654,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             return -1;
         }
 
-        /* If header settings differ */
-        if (isHeader() != pThat.isHeader()) {
-            return isHeader()
-                             ? -1
-                             : 1;
-        }
-
-        /* If the dates differ */
-        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Access parents */
-        T myParent = getParent();
-        T myAltParent = pThat.getParent();
-
-        /* If we are a child */
-        if (myParent != null) {
-            /* If we are both children */
-            if (myAltParent != null) {
-                /* Compare parents */
-                iDiff = Difference.compareObject(myParent, myAltParent);
-                if (iDiff != 0) {
-                    return iDiff;
-                }
-
-                /* Same parent so compare directly */
-
-                /* else we are comparing against a parent */
-            } else {
-                /* Compare parent with target */
-                iDiff = Difference.compareObject(myParent, pThat);
-                if (iDiff != 0) {
-                    return iDiff;
-                }
-
-                /* We are comparing against our parent, so always later */
-                return 1;
-            }
-
-            /* else if we are comparing against a child */
-        } else if (myAltParent != null) {
-            /* Compare with targets parent */
-            @SuppressWarnings("unchecked")
-            int iDiff1 = Difference.compareObject((T) this, myAltParent);
-            if (iDiff1 != 0) {
-                return iDiff1;
-            }
-
-            /* We are comparing against our parent, so always later */
-            return -1;
-        }
-
         /* If the categories differ */
-        iDiff = Difference.compareObject(getCategory(), pThat.getCategory());
+        int iDiff = Difference.compareObject(getCategory(), pThat.getCategory());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -946,18 +673,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         MoneyWiseData myData = getDataSet();
         ValueSet myValues = getValueSet();
         AssetPairManager myManager = getAssetPairManager();
-
-        /* Adjust Split */
-        Object mySplit = myValues.getValue(FIELD_SPLIT);
-        if (mySplit == null) {
-            setValueSplit(Boolean.FALSE);
-        }
-
-        /* Adjust Reconciled */
-        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
-        if (myReconciled == null) {
-            setValueReconciled(Boolean.FALSE);
-        }
 
         /* Resolve AssetPair */
         Object myValue = myValues.getValue(FIELD_PAIR);
@@ -1114,35 +829,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
-     * Set a new parent event.
-     * @param pParent the parent event
-     */
-    public void setParent(final T pParent) {
-        setValueParent(pParent);
-    }
-
-    /**
      * Set a new category.
      * @param pCategory the category
      */
     public void setCategory(final TransactionCategory pCategory) {
         setValueCategory(pCategory);
-    }
-
-    /**
-     * Set a reconciled indication.
-     * @param pReconciled the reconciled state
-     */
-    public void setReconciled(final Boolean pReconciled) {
-        setValueReconciled(pReconciled);
-    }
-
-    /**
-     * Set a split indication.
-     * @param pSplit the reconciled state
-     */
-    public void setSplit(final Boolean pSplit) {
-        setValueSplit(pSplit);
     }
 
     /**
@@ -1154,16 +845,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         setValueAmount(pAmount);
     }
 
-    /**
-     * Set a new date.
-     * @param pDate the new date
-     */
-    public void setDate(final JDateDay pDate) {
-        setValueDate((pDate == null)
-                                    ? null
-                                    : new JDateDay(pDate));
-    }
-
     @Override
     public void touchUnderlyingItems() {
         /* touch the event category referred to */
@@ -1172,12 +853,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* Touch the account and partner */
         getAccount().touchItem(this);
         getPartner().touchItem(this);
-
-        /* Touch parent */
-        T myParent = getParent();
-        if (myParent != null) {
-            myParent.touchItem(this);
-        }
     }
 
     /**
@@ -1185,26 +860,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     @Override
     public void validate() {
-        JDateDay myDate = getDate();
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         AssetDirection myDir = getDirection();
         JMoney myAmount = getAmount();
-        T myParent = getParent();
         TransactionCategory myCategory = getCategory();
         boolean doCheckCombo = true;
-
-        /* Determine date range to check for */
-        TransactionBaseList<T> myList = getList();
-        JDateDayRange myRange = myList.getValidDateRange();
-
-        /* The date must be non-null */
-        if (myDate == null) {
-            addError(ERROR_MISSING, FIELD_DATE);
-            /* The date must be in-range */
-        } else if (myRange.compareTo(myDate) != 0) {
-            addError(ERROR_RANGE, FIELD_DATE);
-        }
 
         /* Account must be non-null */
         if (myAccount == null) {
@@ -1266,19 +927,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             }
         }
 
-        /* If we have a parent */
-        if (myParent != null) {
-            /* Parent must not be child */
-            if (myParent.isChild()) {
-                addError(ERROR_BADPARENT, FIELD_PARENT);
-            }
-
-            /* Parent must have same date */
-            if (!Difference.isEqual(myDate, myParent.getDate())) {
-                addError(ERROR_PARENTDATE, FIELD_PARENT);
-            }
-        }
-
         /* Money must not be null */
         if (myAmount == null) {
             addError(ERROR_MISSING, FIELD_AMOUNT);
@@ -1307,11 +955,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pTrans the edited transaction
      */
     protected void applyBasicChanges(final T pTrans) {
-        /* Update the Date if required */
-        if (!Difference.isEqual(getDate(), pTrans.getDate())) {
-            setValueDate(pTrans.getDate());
-        }
-
         /* Update the assetPair if required */
         if (!Difference.isEqual(getAssetPair(), pTrans.getAssetPair())) {
             setValueAssetPair(pTrans.getAssetPair());
@@ -1332,24 +975,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             setValuePartner(pTrans.getPartner());
         }
 
-        /* Update the parent transaction if required */
-        if (!Difference.isEqual(getParent(), pTrans.getParent())) {
-            setValueParent(pTrans.getParent());
-        }
-
         /* Update the amount if required */
         if (!Difference.isEqual(getAmount(), pTrans.getAmount())) {
             setValueAmount(pTrans.getAmountField());
-        }
-
-        /* Update the reconciled state if required */
-        if (!Difference.isEqual(isReconciled(), pTrans.isReconciled())) {
-            setValueReconciled(pTrans.isReconciled());
-        }
-
-        /* Update the split state if required */
-        if (!Difference.isEqual(isSplit(), pTrans.isSplit())) {
-            setValueSplit(pTrans.isSplit());
         }
     }
 

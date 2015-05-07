@@ -196,7 +196,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             if (myValue instanceof String) {
                 parseEnumValue((String) myValue);
             } else {
-                parseEnumValue(getName());
+                parseEnumValue(getId());
             }
 
             /* Store the Order */
@@ -601,6 +601,35 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         for (S myValue : myEnums) {
             /* If this is the desired value */
             if (myValue.toString().equalsIgnoreCase(pValue)) {
+                /* Store the class */
+                setValueClass(myValue);
+
+                /* Access classId and order */
+                setId(myValue.getClassId());
+                setValueOrder(myValue.getOrder());
+                break;
+            }
+        }
+
+        /* Reject if we didn't find the class */
+        if (getStaticClass() == null) {
+            throw new JPrometheusDataException(ERROR_BADNAME + " " + myClass.getSimpleName() + ": " + pValue);
+        }
+    }
+
+    /**
+     * Parse enum type.
+     * @param pValue the value
+     * @throws JOceanusException on error
+     */
+    private void parseEnumValue(final Integer pValue) throws JOceanusException {
+        Class<S> myClass = getEnumClass();
+        S[] myEnums = myClass.getEnumConstants();
+
+        /* Loop through the enum constants */
+        for (S myValue : myEnums) {
+            /* If this is the desired value */
+            if (pValue.equals(myValue.getClassId())) {
                 /* Store the class */
                 setValueClass(myValue);
 

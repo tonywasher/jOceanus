@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
@@ -58,12 +56,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionBuilder;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Analysis Filter Classes.
@@ -93,11 +87,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
 
     /**
-     * Combine groups Field Id.
-     */
-    private static final JDataField FIELD_COMBINE = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_COMBINE.getValue());
-
-    /**
      * The Underlying bucket.
      */
     private final B theBucket;
@@ -113,11 +102,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     private final Class<T> theClass;
 
     /**
-     * Do we combine grouped transactions?
-     */
-    private Boolean doCombineGroups;
-
-    /**
      * Constructor.
      * @param pBucket the underlying bucket
      * @param pClass the attribute class
@@ -126,7 +110,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                              final Class<T> pClass) {
         theBucket = pBucket;
         theClass = pClass;
-        doCombineGroups = Boolean.FALSE;
     }
 
     @Override
@@ -143,11 +126,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             return theBucket == null
                                     ? JDataFieldValue.SKIP
                                     : theBucket;
-        }
-        if (FIELD_COMBINE.equals(pField)) {
-            return doCombineGroups
-                                  ? doCombineGroups
-                                  : JDataFieldValue.SKIP;
         }
 
         /* Unknown */
@@ -176,22 +154,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     /**
-     * Obtain combine groups setting.
-     * @return true/false
-     */
-    public Boolean getCombineGroups() {
-        return doCombineGroups;
-    }
-
-    /**
-     * Set combine groups setting.
-     * @param pCombineGroups true/false
-     */
-    public void setCombineGroups(final Boolean pCombineGroups) {
-        doCombineGroups = pCombineGroups;
-    }
-
-    /**
      * Get Analysis Type.
      * @return the Analysis Type
      */
@@ -211,48 +173,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return true/false
      */
     public boolean filterTransaction(final Transaction pTrans) {
-        /* If this is a split event */
-        if (doCombineGroups
-            && pTrans.isSplit()) {
-            /* Filter out children */
-            if (pTrans.isChild()) {
-                return true;
-            }
-
-            /* Access the group */
-            TransactionList myList = pTrans.getList();
-            TransactionGroup myGroup = myList.getGroup(pTrans);
-
-            /* Check parent */
-            if (!filterSingleTransaction(pTrans)) {
-                return false;
-            }
-
-            /* Loop through the children */
-            Iterator<Transaction> myIterator = myGroup.iterator();
-            while (myIterator.hasNext()) {
-                Transaction myTrans = myIterator.next();
-
-                /* Check transaction */
-                if (!filterSingleTransaction(myTrans)) {
-                    return false;
-                }
-            }
-
-            /* Ignore Transaction Group */
-            return true;
-        }
-
-        /* Check as a single transaction */
-        return filterSingleTransaction(pTrans);
-    }
-
-    /**
-     * Should we filter this transaction out?
-     * @param pTrans the transaction to check
-     * @return true/false
-     */
-    protected boolean filterSingleTransaction(final Transaction pTrans) {
         /* Check whether this transaction is registered */
         return !pTrans.isHeader()
                && getValuesForTransaction(pTrans) == null;
@@ -309,35 +229,10 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return the value
      */
     public JDecimal getBalanceForTransaction(final Transaction pTrans) {
-        /* If this is a split transaction */
-        if (doCombineGroups
-            && pTrans.isSplit()) {
-            /* Access the group */
-            TransactionList myList = pTrans.getList();
-            TransactionGroup myGroup = myList.getGroup(pTrans);
-
-            /* Initialise return as the balance for the parent */
-            JDecimal myBalance = getSingleBalanceForTransaction(pTrans);
-
-            /* Loop through the children */
-            Iterator<Transaction> myIterator = myGroup.iterator();
-            while (myIterator.hasNext()) {
-                Transaction myTrans = myIterator.next();
-
-                /* Access Balance for transaction */
-                JDecimal myValue = getSingleBalanceForTransaction(myTrans);
-                if (myValue != null) {
-                    /* We need the latest value */
-                    myBalance = myValue;
-                }
-            }
-
-            /* Return the balance */
-            return myBalance;
-        }
-
-        /* Obtain single transaction value */
-        return getSingleBalanceForTransaction(pTrans);
+        BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
+        return (myValues == null)
+                                 ? null
+                                 : myValues.getDecimalValue(getCurrentAttribute());
     }
 
     /**
@@ -379,42 +274,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return the value
      */
     private JDecimal getDeltaValueForTransaction(final Transaction pTrans) {
-        /* If this is a split transaction */
-        if (doCombineGroups
-            && pTrans.isSplit()) {
-            /* Access the group */
-            TransactionList myList = pTrans.getList();
-            TransactionGroup myGroup = myList.getGroup(pTrans);
-
-            /* Initialise return value as delta for parent */
-            JDecimal myTotal = getDeltaForTransaction(pTrans);
-
-            /* Loop through the children */
-            Iterator<Transaction> myIterator = myGroup.iterator();
-            while (myIterator.hasNext()) {
-                Transaction myTrans = myIterator.next();
-
-                /* Access Delta for transaction */
-                JDecimal myDelta = getDeltaForTransaction(myTrans);
-                if (myDelta != null) {
-                    /* If this is the first value */
-                    if (myTotal == null) {
-                        /* Record as value */
-                        myTotal = myDelta;
-
-                        /* else need to add values */
-                    } else {
-                        /* add values appropriately */
-                        myTotal = addDecimals(myTotal, myDelta);
-                    }
-                }
-            }
-
-            /* Return the total */
-            return myTotal;
-        }
-
-        /* Obtain single transaction value */
         return getDeltaForTransaction(pTrans);
     }
 
@@ -424,31 +283,19 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pSecond the second decimal
      * @return the sum
      */
-    private JDecimal addDecimals(final JDecimal pFirst,
-                                 final JDecimal pSecond) {
-        switch (theAttr.getDataType()) {
-            case MONEY:
-                ((JMoney) pFirst).addAmount((JMoney) pSecond);
-                return pFirst;
-            case UNITS:
-                ((JUnits) pFirst).addUnits((JUnits) pSecond);
-                return pFirst;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Obtain total money value for attribute.
-     * @param pTrans the transaction to check
-     * @return the value
-     */
-    public JDecimal getSingleBalanceForTransaction(final Transaction pTrans) {
-        BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
-        return (myValues == null)
-                                 ? null
-                                 : myValues.getDecimalValue(getCurrentAttribute());
-    }
+    // private JDecimal addDecimals(final JDecimal pFirst,
+    // final JDecimal pSecond) {
+    // switch (theAttr.getDataType()) {
+    // case MONEY:
+    // ((JMoney) pFirst).addAmount((JMoney) pSecond);
+    // return pFirst;
+    // case UNITS:
+    // ((JUnits) pFirst).addUnits((JUnits) pSecond);
+    // return pFirst;
+    // default:
+    // return null;
+    // }
+    // }
 
     /**
      * Obtain analysis name.
@@ -961,8 +808,9 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        protected boolean filterSingleTransaction(final Transaction pTrans) {
-            return pTrans.isHeader() || !getBucket().hasTransaction(pTrans);
+        public boolean filterTransaction(final Transaction pTrans) {
+            return pTrans.isHeader()
+                   || !getBucket().hasTransaction(pTrans);
         }
 
         @Override
@@ -1016,7 +864,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        protected boolean filterSingleTransaction(final Transaction pTrans) {
+        public boolean filterTransaction(final Transaction pTrans) {
             return pTrans.isHeader();
         }
 

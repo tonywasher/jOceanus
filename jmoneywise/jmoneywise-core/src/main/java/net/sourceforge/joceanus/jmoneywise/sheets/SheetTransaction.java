@@ -90,19 +90,8 @@ public class SheetTransaction
     private static final int COL_RECONCILED = COL_CATEGORY + 1;
 
     /**
-     * Split column.
-     */
-    private static final int COL_SPLIT = COL_RECONCILED + 1;
-
-    /**
-     * Reconciled column.
-     */
-    private static final int COL_PARENT = COL_SPLIT + 1;
-
-    /**
      * Constructor for loading a spreadsheet.
-     * @param pReader
-     * the spreadsheet reader
+     * @param pReader the spreadsheet reader
      */
     protected SheetTransaction(final MoneyWiseReader pReader) {
         /* Call super constructor */
@@ -115,8 +104,7 @@ public class SheetTransaction
 
     /**
      * Constructor for creating a spreadsheet.
-     * @param pWriter
-     * the spreadsheet writer
+     * @param pWriter the spreadsheet writer
      */
     protected SheetTransaction(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
@@ -138,8 +126,6 @@ public class SheetTransaction
         myValues.addValue(Transaction.FIELD_PARTNER, loadInteger(COL_PARTNER));
         myValues.addValue(Transaction.FIELD_AMOUNT, loadBytes(COL_AMOUNT));
         myValues.addValue(Transaction.FIELD_RECONCILED, loadBoolean(COL_RECONCILED));
-        myValues.addValue(Transaction.FIELD_SPLIT, loadBoolean(COL_SPLIT));
-        myValues.addValue(Transaction.FIELD_PARENT, loadInteger(COL_PARENT));
 
         /* Return the values */
         return myValues;
@@ -156,29 +142,22 @@ public class SheetTransaction
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeBoolean(COL_RECONCILED, pItem.isReconciled());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
-        writeBoolean(COL_SPLIT, pItem.isSplit());
-        writeInteger(COL_PARENT, pItem.getParentId());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_PARENT;
+        return COL_RECONCILED;
     }
 
     /**
      * Load the Events from an archive.
-     * @param pTask
-     * the task control
-     * @param pWorkBook
-     * the workbook
-     * @param pData
-     * the data set to load into
-     * @param pLoader
-     * the archive loader
+     * @param pTask the task control
+     * @param pWorkBook the workbook
+     * @param pData the data set to load into
+     * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
@@ -263,17 +242,12 @@ public class SheetTransaction
 
     /**
      * Process transaction row from archive.
-     * @param pLoader
-     * the archive loader
-     * @param pData
-     * the DataSet
-     * @param pView
-     * the spreadsheet view
-     * @param pRow
-     * the spreadsheet row
+     * @param pLoader the archive loader
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
      * @return continue true/false
-     * @throws JOceanusException
-     * on error
+     * @throws JOceanusException on error
      */
     private static boolean processTransaction(final ArchiveLoader pLoader,
                                               final MoneyWiseData pData,

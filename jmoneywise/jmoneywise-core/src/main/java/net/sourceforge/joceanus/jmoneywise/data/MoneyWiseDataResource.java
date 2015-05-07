@@ -509,11 +509,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     TRANSACTION_RECONCILED("Transaction.Reconciled"),
 
     /**
-     * Transaction Split.
-     */
-    TRANSACTION_SPLIT("Transaction.Split"),
-
-    /**
      * Transaction Split indication.
      */
     TRANSACTION_ID_SPLIT("Transaction.id.Split"),
@@ -524,16 +519,6 @@ public enum MoneyWiseDataResource implements ResourceId {
     TRANSACTION_INFOSET("Transaction.InfoSet"),
 
     /**
-     * Transaction Groups.
-     */
-    TRANSACTION_GROUPS("Transaction.Groups"),
-
-    /**
-     * Transaction Bad Date Error.
-     */
-    TRANSACTION_ERROR_BADPRICEDATE("Transaction.Error.BadPriceDate"),
-
-    /**
      * Transaction Circular Error.
      */
     TRANSACTION_ERROR_CIRCLE("Transaction.Error.Circular"),
@@ -542,16 +527,6 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Transaction AssetPair Error.
      */
     TRANSACTION_ERROR_ASSETPAIR("Transaction.Error.AssetPair"),
-
-    /**
-     * Transaction BadParent Error.
-     */
-    TRANSACTION_ERROR_BADPARENT("Transaction.Error.BadParent"),
-
-    /**
-     * Transaction ParentDate Error.
-     */
-    TRANSACTION_ERROR_PARENTDATE("Transaction.Error.ParentDate"),
 
     /**
      * Transaction ZeroAmount Error.

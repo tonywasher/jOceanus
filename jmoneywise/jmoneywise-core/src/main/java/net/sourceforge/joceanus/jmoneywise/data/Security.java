@@ -117,11 +117,6 @@ public class Security
     private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.SECURITY_NEWACCOUNT.getValue();
 
     /**
-     * Initial Price.
-     */
-    private SecurityPrice theInitPrice;
-
-    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -287,14 +282,6 @@ public class Security
     @Override
     public SecurityInfoSet getInfoSet() {
         return theInfoSet;
-    }
-
-    /**
-     * Obtain Initial Price.
-     * @return the price
-     */
-    public SecurityPrice getInitialPrice() {
-        return theInitPrice;
     }
 
     /**
@@ -564,26 +551,6 @@ public class Security
     @Override
     public SecurityList getList() {
         return (SecurityList) super.getList();
-    }
-
-    @Override
-    public void clearActive() {
-        /* Reset flags */
-        theInitPrice = null;
-
-        /* Pass call onwards */
-        super.clearActive();
-    }
-
-    @Override
-    public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
-        /* Check for initial price */
-        if (pSource instanceof SecurityPrice) {
-            theInitPrice = (SecurityPrice) pSource;
-        }
-
-        /* Pass call onwards */
-        super.touchItem(pSource);
     }
 
     @Override

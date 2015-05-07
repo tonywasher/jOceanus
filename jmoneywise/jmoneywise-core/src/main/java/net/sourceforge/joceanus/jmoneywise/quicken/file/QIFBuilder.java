@@ -170,37 +170,6 @@ public class QIFBuilder {
      * @param pTrans the transaction
      */
     protected void processEvent(final Transaction pTrans) {
-        /* If the event is split */
-        if (pTrans.isSplit()) {
-            /* Ignore if this is a child transaction */
-            if (pTrans.isChild()) {
-                return;
-            }
-
-            /* Process parent */
-            processSingleEvent(pTrans);
-
-            /* Loop through the children */
-            Iterator<Transaction> myIterator = pTrans.childIterator();
-            while (myIterator.hasNext()) {
-                Transaction myChild = myIterator.next();
-
-                /* Process the child */
-                processSingleEvent(myChild);
-            }
-
-            /* Else handle normally */
-        } else {
-            /* process the event */
-            processSingleEvent(pTrans);
-        }
-    }
-
-    /**
-     * Process event.
-     * @param pTrans the transaction
-     */
-    protected void processSingleEvent(final Transaction pTrans) {
         /* Access account and partner */
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionAsset myPartner = pTrans.getPartner();

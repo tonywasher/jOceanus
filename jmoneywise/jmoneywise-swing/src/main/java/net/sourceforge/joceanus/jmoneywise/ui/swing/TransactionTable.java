@@ -1816,7 +1816,6 @@ public class TransactionTable
         protected AnalysisHeader(final TransactionList pList) {
             super(pList);
             setHeader(true);
-            setSplit(Boolean.FALSE);
         }
     }
 }

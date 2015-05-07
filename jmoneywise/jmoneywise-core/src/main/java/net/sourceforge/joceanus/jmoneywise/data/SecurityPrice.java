@@ -945,6 +945,19 @@ public class SecurityPrice
         }
 
         /**
+         * Obtain priceList cursor.
+         * @param pSecurity the security
+         * @return the latest price for the date.
+         */
+        public ListIterator<SecurityPrice> priceIterator(final Security pSecurity) {
+            /* Access list for currency */
+            PriceList myList = theMapOfPrices.get(pSecurity);
+            return (myList != null)
+                                   ? myList.listIterator(myList.size())
+                                   : null;
+        }
+
+        /**
          * Price List class.
          */
         private static final class PriceList
