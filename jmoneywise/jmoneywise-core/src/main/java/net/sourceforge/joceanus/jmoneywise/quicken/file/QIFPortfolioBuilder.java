@@ -357,7 +357,8 @@ public class QIFPortfolioBuilder {
     /**
      * Process transfer to a security.
      * <p>
-     * Note that the source cannot be a Security, since that case is handled by {@link #processTransferFromSecurity}
+     * Note that the source cannot be a Security, since that case is handled by
+     * {@link #processTransferFromSecurity}
      * @param pHolding the security holding
      * @param pDebit the debit account
      * @param pTrans the transaction
@@ -515,7 +516,7 @@ public class QIFPortfolioBuilder {
                 processPortfolioXferForHolding(pHolding, (Portfolio) pCredit, pTrans);
                 break;
             case TRANSFER:
-            case STOCKRIGHTSWAIVED:
+            case STOCKRIGHTSISSUE:
             default:
                 processTransferOut(pHolding, pCredit, pTrans);
                 break;

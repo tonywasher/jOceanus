@@ -1155,8 +1155,7 @@ public class TaxBasisBucket
                 case STOCKTAKEOVER:
                 case STOCKSPLIT:
                 case STOCKDEMERGER:
-                case STOCKRIGHTSTAKEN:
-                case STOCKRIGHTSWAIVED:
+                case STOCKRIGHTSISSUE:
                 case PORTFOLIOXFER:
                 case TRANSFER:
                 default:

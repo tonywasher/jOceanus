@@ -321,83 +321,6 @@ public class SwingHTMLBuilder
     }
 
     /**
-     * Build print styleSheet.
-     * @param pSheet the styleSheet
-     */
-    private static void buildPrintStyleSheet(final StyleSheet pSheet) {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
-        /* Define standard font for body and table contents */
-        myBuilder.append(ELEMENT_BODY);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(" font-family: Verdana, sans-serif; font-size: 8px; color: black; }");
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define standard alignment for headers */
-        myBuilder.append(ELEMENT_TITLE);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_ALIGNCENTRE);
-        myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-        myBuilder.append(ELEMENT_SUBTITLE);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_ALIGNCENTRE);
-        myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define tables */
-        myBuilder.append(ELEMENT_TABLE);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(" width: 100%; border-collapse: collapse; }");
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-        myBuilder.append(ELEMENT_CELL);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_ALIGNCENTRE);
-        myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define table headers */
-        myBuilder.append(ELEMENT_TOTAL);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_FONTBOLD);
-        myBuilder.append(CSS_ALIGNCENTRE);
-        myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define alignment for data values */
-        myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_DATAVALUE);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_ALIGNRIGHT);
-        myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define alignment for negative values */
-        myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_NEGVALUE);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_ALIGNRIGHT);
-        myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Set link definition */
-        myBuilder.append(ELEMENT_LINK);
-        myBuilder.append(SEP_STARTRULE);
-        myBuilder.append(CSS_FONTBOLD);
-        myBuilder.append(" text-decoration: none; color: black; }");
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-    }
-
-    /**
      * Process the field configuration.
      */
     private void processFieldConfig() {
@@ -418,24 +341,6 @@ public class SwingHTMLBuilder
 
         /* Restore the text */
         theEditor.setText(myText);
-    }
-
-    /**
-     * Build print configuration.
-     * @param pPrintPane the print pane
-     */
-    public static void configurePrintPane(final JEditorPane pPrintPane) {
-        /* Create print editorKit and styleSheet */
-        HTMLEditorKit myPrintKit = new HTMLEditorKit();
-        StyleSheet myPrintStyle = new StyleSheet();
-        myPrintStyle.addStyleSheet(myPrintKit.getStyleSheet());
-        buildPrintStyleSheet(myPrintStyle);
-
-        /* Apply styleSheet to print window */
-        myPrintKit.setStyleSheet(myPrintStyle);
-        pPrintPane.setEditorKit(myPrintKit);
-        Document myDoc = myPrintKit.createDefaultDocument();
-        pPrintPane.setDocument(myDoc);
     }
 
     /**

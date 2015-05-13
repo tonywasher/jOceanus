@@ -121,195 +121,194 @@ public enum TransactionCategoryClass implements CategoryInterface {
     STOCKTAKEOVER(18, 21),
 
     /**
-     * Stock Rights Taken.
+     * Stock Rights Issue.
      */
-    STOCKRIGHTSTAKEN(19, 22),
-
-    /**
-     * Stock Rights Waived.
-     */
-    STOCKRIGHTSWAIVED(20, 23),
+    STOCKRIGHTSISSUE(19, 22),
 
     /**
      * PortfolioXfer.
      */
-    PORTFOLIOXFER(21, 24),
+    PORTFOLIOXFER(20, 23),
 
     /**
      * Stock Options Vested.
      */
-    OPTIONSVEST(22, 25),
+    OPTIONSVEST(21, 24),
 
     /**
      * Transfer.
      */
-    TRANSFER(23, 26),
+    TRANSFER(22, 25),
 
     /**
      * Stock Options Exercised.
      */
-    OPTIONSEXERCISE(24, 27),
+    OPTIONSEXERCISE(23, 26),
 
     /**
      * Expense.
      */
-    EXPENSE(25, 28),
+    EXPENSE(24, 27),
 
     /**
      * BadDebt.
      */
-    BADDEBT(26, 29),
+    BADDEBT(25, 28),
 
     /**
      * LocalTaxes.
      */
-    LOCALTAXES(27, 30),
+    LOCALTAXES(26, 29),
 
     /**
      * Write Off.
      */
-    WRITEOFF(28, 31),
+    WRITEOFF(27, 30),
 
     /**
      * Interest earned on Loans.
      */
-    LOANINTERESTCHARGED(29, 32),
+    LOANINTERESTCHARGED(28, 31),
 
     /**
      * Tax Relief.
      */
-    TAXRELIEF(30, 33),
+    TAXRELIEF(29, 32),
 
     /**
      * Tax Settlement.
      */
-    TAXSETTLEMENT(31, 34),
+    TAXSETTLEMENT(30, 33),
 
     /**
      * Taxed Interest.
      */
-    TAXEDINTEREST(32, 35),
+    TAXEDINTEREST(31, 34),
 
     /**
      * Gross Interest.
      */
-    GROSSINTEREST(33, 36),
+    GROSSINTEREST(32, 35),
 
     /**
      * Tax Free Interest.
      */
-    TAXFREEINTEREST(34, 37),
+    TAXFREEINTEREST(33, 36),
 
     /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(35, 38),
+    SHAREDIVIDEND(34, 37),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(36, 39),
+    UNITTRUSTDIVIDEND(35, 38),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(37, 40),
+    TAXFREEDIVIDEND(36, 39),
 
     /**
      * Taxed Loyalty Bonus.
      */
-    TAXEDLOYALTYBONUS(38, 41),
+    TAXEDLOYALTYBONUS(37, 40),
 
     /**
      * Gross LoyaltyBonus.
      */
-    GROSSLOYALTYBONUS(39, 42),
+    GROSSLOYALTYBONUS(38, 41),
 
     /**
      * Tax Free LoyaltyBonus.
      */
-    TAXFREELOYALTYBONUS(40, 43),
+    TAXFREELOYALTYBONUS(39, 42),
 
     /**
      * Taxable Gain.
      */
-    TAXABLEGAIN(41, 44),
+    TAXABLEGAIN(40, 43),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(42, 45),
+    CAPITALGAIN(41, 44),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(43, 46),
+    TAXFREEGAIN(42, 45),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(44, 47),
+    MARKETGROWTH(43, 46),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(45, 48),
+    CURRENCYFLUCTUATION(44, 47),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TAXCREDIT(46, 49),
+    TAXCREDIT(45, 48),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(47, 50),
+    NATINSURANCE(46, 49),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DEEMEDBENEFIT(48, 51),
+    DEEMEDBENEFIT(47, 50),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CHARITYDONATION(49, 52),
+    CHARITYDONATION(48, 51),
 
     /**
      * Income Totals.
      * <p>
-     * This is used for categories which simply own a set of income sub-categories and is used purely for reporting purposes.
+     * This is used for categories which simply own a set of income sub-categories and is used
+     * purely for reporting purposes.
      */
-    INCOMETOTALS(50, 1),
+    INCOMETOTALS(49, 1),
 
     /**
      * Expense Totals.
      * <p>
-     * This is used for categories which simply own a set of expense sub-categories and is used purely for reporting purposes.
+     * This is used for categories which simply own a set of expense sub-categories and is used
+     * purely for reporting purposes.
      */
-    EXPENSETOTALS(51, 2),
+    EXPENSETOTALS(50, 2),
 
     /**
      * Security Parent.
      * <p>
-     * This is used for categories which simply own a set of security transfer sub-categories and is used purely for holding purposes.
+     * This is used for categories which simply own a set of security transfer sub-categories and is
+     * used purely for holding purposes.
      */
-    SECURITYPARENT(52, 3),
+    SECURITYPARENT(51, 3),
 
     /**
      * Totals.
      * <p>
-     * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
+     * This is used for the total of all non-transfer categories and is used purely for reporting
+     * purposes.
      */
-    TOTALS(53, 0);
+    TOTALS(52, 0);
 
     /**
      * The String name.
@@ -449,7 +448,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * Determine whether the category type is singular.
-     * @return <code>true</code> if the event category type is singular, <code>false</code> otherwise.
+     * @return <code>true</code> if the event category type is singular, <code>false</code>
+     * otherwise.
      */
     public boolean isSingular() {
         switch (this) {
@@ -482,7 +482,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * Determine whether the CategoryType should have a tax credit.
-     * @return <code>true</code> if the event should have a tax credit, <code>false</code> otherwise.
+     * @return <code>true</code> if the event should have a tax credit, <code>false</code>
+     * otherwise.
      */
     public boolean needsTaxCredit() {
         switch (this) {
@@ -552,8 +553,6 @@ public enum TransactionCategoryClass implements CategoryInterface {
         switch (this) {
             case STOCKSPLIT:
             case STOCKDEMERGER:
-            case STOCKRIGHTSWAIVED:
-            case STOCKRIGHTSTAKEN:
                 return true;
             default:
                 return false;
@@ -631,7 +630,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * Determine whether the EventCategoryType can be parent categories.
-     * @return <code>true</code> if the event category type can parent categories, <code>false</code> otherwise.
+     * @return <code>true</code> if the event category type can parent categories,
+     * <code>false</code> otherwise.
      */
     public boolean canParentCategory() {
         switch (this) {
@@ -647,7 +647,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
 
     /**
      * Determine whether the EventCategoryType is a subTotal.
-     * @return <code>true</code> if the event category type is a subTotal, <code>false</code> otherwise.
+     * @return <code>true</code> if the event category type is a subTotal, <code>false</code>
+     * otherwise.
      */
     public boolean isSubTotal() {
         switch (this) {
@@ -684,8 +685,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case STOCKDEMERGER:
             case SECURITYREPLACE:
             case STOCKTAKEOVER:
-            case STOCKRIGHTSWAIVED:
-            case STOCKRIGHTSTAKEN:
+            case STOCKRIGHTSISSUE:
             case PORTFOLIOXFER:
             case OPTIONSVEST:
             case SECURITYPARENT:

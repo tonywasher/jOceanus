@@ -247,14 +247,9 @@ public enum StaticDataResource implements ResourceId {
     TRANSTYPE_STOCKTAKEOVER("TransType.StockTakeOver"),
 
     /**
-     * TransType StockRightsTaken.
+     * TransType StockRightsIssue.
      */
-    TRANSTYPE_STOCKRIGHTTAKE("TransType.StockRightsTaken"),
-
-    /**
-     * TransType StockRightsWaived.
-     */
-    TRANSTYPE_STOCKRIGHTWAIVE("TransType.StockRightsWaived"),
+    TRANSTYPE_STOCKRIGHTSISSUE("TransType.StockRightsIssue"),
 
     /**
      * TransType PortfolioXfer.
@@ -1232,10 +1227,8 @@ public enum StaticDataResource implements ResourceId {
                 return TRANSTYPE_STOCKTAKEOVER;
             case SECURITYREPLACE:
                 return TRANSTYPE_SECURITYREPLACE;
-            case STOCKRIGHTSTAKEN:
-                return TRANSTYPE_STOCKRIGHTTAKE;
-            case STOCKRIGHTSWAIVED:
-                return TRANSTYPE_STOCKRIGHTWAIVE;
+            case STOCKRIGHTSISSUE:
+                return TRANSTYPE_STOCKRIGHTSISSUE;
             case PORTFOLIOXFER:
                 return TRANSTYPE_PORTFOLIOXFER;
             case OPTIONSVEST:

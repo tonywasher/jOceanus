@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -104,6 +105,11 @@ public class Transaction
      * Circular update Error Text.
      */
     private static final String ERROR_CIRCULAR = MoneyWiseDataResource.TRANSACTION_ERROR_CIRCLE.getValue();
+
+    /**
+     * Debit and Dilution for DeMerger.
+     */
+    private static final String ERROR_DEBITDILUTION = MoneyWiseDataResource.TRANSACTION_ERROR_DEBITDILUTION.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -675,6 +681,7 @@ public class Transaction
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
+        JDilution myDilution = getDilution();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();
 
@@ -702,6 +709,13 @@ public class Transaction
         /* Cannot have Credit and Debit if securities are identical */
         if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myAccount, myPartner))) {
             addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS));
+        }
+
+        /* Must have either dilution or debit units for deMerger */
+        if (isCategoryClass(TransactionCategoryClass.STOCKDEMERGER)
+            && ((myDebitUnits == null) == (myDilution == null))) {
+            addError(ERROR_DEBITDILUTION, TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION));
+            addError(ERROR_DEBITDILUTION, TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS));
         }
 
         /* If we have a category and an infoSet */

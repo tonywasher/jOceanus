@@ -366,7 +366,7 @@ public class TransactionInfoSet
             return JDataFieldRequired.NOTALLOWED;
         }
         switch (pClass) {
-            case STOCKRIGHTSTAKEN:
+            case STOCKRIGHTSISSUE:
             case STOCKDEMERGER:
             case SECURITYREPLACE:
             case STOCKTAKEOVER:
@@ -391,10 +391,9 @@ public class TransactionInfoSet
         /* Dilution is only required for stock split/rights/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
-            case STOCKRIGHTSWAIVED:
-            case STOCKRIGHTSTAKEN:
-            case STOCKDEMERGER:
                 return JDataFieldRequired.MUSTEXIST;
+            case STOCKDEMERGER:
+                return JDataFieldRequired.CANEXIST;
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }

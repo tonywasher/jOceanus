@@ -112,15 +112,14 @@ public final class TransactionValidator {
                        && ((SecurityHolding) pAccount).getSecurity().isSecurityClass(SecurityTypeClass.PROPERTY);
 
             case UNITSADJUST:
+            case SECURITYREPLACE:
                 /* Account must be capital */
                 return pAccount.isCapital();
 
             case STOCKSPLIT:
-            case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKDEMERGER:
-            case STOCKRIGHTSWAIVED:
-            case STOCKRIGHTSTAKEN:
+            case STOCKRIGHTSISSUE:
                 /* Account must be shares */
                 return pAccount.isShares();
 
@@ -216,14 +215,9 @@ public final class TransactionValidator {
             case STOCKDEMERGER:
             case STOCKTAKEOVER:
             case SECURITYREPLACE:
-            case STOCKRIGHTSWAIVED:
             case PORTFOLIOXFER:
                 /* All need to be To */
                 return pDirection.isTo();
-
-            case STOCKRIGHTSTAKEN:
-                /* Needs to be From */
-                return pDirection.isFrom();
 
             default:
                 return true;
@@ -338,8 +332,7 @@ public final class TransactionValidator {
             case STOCKDEMERGER:
                 return checkTakeOver(pAccount, pPartner);
 
-            case STOCKRIGHTSTAKEN:
-            case STOCKRIGHTSWAIVED:
+            case STOCKRIGHTSISSUE:
                 return checkStockRights(pAccount, pPartner);
 
             case TRANSFER:

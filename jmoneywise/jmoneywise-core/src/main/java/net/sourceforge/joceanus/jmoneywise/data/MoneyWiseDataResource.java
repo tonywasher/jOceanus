@@ -524,6 +524,11 @@ public enum MoneyWiseDataResource implements ResourceId {
     TRANSACTION_ERROR_CIRCLE("Transaction.Error.Circular"),
 
     /**
+     * Transaction Debit+Dilution on DeMerger Error.
+     */
+    TRANSACTION_ERROR_DEBITDILUTION("Transaction.Error.DebitDilution"),
+
+    /**
      * Transaction AssetPair Error.
      */
     TRANSACTION_ERROR_ASSETPAIR("Transaction.Error.AssetPair"),

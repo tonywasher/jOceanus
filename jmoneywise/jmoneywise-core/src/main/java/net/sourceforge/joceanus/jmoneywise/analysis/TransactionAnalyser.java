@@ -587,8 +587,8 @@ public class TransactionAnalyser
         /* Switch on the category */
         TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
-        /* Process a stock right taken */
-            case STOCKRIGHTSWAIVED:
+        /* Process a stock right waived */
+            case STOCKRIGHTSISSUE:
                 processStockRightWaived(pDebit, (AssetBase<?>) pCredit);
                 break;
             /* Process a dividend */
@@ -678,7 +678,7 @@ public class TransactionAnalyser
         TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process standard transfer in/out */
-            case STOCKRIGHTSTAKEN:
+            case STOCKRIGHTSISSUE:
             case TRANSFER:
             case EXPENSE:
             case INHERITED:
@@ -1288,9 +1288,28 @@ public class TransactionAnalyser
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myValues = myAsset.getValues();
 
-        /* Calculate the diluted value of the Debit account */
+        /* Obtain current cost and units */
         JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
-        JMoney myNewCost = myCost.getDilutedMoney(myDilution);
+        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+        JMoney myNewCost;
+
+        /* If we reduced the units */
+        if (myDeltaUnits != null) {
+            /* Record the delta units */
+            myDeltaUnits = new JUnits(myDeltaUnits);
+            myDeltaUnits.negate();
+            myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
+
+            /* Calculate the new cost */
+            JUnits myNewUnits = new JUnits(myUnits);
+            myNewUnits.addUnits(myDeltaUnits);
+            myNewCost = myCost.valueAtWeight(myNewUnits, myUnits);
+
+            /* else we diluted the holding */
+        } else {
+            /* Calculate the diluted cost */
+            myNewCost = myCost.getDilutedMoney(myDilution);
+        }
 
         /* Calculate the delta to the cost */
         JMoney myDeltaCost = new JMoney(myNewCost);
@@ -1299,14 +1318,6 @@ public class TransactionAnalyser
         /* Record the delta cost/investment */
         myAsset.adjustCounter(SecurityAttribute.COST, myDeltaCost);
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
-
-        /* If we reduced the units */
-        if (myDeltaUnits != null) {
-            /* Record the delta units */
-            myDeltaUnits = new JUnits(myDeltaUnits);
-            myDeltaUnits.negate();
-            myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
-        }
 
         /* Register the event */
         myAsset.registerTransaction(theHelper);

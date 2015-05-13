@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterException;
 
 import javax.swing.BoxLayout;
@@ -42,7 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
-import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingHTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingReportManager;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -111,11 +111,6 @@ public class ReportTab
     private final JEditorPane theEditor;
 
     /**
-     * The print version of the report.
-     */
-    private final JEditorPane thePrint;
-
-    /**
      * The Report selection Panel.
      */
     private final ReportSelect theSelect;
@@ -170,11 +165,6 @@ public class ReportTab
 
         /* Create the report builder */
         theBuilder = new ReportBuilder(theManager);
-
-        /* Create the print pane for the window */
-        thePrint = new JEditorPane();
-        thePrint.setEditable(false);
-        SwingHTMLBuilder.configurePrintPane(thePrint);
 
         /* Create a scroll-pane for the editor */
         theScroll = new JEnableScroll();
@@ -246,12 +236,11 @@ public class ReportTab
     private void printIt() {
         /* Print the current report */
         try {
-            /* Copy text from editor */
-            String myText = theEditor.getText();
-            thePrint.setText(myText);
+            /* Print the data */
+            theEditor.print();
 
-            /* Print the report */
-            thePrint.print();
+        } catch (PrinterAbortException e) {
+            return;
         } catch (PrinterException e) {
             LOGGER.error("Failed to print", e);
         }

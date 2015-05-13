@@ -906,7 +906,10 @@ public class ArchiveLoader {
             } else if (!isSplit) {
                 /* Flip values for StockRightsTaken and LoanInterest */
                 switch (theCategory.getCategoryTypeClass()) {
-                    case STOCKRIGHTSTAKEN:
+                    case STOCKRIGHTSISSUE:
+                        /* Use credit as account */
+                        bDebitIsAccount = myDebitType.isSecurityHolding();
+                        break;
                     case LOANINTERESTEARNED:
                         /* Use credit as account */
                         bDebitIsAccount = false;
