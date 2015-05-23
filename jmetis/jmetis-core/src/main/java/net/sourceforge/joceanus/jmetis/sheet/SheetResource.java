@@ -90,14 +90,14 @@ public enum SheetResource implements ResourceId {
      * @param pType the Type
      * @return the resource key
      */
-    protected static SheetResource getKeyForWorkBook(final WorkBookType pType) {
+    protected static ResourceId getKeyForWorkBook(final WorkBookType pType) {
         switch (pType) {
             case EXCELXLS:
                 return WORKBOOK_EXCELXLS;
             case OASISODS:
                 return WORKBOOK_OASISODS;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pType));
         }
     }
 }

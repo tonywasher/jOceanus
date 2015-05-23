@@ -494,7 +494,7 @@ public enum MoneyWiseUIResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static MoneyWiseUIResource getKeyForColumnSet(final AnalysisColumnSet pValue) {
+    protected static ResourceId getKeyForColumnSet(final AnalysisColumnSet pValue) {
         switch (pValue) {
             case BALANCE:
                 return COLUMNSET_BALANCE;
@@ -511,7 +511,7 @@ public enum MoneyWiseUIResource implements ResourceId {
             case ALL:
                 return COLUMNSET_ALL;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

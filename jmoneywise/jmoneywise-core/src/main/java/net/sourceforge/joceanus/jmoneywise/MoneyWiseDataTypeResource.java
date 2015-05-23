@@ -499,7 +499,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static MoneyWiseDataTypeResource getKeyForDataType(final MoneyWiseDataType pValue) {
+    protected static ResourceId getKeyForDataType(final MoneyWiseDataType pValue) {
         switch (pValue) {
             case DEPOSITTYPE:
                 return DEPOSITTYPE_NAME;
@@ -586,7 +586,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
             case SCHEDULE:
                 return SCHEDULE_NAME;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -595,7 +595,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static MoneyWiseDataTypeResource getKeyForDataList(final MoneyWiseDataType pValue) {
+    protected static ResourceId getKeyForDataList(final MoneyWiseDataType pValue) {
         switch (pValue) {
             case DEPOSITTYPE:
                 return DEPOSITTYPE_LIST;
@@ -682,7 +682,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
             case SCHEDULE:
                 return SCHEDULE_LIST;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

@@ -220,7 +220,7 @@ public enum PreferenceResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static PreferenceResource getKeyForValueClass(final ValueClass pValue) {
+    protected static ResourceId getKeyForValueClass(final ValueClass pValue) {
         switch (pValue) {
             case STRING:
                 return VALUE_STRING;
@@ -239,7 +239,7 @@ public enum PreferenceResource implements ResourceId {
             case CHARARRAY:
                 return VALUE_CHARARRAY;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -248,7 +248,7 @@ public enum PreferenceResource implements ResourceId {
      * @param pType the type
      * @return the resource key
      */
-    protected static PreferenceResource getKeyForPrefType(final PreferenceType pType) {
+    protected static ResourceId getKeyForPrefType(final PreferenceType pType) {
         switch (pType) {
             case STRING:
                 return TYPE_STRING;
@@ -269,8 +269,7 @@ public enum PreferenceResource implements ResourceId {
             case FONT:
                 return TYPE_FONT;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pType));
         }
     }
-
 }

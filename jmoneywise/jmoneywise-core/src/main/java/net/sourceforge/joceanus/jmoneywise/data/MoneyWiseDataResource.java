@@ -677,7 +677,7 @@ public enum MoneyWiseDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static MoneyWiseDataResource getKeyForAssetType(final AssetType pValue) {
+    protected static ResourceId getKeyForAssetType(final AssetType pValue) {
         switch (pValue) {
             case PAYEE:
                 return ASSETTYPE_PAYEE;
@@ -696,7 +696,7 @@ public enum MoneyWiseDataResource implements ResourceId {
             case SECURITYHOLDING:
                 return ASSETTYPE_SECURITYHOLDING;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -705,14 +705,14 @@ public enum MoneyWiseDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static MoneyWiseDataResource getKeyForAssetDirection(final AssetDirection pValue) {
+    protected static ResourceId getKeyForAssetDirection(final AssetDirection pValue) {
         switch (pValue) {
             case TO:
                 return ASSETDIRECTION_TO;
             case FROM:
                 return ASSETDIRECTION_FROM;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

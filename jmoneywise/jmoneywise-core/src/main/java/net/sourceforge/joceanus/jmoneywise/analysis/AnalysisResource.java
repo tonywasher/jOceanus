@@ -535,7 +535,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static AnalysisResource getKeyForAccountAttr(final AccountAttribute pValue) {
+    protected static ResourceId getKeyForAccountAttr(final AccountAttribute pValue) {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
@@ -560,7 +560,7 @@ public enum AnalysisResource implements ResourceId {
             case BADDEBT:
                 return ACCOUNTATTR_BADDEBT;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -569,7 +569,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static AnalysisResource getKeyForEventAttr(final TransactionAttribute pValue) {
+    protected static ResourceId getKeyForEventAttr(final TransactionAttribute pValue) {
         switch (pValue) {
             case INCOME:
                 return PAYEEATTR_INCOME;
@@ -578,7 +578,7 @@ public enum AnalysisResource implements ResourceId {
             case PROFIT:
                 return ACCOUNTATTR_PROFIT;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -587,7 +587,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static AnalysisResource getKeyForPayeeAttr(final PayeeAttribute pValue) {
+    protected static ResourceId getKeyForPayeeAttr(final PayeeAttribute pValue) {
         switch (pValue) {
             case INCOME:
                 return PAYEEATTR_INCOME;
@@ -596,7 +596,7 @@ public enum AnalysisResource implements ResourceId {
             case PROFIT:
                 return ACCOUNTATTR_PROFIT;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -605,7 +605,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static AnalysisResource getKeyForSecurityAttr(final SecurityAttribute pValue) {
+    protected static ResourceId getKeyForSecurityAttr(final SecurityAttribute pValue) {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
@@ -650,7 +650,7 @@ public enum AnalysisResource implements ResourceId {
             case PRICE:
                 return SECURITYATTR_PRICE;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -659,7 +659,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static AnalysisResource getKeyForTaxAttr(final TaxBasisAttribute pValue) {
+    protected static ResourceId getKeyForTaxAttr(final TaxBasisAttribute pValue) {
         switch (pValue) {
             case GROSS:
                 return TAXATTR_GROSS;
@@ -668,7 +668,7 @@ public enum AnalysisResource implements ResourceId {
             case TAXCREDIT:
                 return TAXATTR_TAX;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -700,7 +700,7 @@ public enum AnalysisResource implements ResourceId {
             case ALL:
                 return FILTER_ALL;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

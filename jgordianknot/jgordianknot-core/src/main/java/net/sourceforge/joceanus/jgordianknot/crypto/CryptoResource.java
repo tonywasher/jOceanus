@@ -255,12 +255,12 @@ public enum CryptoResource implements ResourceId {
      * @param pProvider the Provider
      * @return the resource key
      */
-    protected static CryptoResource getKeyForProvider(final SecurityProvider pProvider) {
+    protected static ResourceId getKeyForProvider(final SecurityProvider pProvider) {
         switch (pProvider) {
             case BC:
                 return PROVIDER_BC;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pProvider));
         }
     }
 
@@ -269,7 +269,7 @@ public enum CryptoResource implements ResourceId {
      * @param pDigest the DigestType
      * @return the resource key
      */
-    protected static CryptoResource getKeyForDigest(final DigestType pDigest) {
+    protected static ResourceId getKeyForDigest(final DigestType pDigest) {
         switch (pDigest) {
             case SHA2:
                 return DIGEST_SHA2;
@@ -286,7 +286,7 @@ public enum CryptoResource implements ResourceId {
             case SKEIN:
                 return DIGEST_SKEIN;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pDigest));
         }
     }
 
@@ -295,7 +295,7 @@ public enum CryptoResource implements ResourceId {
      * @param pMac the MacType
      * @return the resource key
      */
-    protected static CryptoResource getKeyForHMac(final MacType pMac) {
+    protected static ResourceId getKeyForHMac(final MacType pMac) {
         switch (pMac) {
             case HMAC:
                 return MAC_HMAC;
@@ -308,7 +308,7 @@ public enum CryptoResource implements ResourceId {
             case VMPC:
                 return MAC_VMPC;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pMac));
         }
     }
 
@@ -317,7 +317,7 @@ public enum CryptoResource implements ResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static CryptoResource getKeyForSym(final SymKeyType pKeyType) {
+    protected static ResourceId getKeyForSym(final SymKeyType pKeyType) {
         switch (pKeyType) {
             case AES:
                 return SYMKEY_AES;
@@ -334,7 +334,7 @@ public enum CryptoResource implements ResourceId {
             case THREEFISH:
                 return SYMKEY_THREEFISH;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pKeyType));
         }
     }
 
@@ -343,7 +343,7 @@ public enum CryptoResource implements ResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static CryptoResource getKeyForStream(final StreamKeyType pKeyType) {
+    protected static ResourceId getKeyForStream(final StreamKeyType pKeyType) {
         switch (pKeyType) {
             case XSALSA20:
                 return STREAMKEY_XSALSA20;
@@ -354,7 +354,7 @@ public enum CryptoResource implements ResourceId {
             case VMPC:
                 return STREAMKEY_VMPC;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pKeyType));
         }
     }
 }

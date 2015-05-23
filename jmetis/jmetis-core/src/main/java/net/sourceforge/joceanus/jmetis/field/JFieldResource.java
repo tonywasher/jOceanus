@@ -85,12 +85,12 @@ public enum JFieldResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static JFieldResource getKeyForFieldValue(final JFieldValue pValue) {
+    protected static ResourceId getKeyForFieldValue(final JFieldValue pValue) {
         switch (pValue) {
             case ERROR:
                 return FIELDVALUE_ERROR;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

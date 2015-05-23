@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -431,14 +430,14 @@ public final class TransactionValidator {
      * @return valid true/false
      */
     private static boolean checkCashBack(final TransactionAsset pAccount) {
-        /* If this is deposit then must be peer2peer */
+        /* If this is deposit then check whether it can support cashBack */
         if (pAccount instanceof Deposit) {
-            return ((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER);
+            return ((Deposit) pAccount).getCategoryClass().canCashBack();
         }
 
-        /* If this is loan then must be creditCard */
+        /* If this is loan then check whether it can support cashBack */
         if (pAccount instanceof Loan) {
-            return ((Loan) pAccount).isLoanClass(LoanCategoryClass.CREDITCARD);
+            return ((Loan) pAccount).getCategoryClass().canCashBack();
         }
 
         /* not allowed */
@@ -451,9 +450,9 @@ public final class TransactionValidator {
      * @return valid true/false
      */
     private static boolean checkLoyaltyBonus(final TransactionAsset pAccount) {
-        /* If this is deposit then must be peer2peer */
+        /* If this is deposit then check whether it can support loyaltyBonus */
         if (pAccount instanceof Deposit) {
-            return ((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER);
+            return ((Deposit) pAccount).getCategoryClass().canLoyaltyBonus();
         }
 
         /* must be portfolio */

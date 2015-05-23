@@ -95,7 +95,7 @@ public enum PreferenceResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static PreferenceResource getKeyForDriver(final JDBCDriver pValue) {
+    protected static ResourceId getKeyForDriver(final JDBCDriver pValue) {
         switch (pValue) {
             case SQLSERVER:
                 return DRIVER_SQLSERVER;
@@ -104,7 +104,7 @@ public enum PreferenceResource implements ResourceId {
             case MYSQL:
                 return DRIVER_MYSQL;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

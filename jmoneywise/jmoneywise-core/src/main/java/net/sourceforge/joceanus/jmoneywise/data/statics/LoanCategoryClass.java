@@ -33,23 +33,25 @@ public enum LoanCategoryClass implements CategoryInterface {
     /**
      * CreditCard.
      * <p>
-     * This is a Credit Card account, which is a specialised form of a {@link #LOAN} account. It simply differs in reporting treatment in that overall spend is
-     * tracked.
+     * This is a Credit Card account, which is a specialised form of a {@link #LOAN} account. It
+     * simply differs in reporting treatment in that overall spend is tracked.
      */
     CREDITCARD(1, 1),
 
     /**
      * PrivateLoan.
      * <p>
-     * This is a PrivateLoan account, which is a specialised form of a {@link #LOAN} account. It represents a loan to/from the client from/to an individual
-     * represented by a {@link PayeeTypeClass#INDIVIDUAL} account.
+     * This is a PrivateLoan account, which is a specialised form of a {@link #LOAN} account. It
+     * represents a loan to/from the client from/to an individual represented by a
+     * {@link PayeeTypeClass#INDIVIDUAL} account.
      */
     PRIVATELOAN(2, 2),
 
     /**
      * Generic Loan.
      * <p>
-     * This is a Loan account which represents a loan to/from the client from/to a {@link PayeeTypeClass#INSTITUTION} account.
+     * This is a Loan account which represents a loan to/from the client from/to a
+     * {@link PayeeTypeClass#INSTITUTION} account.
      */
     LOAN(3, 3),
 
@@ -125,7 +127,8 @@ public enum LoanCategoryClass implements CategoryInterface {
 
     /**
      * Determine whether the LoanCategoryType is a child, and needs a parent.
-     * @return <code>true</code> if the account category type is a child, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type is a child, <code>false</code>
+     * otherwise.
      */
     public boolean isChild() {
         switch (this) {
@@ -139,8 +142,23 @@ public enum LoanCategoryClass implements CategoryInterface {
     }
 
     /**
+     * Determine whether the LoanCategoryType can provide cashBack.
+     * @return <code>true</code> if the loan category type can provide cashBack, <code>false</code>
+     * otherwise.
+     */
+    public boolean canCashBack() {
+        switch (this) {
+            case CREDITCARD:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether the LoanCategoryType is a parent category.
-     * @return <code>true</code> if the loan category type is a parent category, <code>false</code> otherwise.
+     * @return <code>true</code> if the loan category type is a parent category, <code>false</code>
+     * otherwise.
      */
     public boolean isParentCategory() {
         switch (this) {

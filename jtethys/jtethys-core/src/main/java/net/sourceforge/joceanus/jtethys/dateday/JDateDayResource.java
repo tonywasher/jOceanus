@@ -205,7 +205,7 @@ public enum JDateDayResource implements ResourceId {
      * @param pPeriod the period
      * @return the resource key
      */
-    protected static JDateDayResource getKeyForPeriod(final JDatePeriod pPeriod) {
+    protected static ResourceId getKeyForPeriod(final JDatePeriod pPeriod) {
         switch (pPeriod) {
             case ONEWEEK:
                 return PERIOD_ONEWEEK;
@@ -234,7 +234,7 @@ public enum JDateDayResource implements ResourceId {
             case ALLDATES:
                 return PERIOD_ALLDATES;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pPeriod));
         }
     }
 }

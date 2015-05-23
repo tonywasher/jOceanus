@@ -550,7 +550,7 @@ public enum PrometheusDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static PrometheusDataResource getKeyForCryptoItem(final CryptographyDataType pValue) {
+    protected static ResourceId getKeyForCryptoItem(final CryptographyDataType pValue) {
         switch (pValue) {
             case CONTROLKEY:
                 return CONTROLKEY_NAME;
@@ -561,7 +561,7 @@ public enum PrometheusDataResource implements ResourceId {
             case CONTROLDATA:
                 return CONTROLDATA_NAME;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -570,7 +570,7 @@ public enum PrometheusDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static PrometheusDataResource getKeyForCryptoList(final CryptographyDataType pValue) {
+    protected static ResourceId getKeyForCryptoList(final CryptographyDataType pValue) {
         switch (pValue) {
             case CONTROLKEY:
                 return CONTROLKEY_LIST;
@@ -581,7 +581,7 @@ public enum PrometheusDataResource implements ResourceId {
             case CONTROLDATA:
                 return CONTROLDATA_LIST;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

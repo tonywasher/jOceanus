@@ -130,7 +130,7 @@ public enum DataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static DataResource getKeyForDifference(final Difference pValue) {
+    protected static ResourceId getKeyForDifference(final Difference pValue) {
         switch (pValue) {
             case IDENTICAL:
                 return DIFFERENCE_IDENTICAL;
@@ -139,7 +139,7 @@ public enum DataResource implements ResourceId {
             case DIFFERENT:
                 return DIFFERENCE_DIFFERENT;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -148,14 +148,14 @@ public enum DataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static DataResource getKeyForFieldValue(final JDataFieldValue pValue) {
+    protected static ResourceId getKeyForFieldValue(final JDataFieldValue pValue) {
         switch (pValue) {
             case UNKNOWN:
                 return FIELDVALUE_UNKNOWN;
             case SKIP:
                 return FIELDVALUE_SKIP;
             default:
-                return null;
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

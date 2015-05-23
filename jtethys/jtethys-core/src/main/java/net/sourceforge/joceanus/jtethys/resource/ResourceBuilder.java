@@ -132,4 +132,18 @@ public final class ResourceBuilder {
         /* No change */
         return pClass;
     }
+
+    /**
+     * Error for missing resource.
+     * @param pId the missing id
+     * @return the error message
+     */
+    public static String getErrorNoResource(final Enum<?> pId) {
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append("Missing Resource: ");
+        myBuilder.append(pId.getClass().getName());
+        myBuilder.append(':');
+        myBuilder.append(pId.name());
+        return myBuilder.toString();
+    }
 }

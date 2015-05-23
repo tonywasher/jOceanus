@@ -75,7 +75,7 @@
     <ApacheMavenVersion>3.3.3</ApacheMavenVersion>
     <MySQLVersion>5.1.35</MySQLVersion>
     <PostGreSQLVersion>9.4-1201-jdbc41</PostGreSQLVersion>
-    <ApachePOIVersion>3.11</ApachePOIVersion>
+    <ApachePOIVersion>3.12</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.11.0</XercesVersion>
     <SLF4JVersion>1.7.12</SLF4JVersion>
