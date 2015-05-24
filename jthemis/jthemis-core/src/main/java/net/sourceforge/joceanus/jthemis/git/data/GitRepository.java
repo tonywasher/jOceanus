@@ -89,7 +89,6 @@ public class GitRepository
 
         /* Report start of analysis */
         if (pReport.initTask("Analysing components")) {
-
             /* Discover components */
             myComponents.discover(pReport);
 

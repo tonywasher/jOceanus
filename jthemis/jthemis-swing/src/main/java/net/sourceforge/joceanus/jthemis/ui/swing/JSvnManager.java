@@ -172,6 +172,16 @@ public final class JSvnManager {
     private ViewerWindow theDataWdw = null;
 
     /**
+     * The GitRepo entry
+     */
+    private ViewerEntry theGitEntry = null;
+
+    /**
+     * The Error entry
+     */
+    private ViewerEntry theErrorEntry = null;
+
+    /**
      * The Window Close handler.
      */
     private WindowClose theCloseHandler = new WindowClose();
@@ -379,14 +389,8 @@ public final class JSvnManager {
             theCreateGit.setEnabled(true);
         }
 
-        /* If we have an error */
-        JOceanusException myError = pData.getError();
-        if (myError != null) {
-            ViewerEntry myErrorEntry = theViewerMgr.newEntry("Error");
-            myErrorEntry.addAsRootChild();
-            myErrorEntry.setObject(myError);
-            myErrorEntry.setFocus();
-        }
+        /* process any error */
+        processError(pData.getError());
     }
 
     /**
@@ -394,12 +398,43 @@ public final class JSvnManager {
      * @param pGit the git thread
      */
     protected void setGitData(final CreateGitRepo pGit) {
+        /* Ensure that we have a Git entry */
+        if (theGitEntry == null) {
+            theGitEntry = theViewerMgr.newEntry("GitRepo");
+            theErrorEntry.addAsRootChild();
+        }
+
         /* Declare repository to data manager */
-        ViewerEntry myRepEntry = theViewerMgr.newEntry("GitRepo");
-        myRepEntry.addAsRootChild();
         GitRepository myRepo = pGit.getGitRepo();
-        myRepEntry.setObject(myRepo);
-        myRepEntry.setFocus();
+        theGitEntry.setObject(myRepo);
+        theGitEntry.setFocus();
+
+        /* process any error */
+        processError(pGit.getError());
+    }
+
+    /**
+     * process error.
+     * @param pError the error
+     */
+    private void processError(final JOceanusException pError) {
+        /* If we have an error */
+        if (pError != null) {
+            /* Ensure that we have an error entry */
+            if (theErrorEntry == null) {
+                theErrorEntry = theViewerMgr.newEntry("Error");
+                theErrorEntry.addAsRootChild();
+            }
+
+            /* Set data and focus */
+            theErrorEntry.showEntry();
+            theErrorEntry.setObject(pError);
+            theErrorEntry.setFocus();
+
+            /* else hide any error entry */
+        } else if (theErrorEntry != null) {
+            theErrorEntry.hideEntry();
+        }
     }
 
     /**

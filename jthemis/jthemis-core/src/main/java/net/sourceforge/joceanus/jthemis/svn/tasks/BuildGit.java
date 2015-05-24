@@ -134,41 +134,136 @@ public class BuildGit {
         /* Build the trunk */
         buildTrunk(pReport);
 
+        /* Loop to build the branches */
+        SvnExtractStatus myStatus = SvnExtractStatus.REPEAT;
+        while (myStatus.doRetry()) {
+            /* Build the branches */
+            myStatus = tryBuildBranches(pReport);
+
+            /* If we are not cancelled */
+            if (!myStatus.isCancelled()) {
+                /* Build the tags */
+                myStatus = myStatus.combineStatus(tryBuildTags(pReport));
+            }
+        }
+
+        /* Note failure */
+        if (myStatus.isBlocked()) {
+            throw new JThemisLogicException("Blocked on extract");
+        }
+
+        /* If we are complete */
+        if (myStatus.isComplete()) {
+            /* Report stage */
+            if (pReport.initTask("Collecting garbage")) {
+                /* Perform garbage collection */
+                garbageCollect();
+            }
+        }
+    }
+
+    /**
+     * Try to build the branches.
+     * @param pReport the report status
+     * @return the extract status
+     * @throws JOceanusException on error
+     */
+    private SvnExtractStatus tryBuildBranches(final ReportStatus pReport) throws JOceanusException {
+        /* Create flags */
+        boolean isBlocked = false;
+        boolean isExtracted = false;
+
         /* Build the branches */
         Iterator<SvnBranchExtractPlan> myBranchIterator = thePlan.branchIterator();
         while (myBranchIterator.hasNext()) {
             SvnBranchExtractPlan myPlan = myBranchIterator.next();
 
-            /* Report stage */
-            if (!pReport.initTask("Building branch " + myPlan.getOwner())) {
-                return;
+            /* Ignore if we have already extracted this plan */
+            if (myPlan.haveExtracted()) {
+                continue;
             }
 
-            /* Build the branch */
-            buildBranch(pReport, myPlan);
+            /* Access anchor point */
+            SvnExtractAnchor myAnchor = myPlan.getAnchor();
+            if (myAnchor == null) {
+                throw new JThemisLogicException("Unanchored branch");
+            }
+
+            /* If we have seen this anchor point */
+            RevCommit myLastCommit = theCommitMap.get(myAnchor.toString());
+            if (myLastCommit != null) {
+                /* Report stage */
+                if (!pReport.initTask("Building branch " + myPlan.getOwner())) {
+                    return SvnExtractStatus.CANCELLED;
+                }
+
+                /* Build the branch */
+                buildBranch(pReport, myPlan, myLastCommit);
+
+                /* Note completion */
+                myPlan.markExtracted();
+                isExtracted = true;
+
+                /* else note blockage */
+            } else {
+                isBlocked = true;
+            }
         }
+
+        /* return status */
+        return SvnExtractStatus.determineStatus(isExtracted, isBlocked);
+    }
+
+    /**
+     * Try to build the tags.
+     * @param pReport the report status
+     * @return the extract status
+     * @throws JOceanusException on error
+     */
+    private SvnExtractStatus tryBuildTags(final ReportStatus pReport) throws JOceanusException {
+        /* Create flags */
+        boolean isBlocked = false;
+        boolean isExtracted = false;
 
         /* Build the tags */
         Iterator<SvnTagExtractPlan> myTagIterator = thePlan.tagIterator();
         while (myTagIterator.hasNext()) {
             SvnTagExtractPlan myPlan = myTagIterator.next();
 
-            /* Report stage */
-            if (!pReport.initTask("Building tag " + myPlan.getOwner())) {
-                return;
+            /* Ignore if we have already extracted this plan */
+            if (myPlan.haveExtracted()) {
+                continue;
             }
 
-            /* Build the tag */
-            buildTag(pReport, myPlan);
+            /* Access anchor point */
+            SvnExtractAnchor myAnchor = myPlan.getAnchor();
+            if (myAnchor == null) {
+                throw new JThemisLogicException("Unanchored tag");
+            }
+
+            /* If we have seen this anchor point */
+            RevCommit myLastCommit = theCommitMap.get(myAnchor.toString());
+            if (myLastCommit != null) {
+                /* Report stage */
+                if (!pReport.initTask("Building tag " + myPlan.getOwner())) {
+                    return SvnExtractStatus.CANCELLED;
+                }
+
+                /* Build the tag */
+                buildTag(pReport, myPlan, myLastCommit);
+
+                /* Note completion */
+                myPlan.markExtracted();
+                isExtracted = true;
+
+                /* else note blockage */
+            } else {
+                isBlocked = true;
+            }
         }
 
-        /* Report stage */
-        if (!pReport.initTask("Collecting garbage")) {
-            return;
-        }
-
-        /* Perform garbage collection */
-        garbageCollect();
+        /* return status */
+        return SvnExtractStatus.determineStatus(isExtracted, isBlocked);
     }
 
     /**
@@ -192,24 +287,16 @@ public class BuildGit {
      * Build the branch.
      * @param pReport the report status
      * @param pBranchPlan the branch to build
+     * @param pLastCommit the commit to branch from
      * @throws JOceanusException on error
      */
     private void buildBranch(final ReportStatus pReport,
-                             final SvnBranchExtractPlan pBranchPlan) throws JOceanusException {
+                             final SvnBranchExtractPlan pBranchPlan,
+                             final RevCommit pLastCommit) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
             SvnBranch myOwner = pBranchPlan.getOwner();
-
-            /* Access anchor point */
-            SvnExtractAnchor myAnchor = pBranchPlan.getAnchor();
-            if (myAnchor == null) {
-                throw new JThemisLogicException("Unanchored branch");
-            }
-            RevCommit myLastCommit = theCommitMap.get(myAnchor.toString());
-            if (myLastCommit == null) {
-                throw new JThemisLogicException("Branch Anchor not found");
-            }
 
             /* Check that we are starting with a clean directory */
             StatusCommand myStatusCmd = theGit.status();
@@ -220,7 +307,7 @@ public class BuildGit {
 
             /* Create a branch from this commit and check it out */
             CheckoutCommand myCheckout = theGit.checkout();
-            myCheckout.setStartPoint(myLastCommit);
+            myCheckout.setStartPoint(pLastCommit);
             myCheckout.setName(myOwner.getBranchName());
             myCheckout.setCreateBranch(true);
             myCheckout.call();
@@ -228,7 +315,7 @@ public class BuildGit {
             /* Report plan steps */
             if (pReport.setNumSteps(pBranchPlan.numViews())) {
                 /* Commit the plan */
-                commitPlan(pReport, myOwner, myLastCommit, pBranchPlan.viewIterator());
+                commitPlan(pReport, myOwner, pLastCommit, pBranchPlan.viewIterator());
             }
 
             /* Catch Git exceptions */
@@ -241,24 +328,16 @@ public class BuildGit {
      * Build the tag.
      * @param pReport the report status
      * @param pTagPlan the tag to build
+     * @param pLastCommit the commit to branch from
      * @throws JOceanusException on error
      */
     private void buildTag(final ReportStatus pReport,
-                          final SvnTagExtractPlan pTagPlan) throws JOceanusException {
+                          final SvnTagExtractPlan pTagPlan,
+                          final RevCommit pLastCommit) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
             SvnTag myOwner = pTagPlan.getOwner();
-
-            /* Access anchor point */
-            SvnExtractAnchor myAnchor = pTagPlan.getAnchor();
-            if (myAnchor == null) {
-                throw new JThemisLogicException("Unanchored tag");
-            }
-            RevCommit myLastCommit = theCommitMap.get(myAnchor.toString());
-            if (myLastCommit == null) {
-                throw new JThemisLogicException("Tag Anchor not found");
-            }
 
             /* If there are changes in working directory */
             StatusCommand myStatusCmd = theGit.status();
@@ -269,13 +348,13 @@ public class BuildGit {
 
             /* Check the commit out as a head-less checkout */
             CheckoutCommand myCheckout = theGit.checkout();
-            myCheckout.setName(myLastCommit.name());
+            myCheckout.setName(pLastCommit.name());
             myCheckout.call();
 
             /* Report plan steps */
             if (pReport.setNumSteps(pTagPlan.numViews())) {
                 /* Commit the plan */
-                commitPlan(pReport, myOwner, myLastCommit, pTagPlan.viewIterator());
+                commitPlan(pReport, myOwner, pLastCommit, pTagPlan.viewIterator());
 
                 /* Create tag if no cancellation */
                 if (!pReport.isCancelled()) {
@@ -389,6 +468,123 @@ public class BuildGit {
             /* Catch git exceptions */
         } catch (GitAPIException e) {
             throw new JThemisIOException("Failed to garbage collect", e);
+        }
+    }
+
+    /**
+     * Extract status.
+     */
+    private enum SvnExtractStatus {
+        /**
+         * All plans blocked.
+         */
+        BLOCKED,
+
+        /**
+         * Some plans blocked.
+         */
+        OBSCURED,
+
+        /**
+         * All plans now extracted.
+         */
+        COMPLETED,
+
+        /**
+         * All plans already extracted.
+         */
+        FINISHED,
+
+        /**
+         * Plans need to be repeated.
+         */
+        REPEAT,
+
+        /**
+         * Extract cancelled.
+         */
+        CANCELLED;
+
+        /**
+         * Combine status.
+         * @param pStatus the secondary status
+         * @return the new status
+         */
+        private SvnExtractStatus combineStatus(final SvnExtractStatus pStatus) {
+            switch (pStatus) {
+                case OBSCURED:
+                    return isComplete()
+                                       ? BLOCKED
+                                       : REPEAT;
+                case COMPLETED:
+                    return isComplete()
+                                       ? FINISHED
+                                       : REPEAT;
+                case FINISHED:
+                    return isComplete()
+                                       ? FINISHED
+                                       : BLOCKED;
+                case CANCELLED:
+                    return CANCELLED;
+                case BLOCKED:
+                default:
+                    return BLOCKED;
+            }
+        }
+
+        /**
+         * Is the extract complete?
+         * @return true/false
+         */
+        private boolean isComplete() {
+            switch (this) {
+                case FINISHED:
+                case COMPLETED:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * Should we retry?
+         * @return true/false
+         */
+        private boolean doRetry() {
+            return this == REPEAT;
+        }
+
+        /**
+         * Is the extract cancelled?
+         * @return true/false
+         */
+        private boolean isCancelled() {
+            return this == CANCELLED;
+        }
+
+        /**
+         * Is the extract blocked?
+         * @return true/false
+         */
+        private boolean isBlocked() {
+            return this == BLOCKED;
+        }
+
+        /**
+         * Determine status.
+         * @param pExtracted were plans extracted?
+         * @param pBlocked were plans blocked?
+         * @return the status
+         */
+        private static SvnExtractStatus determineStatus(final boolean pExtracted,
+                                                        final boolean pBlocked) {
+            return pBlocked
+                           ? pExtracted
+                                       ? OBSCURED
+                                       : BLOCKED
+                           : pExtracted
+                                       ? COMPLETED
+                                       : FINISHED;
         }
     }
 }

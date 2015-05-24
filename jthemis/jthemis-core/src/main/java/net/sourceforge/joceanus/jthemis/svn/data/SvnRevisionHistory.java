@@ -844,20 +844,25 @@ public class SvnRevisionHistory
                     /* Obtain source type assuming component */
                     mySrcType = SvnSourceType.getSourceType(myBase);
 
-                    /* Handle if we cannot determine the source type */
+                    /* Unknown source type implies that we are outside the standard structure. */
                     if (mySrcType == SvnSourceType.UNKNOWN) {
-                        throw new JThemisDataException(pSource, "Unknown source type");
-                    }
+                        /* Record as trunk with no base */
+                        mySrcType = SvnSourceType.TRUNK;
+                        myBase = null;
 
-                    /* Adjust details */
-                    if (mySplit.length > 2) {
+                        /* else record version */
+                    } else if (mySplit.length > 2) {
                         myVers = mySplit[2];
                     }
+
+                    /* Set length */
                     myLen = mySubComp.length() + 1;
                 }
 
                 /* Adjust length */
-                myLen += myBase.length() + 1;
+                if (myBase != null) {
+                    myLen += myBase.length() + 1;
+                }
                 if (mySrcType != SvnSourceType.TRUNK) {
                     myLen += myVers.length() + 1;
                 }

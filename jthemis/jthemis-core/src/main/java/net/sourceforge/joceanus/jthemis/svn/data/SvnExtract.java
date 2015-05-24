@@ -535,6 +535,11 @@ public class SvnExtract
         private SvnExtractAnchor theAnchor;
 
         /**
+         * Have we extracted this plan.
+         */
+        private boolean haveExtracted;
+
+        /**
          * Constructor.
          * @param pRepo the repository
          * @param pOwner the owner
@@ -544,6 +549,7 @@ public class SvnExtract
             /* Store parameters */
             theOwner = pOwner;
             theRepo = pRepo;
+            haveExtracted = false;
 
             /* Create the list */
             theViews = new SvnExtractViewList();
@@ -590,6 +596,21 @@ public class SvnExtract
          */
         public boolean isAnchored() {
             return theAnchor != null;
+        }
+
+        /**
+         * Have we extracted this plan?
+         * @return true/false
+         */
+        public boolean haveExtracted() {
+            return haveExtracted;
+        }
+
+        /**
+         * Mark plan as extracted.
+         */
+        public void markExtracted() {
+            haveExtracted = true;
         }
 
         /**
