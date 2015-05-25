@@ -401,7 +401,7 @@ public final class JSvnManager {
         /* Ensure that we have a Git entry */
         if (theGitEntry == null) {
             theGitEntry = theViewerMgr.newEntry("GitRepo");
-            theErrorEntry.addAsRootChild();
+            theGitEntry.addAsRootChild();
         }
 
         /* Declare repository to data manager */

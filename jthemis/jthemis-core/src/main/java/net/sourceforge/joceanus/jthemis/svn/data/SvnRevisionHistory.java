@@ -718,6 +718,9 @@ public class SvnRevisionHistory
                     if (!Difference.isEqual(myEntry.getSource(), pDir.getSource())) {
                         throw new JThemisDataException(myEntry, "Conflicting sources");
                     }
+
+                    /* Already added!! */
+                    return;
                 }
             }
 

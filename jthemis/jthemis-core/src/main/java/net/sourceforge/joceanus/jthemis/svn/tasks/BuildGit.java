@@ -23,10 +23,10 @@
 package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -86,7 +86,7 @@ public class BuildGit {
     /**
      * The Commit Map.
      */
-    private final Map<String, RevCommit> theCommitMap;
+    private final SvnRevisionCommitMap theCommitMap;
 
     /**
      * Constructor.
@@ -111,7 +111,7 @@ public class BuildGit {
         thePlan = new SvnExtract(pSource);
 
         /* Create the commit map */
-        theCommitMap = new HashMap<String, RevCommit>();
+        theCommitMap = new SvnRevisionCommitMap();
     }
 
     /**
@@ -190,7 +190,7 @@ public class BuildGit {
             }
 
             /* If we have seen this anchor point */
-            RevCommit myLastCommit = theCommitMap.get(myAnchor.toString());
+            RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
                 if (!pReport.initTask("Building branch " + myPlan.getOwner())) {
@@ -242,7 +242,7 @@ public class BuildGit {
             }
 
             /* If we have seen this anchor point */
-            RevCommit myLastCommit = theCommitMap.get(myAnchor.toString());
+            RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
                 if (!pReport.initTask("Building tag " + myPlan.getOwner())) {
@@ -439,7 +439,7 @@ public class BuildGit {
 
                 /* Store details of the commit */
                 SvnExtractAnchor myAnchor = new SvnExtractAnchor(myOwner, myView.getRevision());
-                theCommitMap.put(myAnchor.toString(), myLastCommit);
+                theCommitMap.addAnchor(myAnchor, myLastCommit);
             }
 
             /* Catch Git Exceptions */
@@ -468,6 +468,140 @@ public class BuildGit {
             /* Catch git exceptions */
         } catch (GitAPIException e) {
             throw new JThemisIOException("Failed to garbage collect", e);
+        }
+    }
+
+    /**
+     * Revision Commit entry.
+     */
+    private static final class SvnRevisionCommit {
+        /**
+         * The revision.
+         */
+        private final long theRevision;
+
+        /**
+         * The commit.
+         */
+        private final RevCommit theCommit;
+
+        /**
+         * Constructor.
+         * @param pRevision the revision
+         * @param pCommit the commit
+         */
+        private SvnRevisionCommit(final long pRevision,
+                                  final RevCommit pCommit) {
+            theRevision = pRevision;
+            theCommit = pCommit;
+        }
+
+        /**
+         * Obtain the revision.
+         * @return the revision
+         */
+        private long getRevision() {
+            return theRevision;
+        }
+
+        /**
+         * Obtain the commit.
+         * @return the commit
+         */
+        private RevCommit getCommit() {
+            return theCommit;
+        }
+    }
+
+    /**
+     * Revision Commit List.
+     */
+    private static final class SvnRevisionCommitList
+            extends ArrayList<SvnRevisionCommit> {
+        /**
+         * SerialId.
+         */
+        private static final long serialVersionUID = -401436905814909199L;
+
+        /**
+         * Obtain the commit for the revision.
+         * @param pRevision the revision
+         * @return the commit
+         * @throws JOceanusException on error
+         */
+        private RevCommit getCommit(final long pRevision) throws JOceanusException {
+            /* Note commit */
+            RevCommit myCommit = null;
+
+            /* Loop through the revisions */
+            Iterator<SvnRevisionCommit> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                SvnRevisionCommit myRevision = myIterator.next();
+
+                /* If this revision is past the required revision */
+                if (myRevision.getRevision() > pRevision) {
+                    break;
+                }
+
+                /* Note the commit */
+                myCommit = myRevision.getCommit();
+            }
+            /* If there is no relevant revision */
+            if (myCommit == null) {
+                throw new JThemisLogicException("Missing anchor" + pRevision);
+            }
+
+            /* Return the commit */
+            return myCommit;
+        }
+    }
+
+    /**
+     * Revision Commit Map.
+     */
+    private static final class SvnRevisionCommitMap
+            extends HashMap<Object, SvnRevisionCommitList> {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 6482318288739116836L;
+
+        /**
+         * Add mapping.
+         * @param pAnchor the anchor
+         * @param pCommit the commit
+         */
+        private void addAnchor(final SvnExtractAnchor pAnchor,
+                               final RevCommit pCommit) {
+            /* Access the list */
+            Object myOwner = pAnchor.getOwner();
+            SvnRevisionCommitList myList = get(myOwner);
+            if (myList == null) {
+                /* Create the list and store it */
+                myList = new SvnRevisionCommitList();
+                put(myOwner, myList);
+            }
+
+            /* Add item */
+            myList.add(new SvnRevisionCommit(pAnchor.getRevision().getNumber(), pCommit));
+        }
+
+        /**
+         * Obtain the commit for the anchor.
+         * @param pAnchor the anchor
+         * @return the commit
+         * @throws JOceanusException on error
+         */
+        private RevCommit getCommit(final SvnExtractAnchor pAnchor) throws JOceanusException {
+            /* Access the list */
+            SvnRevisionCommitList myList = get(pAnchor.getOwner());
+            if (myList != null) {
+                /* Access the commit */
+                return myList.getCommit(pAnchor.getRevision().getNumber());
+            }
+
+            /* Not yet extracted */
+            return null;
         }
     }
 
