@@ -213,8 +213,8 @@ public class Cash
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -238,8 +238,8 @@ public class Cash
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     /**
@@ -248,8 +248,8 @@ public class Cash
      */
     public TransactionCategory getAutoExpense() {
         return hasInfoSet
-                         ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
-                         : null;
+                          ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
+                          : null;
     }
 
     /**
@@ -258,8 +258,8 @@ public class Cash
      */
     public Payee getAutoPayee() {
         return hasInfoSet
-                         ? theInfoSet.getPayee(AccountInfoClass.AUTOPAYEE)
-                         : null;
+                          ? theInfoSet.getPayee(AccountInfoClass.AUTOPAYEE)
+                          : null;
     }
 
     /**
@@ -268,8 +268,8 @@ public class Cash
      */
     public JMoney getOpeningBalance() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                          : null;
     }
 
     /**
@@ -287,8 +287,8 @@ public class Cash
     public Integer getCategoryId() {
         CashCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getId();
+                                    ? null
+                                    : myCategory.getId();
     }
 
     /**
@@ -298,8 +298,8 @@ public class Cash
     public String getCategoryName() {
         CashCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getName();
+                                    ? null
+                                    : myCategory.getName();
     }
 
     /**
@@ -309,8 +309,8 @@ public class Cash
     public CashCategoryClass getCategoryClass() {
         CashCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getCategoryTypeClass();
+                                    ? null
+                                    : myCategory.getCategoryTypeClass();
     }
 
     @Override
@@ -392,8 +392,8 @@ public class Cash
     @Override
     public AssetType getAssetType() {
         return isAutoExpense()
-                              ? AssetType.AUTOEXPENSE
-                              : AssetType.CASH;
+                               ? AssetType.AUTOEXPENSE
+                               : AssetType.CASH;
     }
 
     @Override
@@ -412,7 +412,7 @@ public class Cash
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -427,7 +427,7 @@ public class Cash
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -442,7 +442,7 @@ public class Cash
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -496,8 +496,8 @@ public class Cash
         AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -1035,8 +1035,8 @@ public class Cash
         public Cash findItemByName(final String pName) {
             AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Cash
-                                          ? (Cash) myAsset
-                                          : null;
+                                           ? (Cash) myAsset
+                                           : null;
         }
 
         /**

@@ -284,8 +284,8 @@ public class StockOption
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -334,24 +334,24 @@ public class StockOption
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     @Override
     public AssetCurrency getAssetCurrency() {
         SecurityHolding myHolding = getStockHolding();
         return myHolding == null
-                                ? null
-                                : myHolding.getAssetCurrency();
+                                 ? null
+                                 : myHolding.getAssetCurrency();
     }
 
     @Override
     public Currency getCurrency() {
         SecurityHolding myHolding = getStockHolding();
         return myHolding == null
-                                ? null
-                                : myHolding.getCurrency();
+                                 ? null
+                                 : myHolding.getCurrency();
     }
 
     /**
@@ -369,8 +369,8 @@ public class StockOption
     public Integer getStockHoldingId() {
         SecurityHolding myHolding = getStockHolding();
         return (myHolding == null)
-                                  ? null
-                                  : myHolding.getId();
+                                   ? null
+                                   : myHolding.getId();
     }
 
     /**
@@ -380,8 +380,8 @@ public class StockOption
     public String getStockHoldingName() {
         SecurityHolding myHolding = getStockHolding();
         return (myHolding == null)
-                                  ? null
-                                  : myHolding.getName();
+                                   ? null
+                                   : myHolding.getName();
     }
 
     /**
@@ -569,7 +569,7 @@ public class StockOption
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -584,7 +584,7 @@ public class StockOption
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -599,7 +599,7 @@ public class StockOption
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -653,8 +653,8 @@ public class StockOption
         AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */

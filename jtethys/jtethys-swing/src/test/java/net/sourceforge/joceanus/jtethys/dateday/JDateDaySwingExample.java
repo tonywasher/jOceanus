@@ -32,7 +32,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Calendar;
+import java.time.Month;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -50,6 +50,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.jdatebutton.swing.JDateConfig;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellEditor;
@@ -57,15 +60,12 @@ import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellRenderer;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * <p>
  * Provides a simple application that illustrates the features of JDateDay.
  * @author Tony Washer
  */
-public class JDateDayExample
+public class JDateDaySwingExample
         extends JApplet {
     /**
      * Serial Id.
@@ -105,42 +105,42 @@ public class JDateDayExample
     /**
      * Start sample date.
      */
-    private static final JDateDay DATE_START = makeDate(2007, Calendar.JANUARY, 25);
+    private static final JDateDay DATE_START = makeDate(2007, Month.JANUARY, 25);
 
     /**
      * End sample date.
      */
-    private static final JDateDay DATE_END = makeDate(2014, Calendar.AUGUST, 9);
+    private static final JDateDay DATE_END = makeDate(2018, Month.AUGUST, 9);
 
     /**
      * First sample date.
      */
-    private static final JDateDay DATE_FIRST = makeDate(2011, Calendar.JULY, 1);
+    private static final JDateDay DATE_FIRST = makeDate(2011, Month.JULY, 1);
 
     /**
      * Second sample date.
      */
-    private static final JDateDay DATE_SECOND = makeDate(2012, Calendar.MARCH, 14);
+    private static final JDateDay DATE_SECOND = makeDate(2012, Month.MARCH, 14);
 
     /**
      * Third sample date.
      */
-    private static final JDateDay DATE_THIRD = makeDate(2012, Calendar.NOVEMBER, 19);
+    private static final JDateDay DATE_THIRD = makeDate(2014, Month.NOVEMBER, 19);
 
     /**
      * Fourth sample date.
      */
-    private static final JDateDay DATE_FOURTH = makeDate(2013, Calendar.MAY, 31);
+    private static final JDateDay DATE_FOURTH = makeDate(2015, Month.MAY, 31);
 
     /**
      * Fifth sample date.
      */
-    private static final JDateDay DATE_FIFTH = makeDate(2014, Calendar.FEBRUARY, 28);
+    private static final JDateDay DATE_FIFTH = makeDate(2018, Month.FEBRUARY, 28);
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JDateDayExample.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDateDaySwingExample.class);
 
     /**
      * The first date format.
@@ -238,10 +238,10 @@ public class JDateDayExample
     private static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("DateDayButton Demo");
+            JFrame myFrame = new JFrame("JDateDayButton Swing Demo");
 
             /* Create the Example program */
-            JDateDayExample myProgram = new JDateDayExample();
+            JDateDaySwingExample myProgram = new JDateDaySwingExample();
 
             /* Create the panel */
             JPanel myPanel = myProgram.makePanel();
@@ -618,7 +618,7 @@ public class JDateDayExample
      * @return the requested date
      */
     private static JDateDay makeDate(final int pYear,
-                                     final int pMonth,
+                                     final Month pMonth,
                                      final int pDay) {
         return new JDateDay(pYear, pMonth, pDay);
     }
@@ -642,6 +642,7 @@ public class JDateDayExample
     private void applyLocale() {
         /* Set locale for formatter */
         theFormatter.setLocale(theLocale);
+        theRangeSelect.setLocale(theLocale);
 
         /* Set range locale */
         theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
@@ -652,8 +653,6 @@ public class JDateDayExample
         myConfig = theStartDate.getDateConfig();
         myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
         myConfig = theEndDate.getDateConfig();
-        myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
-        myConfig = theRangeSelect.getDateConfig();
         myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
 
         /* Note that we should redraw the table */
@@ -757,7 +756,8 @@ public class JDateDayExample
      */
     private enum ShortLocale {
         /**
-         * China (shorten day names to one character, and shrink from the right to make sure they are different).
+         * China (shorten day names to one character, and shrink from the right to make sure they
+         * are different).
          */
         CHINA(Locale.CHINA, 1, false),
 

@@ -291,8 +291,8 @@ public class Deposit
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -316,8 +316,8 @@ public class Deposit
      */
     public JDateDay getMaturity() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
+                          : null;
     }
 
     /**
@@ -326,8 +326,8 @@ public class Deposit
      */
     public char[] getSortCode() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
+                          : null;
     }
 
     /**
@@ -336,8 +336,8 @@ public class Deposit
      */
     public char[] getReference() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
+                          : null;
     }
 
     /**
@@ -346,8 +346,8 @@ public class Deposit
      */
     public char[] getAccount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
+                          : null;
     }
 
     /**
@@ -356,8 +356,8 @@ public class Deposit
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     /**
@@ -366,8 +366,8 @@ public class Deposit
      */
     public JMoney getOpeningBalance() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                          : null;
     }
 
     @Override
@@ -382,8 +382,8 @@ public class Deposit
     public Integer getParentId() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getId();
+                                  ? null
+                                  : myParent.getId();
     }
 
     /**
@@ -393,8 +393,8 @@ public class Deposit
     public String getParentName() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getName();
+                                  ? null
+                                  : myParent.getName();
     }
 
     /**
@@ -412,8 +412,8 @@ public class Deposit
     public Integer getCategoryId() {
         DepositCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getId();
+                                    ? null
+                                    : myCategory.getId();
     }
 
     /**
@@ -423,8 +423,8 @@ public class Deposit
     public String getCategoryName() {
         DepositCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getName();
+                                    ? null
+                                    : myCategory.getName();
     }
 
     /**
@@ -434,8 +434,8 @@ public class Deposit
     public DepositCategoryClass getCategoryClass() {
         DepositCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getCategoryTypeClass();
+                                    ? null
+                                    : myCategory.getCategoryTypeClass();
     }
 
     @Override
@@ -602,7 +602,7 @@ public class Deposit
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -617,7 +617,7 @@ public class Deposit
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -632,7 +632,7 @@ public class Deposit
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -686,8 +686,8 @@ public class Deposit
         AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -1011,15 +1011,15 @@ public class Deposit
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass((isGross())
-                                                                ? TransactionCategoryClass.GROSSINTEREST
-                                                                : TransactionCategoryClass.TAXEDINTEREST);
+                                                                 ? TransactionCategoryClass.GROSSINTEREST
+                                                                 : TransactionCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);
                 }
                 return myCategories.getSingularClass((isGross())
-                                                                ? TransactionCategoryClass.GROSSLOYALTYBONUS
-                                                                : TransactionCategoryClass.TAXEDLOYALTYBONUS);
+                                                                 ? TransactionCategoryClass.GROSSLOYALTYBONUS
+                                                                 : TransactionCategoryClass.TAXEDLOYALTYBONUS);
             default:
                 return pCategory;
         }
@@ -1476,8 +1476,8 @@ public class Deposit
         public Deposit findItemByName(final String pName) {
             AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Deposit
-                                             ? (Deposit) myAsset
-                                             : null;
+                                              ? (Deposit) myAsset
+                                              : null;
         }
 
         /**

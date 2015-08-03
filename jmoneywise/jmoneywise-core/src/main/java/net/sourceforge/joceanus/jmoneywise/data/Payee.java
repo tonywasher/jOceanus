@@ -194,8 +194,8 @@ public class Payee
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -219,8 +219,8 @@ public class Payee
      */
     public char[] getWebSite() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
+                          : null;
     }
 
     /**
@@ -229,8 +229,8 @@ public class Payee
      */
     public char[] getCustNo() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
+                          : null;
     }
 
     /**
@@ -239,8 +239,8 @@ public class Payee
      */
     public char[] getUserId() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
+                          : null;
     }
 
     /**
@@ -249,8 +249,8 @@ public class Payee
      */
     public char[] getPassword() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
+                          : null;
     }
 
     /**
@@ -259,8 +259,8 @@ public class Payee
      */
     public char[] getSortCode() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
+                          : null;
     }
 
     /**
@@ -269,8 +269,8 @@ public class Payee
      */
     public char[] getReference() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
+                          : null;
     }
 
     /**
@@ -279,8 +279,8 @@ public class Payee
      */
     public char[] getAccount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
+                          : null;
     }
 
     /**
@@ -289,8 +289,8 @@ public class Payee
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     /**
@@ -308,8 +308,8 @@ public class Payee
     public Integer getPayeeTypeId() {
         PayeeType myType = getPayeeType();
         return (myType == null)
-                               ? null
-                               : myType.getId();
+                                ? null
+                                : myType.getId();
     }
 
     /**
@@ -319,8 +319,8 @@ public class Payee
     public String getPayeeTypeName() {
         PayeeType myType = getPayeeType();
         return (myType == null)
-                               ? null
-                               : myType.getName();
+                                ? null
+                                : myType.getName();
     }
 
     /**
@@ -330,8 +330,8 @@ public class Payee
     public PayeeTypeClass getPayeeTypeClass() {
         PayeeType myType = getPayeeType();
         return (myType == null)
-                               ? null
-                               : myType.getPayeeClass();
+                                ? null
+                                : myType.getPayeeClass();
     }
 
     /**
@@ -383,7 +383,7 @@ public class Payee
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -398,7 +398,7 @@ public class Payee
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -413,7 +413,7 @@ public class Payee
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -467,8 +467,8 @@ public class Payee
         AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -504,8 +504,8 @@ public class Payee
     public boolean isHidden() {
         PayeeTypeClass myClass = this.getPayeeTypeClass();
         return (myClass == null)
-                                ? false
-                                : myClass.isHiddenType();
+                                 ? false
+                                 : myClass.isHiddenType();
     }
 
     /**

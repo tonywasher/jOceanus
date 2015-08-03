@@ -265,8 +265,8 @@ public class Security
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -290,8 +290,8 @@ public class Security
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     @Override
@@ -306,8 +306,8 @@ public class Security
     public Integer getParentId() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getId();
+                                  ? null
+                                  : myParent.getId();
     }
 
     /**
@@ -317,8 +317,8 @@ public class Security
     public String getParentName() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getName();
+                                  ? null
+                                  : myParent.getName();
     }
 
     /**
@@ -336,8 +336,8 @@ public class Security
     public Integer getSecurityTypeId() {
         SecurityType myType = getSecurityType();
         return (myType == null)
-                               ? null
-                               : myType.getId();
+                                ? null
+                                : myType.getId();
     }
 
     /**
@@ -347,8 +347,8 @@ public class Security
     public String getSecurityTypeName() {
         SecurityType myType = getSecurityType();
         return (myType == null)
-                               ? null
-                               : myType.getName();
+                                ? null
+                                : myType.getName();
     }
 
     /**
@@ -358,8 +358,8 @@ public class Security
     public SecurityTypeClass getSecurityTypeClass() {
         SecurityType myType = getSecurityType();
         return (myType == null)
-                               ? null
-                               : myType.getSecurityClass();
+                                ? null
+                                : myType.getSecurityClass();
     }
 
     /**
@@ -559,7 +559,7 @@ public class Security
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -574,7 +574,7 @@ public class Security
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -589,7 +589,7 @@ public class Security
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -643,8 +643,8 @@ public class Security
         AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -891,8 +891,8 @@ public class Security
             case DIVIDEND:
                 TransactionCategoryList myCategories = getDataSet().getTransCategories();
                 return myCategories.getSingularClass(isSecurityClass(SecurityTypeClass.UNITTRUST)
-                                                                                                 ? TransactionCategoryClass.UNITTRUSTDIVIDEND
-                                                                                                 : TransactionCategoryClass.SHAREDIVIDEND);
+                                                                                                  ? TransactionCategoryClass.UNITTRUSTDIVIDEND
+                                                                                                  : TransactionCategoryClass.SHAREDIVIDEND);
             default:
                 return pCategory;
         }

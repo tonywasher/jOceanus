@@ -11,6 +11,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>jtethys-swing</module>
+    <module>jtethys-javafx</module>
     <module>jtethys-core</module>
   </modules>
   <properties>

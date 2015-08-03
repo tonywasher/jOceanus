@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
+import java.util.Locale;
+
 /**
  * Represents a contiguous Range of dates.
  */
@@ -76,6 +78,13 @@ public class JDateDayRange
     }
 
     /**
+     * Construct an unbounded Range.
+     */
+    public JDateDayRange() {
+        this(null, null);
+    }
+
+    /**
      * Get the start date for the range.
      * @return the Start date
      */
@@ -94,7 +103,8 @@ public class JDateDayRange
     /**
      * Determine whether a Date is within this range.
      * @param pDate the date to test
-     * @return -1 if the date is after the range, 0 if the date is within the range, 1 if the date is before the range
+     * @return -1 if the date is after the range, 0 if the date is within the range, 1 if the date
+     * is before the range
      */
     public short compareTo(final JDateDay pDate) {
         /* Check start date */
@@ -180,14 +190,14 @@ public class JDateDayRange
         /* Build range description */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append((theStart == null)
-                                           ? DESC_UNBOUNDED
-                                           : theStart.toString());
+                                            ? DESC_UNBOUNDED
+                                            : theStart.toString());
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(DESC_LINK);
         myBuilder.append(CHAR_BLANK);
         myBuilder.append((theEnd == null)
-                                         ? DESC_UNBOUNDED
-                                         : theEnd.toString());
+                                          ? DESC_UNBOUNDED
+                                          : theEnd.toString());
 
         /* return the format */
         return myBuilder.toString();
@@ -243,6 +253,19 @@ public class JDateDayRange
             iHash += theEnd.hashCode();
         }
         return iHash;
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public void setLocale(final Locale pLocale) {
+        if (theStart != null) {
+            theStart.setLocale(pLocale);
+        }
+        if (theEnd != null) {
+            theEnd.setLocale(pLocale);
+        }
     }
 
     /**

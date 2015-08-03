@@ -97,6 +97,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
+     * Reconciled Field Id.
+     */
+    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
+
+    /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
     private static final String ERROR_COMBO = MoneyWiseDataResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
@@ -130,6 +135,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super(pList, 0);
         setNextDataKeySet();
         setValueAssetPair(getAssetPairManager().getDefaultPair());
+        setValueReconciled(Boolean.FALSE);
     }
 
     /**
@@ -200,6 +206,14 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 setValueAmount(myFormatter.parseValue(myString, JMoney.class));
             }
 
+            /* Store the reconciled flag */
+            myValue = pValues.getValue(FIELD_RECONCILED);
+            if (myValue instanceof Boolean) {
+                setValueReconciled((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
             /* Catch Exceptions */
         } catch (IllegalArgumentException
                 | JOceanusException e) {
@@ -226,6 +240,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (FIELD_AMOUNT.equals(pField)) {
             return true;
         }
+        if (FIELD_RECONCILED.equals(pField)) {
+            return isReconciled();
+        }
 
         /* Pass call on */
         return super.includeXmlField(pField);
@@ -244,8 +261,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         Object myPartner = myValues.getValue(FIELD_PARTNER);
         Object myPair = myValues.getValue(FIELD_PAIR);
         AssetDirection myDir = myPair instanceof AssetPair
-                                                          ? ((AssetPair) myPair).getDirection()
-                                                          : null;
+                                                           ? ((AssetPair) myPair).getDirection()
+                                                           : null;
         Object myCategory = myValues.getValue(FIELD_CATEGORY);
         Object myAmount = myValues.getValue(FIELD_AMOUNT);
 
@@ -260,10 +277,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(myFormatter.formatObject(myAccount));
         myBuilder.append(myDir == null
-                                      ? "??"
-                                      : myDir.isFrom()
-                                                      ? "<-"
-                                                      : "->");
+                                       ? "??"
+                                       : myDir.isFrom()
+                                                        ? "<-"
+                                                        : "->");
         myBuilder.append(myFormatter.formatObject(myPartner));
 
         /* return it */
@@ -285,8 +302,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public Integer getAssetPairId() {
         AssetPair myPair = getAssetPair();
         return (myPair == null)
-                               ? null
-                               : myPair.getEncodedId();
+                                ? null
+                                : myPair.getEncodedId();
     }
 
     /**
@@ -312,8 +329,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public Integer getCategoryId() {
         TransactionCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getId();
+                                    ? null
+                                    : myCategory.getId();
     }
 
     /**
@@ -323,8 +340,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public String getCategoryName() {
         TransactionCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getName();
+                                    ? null
+                                    : myCategory.getName();
     }
 
     /**
@@ -334,8 +351,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public TransactionCategoryClass getCategoryClass() {
         TransactionCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getCategoryTypeClass();
+                                    ? null
+                                    : myCategory.getCategoryTypeClass();
     }
 
     /**
@@ -377,8 +394,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public Integer getAccountId() {
         TransactionAsset myAccount = getAccount();
         return (myAccount == null)
-                                  ? null
-                                  : myAccount.getId();
+                                   ? null
+                                   : myAccount.getId();
     }
 
     /**
@@ -396,8 +413,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public Integer getPartnerId() {
         TransactionAsset myPartner = getPartner();
         return (myPartner == null)
-                                  ? null
-                                  : myPartner.getId();
+                                   ? null
+                                   : myPartner.getId();
     }
 
     /**
@@ -407,8 +424,16 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public AssetDirection getDirection() {
         AssetPair myPair = getAssetPair();
         return myPair == null
-                             ? null
-                             : myPair.getDirection();
+                              ? null
+                              : myPair.getDirection();
+    }
+
+    /**
+     * Obtain Reconciled State.
+     * @return the reconciled state
+     */
+    public Boolean isReconciled() {
+        return isReconciled(getValueSet());
     }
 
     /**
@@ -472,6 +497,15 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public static TransactionAsset getPartner(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARTNER, TransactionAsset.class);
+    }
+
+    /**
+     * Obtain Reconciled State.
+     * @param pValueSet the valueSet
+     * @return the Reconciled State
+     */
+    public static Boolean isReconciled(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
     }
 
     /**
@@ -606,6 +640,14 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         getValueSet().setValue(FIELD_PARTNER, pName);
     }
 
+    /**
+     * Set reconciled state.
+     * @param pValue the value
+     */
+    protected final void setValueReconciled(final Boolean pValue) {
+        getValueSet().setValue(FIELD_RECONCILED, pValue);
+    }
+
     @Override
     public final MoneyWiseData getDataSet() {
         return (MoneyWiseData) super.getDataSet();
@@ -674,6 +716,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         ValueSet myValues = getValueSet();
         AssetPairManager myManager = getAssetPairManager();
 
+        /* Adjust Reconciled */
+        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
+        if (myReconciled == null) {
+            setValueReconciled(Boolean.FALSE);
+        }
+
         /* Resolve AssetPair */
         Object myValue = myValues.getValue(FIELD_PAIR);
         if (myValue instanceof Integer) {
@@ -740,8 +788,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* Check for interest */
         TransactionCategoryClass myClass = getCategoryClass();
         return myClass == null
-                              ? false
-                              : myClass.isInterest();
+                               ? false
+                               : myClass.isInterest();
     }
 
     /**
@@ -751,8 +799,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public boolean isDividend() {
         TransactionCategoryClass myClass = getCategoryClass();
         return myClass == null
-                              ? false
-                              : myClass.isDividend();
+                               ? false
+                               : myClass.isDividend();
     }
 
     /**
@@ -762,8 +810,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public boolean needsZeroAmount() {
         TransactionCategoryClass myClass = getCategoryClass();
         return myClass == null
-                              ? false
-                              : myClass.needsZeroAmount();
+                               ? false
+                               : myClass.needsZeroAmount();
     }
 
     /**
@@ -843,6 +891,14 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public void setAmount(final JMoney pAmount) throws JOceanusException {
         setValueAmount(pAmount);
+    }
+
+    /**
+     * Set a reconciled indication.
+     * @param pReconciled the reconciled state
+     */
+    public void setReconciled(final Boolean pReconciled) {
+        setValueReconciled(pReconciled);
     }
 
     @Override
@@ -978,6 +1034,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* Update the amount if required */
         if (!Difference.isEqual(getAmount(), pTrans.getAmount())) {
             setValueAmount(pTrans.getAmountField());
+        }
+
+        /* Update the reconciled state if required */
+        if (!Difference.isEqual(isReconciled(), pTrans.isReconciled())) {
+            setValueReconciled(pTrans.isReconciled());
         }
     }
 

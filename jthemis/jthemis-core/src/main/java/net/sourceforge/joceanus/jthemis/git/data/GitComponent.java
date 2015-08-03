@@ -27,16 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.git.data.GitBranch.GitBranchList;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition.MvnSubModule;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
@@ -53,6 +43,16 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.git.data.GitBranch.GitBranchList;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition.MvnSubModule;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
 /**
  * Represents a component in the repository.
@@ -231,12 +231,9 @@ public final class GitComponent
      */
     public InputStream getFileObjectAsInputStream(final ObjectId pCommitId,
                                                   final String pPath) throws JOceanusException {
-        /* Allocate walkers */
-        RevWalk myRevWalk = new RevWalk(theGitRepo);
-        TreeWalk myTreeWalk = new TreeWalk(theGitRepo);
-
         /* Protect against exceptions */
-        try {
+        try (RevWalk myRevWalk = new RevWalk(theGitRepo);
+             TreeWalk myTreeWalk = new TreeWalk(theGitRepo)) {
             /* Access the tree associated with the commit as part of a Revision Walk */
             RevCommit myCommit = myRevWalk.parseCommit(pCommitId);
             RevTree myTree = myCommit.getTree();
@@ -255,9 +252,6 @@ public final class GitComponent
             return myLoader.openStream();
         } catch (IOException e) {
             throw new JThemisIOException("Unable to read File Object", e);
-        } finally {
-            myRevWalk.release();
-            myTreeWalk.release();
         }
     }
 
@@ -268,8 +262,7 @@ public final class GitComponent
      */
     public Status getStatus() throws JOceanusException {
         /* Protect against exceptions */
-        try {
-            Git myGit = new Git(theGitRepo);
+        try (Git myGit = new Git(theGitRepo)) {
             StatusCommand myCmd = myGit.status();
             return myCmd.call();
         } catch (NoWorkTreeException

@@ -69,8 +69,8 @@
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.52</BouncyCastleVersion>
     <SvnKitVersion>1.8.10</SvnKitVersion>
-    <JGitVersion>3.7.1.201504261725-r</JGitVersion>
-    <HttpClientVersion>4.4.1</HttpClientVersion>
+    <JGitVersion>4.0.1.201506240215-r</JGitVersion>
+    <HttpClientVersion>4.5</HttpClientVersion>
     <JSONVersion>20141113</JSONVersion>
     <ApacheMavenVersion>3.3.3</ApacheMavenVersion>
     <MySQLVersion>5.1.35</MySQLVersion>
@@ -79,7 +79,7 @@
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.11.0</XercesVersion>
     <SLF4JVersion>1.7.12</SLF4JVersion>
-    <LOG4JVersion>2.2</LOG4JVersion>
+    <LOG4JVersion>2.3</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
   <build>
@@ -173,7 +173,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>2.3</version>
+          <version>2.4.1</version>
           <configuration>
             <finalName>${project.artifactId}-${project.version}-uber</finalName>
           </configuration>
@@ -218,7 +218,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.15</version>
+        <version>2.16</version>
         <configuration>
           <configLocation>src/main/checkstyle/checks.xml</configLocation>
         </configuration>
@@ -226,7 +226,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.4</version>
+        <version>3.5</version>
         <configuration>
            <configLocation>src/main/pmd/pmd.xml</configLocation>
            <linkXref>true</linkXref>

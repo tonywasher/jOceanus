@@ -36,12 +36,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeState;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -50,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  * @author Tony Washer
  */
 public class JDateDayRangeSelect
-        extends JPanel {
+        extends JEnablePanel {
     /**
      * SerialId.
      */
@@ -102,6 +103,11 @@ public class JDateDayRangeSelect
     private static final String NLS_TITLE = JDateDayResource.TITLE_BOX.getValue();
 
     /**
+     * The formatter.
+     */
+    private final transient JDateDayFormatter theFormatter;
+
+    /**
      * The Start Date button.
      */
     private final JDateDayButton theStartButton;
@@ -112,24 +118,34 @@ public class JDateDayRangeSelect
     private final JDateDayButton theEndButton;
 
     /**
-     * The Period Label.
+     * The Base Date button.
      */
-    private final JLabel thePeriodLabel;
-
-    /**
-     * The Start Label.
-     */
-    private final JLabel theStartLabel;
-
-    /**
-     * The End Label.
-     */
-    private final JLabel theEndLabel;
+    private final JDateDayButton theBaseButton;
 
     /**
      * The Period Button.
      */
     private final JScrollButton<JDatePeriod> thePeriodButton;
+
+    /**
+     * The Period Panel.
+     */
+    private final JPanel thePeriodPane;
+
+    /**
+     * The Custom Panel.
+     */
+    private final JPanel theCustomPane;
+
+    /**
+     * The Standard Panel.
+     */
+    private final JPanel theStandardPane;
+
+    /**
+     * The Standard Label.
+     */
+    private final JLabel theStandardLabel;
 
     /**
      * The Next button.
@@ -147,34 +163,14 @@ public class JDateDayRangeSelect
     private transient JDateDayRange thePublishedRange = null;
 
     /**
-     * The First select-able date.
-     */
-    private transient JDateDay theFirstDate = null;
-
-    /**
-     * The Last select-able date.
-     */
-    private transient JDateDay theFinalDate = null;
-
-    /**
      * The Active state.
      */
-    private transient JDateRangeState theState = null;
+    private transient JDateDayRangeState theState = null;
 
     /**
      * The Saved state.
      */
-    private transient JDateRangeState theSavePoint = null;
-
-    /**
-     * Should we use start button for periods.
-     */
-    private final boolean useStartButtonForPeriod;
-
-    /**
-     * The Locale.
-     */
-    private Locale theLocale = null;
+    private transient JDateDayRangeState theSavePoint = null;
 
     /**
      * Constructor.
@@ -186,38 +182,44 @@ public class JDateDayRangeSelect
 
     /**
      * Constructor.
-     * @param useStartForPeriod true/false
+     * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    public JDateDayRangeSelect(final boolean useStartForPeriod) {
+    public JDateDayRangeSelect(final boolean pBaseIsStart) {
         /* Call standard constructor */
-        this(new JDateDayFormatter(), useStartForPeriod);
+        this(new JDateDayFormatter(), pBaseIsStart);
     }
 
     /**
      * Constructor.
      * @param pFormatter the formatter
-     * @param useStartForPeriod true/false
+     * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
     public JDateDayRangeSelect(final JDateDayFormatter pFormatter,
-                               final boolean useStartForPeriod) {
-        /* Determine the locale */
-        theLocale = pFormatter.getLocale();
+                               final boolean pBaseIsStart) {
+        /* Store the formatter */
+        theFormatter = pFormatter;
 
-        /* Record whether we are using start for periods */
-        useStartButtonForPeriod = useStartForPeriod;
+        /* Create initial state */
+        theState = new JDateDayRangeState(pBaseIsStart);
 
         /* Create the period button */
         thePeriodButton = new JScrollButton<JDatePeriod>();
         buildPeriodMenu();
 
-        /* Create the DateButtons */
-        theStartButton = new JDateDayButton(pFormatter);
-        theEndButton = new JDateDayButton(pFormatter);
+        /* Create the period panel */
+        JLabel myPeriodLabel = new JLabel(NLS_PERIOD);
+        thePeriodPane = new JEnablePanel();
+        thePeriodPane.setLayout(new BoxLayout(thePeriodPane, BoxLayout.X_AXIS));
+        thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        thePeriodPane.add(myPeriodLabel);
+        thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        thePeriodPane.add(thePeriodButton);
+        thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
-        /* Create the labels */
-        theStartLabel = new JLabel(NLS_START);
-        theEndLabel = new JLabel(NLS_END);
-        thePeriodLabel = new JLabel(NLS_PERIOD);
+        /* Create the DateButtons */
+        theStartButton = new JDateDayButton(theFormatter);
+        theEndButton = new JDateDayButton(theFormatter);
+        theBaseButton = new JDateDayButton(theFormatter);
 
         /* Create the buttons */
         theNextButton = new JButton(ArrowIcon.RIGHT);
@@ -225,47 +227,42 @@ public class JDateDayRangeSelect
         theNextButton.setToolTipText(NLS_NEXTTIP);
         thePrevButton.setToolTipText(NLS_PREVTIP);
 
+        /* Create the Custom Pane */
+        theCustomPane = new JEnablePanel();
+        theCustomPane.setLayout(new BoxLayout(theCustomPane, BoxLayout.X_AXIS));
+        JLabel myStartLabel = new JLabel(NLS_START);
+        JLabel myEndLabel = new JLabel(NLS_END);
+        theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theCustomPane.add(myStartLabel);
+        theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theCustomPane.add(theStartButton);
+        theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theCustomPane.add(myEndLabel);
+        theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theCustomPane.add(theEndButton);
+        theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+
+        /* Create the Standard Pane */
+        theStandardPane = new JEnablePanel();
+        theStandardPane.setLayout(new BoxLayout(theStandardPane, BoxLayout.X_AXIS));
+        theStandardLabel = new JLabel();
+        theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theStandardPane.add(theStandardLabel);
+        theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theStandardPane.add(thePrevButton);
+        theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theStandardPane.add(theBaseButton);
+        theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theStandardPane.add(theNextButton);
+        theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+
         /* Create the panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
-
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(thePeriodLabel);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(thePeriodButton);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(thePeriodPane);
         add(Box.createHorizontalGlue());
-        add(theStartLabel);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        if (useStartButtonForPeriod) {
-            add(thePrevButton);
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-            add(theStartButton);
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-            add(theNextButton);
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        } else {
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-            add(theStartButton);
-        }
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theEndLabel);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        if (!useStartButtonForPeriod) {
-            add(thePrevButton);
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-            add(theEndButton);
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-            add(theNextButton);
-        } else {
-            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-            add(theEndButton);
-        }
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-
-        /* Create initial state and limit the selection to the Range */
-        theState = new JDateRangeState();
-        setInitialRange();
+        add(theStandardPane);
+        add(theCustomPane);
 
         /* Add the listeners for item changes */
         DateListener myListener = new DateListener();
@@ -274,6 +271,7 @@ public class JDateDayRangeSelect
         thePeriodButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theStartButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
         theEndButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
+        theBaseButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
     }
 
     /**
@@ -282,6 +280,22 @@ public class JDateDayRangeSelect
      */
     public JDateDayRange getRange() {
         return theState.getRange();
+    }
+
+    /**
+     * Obtain current state.
+     * @return the current state
+     */
+    private JDateDayRangeState getState() {
+        return theState;
+    }
+
+    @Override
+    public void setLocale(final Locale pLocale) {
+        super.setLocale(pLocale);
+        theFormatter.setLocale(pLocale);
+        theState.setLocale(pLocale);
+        applyState();
     }
 
     /**
@@ -302,53 +316,12 @@ public class JDateDayRangeSelect
     }
 
     /**
-     * Obtain the date configuration.
-     * @return the Date configuration
-     */
-    public JDateDayConfig getDateConfig() {
-        return theEndButton.getDateConfig();
-    }
-
-    /**
-     * Set the initial range for the control.
-     */
-    private void setInitialRange() {
-        /* Record total possible range */
-        theFirstDate = null;
-        theFinalDate = null;
-
-        /* Set range into DateButton */
-        theStartButton.setEarliestDateDay(theFirstDate);
-        theStartButton.setLatestDateDay(theFinalDate);
-        theEndButton.setEarliestDateDay(theFirstDate);
-        theEndButton.setLatestDateDay(theFinalDate);
-
-        /* Adjust the overall range */
-        theState.adjustOverallRange();
-        theState.applyState();
-    }
-
-    /**
      * Set the overall range for the control.
      * @param pRange the range
      */
     public final void setOverallRange(final JDateDayRange pRange) {
-        /* Record total possible range */
-        theFirstDate = (pRange == null)
-                                       ? null
-                                       : pRange.getStart();
-        theFinalDate = (pRange == null)
-                                       ? null
-                                       : pRange.getEnd();
-
-        /* Set range into DateButton */
-        theStartButton.setEarliestDateDay(theFirstDate);
-        theStartButton.setLatestDateDay(theFinalDate);
-        theEndButton.setEarliestDateDay(theFirstDate);
-        theEndButton.setLatestDateDay(theFinalDate);
-
         /* Adjust the overall range */
-        theState.adjustOverallRange();
+        theState.adjustOverallRange(pRange);
         notifyChangedRange();
     }
 
@@ -369,7 +342,7 @@ public class JDateDayRangeSelect
     public void lockPeriod(final boolean isLocked) {
         /* Apply period and build the range */
         theState.lockPeriod(isLocked);
-        theState.applyState();
+        applyState();
     }
 
     /**
@@ -378,13 +351,12 @@ public class JDateDayRangeSelect
      */
     public void setSelection(final JDateDayRangeSelect pSource) {
         /* Access the state */
-        JDateRangeState myState = pSource.theState;
+        JDateDayRangeState myState = pSource.getState();
 
         /* Accept this state */
-        theState = new JDateRangeState(myState);
+        theState = new JDateDayRangeState(myState);
 
         /* Build the range */
-        theState.buildRange();
         notifyChangedRange();
     }
 
@@ -393,7 +365,7 @@ public class JDateDayRangeSelect
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new JDateRangeState(theState);
+        theSavePoint = new JDateDayRangeState(theState);
     }
 
     /**
@@ -401,71 +373,19 @@ public class JDateDayRangeSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new JDateRangeState(theSavePoint);
+        theState = new JDateDayRangeState(theSavePoint);
         notifyChangedRange();
     }
 
     @Override
     public void setEnabled(final boolean pEnable) {
-        /* Determine state */
-        boolean isAdjust = theState.isAdjustable();
-        boolean isCustom = theState.isCustom();
-        boolean isUpTo = theState.isUpTo()
-                         && theState.isLocked();
-        boolean isFull = theState.isFull();
+        /* Pass call on */
+        super.setEnabled(pEnable);
 
-        /* Lock/Unlock the components */
-        theStartButton.setEnabled(pEnable);
-        theEndButton.setEnabled(pEnable);
-        thePeriodButton.setEnabled(pEnable);
-        theNextButton.setEnabled(pEnable
-                                 && theState.isNextOK());
-        thePrevButton.setEnabled(pEnable
-                                 && theState.isPrevOK());
-
-        /* Hide Next/Previous if necessary */
-        theNextButton.setVisible(isAdjust);
-        thePrevButton.setVisible(isAdjust);
-
-        /* Hide Period label and box for UpTo range */
-        thePeriodLabel.setVisible(!isUpTo);
-        thePeriodButton.setVisible(!isUpTo);
-
-        /* If we are using start button for period */
-        if (useStartButtonForPeriod) {
-            /* End label and button is only visible for custom range */
-            theEndLabel.setVisible(isCustom);
-            theEndButton.setVisible(isCustom);
-
-            /* Start label is hidden for Full and UpTo range */
-            theStartLabel.setVisible(!isFull
-                                     && !isUpTo);
-
-            /* Start button is visible unless it is Full range */
-            theStartButton.setVisible(!isFull);
-
-            /* Set correct text for label */
-            theStartLabel.setText(theState.isContaining()
-                                                         ? NLS_CONTAIN
-                                                         : NLS_START);
-
-            /* else we are using end button for period */
-        } else {
-            /* Start label and button is only visible for custom range */
-            theStartLabel.setVisible(isCustom);
-            theStartButton.setVisible(isCustom);
-
-            /* End label is hidden for Full and UpTo range */
-            theEndLabel.setVisible(!isFull
-                                   && !isUpTo);
-
-            /* Start button is visible unless it is Full range */
-            theEndButton.setVisible(!isFull);
-
-            /* Set correct text for label */
-            theEndLabel.setText(theState.isContaining()
-                                                       ? NLS_CONTAIN
-                                                       : NLS_END);
+        /* If we are enabling */
+        if (pEnable) {
+            /* Ensure correct values */
+            applyState();
         }
     }
 
@@ -474,7 +394,8 @@ public class JDateDayRangeSelect
      */
     private void notifyChangedRange() {
         /* Make sure that the state has been applied */
-        theState.applyState();
+        applyState();
+
         /* Determine whether a change has occurred */
         JDateDayRange myNew = getRange();
         if (!JDateDayRange.isDifferent(thePublishedRange, myNew)) {
@@ -488,6 +409,68 @@ public class JDateDayRangeSelect
 
         /* Fire the property change */
         firePropertyChange(PROPERTY_RANGE, myOld, myNew);
+    }
+
+    /**
+     * Apply the state.
+     */
+    private void applyState() {
+        /* Determine flags */
+        boolean isUpTo = theState.isUpTo()
+                         && theState.isLocked();
+        boolean isAdjust = theState.isAdjustable();
+        boolean isFull = theState.isFull();
+        boolean isContaining = theState.isContaining();
+        boolean isBaseStartOfPeriod = theState.isBaseStartOfPeriod();
+
+        /* Set the period value */
+        thePeriodButton.setValue(theState.getPeriod());
+        thePeriodPane.setVisible(!isUpTo);
+
+        /* If this is a custom state */
+        if (theState.isCustom()) {
+            /* Set values for buttons */
+            theStartButton.setSelectedDateDay(theState.getStartDate());
+            theEndButton.setSelectedDateDay(theState.getEndDate());
+
+            /* Show the custom box */
+            theStandardPane.setVisible(false);
+            theCustomPane.setVisible(true);
+
+            /* else is this is a full dates state */
+        } else if (theState.isFull()) {
+            /* Hide custom and standard boxes */
+            theStandardPane.setVisible(false);
+            theCustomPane.setVisible(false);
+
+            /* else this is a standard state */
+        } else {
+            /* Set value for button */
+            theBaseButton.setSelectedDateDay(theState.getBaseDate());
+
+            /* Enable/disable the adjustment buttons */
+            theNextButton.setEnabled(theState.isNextOK());
+            thePrevButton.setEnabled(theState.isPrevOK());
+
+            /* Hide Next/Previous if necessary */
+            theNextButton.setVisible(isAdjust);
+            thePrevButton.setVisible(isAdjust);
+
+            /* Label is hidden for Full and UpTo range */
+            theStandardLabel.setVisible(!isFull
+                                        && !isUpTo);
+
+            /* Set correct text for label */
+            theStandardLabel.setText(isContaining
+                                                  ? NLS_CONTAIN
+                                                  : isBaseStartOfPeriod
+                                                                        ? NLS_START
+                                                                        : NLS_END);
+
+            /* Show the standard box */
+            theCustomPane.setVisible(false);
+            theStandardPane.setVisible(true);
+        }
     }
 
     /**
@@ -520,536 +503,27 @@ public class JDateDayRangeSelect
             /* if this event relates to the Start Date button */
             if (theStartButton.equals(src)) {
                 /* Access the value */
-                theState.setStartDate(theStartButton);
+                theState.setStartDate(theStartButton.getSelectedDateDay());
                 notifyChangedRange();
 
-                /* if this event relates to the Start Date button */
+                /* if this event relates to the End Date button */
             } else if (theEndButton.equals(src)) {
                 /* Access the value */
-                theState.setEndDate(theEndButton);
+                theState.setEndDate(theEndButton.getSelectedDateDay());
+                notifyChangedRange();
+
+                /* if this event relates to the Base Date button */
+            } else if (theEndButton.equals(src)) {
+                /* Access the value */
+                theState.setBaseDate(theBaseButton.getSelectedDateDay());
                 notifyChangedRange();
 
                 /* if this event relates to the Period button */
             } else if (thePeriodButton.equals(src)) {
                 /* Access the value */
                 theState.setPeriod(thePeriodButton.getValue());
-                theState.applyState();
                 notifyChangedRange();
             }
-        }
-    }
-
-    /**
-     * SavePoint values.
-     */
-    private final class JDateRangeState {
-        /**
-         * The start Date.
-         */
-        private JDateDay theStartDate = null;
-
-        /**
-         * The end Date.
-         */
-        private JDateDay theEndDate = null;
-
-        /**
-         * The Date Period.
-         */
-        private JDatePeriod thePeriod = null;
-
-        /**
-         * Is the period locked?
-         */
-        private boolean isLocked = false;
-
-        /**
-         * The calculated Range.
-         */
-        private JDateDayRange theRange = null;
-
-        /**
-         * Can we select a next period within the available range.
-         */
-        private boolean isNextOK = false;
-
-        /**
-         * Can we select a previous period within the available range.
-         */
-        private boolean isPrevOK = false;
-
-        /**
-         * Constructor.
-         */
-        private JDateRangeState() {
-            /* Default the period */
-            thePeriod = JDatePeriod.ONEMONTH;
-
-            /* Determine initial date */
-            JDateDay myDate = new JDateDay(theLocale);
-
-            /* Make sure that we do not go beyond the date range */
-            if ((theFinalDate != null)
-                && (myDate.compareTo(theFinalDate) > 0)) {
-                myDate = theFinalDate;
-            }
-            if ((theFirstDate != null)
-                && (myDate.compareTo(theFirstDate) < 0)) {
-                myDate = theFirstDate;
-            }
-
-            /* Set appropriate date */
-            if (useStartButtonForPeriod) {
-                /* Initialise start date */
-                theStartDate = myDate;
-                /* else we are using the end date for periods */
-            } else {
-                /* Initialise end date */
-                theEndDate = myDate;
-            }
-
-            /* build the range */
-            buildRange();
-        }
-
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        private JDateRangeState(final JDateRangeState pState) {
-            JDateDay myStart = pState.getStartDate();
-            JDateDay myEnd = pState.getEndDate();
-            theStartDate = (myStart == null)
-                                            ? null
-                                            : new JDateDay(myStart);
-            theEndDate = (myEnd == null)
-                                        ? null
-                                        : new JDateDay(myEnd);
-            thePeriod = pState.getPeriod();
-            isLocked = pState.isLocked();
-            buildRange();
-        }
-
-        /**
-         * Get the start date.
-         * @return the start date
-         */
-        private JDateDay getStartDate() {
-            return theStartDate;
-        }
-
-        /**
-         * Get the end date.
-         * @return the end date
-         */
-        private JDateDay getEndDate() {
-            return theEndDate;
-        }
-
-        /**
-         * Get the DatePeriod.
-         * @return the date period
-         */
-        private JDatePeriod getPeriod() {
-            return thePeriod;
-        }
-
-        /**
-         * Get the selected range.
-         * @return the selected range
-         */
-        private JDateDayRange getRange() {
-            return theRange;
-        }
-
-        /**
-         * Can we select a next period within the available range.
-         * @return true/false
-         */
-        private boolean isNextOK() {
-            return isNextOK;
-        }
-
-        /**
-         * Can we select a previous period within the available range.
-         * @return true/false
-         */
-        private boolean isPrevOK() {
-            return isPrevOK;
-        }
-
-        /**
-         * Is the period locked?
-         * @return true/false
-         */
-        private boolean isLocked() {
-            return isLocked;
-        }
-
-        /**
-         * Is this an UpTo range.
-         * @return true/false
-         */
-        private boolean isUpTo() {
-            return thePeriod == JDatePeriod.DATESUPTO;
-        }
-
-        /**
-         * Is this a custom range.
-         * @return true/false
-         */
-        private boolean isCustom() {
-            return thePeriod == JDatePeriod.CUSTOM;
-        }
-
-        /**
-         * Is this a full range.
-         * @return true/false
-         */
-        private boolean isFull() {
-            return thePeriod == JDatePeriod.ALLDATES;
-        }
-
-        /**
-         * Is this an adjustable range.
-         * @return true/false
-         */
-        private boolean isAdjustable() {
-            return thePeriod.adjustPeriod();
-        }
-
-        /**
-         * Is this a containing range.
-         * @return true/false
-         */
-        private boolean isContaining() {
-            return thePeriod.isContaining();
-        }
-
-        /**
-         * Lock the period.
-         * @param pLocked true/false
-         */
-        private void lockPeriod(final boolean pLocked) {
-            isLocked = pLocked;
-        }
-
-        /**
-         * Set new Period.
-         * @param pPeriod the new period
-         */
-        private void setPeriod(final JDatePeriod pPeriod) {
-            /* Adjust the period and build the new range */
-            thePeriod = pPeriod;
-            buildRange();
-        }
-
-        /**
-         * Set new Start Date.
-         * @param pButton the Button with the new date
-         */
-        private void setStartDate(final JDateDayButton pButton) {
-            /* Adjust the date and build the new range */
-            JDateDay myDate = pButton.getSelectedDateDay();
-            theStartDate = myDate;
-            buildRange();
-        }
-
-        /**
-         * Set new End Date.
-         * @param pButton the Button with the new date
-         */
-        private void setEndDate(final JDateDayButton pButton) {
-            /* Adjust the date and build the new range */
-            JDateDay myDate = pButton.getSelectedDateDay();
-            theEndDate = myDate;
-            buildRange();
-        }
-
-        /**
-         * Set next Date.
-         */
-        private void setNextDate() {
-            /* Adjust the date and build the new range */
-            nextPeriod();
-            buildRange();
-        }
-
-        /**
-         * Set previous Date.
-         */
-        private void setPreviousDate() {
-            /* Adjust the date and build the new range */
-            previousPeriod();
-            buildRange();
-        }
-
-        /**
-         * adjust the overall range.
-         */
-        private void adjustOverallRange() {
-            /* Make sure that we are within the range */
-            if ((theFinalDate != null)
-                && (theStartDate.compareTo(theFinalDate) > 0)) {
-                theStartDate = theFinalDate;
-            }
-            if ((theFirstDate != null)
-                && (theStartDate.compareTo(theFirstDate) < 0)) {
-                theStartDate = theFirstDate;
-            }
-            if ((theFinalDate != null)
-                && (theEndDate.compareTo(theFinalDate) > 0)) {
-                theEndDate = theFinalDate;
-            }
-            if ((theFirstDate != null)
-                && (theEndDate.compareTo(theFirstDate) < 0)) {
-                theEndDate = theFirstDate;
-            }
-
-            /* Build the range */
-            buildRange();
-        }
-
-        /**
-         * Build the range represented by the selection.
-         */
-        private void buildRange() {
-            /* Previous is only allowed if we have not hit the first date */
-            isPrevOK = (theFirstDate == null)
-                       || (theFirstDate.compareTo(theStartDate) != 0);
-
-            /* Determine action for period */
-            switch (thePeriod) {
-                case ALLDATES:
-                    buildFullRange();
-                    break;
-                case CUSTOM:
-                    buildCustomRange();
-                    break;
-                case DATESUPTO:
-                    buildUpToRange();
-                    break;
-                case CALENDARMONTH:
-                case CALENDARQUARTER:
-                case CALENDARYEAR:
-                case FISCALYEAR:
-                    buildContainingRange();
-                    break;
-                default:
-                    buildStandardRange();
-                    break;
-            }
-        }
-
-        /**
-         * Build the full range.
-         */
-        private void buildFullRange() {
-            /* Previous and next are not allowed */
-            isPrevOK = false;
-            isNextOK = false;
-
-            /* Create the range */
-            theRange = new JDateDayRange(theFirstDate, theFinalDate);
-        }
-
-        /**
-         * Build the custom range.
-         */
-        private void buildCustomRange() {
-            /* Previous and next are disallowed */
-            isPrevOK = false;
-            isNextOK = false;
-
-            /* If the EndDate is earlier than the startDate, reset it */
-            if (theEndDate.compareTo(theStartDate) < 0) {
-                theEndDate = theStartDate;
-            }
-
-            /* Limit the buttons */
-            theStartButton.setLatestDateDay(theEndDate);
-            theEndButton.setEarliestDateDay(theStartDate);
-
-            /* Create the range */
-            theRange = new JDateDayRange(theStartDate, theEndDate);
-        }
-
-        /**
-         * Build the upTo range.
-         */
-        private void buildUpToRange() {
-            /* Previous and next are disallowed */
-            isPrevOK = false;
-            isNextOK = false;
-
-            /* Limit the buttons */
-            theStartButton.setEarliestDateDay(theFirstDate);
-            theStartButton.setLatestDateDay(theFinalDate);
-            theEndButton.setEarliestDateDay(theFirstDate);
-            theEndButton.setLatestDateDay(theFinalDate);
-
-            /* Create the range */
-            theRange = new JDateDayRange(theFirstDate, (useStartButtonForPeriod)
-                                                                                ? theStartDate
-                                                                                : theEndDate);
-        }
-
-        /**
-         * Build the standard range.
-         */
-        private void buildStandardRange() {
-            if (useStartButtonForPeriod) {
-                /* Previous is only allowed if we have not hit the first date */
-                isPrevOK = (theFirstDate == null)
-                           || (theFirstDate.compareTo(theStartDate) != 0);
-
-                /* Initialise the end date */
-                theEndDate = new JDateDay(theStartDate);
-
-                /* Adjust the date to cover the relevant period */
-                theEndDate.adjustForwardByPeriod(thePeriod);
-                theEndDate.adjustDay(-1);
-
-                /* Assume that next is OK */
-                isNextOK = true;
-
-                /* If we have passed the final date */
-                if ((theFinalDate != null)
-                    && (theEndDate.compareTo(theFinalDate) >= 0)) {
-                    /* Reset the end date and disable next button */
-                    theEndDate = theFinalDate;
-                    isNextOK = false;
-                }
-            } else {
-                /* Next is only allowed if we have not hit the last date */
-                isNextOK = (theFinalDate == null)
-                           || (theFinalDate.compareTo(theEndDate) != 0);
-
-                /* Initialise the end date */
-                theStartDate = new JDateDay(theEndDate);
-
-                /* Adjust the date to cover the relevant period */
-                theStartDate.adjustBackwardByPeriod(thePeriod);
-                theStartDate.adjustDay(1);
-
-                /* Assume that previous is OK */
-                isPrevOK = true;
-
-                /* If we have passed the first date */
-                if ((theFirstDate != null)
-                    && (theStartDate.compareTo(theFirstDate) <= 0)) {
-                    /* Reset the start date and disable previous button */
-                    theStartDate = theFirstDate;
-                    isPrevOK = false;
-                }
-            }
-
-            /* Create the range */
-            theRange = new JDateDayRange(theStartDate, theEndDate);
-        }
-
-        /**
-         * Build the containing range.
-         */
-        private void buildContainingRange() {
-            /* Initialise the end date */
-            JDateDay myStartDate = new JDateDay(theEndDate);
-
-            /* Adjust the date to the start of the relevant period */
-            myStartDate.startPeriod(thePeriod);
-
-            /* Initialise the end date */
-            JDateDay myEndDate = new JDateDay(myStartDate);
-
-            /* Adjust the date to cover the relevant period */
-            myEndDate.adjustForwardByPeriod(thePeriod);
-            myEndDate.adjustDay(-1);
-
-            /* If the StartDate is earlier than the firstDate, reset it */
-            if (myStartDate.compareTo(theFirstDate) < 0) {
-                myStartDate = theFirstDate;
-            }
-
-            /* If the EndDate is later than the finalDate, reset it */
-            if (myEndDate.compareTo(theFinalDate) > 0) {
-                myEndDate = theFinalDate;
-            }
-
-            /* Previous is only allowed if we have not hit the first date */
-            isPrevOK = (theFirstDate == null)
-                       || (theFirstDate.compareTo(theStartDate) != 0);
-
-            /* Next is only allowed if we have not hit the last date */
-            isNextOK = (theFinalDate == null)
-                       || (theFinalDate.compareTo(theEndDate) != 0);
-
-            /* Create the range */
-            theRange = new JDateDayRange(myStartDate, myEndDate);
-        }
-
-        /**
-         * Adjust forwards to the next period.
-         */
-        private void nextPeriod() {
-            /* Initialise the date */
-            JDateDay myDate = new JDateDay(useStartButtonForPeriod
-                                                                  ? theStartDate
-                                                                  : theEndDate);
-
-            /* Adjust the date appropriately */
-            myDate.adjustForwardByPeriod(thePeriod);
-
-            /* Make sure that we do not go beyond the date range */
-            if ((theFinalDate != null)
-                && (myDate.compareTo(theFinalDate) > 0)) {
-                myDate = theFinalDate;
-            }
-
-            /* Store the date */
-            if (useStartButtonForPeriod) {
-                theStartDate = myDate;
-            } else {
-                theEndDate = myDate;
-            }
-        }
-
-        /**
-         * Adjust backwards to the previous period.
-         */
-        private void previousPeriod() {
-            /* Initialise the date */
-            JDateDay myDate = new JDateDay(useStartButtonForPeriod
-                                                                  ? theStartDate
-                                                                  : theEndDate);
-
-            /* Adjust the date appropriately */
-            myDate.adjustBackwardByPeriod(thePeriod);
-
-            /* Make sure that we do not go beyond the date range */
-            if ((theFirstDate != null)
-                && (myDate.compareTo(theFirstDate) < 0)) {
-                myDate = theFirstDate;
-            }
-
-            /* Store the date */
-            if (useStartButtonForPeriod) {
-                theStartDate = myDate;
-            } else {
-                theEndDate = myDate;
-            }
-        }
-
-        /**
-         * Apply the State.
-         */
-        private void applyState() {
-            /* Adjust the lock-down */
-            setEnabled(true);
-            theStartButton.setSelectedDateDay(theStartDate);
-            theEndButton.setSelectedDateDay(theEndDate);
-            thePeriodButton.setText((thePeriod == null)
-                                                       ? null
-                                                       : thePeriod.toString());
         }
     }
 }

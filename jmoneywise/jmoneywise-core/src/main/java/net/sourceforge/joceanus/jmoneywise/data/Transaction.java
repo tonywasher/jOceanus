@@ -87,11 +87,6 @@ public class Transaction
     public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
-     * Reconciled Field Id.
-     */
-    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
-
-    /**
      * EventInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
@@ -164,7 +159,6 @@ public class Transaction
      */
     public Transaction(final TransactionList pList) {
         super(pList);
-        setValueReconciled(Boolean.FALSE);
 
         /* Build InfoSet */
         theInfoSet = new TransactionInfoSet(this, pList.getTransInfoTypes(), pList.getTransactionInfo());
@@ -196,15 +190,6 @@ public class Transaction
                 JDateDayFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDateDay((String) myValue));
             }
-
-            /* Store the reconciled flag */
-            myValue = pValues.getValue(FIELD_RECONCILED);
-            if (myValue instanceof Boolean) {
-                setValueReconciled((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
@@ -228,9 +213,6 @@ public class Transaction
         if (FIELD_DATE.equals(pField)) {
             return true;
         }
-        if (FIELD_RECONCILED.equals(pField)) {
-            return isReconciled();
-        }
 
         /* Pass call on */
         return super.includeXmlField(pField);
@@ -241,8 +223,8 @@ public class Transaction
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -264,14 +246,6 @@ public class Transaction
     }
 
     /**
-     * Obtain Reconciled State.
-     * @return the reconciled state
-     */
-    public Boolean isReconciled() {
-        return isReconciled(getValueSet());
-    }
-
-    /**
      * Obtain Date.
      * @param pValueSet the valueSet
      * @return the Date
@@ -281,28 +255,11 @@ public class Transaction
     }
 
     /**
-     * Obtain Reconciled State.
-     * @param pValueSet the valueSet
-     * @return the Reconciled State
-     */
-    public static Boolean isReconciled(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
-    }
-
-    /**
      * Set date value.
      * @param pValue the value
      */
     private void setValueDate(final JDateDay pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
-    }
-
-    /**
-     * Set reconciled state.
-     * @param pValue the value
-     */
-    protected final void setValueReconciled(final Boolean pValue) {
-        getValueSet().setValue(FIELD_RECONCILED, pValue);
     }
 
     @Override
@@ -316,8 +273,8 @@ public class Transaction
      */
     public final JUnits getDebitUnits() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.DEBITUNITS, JUnits.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.DEBITUNITS, JUnits.class)
+                          : null;
     }
 
     /**
@@ -326,8 +283,8 @@ public class Transaction
      */
     public final JUnits getCreditUnits() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.CREDITUNITS, JUnits.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.CREDITUNITS, JUnits.class)
+                          : null;
     }
 
     /**
@@ -336,8 +293,8 @@ public class Transaction
      */
     public final JMoney getTaxCredit() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.TAXCREDIT, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.TAXCREDIT, JMoney.class)
+                          : null;
     }
 
     /**
@@ -346,8 +303,8 @@ public class Transaction
      */
     public final JDilution getDilution() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.DILUTION, JDilution.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.DILUTION, JDilution.class)
+                          : null;
     }
 
     /**
@@ -356,8 +313,8 @@ public class Transaction
      */
     public final Integer getYears() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.QUALIFYYEARS, Integer.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.QUALIFYYEARS, Integer.class)
+                          : null;
     }
 
     /**
@@ -366,8 +323,8 @@ public class Transaction
      */
     public final JDateDay getCreditDate() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.CREDITDATE, JDateDay.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.CREDITDATE, JDateDay.class)
+                          : null;
     }
 
     /**
@@ -376,8 +333,8 @@ public class Transaction
      */
     public final JMoney getNatInsurance() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.NATINSURANCE, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.NATINSURANCE, JMoney.class)
+                          : null;
     }
 
     /**
@@ -386,8 +343,8 @@ public class Transaction
      */
     public final JMoney getDeemedBenefit() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.DEEMEDBENEFIT, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.DEEMEDBENEFIT, JMoney.class)
+                          : null;
     }
 
     /**
@@ -396,8 +353,8 @@ public class Transaction
      */
     public final JMoney getPension() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.PENSION, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.PENSION, JMoney.class)
+                          : null;
     }
 
     /**
@@ -406,8 +363,8 @@ public class Transaction
      */
     public final JMoney getCharityDonation() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.CHARITYDONATION, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.CHARITYDONATION, JMoney.class)
+                          : null;
     }
 
     /**
@@ -416,8 +373,8 @@ public class Transaction
      */
     public final String getReference() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.REFERENCE, String.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.REFERENCE, String.class)
+                          : null;
     }
 
     /**
@@ -426,8 +383,8 @@ public class Transaction
      */
     public final String getComments() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.COMMENTS, String.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.COMMENTS, String.class)
+                          : null;
     }
 
     /**
@@ -436,8 +393,8 @@ public class Transaction
      */
     public final Deposit getThirdParty() {
         return hasInfoSet
-                         ? theInfoSet.getDeposit(TransactionInfoClass.THIRDPARTY)
-                         : null;
+                          ? theInfoSet.getDeposit(TransactionInfoClass.THIRDPARTY)
+                          : null;
     }
 
     /**
@@ -446,8 +403,8 @@ public class Transaction
      */
     public final JMoney getPartnerAmount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.PARTNERAMOUNT, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.PARTNERAMOUNT, JMoney.class)
+                          : null;
     }
 
     /**
@@ -456,8 +413,8 @@ public class Transaction
      */
     public final JRatio getExchangeRate() {
         return hasInfoSet
-                         ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, JRatio.class)
-                         : null;
+                          ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, JRatio.class)
+                          : null;
     }
 
     /**
@@ -466,8 +423,8 @@ public class Transaction
      */
     public String getTagNameList() {
         return hasInfoSet
-                         ? theInfoSet.getNameList(TransactionInfoClass.TRANSTAG)
-                         : null;
+                          ? theInfoSet.getNameList(TransactionInfoClass.TRANSTAG)
+                          : null;
     }
 
     /**
@@ -476,8 +433,8 @@ public class Transaction
      */
     public Iterator<TransactionInfo> tagIterator() {
         return hasInfoSet
-                         ? theInfoSet.linkIterator(TransactionInfoClass.TRANSTAG)
-                         : null;
+                          ? theInfoSet.linkIterator(TransactionInfoClass.TRANSTAG)
+                          : null;
     }
 
     @Override
@@ -486,7 +443,7 @@ public class Transaction
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -501,7 +458,7 @@ public class Transaction
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -516,7 +473,7 @@ public class Transaction
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -570,8 +527,8 @@ public class Transaction
         TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -630,8 +587,8 @@ public class Transaction
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
             return isHeader()
-                             ? -1
-                             : 1;
+                              ? -1
+                              : 1;
         }
 
         /* If the dates differ */
@@ -648,13 +605,6 @@ public class Transaction
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Transaction details */
         super.resolveDataSetLinks();
-
-        /* Adjust Reconciled */
-        ValueSet myValues = getValueSet();
-        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
-        if (myReconciled == null) {
-            setValueReconciled(Boolean.FALSE);
-        }
 
         /* Sort linkSets */
         if (hasInfoSet) {
@@ -747,7 +697,7 @@ public class Transaction
             }
         }
 
-        /* Return no category */
+        /* Return no deposit */
         return null;
     }
 
@@ -774,8 +724,8 @@ public class Transaction
 
         /* Determine the tax credit rate */
         JRate myRate = (isInterest())
-                                     ? myTax.getIntTaxRate()
-                                     : myTax.getDivTaxRate();
+                                      ? myTax.getIntTaxRate()
+                                      : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -787,16 +737,8 @@ public class Transaction
      */
     public void setDate(final JDateDay pDate) {
         setValueDate((pDate == null)
-                                    ? null
-                                    : new JDateDay(pDate));
-    }
-
-    /**
-     * Set a reconciled indication.
-     * @param pReconciled the reconciled state
-     */
-    public void setReconciled(final Boolean pReconciled) {
-        setValueReconciled(pReconciled);
+                                     ? null
+                                     : new JDateDay(pDate));
     }
 
     /**
@@ -1036,11 +978,6 @@ public class Transaction
         /* Update the Date if required */
         if (!Difference.isEqual(getDate(), myTrans.getDate())) {
             setValueDate(myTrans.getDate());
-        }
-
-        /* Update the reconciled state if required */
-        if (!Difference.isEqual(isReconciled(), myTrans.isReconciled())) {
-            setValueReconciled(myTrans.isReconciled());
         }
 
         /* Apply basic changes */

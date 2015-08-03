@@ -37,6 +37,8 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.util.Arrays;
+
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.DataDigest;
@@ -60,8 +62,6 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.bouncycastle.util.Arrays;
-
 /**
  * Security Test suite.
  */
@@ -84,8 +84,8 @@ public class SecurityTest {
      */
     public static void createAndShowGUI() {
         try {
-            // listAlgorithms(SecurityProvider.BC);
-            checkAlgorithms();
+            listAlgorithms(SecurityProvider.BC);
+            // checkAlgorithms();
             // testSecurity();
             /* Test zip file creation */
             // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");

@@ -248,8 +248,8 @@ public class Portfolio
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -273,8 +273,8 @@ public class Portfolio
      */
     public char[] getWebSite() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
+                          : null;
     }
 
     /**
@@ -283,8 +283,8 @@ public class Portfolio
      */
     public char[] getCustNo() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
+                          : null;
     }
 
     /**
@@ -293,8 +293,8 @@ public class Portfolio
      */
     public char[] getUserId() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
+                          : null;
     }
 
     /**
@@ -303,8 +303,8 @@ public class Portfolio
      */
     public char[] getPassword() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
+                          : null;
     }
 
     /**
@@ -313,8 +313,8 @@ public class Portfolio
      */
     public char[] getSortCode() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
+                          : null;
     }
 
     /**
@@ -323,8 +323,8 @@ public class Portfolio
      */
     public char[] getReference() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
+                          : null;
     }
 
     /**
@@ -333,8 +333,8 @@ public class Portfolio
      */
     public char[] getAccount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
+                          : null;
     }
 
     /**
@@ -343,8 +343,8 @@ public class Portfolio
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     @Override
@@ -359,8 +359,8 @@ public class Portfolio
     public Integer getParentId() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getId();
+                                  ? null
+                                  : myParent.getId();
     }
 
     /**
@@ -370,8 +370,8 @@ public class Portfolio
     public String getParentName() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getName();
+                                  ? null
+                                  : myParent.getName();
     }
 
     @Override
@@ -483,7 +483,7 @@ public class Portfolio
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -498,7 +498,7 @@ public class Portfolio
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -513,7 +513,7 @@ public class Portfolio
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -567,8 +567,8 @@ public class Portfolio
         AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -802,19 +802,19 @@ public class Portfolio
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass((isGross())
-                                                                ? TransactionCategoryClass.GROSSINTEREST
-                                                                : TransactionCategoryClass.TAXEDINTEREST);
+                                                                 ? TransactionCategoryClass.GROSSINTEREST
+                                                                 : TransactionCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);
                 }
                 return myCategories.getSingularClass((isGross())
-                                                                ? TransactionCategoryClass.GROSSLOYALTYBONUS
-                                                                : TransactionCategoryClass.TAXEDLOYALTYBONUS);
+                                                                 ? TransactionCategoryClass.GROSSLOYALTYBONUS
+                                                                 : TransactionCategoryClass.TAXEDLOYALTYBONUS);
             case DIVIDEND:
                 return isTaxFree()
-                                  ? myCategories.getSingularClass(TransactionCategoryClass.TAXFREEDIVIDEND)
-                                  : pCategory;
+                                   ? myCategories.getSingularClass(TransactionCategoryClass.TAXFREEDIVIDEND)
+                                   : pCategory;
             default:
                 return pCategory;
         }
@@ -1225,8 +1225,8 @@ public class Portfolio
         public Portfolio findItemByName(final String pName) {
             AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Portfolio
-                                               ? (Portfolio) myAsset
-                                               : null;
+                                                ? (Portfolio) myAsset
+                                                : null;
         }
 
         /**

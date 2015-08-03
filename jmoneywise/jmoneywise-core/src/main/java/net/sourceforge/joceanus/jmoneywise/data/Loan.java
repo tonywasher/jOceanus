@@ -230,8 +230,8 @@ public class Loan
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                             ? theInfoSet
-                             : JDataFieldValue.SKIP;
+                              ? theInfoSet
+                              : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -255,8 +255,8 @@ public class Loan
      */
     public char[] getSortCode() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
+                          : null;
     }
 
     /**
@@ -265,8 +265,8 @@ public class Loan
      */
     public char[] getReference() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
+                          : null;
     }
 
     /**
@@ -275,8 +275,8 @@ public class Loan
      */
     public char[] getAccount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
+                          : null;
     }
 
     /**
@@ -285,8 +285,8 @@ public class Loan
      */
     public char[] getNotes() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
     }
 
     /**
@@ -295,8 +295,8 @@ public class Loan
      */
     public JMoney getOpeningBalance() {
         return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
-                         : null;
+                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                          : null;
     }
 
     @Override
@@ -311,8 +311,8 @@ public class Loan
     public Integer getParentId() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getId();
+                                  ? null
+                                  : myParent.getId();
     }
 
     /**
@@ -322,8 +322,8 @@ public class Loan
     public String getParentName() {
         Payee myParent = getParent();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getName();
+                                  ? null
+                                  : myParent.getName();
     }
 
     /**
@@ -341,8 +341,8 @@ public class Loan
     public Integer getCategoryId() {
         LoanCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getId();
+                                    ? null
+                                    : myCategory.getId();
     }
 
     /**
@@ -352,8 +352,8 @@ public class Loan
     public String getCategoryName() {
         LoanCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getName();
+                                    ? null
+                                    : myCategory.getName();
     }
 
     /**
@@ -363,8 +363,8 @@ public class Loan
     public LoanCategoryClass getCategoryClass() {
         LoanCategory myCategory = getCategory();
         return (myCategory == null)
-                                   ? null
-                                   : myCategory.getCategoryTypeClass();
+                                    ? null
+                                    : myCategory.getCategoryTypeClass();
     }
 
     @Override
@@ -487,7 +487,7 @@ public class Loan
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -502,7 +502,7 @@ public class Loan
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -517,7 +517,7 @@ public class Loan
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if (!hasHistory && useInfoSet) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -571,8 +571,8 @@ public class Loan
         AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                               ? theInfoSet.fieldChanged(myClass)
-                               : Difference.IDENTICAL;
+                                ? theInfoSet.fieldChanged(myClass)
+                                : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -1217,8 +1217,8 @@ public class Loan
         public Loan findItemByName(final String pName) {
             AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Loan
-                                          ? (Loan) myAsset
-                                          : null;
+                                           ? (Loan) myAsset
+                                           : null;
         }
 
         /**
