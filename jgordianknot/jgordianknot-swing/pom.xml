@@ -7,7 +7,7 @@
   </parent>
   <artifactId>jgordianknot-swing</artifactId>
   <name>jGordianKnot Swing Security Framework</name>
-  <description>A Security framework for Java. This embeds the 7Zip SDK v9.20 which is under public domain license</description>
+  <description>A Security framework for Java.</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

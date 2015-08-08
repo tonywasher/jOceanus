@@ -313,29 +313,33 @@ public class JDateDayRangeState {
         JDateDay myFirst = theOverallRange.getStart();
         JDateDay myLast = theOverallRange.getEnd();
 
-        /* Make sure that no dates are past the final date */
-        if (myLast != null) {
-            if (theBaseDate.compareTo(myLast) > 0) {
-                theBaseDate = myLast;
-            }
-            if (theStartDate.compareTo(myLast) > 0) {
-                theStartDate = myLast;
-            }
-            if (theEndDate.compareTo(myLast) > 0) {
-                theEndDate = myLast;
-            }
-        }
-
         /* Make sure that no dates are before the first date */
         if (myFirst != null) {
             if (theBaseDate.compareTo(myFirst) < 0) {
                 theBaseDate = myFirst;
             }
-            if (theStartDate.compareTo(myFirst) < 0) {
+            if ((theStartDate == null) ||
+                (theStartDate.compareTo(myFirst) < 0)) {
                 theStartDate = myFirst;
             }
-            if (theEndDate.compareTo(myFirst) < 0) {
+            if ((theEndDate != null) &&
+                (theEndDate.compareTo(myFirst) < 0)) {
                 theEndDate = myFirst;
+            }
+        }
+
+        /* Make sure that no dates are past the final date */
+        if (myLast != null) {
+            if (theBaseDate.compareTo(myLast) > 0) {
+                theBaseDate = myLast;
+            }
+            if ((theStartDate != null) &&
+                (theStartDate.compareTo(myLast) > 0)) {
+                theStartDate = myLast;
+            }
+            if ((theEndDate == null) ||
+                (theEndDate.compareTo(myLast) > 0)) {
+                theEndDate = myLast;
             }
         }
 

@@ -11,6 +11,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>jgordianknot-swing</module>
+    <module>jgordianknot-javafx</module>
     <module>jgordianknot-core</module>
   </modules>
   <properties>

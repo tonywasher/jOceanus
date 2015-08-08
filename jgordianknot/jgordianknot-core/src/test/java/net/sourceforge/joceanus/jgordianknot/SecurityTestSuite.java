@@ -35,8 +35,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.SwingUtilities;
-
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymKeyType;
@@ -54,7 +52,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
@@ -65,37 +62,38 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Security Test suite.
  */
-public class SecurityTest {
+public class SecurityTestSuite {
     /**
-     * Main entry point.
-     * @param args the parameters
+     * Interface for Security Manager creator.
      */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+    public interface SecurityManagerCreator {
+                /**
+                 * Create a new SecureManager with default parameters.
+                 * @return the new SecureManager
+                 * @throws JOceanusException on error
+                 */
+                SecureManager newSecureManager() throws JOceanusException;
+
+        /**
+         * Create a new SecureManager.
+         * @param pParams the security parameters
+         * @return the new SecureManager
+         * @throws JOceanusException on error
+         */
+                SecureManager newSecureManager(final SecurityParameters pParams) throws JOceanusException;
     }
 
     /**
-     * Create and show the GUI.
+     * The Security Manager creator.
      */
-    public static void createAndShowGUI() {
-        try {
-            listAlgorithms(SecurityProvider.BC);
-            // checkAlgorithms();
-            // testSecurity();
-            /* Test zip file creation */
-            // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-            // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-            // extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
-        } catch (Exception e) {
-            System.out.println("Help");
-            e.printStackTrace();
-        }
-        System.exit(0);
+    private final SecurityManagerCreator theCreator;
+
+    /**
+     * Constructor.
+     * @param pCreator the Secure Manager creator
+     */
+    public SecurityTestSuite(final SecurityManagerCreator pCreator) {
+        theCreator = pCreator;
     }
 
     /**
@@ -106,16 +104,16 @@ public class SecurityTest {
      * @return the contents of the zip file
      * @throws JOceanusException
      */
-    protected static ZipFileContents createZipFile(File pZipFile,
-                                                   File pDirectory,
-                                                   boolean bSecure) throws JOceanusException {
+    public ZipFileContents createZipFile(File pZipFile,
+                                         File pDirectory,
+                                         boolean bSecure) throws JOceanusException {
         ZipWriteFile myZipFile;
 
         try {
             /* If we are creating a secure zip file */
             if (bSecure) {
                 /* Create new Password Hash */
-                SecureManager myManager = new SwingSecureManager();
+                SecureManager myManager = theCreator.newSecureManager();
                 PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
 
                 /* Initialise the Zip file */
@@ -182,15 +180,15 @@ public class SecurityTest {
      * @param pDirectory the directory to extract to
      * @throws JOceanusException
      */
-    protected static void extractZipFile(File pZipFile,
-                                         File pDirectory) throws JOceanusException {
+    public void extractZipFile(File pZipFile,
+                               File pDirectory) throws JOceanusException {
         /* Protect against exceptions */
         try (ZipReadFile myZipFile = new ZipReadFile(pZipFile)) {
             /* Check for security */
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
                 /* Resolve security and unlock file */
-                SecureManager myManager = new SwingSecureManager();
+                SecureManager myManager = theCreator.newSecureManager();
                 PasswordHash myHash = myManager.resolvePasswordHash(myHashBytes, pZipFile.getName());
                 myZipFile.setPasswordHash(myHash);
             }
@@ -241,9 +239,9 @@ public class SecurityTest {
      * Test security algorithms
      * @throws JOceanusException
      */
-    protected static void testSecurity() throws JOceanusException {
+    protected void testSecurity() throws JOceanusException {
         /* Create new Password Hash */
-        SecureManager myManager = new SwingSecureManager();
+        SecureManager myManager = theCreator.newSecureManager();
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
         SecurityGenerator myGen = myHash.getSecurityGenerator();
 
@@ -286,7 +284,7 @@ public class SecurityTest {
         byte[] myMacSafe = myHash.secureDataMac(myMac);
 
         /* Start a new session */
-        myManager = new SwingSecureManager();
+        myManager = theCreator.newSecureManager();
         PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
         myGen = myHash.getSecurityGenerator();
 
@@ -412,10 +410,10 @@ public class SecurityTest {
     /**
      * Check the supported algorithms
      */
-    protected static void checkAlgorithms() throws JOceanusException {
+    protected void checkAlgorithms() throws JOceanusException {
         /* Create new Security Generator */
         SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
-        SecureManager myManager = new SwingSecureManager(myParams);
+        SecureManager myManager = theCreator.newSecureManager(myParams);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 
         /* Create instance of each digest */
