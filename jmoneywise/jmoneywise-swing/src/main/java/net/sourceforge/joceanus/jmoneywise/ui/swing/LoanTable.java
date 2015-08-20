@@ -76,8 +76,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Loan Table.
@@ -420,15 +420,15 @@ public class LoanTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theLoans == null)
-                                     ? 0
-                                     : theLoans.size();
+                                      ? 0
+                                      : theLoans.size();
         }
 
         @Override
@@ -809,13 +809,13 @@ public class LoanTable
                     return pLoan.isClosed();
                 case COLUMN_ACTIVE:
                     return pLoan.isActive()
-                                           ? ActionType.ACTIVE
-                                           : ActionType.DELETE;
+                                            ? ActionType.ACTIVE
+                                            : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pLoan.getLatest();
                     return (myTran == null)
-                                           ? null
-                                           : myTran.getDate();
+                                            ? null
+                                            : myTran.getDate();
                 default:
                     return null;
             }
@@ -880,8 +880,8 @@ public class LoanTable
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
                     return pItem.isClosed()
-                                           ? !pItem.getParent().isClosed()
-                                           : !pItem.isRelevant();
+                                            ? !pItem.getParent().isClosed()
+                                            : !pItem.isRelevant();
                 default:
                     return false;
             }

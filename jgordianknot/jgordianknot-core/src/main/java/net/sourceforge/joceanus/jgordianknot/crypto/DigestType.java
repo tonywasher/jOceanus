@@ -133,17 +133,17 @@ public enum DigestType {
     protected String getAlgorithm(final boolean bLong) {
         switch (this) {
             case SKEIN:
-                return (bLong)
-                              ? "SKEIN-512-512"
-                              : "SKEIN-256-256";
+                return bLong
+                             ? "SKEIN-512-512"
+                             : "SKEIN-256-256";
             case SHA3:
-                return (bLong)
-                              ? "SHA3-512"
-                              : "SHA3-256";
+                return bLong
+                             ? "SHA3-512"
+                             : "SHA3-256";
             case SHA2:
-                return (bLong)
-                              ? "SHA512"
-                              : "SHA-256";
+                return bLong
+                             ? "SHA512"
+                             : "SHA-256";
             case RIPEMD:
                 return "RIPEMD320";
             case GOST:

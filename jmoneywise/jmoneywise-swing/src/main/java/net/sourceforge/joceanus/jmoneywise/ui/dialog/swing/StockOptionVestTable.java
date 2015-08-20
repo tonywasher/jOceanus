@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
 
 /**
  * Panel to display a list of Vests associated with a StockOption.
@@ -246,15 +246,15 @@ public class StockOptionVestTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theVests == null)
-                                     ? 0
-                                     : 1 + theVests.size();
+                                      ? 0
+                                      : 1 + theVests.size();
         }
 
         @Override
@@ -273,8 +273,8 @@ public class StockOptionVestTable
         public StockOptionVest getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
-                                 ? theHeader
-                                 : theVests.get(pRowIndex - 1);
+                                  ? theHeader
+                                  : theVests.get(pRowIndex - 1);
         }
 
         @Override
@@ -282,8 +282,8 @@ public class StockOptionVestTable
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pItem.isHeader()
-                                   ? theColumns.getHeaderValue(pColIndex)
-                                   : theColumns.getItemValue(pItem, pColIndex);
+                                    ? theColumns.getHeaderValue(pColIndex)
+                                    : theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -309,8 +309,8 @@ public class StockOptionVestTable
 
             /* Handle filter */
             return pRow.isHeader()
-                                  ? isEditable
-                                  : theOption.equals(pRow.getStockOption());
+                                   ? isEditable
+                                   : theOption.equals(pRow.getStockOption());
         }
 
         /**
@@ -516,8 +516,8 @@ public class StockOptionVestTable
                     return pItem.getUnits();
                 case COLUMN_ACTION:
                     return theModel.getViewRowCount() > 1
-                                                         ? ActionType.DELETE
-                                                         : ActionType.DO;
+                                                          ? ActionType.DELETE
+                                                          : ActionType.DO;
                 default:
                     return null;
             }

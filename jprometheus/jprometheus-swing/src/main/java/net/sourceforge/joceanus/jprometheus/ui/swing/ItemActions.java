@@ -56,11 +56,11 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Utility panel to handle actions on selected item.

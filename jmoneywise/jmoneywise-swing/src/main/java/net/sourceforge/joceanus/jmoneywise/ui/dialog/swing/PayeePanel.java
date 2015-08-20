@@ -53,12 +53,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a Payee.

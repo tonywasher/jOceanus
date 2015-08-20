@@ -68,7 +68,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
 
 /**
  * Maintenance Tab panel.
@@ -335,7 +335,7 @@ public class MaintenanceTab
     protected void selectMaintenance(final JOceanusActionEvent pEvent) {
         /* Switch on the subId */
         switch (pEvent.getActionId()) {
-        /* View the requested account */
+            /* View the requested account */
             case MainTab.ACTION_VIEWACCOUNT:
                 /* Select the requested account */
                 AssetBase<?> myAccount = pEvent.getDetails(AssetBase.class);
@@ -569,7 +569,7 @@ public class MaintenanceTab
         public void processActionEvent(final JOceanusActionEvent pEvent) {
             /* else handle or cascade */
             switch (pEvent.getActionId()) {
-            /* Pass through the event */
+                /* Pass through the event */
                 case MainTab.ACTION_VIEWSTATEMENT:
                     theEventManager.cascadeActionEvent(pEvent);
                     break;

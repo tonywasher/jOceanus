@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
 
 /**
  * Panel to display a list of SecurityPrices associated with a Security.
@@ -297,15 +297,15 @@ public class SecurityPriceTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (thePrices == null)
-                                      ? 0
-                                      : 1 + thePrices.size();
+                                       ? 0
+                                       : 1 + thePrices.size();
         }
 
         @Override
@@ -324,8 +324,8 @@ public class SecurityPriceTable
         public ViewSecurityPrice getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
-                                 ? theHeader
-                                 : thePrices.get(pRowIndex - 1);
+                                  ? theHeader
+                                  : thePrices.get(pRowIndex - 1);
         }
 
         @Override
@@ -333,8 +333,8 @@ public class SecurityPriceTable
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pItem.isHeader()
-                                   ? theColumns.getHeaderValue(pColIndex)
-                                   : theColumns.getItemValue(pItem, pColIndex);
+                                    ? theColumns.getHeaderValue(pColIndex)
+                                    : theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -360,8 +360,8 @@ public class SecurityPriceTable
 
             /* Handle filter */
             return pRow.isHeader()
-                                  ? isEditable
-                                  : theSecurity.equals(pRow.getSecurity());
+                                   ? isEditable
+                                   : theSecurity.equals(pRow.getSecurity());
         }
 
         /**
@@ -621,8 +621,8 @@ public class SecurityPriceTable
                     return pItem.getDilutedPrice();
                 case COLUMN_ACTION:
                     return theModel.getViewRowCount() > 1
-                                                         ? ActionType.DELETE
-                                                         : ActionType.DO;
+                                                          ? ActionType.DELETE
+                                                          : ActionType.DO;
                 default:
                     return null;
             }
@@ -673,8 +673,8 @@ public class SecurityPriceTable
                     return false;
                 case COLUMN_ACTION:
                     return pColIndex == 0
-                                         ? isEditable
-                                         : isEditable && theModel.getViewRowCount() > 2;
+                                          ? isEditable
+                                          : isEditable && theModel.getViewRowCount() > 2;
                 default:
                     return false;
             }

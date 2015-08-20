@@ -61,9 +61,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
 
 /**
  * Component classes for jFieldSet.
@@ -119,8 +119,8 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      */
     protected JComponent getComponent() {
         return theScroll == null
-                                ? theComponent
-                                : theScroll;
+                                 ? theComponent
+                                 : theScroll;
     }
 
     /**
@@ -328,11 +328,11 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
         /* Set the appropriate border */
         JComponent myComp = (theScroll != null)
-                                               ? theScroll
-                                               : theComponent;
+                                                ? theScroll
+                                                : theComponent;
         myComp.setBorder(myState.isError()
-                                          ? pRender.getErrorBorder()
-                                          : theBorder);
+                                           ? pRender.getErrorBorder()
+                                           : theBorder);
 
         /* Display the data */
         displayField();
@@ -353,8 +353,8 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
         /* Set the appropriate border */
         JComponent myComp = (theScroll != null)
-                                               ? theScroll
-                                               : theComponent;
+                                                ? theScroll
+                                                : theComponent;
         myComp.setBorder(theBorder);
 
         /* Display the data */
@@ -423,8 +423,8 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Set correct alignment */
             int iAlignment = pModel.isFixedWidth()
-                                                  ? SwingConstants.RIGHT
-                                                  : SwingConstants.LEFT;
+                                                   ? SwingConstants.RIGHT
+                                                   : SwingConstants.LEFT;
             pComponent.setHorizontalAlignment(iAlignment);
         }
 

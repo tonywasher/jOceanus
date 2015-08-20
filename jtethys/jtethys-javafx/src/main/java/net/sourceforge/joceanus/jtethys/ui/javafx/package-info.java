@@ -18,4 +18,4 @@
 /**
  * JavaFX UI utilities.
  */
-package net.sourceforge.joceanus.jtethys.javafx;
+package net.sourceforge.joceanus.jtethys.ui.javafx;

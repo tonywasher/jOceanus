@@ -50,8 +50,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Security Analysis Selection.
@@ -150,8 +150,8 @@ public class SecurityAnalysisSelect
     public SecurityFilter getFilter() {
         SecurityBucket mySecurity = theState.getSecurity();
         return mySecurity != null
-                                 ? new SecurityFilter(mySecurity)
-                                 : null;
+                                  ? new SecurityFilter(mySecurity)
+                                  : null;
     }
 
     @Override
@@ -211,8 +211,8 @@ public class SecurityAnalysisSelect
         if (mySecurity == null) {
             /* Check for a security in the same portfolio */
             myPortfolio = (myPortfolio == null)
-                                               ? null
-                                               : thePortfolios.findItemById(myPortfolio.getOrderedId());
+                                                ? null
+                                                : thePortfolios.findItemById(myPortfolio.getOrderedId());
 
             /* If the portfolio no longer exists */
             if (myPortfolio == null) {
@@ -222,8 +222,8 @@ public class SecurityAnalysisSelect
 
             /* Use the first security for portfolio */
             mySecurity = (myPortfolio == null)
-                                              ? null
-                                              : getFirstSecurity(myPortfolio);
+                                               ? null
+                                               : getFirstSecurity(myPortfolio);
         }
 
         /* Set the security */
@@ -260,8 +260,8 @@ public class SecurityAnalysisSelect
         /* Loop through the available security values */
         Iterator<SecurityBucket> myIterator = pPortfolio.securityIterator();
         return myIterator.hasNext()
-                                   ? myIterator.next()
-                                   : null;
+                                    ? myIterator.next()
+                                    : null;
     }
 
     /**

@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
 
 /**
  * TransactionTag Table.
@@ -349,15 +349,15 @@ public class TransactionTagTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theTransactionTags == null)
-                                               ? 0
-                                               : theTransactionTags.size();
+                                                ? 0
+                                                : theTransactionTags.size();
         }
 
         @Override
@@ -616,8 +616,8 @@ public class TransactionTagTable
                     return pTransactionTag.getDesc();
                 case COLUMN_ACTIVE:
                     return pTransactionTag.isActive()
-                                                     ? ActionType.ACTIVE
-                                                     : ActionType.DELETE;
+                                                      ? ActionType.ACTIVE
+                                                      : ActionType.DELETE;
                 default:
                     return null;
             }

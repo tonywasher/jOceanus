@@ -74,8 +74,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Payee Table.
@@ -408,15 +408,15 @@ public class PayeeTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (thePayees == null)
-                                      ? 0
-                                      : thePayees.size();
+                                       ? 0
+                                       : thePayees.size();
         }
 
         @Override
@@ -765,13 +765,13 @@ public class PayeeTable
                     return pPayee.isClosed();
                 case COLUMN_ACTIVE:
                     return pPayee.isActive()
-                                            ? ActionType.ACTIVE
-                                            : ActionType.DELETE;
+                                             ? ActionType.ACTIVE
+                                             : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pPayee.getLatest();
                     return (myTran == null)
-                                           ? null
-                                           : myTran.getDate();
+                                            ? null
+                                            : myTran.getDate();
                 default:
                     return null;
             }

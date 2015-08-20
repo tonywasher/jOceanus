@@ -46,9 +46,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
@@ -419,8 +419,8 @@ public class TransactionCategoryPanel
             /* Handle Transfer */
             if (myClass.isTransfer()) {
                 return myClass.isSecurityTransfer()
-                                                   ? SECURITYXFER
-                                                   : XFER;
+                                                    ? SECURITYXFER
+                                                    : XFER;
             }
 
             /* Must be expense */

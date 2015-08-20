@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

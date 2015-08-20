@@ -54,9 +54,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 
 /**
  * Loan Analysis Selection.
@@ -160,8 +160,8 @@ public class LoanAnalysisSelect
     public LoanFilter getFilter() {
         LoanBucket myLoan = theState.getLoan();
         return myLoan != null
-                             ? new LoanFilter(myLoan)
-                             : null;
+                              ? new LoanFilter(myLoan)
+                              : null;
     }
 
     @Override
@@ -221,13 +221,13 @@ public class LoanAnalysisSelect
             /* Check for a loan in the same category */
             LoanCategory myCategory = theState.getCategory();
             LoanCategoryBucket myCatBucket = (myCategory == null)
-                                                                 ? null
-                                                                 : theCategories.findItemById(myCategory.getId());
+                                                                  ? null
+                                                                  : theCategories.findItemById(myCategory.getId());
 
             /* Determine the next loan */
             myLoan = (myCatBucket != null)
-                                          ? getFirstLoan(myCategory)
-                                          : theLoans.peekFirst();
+                                           ? getFirstLoan(myCategory)
+                                           : theLoans.peekFirst();
         }
 
         /* Set the loan */
@@ -519,8 +519,8 @@ public class LoanAnalysisSelect
 
             /* Access category for account */
             theCategory = (theLoan == null)
-                                           ? null
-                                           : theLoan.getCategory();
+                                            ? null
+                                            : theLoan.getCategory();
         }
 
         /**

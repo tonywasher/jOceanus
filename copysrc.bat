@@ -13,8 +13,8 @@ goto :docopy
 set projectName=jOceanus
 set source=c:\Users\Tony\%projectName%
 set target=c:\Users\Tony\sourceforge\%projectName%\trunk
-set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing
-set dirNames=%dirNames% jgordianknot jgordianknot\jgordianknot-core jgordianknot\jgordianknot-swing
+set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing jtethys\jtethys-javafx
+set dirNames=%dirNames% jgordianknot jgordianknot\jgordianknot-core jgordianknot\jgordianknot-swing jgordianknot\jgordianknot-javafx
 set dirNames=%dirNames% jmetis jmetis\jmetis-core jmetis\jmetis-swing
 set dirNames=%dirNames% jprometheus jprometheus\jprometheus-core jprometheus\jprometheus-swing
 set dirNames=%dirNames% jthemis jthemis\jthemis-core jthemis\jthemis-swing

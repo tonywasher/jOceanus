@@ -67,10 +67,10 @@ import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.GridBagUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Preference Set panel.
@@ -376,7 +376,7 @@ public class PreferenceSetPanel
 
             /* Switch on field type */
             switch (theType) {
-            /* Create the Underlying field */
+                /* Create the Underlying field */
                 case STRING:
                 case DIRECTORY:
                 case FILE:
@@ -500,8 +500,8 @@ public class PreferenceSetPanel
             @Override
             protected JComponent getLabel() {
                 return (theType == PreferenceType.STRING)
-                                                         ? super.getLabel()
-                                                         : theButton;
+                                                          ? super.getLabel()
+                                                          : theButton;
             }
 
             @Override
@@ -547,7 +547,7 @@ public class PreferenceSetPanel
                     if (theButton.equals(o)) {
                         /* Switch on the preference type */
                         switch (theType) {
-                        /* If we are a directory preference */
+                            /* If we are a directory preference */
                             case DIRECTORY:
                                 /* Create and show the dialog */
                                 FileSelector myDialog = new FileSelector(PreferenceSetPanel.this, NLS_SELECT

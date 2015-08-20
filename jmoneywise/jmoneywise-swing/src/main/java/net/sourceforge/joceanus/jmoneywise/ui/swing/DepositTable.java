@@ -78,8 +78,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Deposit Table.
@@ -434,15 +434,15 @@ public class DepositTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theDeposits == null)
-                                        ? 0
-                                        : theDeposits.size();
+                                         ? 0
+                                         : theDeposits.size();
         }
 
         @Override
@@ -823,13 +823,13 @@ public class DepositTable
                     return pDeposit.isClosed();
                 case COLUMN_ACTIVE:
                     return pDeposit.isActive()
-                                              ? ActionType.ACTIVE
-                                              : ActionType.DELETE;
+                                               ? ActionType.ACTIVE
+                                               : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pDeposit.getLatest();
                     return (myTran == null)
-                                           ? null
-                                           : myTran.getDate();
+                                            ? null
+                                            : myTran.getDate();
                 default:
                     return null;
             }
@@ -894,8 +894,8 @@ public class DepositTable
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
                     return pItem.isClosed()
-                                           ? !pItem.getParent().isClosed()
-                                           : !pItem.isRelevant();
+                                            ? !pItem.getParent().isClosed()
+                                            : !pItem.isRelevant();
                 default:
                     return false;
             }

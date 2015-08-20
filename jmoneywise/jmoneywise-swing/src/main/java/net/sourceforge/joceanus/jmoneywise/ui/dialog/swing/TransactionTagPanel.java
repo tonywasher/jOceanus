@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagLis
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a TransactionTag.

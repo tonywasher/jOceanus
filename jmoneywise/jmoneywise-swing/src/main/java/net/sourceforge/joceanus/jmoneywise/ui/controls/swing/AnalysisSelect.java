@@ -66,10 +66,10 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Selection panel for Analysis Statement.
@@ -940,8 +940,8 @@ public class AnalysisSelect
                 /* Toggle visibility of range selection */
                 boolean isVisible = theRangeSelect.isVisible();
                 theRangeButton.setIcon(isVisible
-                                                ? ArrowIcon.DOWN
-                                                : ArrowIcon.UP);
+                                                 ? ArrowIcon.DOWN
+                                                 : ArrowIcon.UP);
                 theRangeSelect.setVisible(!isVisible);
             }
 
@@ -950,8 +950,8 @@ public class AnalysisSelect
                 /* Toggle visibility of filter selection */
                 boolean isVisible = theFilterSelect.isVisible();
                 theFilterButton.setIcon(isVisible
-                                                 ? ArrowIcon.DOWN
-                                                 : ArrowIcon.UP);
+                                                  ? ArrowIcon.DOWN
+                                                  : ArrowIcon.UP);
                 theFilterSelect.setVisible(!isVisible);
             }
         }
@@ -1376,8 +1376,8 @@ public class AnalysisSelect
             setEnabled(true);
             theRangeButton.setText(theRange.toString());
             theFilterButton.setText((theFilter == null)
-                                                       ? null
-                                                       : theFilter.getName());
+                                                        ? null
+                                                        : theFilter.getName());
             theFilterTypeButton.setValue(theType);
             theBucketButton.setValue(theBucket);
             theColumnButton.setValue(theColumns);

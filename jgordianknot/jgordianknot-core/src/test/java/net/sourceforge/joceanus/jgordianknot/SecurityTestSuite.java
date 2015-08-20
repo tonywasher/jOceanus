@@ -84,6 +84,11 @@ public class SecurityTestSuite {
     }
 
     /**
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 1024;
+
+    /**
      * The Security Manager creator.
      */
     private final SecurityManagerCreator theCreator;
@@ -97,16 +102,16 @@ public class SecurityTestSuite {
     }
 
     /**
-     * Create a Zip File of files in a directory
+     * Create a Zip File of files in a directory.
      * @param pZipFile the name of the zip file to create
      * @param pDirectory the directory to archive
      * @param bSecure encrypt the zip file (true/false)
      * @return the contents of the zip file
-     * @throws JOceanusException
+     * @throws JOceanusException on error
      */
-    public ZipFileContents createZipFile(File pZipFile,
-                                         File pDirectory,
-                                         boolean bSecure) throws JOceanusException {
+    public ZipFileContents createZipFile(final File pZipFile,
+                                         final File pDirectory,
+                                         final boolean bSecure) throws JOceanusException {
         ZipWriteFile myZipFile;
 
         try {
@@ -118,16 +123,15 @@ public class SecurityTestSuite {
 
                 /* Initialise the Zip file */
                 myZipFile = new ZipWriteFile(myHash, pZipFile);
-            }
 
-            /* else */
-            else {
+                /* else */
+            } else {
                 /* Just create a standard zip file */
                 myZipFile = new ZipWriteFile(pZipFile);
             }
 
             /* Create a read buffer */
-            int myBufLen = 1024;
+            int myBufLen = BUFFER_LEN;
             byte[] myBuffer = new byte[myBufLen];
             int myRead;
 
@@ -140,8 +144,9 @@ public class SecurityTestSuite {
             /* Loop through the files is the directory */
             for (File myFile : pDirectory.listFiles()) {
                 /* Skip directories */
-                if (myFile.isDirectory())
+                if (myFile.isDirectory()) {
                     continue;
+                }
 
                 /* Open the file for reading */
                 InputStream myInFile = new FileInputStream(myFile);
@@ -175,13 +180,13 @@ public class SecurityTestSuite {
     }
 
     /**
-     * Extract a Zip File to a directory
+     * Extract a Zip File to a directory.
      * @param pZipFile the name of the zip file to extract from
      * @param pDirectory the directory to extract to
-     * @throws JOceanusException
+     * @throws JOceanusException on error
      */
-    public void extractZipFile(File pZipFile,
-                               File pDirectory) throws JOceanusException {
+    public void extractZipFile(final File pZipFile,
+                               final File pDirectory) throws JOceanusException {
         /* Protect against exceptions */
         try (ZipReadFile myZipFile = new ZipReadFile(pZipFile)) {
             /* Check for security */
@@ -197,13 +202,14 @@ public class SecurityTestSuite {
             ZipFileContents myContents = myZipFile.getContents();
 
             /* Create a read buffer */
-            int myBufLen = 1024;
+            int myBufLen = BUFFER_LEN;
             byte[] myBuffer = new byte[myBufLen];
             int myRead;
 
             /* Make sure that we have a directory */
-            if (!pDirectory.isDirectory())
+            if (!pDirectory.isDirectory()) {
                 throw new JGordianDataException("Invalid source directory");
+            }
 
             Iterator<ZipFileEntry> myIterator = myContents.iterator();
             while (myIterator.hasNext()) {
@@ -236,8 +242,8 @@ public class SecurityTestSuite {
     }
 
     /**
-     * Test security algorithms
-     * @throws JOceanusException
+     * Test security algorithms.
+     * @throws JOceanusException on error
      */
     protected void testSecurity() throws JOceanusException {
         /* Create new Password Hash */
@@ -307,10 +313,12 @@ public class SecurityTestSuite {
         byte[] myNewBytes = myDigest.finish();
 
         /* Check the digests are the same */
-        if (!Arrays.areEqual(myDigestBytes, myNewBytes))
+        if (!Arrays.areEqual(myDigestBytes, myNewBytes)) {
             System.out.println("Failed to recalculate digest");
-        if (!Arrays.areEqual(myMacBytes, myMac1Bytes))
+        }
+        if (!Arrays.areEqual(myMacBytes, myMac1Bytes)) {
             System.out.println("Failed to recalculate mac");
+        }
 
         /* Derive the keys */
         AsymmetricKey myAsym1 = myNewHash.deriveAsymmetricKey(myAsymSafe, myAsymPublic);
@@ -319,27 +327,32 @@ public class SecurityTestSuite {
         SymmetricKey mySym2 = myAsym1.deriveSymmetricKey(mySymSafe2, mySym.getKeyType());
 
         /* Check the keys are the same */
-        if (!myAsym1.equals(myAsym))
+        if (!myAsym1.equals(myAsym)) {
             System.out.println("Failed to decrypt AsymmetricKey");
-        if (!mySym1.equals(mySym))
+        }
+        if (!mySym1.equals(mySym)) {
             System.out.println("Failed to decrypt SymmetricKey via Hash");
-        if (!mySym2.equals(mySym))
+        }
+        if (!mySym2.equals(mySym)) {
             System.out.println("Failed to decrypt SymmetricKey via Asym Key");
-        if (!myStm1.equals(myStream))
+        }
+        if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey via Hash");
+        }
 
         /* Decrypt the bytes */
         byte[] myResult = myHash.decryptBytes(myEncrypt);
         String myAnswer = DataConverter.byteArrayToString(myResult);
-        if (!myAnswer.equals(myTest))
+        if (!myAnswer.equals(myTest)) {
             System.out.println("Failed to decrypt test string");
+        }
     }
 
     /**
-     * List the supported algorithms
+     * List the supported algorithms.
      * @param pProvider the provider
      */
-    protected static void listAlgorithms(SecurityProvider pProvider) {
+    protected static void listAlgorithms(final SecurityProvider pProvider) {
         Set<String> ciphers = new HashSet<String>();
         Set<String> keyFactories = new HashSet<String>();
         Set<String> messageDigests = new HashSet<String>();
@@ -352,8 +365,9 @@ public class SecurityTestSuite {
         Provider[] providers = Security.getProviders();
 
         for (int i = 0; i != providers.length; i++) {
-            if (!providers[i].getName().equals(pProvider.getProvider()))
+            if (!providers[i].getName().equals(pProvider.getProvider())) {
                 continue;
+            }
             Iterator<Object> it = providers[i].keySet().iterator();
             while (it.hasNext()) {
                 String entry = (String) it.next();
@@ -372,8 +386,9 @@ public class SecurityTestSuite {
                     signatures.add(entry.substring("Signature.".length()));
                 } else if (entry.startsWith("SecureRandom.")) {
                     randoms.add(entry.substring("SecureRandom.".length()));
-                } else
+                } else {
                     remaining.add(entry);
+                }
             }
         }
 
@@ -387,12 +402,12 @@ public class SecurityTestSuite {
     }
 
     /**
-     * Print out a set of algorithms
+     * Print out a set of algorithms.
      * @param setName the name of the set
      * @param algorithms the set of algorithms
      */
-    private static void printSet(String setName,
-                                 Set<String> algorithms) {
+    private static void printSet(final String setName,
+                                 final Set<String> algorithms) {
         System.out.println(setName
                            + ":");
         if (algorithms.isEmpty()) {
@@ -408,7 +423,8 @@ public class SecurityTestSuite {
     }
 
     /**
-     * Check the supported algorithms
+     * Check the supported algorithms.
+     * @throws JOceanusException on error
      */
     protected void checkAlgorithms() throws JOceanusException {
         /* Create new Security Generator */

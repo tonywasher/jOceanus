@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -44,10 +44,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter.TableFilterModel;
 
 /**
  * Demo application for JTableFilter.

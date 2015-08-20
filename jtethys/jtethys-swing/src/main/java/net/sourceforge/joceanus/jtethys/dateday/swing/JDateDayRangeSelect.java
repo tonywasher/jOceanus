@@ -41,10 +41,10 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeState;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
@@ -513,7 +513,7 @@ public class JDateDayRangeSelect
                 notifyChangedRange();
 
                 /* if this event relates to the Base Date button */
-            } else if (theEndButton.equals(src)) {
+            } else if (theBaseButton.equals(src)) {
                 /* Access the value */
                 theState.setBaseDate(theBaseButton.getSelectedDateDay());
                 notifyChangedRange();

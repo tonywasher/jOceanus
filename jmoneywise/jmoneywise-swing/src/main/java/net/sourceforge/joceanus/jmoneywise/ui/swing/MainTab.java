@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.swing.HelpException;
 import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
 
 /**
  * Main Window for jMoneyWise.
@@ -582,7 +582,7 @@ public class MainTab
         public void processActionEvent(final JOceanusActionEvent pEvent) {
             /* Pass out the request */
             switch (pEvent.getActionId()) {
-            /* View the requested statement */
+                /* View the requested statement */
                 case ACTION_VIEWSTATEMENT:
                     StatementSelect mySelect = pEvent.getDetails(StatementSelect.class);
                     selectStatement(mySelect);

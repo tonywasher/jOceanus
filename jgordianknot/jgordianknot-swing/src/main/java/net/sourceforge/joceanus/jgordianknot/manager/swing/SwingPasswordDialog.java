@@ -43,11 +43,11 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CryptoResource;
-import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jgordianknot.crypto.CryptoResource;
+import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.

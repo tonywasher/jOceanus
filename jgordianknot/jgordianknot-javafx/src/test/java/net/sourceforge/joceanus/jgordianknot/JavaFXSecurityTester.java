@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Security Test suite.
  */
-public class JavaFXSecurityTest
+public class JavaFXSecurityTester
         extends Application
         implements SecurityManagerCreator {
     /**
@@ -56,7 +56,7 @@ public class JavaFXSecurityTest
     /**
      * Constructor.
      */
-    public JavaFXSecurityTest() {
+    public JavaFXSecurityTester() {
         theTests = new SecurityTestSuite(this);
     }
 

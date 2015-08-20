@@ -34,24 +34,25 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanus
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.RegistrationType;
 
 /**
- * EventManager implementation. This provides means for classes to fire events to registered listeners.
+ * EventManager implementation. This provides means for classes to fire events to registered
+ * listeners.
  */
 public class JOceanusEventManager
         implements JOceanusEventProvider {
     /**
      * Default action Id.
      */
-    private static final int DEFAULT_ACTION_ID = 100;
+    public static final int ACTIONID_ANY = -1;
 
     /**
-     * The Next ownerId.
+     * The Next managerId.
      */
-    private static int theNextOwnerId = 1;
+    private static int theNextMgrId = 1;
 
     /**
      * The Id of this manager.
      */
-    private final int theOwnerId;
+    private final int theMgrId;
 
     /**
      * The registrar.
@@ -63,27 +64,27 @@ public class JOceanusEventManager
      */
     public JOceanusEventManager() {
         /* Store the owner */
-        theOwnerId = getNextOwnerId();
+        theMgrId = getNextManagerId();
 
         /* Allocate the registrar */
-        theRegistrar = new JOceanusEventRegistrar(theOwnerId);
+        theRegistrar = new JOceanusEventRegistrar(theMgrId);
     }
 
     /**
      * Obtain next owner id.
      * @return the id of the new owner
      */
-    private synchronized int getNextOwnerId() {
-        /* return the new owner id */
-        return theNextOwnerId++;
+    private static synchronized int getNextManagerId() {
+        /* return the new manager id */
+        return theNextMgrId++;
     }
 
     /**
      * Obtain ownerId.
      * @return the owner Id
      */
-    public int getOwnerId() {
-        return theOwnerId;
+    public int getManagerId() {
+        return theMgrId;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class JOceanusEventManager
                 /* If we have not yet created the change event */
                 if (myEvent == null) {
                     /* Create the change event */
-                    myEvent = new JOceanusChangeEvent(theOwnerId);
+                    myEvent = new JOceanusChangeEvent(theMgrId);
                 }
 
                 /* Fire the event */
@@ -131,7 +132,7 @@ public class JOceanusEventManager
      * Fire Action Performed Event to all registered listeners.
      */
     public void fireActionEvent() {
-        fireActionEvent(DEFAULT_ACTION_ID, null);
+        fireActionEvent(ACTIONID_ANY, null);
     }
 
     /**
@@ -139,7 +140,7 @@ public class JOceanusEventManager
      * @param pDetails the details of the event
      */
     public void fireActionEvent(final Object pDetails) {
-        fireActionEvent(DEFAULT_ACTION_ID, pDetails);
+        fireActionEvent(ACTIONID_ANY, pDetails);
     }
 
     /**
@@ -167,14 +168,19 @@ public class JOceanusEventManager
 
             /* If this is an action registration */
             if (myReg.isRegistrationType(RegistrationType.ACTION)) {
-                /* If we have not yet created the item event */
+                /* Check whether the action is filtered */
+                JOceanusActionRegistration myAction = (JOceanusActionRegistration) myReg;
+                if (myAction.isFiltered(pActionId)) {
+                    continue;
+                }
+
+                /* If we have not yet created the action event */
                 if (myEvent == null) {
                     /* Create the action event */
-                    myEvent = new JOceanusActionEvent(theOwnerId, pActionId, pDetails);
+                    myEvent = new JOceanusActionEvent(theMgrId, pActionId, pDetails);
                 }
 
                 /* Fire the event */
-                JOceanusActionRegistration myAction = (JOceanusActionRegistration) myReg;
                 myAction.processEvent(myEvent);
             }
         }
@@ -188,7 +194,7 @@ public class JOceanusEventManager
      */
     public JOceanusActionEvent createActionEvent(final int pActionId,
                                                  final Object pDetails) {
-        return new JOceanusActionEvent(theOwnerId, pActionId, pDetails);
+        return new JOceanusActionEvent(theMgrId, pActionId, pDetails);
     }
 
     /**
@@ -198,7 +204,7 @@ public class JOceanusEventManager
      */
     public void fireItemStateChanged(final Object pItem,
                                      final boolean pSelected) {
-        fireItemStateChanged(DEFAULT_ACTION_ID, pItem, pSelected);
+        fireItemStateChanged(ACTIONID_ANY, pItem, pSelected);
     }
 
     /**
@@ -223,7 +229,7 @@ public class JOceanusEventManager
                 /* If we have not yet created the item event */
                 if (myEvent == null) {
                     /* Create the item event */
-                    myEvent = new JOceanusItemEvent(theOwnerId, pActionId, pItem, pSelected);
+                    myEvent = new JOceanusItemEvent(theMgrId, pActionId, pItem, pSelected);
                 }
 
                 /* Fire the event */

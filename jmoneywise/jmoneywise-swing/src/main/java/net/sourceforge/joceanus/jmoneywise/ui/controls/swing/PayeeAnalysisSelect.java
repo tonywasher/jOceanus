@@ -48,8 +48,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Payee Analysis Selection.
@@ -130,8 +130,8 @@ public class PayeeAnalysisSelect
     public PayeeFilter getFilter() {
         PayeeBucket myPayee = theState.getPayee();
         return myPayee != null
-                              ? new PayeeFilter(myPayee)
-                              : null;
+                               ? new PayeeFilter(myPayee)
+                               : null;
     }
 
     @Override

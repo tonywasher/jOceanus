@@ -22,12 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jtethys.DataConverter;
+
 /**
- * Simple class that handles a byte array as an integer housing an integer of max value 2<sup>8n</sup> where n is the length of the byte array.
+ * Simple class that handles a byte array as an integer housing an integer of max value 2
+ * <sup>8n</sup> where n is the length of the byte array.
  */
 public class ByteArrayInteger {
     /**
@@ -160,7 +161,7 @@ public class ByteArrayInteger {
             myOffset++;
 
             /* Determine the carry */
-            doCarry = ((myNext & ~DataConverter.BYTE_MASK) != 0);
+            doCarry = (myNext & ~DataConverter.BYTE_MASK) != 0;
         }
 
         /* Adjust remaining bytes for carry */

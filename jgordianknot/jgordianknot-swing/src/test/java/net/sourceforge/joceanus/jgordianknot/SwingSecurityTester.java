@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Security Test suite.
  */
-public class SwingSecurityTest
+public class SwingSecurityTester
         implements SecurityManagerCreator {
     /**
      * The Test suite.
@@ -46,7 +46,7 @@ public class SwingSecurityTest
     /**
      * Constructor.
      */
-    public SwingSecurityTest() {
+    public SwingSecurityTester() {
         theTests = new SecurityTestSuite(this);
     }
 
@@ -105,7 +105,7 @@ public class SwingSecurityTest
      */
     public static void createAndShowGUI(final String[] args) {
         try {
-            SwingSecurityTest myTests = new SwingSecurityTest();
+            SwingSecurityTester myTests = new SwingSecurityTester();
             myTests.runTests(args);
         } catch (Exception e) {
             System.out.println("Help");

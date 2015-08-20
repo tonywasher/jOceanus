@@ -74,8 +74,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Options Table.
@@ -411,15 +411,15 @@ public class StockOptionTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theOptions == null)
-                                       ? 0
-                                       : theOptions.size();
+                                        ? 0
+                                        : theOptions.size();
         }
 
         @Override
@@ -768,13 +768,13 @@ public class StockOptionTable
                     return pOption.isClosed();
                 case COLUMN_ACTIVE:
                     return pOption.isActive()
-                                             ? ActionType.ACTIVE
-                                             : ActionType.DELETE;
+                                              ? ActionType.ACTIVE
+                                              : ActionType.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pOption.getLatest();
                     return (myTran == null)
-                                           ? null
-                                           : myTran.getDate();
+                                            ? null
+                                            : myTran.getDate();
                 default:
                     return null;
             }

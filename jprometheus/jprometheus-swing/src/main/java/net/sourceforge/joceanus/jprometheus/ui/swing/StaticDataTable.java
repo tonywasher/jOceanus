@@ -52,9 +52,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Static Data Table.
@@ -412,8 +412,8 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         /**
@@ -423,8 +423,8 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         @Override
         public int getRowCount() {
             return (theStatic == null)
-                                      ? 0
-                                      : theStatic.size();
+                                       ? 0
+                                       : theStatic.size();
         }
 
         @Override
@@ -633,8 +633,8 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                     return pItem.getEnabled();
                 case COLUMN_ACTIVE:
                     return pItem.isActive()
-                                           ? ActionType.ACTIVE
-                                           : ActionType.DELETE;
+                                            ? ActionType.ACTIVE
+                                            : ActionType.DELETE;
                 default:
                     return null;
             }

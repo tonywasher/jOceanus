@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Report selection panel.
@@ -371,8 +371,8 @@ public class ReportSelect
                 if (theType.isPointInTime() != isPointInTime) {
                     /* Switch it appropriately */
                     theRangeSelect.setPeriod(isPointInTime
-                                                          ? JDatePeriod.FISCALYEAR
-                                                          : JDatePeriod.DATESUPTO);
+                                                           ? JDatePeriod.FISCALYEAR
+                                                           : JDatePeriod.DATESUPTO);
                     theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
@@ -395,8 +395,8 @@ public class ReportSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theReportButton.setText((theType == null)
-                                                     ? null
-                                                     : theType.toString());
+                                                      ? null
+                                                      : theType.toString());
         }
     }
 }

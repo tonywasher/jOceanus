@@ -119,15 +119,15 @@ public enum MacType {
     public String getAlgorithm(final SymKeyType pKeyType) {
         switch (this) {
             case GMAC:
-                return (pKeyType.isStdBlock())
-                                              ? pKeyType.name()
-                                                + "-GMAC"
-                                              : null;
+                return pKeyType.isStdBlock()
+                                             ? pKeyType.name()
+                                               + "-GMAC"
+                                             : null;
             case POLY1305:
-                return (pKeyType.isStdBlock())
-                                              ? "POLY1305-"
-                                                + pKeyType.name()
-                                              : null;
+                return pKeyType.isStdBlock()
+                                             ? "POLY1305-"
+                                               + pKeyType.name()
+                                             : null;
             default:
                 return null;
         }
@@ -144,9 +144,9 @@ public enum MacType {
                 return "VMPC-MAC";
             case SKEIN:
                 return "SKEIN-MAC-"
-                       + ((bLong)
-                                 ? "512-512"
-                                 : "256-256");
+                       + (bLong
+                                ? "512-512"
+                                : "256-256");
             default:
                 return null;
         }

@@ -318,12 +318,12 @@ public class JDateDayRangeState {
             if (theBaseDate.compareTo(myFirst) < 0) {
                 theBaseDate = myFirst;
             }
-            if ((theStartDate == null) ||
-                (theStartDate.compareTo(myFirst) < 0)) {
+            if ((theStartDate == null)
+                || (theStartDate.compareTo(myFirst) < 0)) {
                 theStartDate = myFirst;
             }
-            if ((theEndDate != null) &&
-                (theEndDate.compareTo(myFirst) < 0)) {
+            if ((theEndDate != null)
+                && (theEndDate.compareTo(myFirst) < 0)) {
                 theEndDate = myFirst;
             }
         }
@@ -333,12 +333,12 @@ public class JDateDayRangeState {
             if (theBaseDate.compareTo(myLast) > 0) {
                 theBaseDate = myLast;
             }
-            if ((theStartDate != null) &&
-                (theStartDate.compareTo(myLast) > 0)) {
+            if ((theStartDate != null)
+                && (theStartDate.compareTo(myLast) > 0)) {
                 theStartDate = myLast;
             }
-            if ((theEndDate == null) ||
-                (theEndDate.compareTo(myLast) > 0)) {
+            if ((theEndDate == null)
+                || (theEndDate.compareTo(myLast) > 0)) {
                 theEndDate = myLast;
             }
         }

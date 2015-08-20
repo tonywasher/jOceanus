@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.TableFilter;
-import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter.TableFilterModel;
 
 /**
  * Data Table model class.
@@ -102,8 +102,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      */
     public int getViewRowCount() {
         return theFilter == null
-                                ? getRowCount()
-                                : theFilter.getViewRowCount();
+                                 ? getRowCount()
+                                 : theFilter.getViewRowCount();
     }
 
     /**
@@ -346,8 +346,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
-     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
-     * by subsequent changes.
+     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot
+     * of the table mapping. It will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> modelIterator() {
@@ -356,8 +356,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
-     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
-     * by subsequent changes.
+     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot
+     * of the table mapping. It will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> viewIterator() {
@@ -366,8 +366,9 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
-     * Obtain an iterator over View rows starting at the end of the list. Note that this iterator is for a self-contained snapshot of the table mapping. It will
-     * not be affected or invalidated by subsequent changes.
+     * Obtain an iterator over View rows starting at the end of the list. Note that this iterator is
+     * for a self-contained snapshot of the table mapping. It will not be affected or invalidated by
+     * subsequent changes.
      * @return the iterator
      */
     public ListIterator<T> viewEndIterator() {

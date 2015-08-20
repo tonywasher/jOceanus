@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday;
+package net.sourceforge.joceanus.jtethys.dateday.swing.demo;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -54,6 +54,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.jdatebutton.swing.JDateConfig;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellEditor;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellRenderer;

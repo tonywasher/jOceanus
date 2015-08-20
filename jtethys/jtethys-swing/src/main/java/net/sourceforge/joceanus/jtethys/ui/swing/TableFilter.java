@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter.TableFilterModel;
 
 /**
  * RowSorter to provide filtering capabilities with natural sorting.
@@ -56,19 +56,19 @@ public class TableFilter<T extends Comparable<? super T>>
      */
     public interface TableFilterModel<T extends Comparable<? super T>>
             extends TableModel {
-        /**
-         * Obtain the item at the model index.
-         * @param pRowIndex the index
-         * @return the item
-         */
-        T getItemAtIndex(final int pRowIndex);
+                /**
+                 * Obtain the item at the model index.
+                 * @param pRowIndex the index
+                 * @return the item
+                 */
+                T getItemAtIndex(final int pRowIndex);
 
         /**
          * Do we include row in view.
          * @param pRow the row
          * @return true/false
          */
-        boolean includeRow(final T pRow);
+                boolean includeRow(final T pRow);
     }
 
     /**
@@ -565,10 +565,12 @@ public class TableFilter<T extends Comparable<? super T>>
     /**
      * Update sort mapping if required.
      * <p>
-     * This should really be done within the rowsUpdated() method, but unfortunately fireXXX methods are ignored from within these method (undocumented), and
-     * hence additional calls must be made to honour the interface.
+     * This should really be done within the rowsUpdated() method, but unfortunately fireXXX methods
+     * are ignored from within these method (undocumented), and hence additional calls must be made
+     * to honour the interface.
      * <p>
-     * Note also that the parameter to the fireMethod is ViewToModel as per the documented name of the parameter and not the description.
+     * Note also that the parameter to the fireMethod is ViewToModel as per the documented name of
+     * the parameter and not the description.
      */
     public void reportMappingChanged() {
         /* If we have a saved mapping change */
@@ -633,16 +635,17 @@ public class TableFilter<T extends Comparable<? super T>>
     private boolean isCorrectOrder(final RowEntry<T> pFirst,
                                    final RowEntry<T> pSecond) {
         int iResult = (doSort)
-                              ? pFirst.compareRow(pSecond)
-                              : pFirst.compareReference(pSecond);
+                               ? pFirst.compareRow(pSecond)
+                               : pFirst.compareReference(pSecond);
         return iResult <= 0;
     }
 
     /**
      * Sort the viewToModel map.
      * <p>
-     * Uses insertion sort since the list will generally be almost sorted. We could used Arrays.sort() but this does not return an indication of whether the
-     * array was changed by the sort.
+     * Uses insertion sort since the list will generally be almost sorted. We could used
+     * Arrays.sort() but this does not return an indication of whether the array was changed by the
+     * sort.
      * @param pArray the array to sort
      * @return was sort order changed? true/false
      */
@@ -701,8 +704,8 @@ public class TableFilter<T extends Comparable<? super T>>
     }
 
     /**
-     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
-     * by subsequent changes.
+     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot
+     * of the table mapping. It will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public ListIterator<T> modelIterator() {
@@ -711,8 +714,8 @@ public class TableFilter<T extends Comparable<? super T>>
     }
 
     /**
-     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
-     * by subsequent changes.
+     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot
+     * of the table mapping. It will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public ListIterator<T> viewIterator() {
@@ -732,8 +735,8 @@ public class TableFilter<T extends Comparable<? super T>>
     }
 
     /**
-     * Iterator for rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated by subsequent
-     * changes.
+     * Iterator for rows. Note that this iterator is for a self-contained snapshot of the table
+     * mapping. It will not be affected or invalidated by subsequent changes.
      */
     private final class TableIterator
             implements ListIterator<T> {

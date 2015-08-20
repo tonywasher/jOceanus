@@ -24,7 +24,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -411,8 +411,8 @@ public class JScrollListButton<T>
             /* Access and select the item */
             JCheckBoxMenuItem myMenu = theItemMap.get(pItem);
             return (myMenu == null)
-                                   ? false
-                                   : myMenu.isSelected();
+                                    ? false
+                                    : myMenu.isSelected();
         }
 
         /**

@@ -34,12 +34,13 @@ import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetBase;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
 
 /**
- * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing the data.
+ * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing
+ * the data.
  * @param <T> the Data Item type
  */
 public class JFieldSet<T extends JFieldSetItem>

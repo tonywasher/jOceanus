@@ -51,9 +51,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 
 /**
  * EventCategory Analysis Selection.
@@ -134,8 +134,8 @@ public class TransCategoryAnalysisSelect
     public TransactionCategoryFilter getFilter() {
         TransactionCategoryBucket myCategory = theState.getEventCategory();
         return myCategory != null
-                                 ? new TransactionCategoryFilter(myCategory)
-                                 : null;
+                                  ? new TransactionCategoryFilter(myCategory)
+                                  : null;
     }
 
     @Override

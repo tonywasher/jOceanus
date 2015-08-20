@@ -172,7 +172,7 @@ public class ZipFileEntry {
         theZipName = pProperties.getStringProperty(PROP_ZIPNAME);
 
         /* Determine whether this is a header */
-        isHeader = (pProperties.getLongProperty(PROP_HEADER) != null);
+        isHeader = pProperties.getLongProperty(PROP_HEADER) != null;
 
         /* If this is the header */
         if (isHeader) {

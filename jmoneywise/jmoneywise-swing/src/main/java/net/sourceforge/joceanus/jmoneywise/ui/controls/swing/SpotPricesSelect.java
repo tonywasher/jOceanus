@@ -59,9 +59,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * SpotPrice selection panel.
@@ -266,8 +266,8 @@ public class SpotPricesSelect
     public final Portfolio getPortfolio() {
         PortfolioBucket myBucket = theState.getPortfolio();
         return (myBucket == null)
-                                 ? null
-                                 : myBucket.getPortfolio();
+                                  ? null
+                                  : myBucket.getPortfolio();
     }
 
     /**
@@ -327,8 +327,8 @@ public class SpotPricesSelect
         /* Loop through the available account values */
         Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         return myIterator.hasNext()
-                                   ? myIterator.next()
-                                   : null;
+                                    ? myIterator.next()
+                                    : null;
     }
 
     /**
@@ -337,11 +337,11 @@ public class SpotPricesSelect
      */
     public final void setRange(final JDateDayRange pRange) {
         JDateDay myStart = (pRange == null)
-                                           ? null
-                                           : pRange.getStart();
+                                            ? null
+                                            : pRange.getStart();
         JDateDay myEnd = (pRange == null)
-                                         ? null
-                                         : pRange.getEnd();
+                                          ? null
+                                          : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);

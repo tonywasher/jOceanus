@@ -76,8 +76,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Security Table.
@@ -431,15 +431,15 @@ public class SecurityTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theSecurities == null)
-                                          ? 0
-                                          : theSecurities.size();
+                                           ? 0
+                                           : theSecurities.size();
         }
 
         @Override
@@ -813,8 +813,8 @@ public class SecurityTable
                     return pSecurity.isClosed();
                 case COLUMN_ACTIVE:
                     return pSecurity.isActive()
-                                               ? ActionType.ACTIVE
-                                               : ActionType.DELETE;
+                                                ? ActionType.ACTIVE
+                                                : ActionType.DELETE;
                 case COLUMN_SYMBOL:
                     return pSecurity.getSymbol();
                 case COLUMN_PARENT:
@@ -889,8 +889,8 @@ public class SecurityTable
                     return !pItem.isActive();
                 case COLUMN_CLOSED:
                     return pItem.isClosed()
-                                           ? !pItem.getParent().isClosed()
-                                           : !pItem.isRelevant();
+                                            ? !pItem.getParent().isClosed()
+                                            : !pItem.isRelevant();
                 default:
                     return false;
             }

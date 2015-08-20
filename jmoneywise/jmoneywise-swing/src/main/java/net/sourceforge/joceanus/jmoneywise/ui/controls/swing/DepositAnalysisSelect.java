@@ -54,9 +54,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 
 /**
  * Deposit Analysis Selection.
@@ -160,8 +160,8 @@ public class DepositAnalysisSelect
     public DepositFilter getFilter() {
         DepositBucket myDeposit = theState.getDeposit();
         return myDeposit != null
-                                ? new DepositFilter(myDeposit)
-                                : null;
+                                 ? new DepositFilter(myDeposit)
+                                 : null;
     }
 
     @Override
@@ -221,13 +221,13 @@ public class DepositAnalysisSelect
             /* Check for an account in the same category */
             DepositCategory myCategory = theState.getCategory();
             DepositCategoryBucket myCatBucket = (myCategory == null)
-                                                                    ? null
-                                                                    : theCategories.findItemById(myCategory.getId());
+                                                                     ? null
+                                                                     : theCategories.findItemById(myCategory.getId());
 
             /* Determine the next deposit */
             myDeposit = (myCatBucket != null)
-                                             ? getFirstDeposit(myCategory)
-                                             : theDeposits.peekFirst();
+                                              ? getFirstDeposit(myCategory)
+                                              : theDeposits.peekFirst();
         }
 
         /* Set the account */
@@ -532,8 +532,8 @@ public class DepositAnalysisSelect
 
             /* Access category for account */
             theCategory = (theDeposit == null)
-                                              ? null
-                                              : theDeposit.getCategory();
+                                               ? null
+                                               : theDeposit.getCategory();
         }
 
         /**

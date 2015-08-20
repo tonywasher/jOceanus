@@ -32,8 +32,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Provide an decryptInputStream wrapper. This class simply wraps an input buffer and processes it as a Zip file. It will read control information from the
- * HEADER zip entry and will use this information to decrypts the data from the DATA Zip Entry.
+ * Provide an decryptInputStream wrapper. This class simply wraps an input buffer and processes it
+ * as a Zip file. It will read control information from the HEADER zip entry and will use this
+ * information to decrypts the data from the DATA Zip Entry.
  */
 public class DecryptionInputStream
         extends InputStream {
@@ -256,7 +257,7 @@ public class DecryptionInputStream
 
         /* Convert the byte that has been read into an integer */
         if (iNumBytesRead > 0) {
-            iNumBytesRead = (theByte[0] & BYTE_MASK);
+            iNumBytesRead = theByte[0] & BYTE_MASK;
         }
 
         /* Return to the caller */
@@ -312,8 +313,8 @@ public class DecryptionInputStream
 
             /* Determine how much data we can transfer */
             iNumRead = (iNumRead <= pLength)
-                    ? iNumRead
-                    : pLength;
+                                             ? iNumRead
+                                             : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {

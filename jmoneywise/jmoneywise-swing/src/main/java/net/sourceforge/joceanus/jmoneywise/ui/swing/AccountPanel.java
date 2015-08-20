@@ -62,9 +62,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Top-level panel for Accounts.
@@ -669,7 +669,7 @@ public class AccountPanel
             } else {
                 /* Access event and obtain details */
                 switch (pEvent.getActionId()) {
-                /* Pass through the event */
+                    /* Pass through the event */
                     case MainTab.ACTION_VIEWSTATEMENT:
                     case MainTab.ACTION_VIEWCATEGORY:
                     case MainTab.ACTION_VIEWTAG:

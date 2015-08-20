@@ -36,6 +36,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
+import org.tmatesoft.svn.core.wc.SVNRevision;
+
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
@@ -48,7 +50,7 @@ import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
@@ -69,8 +71,6 @@ import net.sourceforge.joceanus.jthemis.threads.swing.RevertWorkingCopy;
 import net.sourceforge.joceanus.jthemis.threads.swing.SubversionBackup;
 import net.sourceforge.joceanus.jthemis.threads.swing.SubversionRestore;
 import net.sourceforge.joceanus.jthemis.threads.swing.UpdateWorkingCopy;
-
-import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
  * Top level JSvnManager window.

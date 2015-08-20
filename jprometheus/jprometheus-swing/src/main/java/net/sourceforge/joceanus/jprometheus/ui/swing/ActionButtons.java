@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
 
 /**
  * Action buttons panel.
@@ -139,13 +139,13 @@ public class ActionButtons
 
         /* Create the standard strut */
         Dimension myStrutSize = pHorizontal
-                                           ? new Dimension(STRUT_LENGTH, 0)
-                                           : new Dimension(0, STRUT_LENGTH);
+                                            ? new Dimension(STRUT_LENGTH, 0)
+                                            : new Dimension(0, STRUT_LENGTH);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, pHorizontal
-                                                 ? BoxLayout.X_AXIS
-                                                 : BoxLayout.Y_AXIS));
+                                                  ? BoxLayout.X_AXIS
+                                                  : BoxLayout.Y_AXIS));
         add(Box.createRigidArea(myStrutSize));
         add(theCommitButton);
         add(Box.createRigidArea(myStrutSize));

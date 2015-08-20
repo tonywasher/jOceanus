@@ -59,12 +59,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a Security.
@@ -269,8 +269,8 @@ public class SecurityPanel
 
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed
-                                       ? !mySecurity.getParent().isClosed()
-                                       : !bIsRelevant;
+                                        ? !mySecurity.getParent().isClosed()
+                                        : !bIsRelevant;
         theFieldSet.setEditable(Security.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 

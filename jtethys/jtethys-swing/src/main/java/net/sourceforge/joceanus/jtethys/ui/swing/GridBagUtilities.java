@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;

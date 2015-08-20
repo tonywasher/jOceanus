@@ -33,7 +33,7 @@ import javax.swing.JButton;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 
 /**
  * Utility class to manage status icon buttons.

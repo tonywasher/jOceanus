@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellRenderer;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.IconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.IconButtonState;
 
 /**
  * Cell renderers.
@@ -335,8 +335,8 @@ public final class JFieldCellRenderer {
         @SuppressWarnings("unchecked")
         public ComplexIconButtonState<T, Boolean> getComplexState() {
             return (theState instanceof ComplexIconButtonState)
-                                                               ? (ComplexIconButtonState<T, Boolean>) theState
-                                                               : null;
+                                                                ? (ComplexIconButtonState<T, Boolean>) theState
+                                                                : null;
         }
     }
 

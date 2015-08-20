@@ -95,9 +95,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
 
 /**
  * Analysis Statement.
@@ -428,8 +428,8 @@ public class TransactionTable
         /* Initialise the filter */
         theFilter = theSelect.getFilter();
         theColumns.adjustColumns(theSelect.showColumns()
-                                                        ? theSelect.getColumns()
-                                                        : AnalysisColumnSet.BALANCE);
+                                                         ? theSelect.getColumns()
+                                                         : AnalysisColumnSet.BALANCE);
     }
 
     /**
@@ -472,8 +472,8 @@ public class TransactionTable
 
         /* Ensure that columns are correct */
         theColumns.adjustColumns(theSelect.showColumns()
-                                                        ? theSelect.getColumns()
-                                                        : AnalysisColumnSet.BALANCE);
+                                                         ? theSelect.getColumns()
+                                                         : AnalysisColumnSet.BALANCE);
 
         /* Update the lists */
         updateList();
@@ -615,15 +615,15 @@ public class TransactionTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theTransactions == null)
-                                            ? 0
-                                            : 1 + theTransactions.size();
+                                             ? 0
+                                             : 1 + theTransactions.size();
         }
 
         @Override
@@ -636,16 +636,16 @@ public class TransactionTable
         public boolean isCellEditable(final Transaction pItem,
                                       final int pColIndex) {
             return pItem.isHeader()
-                                   ? false
-                                   : theColumns.isCellEditable(pItem, pColIndex);
+                                    ? false
+                                    : theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
         public Transaction getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
-                                 ? theHeader
-                                 : theTransactions.get(pRowIndex - 1);
+                                  ? theHeader
+                                  : theTransactions.get(pRowIndex - 1);
         }
 
         @Override
@@ -653,8 +653,8 @@ public class TransactionTable
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pItem.isHeader()
-                                   ? theColumns.getHeaderValue(pColIndex)
-                                   : theColumns.getItemValue(pItem, pColIndex);
+                                    ? theColumns.getHeaderValue(pColIndex)
+                                    : theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -809,8 +809,8 @@ public class TransactionTable
 
                 /* Ensure that columns are correct */
                 theColumns.adjustColumns(theSelect.showColumns()
-                                                                ? theSelect.getColumns()
-                                                                : AnalysisColumnSet.BALANCE);
+                                                                 ? theSelect.getColumns()
+                                                                 : AnalysisColumnSet.BALANCE);
 
                 /* Set the selection */
                 JDateDayRange myRange = theSelect.getRange();
@@ -1375,8 +1375,8 @@ public class TransactionTable
                     return theFilter.getBalanceForTransaction(pTrans);
                 case COLUMN_ACTION:
                     return pTrans.isReconciled()
-                                                ? ActionType.DO
-                                                : ActionType.DELETE;
+                                                 ? ActionType.DO
+                                                 : ActionType.DELETE;
                 default:
                     return null;
             }
@@ -1680,8 +1680,8 @@ public class TransactionTable
 
             /* Set reSize mode */
             setAutoResizeMode(reSize
-                                    ? AUTO_RESIZE_ALL_COLUMNS
-                                    : AUTO_RESIZE_OFF);
+                                     ? AUTO_RESIZE_ALL_COLUMNS
+                                     : AUTO_RESIZE_OFF);
 
             /* Store the column set */
             theColumnSet = pSet;

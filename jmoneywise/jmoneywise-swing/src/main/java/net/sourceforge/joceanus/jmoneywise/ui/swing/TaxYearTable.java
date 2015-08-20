@@ -68,8 +68,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * TaxYear Table.
@@ -388,15 +388,15 @@ public class TaxYearTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theTaxYears == null)
-                                        ? 0
-                                        : theTaxYears.size();
+                                         ? 0
+                                         : theTaxYears.size();
         }
 
         @Override
@@ -649,8 +649,8 @@ public class TaxYearTable
                     return pYear.getTaxRegime();
                 case COLUMN_ACTIVE:
                     return pYear.isActive()
-                                           ? ActionType.ACTIVE
-                                           : ActionType.DELETE;
+                                            ? ActionType.ACTIVE
+                                            : ActionType.DELETE;
                 default:
                     return null;
             }

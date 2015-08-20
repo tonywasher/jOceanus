@@ -74,9 +74,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Deposit Category Maintenance.
@@ -438,15 +438,15 @@ public class DepositCategoryTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theCategories == null)
-                                          ? 0
-                                          : theCategories.size();
+                                           ? 0
+                                           : theCategories.size();
         }
 
         @Override
@@ -497,8 +497,8 @@ public class DepositCategoryTable
 
             /* Handle filter */
             return (theParent == null)
-                                      ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
-                                      : theParent.equals(pRow.getParentCategory());
+                                       ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
+                                       : theParent.equals(pRow.getParentCategory());
         }
 
         /**
@@ -842,8 +842,8 @@ public class DepositCategoryTable
                 case COLUMN_NAME:
                     String mySubCat = pCategory.getSubCategory();
                     return (mySubCat == null)
-                                             ? pCategory.getName()
-                                             : mySubCat;
+                                              ? pCategory.getName()
+                                              : mySubCat;
                 case COLUMN_FULLNAME:
                     return pCategory.getName();
                 case COLUMN_CATEGORY:
@@ -852,8 +852,8 @@ public class DepositCategoryTable
                     return pCategory.getDesc();
                 case COLUMN_ACTIVE:
                     return pCategory.isActive()
-                                               ? ActionType.ACTIVE
-                                               : ActionType.DELETE;
+                                                ? ActionType.ACTIVE
+                                                : ActionType.DELETE;
                 default:
                     return null;
             }

@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
 
 /**
  * SpotRates selection panel.
@@ -228,8 +228,8 @@ public class SpotRatesSelect
         MoneyWiseData myData = theView.getData();
         AssetCurrency myDefault = myData.getDefaultCurrency();
         theCurrLabel.setText(myDefault != null
-                                              ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
-                                              : null);
+                                               ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
+                                               : null);
     }
 
     /**
@@ -238,11 +238,11 @@ public class SpotRatesSelect
      */
     private void setRange(final JDateDayRange pRange) {
         JDateDay myStart = (pRange == null)
-                                           ? null
-                                           : pRange.getStart();
+                                            ? null
+                                            : pRange.getStart();
         JDateDay myEnd = (pRange == null)
-                                         ? null
-                                         : pRange.getEnd();
+                                          ? null
+                                          : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);

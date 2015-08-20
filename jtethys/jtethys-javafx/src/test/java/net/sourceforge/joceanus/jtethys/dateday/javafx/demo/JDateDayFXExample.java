@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayCell;
 import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.javafx.JTitledPane;
+import net.sourceforge.joceanus.jtethys.ui.javafx.JTitledPane;
 
 /**
  * <p>

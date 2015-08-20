@@ -20,12 +20,15 @@
  * $Author: Tony $
  * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.javafx;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -46,18 +49,30 @@ public final class JTitledPane {
     /**
      * Create titled pane wrapper around panel.
      * @param pTitle the title
-     * @param pPanel the panel
+     * @param pNode the node
      * @return the titled pane
      */
     public static StackPane getTitledPane(final String pTitle,
-                                          final Pane pPanel) {
+                                          final Node pNode) {
+        /* Access the Node */
+        Node myNode = pNode;
+        if (!(myNode instanceof Pane)) {
+            /* Create an HBox for the content */
+            HBox myBox = new HBox();
+            myBox.getChildren().add(pNode);
+            myNode = myBox;
+
+            /* Set the HBox to fill the pane */
+            HBox.setHgrow(pNode, Priority.ALWAYS);
+        }
+
         /* Create the panel */
         StackPane myPanel = new StackPane();
         Label myTitle = new Label(pTitle);
         StackPane.setAlignment(myTitle, Pos.TOP_LEFT);
-        StackPane.setAlignment(pPanel, Pos.CENTER);
-        myPanel.getChildren().addAll(myTitle, pPanel);
-        pPanel.getStyleClass().add("-jtethys-titled-content");
+        StackPane.setAlignment(pNode, Pos.CENTER);
+        myPanel.getChildren().addAll(myTitle, myNode);
+        myNode.getStyleClass().add("-jtethys-titled-content");
         myTitle.getStyleClass().add("-jtethys-titled-title");
         myPanel.getStyleClass().add("-jtethys-titled-border");
 

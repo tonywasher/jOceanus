@@ -85,15 +85,15 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a Transaction.
@@ -445,11 +445,11 @@ public class TransactionPanel
     public void updateEditors(final JDateDayRange pRange) {
         /* Update Date button */
         theDateButton.setEarliestDateDay(pRange != null
-                                                       ? pRange.getStart()
-                                                       : null);
+                                                        ? pRange.getStart()
+                                                        : null);
         theDateButton.setLatestDateDay(pRange != null
-                                                     ? pRange.getEnd()
-                                                     : null);
+                                                      ? pRange.getEnd()
+                                                      : null);
 
         /* update the tagMenuBuilder */
         updateTagMenuBuilder(theTagMenuBuilder);
@@ -831,8 +831,8 @@ public class TransactionPanel
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCategory = pTrans.getCategory();
         TransactionAsset myCurr = pIsAccount
-                                            ? myAccount
-                                            : pTrans.getPartner();
+                                             ? myAccount
+                                             : pTrans.getPartner();
         JMenuItem myActive = null;
         JScrollMenu myMenu = null;
 
@@ -846,8 +846,8 @@ public class TransactionPanel
 
             /* Check whether the asset is allowable for the owner */
             bIgnore |= !(pIsAccount
-                                   ? TransactionValidator.isValidAccount(myAsset)
-                                   : TransactionValidator.isValidPartner(myAccount, myCategory, myAsset));
+                                    ? TransactionValidator.isValidAccount(myAsset)
+                                    : TransactionValidator.isValidPartner(myAccount, myCategory, myAsset));
             if (bIgnore) {
                 continue;
             }
@@ -885,8 +885,8 @@ public class TransactionPanel
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCategory = pTrans.getCategory();
         TransactionAsset myCurr = pIsAccount
-                                            ? myAccount
-                                            : pTrans.getPartner();
+                                             ? myAccount
+                                             : pTrans.getPartner();
         JMenuItem myActive = null;
         JScrollMenu myMenu = null;
 
@@ -919,8 +919,8 @@ public class TransactionPanel
 
                         /* Check whether the asset is allowable for the owner */
                         boolean bIgnore = !(pIsAccount
-                                                      ? TransactionValidator.isValidAccount(myHolding)
-                                                      : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                                       ? TransactionValidator.isValidAccount(myHolding)
+                                                       : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -956,8 +956,8 @@ public class TransactionPanel
 
                         /* Check whether the asset is allowable for the owner */
                         boolean bIgnore = !(pIsAccount
-                                                      ? TransactionValidator.isValidAccount(myHolding)
-                                                      : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                                       ? TransactionValidator.isValidAccount(myHolding)
+                                                       : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }

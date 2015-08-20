@@ -37,12 +37,13 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
 
 /**
- * Field Set. This handles a fields for an item, populating the field, rendering and parsing the data.
+ * Field Set. This handles a fields for an item, populating the field, rendering and parsing the
+ * data.
  * @param <T> the Data Item type
  */
 public class JFieldElement<T extends JFieldSetItem> {
@@ -412,8 +413,8 @@ public class JFieldElement<T extends JFieldSetItem> {
          */
         private void setEditable(final boolean setEditable) {
             theCardLayout.show(this, setEditable
-                                                ? NAME_EDITABLE
-                                                : NAME_READONLY);
+                                                 ? NAME_EDITABLE
+                                                 : NAME_READONLY);
         }
     }
 }

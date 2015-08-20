@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Class to enable display/editing of and individual dataItem.
@@ -290,10 +290,10 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         if (theItem != null) {
             /* Determine EditVersion */
             theEditVersion = isEditable
-                                       ? isEditing()
-                                                    ? theEditVersion
-                                                    : theUpdateSet.getVersion()
-                                       : VERSION_READONLY;
+                                        ? isEditing()
+                                                      ? theEditVersion
+                                                      : theUpdateSet.getVersion()
+                                        : VERSION_READONLY;
 
             /* adjust fields */
             setVisible(true);
@@ -529,8 +529,8 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         if (isNew || hasUpdates()) {
             /* Condense history to a single update */
             theUpdateSet.processEditCommand(UpdateSet.CMD_OK, isNew
-                                                                   ? theEditVersion
-                                                                   : theEditVersion + 1, theError);
+                                                                    ? theEditVersion
+                                                                    : theEditVersion + 1, theError);
         }
 
         /* Stop element being editable */

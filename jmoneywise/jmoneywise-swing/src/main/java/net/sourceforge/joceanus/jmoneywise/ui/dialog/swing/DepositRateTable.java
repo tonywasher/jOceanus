@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
 
 /**
  * Panel to display a list of DepositRates associated with a Deposit.
@@ -256,15 +256,15 @@ public class DepositRateTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         @Override
         public int getRowCount() {
             return (theRates == null)
-                                     ? 0
-                                     : 1 + theRates.size();
+                                      ? 0
+                                      : 1 + theRates.size();
         }
 
         @Override
@@ -283,8 +283,8 @@ public class DepositRateTable
         public DepositRate getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
-                                 ? theHeader
-                                 : theRates.get(pRowIndex - 1);
+                                  ? theHeader
+                                  : theRates.get(pRowIndex - 1);
         }
 
         @Override
@@ -292,8 +292,8 @@ public class DepositRateTable
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pItem.isHeader()
-                                   ? theColumns.getHeaderValue(pColIndex)
-                                   : theColumns.getItemValue(pItem, pColIndex);
+                                    ? theColumns.getHeaderValue(pColIndex)
+                                    : theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -319,8 +319,8 @@ public class DepositRateTable
 
             /* Handle filter */
             return pRow.isHeader()
-                                  ? isEditable
-                                  : theDeposit.equals(pRow.getDeposit());
+                                   ? isEditable
+                                   : theDeposit.equals(pRow.getDeposit());
         }
 
         /**
@@ -359,8 +359,8 @@ public class DepositRateTable
             Iterator<DepositRate> myIterator = theModel.viewIterator();
             myIterator.next();
             DepositRate myLatest = myIterator.hasNext()
-                                                       ? myIterator.next()
-                                                       : null;
+                                                        ? myIterator.next()
+                                                        : null;
 
             /* If we have a latest element with no date */
             if (myLatest != null

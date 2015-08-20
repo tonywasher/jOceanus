@@ -31,7 +31,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import net.sourceforge.joceanus.jgordianknot.crypto.StreamCipher;
 
 /**
- * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and reading from an input stream.
+ * Class to provide a pipe enabling data to be passed between threads via writing to an output
+ * stream and reading from an input stream.
  */
 public class PipedStream {
     /**
@@ -141,7 +142,7 @@ public class PipedStream {
 
             /* Convert the byte read into an integer */
             if (iNumRead > 0) {
-                iNumRead = (theByte[0] & DecryptionInputStream.BYTE_MASK);
+                iNumRead = theByte[0] & DecryptionInputStream.BYTE_MASK;
             }
 
             /* Return to the caller */
@@ -188,8 +189,8 @@ public class PipedStream {
 
             /* Determine how much data we can transfer */
             iNumRead = (iNumRead <= pLength)
-                                            ? iNumRead
-                                            : pLength;
+                                             ? iNumRead
+                                             : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {

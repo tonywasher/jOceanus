@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Component;
 
@@ -41,8 +41,10 @@ public final class SpringUtilities {
     }
 
     /**
-     * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each component in a column is as wide as the maximum
-     * preferred width of the components in that column; height is similarly determined for each row. The parent is made just big enough to fit them all.
+     * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a
+     * grid. Each component in a column is as wide as the maximum preferred width of the components
+     * in that column; height is similarly determined for each row. The parent is made just big
+     * enough to fit them all.
      * @param pParent the parent panel
      * @param pLayout the layout of the panel
      * @param pRows number of rows

@@ -48,8 +48,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * TransactionTag Selection.
@@ -130,8 +130,8 @@ public class TransactionTagSelect
     public TagFilter getFilter() {
         TransactionTagBucket myTag = theState.getTag();
         return myTag != null
-                            ? new TagFilter(myTag)
-                            : null;
+                             ? new TagFilter(myTag)
+                             : null;
     }
 
     @Override

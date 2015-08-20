@@ -54,9 +54,9 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 
 /**
  * Cash Analysis Selection.
@@ -160,8 +160,8 @@ public class CashAnalysisSelect
     public CashFilter getFilter() {
         CashBucket myCash = theState.getCash();
         return myCash != null
-                             ? new CashFilter(myCash)
-                             : null;
+                              ? new CashFilter(myCash)
+                              : null;
     }
 
     @Override
@@ -221,13 +221,13 @@ public class CashAnalysisSelect
             /* Check for an account in the same category */
             CashCategory myCategory = theState.getCategory();
             CashCategoryBucket myCatBucket = (myCategory == null)
-                                                                 ? null
-                                                                 : theCategories.findItemById(myCategory.getId());
+                                                                  ? null
+                                                                  : theCategories.findItemById(myCategory.getId());
 
             /* Determine the next cash */
             myCash = (myCatBucket != null)
-                                          ? getFirstCash(myCategory)
-                                          : theCash.peekFirst();
+                                           ? getFirstCash(myCategory)
+                                           : theCash.peekFirst();
         }
 
         /* Set the cash */
@@ -536,8 +536,8 @@ public class CashAnalysisSelect
 
             /* Access category for account */
             theCategory = (theCash == null)
-                                           ? null
-                                           : theCash.getCategory();
+                                            ? null
+                                            : theCash.getCategory();
         }
 
         /**

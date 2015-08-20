@@ -40,23 +40,23 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
     private final RegistrationType theType;
 
     /**
-     * owner id.
+     * manager id.
      */
-    private int theOwnerId;
+    private int theMgrId;
 
     /**
      * registration id.
      */
-    private int theId;
+    private int theRegId;
 
     /**
      * Constructor.
-     * @param pOwnerId the owner Id
+     * @param pMgrId the manager Id
      * @param pType the registration type
      */
-    private JOceanusEventRegistration(final int pOwnerId,
+    private JOceanusEventRegistration(final int pMgrId,
                                       final RegistrationType pType) {
-        theOwnerId = pOwnerId;
+        theMgrId = pMgrId;
         theType = pType;
     }
 
@@ -66,23 +66,23 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
      * @return true/false
      */
     public boolean isRelevant(final JOceanusEvent pEvent) {
-        return theOwnerId == pEvent.getSourceId();
+        return theMgrId == pEvent.getSourceId();
     }
 
     /**
      * Obtain the registration id.
      * @return the id
      */
-    protected int getId() {
-        return theId;
+    protected int getRegId() {
+        return theRegId;
     }
 
     /**
      * Set the registration id.
      * @param pId the id
      */
-    protected void setId(final int pId) {
-        theId = pId;
+    protected void setRegId(final int pId) {
+        theRegId = pId;
     }
 
     /**
@@ -114,12 +114,12 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
         JOceanusEventRegistration<?> myReg = (JOceanusEventRegistration<?>) o;
 
         /* Compare fields */
-        return theId == myReg.getId();
+        return theRegId == myReg.getRegId();
     }
 
     @Override
     public int hashCode() {
-        return theId;
+        return theRegId;
     }
 
     /**
@@ -133,19 +133,47 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
         private final JOceanusActionEventListener theListener;
 
         /**
+         * Action Id.
+         */
+        private final int theActionId;
+
+        /**
          * Constructor.
-         * @param pOwnerId the owner Id
+         * @param pMgrId the manager Id
          * @param pListener the listener
          */
-        protected JOceanusActionRegistration(final int pOwnerId,
+        protected JOceanusActionRegistration(final int pMgrId,
                                              final JOceanusActionEventListener pListener) {
-            super(pOwnerId, RegistrationType.ACTION);
+            this(pMgrId, JOceanusEventManager.ACTIONID_ANY, pListener);
+        }
+
+        /**
+         * Constructor.
+         * @param pMgrId the manager Id
+         * @param pActionId the actionId to filter on
+         * @param pListener the listener
+         */
+        protected JOceanusActionRegistration(final int pMgrId,
+                                             final int pActionId,
+                                             final JOceanusActionEventListener pListener) {
+            super(pMgrId, RegistrationType.ACTION);
+            theActionId = pActionId;
             theListener = pListener;
         }
 
         @Override
         protected void processEvent(final JOceanusActionEvent pEvent) {
             theListener.processActionEvent(pEvent);
+        }
+
+        /**
+         * Is the event filtered?
+         * @param pActionId the action Id
+         * @return true/false
+         */
+        protected boolean isFiltered(final int pActionId) {
+            return theActionId != JOceanusEventManager.ACTIONID_ANY
+                   && theActionId != pActionId;
         }
     }
 
@@ -161,12 +189,12 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
 
         /**
          * Constructor.
-         * @param pOwnerId the owner Id
+         * @param pMgrId the manager Id
          * @param pListener the listener
          */
-        protected JOceanusChangeRegistration(final int pOwnerId,
+        protected JOceanusChangeRegistration(final int pMgrId,
                                              final JOceanusChangeEventListener pListener) {
-            super(pOwnerId, RegistrationType.CHANGE);
+            super(pMgrId, RegistrationType.CHANGE);
             theListener = pListener;
         }
 
@@ -188,12 +216,12 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
 
         /**
          * Constructor.
-         * @param pOwnerId the owner Id
+         * @param pMgrId the manager Id
          * @param pListener the listener
          */
-        protected JOceanusItemRegistration(final int pOwnerId,
+        protected JOceanusItemRegistration(final int pMgrId,
                                            final JOceanusItemEventListener pListener) {
-            super(pOwnerId, RegistrationType.ITEM);
+            super(pMgrId, RegistrationType.ITEM);
             theListener = pListener;
         }
 

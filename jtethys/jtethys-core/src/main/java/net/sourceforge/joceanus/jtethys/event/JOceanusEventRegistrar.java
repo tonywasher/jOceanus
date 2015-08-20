@@ -35,9 +35,11 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanus
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusItemRegistration;
 
 /**
- * EventRegister implementation. This maintains a list of Action/Change/ItemListeners/ActionListeners and allows the caller to fire Action/Change/ItemEvents and
- * ActionEvents to these listeners. This is implemented to provide functionality to non-GUI components and also to enable improved control over the contents of
- * the ChangeEvents and ActionEvents that are fired.
+ * EventRegister implementation. This maintains a list of
+ * Action/Change/ItemListeners/ActionListeners and allows the caller to fire
+ * Action/Change/ItemEvents and ActionEvents to these listeners. This is implemented to provide
+ * functionality to non-GUI components and also to enable improved control over the contents of the
+ * ChangeEvents and ActionEvents that are fired.
  * <p>
  * This class is used by listeners to register to listen for events.
  */
@@ -46,17 +48,17 @@ public class JOceanusEventRegistrar {
      * Interface for event providers.
      */
     public interface JOceanusEventProvider {
-        /**
-         * Obtain registration object for listeners.
-         * @return the registrar
-         */
-        JOceanusEventRegistrar getEventRegistrar();
+                /**
+                 * Obtain registration object for listeners.
+                 * @return the registrar
+                 */
+                JOceanusEventRegistrar getEventRegistrar();
     }
 
     /**
-     * The Owner of the events.
+     * The Source of the events.
      */
-    private final int theOwnerId;
+    private final int theMgrId;
 
     /**
      * The list of registrations.
@@ -70,14 +72,23 @@ public class JOceanusEventRegistrar {
 
     /**
      * Constructor.
-     * @param pOwnerId the owner id
+     * @param pMgrId the manager id
      */
-    protected JOceanusEventRegistrar(final int pOwnerId) {
-        /* Store the owner */
-        theOwnerId = pOwnerId;
+    protected JOceanusEventRegistrar(final int pMgrId) {
+        /* Store the owning manager */
+        theMgrId = pMgrId;
 
         /* Allocate the list */
         theRegistrations = new ArrayList<JOceanusEventRegistration<?>>();
+    }
+
+    /**
+     * Obtain next owner id.
+     * @return the id of the new owner
+     */
+    private synchronized int getNextRegistrationId() {
+        /* return the new registration id */
+        return theNextRegId++;
     }
 
     /**
@@ -107,7 +118,7 @@ public class JOceanusEventRegistrar {
      */
     public JOceanusChangeRegistration addChangeListener(final JOceanusChangeEventListener pListener) {
         /* Create the registration */
-        JOceanusChangeRegistration myReg = new JOceanusChangeRegistration(theOwnerId, pListener);
+        JOceanusChangeRegistration myReg = new JOceanusChangeRegistration(theMgrId, pListener);
 
         /* Add it to the list */
         addToListenerList(myReg);
@@ -121,7 +132,23 @@ public class JOceanusEventRegistrar {
      */
     public JOceanusActionRegistration addActionListener(final JOceanusActionEventListener pListener) {
         /* Create the registration */
-        JOceanusActionRegistration myReg = new JOceanusActionRegistration(theOwnerId, pListener);
+        JOceanusActionRegistration myReg = new JOceanusActionRegistration(theMgrId, pListener);
+
+        /* Add it to the list */
+        addToListenerList(myReg);
+        return myReg;
+    }
+
+    /**
+     * Add filtered action Listener to list.
+     * @param pActionId the explicit action id to listen for
+     * @param pListener the listener to add
+     * @return the registration
+     */
+    public JOceanusActionRegistration addFilteredActionListener(final int pActionId,
+                                                                final JOceanusActionEventListener pListener) {
+        /* Create the registration */
+        JOceanusActionRegistration myReg = new JOceanusActionRegistration(theMgrId, pActionId, pListener);
 
         /* Add it to the list */
         addToListenerList(myReg);
@@ -135,7 +162,7 @@ public class JOceanusEventRegistrar {
      */
     public JOceanusItemRegistration addItemListener(final JOceanusItemEventListener pListener) {
         /* Create the registration */
-        JOceanusItemRegistration myReg = new JOceanusItemRegistration(theOwnerId, pListener);
+        JOceanusItemRegistration myReg = new JOceanusItemRegistration(theMgrId, pListener);
 
         /* Add it to the list */
         addToListenerList(myReg);
@@ -176,7 +203,7 @@ public class JOceanusEventRegistrar {
         List<JOceanusEventRegistration<?>> myNew = new ArrayList<JOceanusEventRegistration<?>>(theRegistrations);
 
         /* Set the new registration Id */
-        pRegistration.setId(theNextRegId++);
+        pRegistration.setRegId(getNextRegistrationId());
 
         /* Adjust the list */
         myNew.add(pRegistration);
@@ -185,7 +212,7 @@ public class JOceanusEventRegistrar {
         theRegistrations = myNew;
 
         /* return the new registration id */
-        return pRegistration.getId();
+        return pRegistration.getRegId();
     }
 
     /**

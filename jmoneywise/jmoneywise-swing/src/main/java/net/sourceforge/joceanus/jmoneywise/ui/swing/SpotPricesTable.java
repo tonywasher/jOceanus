@@ -74,7 +74,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
 
 /**
  * SpotPrices panel.
@@ -552,8 +552,8 @@ public class SpotPricesTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                                       ? 0
-                                       : theColumns.getDeclaredCount();
+                                        ? 0
+                                        : theColumns.getDeclaredCount();
         }
 
         /**
@@ -563,8 +563,8 @@ public class SpotPricesTable
         @Override
         public int getRowCount() {
             return (thePrices == null)
-                                      ? 0
-                                      : thePrices.size();
+                                       ? 0
+                                       : thePrices.size();
         }
 
         @Override
@@ -737,8 +737,8 @@ public class SpotPricesTable
                     return pItem.getPrevDate();
                 case COLUMN_ACTION:
                     return pItem.getPrice() != null && !pItem.isDisabled()
-                                                                          ? ActionType.DELETE
-                                                                          : ActionType.DO;
+                                                                           ? ActionType.DELETE
+                                                                           : ActionType.DO;
                 default:
                     return null;
             }

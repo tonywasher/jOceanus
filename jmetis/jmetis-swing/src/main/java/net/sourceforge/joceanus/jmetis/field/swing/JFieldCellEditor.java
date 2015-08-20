@@ -65,13 +65,13 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventLis
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton;
-import net.sourceforge.joceanus.jtethys.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
 
 /**
  * Cell editors.
@@ -153,9 +153,9 @@ public final class JFieldCellEditor {
 
             /* Set the text */
             theField.setText(((pValue == null)
-                    || (JFieldValue.ERROR.equals(pValue)))
-                                                          ? STR_EMPTY
-                                                          : (String) pValue);
+                              || (JFieldValue.ERROR.equals(pValue)))
+                                                                     ? STR_EMPTY
+                                                                     : (String) pValue);
             return theField;
         }
 
@@ -277,8 +277,8 @@ public final class JFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             theField.setSelected(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
-                                                                                         ? Boolean.FALSE
-                                                                                         : (Boolean) pValue);
+                                                                                          ? Boolean.FALSE
+                                                                                          : (Boolean) pValue);
             theField.addItemListener(theListener);
             return theField;
         }
@@ -390,8 +390,8 @@ public final class JFieldCellEditor {
 
             /* Build the button */
             theState = pComplex
-                               ? new ComplexIconButtonState<T, Boolean>(Boolean.FALSE)
-                               : new DefaultIconButtonState<T>();
+                                ? new ComplexIconButtonState<T, Boolean>(Boolean.FALSE)
+                                : new DefaultIconButtonState<T>();
             theButton = new JIconButton<T>(theState);
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, theButtonListener);
@@ -460,8 +460,8 @@ public final class JFieldCellEditor {
         @SuppressWarnings("unchecked")
         public ComplexIconButtonState<T, Boolean> getComplexState() {
             return (theState instanceof ComplexIconButtonState)
-                                                               ? (ComplexIconButtonState<T, Boolean>) theState
-                                                               : null;
+                                                                ? (ComplexIconButtonState<T, Boolean>) theState
+                                                                : null;
         }
 
         /**
@@ -1167,11 +1167,11 @@ public final class JFieldCellEditor {
                                                       final int pColIndex) {
             /* Access the range */
             JDateDay myStart = (theRange == null)
-                                                 ? null
-                                                 : theRange.getStart();
+                                                  ? null
+                                                  : theRange.getStart();
             JDateDay myEnd = (theRange == null)
-                                               ? null
-                                               : theRange.getEnd();
+                                                ? null
+                                                : theRange.getEnd();
             JDateDay myCurr;
 
             /* If the value is null */

@@ -161,8 +161,8 @@ public class ZipReadFile
      */
     public byte[] getHashBytes() {
         return (theHashBytes == null)
-                                     ? null
-                                     : Arrays.copyOf(theHashBytes, theHashBytes.length);
+                                      ? null
+                                      : Arrays.copyOf(theHashBytes, theHashBytes.length);
     }
 
     /**
@@ -210,7 +210,7 @@ public class ZipReadFile
      * @return the header
      * @throws IOException on error
      */
-    private byte[] readHeader(final InputStream pHdrStream) throws IOException {
+    private static byte[] readHeader(final InputStream pHdrStream) throws IOException {
         /* Initialise variables */
         int myLen = 0;
         int mySpace = BUFFERSIZE;

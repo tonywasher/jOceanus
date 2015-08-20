@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -127,8 +127,8 @@ public class JScrollButton<T>
      */
     public void setValue(final T pValue) {
         setValue(pValue, pValue == null
-                                       ? null
-                                       : pValue.toString());
+                                        ? null
+                                        : pValue.toString());
     }
 
     /**
@@ -182,8 +182,8 @@ public class JScrollButton<T>
      */
     public void storeValue(final T pValue) {
         storeValue(pValue, pValue == null
-                                         ? null
-                                         : pValue.toString());
+                                          ? null
+                                          : pValue.toString());
     }
 
     /**

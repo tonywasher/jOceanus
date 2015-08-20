@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.swing.JEnableWrapper.JEnableScroll;
-import net.sourceforge.joceanus.jtethys.swing.TableFilter;
+import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter;
 
 /**
  * Template class to provide a table to handle a data type.
@@ -323,8 +323,8 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     public EditState getEditState() {
         return (theUpdateSet == null)
-                                     ? EditState.CLEAN
-                                     : theUpdateSet.getEditState();
+                                      ? EditState.CLEAN
+                                      : theUpdateSet.getEditState();
     }
 
     /**
@@ -349,8 +349,8 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected void setList(final DataList<T, E> pList) {
         int myZeroRow = hasHeader()
-                                   ? 1
-                                   : 0;
+                                    ? 1
+                                    : 0;
 
         /* Store list and select correct mode */
         theList = pList;
