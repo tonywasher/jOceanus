@@ -59,6 +59,7 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuToggleItem;
@@ -81,7 +82,7 @@ public class ScrollFXContextMenu<T>
     /**
      * CheckMark icon.
      */
-    private static final Image CHECK_ICON = new Image(ScrollFXContextMenu.class.getResourceAsStream("BlueJellyCheckMark.png"));
+    private static final Image CHECK_ICON = new Image(ScrollMenuContent.class.getResourceAsStream("BlueJellyCheckMark.png"));
 
     /**
      * The menu style.
@@ -92,31 +93,6 @@ public class ScrollFXContextMenu<T>
      * The item style.
      */
     private static final String STYLE_ITEM = "-jtethys-context-item";
-
-    /**
-     * MaxDisplayItems error.
-     */
-    protected static final String ERROR_MAXITEMS = "Maximum Display items must be greater than 0";
-
-    /**
-     * Default number of items for scroll window.
-     */
-    protected static final int DEFAULT_ITEMCOUNT = 15;
-
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 16;
-
-    /**
-     * Initial scroll delay when hovering over icon.
-     */
-    protected static final int INITIAL_SCROLLDELAY = 1000;
-
-    /**
-     * Default scroll delay when hovering over icon.
-     */
-    protected static final int REPEAT_SCROLLDELAY = 150;
 
     /**
      * Timer.
@@ -197,7 +173,7 @@ public class ScrollFXContextMenu<T>
      * Constructor.
      */
     public ScrollFXContextMenu() {
-        this(DEFAULT_ITEMCOUNT);
+        this(ScrollMenuContent.DEFAULT_ITEMCOUNT);
     }
 
     /**
@@ -205,7 +181,7 @@ public class ScrollFXContextMenu<T>
      * @param pMaxDisplayItems the maximum number of items to display
      */
     public ScrollFXContextMenu(final int pMaxDisplayItems) {
-        this(null, DEFAULT_ITEMCOUNT);
+        this(null, pMaxDisplayItems);
     }
 
     /**
@@ -229,7 +205,7 @@ public class ScrollFXContextMenu<T>
 
         /* Check parameters */
         if (pMaxDisplayItems <= 0) {
-            throw new IllegalArgumentException(ERROR_MAXITEMS);
+            throw new IllegalArgumentException(ScrollMenuContent.ERROR_MAXITEMS);
         }
 
         /* Record parameters */
@@ -366,7 +342,7 @@ public class ScrollFXContextMenu<T>
     public void setMaxDisplayItems(final int pMaxDisplayItems) {
         /* Check parameters */
         if (pMaxDisplayItems <= 0) {
-            throw new IllegalArgumentException(ERROR_MAXITEMS);
+            throw new IllegalArgumentException(ScrollMenuContent.ERROR_MAXITEMS);
         }
 
         /* Check state */
@@ -401,20 +377,6 @@ public class ScrollFXContextMenu<T>
      */
     public void showMenuAtPosition(final Node pAnchor,
                                    final Side pSide) {
-        showMenuAtPosition(pAnchor, pSide, 0, 0);
-    }
-
-    /**
-     * Show the menu at position.
-     * @param pAnchor the anchor node
-     * @param pSide the side of the anchor node
-     * @param pX the relative X position
-     * @param pY the relative Y position
-     */
-    public void showMenuAtPosition(final Node pAnchor,
-                                   final Side pSide,
-                                   final double pX,
-                                   final double pY) {
         /* Obtain location of anchor node */
         Bounds myLocal = pAnchor.getLayoutBounds();
         Bounds myBounds = pAnchor.localToScreen(myLocal);
@@ -471,8 +433,8 @@ public class ScrollFXContextMenu<T>
      * @param pX the X position
      * @param pY the Y position
      */
-    public void showMenuAtPosition(final double pX,
-                                   final double pY) {
+    private void showMenuAtPosition(final double pX,
+                                    final double pY) {
         /* Record position */
         setX(pX);
         setY(pY);
@@ -484,7 +446,7 @@ public class ScrollFXContextMenu<T>
     /**
      * Show the menu.
      */
-    public void showMenu() {
+    private void showMenu() {
         /* Ensure that the menu is built */
         refreshMenu();
 
@@ -734,9 +696,8 @@ public class ScrollFXContextMenu<T>
                 }
 
                 /* Add the top level item */
-                theContainer.setTop(theFirstIndex > 0
-                                                      ? theUpItem
-                                                      : null);
+                theContainer.setTop(theUpItem);
+                theUpItem.setVisible(theFirstIndex > 0);
 
                 /* Loop through the items to add */
                 for (int i = theFirstIndex; i < myMaxIndex; i++) {
@@ -745,9 +706,8 @@ public class ScrollFXContextMenu<T>
                 }
 
                 /* Add the down item */
-                theContainer.setBottom(myMaxIndex < myCount
-                                                            ? theDownItem
-                                                            : null);
+                theContainer.setBottom(theDownItem);
+                theDownItem.setVisible(myMaxIndex < myCount);
             }
         }
 
@@ -873,7 +833,7 @@ public class ScrollFXContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new Label();
             theIcon.setGraphic(pGraphic);
-            theIcon.setMinWidth(DEFAULT_ICONWIDTH);
+            theIcon.setMinWidth(ScrollMenuContent.DEFAULT_ICONWIDTH);
 
             /* Add the children */
             getChildren().addAll(theIcon, theLabel);
@@ -1013,7 +973,7 @@ public class ScrollFXContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? resizeImage(CHECK_ICON, DEFAULT_ICONWIDTH)
+                               ? resizeImage(CHECK_ICON, ScrollMenuContent.DEFAULT_ICONWIDTH)
                                : null);
         }
 
@@ -1226,7 +1186,7 @@ public class ScrollFXContextMenu<T>
             };
 
             /* Schedule the task */
-            theTimer.schedule(theTimerTask, INITIAL_SCROLLDELAY, REPEAT_SCROLLDELAY);
+            theTimer.schedule(theTimerTask, ScrollMenuContent.INITIAL_SCROLLDELAY, ScrollMenuContent.REPEAT_SCROLLDELAY);
         }
 
         /**

@@ -278,8 +278,7 @@ public class ScrollUIFXExample
         });
 
         /* Create list button line */
-        ListFXButton myListButton = theListButtonMgr
-                .getButton();
+        ListFXButton myListButton = theListButtonMgr.getButton();
         myControl = JTitledPane.getTitledPane("ListButton", myListButton);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);

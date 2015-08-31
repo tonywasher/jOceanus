@@ -634,9 +634,9 @@ public class TableFilter<T extends Comparable<? super T>>
      */
     private boolean isCorrectOrder(final RowEntry<T> pFirst,
                                    final RowEntry<T> pSecond) {
-        int iResult = (doSort)
-                               ? pFirst.compareRow(pSecond)
-                               : pFirst.compareReference(pSecond);
+        int iResult = doSort
+                             ? pFirst.compareRow(pSecond)
+                             : pFirst.compareReference(pSecond);
         return iResult <= 0;
     }
 

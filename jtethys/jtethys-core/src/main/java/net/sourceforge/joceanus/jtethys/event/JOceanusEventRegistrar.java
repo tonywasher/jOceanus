@@ -58,7 +58,7 @@ public class JOceanusEventRegistrar {
     /**
      * The Source of the events.
      */
-    private final int theMgrId;
+    private final Integer theMgrId;
 
     /**
      * The list of registrations.
@@ -68,13 +68,13 @@ public class JOceanusEventRegistrar {
     /**
      * The Next registrationId.
      */
-    private int theNextRegId = 1;
+    private Integer theNextRegId = 1;
 
     /**
      * Constructor.
      * @param pMgrId the manager id
      */
-    protected JOceanusEventRegistrar(final int pMgrId) {
+    protected JOceanusEventRegistrar(final Integer pMgrId) {
         /* Store the owning manager */
         theMgrId = pMgrId;
 
@@ -88,7 +88,9 @@ public class JOceanusEventRegistrar {
      */
     private synchronized int getNextRegistrationId() {
         /* return the new registration id */
-        return theNextRegId++;
+        Integer myId = theNextRegId;
+        theNextRegId = theNextRegId + 1;
+        return myId;
     }
 
     /**
@@ -198,7 +200,7 @@ public class JOceanusEventRegistrar {
      * @param pRegistration the relevant registration
      * @return the id of the new registration
      */
-    private synchronized int addToListenerList(final JOceanusEventRegistration<?> pRegistration) {
+    private synchronized Integer addToListenerList(final JOceanusEventRegistration<?> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
         List<JOceanusEventRegistration<?>> myNew = new ArrayList<JOceanusEventRegistration<?>>(theRegistrations);
 

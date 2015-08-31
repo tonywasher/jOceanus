@@ -47,12 +47,12 @@ public class JOceanusEventManager
     /**
      * The Next managerId.
      */
-    private static int theNextMgrId = 1;
+    private static Integer theNextMgrId = 1;
 
     /**
      * The Id of this manager.
      */
-    private final int theMgrId;
+    private final Integer theMgrId;
 
     /**
      * The registrar.
@@ -74,16 +74,18 @@ public class JOceanusEventManager
      * Obtain next owner id.
      * @return the id of the new owner
      */
-    private static synchronized int getNextManagerId() {
+    private static synchronized Integer getNextManagerId() {
         /* return the new manager id */
-        return theNextMgrId++;
+        Integer myId = theNextMgrId;
+        theNextMgrId = theNextMgrId + 1;
+        return myId;
     }
 
     /**
      * Obtain ownerId.
      * @return the owner Id
      */
-    public int getManagerId() {
+    public Integer getManagerId() {
         return theMgrId;
     }
 

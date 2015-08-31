@@ -20,41 +20,46 @@
  * $Author: Tony $
  * $Date: 2015-03-30 06:24:29 +0100 (Mon, 30 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.geometry.Side;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Tooltip;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.ui.ScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.ScrollButtonManager.ScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.javafx.ScrollFXContextMenu.ContextEvent;
 
 /**
  * JavaFX Button which provides a PopUpMenu selection.
  */
-public final class ScrollFXButton
-        extends Button
-        implements ScrollButton<Node> {
+public class ScrollSwingButton
+        extends JButton
+        implements ScrollButton<Icon> {
+    /**
+     * Serial Id.
+     */
+    private static final long serialVersionUID = -483012677041020491L;
+
     /**
      * Constructor.
      * @param pManager the button manager
      */
-    private ScrollFXButton(final ScrollButtonManager<?, Node> pManager) {
+    private ScrollSwingButton(final ScrollButtonManager<?, Icon> pManager) {
         /* Create style of button */
-        setGraphic(ArrowIcon.DOWN.getArrow());
-        setAlignment(Pos.CENTER);
-        setContentDisplay(ContentDisplay.RIGHT);
-        setMaxWidth(Double.MAX_VALUE);
+        setIcon(ArrowIcon.DOWN);
+        setHorizontalAlignment(SwingConstants.CENTER);
+        setVerticalAlignment(SwingConstants.CENTER);
+        setHorizontalTextPosition(SwingConstants.LEFT);
 
         /* Set action handler */
-        setOnAction(new EventHandler<ActionEvent>() {
+        addActionListener(new ActionListener() {
             @Override
-            public void handle(final ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 pManager.handleMenuRequest();
             }
         });
@@ -67,38 +72,35 @@ public final class ScrollFXButton
     }
 
     @Override
-    public void setButtonIcon(final Node pIcon) {
+    public void setButtonIcon(final Icon pIcon) {
         /* Set the icon */
-        setGraphic(pIcon);
+        setIcon(pIcon);
     }
 
     @Override
     public void setButtonToolTip(final String pToolTip) {
         /* Set the ToolTip */
-        Tooltip myToolTip = pToolTip == null
-                                             ? null
-                                             : new Tooltip(pToolTip);
-        setTooltip(myToolTip);
+        setToolTipText(pToolTip);
     }
 
     /**
-     * FX ScrollButton Manager.
+     * Swing ScrollButton Manager.
      * @param <T> the object type
      */
-    public static final class ScrollFXButtonManager<T>
-            extends ScrollButtonManager<T, Node> {
+    public static final class ScrollSwingButtonManager<T>
+            extends ScrollButtonManager<T, Icon> {
         /**
          * Constructor.
          */
-        public ScrollFXButtonManager() {
+        public ScrollSwingButtonManager() {
             /* Create and declare the button and menu */
-            declareButton(new ScrollFXButton(this));
-            declareMenu(new ScrollFXContextMenu<T>());
+            declareButton(new ScrollSwingButton(this));
+            declareMenu(new ScrollSwingContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().addEventHandler(ContextEvent.MENU_SELECT, new EventHandler<ContextEvent<?>>() {
+            getMenu().getEventRegistrar().addFilteredActionListener(ScrollSwingContextMenu.ACTION_SELECTED, new JOceanusActionEventListener() {
                 @Override
-                public void handle(final ContextEvent<?> e) {
+                public void processActionEvent(final JOceanusActionEvent e) {
                     /* Handle the close of the menu */
                     handleMenuClosed();
                 }
@@ -106,18 +108,18 @@ public final class ScrollFXButton
         }
 
         @Override
-        public ScrollFXButton getButton() {
-            return (ScrollFXButton) super.getButton();
+        public ScrollSwingButton getButton() {
+            return (ScrollSwingButton) super.getButton();
         }
 
         @Override
-        public ScrollFXContextMenu<T> getMenu() {
-            return (ScrollFXContextMenu<T>) super.getMenu();
+        public ScrollSwingContextMenu<T> getMenu() {
+            return (ScrollSwingContextMenu<T>) super.getMenu();
         }
 
         @Override
         protected void showMenu() {
-            getMenu().showMenuAtPosition(getButton(), Side.BOTTOM);
+            getMenu().showMenuAtPosition(getButton(), SwingConstants.BOTTOM);
         }
     }
 }

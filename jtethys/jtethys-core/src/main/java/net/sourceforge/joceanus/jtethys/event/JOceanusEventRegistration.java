@@ -42,19 +42,19 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
     /**
      * manager id.
      */
-    private int theMgrId;
+    private final Integer theMgrId;
 
     /**
      * registration id.
      */
-    private int theRegId;
+    private Integer theRegId;
 
     /**
      * Constructor.
      * @param pMgrId the manager Id
      * @param pType the registration type
      */
-    private JOceanusEventRegistration(final int pMgrId,
+    private JOceanusEventRegistration(final Integer pMgrId,
                                       final RegistrationType pType) {
         theMgrId = pMgrId;
         theType = pType;
@@ -73,7 +73,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
      * Obtain the registration id.
      * @return the id
      */
-    protected int getRegId() {
+    protected Integer getRegId() {
         return theRegId;
     }
 
@@ -81,7 +81,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
      * Set the registration id.
      * @param pId the id
      */
-    protected void setRegId(final int pId) {
+    protected void setRegId(final Integer pId) {
         theRegId = pId;
     }
 
@@ -142,7 +142,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
          * @param pMgrId the manager Id
          * @param pListener the listener
          */
-        protected JOceanusActionRegistration(final int pMgrId,
+        protected JOceanusActionRegistration(final Integer pMgrId,
                                              final JOceanusActionEventListener pListener) {
             this(pMgrId, JOceanusEventManager.ACTIONID_ANY, pListener);
         }
@@ -153,7 +153,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
          * @param pActionId the actionId to filter on
          * @param pListener the listener
          */
-        protected JOceanusActionRegistration(final int pMgrId,
+        protected JOceanusActionRegistration(final Integer pMgrId,
                                              final int pActionId,
                                              final JOceanusActionEventListener pListener) {
             super(pMgrId, RegistrationType.ACTION);
@@ -192,7 +192,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
          * @param pMgrId the manager Id
          * @param pListener the listener
          */
-        protected JOceanusChangeRegistration(final int pMgrId,
+        protected JOceanusChangeRegistration(final Integer pMgrId,
                                              final JOceanusChangeEventListener pListener) {
             super(pMgrId, RegistrationType.CHANGE);
             theListener = pListener;
@@ -219,7 +219,7 @@ public abstract class JOceanusEventRegistration<T extends JOceanusEvent> {
          * @param pMgrId the manager Id
          * @param pListener the listener
          */
-        protected JOceanusItemRegistration(final int pMgrId,
+        protected JOceanusItemRegistration(final Integer pMgrId,
                                            final JOceanusItemEventListener pListener) {
             super(pMgrId, RegistrationType.ITEM);
             theListener = pListener;

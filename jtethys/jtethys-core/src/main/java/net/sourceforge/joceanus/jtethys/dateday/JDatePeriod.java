@@ -135,9 +135,9 @@ public enum JDatePeriod {
      * @return the amount
      */
     public int getAmount(final boolean bForward) {
-        return (bForward)
-                         ? theAmount
-                         : -theAmount;
+        return bForward
+                        ? theAmount
+                        : -theAmount;
     }
 
     @Override

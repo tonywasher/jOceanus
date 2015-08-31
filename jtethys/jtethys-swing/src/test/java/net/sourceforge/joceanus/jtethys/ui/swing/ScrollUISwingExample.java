@@ -22,24 +22,40 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
+import net.sourceforge.joceanus.jtethys.ui.ListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.ScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuToggleItem;
+import net.sourceforge.joceanus.jtethys.ui.ScrollUITestHelper;
+import net.sourceforge.joceanus.jtethys.ui.ScrollUITestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.ui.swing.IconSwingButton.SimpleSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.IconSwingButton.StateSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.ListSwingButton.ListSwingButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.ScrollSwingButton.ScrollSwingButtonManager;
 
 /**
  * Scroll utilities examples.
@@ -52,31 +68,100 @@ public class ScrollUISwingExample
     private static final long serialVersionUID = 1335897095869650737L;
 
     /**
+     * The padding.
+     */
+    private static final int PADDING = 5;
+
+    /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ScrollUISwingExample.class);
 
     /**
+     * The Test helper.
+     */
+    private final ScrollUITestHelper<Icon> theHelper;
+
+    /**
      * The popUp menu.
      */
-    private final JScrollPopupMenu thePopupMenu;
+    private final ScrollSwingContextMenu<String> theScrollMenu;
 
     /**
-     * The text field.
+     * The scroll button manager.
      */
-    private final JLabel theDisplayValue;
+    private final ScrollSwingButtonManager<String> theScrollButtonMgr;
 
     /**
-     * The active value.
+     * The simple icon button manager.
      */
-    private String theActiveValue;
+    private final SimpleSwingIconButtonManager<Boolean> theSimpleIconButtonMgr;
+
+    /**
+     * The state icon button manager.
+     */
+    private final StateSwingIconButtonManager<Boolean, IconState> theStateIconButtonMgr;
+
+    /**
+     * The state scroll manager.
+     */
+    private final ScrollSwingButtonManager<IconState> theStateButtonMgr;
+
+    /**
+     * The list button manager.
+     */
+    private final ListSwingButtonManager<String> theListButtonMgr;
+
+    /**
+     * The selected context value.
+     */
+    private final JLabel theContextValue;
+
+    /**
+     * The selected scroll value.
+     */
+    private final JLabel theScrollValue;
+
+    /**
+     * The selected simple icon value.
+     */
+    private final JLabel theSimpleIconValue;
+
+    /**
+     * The selected state icon values.
+     */
+    private final JLabel theStateIconValue;
+
+    /**
+     * The selected list values.
+     */
+    private final JLabel theListValues;
+
+    /**
+     * The selected list values.
+     */
+    private final List<String> theSelectedValues;
 
     /**
      * Constructor.
      */
     public ScrollUISwingExample() {
-        thePopupMenu = new JScrollPopupMenu();
-        theDisplayValue = new JLabel();
+        /* Create helper */
+        theHelper = new ScrollUITestHelper<Icon>();
+
+        /* Create resources */
+        theScrollMenu = new ScrollSwingContextMenu<String>();
+        theScrollButtonMgr = new ScrollSwingButtonManager<String>();
+        theSimpleIconButtonMgr = new SimpleSwingIconButtonManager<Boolean>();
+        theStateIconButtonMgr = new StateSwingIconButtonManager<Boolean, IconState>();
+        theStateButtonMgr = new ScrollSwingButtonManager<IconState>();
+        theListButtonMgr = new ListSwingButtonManager<String>();
+        theContextValue = new JLabel();
+        theScrollValue = new JLabel();
+        theSimpleIconValue = new JLabel();
+        theStateIconValue = new JLabel();
+        theListValues = new JLabel();
+        theSelectedValues = new ArrayList<String>();
     }
 
     @Override
@@ -117,7 +202,7 @@ public class ScrollUISwingExample
     private static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("ScrollUI Example");
+            JFrame myFrame = new JFrame("SwingScroll Demo");
 
             /* Create the UI */
             ScrollUISwingExample myExample = new ScrollUISwingExample();
@@ -143,30 +228,109 @@ public class ScrollUISwingExample
      * Build the panel.
      */
     private JPanel buildPanel() {
-        /* Build the popUp menu */
-        buildPopupMenu();
-
-        /* Create the display value */
-        theDisplayValue.setText("null");
-
         /* Create a panel */
         JPanel myPanel = new JPanel();
-        JLabel myLabel = new JLabel("Selected Value:");
-        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
-        myPanel.add(myLabel);
-        myPanel.add(theDisplayValue);
+        GridLayout myLayout = new GridLayout();
+        myLayout.setColumns(2);
+        myLayout.setRows(0);
+        myPanel.setLayout(myLayout);
+        myLayout.setHgap(PADDING);
+        myLayout.setVgap(PADDING << 1);
+        myPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
+
+        /* Create context menu line */
+        JLabel myContextArea = new JLabel("Right-click for Menu");
+        myContextArea.setBorder(BorderFactory.createTitledBorder("ContextArea"));
+        myContextArea.setHorizontalAlignment(SwingConstants.CENTER);
+        buildResultLabel(theContextValue, "ContextValue");
+        myPanel.add(myContextArea);
+        myPanel.add(theContextValue);
+        setContextValue(null);
+
+        /* Build the context menu */
+        theHelper.buildContextMenu(theScrollMenu);
 
         /* Add popUp listener */
-        myPanel.addMouseListener(new MouseAdapter() {
+        myContextArea.addMouseListener(new MouseAdapter() {
             public void mousePressed(final MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
-                    thePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
 
             public void mouseReleased(final MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
-                    thePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    theScrollMenu.showMenuAtPosition(evt.getComponent(), (double) evt.getX(), (double) evt.getY());
+                }
+            }
+        });
+
+        /* Add listener */
+        theScrollMenu.getEventRegistrar().addFilteredActionListener(ScrollSwingContextMenu.ACTION_SELECTED, new JOceanusActionEventListener() {
+            @Override
+            public void processActionEvent(final JOceanusActionEvent e) {
+                /* If we selected a value */
+                ScrollMenuItem<String> mySelected = theScrollMenu.getSelectedItem();
+                if (mySelected != null) {
+                    setContextValue(mySelected.getValue());
+                }
+            }
+        });
+
+        /* Create scroll button line */
+        ScrollSwingButton myScrollButton = theScrollButtonMgr.getButton();
+        JPanel myScrollArea = new JPanel();
+        myScrollArea.setBorder(BorderFactory.createTitledBorder("ScrollButton"));
+        myScrollArea.add(myScrollButton);
+        buildResultLabel(theScrollValue, "ScrollValue");
+        myPanel.add(myScrollArea);
+        myPanel.add(theScrollValue);
+        setScrollValue(null);
+
+        /* Add listener */
+        theScrollButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
+            @Override
+            public void processActionEvent(final JOceanusActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case ScrollButtonManager.ACTION_NEW_VALUE:
+                        setScrollValue(pEvent.getDetails(String.class));
+                        break;
+                    case ScrollButtonManager.ACTION_MENU_BUILD:
+                        theHelper.buildContextMenu(theScrollButtonMgr.getMenu());
+                        break;
+                    case ScrollButtonManager.ACTION_MENU_CANCELLED:
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create list button line */
+        ListSwingButton myListButton = theListButtonMgr.getButton();
+        JPanel myListArea = new JPanel();
+        myListArea.setBorder(BorderFactory.createTitledBorder("ListButton"));
+        myListArea.add(myListButton);
+        buildResultLabel(theListValues, "ListValues");
+        myPanel.add(myListArea);
+        myPanel.add(theListValues);
+        setListValue(null);
+        theListButtonMgr.getButton().setButtonText("Tag");
+        theListButtonMgr.getMenu().setCloseOnToggle(false);
+
+        /* Add listener */
+        theListButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
+            @Override
+            public void processActionEvent(final JOceanusActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case ListButtonManager.ACTION_TOGGLED:
+                        setListValue(pEvent.getDetails(ScrollMenuToggleItem.class));
+                        break;
+                    case ScrollButtonManager.ACTION_MENU_BUILD:
+                        theHelper.buildAvailableItems(theListButtonMgr.getMenu(), theSelectedValues);
+                        break;
+                    case ScrollButtonManager.ACTION_MENU_CANCELLED:
+                    default:
+                        break;
                 }
             }
         });
@@ -176,76 +340,66 @@ public class ScrollUISwingExample
     }
 
     /**
-     * Build the popUp menu.
+     * Build result.
+     * @param pResult the result label
+     * @param pTitle the title
      */
-    private void buildPopupMenu() {
-        /* Set the display count */
-        thePopupMenu.setMaxDisplayItems(4);
+    private void buildResultLabel(final JLabel pLabel,
+                                  final String pTitle) {
+        pLabel.setBorder(BorderFactory.createTitledBorder(pTitle));
+        theContextValue.setHorizontalAlignment(SwingConstants.CENTER);
 
-        /* Create the menu item */
-        addMenuItem("First");
-        addMenuItem("Second");
-        addMenuItem("Third");
-        addMenuItem("Fourth");
-        addMenuItem("Fifth");
-        addMenuItem("Sixth");
-        addMenuItem("Seventh");
-        addMenuItem("Eighth");
-    }
-
-    /**
-     * Add Menu Item for string.
-     * @param pValue the value to add
-     */
-    private void addMenuItem(final String pValue) {
-        /* Create the menu item */
-        ValueAction myAction = new ValueAction(pValue);
-        JMenuItem myItem = new JMenuItem(myAction);
-
-        /* Add to popup menu */
-        thePopupMenu.addMenuItem(myItem);
+        Dimension myDim = new Dimension(100, 39);
+        theContextValue.setMinimumSize(myDim);
+        theContextValue.setPreferredSize(myDim);
     }
 
     /**
      * Set the active value.
      * @param pValue the value to set
      */
-    private void setActiveValue(final String pValue) {
+    private void setContextValue(final String pValue) {
         /* Record the value */
-        theActiveValue = pValue;
-        theDisplayValue.setText(pValue);
+        theContextValue.setText(pValue);
     }
 
     /**
-     * Value action class.
+     * Set the scroll value.
+     * @param pValue the value to set
      */
-    private final class ValueAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 2071811503847714024L;
+    private void setScrollValue(final String pValue) {
+        /* Record the value */
+        theScrollValue.setText(pValue);
+    }
 
-        /**
-         * Value.
-         */
-        private final String theValue;
-
-        /**
-         * Constructor.
-         * @param pButton the button
-         * @param pItem the item
-         * @param pName the name
-         */
-        private ValueAction(final String pValue) {
-            super(pValue);
-            theValue = pValue;
+    /**
+     * Set the list value.
+     * @param pValue the value to set
+     */
+    private void setListValue(final ScrollMenuToggleItem<?> pValue) {
+        /* Record the value */
+        if (pValue != null) {
+            String myValue = (String) pValue.getValue();
+            theHelper.adjustSelected(myValue, theSelectedValues);
         }
+        theListValues.setText(theHelper.formatSelected(theSelectedValues));
+    }
 
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Set the item */
-            setActiveValue(theValue);
-        }
+    /**
+     * Set the simple icon value.
+     * @param pValue the value to set
+     */
+    private void setSimpleIconValue(final Boolean pValue) {
+        /* Record the value */
+        theSimpleIconValue.setText(Boolean.toString(pValue));
+    }
+
+    /**
+     * Set the state icon value.
+     * @param pValue the value to set
+     */
+    private void setStateIconValue(final Boolean pValue) {
+        /* Record the value */
+        theStateIconValue.setText(theStateButtonMgr.getValue().toString() + ":" + Boolean.toString(pValue));
     }
 }
