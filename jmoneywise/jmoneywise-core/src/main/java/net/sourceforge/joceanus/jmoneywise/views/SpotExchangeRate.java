@@ -147,9 +147,9 @@ public final class SpotExchangeRate
      */
     @Override
     public void setValidEdit() {
-        setEditState((hasHistory())
-                                   ? EditState.VALID
-                                   : EditState.CLEAN);
+        setEditState(hasHistory()
+                                  ? EditState.VALID
+                                  : EditState.CLEAN);
     }
 
     @Override
@@ -180,14 +180,14 @@ public final class SpotExchangeRate
         if (getExchangeRate(myBase) == null) {
             /* Return status */
             return getExchangeRate(myCurr) == null
-                                                  ? DataState.DELNEW
-                                                  : DataState.NEW;
+                                                   ? DataState.DELNEW
+                                                   : DataState.NEW;
         }
 
         /* If we are deleted return so */
         return getExchangeRate(myCurr) == null
-                                              ? DataState.DELETED
-                                              : DataState.CHANGED;
+                                               ? DataState.DELETED
+                                               : DataState.CHANGED;
     }
 
     /**

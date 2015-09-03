@@ -25,16 +25,16 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Build a report document.
@@ -479,8 +479,8 @@ public abstract class HTMLBuilder {
      * @param pCell the cell to set the value for
      * @param pTitle the title for the cell
      */
-    private void setCellTitle(final Element pCell,
-                              final String pTitle) {
+    private static void setCellTitle(final Element pCell,
+                                     final String pTitle) {
         /* Set class and content of cell */
         pCell.setAttribute(ATTR_CLASS, CLASS_TITLEVALUE);
         pCell.setTextContent(pTitle);
@@ -658,8 +658,8 @@ public abstract class HTMLBuilder {
 
         /* Cast result to element */
         return (myParent instanceof Element)
-                                            ? (Element) myParent
-                                            : null;
+                                             ? (Element) myParent
+                                             : null;
     }
 
     /**
@@ -803,8 +803,8 @@ public abstract class HTMLBuilder {
 
             /* Return the class name */
             return wasOdd
-                         ? theClass.getOddClass()
-                         : theClass.getEvenClass();
+                          ? theClass.getOddClass()
+                          : theClass.getEvenClass();
         }
 
         /**
@@ -838,16 +838,16 @@ public abstract class HTMLBuilder {
          */
         private void createNewRow(final boolean bHdr) {
             /* Determine the parent */
-            Element myParent = (bHdr)
-                                     ? getTableHeader()
-                                     : getTableBody();
+            Element myParent = bHdr
+                                    ? getTableHeader()
+                                    : getTableBody();
 
             /* Create the row */
             theRow = theDocument.createElement(ELEMENT_ROW);
             myParent.appendChild(theRow);
-            theRow.setAttribute(ATTR_CLASS, (bHdr)
-                                                  ? CLASS_TOTROW
-                                                  : getNextRowClass());
+            theRow.setAttribute(ATTR_CLASS, bHdr
+                                                 ? CLASS_TOTROW
+                                                 : getNextRowClass());
 
             /* Adjust # of columns */
             numCols = 0;
@@ -860,9 +860,9 @@ public abstract class HTMLBuilder {
          */
         private Element createNewCell(final boolean bTotal) {
             /* Determine the cell type */
-            String myCellType = (bTotal)
-                                        ? ELEMENT_TOTAL
-                                        : ELEMENT_CELL;
+            String myCellType = bTotal
+                                       ? ELEMENT_TOTAL
+                                       : ELEMENT_CELL;
 
             /* Adjust column # */
             numCols++;

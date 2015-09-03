@@ -302,9 +302,9 @@ public class ViewSecurityPrice
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_DILUTIONS.equals(pField)) {
-                return (theDilutions.isEmpty())
-                                               ? JDataFieldValue.SKIP
-                                               : theDilutions;
+                return theDilutions.isEmpty()
+                                              ? JDataFieldValue.SKIP
+                                              : theDilutions;
             }
             return super.getFieldValue(pField);
         }

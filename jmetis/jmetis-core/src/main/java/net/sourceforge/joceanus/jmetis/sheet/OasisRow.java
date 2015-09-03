@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
+
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 
 /**
  * Class representing a row in Oasis.
@@ -113,8 +113,8 @@ public class OasisRow
     protected boolean isHidden() {
         String myString = theOasisRow.getTableVisibilityAttribute();
         return (myString == null)
-                                 ? false
-                                 : myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
+                                  ? false
+                                  : myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
     }
 
     /**
@@ -138,8 +138,8 @@ public class OasisRow
         if (!isReadOnly) {
             /* Set the visibility attribute */
             theOasisRow.setTableVisibilityAttribute(isHidden
-                                                            ? TableVisibilityAttribute.Value.COLLAPSE.toString()
-                                                            : TableVisibilityAttribute.Value.VISIBLE.toString());
+                                                             ? TableVisibilityAttribute.Value.COLLAPSE.toString()
+                                                             : TableVisibilityAttribute.Value.VISIBLE.toString());
         }
     }
 
@@ -155,9 +155,9 @@ public class OasisRow
 
     @Override
     public OasisCell getMutableCellByIndex(final int pIndex) {
-        return (isReadOnly)
-                           ? null
-                           : theCellMap.getMutableCellByIndex(pIndex);
+        return isReadOnly
+                          ? null
+                          : theCellMap.getMutableCellByIndex(pIndex);
     }
 
     /**

@@ -44,7 +44,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jgordianknot.crypto.CryptoResource;
-import net.sourceforge.joceanus.jtethys.ui.javafx.JTitledPane;
+import net.sourceforge.joceanus.jtethys.ui.javafx.GuiUtils;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -244,7 +244,7 @@ public class JavaFXPasswordDialog
         theErrorField = new Label();
         BorderPane myErrorBox = new BorderPane();
         myErrorBox.setCenter(theErrorField);
-        theError = JTitledPane.getTitledPane(NLS_ERROR, myErrorBox);
+        theError = GuiUtils.getTitledPane(NLS_ERROR, myErrorBox);
         BorderPane.setMargin(theError, new Insets(PADDING_SIZE, 0, 0, 0));
 
         /* Set the Error panel to be red */
@@ -275,7 +275,7 @@ public class JavaFXPasswordDialog
         theContainer.setCenter(myForm);
         Scene myScene = new Scene(theContainer);
         setScene(myScene);
-        JTitledPane.addStyleSheet(myScene);
+        GuiUtils.addStyleSheet(myScene);
     }
 
     /**

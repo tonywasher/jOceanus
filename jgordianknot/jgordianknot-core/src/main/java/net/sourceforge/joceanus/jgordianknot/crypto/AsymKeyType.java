@@ -107,8 +107,8 @@ public enum AsymKeyType {
      * @param id the id
      * @param keySize the RSA Key size
      */
-    private AsymKeyType(final int id,
-                        final int keySize) {
+    AsymKeyType(final int id,
+                final int keySize) {
         theId = id;
         theKeySize = keySize;
         theCurve = null;
@@ -120,8 +120,8 @@ public enum AsymKeyType {
      * @param id the id
      * @param pCurve the name of the elliptic curve
      */
-    private AsymKeyType(final int id,
-                        final String pCurve) {
+    AsymKeyType(final int id,
+                final String pCurve) {
         theId = id;
         theKeySize = 0;
         theCurve = pCurve;

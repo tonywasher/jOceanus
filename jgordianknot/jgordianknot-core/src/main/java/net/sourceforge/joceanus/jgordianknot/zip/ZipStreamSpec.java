@@ -745,7 +745,7 @@ public abstract class ZipStreamSpec {
          * Constructor.
          * @param id the id
          */
-        private ZipStreamType(final int id) {
+        ZipStreamType(final int id) {
             theId = id;
         }
 

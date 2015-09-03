@@ -60,14 +60,12 @@ public class OasisCellAddress {
     /**
      * Apostrophe search string.
      */
-    private static final String STR_APOS = ""
-                                           + CHAR_APOS;
+    private static final String STR_APOS = Character.toString(CHAR_APOS);
 
     /**
      * Period search string.
      */
-    private static final String STR_PERIOD = ""
-                                             + CHAR_PERIOD;
+    private static final String STR_PERIOD = Character.toString(CHAR_PERIOD);
 
     /**
      * Row radix.
@@ -110,8 +108,8 @@ public class OasisCellAddress {
         int iPos = pAddress.indexOf(CHAR_PERIOD);
         thePosition = parsePosition(pAddress.substring(iPos + 1));
         String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR)
-                                                                              ? 1
-                                                                              : 0, iPos);
+                                                                               ? 1
+                                                                               : 0, iPos);
         theSheetName = new OasisSheetName(myName, true);
     }
 
@@ -200,7 +198,7 @@ public class OasisCellAddress {
      * @param pAddress the position to parse
      * @return the parsed position
      */
-    private CellPosition parsePosition(final String pAddress) {
+    private static CellPosition parsePosition(final String pAddress) {
         /* Initialise the results */
         int iCol = 0;
         int iRow = 0;
@@ -346,7 +344,7 @@ public class OasisCellAddress {
          * @param pName the name to test
          * @return true/false
          */
-        private boolean needsEscaping(final String pName) {
+        private static boolean needsEscaping(final String pName) {
             /* Need to escape if there is a blank in the name */
             if (pName.contains(" ")) {
                 return true;
@@ -440,7 +438,7 @@ public class OasisCellAddress {
             theFirstCell = pFirstCell;
             theLastCell = pLastCell;
             isSingleCell = false;
-            isSingleSheet = (theFirstCell.getSheetName().equals(theLastCell.getSheetName()));
+            isSingleSheet = theFirstCell.getSheetName().equals(theLastCell.getSheetName());
         }
 
         /**
@@ -462,7 +460,7 @@ public class OasisCellAddress {
         public OasisCellRange(final String pAddress) {
             /* Locate the split */
             int iSplit = pAddress.indexOf(CHAR_COLON);
-            isSingleCell = (iSplit == -1);
+            isSingleCell = iSplit == -1;
             if (isSingleCell) {
                 theFirstCell = new OasisCellAddress(pAddress);
                 theLastCell = theFirstCell;

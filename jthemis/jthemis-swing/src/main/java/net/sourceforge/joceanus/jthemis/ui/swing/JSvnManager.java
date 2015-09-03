@@ -172,12 +172,12 @@ public final class JSvnManager {
     private ViewerWindow theDataWdw = null;
 
     /**
-     * The GitRepo entry
+     * The GitRepo entry.
      */
     private ViewerEntry theGitEntry = null;
 
     /**
-     * The Error entry
+     * The Error entry.
      */
     private ViewerEntry theErrorEntry = null;
 

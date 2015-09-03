@@ -36,7 +36,7 @@ public class JDateDayButton
     /**
      * Name of the Date property.
      */
-    public static final String PROPERTY_DATE = "SelectedDateDay";
+    public static final String PROPERTY_DATEDAY = "SelectedDateDay";
 
     /**
      * DateDayConfig.

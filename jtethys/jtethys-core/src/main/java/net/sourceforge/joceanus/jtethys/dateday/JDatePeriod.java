@@ -114,8 +114,8 @@ public enum JDatePeriod {
      * @param pField the Calendar field
      * @param pAmount the adjustment value
      */
-    private JDatePeriod(final ChronoUnit pField,
-                        final int pAmount) {
+    JDatePeriod(final ChronoUnit pField,
+                final int pAmount) {
         /* Store values */
         theField = pField;
         theAmount = pAmount;

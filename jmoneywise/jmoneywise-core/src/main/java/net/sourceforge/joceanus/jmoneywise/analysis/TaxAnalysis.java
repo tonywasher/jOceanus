@@ -159,8 +159,8 @@ public class TaxAnalysis {
         /* Determine tax details */
         TaxCalcBucketList myTax = theAnalysis.getTaxCalculations();
         theYear = (myTax != null)
-                                 ? myTax.getTaxYear()
-                                 : null;
+                                  ? myTax.getTaxYear()
+                                  : null;
     }
 
     /**
@@ -1281,8 +1281,8 @@ public class TaxAnalysis {
             /* Access the BasicGainsBucket */
             myTaxBucket = myList.getBucket(TaxCategoryClass.CAPITALBASICRATE);
             myTaxBucket.setRate(myRegime.hasCapitalGainsAsIncome()
-                                                                  ? theYear.getBasicTaxRate()
-                                                                  : theYear.getCapTaxRate());
+                                                                   ? theYear.getBasicTaxRate()
+                                                                   : theYear.getCapTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
             /* Determine whether we need to use basic tax band */
@@ -1305,9 +1305,7 @@ public class TaxAnalysis {
                 myTax.addAmount(myTaxBucket.setAmount(myCapital));
 
                 /* Adjust the basicBand to remove capital and note that we have finished */
-                if (bUseBasicBand) {
-                    pBands.theBasicBand.subtractAmount(myCapital);
-                }
+                pBands.theBasicBand.subtractAmount(myCapital);
                 isFinished = true;
             }
         }
@@ -1317,8 +1315,8 @@ public class TaxAnalysis {
             /* Access the HiGainsBucket */
             myTaxBucket = myList.getBucket(TaxCategoryClass.CAPITALHIRATE);
             myTaxBucket.setRate(myRegime.hasCapitalGainsAsIncome()
-                                                                  ? theYear.getHiTaxRate()
-                                                                  : theYear.getHiCapTaxRate());
+                                                                   ? theYear.getHiTaxRate()
+                                                                   : theYear.getHiCapTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
             /* Set the tax bucket and add the tax */

@@ -570,9 +570,9 @@ public class Loan
         /* Handle InfoSet fields */
         AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if (myClass != null) {
-            return (useInfoSet)
-                                ? theInfoSet.fieldChanged(myClass)
-                                : Difference.IDENTICAL;
+            return useInfoSet
+                              ? theInfoSet.fieldChanged(myClass)
+                              : Difference.IDENTICAL;
         }
 
         /* Check super fields */

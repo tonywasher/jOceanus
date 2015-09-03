@@ -642,9 +642,9 @@ public class Security
         /* Handle InfoSet fields */
         AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
-            return (useInfoSet)
-                                ? theInfoSet.fieldChanged(myClass)
-                                : Difference.IDENTICAL;
+            return useInfoSet
+                              ? theInfoSet.fieldChanged(myClass)
+                              : Difference.IDENTICAL;
         }
 
         /* Check super fields */

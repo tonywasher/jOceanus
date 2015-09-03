@@ -628,9 +628,9 @@ public abstract class PreferenceSet
          */
         protected Object getValue() {
             /* Return the active value */
-            return (isChanged)
-                              ? theNewValue
-                              : theValue;
+            return isChanged
+                             ? theNewValue
+                             : theValue;
         }
 
         /**
@@ -655,8 +655,8 @@ public abstract class PreferenceSet
          */
         protected void setNewValue(final Object pNewValue) {
             theNewValue = (pNewValue == null)
-                                             ? theDefault
-                                             : pNewValue;
+                                              ? theDefault
+                                              : pNewValue;
             isChanged = !Difference.isEqual(theNewValue, theValue);
         }
 
@@ -786,8 +786,8 @@ public abstract class PreferenceSet
 
                 /* Set as initial value */
                 setTheValue(myValue
-                                   ? Boolean.TRUE
-                                   : Boolean.FALSE);
+                                    ? Boolean.TRUE
+                                    : Boolean.FALSE);
 
                 /* else value does not exist */
             } else {
@@ -811,8 +811,8 @@ public abstract class PreferenceSet
             /* Take a copy if not null */
             if (myNewValue != null) {
                 myNewValue = myNewValue
-                                       ? Boolean.TRUE
-                                       : Boolean.FALSE;
+                                        ? Boolean.TRUE
+                                        : Boolean.FALSE;
             }
 
             /* Set the new value */
@@ -1006,7 +1006,7 @@ public abstract class PreferenceSet
                 } else {
                     /* Set the value */
                     E myEnum = findValue(myValue);
-                    bExists = (myEnum != null);
+                    bExists = myEnum != null;
                     if (bExists) {
                         setTheValue(myEnum);
                     }
@@ -1102,8 +1102,8 @@ public abstract class PreferenceSet
         if (myPref != null) {
             /* Return the relevant state */
             return myPref.isChanged()
-                                     ? JFieldState.CHANGED
-                                     : JFieldState.NORMAL;
+                                      ? JFieldState.CHANGED
+                                      : JFieldState.NORMAL;
         }
 
         /* Not recognised */
@@ -1122,7 +1122,7 @@ public abstract class PreferenceSet
 
         /* Return the value */
         return (myPref == null)
-                               ? JDataFieldValue.UNKNOWN
-                               : myPref.getValue();
+                                ? JDataFieldValue.UNKNOWN
+                                : myPref.getValue();
     }
 }

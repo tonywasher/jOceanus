@@ -97,7 +97,7 @@ public enum ArrowIcon implements Icon {
      * Constructor.
      * @param pPoints the icon points
      */
-    private ArrowIcon(final Point... pPoints) {
+    ArrowIcon(final Point... pPoints) {
         /* Allocate arrays */
         theNumPoints = pPoints.length;
         theXPoints = new int[theNumPoints];

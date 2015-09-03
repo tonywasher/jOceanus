@@ -434,8 +434,8 @@ public final class ViewerHTML {
             if ((myField.isValueSetField())
                 && (myValues != null)) {
                 myValue = myValueCtl.skipField(myField)
-                                                       ? JDataFieldValue.SKIP
-                                                       : myValues.getValue(myField);
+                                                        ? JDataFieldValue.SKIP
+                                                        : myValues.getValue(myField);
             } else {
                 myValue = myDetail.getFieldValue(myField);
             }
@@ -448,8 +448,8 @@ public final class ViewerHTML {
             /* Start the field */
             myEntries.append(HTML_ROWCLSSTART);
             myEntries.append(isOdd
-                                  ? CLASS_ODDROW
-                                  : CLASS_EVENROW);
+                                   ? CLASS_ODDROW
+                                   : CLASS_EVENROW);
             myEntries.append(HTML_ROWCLSEND);
             myEntries.append(HTML_CELLSTART);
             myEntries.append(myField.getName());
@@ -559,8 +559,8 @@ public final class ViewerHTML {
         /* Build a div section */
         myBuffer.append("<div class=\"");
         myBuffer.append(pDifference.isValueChanged()
-                                                    ? CLASS_CHANGED
-                                                    : CLASS_SECCHANGED);
+                                                     ? CLASS_CHANGED
+                                                     : CLASS_SECCHANGED);
         myBuffer.append(HTML_ROWCLSEND);
 
         /* Add value and reformat */
@@ -607,8 +607,7 @@ public final class ViewerHTML {
      * @param pEntries the map entries
      * @return the HTML table
      */
-    private StringBuilder buildHTMLMap(final StringBuilder pEntries) {
-
+    private static StringBuilder buildHTMLMap(final StringBuilder pEntries) {
         /* Initialise the string with an item name */
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
         myResults.append(HTML_HDRSTART);
@@ -654,8 +653,8 @@ public final class ViewerHTML {
         /* Format the row */
         myBuild.append(HTML_ROWCLSSTART);
         myBuild.append(isOdd
-                            ? CLASS_ODDROW
-                            : CLASS_EVENROW);
+                             ? CLASS_ODDROW
+                             : CLASS_EVENROW);
         myBuild.append(HTML_ROWCLSEND);
 
         /* Format the key */
@@ -786,8 +785,8 @@ public final class ViewerHTML {
             /* Format the row */
             myResults.append(HTML_ROWCLSSTART);
             myResults.append(isOdd
-                                  ? CLASS_ODDROW
-                                  : CLASS_EVENROW);
+                                   ? CLASS_ODDROW
+                                   : CLASS_EVENROW);
             myResults.append(HTML_ROWCLSEND);
 
             /* Add the stack trace */

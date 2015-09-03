@@ -85,7 +85,7 @@ public enum DigestType {
      * Constructor.
      * @param id the id
      */
-    private DigestType(final int id) {
+    DigestType(final int id) {
         theId = id;
     }
 

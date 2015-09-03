@@ -28,14 +28,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jmetis.JMetisIOException;
-import net.sourceforge.joceanus.jmetis.JMetisLogicException;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.attribute.table.TableMessageTypeAttribute;
 import org.odftoolkit.odfdom.dom.attribute.table.TableOrientationAttribute;
@@ -68,6 +60,14 @@ import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 import org.odftoolkit.odfdom.pkg.OdfElement;
 import org.odftoolkit.simple.SpreadsheetDocument;
 import org.w3c.dom.Node;
+
+import net.sourceforge.joceanus.jmetis.JMetisDataException;
+import net.sourceforge.joceanus.jmetis.JMetisIOException;
+import net.sourceforge.joceanus.jmetis.JMetisLogicException;
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * The Oasis WorkBook.
@@ -360,8 +360,8 @@ public class OasisWorkBook {
         /* Obtain the existing sheet */
         SheetReference myRef = theSheetMap.get(pName);
         return (myRef == null)
-                              ? null
-                              : myRef.getReadOnlySheet();
+                               ? null
+                               : myRef.getReadOnlySheet();
     }
 
     /**
@@ -530,10 +530,10 @@ public class OasisWorkBook {
      * @param pConstraint the constraint
      * @throws JOceanusException on error
      */
-    private void applyDataConstraint(final OasisSheet pSheet,
-                                     final CellPosition pFirstCell,
-                                     final CellPosition pLastCell,
-                                     final TableContentValidationElement pConstraint) throws JOceanusException {
+    private static void applyDataConstraint(final OasisSheet pSheet,
+                                            final CellPosition pFirstCell,
+                                            final CellPosition pLastCell,
+                                            final TableContentValidationElement pConstraint) throws JOceanusException {
         /* Determine size of range */
         String myName = pConstraint.getTableNameAttribute();
         int iRow = pFirstCell.getRowIndex();
@@ -662,7 +662,7 @@ public class OasisWorkBook {
      * @param pWidth the character width
      * @return the name of the style
      */
-    private String getStyleWidth(final int pWidth) {
+    private static String getStyleWidth(final int pWidth) {
         return (pWidth << 1)
                + "mm";
     }
@@ -693,8 +693,7 @@ public class OasisWorkBook {
                 StyleTextPropertiesElement myNegStyle;
 
                 /* Look for format splits */
-                String[] myParts = pFormat.split(""
-                                                 + DataFormats.CHAR_SEP);
+                String[] myParts = pFormat.split(Character.toString(DataFormats.CHAR_SEP));
                 switch (myParts.length) {
                     case 1:
                         theStyles.appendChild(new OdfNumberStyle(theContentDom, pFormat, pStyleName));

@@ -52,7 +52,7 @@ public abstract class ViewerManager {
     /**
      * The next entry index.
      */
-    private int theNextIndex = 0;
+    private Integer theNextIndex = 0;
 
     /**
      * Constructor.
@@ -101,8 +101,10 @@ public abstract class ViewerManager {
      * Obtain next id.
      * @return the next id
      */
-    public synchronized int nextId() {
-        return theNextIndex++;
+    public synchronized Integer nextId() {
+        Integer myId = theNextIndex;
+        theNextIndex = theNextIndex + 1;
+        return myId;
     }
 
     /**

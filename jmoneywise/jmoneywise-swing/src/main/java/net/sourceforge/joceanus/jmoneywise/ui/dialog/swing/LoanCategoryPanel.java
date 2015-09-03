@@ -254,8 +254,8 @@ public class LoanCategoryPanel
      * @param pMenuBuilder the menu builder
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final JScrollMenuBuilder<LoanCategory> pMenuBuilder,
-                                 final LoanCategory pCategory) {
+    private static void buildParentMenu(final JScrollMenuBuilder<LoanCategory> pMenuBuilder,
+                                        final LoanCategory pCategory) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 

@@ -44,7 +44,7 @@ public abstract class ViewerEntry {
     /**
      * The id.
      */
-    private final int theId;
+    private final Integer theId;
 
     /**
      * The object for the entry.
@@ -64,7 +64,7 @@ public abstract class ViewerEntry {
      */
     protected ViewerEntry(final ViewerManager pManager,
                           final String pName,
-                          final int pId) {
+                          final Integer pId) {
         /* Store parameters */
         theManager = pManager;
         theName = pName;
@@ -83,7 +83,7 @@ public abstract class ViewerEntry {
      * Obtain the index.
      * @return the index
      */
-    public int getId() {
+    public Integer getId() {
         return theId;
     }
 

@@ -69,7 +69,7 @@ public class JDateDayConfig
      * Constructor.
      */
     public JDateDayConfig() {
-        theSelectedDateDay = new SimpleObjectProperty<JDateDay>(this, JDateDayButton.PROPERTY_DATE);
+        theSelectedDateDay = new SimpleObjectProperty<JDateDay>(this, JDateDayButton.PROPERTY_DATEDAY);
         addListener();
     }
 
@@ -79,7 +79,7 @@ public class JDateDayConfig
      */
     public JDateDayConfig(final JDateDayFormatter pFormatter) {
         super(pFormatter);
-        theSelectedDateDay = new SimpleObjectProperty<JDateDay>(this, JDateDayButton.PROPERTY_DATE);
+        theSelectedDateDay = new SimpleObjectProperty<JDateDay>(this, JDateDayButton.PROPERTY_DATEDAY);
         pFormatter.getEventRegistrar().addChangeListener(new LocaleListener(pFormatter));
         addListener();
     }

@@ -160,7 +160,6 @@ public abstract class ScrollMenuContent {
                 ScrollMenuToggleItem<T> addToggleItem(final T pItem);
 
         /**
-         * 
          * Add New toggle item.
          * @param pItem the available item
          * @param pName the display name

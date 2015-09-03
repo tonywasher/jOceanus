@@ -668,9 +668,9 @@ public class TaxYear
         /* Handle InfoSet fields */
         TaxYearInfoClass myClass = TaxYearInfoSet.getClassForField(pField);
         if (myClass != null) {
-            return (useInfoSet)
-                                ? theInfoSet.fieldChanged(myClass)
-                                : Difference.IDENTICAL;
+            return useInfoSet
+                              ? theInfoSet.fieldChanged(myClass)
+                              : Difference.IDENTICAL;
         }
 
         /* Check super fields */

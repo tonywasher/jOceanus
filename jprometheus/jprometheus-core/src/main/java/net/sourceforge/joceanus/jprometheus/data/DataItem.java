@@ -44,8 +44,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
- * a time and is unique within that list
+ * Provides the abstract DataItem class as the basis for data items. The implementation of the
+ * interface means that this object can only be held in one list at a time and is unique within that
+ * list
  * @see DataList
  * @param <E> the data type enum class
  */
@@ -268,8 +269,8 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Allocate initial value set and declare it */
         ValueSet myValues = (this instanceof EncryptedItem)
-                                                           ? new EncryptedValueSet(this)
-                                                           : new ValueSet(this);
+                                                            ? new EncryptedValueSet(this)
+                                                            : new ValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 
@@ -314,10 +315,10 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Switch on the styles */
         switch (myStyle) {
-        /* We are building an update list (from Core) */
+            /* We are building an update list (from Core) */
             case UPDATE:
                 switch (myState) {
-                /* NEW/DELNEW need to be at version 1 */
+                    /* NEW/DELNEW need to be at version 1 */
                     case DELNEW:
                     case NEW:
                         theValueSet.setVersion(1);
@@ -327,7 +328,9 @@ public abstract class DataItem<E extends Enum<E>>
                         theHistory.pushHistory(1);
                         break;
 
-                    /* Changed items need to have new values at version 1 and originals at version 0 */
+                    /*
+                     * Changed items need to have new values at version 1 and originals at version 0
+                     */
                     case CHANGED:
                         setHistory(pBase);
                         break;
@@ -345,7 +348,7 @@ public abstract class DataItem<E extends Enum<E>>
             case EDIT:
                 /* Switch on the base style */
                 switch (myBaseStyle) {
-                /* New item from core we need to link back and copy flags */
+                    /* New item from core we need to link back and copy flags */
                     case CORE:
                         theBase = pBase;
                         copyFlags(pBase);
@@ -451,8 +454,8 @@ public abstract class DataItem<E extends Enum<E>>
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                                    ? JDataFieldValue.SKIP
-                                    : theBase;
+                                     ? JDataFieldValue.SKIP
+                                     : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
             return getState();
@@ -462,28 +465,28 @@ public abstract class DataItem<E extends Enum<E>>
         }
         if (FIELD_DELETED.equals(pField)) {
             return isDeleted()
-                              ? Boolean.TRUE
-                              : JDataFieldValue.SKIP;
+                               ? Boolean.TRUE
+                               : JDataFieldValue.SKIP;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null)
-                                        ? theValueSet.getVersion()
-                                        : JDataFieldValue.SKIP;
+                                         ? theValueSet.getVersion()
+                                         : JDataFieldValue.SKIP;
         }
         if (FIELD_HEADER.equals(pField)) {
-            return (isHeader)
-                             ? isHeader
-                             : JDataFieldValue.SKIP;
+            return isHeader
+                            ? isHeader
+                            : JDataFieldValue.SKIP;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return hasHistory()
-                               ? theHistory
-                               : JDataFieldValue.SKIP;
+                                ? theHistory
+                                : JDataFieldValue.SKIP;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return hasErrors()
-                              ? theErrors
-                              : JDataFieldValue.SKIP;
+                               ? theErrors
+                               : JDataFieldValue.SKIP;
         }
 
         /* Not recognised */
@@ -783,7 +786,8 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
-     * Set Change history for an update list so that the first and only entry in the change list is the original values of the base.
+     * Set Change history for an update list so that the first and only entry in the change list is
+     * the original values of the base.
      * @param pBase the base item
      */
     public final void setHistory(final DataItem<?> pBase) {
@@ -799,7 +803,8 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
-     * Check to see whether any changes were made. If no changes were made remove last saved history since it is not needed.
+     * Check to see whether any changes were made. If no changes were made remove last saved history
+     * since it is not needed.
      * @return <code>true</code> if changes were made, <code>false</code> otherwise
      */
     public boolean checkForHistory() {
@@ -857,8 +862,8 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public Difference fieldChanged(final JDataField pField) {
         return ((pField != null) && (pField.isValueSetField()))
-                                                               ? theHistory.fieldChanged(pField)
-                                                               : Difference.IDENTICAL;
+                                                                ? theHistory.fieldChanged(pField)
+                                                                : Difference.IDENTICAL;
     }
 
     /**
@@ -892,8 +897,8 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public boolean hasErrors(final JDataField pField) {
         return (pField != null)
-                               ? theErrors.hasErrors(pField)
-                               : false;
+                                ? theErrors.hasErrors(pField)
+                                : false;
     }
 
     /**
@@ -915,8 +920,8 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public void clearErrors() {
         theEdit = (theValueSet.getVersion() > 0)
-                                                ? EditState.DIRTY
-                                                : EditState.CLEAN;
+                                                 ? EditState.DIRTY
+                                                 : EditState.CLEAN;
         theErrors.clearErrors();
     }
 
@@ -938,8 +943,8 @@ public abstract class DataItem<E extends Enum<E>>
     @Override
     public String getFieldErrors(final JDataField pField) {
         return (pField != null)
-                               ? theErrors.getFieldErrors(pField)
-                               : null;
+                                ? theErrors.getFieldErrors(pField)
+                                : null;
     }
 
     @Override
@@ -1088,8 +1093,8 @@ public abstract class DataItem<E extends Enum<E>>
     protected DataState getBaseState() {
         DataItem<?> myBase = getBase();
         return (myBase == null)
-                               ? DataState.NOSTATE
-                               : myBase.getState();
+                                ? DataState.NOSTATE
+                                : myBase.getState();
     }
 
     /**

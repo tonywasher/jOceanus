@@ -737,7 +737,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Create the listener and attach it */
             DateListener myListener = new DateListener();
-            pComponent.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
+            pComponent.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, myListener);
         }
 
         @Override

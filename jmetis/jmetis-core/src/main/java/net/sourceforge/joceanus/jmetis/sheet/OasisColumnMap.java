@@ -38,16 +38,19 @@ import org.w3c.dom.Node;
 /**
  * Class to manage the columns for a Sheet in Oasis.
  * <p>
- * A simple array list is maintained to map from column number to the underlying element. Each such element may have a repeat count that means that multiple
- * columns map to the same element.
+ * A simple array list is maintained to map from column number to the underlying element. Each such
+ * element may have a repeat count that means that multiple columns map to the same element.
  * <p>
- * The map is sparsely populated at the end to avoid addressing unused columns. This situation can occur when the sheet is extended to the full 1024 possible
- * columns, but with no active cells/columns. The map will initially only map up to the last TableTableColumnElement regardless of the number of columns that
- * this last element represents. If columns are subsequently referenced past this point, then the map will be expanded as required, so that the column is
+ * The map is sparsely populated at the end to avoid addressing unused columns. This situation can
+ * occur when the sheet is extended to the full 1024 possible columns, but with no active
+ * cells/columns. The map will initially only map up to the last TableTableColumnElement regardless
+ * of the number of columns that this last element represents. If columns are subsequently
+ * referenced past this point, then the map will be expanded as required, so that the column is
  * included in the map.
  * <p>
- * If columns are referenced past those initially declared, then they will be automatically created if the {@link #getMutableColumnByIndex} method is used. If
- * the {@link #getReadOnlyColumnByIndex} method is used, then null will be returned to indicate that the column does not exist.
+ * If columns are referenced past those initially declared, then they will be automatically created
+ * if the {@link #getMutableColumnByIndex} method is used. If the {@link #getReadOnlyColumnByIndex}
+ * method is used, then null will be returned to indicate that the column does not exist.
  */
 public class OasisColumnMap {
     /**
@@ -261,7 +264,7 @@ public class OasisColumnMap {
         /* Empty if none of the data attributes exist */
         return (defStyle == null)
                && (style == null)
-               && (visible.equals(TableVisibilityAttribute.DEFAULT_VALUE.toString()));
+               && (visible.equals(TableVisibilityAttribute.DEFAULT_VALUE));
     }
 
     /**
@@ -306,8 +309,8 @@ public class OasisColumnMap {
             /* Determine the maximum instance */
             Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
             return (myRepeat == null)
-                                     ? 1
-                                     : myRepeat;
+                                      ? 1
+                                      : myRepeat;
         }
 
         /**

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.ListButtonManager.ListButton;
 /**
  * PopUp menu that displays a list of checkMenu items.
  */
-public class ListSwingButton
+public final class ListSwingButton
         extends JButton
         implements ListButton<Icon> {
     /**

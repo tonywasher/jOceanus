@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayCell;
 import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayConfig;
 import net.sourceforge.joceanus.jtethys.dateday.javafx.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.ui.javafx.JTitledPane;
+import net.sourceforge.joceanus.jtethys.ui.javafx.GuiUtils;
 
 /**
  * <p>
@@ -143,7 +143,7 @@ public class JDateDayFXExample
     @Override
     public void start(final Stage pStage) {
         Scene myScene = new Scene(new Group());
-        JTitledPane.addStyleSheet(myScene);
+        GuiUtils.addStyleSheet(myScene);
         GridPane myPane = makePanel();
         ((Group) myScene.getRoot()).getChildren().addAll(myPane);
         pStage.setTitle("JDateDayButton JavaFX Demo");
@@ -285,7 +285,7 @@ public class JDateDayFXExample
         GridPane.setHalignment(myOptions, HPos.CENTER);
         myPanel.add(theTable, 0, iRow++, 2, 1);
         GridPane.setHalignment(theTable, HPos.CENTER);
-        Node myRangeSel = JTitledPane.getTitledPane("Explicit Range Selection", theRangeSelect);
+        Node myRangeSel = GuiUtils.getTitledPane("Explicit Range Selection", theRangeSelect);
         myPanel.add(myRangeSel, 0, iRow++, 2, 1);
         GridPane.setHalignment(myRangeSel, HPos.CENTER);
         GridPane.setFillWidth(myRangeSel, true);
@@ -326,7 +326,7 @@ public class JDateDayFXExample
         myRange.add(theEndDate, 1, 1);
 
         /* Return the panel */
-        return JTitledPane.getTitledPane("Range Selection", myRange);
+        return GuiUtils.getTitledPane("Range Selection", myRange);
     }
 
     /**
@@ -363,7 +363,7 @@ public class JDateDayFXExample
         theFormatList.setMaxWidth(Integer.MAX_VALUE);
 
         /* Return the panel */
-        return JTitledPane.getTitledPane("Format Selection", myStyle);
+        return GuiUtils.getTitledPane("Format Selection", myStyle);
     }
 
     /**
@@ -383,7 +383,7 @@ public class JDateDayFXExample
         myOptions.getChildren().addAll(myStrut1, theNullSelect, myStrut2);
 
         /* Return the panel */
-        return JTitledPane.getTitledPane("Options", myOptions);
+        return GuiUtils.getTitledPane("Options", myOptions);
     }
 
     /**
@@ -950,7 +950,7 @@ public class JDateDayFXExample
          * Constructor.
          * @param pLocale the locale
          */
-        private ShortLocale(final Locale pLocale) {
+        ShortLocale(final Locale pLocale) {
             /* Store the Locale */
             this(pLocale, false);
         }
@@ -960,8 +960,8 @@ public class JDateDayFXExample
          * @param pLocale the locale
          * @param pShowNarrowDays true/false
          */
-        private ShortLocale(final Locale pLocale,
-                            final boolean pShowNarrowDays) {
+        ShortLocale(final Locale pLocale,
+                    final boolean pShowNarrowDays) {
             /* Store the Locale */
             theLocale = pLocale;
             doShowNarrowDays = pShowNarrowDays;
@@ -991,5 +991,4 @@ public class JDateDayFXExample
             }
         }
     }
-
 }

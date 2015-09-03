@@ -289,8 +289,8 @@ public class Analysis
         JDateDay myStart = theDateRange.getStart();
         theCharges = new ChargeableEventList();
         theDilutions = myStart == null
-                                      ? new DilutionEventMap()
-                                      : new DilutionEventMap(pSource.getDilutions(), myStart);
+                                       ? new DilutionEventMap()
+                                       : new DilutionEventMap(pSource.getDilutions(), myStart);
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, pSource.getDeposits());
@@ -381,8 +381,8 @@ public class Analysis
 
         /* Allocate tax calculations if required */
         theTaxCalculations = (myTaxYear != null)
-                                                ? new TaxCalcBucketList(this, myTaxYear)
-                                                : null;
+                                                 ? new TaxCalcBucketList(this, myTaxYear)
+                                                 : null;
     }
 
     @Override
@@ -399,74 +399,74 @@ public class Analysis
             return theCurrency;
         }
         if (FIELD_DEPOSITS.equals(pField)) {
-            return (theDeposits.isEmpty())
-                                          ? JDataFieldValue.SKIP
-                                          : theDeposits;
+            return theDeposits.isEmpty()
+                                         ? JDataFieldValue.SKIP
+                                         : theDeposits;
         }
         if (FIELD_CASH.equals(pField)) {
-            return (theCash.isEmpty())
-                                      ? JDataFieldValue.SKIP
-                                      : theCash;
+            return theCash.isEmpty()
+                                     ? JDataFieldValue.SKIP
+                                     : theCash;
         }
         if (FIELD_LOANS.equals(pField)) {
-            return (theLoans.isEmpty())
-                                       ? JDataFieldValue.SKIP
-                                       : theLoans;
+            return theLoans.isEmpty()
+                                      ? JDataFieldValue.SKIP
+                                      : theLoans;
         }
         if (FIELD_PORTFOLIOS.equals(pField)) {
-            return (thePortfolios.isEmpty())
-                                            ? JDataFieldValue.SKIP
-                                            : thePortfolios;
+            return thePortfolios.isEmpty()
+                                           ? JDataFieldValue.SKIP
+                                           : thePortfolios;
         }
         if (FIELD_PAYEES.equals(pField)) {
-            return (thePayees.isEmpty())
-                                        ? JDataFieldValue.SKIP
-                                        : thePayees;
+            return thePayees.isEmpty()
+                                       ? JDataFieldValue.SKIP
+                                       : thePayees;
         }
         if (FIELD_DEPCATS.equals(pField)) {
-            return (theDepositCategories.isEmpty())
-                                                   ? JDataFieldValue.SKIP
-                                                   : theDepositCategories;
+            return theDepositCategories.isEmpty()
+                                                  ? JDataFieldValue.SKIP
+                                                  : theDepositCategories;
         }
         if (FIELD_CASHCATS.equals(pField)) {
-            return (theCashCategories.isEmpty())
-                                                ? JDataFieldValue.SKIP
-                                                : theCashCategories;
+            return theCashCategories.isEmpty()
+                                               ? JDataFieldValue.SKIP
+                                               : theCashCategories;
         }
         if (FIELD_LOANCATS.equals(pField)) {
-            return (theLoanCategories.isEmpty())
-                                                ? JDataFieldValue.SKIP
-                                                : theLoanCategories;
+            return theLoanCategories.isEmpty()
+                                               ? JDataFieldValue.SKIP
+                                               : theLoanCategories;
         }
         if (FIELD_TRANCATS.equals(pField)) {
-            return (theTransCategories.isEmpty())
-                                                 ? JDataFieldValue.SKIP
-                                                 : theTransCategories;
+            return theTransCategories.isEmpty()
+                                                ? JDataFieldValue.SKIP
+                                                : theTransCategories;
         }
         if (FIELD_TRANSTAGS.equals(pField)) {
-            return (theTransTags.isEmpty())
-                                           ? JDataFieldValue.SKIP
-                                           : theTransTags;
+            return theTransTags.isEmpty()
+                                          ? JDataFieldValue.SKIP
+                                          : theTransTags;
         }
         if (FIELD_TAXBASIS.equals(pField)) {
-            return (theTaxBasis.isEmpty())
-                                          ? JDataFieldValue.SKIP
-                                          : theTaxBasis;
+            return theTaxBasis.isEmpty()
+                                         ? JDataFieldValue.SKIP
+                                         : theTaxBasis;
         }
         if (FIELD_TAXCALC.equals(pField)) {
-            return ((theTaxCalculations != null) && (!theTaxCalculations.isEmpty()))
-                                                                                    ? theTaxCalculations
-                                                                                    : JDataFieldValue.SKIP;
+            return (theTaxCalculations != null) && (!theTaxCalculations.isEmpty())
+                                                                                   ? theTaxCalculations
+                                                                                   : JDataFieldValue.SKIP;
         }
         if (FIELD_CHARGES.equals(pField)) {
-            return (theCharges.isEmpty())
-                                         ? JDataFieldValue.SKIP
-                                         : theCharges;
+            return theCharges.isEmpty()
+                                        ? JDataFieldValue.SKIP
+                                        : theCharges;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
-            return (theDilutions.isEmpty())
-                                           ? JDataFieldValue.SKIP
-                                           : theDilutions;
+            return theDilutions.isEmpty()
+                                          ? JDataFieldValue.SKIP
+                                          : theDilutions;
         }
 
         /* Unknown */

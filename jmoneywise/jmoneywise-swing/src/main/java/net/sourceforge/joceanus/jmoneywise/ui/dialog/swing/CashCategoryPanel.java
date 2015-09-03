@@ -254,8 +254,8 @@ public class CashCategoryPanel
      * @param pMenuBuilder the menu builder
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final JScrollMenuBuilder<CashCategory> pMenuBuilder,
-                                 final CashCategory pCategory) {
+    private static void buildParentMenu(final JScrollMenuBuilder<CashCategory> pMenuBuilder,
+                                        final CashCategory pCategory) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 

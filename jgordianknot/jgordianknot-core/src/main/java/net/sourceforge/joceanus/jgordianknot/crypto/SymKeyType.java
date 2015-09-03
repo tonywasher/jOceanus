@@ -81,7 +81,7 @@ public enum SymKeyType {
      * Constructor.
      * @param id the id
      */
-    private SymKeyType(final int id) {
+    SymKeyType(final int id) {
         theId = id;
     }
 
@@ -130,8 +130,8 @@ public enum SymKeyType {
     public CipherMode adjustCipherMode(final CipherMode pMode) {
         /* If the mode needs a Standard block cipher and this is not one switch to OFB */
         return (pMode.needsStdBlock() && !isStdBlock())
-                                                       ? CipherMode.OFB
-                                                       : pMode;
+                                                        ? CipherMode.OFB
+                                                        : pMode;
     }
 
     /**

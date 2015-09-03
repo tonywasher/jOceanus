@@ -67,7 +67,7 @@ public class SwingViewerEntry
      */
     protected SwingViewerEntry(final SwingViewerManager pManager,
                                final String pName,
-                               final int pId) {
+                               final Integer pId) {
         /* Store parameters */
         super(pManager, pName, pId);
 

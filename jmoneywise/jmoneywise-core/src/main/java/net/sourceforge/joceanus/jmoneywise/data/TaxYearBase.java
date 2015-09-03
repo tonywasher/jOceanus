@@ -191,8 +191,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     public Integer getTaxRegimeId() {
         TaxRegime myRegime = getTaxRegime();
         return (myRegime == null)
-                                 ? null
-                                 : myRegime.getId();
+                                  ? null
+                                  : myRegime.getId();
     }
 
     /**
@@ -202,8 +202,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     public String getTaxRegimeName() {
         TaxRegime myRegime = getTaxRegime();
         return (myRegime == null)
-                                 ? null
-                                 : myRegime.getName();
+                                  ? null
+                                  : myRegime.getName();
     }
 
     /**
@@ -264,8 +264,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     private void setValueTaxYear(final JDateDay pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
         JDateDayRange myRange = (pValue != null)
-                                                ? deriveRange(pValue)
-                                                : null;
+                                                 ? deriveRange(pValue)
+                                                 : null;
         getValueSet().setValue(FIELD_DATERANGE, myRange);
     }
 
@@ -308,7 +308,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pLastDate the last date of the tax year
      * @return the range for the tax year
      */
-    private JDateDayRange deriveRange(final JDateDay pLastDate) {
+    private static JDateDayRange deriveRange(final JDateDay pLastDate) {
         /* Access start date */
         JDateDay myStart = new JDateDay(pLastDate);
 

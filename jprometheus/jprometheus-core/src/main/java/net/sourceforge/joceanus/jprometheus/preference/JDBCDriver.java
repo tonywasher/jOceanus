@@ -156,8 +156,8 @@ public enum JDBCDriver {
         switch (pType) {
             case BOOLEAN:
                 return isPostgreSQL
-                                   ? "boolean"
-                                   : "bit";
+                                    ? "boolean"
+                                    : "bit";
             case SHORT:
                 return "smallint";
             case INTEGER:
@@ -168,24 +168,24 @@ public enum JDBCDriver {
                 return "real";
             case DOUBLE:
                 return isSQLServer
-                                  ? "float"
-                                  : isPostgreSQL
-                                                ? "double precision"
-                                                : "double";
+                                   ? "float"
+                                   : isPostgreSQL
+                                                  ? "double precision"
+                                                  : "double";
             case DATE:
                 return "date";
             case MONEY:
-                return (isSQLServer)
-                                    ? "money"
-                                    : "numeric(18,2)";
+                return isSQLServer
+                                   ? "money"
+                                   : "numeric(18,2)";
             case DECIMAL:
-                return (isSQLServer)
-                                    ? "decimal"
-                                    : "numeric";
+                return isSQLServer
+                                   ? "decimal"
+                                   : "numeric";
             case BINARY:
-                return (isPostgreSQL)
-                                     ? "bytea"
-                                     : "varbinary";
+                return isPostgreSQL
+                                    ? "bytea"
+                                    : "varbinary";
             case STRING:
             default:
                 return "varchar";

@@ -269,9 +269,9 @@ public class JDateDayRangeSelect
         theNextButton.addActionListener(myListener);
         thePrevButton.addActionListener(myListener);
         thePeriodButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theStartButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
-        theEndButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
-        theBaseButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
+        theStartButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, myListener);
+        theEndButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, myListener);
+        theBaseButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, myListener);
     }
 
     /**

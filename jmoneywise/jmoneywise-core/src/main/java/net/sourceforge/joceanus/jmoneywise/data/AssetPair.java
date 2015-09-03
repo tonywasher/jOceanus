@@ -410,7 +410,7 @@ public final class AssetPair
          * @param pName the name
          * @return the assetType
          */
-        private AssetType checkName(final String pName) {
+        private static AssetType checkName(final String pName) {
             /* Locate the separator in the name */
             for (AssetType myType : AssetType.values()) {
                 if (pName.equals(myType.toString())) {
@@ -491,8 +491,8 @@ public final class AssetPair
          */
         private static AssetType getAssetType(final TransactionAsset pAsset) {
             return (pAsset == null)
-                                   ? AssetType.CASH
-                                   : pAsset.getAssetType();
+                                    ? AssetType.CASH
+                                    : pAsset.getAssetType();
         }
     }
 
@@ -554,8 +554,8 @@ public final class AssetPair
          */
         public AssetDirection reverse() {
             return this == TO
-                             ? FROM
-                             : TO;
+                              ? FROM
+                              : TO;
         }
 
         /**

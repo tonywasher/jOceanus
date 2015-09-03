@@ -22,16 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
+
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class representing an Oasis sheet within a workBook.
@@ -134,9 +134,9 @@ public class OasisSheet
     @Override
     public OasisRow getMutableRowByIndex(final int pRowIndex) {
         /* Obtain row from row map, creating row if necessary */
-        return (isReadOnly)
-                           ? null
-                           : theRowMap.getMutableRowByIndex(pRowIndex);
+        return isReadOnly
+                          ? null
+                          : theRowMap.getMutableRowByIndex(pRowIndex);
     }
 
     @Override
@@ -148,9 +148,9 @@ public class OasisSheet
     @Override
     public OasisColumn getMutableColumnByIndex(final int pColIndex) {
         /* Obtain column from column map, creating column if necessary */
-        return (isReadOnly)
-                           ? null
-                           : theColMap.getMutableColumnByIndex(pColIndex);
+        return isReadOnly
+                          ? null
+                          : theColMap.getMutableColumnByIndex(pColIndex);
     }
 
     @Override
@@ -162,8 +162,8 @@ public class OasisSheet
     public void setHidden(final boolean isHidden) {
         if (!isReadOnly) {
             theOasisTable.setTableStyleNameAttribute(isHidden
-                                                             ? OasisWorkBook.STYLE_HIDDENTABLE
-                                                             : OasisWorkBook.STYLE_TABLE);
+                                                              ? OasisWorkBook.STYLE_HIDDENTABLE
+                                                              : OasisWorkBook.STYLE_TABLE);
         }
     }
 

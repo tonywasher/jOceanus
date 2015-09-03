@@ -174,7 +174,7 @@ public enum JDateDayResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private JDateDayResource(final String pKeyName) {
+    JDateDayResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

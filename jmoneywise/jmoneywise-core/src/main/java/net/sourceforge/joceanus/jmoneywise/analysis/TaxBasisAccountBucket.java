@@ -408,7 +408,7 @@ public final class TaxBasisAccountBucket
          * @param pTrans the transaction
          * @return the relevant asset
          */
-        private TransactionAsset deriveAsset(final TransactionHelper pTrans) {
+        private static TransactionAsset deriveAsset(final TransactionHelper pTrans) {
             /* Determine required asset */
             TransactionAsset myAsset = pTrans.getPartner();
             if (!(myAsset instanceof Payee)) {

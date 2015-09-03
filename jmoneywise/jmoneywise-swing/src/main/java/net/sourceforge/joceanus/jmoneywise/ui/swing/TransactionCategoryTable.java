@@ -905,9 +905,9 @@ public class TransactionCategoryTable
                 case COLUMN_DESC:
                     return true;
                 case COLUMN_CATEGORY:
-                    return (pItem.isActive())
-                                              ? false
-                                              : CategoryType.determineType(pItem).isChangeable();
+                    return pItem.isActive()
+                                            ? false
+                                            : CategoryType.determineType(pItem).isChangeable();
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 default:

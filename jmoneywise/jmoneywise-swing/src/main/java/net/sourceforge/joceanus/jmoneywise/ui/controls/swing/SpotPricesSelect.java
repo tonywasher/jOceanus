@@ -411,7 +411,7 @@ public class SpotPricesSelect
             thePortMenuReg = thePortMenuBuilder.getEventRegistrar().addChangeListener(this);
 
             /* Add swing listeners */
-            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, this);
+            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, this);
             theShowClosed.addItemListener(this);
             theNext.addActionListener(this);
             thePrev.addActionListener(this);

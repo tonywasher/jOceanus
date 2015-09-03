@@ -159,9 +159,9 @@ public final class SpotSecurityPrice
      */
     @Override
     public void setValidEdit() {
-        setEditState((hasHistory())
-                                   ? EditState.VALID
-                                   : EditState.CLEAN);
+        setEditState(hasHistory()
+                                  ? EditState.VALID
+                                  : EditState.CLEAN);
     }
 
     @Override
@@ -192,14 +192,14 @@ public final class SpotSecurityPrice
         if (getPrice(myBase) == null) {
             /* Return status */
             return getPrice(myCurr) == null
-                                           ? DataState.DELNEW
-                                           : DataState.NEW;
+                                            ? DataState.DELNEW
+                                            : DataState.NEW;
         }
 
         /* If we are deleted return so */
         return getPrice(myCurr) == null
-                                       ? DataState.DELETED
-                                       : DataState.CHANGED;
+                                        ? DataState.DELETED
+                                        : DataState.CHANGED;
     }
 
     /**

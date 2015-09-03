@@ -66,7 +66,7 @@ public enum StreamKeyType {
      * Constructor.
      * @param id the id
      */
-    private StreamKeyType(final int id) {
+    StreamKeyType(final int id) {
         theId = id;
     }
 
@@ -101,12 +101,12 @@ public enum StreamKeyType {
                 return "VMPC-KSA3";
             case HC256:
                 return pRestricted
-                                  ? "HC128"
-                                  : name();
+                                   ? "HC128"
+                                   : name();
             case XSALSA20:
                 return pRestricted
-                                  ? "SALSA20"
-                                  : name();
+                                   ? "SALSA20"
+                                   : name();
             default:
                 return name();
         }

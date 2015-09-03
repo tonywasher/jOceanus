@@ -124,8 +124,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     @Override
     public JDataFields getDataFields() {
         return (theLocalFields == null)
-                                       ? DataInfo.FIELD_DEFS
-                                       : theLocalFields;
+                                        ? DataInfo.FIELD_DEFS
+                                        : theLocalFields;
     }
 
     @Override
@@ -491,9 +491,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
             T myLink = myIterator.next();
 
             /* Access version of value */
-            int myValueVersion = (bEditRestore)
-                                               ? myLink.getValueSetVersion()
-                                               : myLink.getBase().getValueSetVersion();
+            int myValueVersion = bEditRestore
+                                              ? myLink.getValueSetVersion()
+                                              : myLink.getBase().getValueSetVersion();
 
             /* If the value was deleted at same time as owner */
             if (myValueVersion == myVersion) {

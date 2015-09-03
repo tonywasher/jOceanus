@@ -68,7 +68,7 @@ public abstract class PrimaryTransaction<T extends PrimaryTransaction<T, S>, S e
     }
 
     /**
-     * Create secondary transaction
+     * Create secondary transaction.
      * @return the secondary transaction
      */
     protected S addSubTransaction() {
@@ -85,8 +85,7 @@ public abstract class PrimaryTransaction<T extends PrimaryTransaction<T, S>, S e
     }
 
     /**
-     * Create secondary transaction
-     * @param pPrimary transaction
+     * Create secondary transaction.
      * @return the secondary transaction
      */
     protected abstract S newSubTransaction();

@@ -39,8 +39,9 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.Bounds;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -48,7 +49,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -102,7 +102,7 @@ public class ScrollFXContextMenu<T>
     /**
      * List of menu items.
      */
-    private final List<ScrollElement<T>> theMenuItems;
+    private final List<ScrollElement> theMenuItems;
 
     /**
      * List of active menu items.
@@ -170,6 +170,11 @@ public class ScrollFXContextMenu<T>
     private boolean needReBuild;
 
     /**
+     * The size of the menu.
+     */
+    private Dimension2D theMenuSize;
+
+    /**
      * Constructor.
      */
     public ScrollFXContextMenu() {
@@ -226,7 +231,7 @@ public class ScrollFXContextMenu<T>
         theDownItem = new ScrollControl(ArrowIcon.DOWN.getArrow(), 1);
 
         /* Allocate the list */
-        theMenuItems = new ArrayList<ScrollElement<T>>();
+        theMenuItems = new ArrayList<ScrollElement>();
         VBox myBox = new VBox();
         myBox.setSpacing(2);
         myBox.setPadding(new Insets(2, 2, 2, 2));
@@ -249,15 +254,16 @@ public class ScrollFXContextMenu<T>
                                 final Boolean newValue) {
                 /* If we've lost focus to other than the active subMenu */
                 if ((!newValue)
-                    && ((theActiveMenu == null)
-                        || theActiveMenu.isFocused())) {
+                    && (theActiveMenu == null)) {
                     /* fire cancellation event */
                     if (theParentMenu == null) {
                         fireEvent(new ContextEvent<T>());
                     }
 
-                    /* Close the menu */
-                    closeMenu();
+                    /* Close the menu hierarchy if we are currently showing */
+                    if (isShowing()) {
+                        closeOnFocusLoss();
+                    }
                 }
             }
         });
@@ -283,10 +289,9 @@ public class ScrollFXContextMenu<T>
         addEventFilter(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(final ScrollEvent e) {
-                /* Adjust index and refresh the menu */
-                theFirstIndex -= e.getDeltaY() / e.getMultiplierY();
-                needReBuild = true;
-                refreshMenu();
+                /* request the scroll */
+                double myDelta = e.getDeltaY() / e.getMultiplierY();
+                requestScroll((int) -myDelta);
 
                 /* Consume the event */
                 e.consume();
@@ -295,20 +300,17 @@ public class ScrollFXContextMenu<T>
     }
 
     /**
-     * Resize an icon to the width.
-     * @param pSource the source icon
-     * @param pWidth the width
-     * @return the resized icon
+     * CloseOnFocusLoss.
      */
-    private static ImageView resizeImage(final Image pSource,
-                                         final int pWidth) {
-        ImageView myNewImage = new ImageView();
-        myNewImage.setImage(pSource);
-        myNewImage.setFitWidth(pWidth);
-        myNewImage.setPreserveRatio(true);
-        myNewImage.setSmooth(true);
-        myNewImage.setCache(true);
-        return myNewImage;
+    private void closeOnFocusLoss() {
+        /* If we have lost focus */
+        /* Pass call on to parent if it exists */
+        if (theParentContext != null) {
+            theParentContext.closeOnFocusLoss();
+        }
+
+        /* Close the menu */
+        closeMenu();
     }
 
     @Override
@@ -354,9 +356,9 @@ public class ScrollFXContextMenu<T>
         theMaxDisplayItems = pMaxDisplayItems;
 
         /* Loop through the children */
-        Iterator<ScrollElement<T>> myIterator = theMenuItems.iterator();
+        Iterator<ScrollElement> myIterator = theMenuItems.iterator();
         while (myIterator.hasNext()) {
-            ScrollElement<T> myChild = myIterator.next();
+            ScrollElement myChild = myIterator.next();
 
             /* If this is a subMenu */
             if (myChild instanceof ScrollFXSubMenu) {
@@ -377,34 +379,14 @@ public class ScrollFXContextMenu<T>
      */
     public void showMenuAtPosition(final Node pAnchor,
                                    final Side pSide) {
-        /* Obtain location of anchor node */
-        Bounds myLocal = pAnchor.getLayoutBounds();
-        Bounds myBounds = pAnchor.localToScreen(myLocal);
+        /* determine the size of the menu */
+        determineSize();
 
-        /* Obtain default location */
-        double myX = myBounds.getMinX();
-        double myY = myBounds.getMinY();
-
-        switch (pSide) {
-            case RIGHT:
-                myX = myBounds.getMaxX();
-                break;
-            case BOTTOM:
-                myY = myBounds.getMaxY();
-                break;
-            case TOP:
-                refreshMenu();
-                myY -= getHeight();
-                break;
-            case LEFT:
-            default:
-                refreshMenu();
-                myX -= getWidth();
-                break;
-        }
+        /* determine location to display */
+        Point2D myLocation = GuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
         /* Show menu */
-        showMenuAtPosition(myX, myY);
+        showMenuAtLocation(myLocation);
     }
 
     /**
@@ -416,28 +398,25 @@ public class ScrollFXContextMenu<T>
     public void showMenuAtPosition(final Node pAnchor,
                                    final double pX,
                                    final double pY) {
-        /* Obtain location of anchor node */
-        Bounds myLocal = pAnchor.getLayoutBounds();
-        Bounds myBounds = pAnchor.localToScreen(myLocal);
+        /* determine the size of the menu */
+        determineSize();
 
-        /* Obtain default location */
-        double myX = myBounds.getMinX() + pX;
-        double myY = myBounds.getMinY() + pY;
+        /* determine location to display */
+        Point2D myRequest = new Point2D(pX, pY);
+        Point2D myLocation = GuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
 
         /* Show menu */
-        showMenuAtPosition(myX, myY);
+        showMenuAtLocation(myLocation);
     }
 
     /**
-     * Show the menu at position.
-     * @param pX the X position
-     * @param pY the Y position
+     * Show the menu at location.
+     * @param pLocation the location
      */
-    private void showMenuAtPosition(final double pX,
-                                    final double pY) {
+    private void showMenuAtLocation(final Point2D pLocation) {
         /* Record position */
-        setX(pX);
-        setY(pY);
+        setX(pLocation.getX());
+        setY(pLocation.getY());
 
         /* Show menu */
         showMenu();
@@ -447,9 +426,6 @@ public class ScrollFXContextMenu<T>
      * Show the menu.
      */
     private void showMenu() {
-        /* Ensure that the menu is built */
-        refreshMenu();
-
         /* Initialise the values */
         theTimer = theParentMenu != null
                                          ? theParentContext.getTimer()
@@ -617,9 +593,6 @@ public class ScrollFXContextMenu<T>
         if (theParentMenu != null) {
             theParentMenu.scrollToMenu();
         }
-
-        /* Request reBuild */
-        needReBuild = true;
     }
 
     /**
@@ -636,8 +609,8 @@ public class ScrollFXContextMenu<T>
 
         /* If index is above window */
         if (pIndex < theFirstIndex) {
-            /* Move window upwards and return */
-            theFirstIndex = pIndex;
+            /* Scroll window upwards and return */
+            requestScroll(pIndex - theFirstIndex);
             return;
         }
 
@@ -646,74 +619,9 @@ public class ScrollFXContextMenu<T>
                           + theMaxDisplayItems
                           - 1;
         if (myLastIndex < pIndex) {
-            /* Move window downwards */
-            theFirstIndex += pIndex
-                             - myLastIndex;
+            /* Scroll window downwards */
+            requestScroll(pIndex - myLastIndex);
         }
-    }
-
-    /**
-     * Refresh the menu.
-     */
-    protected void refreshMenu() {
-        /* If we have items to display */
-        if (needReBuild
-            && !theMenuItems.isEmpty()) {
-            /* Access the number of entries and the scroll count */
-            int myCount = theMenuItems.size();
-            int myScroll = Math.min(theMaxDisplayItems, myCount);
-
-            /* Remove all items */
-            theActiveItems.clear();
-
-            /* If we do not need to scroll */
-            if (myScroll == myCount) {
-                /* Ensure we have no arrows */
-                theContainer.setTop(null);
-                theContainer.setBottom(null);
-
-                /* Loop through the items to add */
-                for (int i = 0; i < myCount; i++) {
-                    /* Add the items */
-                    theActiveItems.add(theMenuItems.get(i));
-                }
-
-                /* else need to set up scroll */
-            } else {
-                /* Ensure that the starting index is positive */
-                if (theFirstIndex < 0) {
-                    theFirstIndex = 0;
-                }
-
-                /* Ensure that the starting point is not too late */
-                int myMaxIndex = theFirstIndex
-                                 + myScroll;
-                if (myMaxIndex > myCount) {
-                    /* Adjust the first index */
-                    theFirstIndex = myCount
-                                    - myScroll;
-                    myMaxIndex = myCount;
-                }
-
-                /* Add the top level item */
-                theContainer.setTop(theUpItem);
-                theUpItem.setVisible(theFirstIndex > 0);
-
-                /* Loop through the items to add */
-                for (int i = theFirstIndex; i < myMaxIndex; i++) {
-                    /* Add the items */
-                    theActiveItems.add(theMenuItems.get(i));
-                }
-
-                /* Add the down item */
-                theContainer.setBottom(theDownItem);
-                theDownItem.setVisible(myMaxIndex < myCount);
-            }
-        }
-
-        /* Make sure that the menu is sized correctly */
-        sizeToScene();
-        needReBuild = false;
     }
 
     @Override
@@ -746,6 +654,11 @@ public class ScrollFXContextMenu<T>
     public ScrollMenuItem<T> addItem(final T pValue,
                                      final String pName,
                                      final Node pGraphic) {
+        /* Check state */
+        if (isShowing()) {
+            throw new IllegalStateException();
+        }
+
         /* Create element */
         ScrollFXMenuItem<T> myItem = new ScrollFXMenuItem<T>(this, pValue, pName, pGraphic);
 
@@ -764,6 +677,11 @@ public class ScrollFXContextMenu<T>
     @Override
     public ScrollSubMenu<T, Node> addSubMenu(final String pName,
                                              final Node pGraphic) {
+        /* Check state */
+        if (isShowing()) {
+            throw new IllegalStateException();
+        }
+
         /* Create menu */
         ScrollFXSubMenu<T> myMenu = new ScrollFXSubMenu<T>(this, pName, pGraphic);
 
@@ -782,6 +700,11 @@ public class ScrollFXContextMenu<T>
     @Override
     public ScrollMenuToggleItem<T> addToggleItem(final T pValue,
                                                  final String pName) {
+        /* Check state */
+        if (isShowing()) {
+            throw new IllegalStateException();
+        }
+
         /* Create element */
         ScrollFXToggleItem<T> myItem = new ScrollFXToggleItem<T>(this, pValue, pName);
 
@@ -803,10 +726,195 @@ public class ScrollFXContextMenu<T>
     }
 
     /**
-     * Scroll item.
-     * @param <T> the value type
+     * Determine size of menu.
      */
-    public abstract static class ScrollElement<T>
+    private void determineSize() {
+        /* If we need to rebuild the menu */
+        if (needReBuild
+            && !theMenuItems.isEmpty()) {
+            /* Access the number of entries and the scroll count */
+            int myCount = theMenuItems.size();
+            int myScroll = Math.min(theMaxDisplayItems, myCount);
+
+            /* Remove all items */
+            theActiveItems.clear();
+
+            /* If we do not need to scroll */
+            if (myScroll == myCount) {
+                /* Ensure we have no arrows */
+                theContainer.setTop(null);
+                theContainer.setBottom(null);
+
+                /* Loop through the items to add */
+                for (int i = 0; i < myCount; i++) {
+                    /* Add the items */
+                    theActiveItems.add(theMenuItems.get(i));
+                }
+
+                /* Calculate size of menu */
+                show();
+                close();
+
+                /* Determine the size */
+                theMenuSize = new Dimension2D(getWidth(), getHeight());
+
+                /* else need to set up scroll */
+            } else {
+                /* Add the scrolling items */
+                theContainer.setTop(theUpItem);
+                theContainer.setBottom(theDownItem);
+                theUpItem.setVisible(true);
+                theDownItem.setVisible(true);
+
+                /* Add ALL items */
+                for (ScrollElement myItem : theMenuItems) {
+                    /* Add the items */
+                    theActiveItems.add(myItem);
+                }
+
+                /* Calculate size of menu */
+                show();
+                close();
+                double myWidth = getWidth();
+
+                /* Remove all items */
+                theActiveItems.clear();
+
+                /* Ensure that the starting index is positive */
+                if (theFirstIndex < 0) {
+                    theFirstIndex = 0;
+                }
+
+                /* Ensure that the starting point is not too late */
+                int myMaxIndex = theFirstIndex
+                                 + myScroll;
+                if (myMaxIndex > myCount) {
+                    /* Adjust the first index */
+                    theFirstIndex = myCount
+                                    - myScroll;
+                    myMaxIndex = myCount;
+                }
+
+                /* Loop through the items to add */
+                for (int i = theFirstIndex; i < myMaxIndex; i++) {
+                    /* Add the items */
+                    theActiveItems.add(theMenuItems.get(i));
+                }
+
+                /* Calculate size of menu */
+                show();
+                close();
+                double myHeight = getHeight();
+
+                /* Set visibility of scroll items */
+                theUpItem.setVisible(theFirstIndex > 0);
+                theDownItem.setVisible(myMaxIndex < myCount);
+
+                /* Determine the size */
+                theMenuSize = new Dimension2D(myWidth, myHeight);
+
+                /* Fix the width */
+                setMinWidth(myWidth);
+            }
+        }
+
+        /* Reset flag */
+        needReBuild = false;
+    }
+
+    /**
+     * ScrollPlusOne.
+     */
+    protected void scrollPlusOne() {
+        /* If we are already built */
+        if (!needReBuild) {
+            /* Access the number of entries */
+            int myCount = theMenuItems.size();
+
+            /* Reset the children */
+            closeChildren();
+
+            /* Ensure Up item is enabled */
+            theUpItem.setVisible(true);
+
+            /* Remove the first item */
+            theActiveItems.remove(0);
+
+            /* Add the final item */
+            int myLast = theFirstIndex + theMaxDisplayItems;
+            ScrollElement myItem = theMenuItems.get(myLast);
+            theActiveItems.add(myItem);
+
+            /* Adjust down item */
+            theDownItem.setVisible(myLast + 1 < myCount);
+        }
+
+        /* Adjust first index */
+        theFirstIndex++;
+    }
+
+    /**
+     * ScrollMinusOne.
+     */
+    protected void scrollMinusOne() {
+        /* If we are already built */
+        if (!needReBuild) {
+            /* Reset the children */
+            closeChildren();
+
+            /* Ensure Down item is enabled */
+            theDownItem.setVisible(true);
+
+            /* Remove the last item */
+            theActiveItems.remove(theMaxDisplayItems - 1);
+
+            /* Add the initial item */
+            ScrollElement myItem = theMenuItems.get(theFirstIndex - 1);
+            theActiveItems.add(0, myItem);
+
+            /* Adjust up item */
+            theUpItem.setVisible(theFirstIndex > 1);
+        }
+
+        /* Adjust first index */
+        theFirstIndex--;
+    }
+
+    /**
+     * request scroll.
+     * @param pDelta the delta to scroll.
+     */
+    private void requestScroll(final int pDelta) {
+        /* If this is a scroll downwards */
+        if (pDelta > 0) {
+            /* If we can scroll downwards */
+            int myCount = theMenuItems.size();
+            int mySpace = myCount - theFirstIndex - theMaxDisplayItems;
+            int myScroll = Math.min(mySpace, pDelta);
+
+            /* While we have space */
+            while (myScroll-- > 0) {
+                /* Scroll downwards */
+                scrollPlusOne();
+            }
+
+            /* else scroll upwards if we can */
+        } else if (theFirstIndex > 0) {
+            /* Determine space */
+            int myScroll = Math.min(theFirstIndex, -pDelta);
+
+            /* While we have space */
+            while (myScroll-- > 0) {
+                /* Scroll upwards */
+                scrollMinusOne();
+            }
+        }
+    }
+
+    /**
+     * Scroll item.
+     */
+    public abstract static class ScrollElement
             extends HBox {
         /**
          * The label.
@@ -872,7 +980,7 @@ public class ScrollFXContextMenu<T>
      * @param <T> the value type
      */
     protected static class ScrollFXMenuItem<T>
-            extends ScrollElement<T>
+            extends ScrollElement
             implements ScrollMenuItem<T> {
         /**
          * Parent context menu.
@@ -973,7 +1081,7 @@ public class ScrollFXContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? resizeImage(CHECK_ICON, ScrollMenuContent.DEFAULT_ICONWIDTH)
+                               ? GuiUtils.resizeImage(CHECK_ICON, ScrollMenuContent.DEFAULT_ICONWIDTH)
                                : null);
         }
 
@@ -988,7 +1096,7 @@ public class ScrollFXContextMenu<T>
      * @param <T> the value type
      */
     public static final class ScrollFXSubMenu<T>
-            extends ScrollElement<T>
+            extends ScrollElement
             implements ScrollSubMenu<T, Node> {
         /**
          * Parent contextMenu.
@@ -1151,10 +1259,8 @@ public class ScrollFXContextMenu<T>
          * Process scroll event.
          */
         private void processScroll() {
-            /* Adjust index and refresh menu */
-            theFirstIndex += theIncrement;
-            needReBuild = true;
-            refreshMenu();
+            /* Request the scroll */
+            requestScroll(theIncrement);
         }
 
         /**
@@ -1245,7 +1351,6 @@ public class ScrollFXContextMenu<T>
 
         /**
          * Constructor.
-         * @param pItem the selected item
          */
         public ContextEvent() {
             super(MENU_CANCEL);

@@ -48,11 +48,11 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
 
 /**
  * Data Item.
@@ -298,7 +298,7 @@ public class ViewerItem {
         }
 
         /* If we are updating the active object */
-        if (theEntry.getId() == pEntry.getId()) {
+        if (theEntry.getId().equals(pEntry.getId())) {
             /* Display the object */
             displayDetail(new ViewerDetail(theFormatter, pEntry.getObject()));
         }

@@ -72,7 +72,7 @@ public enum JFiscalYear {
     /**
      * Constructor.
      */
-    private JFiscalYear() {
+    JFiscalYear() {
         this(Month.JANUARY);
     }
 
@@ -80,7 +80,7 @@ public enum JFiscalYear {
      * Constructor.
      * @param pMonth the first month of fiscal year
      */
-    private JFiscalYear(final Month pMonth) {
+    JFiscalYear(final Month pMonth) {
         this(1, pMonth);
     }
 
@@ -89,8 +89,8 @@ public enum JFiscalYear {
      * @param pDay the first day of fiscal year
      * @param pMonth the first month of fiscal year
      */
-    private JFiscalYear(final int pDay,
-                        final Month pMonth) {
+    JFiscalYear(final int pDay,
+                final Month pMonth) {
         theDay = pDay;
         theMonth = pMonth;
     }
@@ -147,8 +147,8 @@ public enum JFiscalYear {
 
         /* See whether we are earlier in the year */
         boolean bEarlier = myFiscalMonth == myMonth
-                                                   ? myDay < theDay
-                                                   : myMonth < myFiscalMonth;
+                                                    ? myDay < theDay
+                                                    : myMonth < myFiscalMonth;
 
         /* Build the basic taxYear */
         JDateDay myDate = new JDateDay(pDate.getYear(), theMonth, theDay, pDate.getLocale());

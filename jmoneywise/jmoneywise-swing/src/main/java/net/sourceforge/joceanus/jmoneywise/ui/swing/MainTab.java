@@ -184,6 +184,19 @@ public class MainTab
      */
     private MainListener theListener = null;
 
+    /**
+     * Constructor.
+     * @param pProfile the startup profile
+     * @throws JOceanusException on error
+     */
+    public MainTab(final JDataProfile pProfile) throws JOceanusException {
+        /* Create the view */
+        theView = new SwingView(pProfile);
+
+        /* Build the main window */
+        buildMainWindow(theView, theView.getUtilitySet());
+    }
+
     @Override
     public SwingView getView() {
         return theView;
@@ -205,19 +218,6 @@ public class MainTab
         } catch (HelpException e) {
             throw new JMoneyWiseIOException("Unable to load help", e);
         }
-    }
-
-    /**
-     * Constructor.
-     * @param pProfile the startup profile
-     * @throws JOceanusException on error
-     */
-    public MainTab(final JDataProfile pProfile) throws JOceanusException {
-        /* Create the view */
-        theView = new SwingView(pProfile);
-
-        /* Build the main window */
-        buildMainWindow(theView, theView.getUtilitySet());
     }
 
     @Override
@@ -622,30 +622,6 @@ public class MainTab
         private final Transaction theTransaction;
 
         /**
-         * Obtain the selected account.
-         * @return the account
-         */
-        protected AssetBase<?> getAccount() {
-            return theAccount;
-        }
-
-        /**
-         * Obtain the selected range.
-         * @return the range
-         */
-        protected JDateDayRangeSelect getRange() {
-            return theRange;
-        }
-
-        /**
-         * Obtain the selected transaction.
-         * @return the event
-         */
-        protected Transaction getTransaction() {
-            return theTransaction;
-        }
-
-        /**
          * Constructor.
          * @param pAccount the requested account
          */
@@ -687,6 +663,30 @@ public class MainTab
             theAccount = pAccount;
             theRange = null;
             theTransaction = pTrans;
+        }
+
+        /**
+         * Obtain the selected account.
+         * @return the account
+         */
+        protected AssetBase<?> getAccount() {
+            return theAccount;
+        }
+
+        /**
+         * Obtain the selected range.
+         * @return the range
+         */
+        protected JDateDayRangeSelect getRange() {
+            return theRange;
+        }
+
+        /**
+         * Obtain the selected transaction.
+         * @return the event
+         */
+        protected Transaction getTransaction() {
+            return theTransaction;
         }
     }
 }

@@ -285,8 +285,8 @@ public class ValueSet {
     public int hashCode() {
         /* Use deletion flag in hash Code */
         int iHashCode = isDeletion
-                                  ? DELETION_HASH
-                                  : 1;
+                                   ? DELETION_HASH
+                                   : 1;
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
@@ -352,9 +352,9 @@ public class ValueSet {
         }
 
         /* Determine the difference */
-        return (isSecureDiff)
-                             ? Difference.SECURITY
-                             : Difference.IDENTICAL;
+        return isSecureDiff
+                            ? Difference.SECURITY
+                            : Difference.IDENTICAL;
     }
 
     /**

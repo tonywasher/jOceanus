@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -32,6 +29,9 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
+
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class representing an Excel sheet within a workBook.
@@ -119,16 +119,16 @@ public class ExcelSheet
     public int getRowCount() {
         int iLastRowNum = theExcelSheet.getLastRowNum();
         return (iLastRowNum == 0)
-                                 ? theExcelSheet.getPhysicalNumberOfRows()
-                                 : iLastRowNum + 1;
+                                  ? theExcelSheet.getPhysicalNumberOfRows()
+                                  : iLastRowNum + 1;
     }
 
     @Override
     public ExcelRow getReadOnlyRowByIndex(final int pRowIndex) {
         HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
         return (myExcelRow == null)
-                                   ? null
-                                   : new ExcelRow(this, myExcelRow, pRowIndex, true);
+                                    ? null
+                                    : new ExcelRow(this, myExcelRow, pRowIndex, true);
     }
 
     @Override
@@ -151,9 +151,9 @@ public class ExcelSheet
 
     @Override
     public ExcelColumn getMutableColumnByIndex(final int pColIndex) {
-        return (isReadOnly)
-                           ? null
-                           : new ExcelColumn(this, pColIndex, false);
+        return isReadOnly
+                          ? null
+                          : new ExcelColumn(this, pColIndex, false);
     }
 
     @Override

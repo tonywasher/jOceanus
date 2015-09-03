@@ -228,7 +228,7 @@ public abstract class SwingPreferenceSet
                 } else {
                     /* Parse the value */
                     int myPos = myValue.indexOf(FONT_SEPARATOR);
-                    bExists = (myPos > 0);
+                    bExists = myPos > 0;
 
                     /* If we look good */
                     if (bExists) {

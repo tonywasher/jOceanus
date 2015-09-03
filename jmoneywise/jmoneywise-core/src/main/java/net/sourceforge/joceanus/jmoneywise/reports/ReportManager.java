@@ -33,6 +33,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -42,13 +46,10 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 /**
- * Provides functionality to hide and restore sections of an HTML document. This is useful for displaying HTML documents in a jEditorPane, allowing a click to
- * open/close sections of the document.
+ * Provides functionality to hide and restore sections of an HTML document. This is useful for
+ * displaying HTML documents in a jEditorPane, allowing a click to open/close sections of the
+ * document.
  */
 public abstract class ReportManager
         implements JOceanusEventProvider {
@@ -237,8 +238,8 @@ public abstract class ReportManager
      * @param pId the id
      * @return the element or null if not found
      */
-    private Element checkElementForId(final Element pElement,
-                                      final String pId) {
+    private static Element checkElementForId(final Element pElement,
+                                             final String pId) {
         /* Check the element for the id */
         if (pElement.getAttribute(ATTR_ID).equals(pId)) {
             return pElement;

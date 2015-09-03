@@ -259,8 +259,8 @@ public class DepositCategoryPanel
      * @param pMenuBuilder the menu builder
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final JScrollMenuBuilder<DepositCategory> pMenuBuilder,
-                                 final DepositCategory pCategory) {
+    private static void buildParentMenu(final JScrollMenuBuilder<DepositCategory> pMenuBuilder,
+                                        final DepositCategory pCategory) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 

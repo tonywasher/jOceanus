@@ -121,8 +121,8 @@ public enum Difference {
                 return pThat;
             case SECURITY:
                 return (pThat == DIFFERENT)
-                                           ? pThat
-                                           : this;
+                                            ? pThat
+                                            : this;
             default:
                 return this;
         }
@@ -158,9 +158,9 @@ public enum Difference {
         }
 
         /* Handle Standard cases */
-        return (pCurr.equals(pNew))
-                                   ? IDENTICAL
-                                   : DIFFERENT;
+        return pCurr.equals(pNew)
+                                  ? IDENTICAL
+                                  : DIFFERENT;
     }
 
     /**
@@ -241,14 +241,14 @@ public enum Difference {
 
         /* Handle positioning of nulls */
         if (pCurr == null) {
-            return (pNullLast)
-                              ? 1
-                              : -1;
+            return pNullLast
+                             ? 1
+                             : -1;
         }
         if (pNew == null) {
-            return (pNullLast)
-                              ? -1
-                              : 1;
+            return pNullLast
+                             ? -1
+                             : 1;
         }
 
         /* Both non-Null, so pass the call on */

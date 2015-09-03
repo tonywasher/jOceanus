@@ -34,7 +34,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -46,10 +45,10 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.ScrollUITestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.ui.javafx.GuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.IconFXButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.IconFXButton.SimpleFXIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.IconFXButton.StateFXIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.JTitledPane;
 import net.sourceforge.joceanus.jtethys.ui.javafx.ListFXButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.ListFXButton.ListFXButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.ScrollFXButton;
@@ -187,23 +186,6 @@ public class ScrollUIFXExample
         launch(args);
     }
 
-    /**
-     * Resize an icon to the width.
-     * @param pSource the source icon
-     * @param pWidth the width
-     * @return the resized icon
-     */
-    private static ImageView resizeImage(final Image pSource,
-                                         final int pWidth) {
-        ImageView myNewImage = new ImageView();
-        myNewImage.setImage(pSource);
-        myNewImage.setFitWidth(pWidth);
-        myNewImage.setPreserveRatio(true);
-        myNewImage.setSmooth(true);
-        myNewImage.setCache(true);
-        return myNewImage;
-    }
-
     @Override
     public void start(final Stage pStage) {
         /* Create a GridPane */
@@ -216,22 +198,22 @@ public class ScrollUIFXExample
 
         /* Create context menu line */
         Label myContextArea = new Label("Right-click for Menu");
-        StackPane myControl = JTitledPane.getTitledPane("ContextArea", myContextArea);
-        myControl.setAlignment(Pos.CENTER);
-        myControl.setMaxWidth(Double.MAX_VALUE);
-        StackPane myResult = JTitledPane.getTitledPane("ContextValue", theContextValue);
+        StackPane myContext = GuiUtils.getTitledPane("ContextArea", myContextArea);
+        myContext.setAlignment(Pos.CENTER);
+        myContext.setMaxWidth(Double.MAX_VALUE);
+        StackPane myResult = GuiUtils.getTitledPane("ContextValue", theContextValue);
         theContextValue.setAlignment(Pos.CENTER);
-        myPane.addRow(myRowNo++, myControl, myResult);
+        myPane.addRow(myRowNo++, myContext, myResult);
         setContextValue(null);
 
         /* Build the context menu */
         theHelper.buildContextMenu(theContextMenu);
 
         /* Create the menu hook */
-        myControl.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+        myContext.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(final ContextMenuEvent e) {
-                theContextMenu.showMenuAtPosition(myPane, e.getSceneX(), e.getSceneY());
+                theContextMenu.showMenuAtPosition(myContext, e.getX(), e.getY());
             }
         });
 
@@ -250,10 +232,10 @@ public class ScrollUIFXExample
 
         /* Create scroll button line */
         ScrollFXButton myScrollButton = theScrollButtonMgr.getButton();
-        myControl = JTitledPane.getTitledPane("ScrollButton", myScrollButton);
+        StackPane myControl = GuiUtils.getTitledPane("ScrollButton", myScrollButton);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = JTitledPane.getTitledPane("ScrollValue", theScrollValue);
+        myResult = GuiUtils.getTitledPane("ScrollValue", theScrollValue);
         theScrollValue.setAlignment(Pos.CENTER);
         myPane.addRow(myRowNo++, myControl, myResult);
         setScrollValue(null);
@@ -279,10 +261,10 @@ public class ScrollUIFXExample
 
         /* Create list button line */
         ListFXButton myListButton = theListButtonMgr.getButton();
-        myControl = JTitledPane.getTitledPane("ListButton", myListButton);
+        myControl = GuiUtils.getTitledPane("ListButton", myListButton);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = JTitledPane.getTitledPane("ListValues", theListValues);
+        myResult = GuiUtils.getTitledPane("ListValues", theListValues);
         theListValues.setAlignment(Pos.CENTER);
         myPane.addRow(myRowNo++, myControl, myResult);
         setListValue(null);
@@ -310,15 +292,15 @@ public class ScrollUIFXExample
 
         /* Create simple icon button line */
         IconFXButton myIconButton = theSimpleIconButtonMgr.getButton();
-        myControl = JTitledPane.getTitledPane("SimpleIconButton", myIconButton);
+        myControl = GuiUtils.getTitledPane("SimpleIconButton", myIconButton);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = JTitledPane.getTitledPane("IconValue", theSimpleIconValue);
+        myResult = GuiUtils.getTitledPane("IconValue", theSimpleIconValue);
         theSimpleIconValue.setAlignment(Pos.CENTER);
         myPane.addRow(myRowNo++, myControl, myResult);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
-                resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
-                resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH));
+                GuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
+                GuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH));
 
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
@@ -339,17 +321,17 @@ public class ScrollUIFXExample
         myIconButton = theStateIconButtonMgr.getButton();
         HBox myBox = new HBox();
         myBox.getChildren().addAll(theStateButtonMgr.getButton(), myIconButton);
-        myControl = JTitledPane.getTitledPane("StateIconButton", myBox);
+        myControl = GuiUtils.getTitledPane("StateIconButton", myBox);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = JTitledPane.getTitledPane("StateIconValue", theStateIconValue);
+        myResult = GuiUtils.getTitledPane("StateIconValue", theStateIconValue);
         theStateIconValue.setAlignment(Pos.CENTER);
         myPane.addRow(myRowNo++, myControl, myResult);
         theHelper.buildStateButton(theStateButtonMgr);
         theHelper.buildStateIconState(theStateIconButtonMgr,
-                resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
-                resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH),
-                resizeImage(CLOSED_TRUE_ICON, DEFAULT_ICONWIDTH));
+                GuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
+                GuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH),
+                GuiUtils.resizeImage(CLOSED_TRUE_ICON, DEFAULT_ICONWIDTH));
 
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
@@ -381,11 +363,12 @@ public class ScrollUIFXExample
                 }
             }
         });
+
         /* Create scene */
         Scene myScene = new Scene(new Group());
         ((Group) myScene.getRoot()).getChildren().addAll(myPane);
         pStage.setTitle("JavaFXScroll Demo");
-        JTitledPane.addStyleSheet(myScene);
+        GuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);
         pStage.show();
     }

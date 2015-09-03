@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -83,7 +82,7 @@ public class ScrollSwingContextMenu<T>
     /**
      * CheckMark icon.
      */
-    private static final Icon CHECK_ICON = resizeImage(new ImageIcon(ScrollMenuContent.class.getResource("BlueJellyCheckMark.png")), ScrollMenuContent.DEFAULT_ICONWIDTH);
+    private static final Icon CHECK_ICON = GuiUtils.resizeImage(new ImageIcon(ScrollMenuContent.class.getResource("BlueJellyCheckMark.png")), ScrollMenuContent.DEFAULT_ICONWIDTH);
 
     /**
      * Background active colour.
@@ -113,7 +112,7 @@ public class ScrollSwingContextMenu<T>
     /**
      * List of menu items.
      */
-    private final List<ScrollElement<T>> theMenuItems;
+    private final List<ScrollElement> theMenuItems;
 
     /**
      * The items panel.
@@ -191,6 +190,11 @@ public class ScrollSwingContextMenu<T>
     private boolean needReBuild;
 
     /**
+     * The size of the menu.
+     */
+    private Dimension theMenuSize;
+
+    /**
      * Constructor.
      */
     public ScrollSwingContextMenu() {
@@ -246,7 +250,7 @@ public class ScrollSwingContextMenu<T>
         theDownItem = new ScrollControl(ArrowIcon.DOWN, 1);
 
         /* Allocate the list */
-        theMenuItems = new ArrayList<ScrollElement<T>>();
+        theMenuItems = new ArrayList<ScrollElement>();
         theActiveItems = new JPanel();
         theActiveItems.setLayout(new BoxLayout(theActiveItems, BoxLayout.Y_AXIS));
         theActiveItems.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -254,26 +258,12 @@ public class ScrollSwingContextMenu<T>
         /* Create the container */
         theContainer = new JPanel();
         theContainer.setLayout(new BorderLayout());
+        theContainer.setBorder(BorderFactory.createLineBorder(Color.lightGray));
     }
 
     @Override
     public JOceanusEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Resize an icon to the width.
-     * @param pSource the source icon
-     * @param pWidth the width
-     * @return the resized icon
-     */
-    protected static Icon resizeImage(final ImageIcon pSource,
-                                      final int pWidth) {
-        Image myImage = pSource.getImage();
-        Image myNewImage = myImage.getScaledInstance(pWidth,
-                pWidth,
-                Image.SCALE_SMOOTH);
-        return new ImageIcon(myNewImage);
     }
 
     @Override
@@ -328,9 +318,9 @@ public class ScrollSwingContextMenu<T>
         theMaxDisplayItems = pMaxDisplayItems;
 
         /* Loop through the children */
-        Iterator<ScrollElement<T>> myIterator = theMenuItems.iterator();
+        Iterator<ScrollElement> myIterator = theMenuItems.iterator();
         while (myIterator.hasNext()) {
-            ScrollElement<T> myChild = myIterator.next();
+            ScrollElement myChild = myIterator.next();
 
             /* If this is a subMenu */
             if (myChild instanceof ScrollSwingSubMenu) {
@@ -348,8 +338,6 @@ public class ScrollSwingContextMenu<T>
      * Show the menu at position.
      * @param pAnchor the anchor node
      * @param pSide the side of the anchor node
-     * @param pX the relative X position
-     * @param pY the relative Y position
      */
     public void showMenuAtPosition(final Component pAnchor,
                                    final int pSide) {
@@ -358,33 +346,14 @@ public class ScrollSwingContextMenu<T>
             createDialog(pAnchor);
         }
 
-        /* Obtain location of anchor node */
-        Point myBounds = pAnchor.getLocationOnScreen();
+        /* determine the size of the menu */
+        determineSize();
 
-        /* Obtain default location */
-        double myX = myBounds.getX();
-        double myY = myBounds.getY();
-
-        switch (pSide) {
-            case SwingConstants.RIGHT:
-                myX += pAnchor.getWidth();
-                break;
-            case SwingConstants.BOTTOM:
-                myY += pAnchor.getHeight();
-                break;
-            case SwingConstants.TOP:
-                buildMenu();
-                myY -= theContainer.getHeight();
-                break;
-            case SwingConstants.LEFT:
-            default:
-                buildMenu();
-                myX -= theContainer.getWidth();
-                break;
-        }
+        /* determine location to display */
+        Point myLocation = GuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
         /* Show menu */
-        showMenuAtPosition(myX, myY);
+        showMenuAtLocation(myLocation);
     }
 
     /**
@@ -401,26 +370,24 @@ public class ScrollSwingContextMenu<T>
             createDialog(pAnchor);
         }
 
-        /* Obtain location of anchor node */
-        Point myBounds = pAnchor.getLocationOnScreen();
+        /* determine the size of the menu */
+        determineSize();
 
-        /* Obtain default location */
-        double myX = myBounds.getX() + pX;
-        double myY = myBounds.getY() + pY;
+        /* determine location to display */
+        Point myRequest = new Point((int) pX, (int) pY);
+        Point myLocation = GuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
 
         /* Show menu */
-        showMenuAtPosition(myX, myY);
+        showMenuAtLocation(myLocation);
     }
 
     /**
-     * Show the menu at position.
-     * @param pX the X position
-     * @param pY the Y position
+     * Show the menu at location.
+     * @param pLocation the location
      */
-    private void showMenuAtPosition(final double pX,
-                                    final double pY) {
+    private void showMenuAtLocation(final Point pLocation) {
         /* Record position */
-        theDialog.setLocation((int) pX, (int) pY);
+        theDialog.setLocation(pLocation);
 
         /* Show menu */
         showMenu();
@@ -430,8 +397,11 @@ public class ScrollSwingContextMenu<T>
      * Show the menu.
      */
     private void showMenu() {
-        /* Ensure that the menu is built */
-        buildMenu();
+        /* Clear any timer */
+        if (theParentMenu == null
+            && theTimer != null) {
+            theTimer.cancel();
+        }
 
         /* Initialise the values */
         theTimer = theParentMenu != null
@@ -443,6 +413,19 @@ public class ScrollSwingContextMenu<T>
 
         /* show the dialog */
         theDialog.setVisible(true);
+    }
+
+    /**
+     * CloseOnFocusLoss.
+     */
+    private void closeOnFocusLoss() {
+        /* Pass call on to parent if it exists */
+        if (theParentContext != null) {
+            theParentContext.closeOnFocusLoss();
+        }
+
+        /* Close the menu */
+        closeMenu();
     }
 
     /**
@@ -479,6 +462,7 @@ public class ScrollSwingContextMenu<T>
                                                          : new JDialog(JOptionPane.getFrameForComponent(pOwner), false);
         theDialog.setUndecorated(true);
         theDialog.getContentPane().add(theContainer);
+        needReBuild = true;
 
         /* Add focus listener */
         theDialog.addFocusListener(new FocusListener() {
@@ -490,15 +474,17 @@ public class ScrollSwingContextMenu<T>
             @Override
             public void focusLost(final FocusEvent e) {
                 /* If we've lost focus to other than the active subMenu */
-                if ((theActiveMenu == null)
-                    || theActiveMenu.isFocused()) {
+                if (theActiveMenu == null) {
                     /* fire cancellation event */
                     if (theParentMenu == null) {
                         theEventManager.fireActionEvent(ACTION_MENU_CANCELLED);
                     }
 
-                    /* Close the menu */
-                    closeMenu();
+                    /* Close the menu hierarchy if we are currently showing */
+                    if ((theDialog != null)
+                        && theDialog.isShowing()) {
+                        closeOnFocusLoss();
+                    }
                 }
             }
         });
@@ -698,6 +684,12 @@ public class ScrollSwingContextMenu<T>
     public ScrollMenuItem<T> addItem(final T pValue,
                                      final String pName,
                                      final Icon pGraphic) {
+        /* Check state */
+        if ((theDialog != null)
+            && theDialog.isVisible()) {
+            throw new IllegalStateException();
+        }
+
         /* Create element */
         ScrollSwingMenuItem<T> myItem = new ScrollSwingMenuItem<T>(this, pValue, pName, pGraphic);
 
@@ -716,6 +708,12 @@ public class ScrollSwingContextMenu<T>
     @Override
     public ScrollSubMenu<T, Icon> addSubMenu(final String pName,
                                              final Icon pGraphic) {
+        /* Check state */
+        if ((theDialog != null)
+            && theDialog.isVisible()) {
+            throw new IllegalStateException();
+        }
+
         /* Create menu */
         ScrollSwingSubMenu<T> myMenu = new ScrollSwingSubMenu<T>(this, pName, pGraphic);
 
@@ -734,6 +732,12 @@ public class ScrollSwingContextMenu<T>
     @Override
     public ScrollMenuToggleItem<T> addToggleItem(final T pValue,
                                                  final String pName) {
+        /* Check state */
+        if ((theDialog != null)
+            && theDialog.isVisible()) {
+            throw new IllegalStateException();
+        }
+
         /* Create element */
         ScrollSwingToggleItem<T> myItem = new ScrollSwingToggleItem<T>(this, pValue, pName);
 
@@ -798,21 +802,20 @@ public class ScrollSwingContextMenu<T>
     }
 
     /**
-     * Build the menu.
+     * Determine size of menu.
      */
-    private void buildMenu() {
-        /* If we have items to display */
+    private void determineSize() {
+        /* If we need to rebuild the menu */
         if (needReBuild
             && !theMenuItems.isEmpty()) {
             /* Access the number of entries and the scroll count */
             int myCount = theMenuItems.size();
             int myScroll = Math.min(theMaxDisplayItems, myCount);
 
-            /* Reset the menu */
+            /* Remove all items */
             theActiveItems.removeAll();
             theContainer.removeAll();
             theContainer.add(theActiveItems, BorderLayout.CENTER);
-            closeChildren();
 
             /* If we do not need to scroll */
             if (myScroll == myCount) {
@@ -822,8 +825,33 @@ public class ScrollSwingContextMenu<T>
                     theActiveItems.add(theMenuItems.get(i));
                 }
 
+                /* Calculate size of menu */
+                theDialog.pack();
+
+                /* Determine the size */
+                theMenuSize = new Dimension(theDialog.getWidth(), theDialog.getHeight());
+
                 /* else need to set up scroll */
             } else {
+                /* Add the scrolling items */
+                theContainer.add(theUpItem, BorderLayout.PAGE_START);
+                theContainer.add(theDownItem, BorderLayout.PAGE_END);
+                theUpItem.setEnabled(true);
+                theDownItem.setEnabled(true);
+
+                /* Add ALL items */
+                for (ScrollElement myItem : theMenuItems) {
+                    /* Add the items */
+                    theActiveItems.add(myItem);
+                }
+
+                /* Calculate size of menu */
+                theDialog.pack();
+                int myWidth = theDialog.getWidth();
+
+                /* Remove all items */
+                theActiveItems.removeAll();
+
                 /* Ensure that the starting index is positive */
                 if (theFirstIndex < 0) {
                     theFirstIndex = 0;
@@ -839,28 +867,30 @@ public class ScrollSwingContextMenu<T>
                     myMaxIndex = myCount;
                 }
 
-                /* Add the top level item */
-                theContainer.add(theUpItem, BorderLayout.PAGE_START);
-                theUpItem.setEnabled(theFirstIndex > 0);
-
                 /* Loop through the items to add */
                 for (int i = theFirstIndex; i < myMaxIndex; i++) {
                     /* Add the items */
-                    ScrollElement<T> myItem = theMenuItems.get(i);
-                    myItem.setActive(false);
-                    theActiveItems.add(myItem);
+                    theActiveItems.add(theMenuItems.get(i));
                 }
 
-                /* Add the down item */
-                theContainer.add(theDownItem, BorderLayout.PAGE_END);
+                /* Calculate size of menu */
+                theDialog.pack();
+                int myHeight = theDialog.getHeight();
+
+                /* Set visibility of scroll items */
+                theUpItem.setEnabled(theFirstIndex > 0);
                 theDownItem.setEnabled(myMaxIndex < myCount);
+
+                /* Determine the size */
+                theMenuSize = new Dimension(myWidth, myHeight);
+
+                /* Fix the width */
+                theDialog.setPreferredSize(theMenuSize);
+                theDialog.pack();
             }
         }
 
-        /* Make sure that the menu is sized correctly */
-        if (theDialog != null) {
-            theDialog.pack();
-        }
+        /* Reset flag */
         needReBuild = false;
     }
 
@@ -868,60 +898,66 @@ public class ScrollSwingContextMenu<T>
      * ScrollPlusOne.
      */
     protected void scrollPlusOne() {
-        /* Access the number of entries */
-        int myCount = theMenuItems.size();
+        /* If we are already built */
+        if (!needReBuild) {
+            /* Access the number of entries */
+            int myCount = theMenuItems.size();
 
-        /* Reset the children */
-        closeChildren();
+            /* Reset the children */
+            closeChildren();
 
-        /* Ensure Up item is enabled */
-        theUpItem.setEnabled(true);
+            /* Ensure Up item is enabled */
+            theUpItem.setEnabled(true);
 
-        /* Remove the first item */
-        theActiveItems.remove(0);
+            /* Remove the first item */
+            theActiveItems.remove(0);
 
-        /* Add the final item */
-        int myLast = theFirstIndex + theMaxDisplayItems;
-        ScrollElement<T> myItem = theMenuItems.get(myLast);
-        myItem.setActive(false);
-        theActiveItems.add(myItem);
+            /* Add the final item */
+            int myLast = theFirstIndex + theMaxDisplayItems;
+            ScrollElement myItem = theMenuItems.get(myLast);
+            myItem.setActive(false);
+            theActiveItems.add(myItem);
 
-        /* Adjust down item */
-        theDownItem.setEnabled(myLast + 1 < myCount);
+            /* Adjust down item */
+            theDownItem.setEnabled(myLast + 1 < myCount);
+
+            /* Make sure that the menu is sized correctly */
+            theDialog.pack();
+        }
 
         /* Adjust first index */
         theFirstIndex++;
-
-        /* Make sure that the menu is sized correctly */
-        theDialog.pack();
     }
 
     /**
      * ScrollMinusOne.
      */
     protected void scrollMinusOne() {
-        /* Reset the children */
-        closeChildren();
+        /* If we are already built */
+        if (!needReBuild) {
+            /* Reset the children */
+            closeChildren();
 
-        /* Ensure Down item is enabled */
-        theDownItem.setEnabled(true);
+            /* Ensure Down item is enabled */
+            theDownItem.setEnabled(true);
 
-        /* Remove the last item */
-        theActiveItems.remove(theMaxDisplayItems - 1);
+            /* Remove the last item */
+            theActiveItems.remove(theMaxDisplayItems - 1);
+
+            /* Add the initial item */
+            ScrollElement myItem = theMenuItems.get(theFirstIndex - 1);
+            myItem.setActive(false);
+            theActiveItems.add(myItem, 0);
+
+            /* Adjust up item */
+            theUpItem.setEnabled(theFirstIndex > 1);
+
+            /* Make sure that the menu is sized correctly */
+            theDialog.pack();
+        }
 
         /* Adjust first index */
         theFirstIndex--;
-
-        /* Add the initial item */
-        ScrollElement<T> myItem = theMenuItems.get(theFirstIndex);
-        myItem.setActive(false);
-        theActiveItems.add(myItem, 0);
-
-        /* Adjust down item */
-        theUpItem.setEnabled(theFirstIndex > 0);
-
-        /* Make sure that the menu is sized correctly */
-        theDialog.pack();
     }
 
     /**
@@ -957,9 +993,8 @@ public class ScrollSwingContextMenu<T>
 
     /**
      * Scroll item.
-     * @param <T> the value type
      */
-    public abstract static class ScrollElement<T>
+    public abstract static class ScrollElement
             extends JEnablePanel {
         /**
          * Serial Id.
@@ -1075,7 +1110,7 @@ public class ScrollSwingContextMenu<T>
      * @param <T> the value type
      */
     protected static class ScrollSwingMenuItem<T>
-            extends ScrollElement<T>
+            extends ScrollElement
             implements ScrollMenuItem<T> {
         /**
          * Serial Id.
@@ -1203,7 +1238,7 @@ public class ScrollSwingContextMenu<T>
      * @param <T> the value type
      */
     public static final class ScrollSwingSubMenu<T>
-            extends ScrollElement<T>
+            extends ScrollElement
             implements ScrollSubMenu<T, Icon> {
         /**
          * Serial Id.
@@ -1307,15 +1342,6 @@ public class ScrollSwingContextMenu<T>
         }
 
         /**
-         * Is the subMenu focused?
-         * @return true/false
-         */
-        private boolean isFocused() {
-            JDialog myDialog = theSubMenu.getDialog();
-            return myDialog != null && myDialog.hasFocus();
-        }
-
-        /**
          * Set the number of items in the scrolling portion of the menu.
          * @param pMaxDisplayItems the maximum number of items to display
          * @throws IllegalArgumentException if pMaxDisplayItems is 0 or negative
@@ -1337,7 +1363,7 @@ public class ScrollSwingContextMenu<T>
      * Scroll control class.
      */
     private final class ScrollControl
-            extends ScrollElement<T> {
+            extends ScrollElement {
         /**
          * Serial Id.
          */

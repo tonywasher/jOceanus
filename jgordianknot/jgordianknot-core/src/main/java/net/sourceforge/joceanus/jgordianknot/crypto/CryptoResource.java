@@ -224,7 +224,7 @@ public enum CryptoResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private CryptoResource(final String pKeyName) {
+    CryptoResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

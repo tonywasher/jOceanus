@@ -749,7 +749,7 @@ public class PreferenceSetPanel
                 theField = new JDateDayButton();
 
                 /* Add property change listener */
-                theField.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, new PreferenceListener());
+                theField.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, new PreferenceListener());
             }
 
             @Override

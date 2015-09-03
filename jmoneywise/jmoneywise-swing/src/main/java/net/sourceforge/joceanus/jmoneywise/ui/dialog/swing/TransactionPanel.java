@@ -823,10 +823,10 @@ public class TransactionPanel
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private <T extends AssetBase<T>> void buildAssetMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
-                                                         final AssetBaseList<T> pList,
-                                                         final boolean pIsAccount,
-                                                         final Transaction pTrans) {
+    private static <T extends AssetBase<T>> void buildAssetMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+                                                                final AssetBaseList<T> pList,
+                                                                final boolean pIsAccount,
+                                                                final Transaction pTrans) {
         /* Record active item */
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCategory = pTrans.getCategory();

@@ -566,9 +566,9 @@ public class Portfolio
         /* Handle InfoSet fields */
         AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if (myClass != null) {
-            return (useInfoSet)
-                                ? theInfoSet.fieldChanged(myClass)
-                                : Difference.IDENTICAL;
+            return useInfoSet
+                              ? theInfoSet.fieldChanged(myClass)
+                              : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -801,16 +801,16 @@ public class Portfolio
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass((isGross())
-                                                                 ? TransactionCategoryClass.GROSSINTEREST
-                                                                 : TransactionCategoryClass.TAXEDINTEREST);
+                return myCategories.getSingularClass(isGross()
+                                                               ? TransactionCategoryClass.GROSSINTEREST
+                                                               : TransactionCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass((isGross())
-                                                                 ? TransactionCategoryClass.GROSSLOYALTYBONUS
-                                                                 : TransactionCategoryClass.TAXEDLOYALTYBONUS);
+                return myCategories.getSingularClass(isGross()
+                                                               ? TransactionCategoryClass.GROSSLOYALTYBONUS
+                                                               : TransactionCategoryClass.TAXEDLOYALTYBONUS);
             case DIVIDEND:
                 return isTaxFree()
                                    ? myCategories.getSingularClass(TransactionCategoryClass.TAXFREEDIVIDEND)

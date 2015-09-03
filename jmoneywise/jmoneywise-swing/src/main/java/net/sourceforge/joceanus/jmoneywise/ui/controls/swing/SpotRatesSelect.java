@@ -297,7 +297,7 @@ public class SpotRatesSelect
          */
         private SpotRatesListener() {
             /* Declare listener */
-            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, this);
+            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, this);
             theDownloadButton.addActionListener(this);
             theNext.addActionListener(this);
             thePrev.addActionListener(this);

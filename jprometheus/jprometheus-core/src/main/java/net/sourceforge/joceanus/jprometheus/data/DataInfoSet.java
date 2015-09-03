@@ -262,8 +262,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
         /* Return iterator if it is useful */
         return (mySet == null)
-                              ? null
-                              : mySet.iterator();
+                               ? null
+                               : mySet.iterator();
     }
 
     /**
@@ -282,8 +282,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
         /* Return iterator if it is useful */
         return (mySet == null)
-                              ? null
-                              : mySet.getNameList();
+                               ? null
+                               : mySet.getNameList();
     }
 
     /**
@@ -395,8 +395,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
             /* Access the info */
             DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
             return mySet == null
-                                ? Difference.IDENTICAL
-                                : mySet.fieldChanged();
+                                 ? Difference.IDENTICAL
+                                 : mySet.fieldChanged();
         }
 
         /* Access the info */
@@ -404,8 +404,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
         /* Return change details */
         return (myInfo != null) && myInfo.hasHistory()
-                                                      ? Difference.DIFFERENT
-                                                      : Difference.IDENTICAL;
+                                                       ? Difference.DIFFERENT
+                                                       : Difference.IDENTICAL;
     }
 
     /**
@@ -736,9 +736,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
             } else {
                 /* Access version of value */
-                int myValueVersion = (bEditRestore)
-                                                   ? myValue.getValueSetVersion()
-                                                   : myValue.getBase().getValueSetVersion();
+                int myValueVersion = bEditRestore
+                                                  ? myValue.getValueSetVersion()
+                                                  : myValue.getBase().getValueSetVersion();
 
                 /* If the value was deleted at same time as owner */
                 if (myValueVersion == myVersion) {

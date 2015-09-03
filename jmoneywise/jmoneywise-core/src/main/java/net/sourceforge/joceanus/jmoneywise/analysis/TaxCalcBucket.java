@@ -142,8 +142,8 @@ public final class TaxCalcBucket
         }
         if (FIELD_PARENT.equals(pField)) {
             return (theParent != null)
-                                      ? theParent
-                                      : JDataFieldValue.SKIP;
+                                       ? theParent
+                                       : JDataFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -152,8 +152,8 @@ public final class TaxCalcBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : JDataFieldValue.SKIP;
+                                                        ? myValue
+                                                        : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -233,8 +233,8 @@ public final class TaxCalcBucket
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : JDataFieldValue.SKIP;
+                                 ? myValue
+                                 : JDataFieldValue.SKIP;
     }
 
     /**
@@ -361,8 +361,8 @@ public final class TaxCalcBucket
 
         /* Calculate the tax if we have a rate */
         JMoney myTaxation = (myRate != null)
-                                            ? myAmount.valueAtRate(myRate)
-                                            : new JMoney();
+                                             ? myAmount.valueAtRate(myRate)
+                                             : new JMoney();
 
         /* Return the taxation amount */
         setAttribute(TaxAttribute.TAXATION, myTaxation);
@@ -531,14 +531,14 @@ public final class TaxCalcBucket
                 return theAge;
             }
             if (FIELD_GAINS.equals(pField)) {
-                return (hasGainsSlices)
-                                       ? hasGainsSlices
-                                       : JDataFieldValue.SKIP;
+                return hasGainsSlices
+                                      ? hasGainsSlices
+                                      : JDataFieldValue.SKIP;
             }
             if (FIELD_ALLOW.equals(pField)) {
-                return (hasReducedAllow)
-                                        ? hasReducedAllow
-                                        : JDataFieldValue.SKIP;
+                return hasReducedAllow
+                                       ? hasReducedAllow
+                                       : JDataFieldValue.SKIP;
             }
             return JDataFieldValue.UNKNOWN;
         }

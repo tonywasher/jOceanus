@@ -140,8 +140,8 @@ public final class TransactionCategory
     public TransactionCategoryClass getCategoryTypeClass() {
         TransactionCategoryType myType = getCategoryType();
         return (myType == null)
-                               ? null
-                               : myType.getCategoryClass();
+                                ? null
+                                : myType.getCategoryClass();
     }
 
     @Override
@@ -214,8 +214,8 @@ public final class TransactionCategory
         /* Check for match */
         TransactionCategoryClass myClass = getCategoryTypeClass();
         return (myClass == null)
-                                ? false
-                                : myClass.isTransfer();
+                                 ? false
+                                 : myClass.isTransfer();
     }
 
     /**
@@ -255,9 +255,9 @@ public final class TransactionCategory
         /* Compare the hidden attribute */
         boolean isHidden = isHidden();
         if (isHidden != pThat.isHidden()) {
-            return (isHidden)
-                             ? 1
-                             : -1;
+            return isHidden
+                            ? 1
+                            : -1;
         }
 
         /* Compare the underlying id */
@@ -406,8 +406,8 @@ public final class TransactionCategory
     public boolean isHidden() {
         TransactionCategoryClass myClass = this.getCategoryTypeClass();
         return (myClass == null)
-                                ? false
-                                : myClass.isHiddenType();
+                                 ? false
+                                 : myClass.isHiddenType();
     }
 
     /**

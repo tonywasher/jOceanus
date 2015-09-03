@@ -68,7 +68,7 @@ public enum CipherMode {
      * Constructor.
      * @param id the id
      */
-    private CipherMode(final int id) {
+    CipherMode(final int id) {
         theId = id;
     }
 

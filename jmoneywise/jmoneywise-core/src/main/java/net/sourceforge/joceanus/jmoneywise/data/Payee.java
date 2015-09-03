@@ -466,9 +466,9 @@ public class Payee
         /* Handle InfoSet fields */
         AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if (myClass != null) {
-            return (useInfoSet)
-                                ? theInfoSet.fieldChanged(myClass)
-                                : Difference.IDENTICAL;
+            return useInfoSet
+                              ? theInfoSet.fieldChanged(myClass)
+                              : Difference.IDENTICAL;
         }
 
         /* Check super fields */

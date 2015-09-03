@@ -256,7 +256,7 @@ public class SecurityAnalysisSelect
      * @param pPortfolio the portfolio
      * @return the first security
      */
-    private SecurityBucket getFirstSecurity(final PortfolioBucket pPortfolio) {
+    private static SecurityBucket getFirstSecurity(final PortfolioBucket pPortfolio) {
         /* Loop through the available security values */
         Iterator<SecurityBucket> myIterator = pPortfolio.securityIterator();
         return myIterator.hasNext()
@@ -289,8 +289,8 @@ public class SecurityAnalysisSelect
      * @param pBucket the original bucket
      * @return the matching bucket
      */
-    private SecurityBucket getMatchingSecurityBucket(final PortfolioBucket pPortfolio,
-                                                     final SecurityBucket pBucket) {
+    private static SecurityBucket getMatchingSecurityBucket(final PortfolioBucket pPortfolio,
+                                                            final SecurityBucket pBucket) {
         /* Look up the matching SecurityBucket */
         Security mySecurity = pBucket.getSecurity();
         SecurityBucket myBucket = pPortfolio.findSecurityBucket(mySecurity);

@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,8 +48,10 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
+import net.sourceforge.joceanus.jtethys.ui.IconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.ListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.ScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.ScrollUITestHelper;
@@ -66,6 +70,21 @@ public class ScrollUISwingExample
      * Serial Id.
      */
     private static final long serialVersionUID = 1335897095869650737L;
+
+    /**
+     * Open True icon.
+     */
+    private static final Icon OPEN_TRUE_ICON = GuiUtils.resizeImage(new ImageIcon(ScrollUITestHelper.class.getResource("GreenJellyOpenTrue.png")), ScrollMenuContent.DEFAULT_ICONWIDTH);
+
+    /**
+     * Open False icon.
+     */
+    private static final Icon OPEN_FALSE_ICON = GuiUtils.resizeImage(new ImageIcon(ScrollUITestHelper.class.getResource("GreenJellyOpenFalse.png")), ScrollMenuContent.DEFAULT_ICONWIDTH);
+
+    /**
+     * Closed True icon.
+     */
+    private static final Icon CLOSED_TRUE_ICON = GuiUtils.resizeImage(new ImageIcon(ScrollUITestHelper.class.getResource("BlueJellyClosedTrue.png")), ScrollMenuContent.DEFAULT_ICONWIDTH);
 
     /**
      * The padding.
@@ -260,7 +279,7 @@ public class ScrollUISwingExample
 
             public void mouseReleased(final MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
-                    theScrollMenu.showMenuAtPosition(evt.getComponent(), (double) evt.getX(), (double) evt.getY());
+                    theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         });
@@ -329,6 +348,75 @@ public class ScrollUISwingExample
                         theHelper.buildAvailableItems(theListButtonMgr.getMenu(), theSelectedValues);
                         break;
                     case ScrollButtonManager.ACTION_MENU_CANCELLED:
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create simple icon button line */
+        IconSwingButton myIconButton = theSimpleIconButtonMgr.getButton();
+        JPanel myIconArea = new JPanel();
+        myIconArea.setBorder(BorderFactory.createTitledBorder("SimpleIconButton"));
+        myIconArea.add(myIconButton);
+        buildResultLabel(theSimpleIconValue, "IconValue");
+        myPanel.add(myIconArea);
+        myPanel.add(theSimpleIconValue);
+        theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
+                OPEN_FALSE_ICON,
+                OPEN_TRUE_ICON);
+
+        /* Add listener */
+        theSimpleIconButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
+            @Override
+            public void processActionEvent(final JOceanusActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case IconButtonManager.ACTION_NEW_VALUE:
+                        setSimpleIconValue(pEvent.getDetails(Boolean.class));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create state icon button line */
+        myIconButton = theStateIconButtonMgr.getButton();
+        myIconArea = new JPanel();
+        myIconArea.setLayout(new BoxLayout(myIconArea, BoxLayout.X_AXIS));
+        myIconArea.setBorder(BorderFactory.createTitledBorder("StateIconButton"));
+        myIconArea.add(theStateButtonMgr.getButton());
+        myIconArea.add(myIconButton);
+        buildResultLabel(theStateIconValue, "StateIconValue");
+        myPanel.add(myIconArea);
+        myPanel.add(theStateIconValue);
+        theHelper.buildStateButton(theStateButtonMgr);
+        theHelper.buildStateIconState(theStateIconButtonMgr,
+                OPEN_FALSE_ICON, OPEN_TRUE_ICON, CLOSED_TRUE_ICON);
+
+        /* Add listener */
+        theStateIconButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
+            @Override
+            public void processActionEvent(final JOceanusActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case IconButtonManager.ACTION_NEW_VALUE:
+                        setStateIconValue(pEvent.getDetails(Boolean.class));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Add listener */
+        theStateButtonMgr.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
+            @Override
+            public void processActionEvent(final JOceanusActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case IconButtonManager.ACTION_NEW_VALUE:
+                        theStateIconButtonMgr.setMachineState(pEvent.getDetails(IconState.class));
+                        setStateIconValue(theStateIconButtonMgr.getValue());
+                        break;
                     default:
                         break;
                 }

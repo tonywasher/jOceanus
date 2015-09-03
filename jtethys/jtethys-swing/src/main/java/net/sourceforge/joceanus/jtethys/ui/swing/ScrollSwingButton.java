@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.ScrollButtonManager.ScrollButton;
 /**
  * JavaFX Button which provides a PopUpMenu selection.
  */
-public class ScrollSwingButton
+public final class ScrollSwingButton
         extends JButton
         implements ScrollButton<Icon> {
     /**

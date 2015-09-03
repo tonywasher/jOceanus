@@ -147,22 +147,22 @@ public class ViewerDetail {
         /* Obtain the detail for this object */
         if (pObject != null) {
             theBuilder = theFormatter.formatHTMLObject(this, pObject);
-            isList = (pObject instanceof List);
+            isList = pObject instanceof List;
         } else {
             theBuilder = null;
             isList = false;
         }
 
         /* Allocate iterator if needed */
-        theList = (isList)
-                          ? (List<?>) pObject
-                          : null;
-        theIterator = (isList())
-                                ? theList.listIterator()
-                                : null;
-        thePartnerDetail = (isList())
-                                     ? new ViewerDetail(this, theIterator.next())
-                                     : null;
+        theList = isList
+                         ? (List<?>) pObject
+                         : null;
+        theIterator = isList()
+                               ? theList.listIterator()
+                               : null;
+        thePartnerDetail = isList()
+                                    ? new ViewerDetail(this, theIterator.next())
+                                    : null;
     }
 
     /**
@@ -374,14 +374,14 @@ public class ViewerDetail {
 
         /* Handle forward/backward links */
         if (myName.equals(LINK_FORWARD)) {
-            return (isChild)
-                            ? thePartnerDetail.theForward
-                            : theForward;
+            return isChild
+                           ? thePartnerDetail.theForward
+                           : theForward;
         }
         if (myName.equals(LINK_BACKWARD)) {
-            return (isChild)
-                            ? thePartnerDetail.theBackward
-                            : theBackward;
+            return isChild
+                           ? thePartnerDetail.theBackward
+                           : theBackward;
         }
 
         /* Loop through the links */

@@ -80,7 +80,7 @@ public enum ArrowIcon {
      * Constructor.
      * @param pPoints the icon points
      */
-    private ArrowIcon(final Point... pPoints) {
+    ArrowIcon(final Point... pPoints) {
         /* Allocate arrays */
         int myNumPoints = pPoints.length;
         thePoints = new Double[myNumPoints << 1];

@@ -71,7 +71,7 @@ public enum MacType {
      * Constructor.
      * @param id the id
      */
-    private MacType(final int id) {
+    MacType(final int id) {
         theId = id;
     }
 

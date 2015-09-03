@@ -232,7 +232,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
             /* Switch on class */
             switch (pClass) {
-            /* Supported classes */
+                /* Supported classes */
                 case STRING:
                 case MONEY:
                 case RATE:
@@ -274,9 +274,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @return the edit string
          */
         public String getEditString() {
-            return (isError)
-                            ? theError
-                            : theEdit;
+            return isError
+                           ? theError
+                           : theEdit;
         }
 
         /**
@@ -291,7 +291,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         public boolean isFixedWidth() {
             /* Switch on class */
             switch (getDataClass()) {
-            /* Number classes */
+                /* Number classes */
                 case MONEY:
                 case RATE:
                 case PRICE:
@@ -303,7 +303,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                 case LONG:
                     return true;
 
-                    /* Other classes */
+                /* Other classes */
                 default:
                     return false;
             }
@@ -414,7 +414,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                 try {
                     /* Switch on data type */
                     switch (getDataClass()) {
-                    /* Handle strings */
+                        /* Handle strings */
                         case STRING:
                             myValue = pValue;
                             break;
@@ -587,7 +587,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
             /* Switch on class */
             switch (pClass) {
-            /* Supported classes */
+                /* Supported classes */
                 case BOOLEAN:
                     break;
 
@@ -637,7 +637,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
             /* Switch on class */
             switch (pClass) {
-            /* Supported classes */
+                /* Supported classes */
                 case DATEDAY:
                     break;
 

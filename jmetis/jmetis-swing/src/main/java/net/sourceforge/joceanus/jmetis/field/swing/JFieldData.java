@@ -221,21 +221,21 @@ public final class JFieldData {
 
         /* Obtain the foreground for the state */
         Color myFore = isDisabled
-                                 ? theManager.getDisabledColor()
-                                 : theManager.getForeground(theState);
+                                  ? theManager.getDisabledColor()
+                                  : theManager.getForeground(theState);
         Color myBack = (theRow & 1) == 0
-                                        ? theManager.getStandardBackground()
-                                        : theManager.getZebraColor();
+                                         ? theManager.getStandardBackground()
+                                         : theManager.getZebraColor();
 
         /* Determine toolTip */
         String myTip = theState.isError()
-                                         ? pRow.getFieldErrors(pField)
-                                         : null;
+                                          ? pRow.getFieldErrors(pField)
+                                          : null;
 
         /* Select the font */
         Font myFont = isSelected()
-                                  ? theManager.determineHiFont(theState, isFixed)
-                                  : theManager.determineFont(theState, isFixed);
+                                   ? theManager.determineHiFont(theState, isFixed)
+                                   : theManager.determineFont(theState, isFixed);
 
         /* Set the data */
         theForeGround = myFore;
@@ -300,9 +300,9 @@ public final class JFieldData {
 
         /* Obtain the state */
         JDataField myField = pElement.getField();
-        theState = (isNull)
-                           ? JFieldState.NORMAL
-                           : pItem.getFieldState(myField);
+        theState = isNull
+                          ? JFieldState.NORMAL
+                          : pItem.getFieldState(myField);
 
         /* Determine the standard colours */
         theForeGround = theManager.getForeground(theState);
@@ -310,8 +310,8 @@ public final class JFieldData {
 
         /* Determine the Font and ToolTip */
         theFont = theManager.determineFont(theState, isFixed);
-        theToolTipText = (isNull)
-                                 ? null
-                                 : theManager.determineToolTip(theState, pItem, myField);
+        theToolTipText = isNull
+                                ? null
+                                : theManager.determineToolTip(theState, pItem, myField);
     }
 }

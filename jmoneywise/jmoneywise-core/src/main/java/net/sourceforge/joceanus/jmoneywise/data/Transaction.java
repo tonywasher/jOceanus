@@ -526,9 +526,9 @@ public class Transaction
         /* Handle InfoSet fields */
         TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
-            return (useInfoSet)
-                                ? theInfoSet.fieldChanged(myClass)
-                                : Difference.IDENTICAL;
+            return useInfoSet
+                              ? theInfoSet.fieldChanged(myClass)
+                              : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -723,9 +723,9 @@ public class Transaction
         TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
-        JRate myRate = (isInterest())
-                                      ? myTax.getIntTaxRate()
-                                      : myTax.getDivTaxRate();
+        JRate myRate = isInterest()
+                                    ? myTax.getIntTaxRate()
+                                    : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);

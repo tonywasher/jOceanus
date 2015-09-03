@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog.swing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +65,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     /**
      * The GoToMenuBuilder.
      */
-    private JScrollMenuBuilder<JOceanusActionEvent> theGoToBuilder;
+    private transient JScrollMenuBuilder<JOceanusActionEvent> theGoToBuilder;
 
     /**
      * The DataItem GoToMenuMap.
@@ -161,7 +161,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
         processGoToFilters();
 
         /* Create a simple map for top-level categories */
-        Map<MoneyWiseDataType, JScrollMenu> myMap = new HashMap<MoneyWiseDataType, JScrollMenu>();
+        Map<MoneyWiseDataType, JScrollMenu> myMap = new EnumMap<MoneyWiseDataType, JScrollMenu>(MoneyWiseDataType.class);
 
         /* Loop through the items */
         Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();

@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-
 import org.odftoolkit.odfdom.dom.OdfDocumentNamespace;
 import org.odftoolkit.odfdom.dom.attribute.table.TableNumberRowsRepeatedAttribute;
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
@@ -38,18 +36,23 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableRowGroupElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowsElement;
 import org.w3c.dom.Node;
 
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+
 /**
  * Class to manage the rows for a Sheet in Oasis.
  * <p>
- * A simple array list is maintained to map from row number to the underlying element. Each such element may have a repeat count that means that multiple rows
- * map to the same element.
+ * A simple array list is maintained to map from row number to the underlying element. Each such
+ * element may have a repeat count that means that multiple rows map to the same element.
  * <p>
- * The map is sparsely populated at the end to avoid addressing unused rows. This situation can occur when the sheet is extended to the full 1048576 possible
- * rows, but with no active cells/rows. The map will initially only map up to the last TableTableRowElement regardless of the number of rows that this last
- * element represents. If rows are subsequently referenced past this point, then the map will be expanded as required, so that the row is included in the map.
+ * The map is sparsely populated at the end to avoid addressing unused rows. This situation can
+ * occur when the sheet is extended to the full 1048576 possible rows, but with no active
+ * cells/rows. The map will initially only map up to the last TableTableRowElement regardless of the
+ * number of rows that this last element represents. If rows are subsequently referenced past this
+ * point, then the map will be expanded as required, so that the row is included in the map.
  * <p>
- * If rows are referenced past those initially declared, then they will be automatically created if the {@link #getMutableRowByIndex} method is used. If the
- * {@link #getReadOnlyRowByIndex} method is used, then null will be returned to indicate that the row does not exist.
+ * If rows are referenced past those initially declared, then they will be automatically created if
+ * the {@link #getMutableRowByIndex} method is used. If the {@link #getReadOnlyRowByIndex} method is
+ * used, then null will be returned to indicate that the row does not exist.
  */
 public class OasisRowMap {
     /**
@@ -312,7 +315,7 @@ public class OasisRowMap {
 
         /* Empty if none of the data attributes exist */
         return (defStyle == null)
-               && (visible.equals(TableVisibilityAttribute.DEFAULT_VALUE.toString()));
+               && (visible.equals(TableVisibilityAttribute.DEFAULT_VALUE));
     }
 
     /**
@@ -357,8 +360,8 @@ public class OasisRowMap {
             /* Determine the maximum instance */
             Integer myRepeat = theElement.getTableNumberRowsRepeatedAttribute();
             return (myRepeat == null)
-                                     ? 1
-                                     : myRepeat;
+                                      ? 1
+                                      : myRepeat;
         }
 
         /**

@@ -30,7 +30,8 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 
 /**
- * Provides the implementation of a error buffer for an object that implements JDataContents. Each element represents an error that relates to a field.
+ * Provides the implementation of a error buffer for an object that implements JDataContents. Each
+ * element represents an error that relates to a field.
  */
 public class ItemValidation
         implements JDataContents {
@@ -95,9 +96,9 @@ public class ItemValidation
      * @return the first error or <code>null</code>
      */
     public ErrorElement getFirst() {
-        return (theErrors.isEmpty())
-                                    ? null
-                                    : theErrors.get(0);
+        return theErrors.isEmpty()
+                                   ? null
+                                   : theErrors.get(0);
     }
 
     /**
@@ -221,8 +222,8 @@ public class ItemValidation
                                      final String pError) {
         /* Add relevant prefix */
         pBuilder.append((pBuilder.length() == 0)
-                                                ? "<html>"
-                                                : "<br>");
+                                                 ? "<html>"
+                                                 : "<br>");
 
         /* Add error text */
         pBuilder.append(pError);

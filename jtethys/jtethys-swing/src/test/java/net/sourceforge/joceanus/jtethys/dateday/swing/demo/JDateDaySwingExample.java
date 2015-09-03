@@ -606,8 +606,8 @@ public class JDateDaySwingExample
         applyRange();
 
         /* Add Listener to buttons */
-        theStartDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, theListener);
-        theEndDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, theListener);
+        theStartDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, theListener);
+        theEndDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, theListener);
 
         /* Create the range report label */
         theSelectedRange = new JLabel(theRangeSelect.getRange().toString());

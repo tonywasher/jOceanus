@@ -80,8 +80,8 @@ public enum DataState {
         if (myBase.getVersion() > 0) {
             /* Return status */
             return myCurr.isDeletion()
-                                      ? DELNEW
-                                      : NEW;
+                                       ? DELNEW
+                                       : NEW;
         }
 
         /* If we have no changes we are CLEAN */
@@ -95,8 +95,8 @@ public enum DataState {
         }
 
         /* Return RECOVERED or CHANGED depending on whether we started as deleted */
-        return (myBase.isDeletion())
-                                    ? RECOVERED
-                                    : CHANGED;
+        return myBase.isDeletion()
+                                   ? RECOVERED
+                                   : CHANGED;
     }
 }

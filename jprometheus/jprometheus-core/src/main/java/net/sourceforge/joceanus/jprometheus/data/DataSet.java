@@ -234,24 +234,24 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             return theSecurity;
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
-            return (theControlKeys.isEmpty())
-                                             ? JDataFieldValue.SKIP
-                                             : theControlKeys;
+            return theControlKeys.isEmpty()
+                                            ? JDataFieldValue.SKIP
+                                            : theControlKeys;
         }
         if (FIELD_DATAKEYSETS.equals(pField)) {
-            return (theDataKeySets.isEmpty())
-                                             ? JDataFieldValue.SKIP
-                                             : theDataKeySets;
+            return theDataKeySets.isEmpty()
+                                            ? JDataFieldValue.SKIP
+                                            : theDataKeySets;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
-            return (theDataKeys.isEmpty())
-                                          ? JDataFieldValue.SKIP
-                                          : theDataKeys;
+            return theDataKeys.isEmpty()
+                                         ? JDataFieldValue.SKIP
+                                         : theDataKeys;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
-            return (theControlData.isEmpty())
-                                             ? JDataFieldValue.SKIP
-                                             : theControlData;
+            return theControlData.isEmpty()
+                                            ? JDataFieldValue.SKIP
+                                            : theControlData;
         }
         return JDataFieldValue.UNKNOWN;
     }
@@ -452,9 +452,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
-     * in the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
-     * Items that are in both list but differ will be viewed as changed
+     * Construct a difference extract between two DataSets. The difference extract will only contain
+     * items that differ between the two DataSets. Items that are in the new list, but not in the
+     * old list will be viewed as inserted. Items that are in the old list but not in the new list
+     * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
      * @param pTask the task control
      * @param pOld The old list to extract from
      * @return the difference set
@@ -464,9 +465,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                        final T pOld) throws JOceanusException;
 
     /**
-     * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
-     * in the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
-     * Items that are in both list but differ will be viewed as changed
+     * Construct a difference extract between two DataSets. The difference extract will only contain
+     * items that differ between the two DataSets. Items that are in the new list, but not in the
+     * old list will be viewed as inserted. Items that are in the old list but not in the new list
+     * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
      * @param pTask the task control
      * @param pNew The new list to compare
      * @param pOld The old list to compare
@@ -576,8 +578,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Cast correctly */
         return (myList == null)
-                               ? null
-                               : pListClass.cast(myList);
+                                ? null
+                                : pListClass.cast(myList);
     }
 
     /**
@@ -591,8 +593,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Cast correctly */
         return ((myList == null) || (myList.isEmpty()))
-                                                       ? JDataFieldValue.SKIP
-                                                       : myList;
+                                                        ? JDataFieldValue.SKIP
+                                                        : myList;
     }
 
     /**
@@ -1011,8 +1013,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Set the control */
         return (myKey == null)
-                              ? null
-                              : myKey.getPasswordHash();
+                               ? null
+                               : myKey.getPasswordHash();
     }
 
     /**
