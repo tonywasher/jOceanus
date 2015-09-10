@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-08-20 05:56:10 +0100 (Thu, 20 Aug 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing;
+package net.sourceforge.joceanus.jtethys.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;

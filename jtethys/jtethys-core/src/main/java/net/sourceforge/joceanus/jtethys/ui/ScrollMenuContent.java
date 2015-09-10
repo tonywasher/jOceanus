@@ -103,6 +103,15 @@ public abstract class ScrollMenuContent {
         /**
          * Add Element.
          * @param pValue the value
+         * @param pName the display name
+         * @return the item added
+         */
+                ScrollMenuItem<T> addItem(final T pValue,
+                                          final String pName);
+
+        /**
+         * Add Element.
+         * @param pValue the value
          * @param pGraphic the icon for the item
          * @return the item added
          */

@@ -59,6 +59,7 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sourceforge.joceanus.jtethys.javafx.GuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
@@ -628,6 +629,13 @@ public class ScrollFXContextMenu<T>
     public ScrollMenuItem<T> addItem(final T pValue) {
         /* Use standard name */
         return addItem(pValue, pValue.toString(), null);
+    }
+
+    @Override
+    public ScrollMenuItem<T> addItem(final T pValue,
+                                     final String pName) {
+        /* Use standard name */
+        return addItem(pValue, pName, null);
     }
 
     @Override

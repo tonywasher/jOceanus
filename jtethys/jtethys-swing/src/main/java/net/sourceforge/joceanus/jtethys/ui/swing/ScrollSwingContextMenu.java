@@ -59,6 +59,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.swing.GuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
@@ -658,6 +659,13 @@ public class ScrollSwingContextMenu<T>
     public ScrollMenuItem<T> addItem(final T pValue) {
         /* Use standard name */
         return addItem(pValue, pValue.toString(), null);
+    }
+
+    @Override
+    public ScrollMenuItem<T> addItem(final T pValue,
+                                     final String pName) {
+        /* Use standard name */
+        return addItem(pValue, pName, null);
     }
 
     @Override

@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
+import net.sourceforge.joceanus.jtethys.swing.GuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.IconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.ListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.ScrollButtonManager;
@@ -90,6 +91,16 @@ public class ScrollUISwingExample
      * The padding.
      */
     private static final int PADDING = 5;
+
+    /**
+     * The default height.
+     */
+    private static final int DEFAULT_HEIGHT = 300;
+
+    /**
+     * The default width.
+     */
+    private static final int DEFAULT_WIDTH = 400;
 
     /**
      * Logger.
@@ -249,21 +260,16 @@ public class ScrollUISwingExample
     private JPanel buildPanel() {
         /* Create a panel */
         JPanel myPanel = new JPanel();
-        GridLayout myLayout = new GridLayout();
-        myLayout.setColumns(2);
-        myLayout.setRows(0);
-        myPanel.setLayout(myLayout);
-        myLayout.setHgap(PADDING);
-        myLayout.setVgap(PADDING << 1);
-        myPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
+        GridBagHelper myHelper = new GridBagHelper(myPanel);
+        myHelper.setInsetSize(PADDING);
+        myPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
         /* Create context menu line */
         JLabel myContextArea = new JLabel("Right-click for Menu");
         myContextArea.setBorder(BorderFactory.createTitledBorder("ContextArea"));
         myContextArea.setHorizontalAlignment(SwingConstants.CENTER);
         buildResultLabel(theContextValue, "ContextValue");
-        myPanel.add(myContextArea);
-        myPanel.add(theContextValue);
+        myHelper.addFullLabeledRow(myContextArea, theContextValue);
         setContextValue(null);
 
         /* Build the context menu */
@@ -299,11 +305,11 @@ public class ScrollUISwingExample
         /* Create scroll button line */
         ScrollSwingButton myScrollButton = theScrollButtonMgr.getButton();
         JPanel myScrollArea = new JPanel();
+        myScrollArea.setLayout(new BorderLayout());
         myScrollArea.setBorder(BorderFactory.createTitledBorder("ScrollButton"));
-        myScrollArea.add(myScrollButton);
+        myScrollArea.add(myScrollButton, BorderLayout.CENTER);
         buildResultLabel(theScrollValue, "ScrollValue");
-        myPanel.add(myScrollArea);
-        myPanel.add(theScrollValue);
+        myHelper.addFullLabeledRow(myScrollArea, theScrollValue);
         setScrollValue(null);
 
         /* Add listener */
@@ -327,11 +333,11 @@ public class ScrollUISwingExample
         /* Create list button line */
         ListSwingButton myListButton = theListButtonMgr.getButton();
         JPanel myListArea = new JPanel();
+        myListArea.setLayout(new BorderLayout());
         myListArea.setBorder(BorderFactory.createTitledBorder("ListButton"));
-        myListArea.add(myListButton);
+        myListArea.add(myListButton, BorderLayout.CENTER);
         buildResultLabel(theListValues, "ListValues");
-        myPanel.add(myListArea);
-        myPanel.add(theListValues);
+        myHelper.addFullLabeledRow(myListArea, theListValues);
         setListValue(null);
         theListButtonMgr.getButton().setButtonText("Tag");
         theListButtonMgr.getMenu().setCloseOnToggle(false);
@@ -357,11 +363,11 @@ public class ScrollUISwingExample
         /* Create simple icon button line */
         IconSwingButton myIconButton = theSimpleIconButtonMgr.getButton();
         JPanel myIconArea = new JPanel();
+        myIconArea.setLayout(new BorderLayout());
         myIconArea.setBorder(BorderFactory.createTitledBorder("SimpleIconButton"));
-        myIconArea.add(myIconButton);
+        myIconArea.add(myIconButton, BorderLayout.CENTER);
         buildResultLabel(theSimpleIconValue, "IconValue");
-        myPanel.add(myIconArea);
-        myPanel.add(theSimpleIconValue);
+        myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
                 OPEN_FALSE_ICON,
                 OPEN_TRUE_ICON);
@@ -388,8 +394,7 @@ public class ScrollUISwingExample
         myIconArea.add(theStateButtonMgr.getButton());
         myIconArea.add(myIconButton);
         buildResultLabel(theStateIconValue, "StateIconValue");
-        myPanel.add(myIconArea);
-        myPanel.add(theStateIconValue);
+        myHelper.addFullLabeledRow(myIconArea, theStateIconValue);
         theHelper.buildStateButton(theStateButtonMgr);
         theHelper.buildStateIconState(theStateIconButtonMgr,
                 OPEN_FALSE_ICON, OPEN_TRUE_ICON, CLOSED_TRUE_ICON);

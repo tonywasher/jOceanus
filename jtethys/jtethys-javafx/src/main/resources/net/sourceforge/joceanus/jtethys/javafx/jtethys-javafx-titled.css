@@ -15,3 +15,7 @@
 .-jtethys-titled-content {
   -fx-padding: 18 5 5 5;
 }
+
+.-jtethys-datafield-error {
+  -fx-control-inner-background: #DC381F;
+}

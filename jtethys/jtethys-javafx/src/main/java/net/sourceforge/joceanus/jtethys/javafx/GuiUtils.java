@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx;
+package net.sourceforge.joceanus.jtethys.javafx;
 
 import java.util.List;
 
@@ -39,6 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 
@@ -52,9 +53,42 @@ public final class GuiUtils {
     private static final String CSS_STYLE = GuiUtils.class.getResource("jtethys-javafx-titled.css").toExternalForm();
 
     /**
+     * RGB header.
+     */
+    private static final String RGB_HDR = "rgb(";
+
+    /**
+     * RGB separator.
+     */
+    private static final String RGB_SEP = "%,";
+
+    /**
+     * RGB trailer.
+     */
+    private static final String RGB_TRLR = "%)";
+
+    /**
      * private constructor.
      */
     private GuiUtils() {
+    }
+
+    /**
+     * format a colour as a hexadecimal string.
+     * @param pValue the long value
+     * @return the string
+     */
+    public static String colorToHexString(final Color pValue) {
+        /* Return the string */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(RGB_HDR);
+        myBuilder.append(pValue.getRed());
+        myBuilder.append(RGB_SEP);
+        myBuilder.append(pValue.getGreen());
+        myBuilder.append(RGB_SEP);
+        myBuilder.append(pValue.getBlue());
+        myBuilder.append(RGB_TRLR);
+        return myBuilder.toString();
     }
 
     /**

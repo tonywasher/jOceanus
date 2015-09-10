@@ -44,7 +44,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jgordianknot.crypto.CryptoResource;
-import net.sourceforge.joceanus.jtethys.ui.javafx.GuiUtils;
+import net.sourceforge.joceanus.jtethys.javafx.GuiUtils;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.

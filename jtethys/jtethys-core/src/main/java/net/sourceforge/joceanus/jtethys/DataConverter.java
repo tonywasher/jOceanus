@@ -54,6 +54,7 @@ public final class DataConverter {
      * Base64 Decoding array.
      */
     private static final int[] BASE64_DECODE = new int[BASE64_ENCODE.length << 1];
+
     static {
         for (int i = 0; i < BASE64_ENCODE.length; i++) {
             BASE64_DECODE[BASE64_ENCODE[i]] = i;
@@ -601,11 +602,11 @@ public final class DataConverter {
             /* Access input triplet */
             myTriplet[0] = pBytes[myIn++];
             myTriplet[1] = (myIn < myLen)
-                                         ? pBytes[myIn++]
-                                         : 0;
+                                          ? pBytes[myIn++]
+                                          : 0;
             myTriplet[2] = (myIn < myLen)
-                                         ? pBytes[myIn++]
-                                         : 0;
+                                          ? pBytes[myIn++]
+                                          : 0;
 
             /* Convert to base64 */
             myBuilder.append(BASE64_ENCODE[(myTriplet[0] >> BASE64_SHIFT1)

@@ -252,6 +252,45 @@ public class JDecimalFormatter {
     }
 
     /**
+     * Format a long value.
+     * @param pValue the value to format
+     * @return the formatted value.
+     */
+    private StringBuilder formatLong(final long pValue) {
+        /* Access the value */
+        long myValue = pValue;
+
+        /* handle negative values */
+        boolean isNegative = myValue < 0;
+        if (isNegative) {
+            myValue = -myValue;
+        }
+
+        /* Format the string */
+        StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
+        myString.append(Long.toString(myValue));
+
+        /* Loop while we need to add grouping */
+        int myLen = myString.length();
+        int myGroupingSize = theLocale.getGroupingSize();
+        String myGrouping = theLocale.getGrouping();
+        while (myLen > myGroupingSize) {
+            /* Insert grouping character and remove grouping size from length */
+            myString.insert(myLen
+                            - myGroupingSize, myGrouping);
+            myLen -= myGroupingSize;
+        }
+
+        /* Add minus sign if required */
+        if (isNegative) {
+            myString.insert(0, theLocale.getMinusSign());
+        }
+
+        /* Return the string */
+        return myString;
+    }
+
+    /**
      * Format Money value.
      * @param pMoney the value to format
      * @return the formatted value
@@ -452,6 +491,45 @@ public class JDecimalFormatter {
         myWork.insert(0, theLocale.getSymbol(pCurrency));
 
         /* Return the string */
+        return myWork.toString();
+    }
+
+    /**
+     * Format Long value.
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String formatLong(final Long pValue) {
+        /* Format the basic value */
+        StringBuilder myWork = formatLong(pValue.longValue());
+
+        /* return the formatted value */
+        return myWork.toString();
+    }
+
+    /**
+     * Format Integer value.
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String formatInteger(final Integer pValue) {
+        /* Format the basic value */
+        StringBuilder myWork = formatLong(pValue.longValue());
+
+        /* return the formatted value */
+        return myWork.toString();
+    }
+
+    /**
+     * Format Short value.
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String formatShort(final Short pValue) {
+        /* Format the basic value */
+        StringBuilder myWork = formatLong(pValue.longValue());
+
+        /* return the formatted value */
         return myWork.toString();
     }
 }

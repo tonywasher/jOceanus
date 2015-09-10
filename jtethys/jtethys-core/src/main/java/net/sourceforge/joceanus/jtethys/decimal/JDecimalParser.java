@@ -31,9 +31,14 @@ import java.util.Locale;
  */
 public class JDecimalParser {
     /**
-     * Error message.
+     * Parse Error message.
      */
     private static final String ERROR_PARSE = "Non Decimal Numeric Value: ";
+
+    /**
+     * Bounds Error message.
+     */
+    private static final String ERROR_BOUNDS = "Value out of range: ";
 
     /**
      * PerCent adjustment.
@@ -152,8 +157,8 @@ public class JDecimalParser {
 
         /* Locate the decimal point if present */
         myPos = myWork.indexOf(useMoneyDecimal
-                                              ? pLocale.getMoneyDecimal()
-                                              : pLocale.getDecimal());
+                                               ? pLocale.getMoneyDecimal()
+                                               : pLocale.getDecimal());
 
         /* Assume no decimals */
         StringBuilder myDecimals = null;
@@ -317,6 +322,62 @@ public class JDecimalParser {
     }
 
     /**
+     * Parse a long value.
+     * @param pValue The value to parse.
+     * @param pLocale the Decimal locale
+     * @return the long value
+     * @throws IllegalArgumentException on invalid decimal
+     */
+    protected static long parseLongValue(final String pValue,
+                                         final JDecimalLocale pLocale) {
+        /* Handle null value */
+        if (pValue == null) {
+            throw new IllegalArgumentException();
+        }
+
+        /* Create a working copy */
+        StringBuilder myWork = new StringBuilder(pValue.trim());
+
+        /* If the value is negative, strip the leading minus sign */
+        boolean isNegative = (myWork.length() > 0)
+                             && (myWork.charAt(0) == pLocale.getMinusSign());
+        if (isNegative) {
+            myWork.deleteCharAt(0);
+        }
+
+        /* Remove any grouping characters from the value */
+        String myGrouping = pLocale.getGrouping();
+        int myPos;
+        for (;;) {
+            myPos = myWork.indexOf(myGrouping);
+            if (myPos == -1) {
+                break;
+            }
+            myWork.deleteCharAt(myPos);
+        }
+
+        /* Trim leading and trailing blanks again */
+        trimBuffer(myWork);
+
+        /* Parse the long value */
+        long myValue;
+        try {
+            myValue = Long.parseLong(myWork.toString());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(ERROR_PARSE
+                                               + pValue, e);
+        }
+
+        /* If the value is negative, negate the number */
+        if (isNegative) {
+            myValue = -myValue;
+        }
+
+        /* return the result */
+        return myValue;
+    }
+
+    /**
      * Obtain a new zero money value for the default currency.
      * @return the new money
      */
@@ -340,7 +401,7 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid money value
      */
     public JMoney parseMoneyValue(final String pValue) {
-        return parseMoneyValue(pValue, getDefaultCurrency());
+        return parseMoneyValue(pValue, null);
     }
 
     /**
@@ -361,7 +422,9 @@ public class JDecimalParser {
         StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Determine currency */
-        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency);
+        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
+                                                                            ? getDefaultCurrency()
+                                                                            : pDeemedCurrency);
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
@@ -410,7 +473,7 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid price value
      */
     public JPrice parsePriceValue(final String pValue) {
-        return parsePriceValue(pValue, getDefaultCurrency());
+        return parsePriceValue(pValue, null);
     }
 
     /**
@@ -431,7 +494,9 @@ public class JDecimalParser {
         StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Look for explicit currency */
-        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency);
+        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
+                                                                            ? getDefaultCurrency()
+                                                                            : pDeemedCurrency);
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
@@ -463,7 +528,7 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid money value
      */
     public JDilutedPrice parseDilutedPriceValue(final String pValue) {
-        return parseDilutedPriceValue(pValue, getDefaultCurrency());
+        return parseDilutedPriceValue(pValue, null);
     }
 
     /**
@@ -484,7 +549,9 @@ public class JDecimalParser {
         StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Determine currency */
-        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency);
+        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
+                                                                            ? getDefaultCurrency()
+                                                                            : pDeemedCurrency);
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
@@ -531,7 +598,9 @@ public class JDecimalParser {
             myWork.deleteCharAt(myLast);
             myXtraDecimals = ADJUST_PERCENT;
 
-            /* If there is a trailing perMille, remove any percent sign from the end of the string */
+            /*
+             * If there is a trailing perMille, remove any percent sign from the end of the string
+             */
         } else if (myWork.charAt(myLast) == theLocale.getPerMille()) {
             myWork.deleteCharAt(myLast);
             myXtraDecimals = ADJUST_PERMILLE;
@@ -655,6 +724,73 @@ public class JDecimalParser {
 
         /* return the parsed decimal object */
         return myDecimal;
+    }
+
+    /**
+     * Parse Long value.
+     * @param pValue the string value to parse.
+     * @return the parsed value
+     * @throws IllegalArgumentException on invalid value
+     */
+    public Long parseLongValue(final String pValue) {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Parse the value */
+        long myValue = parseLongValue(pValue, theLocale);
+        return Long.valueOf(myValue);
+    }
+
+    /**
+     * Parse Integer value.
+     * @param pValue the string value to parse.
+     * @return the parsed value
+     * @throws IllegalArgumentException on invalid value
+     */
+    public Integer parseIntegerValue(final String pValue) {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Parse the value */
+        long myValue = parseLongValue(pValue, theLocale);
+
+        /* Check bounds */
+        if ((myValue > Integer.MAX_VALUE) || (myValue < Integer.MIN_VALUE)) {
+            throw new IllegalArgumentException(ERROR_BOUNDS
+                                               + pValue);
+        }
+
+        /* Return value */
+        return Integer.valueOf((int) myValue);
+    }
+
+    /**
+     * Parse Short value.
+     * @param pValue the string value to parse.
+     * @return the parsed value
+     * @throws IllegalArgumentException on invalid value
+     */
+    public Short parseShortValue(final String pValue) {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Parse the value */
+        long myValue = parseLongValue(pValue, theLocale);
+
+        /* Check bounds */
+        if ((myValue > Short.MAX_VALUE) || (myValue < Short.MIN_VALUE)) {
+            throw new IllegalArgumentException(ERROR_BOUNDS
+                                               + pValue);
+        }
+
+        /* Return value */
+        return Short.valueOf((short) myValue);
     }
 
     /**

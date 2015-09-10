@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeState;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayResource;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
-import net.sourceforge.joceanus.jtethys.ui.javafx.GuiUtils;
+import net.sourceforge.joceanus.jtethys.javafx.GuiUtils;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
