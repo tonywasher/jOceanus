@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jtethys.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -33,6 +35,7 @@ import java.awt.Rectangle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 /**
@@ -40,9 +43,38 @@ import javax.swing.SwingConstants;
  */
 public final class GuiUtils {
     /**
+     * Height adjustment for field.
+     */
+    private static final int PADDING_HEIGHT = 4;
+
+    /**
      * private constructor.
      */
     private GuiUtils() {
+    }
+
+    /**
+     * Restrict field.
+     * @param pComponent the component to restrict
+     * @param pWidth field width in characters
+     */
+    public static void restrictField(final JComponent pComponent,
+                                     final int pWidth) {
+        /* Calculate the character width */
+        Font myFont = pComponent.getFont();
+        FontMetrics myMetrics = pComponent.getFontMetrics(myFont);
+        int myCharWidth = myMetrics.stringWidth("w");
+        int myCharHeight = myMetrics.getHeight() + PADDING_HEIGHT;
+
+        /* Allocate Dimensions */
+        Dimension myPrefDims = new Dimension(pWidth * myCharWidth, myCharHeight);
+        Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, myCharHeight);
+        Dimension myMinDims = new Dimension(1, myCharHeight);
+
+        /* Restrict the field */
+        pComponent.setPreferredSize(myPrefDims);
+        pComponent.setMaximumSize(myMaxDims);
+        pComponent.setMinimumSize(myMinDims);
     }
 
     /**

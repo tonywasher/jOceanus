@@ -33,6 +33,7 @@ import java.util.Currency;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,6 +51,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
+import net.sourceforge.joceanus.jtethys.ui.DataEditField;
 import net.sourceforge.joceanus.jtethys.ui.swing.DataSwingEditField.DilutedPriceSwingTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.DataSwingEditField.DilutionSwingTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.DataSwingEditField.IntegerSwingTextField;
@@ -178,6 +180,7 @@ public class EditUISwingExample
 
         /* Create resources */
         theStringField = new StringSwingTextField();
+        theStringField.showButton(true);
         theShortField = new ShortSwingTextField(theFormatter, myParser);
         theIntegerField = new IntegerSwingTextField(theFormatter, myParser);
         theLongField = new LongSwingTextField(theFormatter, myParser);
@@ -255,6 +258,7 @@ public class EditUISwingExample
 
     /**
      * Build the panel.
+     * @return the panel
      */
     private JPanel buildPanel() {
         /* Create a GridPane for the fields */
@@ -299,7 +303,7 @@ public class EditUISwingExample
         theStringField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("String", pEvent.getDetails());
+                processAction(theStringField, pEvent);
             }
         });
 
@@ -310,7 +314,7 @@ public class EditUISwingExample
         theShortField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Short", pEvent.getDetails());
+                processAction(theShortField, pEvent);
             }
         });
 
@@ -321,7 +325,7 @@ public class EditUISwingExample
         theIntegerField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Integer", pEvent.getDetails());
+                processAction(theIntegerField, pEvent);
             }
         });
 
@@ -332,7 +336,7 @@ public class EditUISwingExample
         theLongField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Long", pEvent.getDetails());
+                processAction(theLongField, pEvent);
             }
         });
 
@@ -343,7 +347,7 @@ public class EditUISwingExample
         theMoneyField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Money", pEvent.getDetails());
+                processAction(theMoneyField, pEvent);
             }
         });
 
@@ -354,7 +358,7 @@ public class EditUISwingExample
         thePriceField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Price", pEvent.getDetails());
+                processAction(thePriceField, pEvent);
             }
         });
 
@@ -365,7 +369,7 @@ public class EditUISwingExample
         theUnitsField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Units", pEvent.getDetails());
+                processAction(theUnitsField, pEvent);
             }
         });
 
@@ -376,7 +380,7 @@ public class EditUISwingExample
         theRateField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Rate", pEvent.getDetails());
+                processAction(theRateField, pEvent);
             }
         });
 
@@ -387,7 +391,7 @@ public class EditUISwingExample
         theRatioField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Ratio", pEvent.getDetails());
+                processAction(theRatioField, pEvent);
             }
         });
 
@@ -398,7 +402,7 @@ public class EditUISwingExample
         theDilutionField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Dilution", pEvent.getDetails());
+                processAction(theDilutionField, pEvent);
             }
         });
 
@@ -409,7 +413,7 @@ public class EditUISwingExample
         theDilutedPriceField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("DilutedPrice", pEvent.getDetails());
+                processAction(theDilutedPriceField, pEvent);
             }
         });
 
@@ -518,6 +522,33 @@ public class EditUISwingExample
         theMoneyField.setDeemedCurrency(pCurrency);
         thePriceField.setDeemedCurrency(pCurrency);
         theDilutedPriceField.setDeemedCurrency(pCurrency);
+    }
+
+    /**
+     * Process action.
+     * @param pSource the source of the action
+     * @param pResults the results
+     */
+    private void processAction(final DataEditField<?, JPanel, Icon> pField,
+                               final JOceanusActionEvent pEvent) {
+        /* Determine source */
+        String mySource = pField.getClass().getSimpleName();
+
+        /* Switch on action */
+        switch (pEvent.getActionId()) {
+            case DataEditField.ACTION_NEW_VALUE:
+                setResults(mySource, pEvent.getDetails());
+                break;
+            case DataEditField.ACTION_NEW_COMMAND:
+                setResults(mySource + "-Cmd", pEvent.getDetails());
+                break;
+            case DataEditField.ACTION_CMDMENU_BUILD:
+                pField.getMenu().removeAllItems();
+                pField.getMenu().addItem("TestCmd");
+                break;
+            default:
+                break;
+        }
     }
 
     /**

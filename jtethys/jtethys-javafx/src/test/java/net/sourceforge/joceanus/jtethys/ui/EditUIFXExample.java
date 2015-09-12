@@ -162,6 +162,7 @@ public class EditUIFXExample
 
         /* Create resources */
         theStringField = new StringFXTextField();
+        theStringField.showButton(true);
         theShortField = new ShortFXTextField(theFormatter, myParser);
         theIntegerField = new IntegerFXTextField(theFormatter, myParser);
         theLongField = new LongFXTextField(theFormatter, myParser);
@@ -201,6 +202,7 @@ public class EditUIFXExample
 
     /**
      * Build the panel.
+     * @return the panel
      */
     private Node buildPanel() {
         /* Create a GridPane for the fields */
@@ -246,7 +248,7 @@ public class EditUIFXExample
         theStringField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("String", pEvent.getDetails());
+                processAction(theStringField, pEvent);
             }
         });
 
@@ -257,7 +259,7 @@ public class EditUIFXExample
         theShortField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Short", pEvent.getDetails());
+                processAction(theShortField, pEvent);
             }
         });
 
@@ -268,7 +270,7 @@ public class EditUIFXExample
         theIntegerField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Integer", pEvent.getDetails());
+                processAction(theIntegerField, pEvent);
             }
         });
 
@@ -279,7 +281,7 @@ public class EditUIFXExample
         theLongField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Long", pEvent.getDetails());
+                processAction(theLongField, pEvent);
             }
         });
 
@@ -290,7 +292,7 @@ public class EditUIFXExample
         theMoneyField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Money", pEvent.getDetails());
+                processAction(theMoneyField, pEvent);
             }
         });
 
@@ -301,7 +303,7 @@ public class EditUIFXExample
         thePriceField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Price", pEvent.getDetails());
+                processAction(thePriceField, pEvent);
             }
         });
 
@@ -312,7 +314,7 @@ public class EditUIFXExample
         theUnitsField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Units", pEvent.getDetails());
+                processAction(theUnitsField, pEvent);
             }
         });
 
@@ -323,7 +325,7 @@ public class EditUIFXExample
         theRateField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Rate", pEvent.getDetails());
+                processAction(theRateField, pEvent);
             }
         });
 
@@ -334,7 +336,7 @@ public class EditUIFXExample
         theRatioField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Ratio", pEvent.getDetails());
+                processAction(theRatioField, pEvent);
             }
         });
 
@@ -345,7 +347,7 @@ public class EditUIFXExample
         theDilutionField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("Dilution", pEvent.getDetails());
+                processAction(theDilutionField, pEvent);
             }
         });
 
@@ -356,7 +358,7 @@ public class EditUIFXExample
         theDilutedPriceField.getEventRegistrar().addActionListener(new JOceanusActionEventListener() {
             @Override
             public void processActionEvent(final JOceanusActionEvent pEvent) {
-                setResults("DilutedPrice", pEvent.getDetails());
+                processAction(theDilutedPriceField, pEvent);
             }
         });
 
@@ -471,6 +473,33 @@ public class EditUIFXExample
         theMoneyField.setDeemedCurrency(pCurrency);
         thePriceField.setDeemedCurrency(pCurrency);
         theDilutedPriceField.setDeemedCurrency(pCurrency);
+    }
+
+    /**
+     * Process action.
+     * @param pSource the source of the action
+     * @param pResults the results
+     */
+    private void processAction(final DataEditField<?, Node, Node> pField,
+                               final JOceanusActionEvent pEvent) {
+        /* Determine source */
+        String mySource = pField.getClass().getSimpleName();
+
+        /* Switch on action */
+        switch (pEvent.getActionId()) {
+            case DataEditField.ACTION_NEW_VALUE:
+                setResults(mySource, pEvent.getDetails());
+                break;
+            case DataEditField.ACTION_NEW_COMMAND:
+                setResults(mySource + "-Cmd", pEvent.getDetails());
+                break;
+            case DataEditField.ACTION_CMDMENU_BUILD:
+                pField.getMenu().removeAllItems();
+                pField.getMenu().addItem("TestCmd");
+                break;
+            default:
+                break;
+        }
     }
 
     /**

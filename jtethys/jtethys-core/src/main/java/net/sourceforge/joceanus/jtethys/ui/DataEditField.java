@@ -37,13 +37,16 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.ScrollMenuContent.ScrollMenuItem;
 
 /**
  * Generic class for displaying and editing a data field.
  * @param <T> the data type
  * @param <N> the node type
+ * @param <I> the Icon type
  */
-public abstract class DataEditField<T, N>
+public abstract class DataEditField<T, N, I>
         implements JOceanusEventProvider {
     /**
      * DataEditConverter interface.
@@ -86,6 +89,16 @@ public abstract class DataEditField<T, N>
     public static final int ACTION_NEW_VALUE = 100;
 
     /**
+     * Command issued.
+     */
+    public static final int ACTION_NEW_COMMAND = 101;
+
+    /**
+     * Menu build.
+     */
+    public static final int ACTION_CMDMENU_BUILD = 102;
+
+    /**
      * Invalid value text.
      */
     protected static final String TOOLTIP_BAD_VALUE = "Invalid Value";
@@ -104,6 +117,11 @@ public abstract class DataEditField<T, N>
      * The value.
      */
     private T theValue;
+
+    /**
+     * The ScrollMenu.
+     */
+    private ScrollMenu<String, I> theMenu;
 
     /**
      * Constructor.
@@ -145,6 +163,14 @@ public abstract class DataEditField<T, N>
         return theValue;
     }
 
+    /**
+     * Obtain the menu.
+     * @return the menu.
+     */
+    public ScrollMenu<String, I> getMenu() {
+        return theMenu;
+    }
+
     @Override
     public JOceanusEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
@@ -160,18 +186,59 @@ public abstract class DataEditField<T, N>
     }
 
     /**
+     * handleMenuRequest.
+     */
+    public void handleMenuRequest() {
+        /* fire menuBuild actionEvent */
+        fireEvent(ACTION_CMDMENU_BUILD, theMenu);
+
+        /* If a menu is provided */
+        if (!theMenu.isEmpty()) {
+            /* Show the menu */
+            showMenu();
+        }
+    }
+
+    /**
+     * handleMenuClosed.
+     */
+    protected void handleMenuClosed() {
+        /* If we selected a value */
+        ScrollMenuItem<String> mySelected = theMenu.getSelectedItem();
+        if (mySelected != null) {
+            /* fire new command actionEvent */
+            theEventManager.fireActionEvent(ACTION_NEW_COMMAND, mySelected.getValue());
+        }
+    }
+
+    /**
      * Obtain the node.
      * @return the node.
      */
     public abstract N getNode();
 
     /**
+     * Show the menu.
+     */
+    protected abstract void showMenu();
+
+    /**
+     * Declare menu.
+     * @param pMenu the menu
+     */
+    protected void declareMenu(final ScrollMenu<String, I> pMenu) {
+        /* Store the menu */
+        theMenu = pMenu;
+    }
+
+    /**
      * DataEditTextField base class.
      * @param <T> the data type
      * @param <N> the node type
+     * @param <I> the Icon type
      */
-    public abstract static class DataEditTextFieldBase<T, N>
-            extends DataEditField<T, N> {
+    public abstract static class DataEditTextFieldBase<T, N, I>
+            extends DataEditField<T, N, I> {
         /**
          * The DataConverter.
          */
@@ -231,9 +298,9 @@ public abstract class DataEditField<T, N>
                 /* Protect to catch parsing errors */
                 try {
                     /* Parse the value */
-                    T myValue = pNewValue.length() == 0
-                                                        ? null
-                                                        : theConverter.parseEditedValue(pNewValue);
+                    T myValue = pNewValue == null
+                                                  ? null
+                                                  : theConverter.parseEditedValue(pNewValue);
 
                     /* set the value and fire Event */
                     setValue(myValue);

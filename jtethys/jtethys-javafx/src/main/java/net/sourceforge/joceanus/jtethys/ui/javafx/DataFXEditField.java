@@ -27,10 +27,13 @@ import java.util.Currency;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -38,6 +41,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import net.sourceforge.jdatebutton.javafx.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
@@ -49,6 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.javafx.GuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.DataEditField.DataEditTextFieldBase;
+import net.sourceforge.joceanus.jtethys.ui.javafx.ScrollFXContextMenu.ContextEvent;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -65,7 +70,7 @@ public abstract class DataFXEditField {
      * @param <T> the data type
      */
     public abstract static class DataFXEditTextField<T>
-            extends DataEditTextFieldBase<T, Node> {
+            extends DataEditTextFieldBase<T, Node, Node> {
         /**
          * The error style class.
          */
@@ -92,6 +97,16 @@ public abstract class DataFXEditField {
         private final Label theLabel;
 
         /**
+         * The button.
+         */
+        private final Button theButton;
+
+        /**
+         * Do we show the button?
+         */
+        private boolean doShowButton;
+
+        /**
          * The error text.
          */
         private String theErrorText;
@@ -101,13 +116,21 @@ public abstract class DataFXEditField {
          * @param pConverter the data converter
          */
         protected DataFXEditTextField(final DataEditConverter<T> pConverter) {
-            /* Call super-constructor */
+            /* Call super-constructor and store parameters */
             super(pConverter);
 
             /* Create resources */
             theNode = new BorderPane();
             theLabel = new Label();
             theEditNode = new TextField();
+
+            /* Create the button */
+            theButton = new Button();
+            theButton.setGraphic(ArrowIcon.DOWN.getArrow());
+            theButton.setFocusTraversable(false);
+
+            /* declare the menu */
+            declareMenu(new ScrollFXContextMenu<String>());
 
             /* Set maximum widths for fields */
             theLabel.setMaxWidth(Integer.MAX_VALUE);
@@ -141,7 +164,7 @@ public abstract class DataFXEditField {
                 }
             });
 
-            /* handle enter key */
+            /* handle enter/escape keys */
             theEditNode.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(final KeyEvent t) {
@@ -151,12 +174,40 @@ public abstract class DataFXEditField {
                             break;
                         case ESCAPE:
                             theEditNode.setText(getEditText());
+                            clearError();
                             break;
                         default:
                             break;
                     }
                 }
             });
+
+            /* handle button key */
+            theButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(final ActionEvent t) {
+                    handleMenuRequest();
+                }
+            });
+
+            /* Set context menu listener */
+            getMenu().addEventHandler(ContextEvent.MENU_SELECT, new EventHandler<ContextEvent<?>>() {
+                @Override
+                public void handle(final ContextEvent<?> e) {
+                    /* Handle the close of the menu */
+                    handleMenuClosed();
+                }
+            });
+        }
+
+        @Override
+        public ScrollFXContextMenu<String> getMenu() {
+            return (ScrollFXContextMenu<String>) super.getMenu();
+        }
+
+        @Override
+        protected void showMenu() {
+            getMenu().showMenuAtPosition(theButton, Side.RIGHT);
         }
 
         /**
@@ -165,7 +216,6 @@ public abstract class DataFXEditField {
         private void processValue() {
             /* If we failed to process the value */
             String myText = theEditNode.getText();
-            ObservableList<String> myStyles = theEditNode.getStyleClass();
             if (!processValue(myText)) {
                 /* Set toolTip, save error text and retain the focus */
                 theEditNode.setTooltip(new Tooltip(TOOLTIP_BAD_VALUE));
@@ -173,16 +223,26 @@ public abstract class DataFXEditField {
                 theEditNode.requestFocus();
 
                 /* add an error style */
+                ObservableList<String> myStyles = theEditNode.getStyleClass();
                 if (!myStyles.contains(STYLE_ERROR)) {
                     myStyles.add(STYLE_ERROR);
                 }
 
-                /* else value was OK, so clear the error indications */
+                /* else value was OK */
             } else {
-                theEditNode.setTooltip(null);
-                theErrorText = null;
-                myStyles.remove(STYLE_ERROR);
+                /* Clear error indications */
+                clearError();
             }
+        }
+
+        /**
+         * Clear error indication.
+         */
+        private void clearError() {
+            theEditNode.setTooltip(null);
+            theErrorText = null;
+            ObservableList<String> myStyles = theEditNode.getStyleClass();
+            myStyles.remove(STYLE_ERROR);
         }
 
         @Override
@@ -208,6 +268,21 @@ public abstract class DataFXEditField {
             /* Apply font to the two nodes */
             theLabel.setTextFill(pColor);
             theEditNode.setStyle("-fx-text-inner-color: " + GuiUtils.colorToHexString(pColor));
+        }
+
+        /**
+         * Show the button.
+         * @param pShow true/false
+         */
+        public void showButton(final boolean pShow) {
+            /* Remove any button that is displaying */
+            theNode.setRight(null);
+            doShowButton = pShow;
+
+            /* If we have a button to display */
+            if (isEditable() && doShowButton) {
+                theNode.setRight(theButton);
+            }
         }
 
         /**
@@ -246,10 +321,16 @@ public abstract class DataFXEditField {
 
             /* If we are changing */
             if (pEditable != isEditable) {
-                /* Set correct component */
-                theNode.setCenter(pEditable
-                                            ? theEditNode
-                                            : theLabel);
+                /* If we are setting editable */
+                if (pEditable) {
+                    theNode.setCenter(theEditNode);
+                    if (doShowButton) {
+                        theNode.setRight(theButton);
+                    }
+                } else {
+                    theNode.setCenter(theLabel);
+                    theNode.setRight(null);
+                }
 
                 /* Pass call on */
                 super.setEditable(pEditable);

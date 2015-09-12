@@ -22,16 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Currency;
 
-import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -47,6 +52,8 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
 import net.sourceforge.joceanus.jtethys.ui.DataEditField.DataEditTextFieldBase;
 
 /**
@@ -64,12 +71,7 @@ public abstract class DataSwingEditField {
      * @param <T> the data type
      */
     public abstract static class DataSwingEditTextField<T>
-            extends DataEditTextFieldBase<T, JPanel> {
-        /**
-         * The padding size to expand a label to match a TextField.
-         */
-        private static final int PADDING = 10;
-
+            extends DataEditTextFieldBase<T, JPanel, Icon> {
         /**
          * The label name.
          */
@@ -91,9 +93,14 @@ public abstract class DataSwingEditField {
         private final JPanel theNode;
 
         /**
-         * The label.
+         * The edit node.
          */
-        private final JTextField theEditNode;
+        private final JPanel theEditNode;
+
+        /**
+         * The text field.
+         */
+        private final JTextField theTextField;
 
         /**
          * The label.
@@ -104,6 +111,16 @@ public abstract class DataSwingEditField {
          * The card layout.
          */
         private final CardLayout theLayout;
+
+        /**
+         * The button.
+         */
+        private final JButton theButton;
+
+        /**
+         * Do we show the button?
+         */
+        private boolean doShowButton;
 
         /**
          * The error text.
@@ -126,15 +143,28 @@ public abstract class DataSwingEditField {
             /* Create resources */
             theNode = new JPanel();
             theLabel = new JLabel();
-            theEditNode = new JTextField();
+            theEditNode = new JPanel();
+            theTextField = new JTextField();
+
+            /* Create the button */
+            theButton = new JButton();
+            theButton.setIcon(ArrowIcon.DOWN);
+            theButton.setMargin(new Insets(0, 0, 0, 0));
+            theButton.setFocusable(false);
+
+            /* declare the menu */
+            declareMenu(new ScrollSwingContextMenu<String>());
 
             /* Set alignment */
             int myAlignment = pConverter.rightAlignFields()
                                                             ? SwingConstants.RIGHT
                                                             : SwingConstants.LEFT;
             theLabel.setHorizontalAlignment(myAlignment);
-            theEditNode.setHorizontalAlignment(myAlignment);
-            theLabel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
+            theTextField.setHorizontalAlignment(myAlignment);
+
+            /* Build the edit node */
+            theEditNode.setLayout(new BorderLayout());
+            theEditNode.add(theTextField, BorderLayout.CENTER);
 
             /* Default to readOnly */
             theLayout = new CardLayout();
@@ -143,7 +173,7 @@ public abstract class DataSwingEditField {
             theNode.add(theEditNode, NAME_EDIT);
 
             /* Add listener to handle change of focus */
-            theEditNode.addFocusListener(new FocusListener() {
+            theTextField.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(final FocusEvent e) {
                     handleFocusGained();
@@ -159,7 +189,7 @@ public abstract class DataSwingEditField {
             });
 
             /* handle enter key */
-            theEditNode.addKeyListener(new KeyListener() {
+            theTextField.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(final KeyEvent e) {
                     /* NoOp */
@@ -172,7 +202,8 @@ public abstract class DataSwingEditField {
                             processValue();
                             break;
                         case KeyEvent.VK_ESCAPE:
-                            theEditNode.setText(getEditText());
+                            theTextField.setText(getEditText());
+                            clearError();
                             break;
                         default:
                             break;
@@ -184,45 +215,85 @@ public abstract class DataSwingEditField {
                     /* NoOp */
                 }
             });
+
+            /* Set action handler */
+            theButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent event) {
+                    handleMenuRequest();
+                }
+            });
+
+            /* Set context menu listener */
+            getMenu().getEventRegistrar().addFilteredActionListener(ScrollSwingContextMenu.ACTION_SELECTED, new JOceanusActionEventListener() {
+                @Override
+                public void processActionEvent(final JOceanusActionEvent e) {
+                    /* Handle the close of the menu */
+                    handleMenuClosed();
+                }
+            });
+        }
+
+        @Override
+        public ScrollSwingContextMenu<String> getMenu() {
+            return (ScrollSwingContextMenu<String>) super.getMenu();
+        }
+
+        @Override
+        protected void showMenu() {
+            getMenu().showMenuAtPosition(theButton, SwingConstants.RIGHT);
         }
 
         /**
          * Process value.
          */
         private void processValue() {
+            /* Convert zero-length string to null */
+            String myText = theTextField.getText();
+            if (myText.length() == 0) {
+                myText = null;
+            }
+
             /* If we failed to process the value */
-            String myText = theEditNode.getText();
-            if (!processValue(theEditNode.getText())) {
+            if (!processValue(myText)) {
                 /* Set error border */
-                theEditNode.setToolTipText(TOOLTIP_BAD_VALUE);
+                theTextField.setToolTipText(TOOLTIP_BAD_VALUE);
                 theErrorText = myText;
 
                 /* Cache the background colour */
                 if (theCacheColor == null) {
-                    theCacheColor = theEditNode.getBackground();
+                    theCacheColor = theTextField.getBackground();
                 }
-                theEditNode.setBackground(COLOR_ERROR);
+                theTextField.setBackground(COLOR_ERROR);
 
                 /* request focus again */
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        theEditNode.requestFocus();
+                        theTextField.requestFocus();
                     }
                 });
 
                 /* else value was OK */
             } else {
                 /* Clear error indications */
-                theEditNode.setToolTipText(null);
-                theErrorText = null;
-
-                /* Restore cached background color */
-                if (theCacheColor != null) {
-                    theEditNode.setBackground(theCacheColor);
-                }
-                theCacheColor = null;
+                clearError();
             }
+        }
+
+        /**
+         * Clear Error indication.
+         */
+        private void clearError() {
+            /* Clear error indications */
+            theTextField.setToolTipText(null);
+            theErrorText = null;
+
+            /* Restore cached background colour */
+            if (theCacheColor != null) {
+                theTextField.setBackground(theCacheColor);
+            }
+            theCacheColor = null;
         }
 
         @Override
@@ -251,20 +322,35 @@ public abstract class DataSwingEditField {
         }
 
         /**
+         * Show the button.
+         * @param pShow true/false
+         */
+        public void showButton(final boolean pShow) {
+            /* Remove any button that is displaying */
+            theEditNode.remove(theButton);
+            doShowButton = pShow;
+
+            /* If we have a button to display */
+            if (doShowButton) {
+                theEditNode.add(theButton, BorderLayout.LINE_END);
+            }
+        }
+
+        /**
          * Handle focusGained.
          */
         private void handleFocusGained() {
-            theEditNode.setText(theErrorText == null
-                                                     ? getEditText()
-                                                     : theErrorText);
-            theEditNode.selectAll();
+            theTextField.setText(theErrorText == null
+                                                      ? getEditText()
+                                                      : theErrorText);
+            theTextField.selectAll();
         }
 
         /**
          * Handle focusLost.
          */
         private void handleFocusLost() {
-            theEditNode.setText(getDisplayText());
+            theTextField.setText(getDisplayText());
         }
 
         @Override
@@ -274,9 +360,9 @@ public abstract class DataSwingEditField {
 
             /* Update nodes */
             theLabel.setText(getDisplayText());
-            theEditNode.setText(theEditNode.hasFocus()
-                                                       ? getEditText()
-                                                       : getDisplayText());
+            theTextField.setText(theEditNode.hasFocus()
+                                                        ? getEditText()
+                                                        : getDisplayText());
         }
 
         @Override
