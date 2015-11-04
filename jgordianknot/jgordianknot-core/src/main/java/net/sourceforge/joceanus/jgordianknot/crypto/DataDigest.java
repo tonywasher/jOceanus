@@ -27,7 +27,6 @@ import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -60,9 +59,8 @@ public class DataDigest {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
-            boolean useLongHash = pGenerator.useLongHash();
             String myProviderName = pGenerator.getProviderName();
-            theDigest = MessageDigest.getInstance(theDigestType.getAlgorithm(useLongHash), myProviderName);
+            theDigest = MessageDigest.getInstance(theDigestType.getAlgorithm(), myProviderName);
 
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
@@ -77,8 +75,8 @@ public class DataDigest {
      * @throws JOceanusException on error
      */
     protected DataDigest(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Create digest for random digest type */
-        this(pGenerator, DigestType.getRandomTypes(1, pGenerator.getRandom())[0]);
+        /* Build with random DigestType */
+        this(pGenerator, pGenerator.getIdManager().getRandomDigestType(pGenerator.getDigestPredicate()));
     }
 
     /**
@@ -104,12 +102,12 @@ public class DataDigest {
      * @throws JOceanusException on error
      */
     protected static DataDigest generateRandomDigest(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+        /* Determine random DigestType */
+        SecurityIdManager myManager = pGenerator.getIdManager();
+        DigestType myType = myManager.getRandomDigestType(pGenerator.getDigestPredicate());
 
         /* Generate a Digest for the Digest type */
-        return new DataDigest(pGenerator, myType[0]);
+        return new DataDigest(pGenerator, myType);
     }
 
     /**

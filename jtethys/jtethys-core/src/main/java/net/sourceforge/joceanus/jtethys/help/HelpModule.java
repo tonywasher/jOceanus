@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.swing;
+package net.sourceforge.joceanus.jtethys.help;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,17 +65,17 @@ public abstract class HelpModule {
     /**
      * The stream close error.
      */
-    protected static final String ERROR_STREAM = "Failed to close stream";
+    public static final String ERROR_STREAM = "Failed to close stream";
 
     /**
      * The list of Help pages.
      */
-    private List<HelpPage> theList = null;
+    private final List<HelpPage> thePages;
 
     /**
      * The Help Entries.
      */
-    private HelpEntry[] theEntries = null;
+    private List<HelpEntry> theEntries;
 
     /**
      * The title of the Help System.
@@ -85,7 +85,7 @@ public abstract class HelpModule {
     /**
      * The initial entry of the help system.
      */
-    private String theInitial = null;
+    private String theInitial;
 
     /**
      * Constructor.
@@ -95,8 +95,8 @@ public abstract class HelpModule {
      */
     public HelpModule(final Class<?> pClass,
                       final String pDefinitions) throws HelpException {
-        /* Allocate the list */
-        theList = new ArrayList<HelpPage>();
+        /* Allocate the page list */
+        thePages = new ArrayList<HelpPage>();
 
         /* Parse the help definitions */
         parseHelpDefinition(pClass, pDefinitions);
@@ -110,7 +110,7 @@ public abstract class HelpModule {
      * @return the list of pages
      */
     public List<HelpPage> getHelpPages() {
-        return theList;
+        return thePages;
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class HelpModule {
      * Obtain the help entries.
      * @return the help entries
      */
-    protected HelpEntry[] getHelpEntries() {
+    public List<HelpEntry> getHelpEntries() {
         return theEntries;
     }
 
@@ -144,7 +144,7 @@ public abstract class HelpModule {
      */
     public final HelpPage searchFor(final String pName) {
         /* Loop through the entries */
-        Iterator<HelpPage> myIterator = theList.iterator();
+        Iterator<HelpPage> myIterator = thePages.iterator();
         while (myIterator.hasNext()) {
             /* Access the entry */
             HelpPage myPage = myIterator.next();
@@ -188,10 +188,10 @@ public abstract class HelpModule {
             }
 
             /* Access the entries */
-            theEntries = HelpEntry.getHelpEntryArray(myElement);
+            theEntries = HelpEntry.getHelpEntryList(myElement);
 
             /* Default the initial entry */
-            theInitial = theEntries[0].getName();
+            theInitial = theEntries.get(0).getName();
 
             /* Set initial element */
             if (myElement.getAttribute(ATTR_INITIAL) != null) {
@@ -215,7 +215,7 @@ public abstract class HelpModule {
      * @throws HelpException on error
      */
     private void loadHelpPages(final Class<?> pClass,
-                               final HelpEntry[] pEntries) throws HelpException {
+                               final List<HelpEntry> pEntries) throws HelpException {
         /* Loop through the entities */
         for (HelpEntry myEntry : pEntries) {
             /* Check that the entry is not already in the list */
@@ -230,7 +230,7 @@ public abstract class HelpModule {
                     HelpPage myPage = new HelpPage(myEntry, myStream);
 
                     /* Add it to the list */
-                    theList.add(myPage);
+                    thePages.add(myPage);
 
                 } catch (IOException ex) {
                     LOGGER.error(ERROR_STREAM, ex);

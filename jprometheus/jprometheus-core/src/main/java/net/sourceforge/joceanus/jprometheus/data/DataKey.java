@@ -36,8 +36,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the ControlKey. For a single control key, one DataKey is allocated
- * for each available SymmetricKey Type and the set forms a CipherSet for encryption purposes.
+ * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the
+ * ControlKey. For a single control key, one DataKey is allocated for each available SymmetricKey
+ * Type and the set forms a CipherSet for encryption purposes.
  * @author Tony Washer
  */
 public class DataKey
@@ -126,20 +127,21 @@ public class DataKey
             DataSet<?, ?> myData = getDataSet();
             resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
             DataKeySet myKeySet = getDataKeySet();
+            SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
 
             /* Store the KeyType */
             myValue = pValues.getValue(FIELD_KEYTYPE);
             if (myValue instanceof Integer) {
                 myInt = (Integer) myValue;
                 setValueKeyType(myInt);
-                setValueKeyType(SymKeyType.fromId(myInt));
+                setValueKeyType(myGenerator.deriveSymKeyTypeFromExternalId(myInt));
             }
 
             /* Store the PrimeHash indicator */
             myValue = pValues.getValue(FIELD_HASHPRIME);
             Boolean isHashPrime = (myValue instanceof Boolean)
-                                                              ? (Boolean) myValue
-                                                              : Boolean.TRUE;
+                                                               ? (Boolean) myValue
+                                                               : Boolean.TRUE;
             setValueHashPrime(isHashPrime);
 
             /* Store the KeyDef */
@@ -253,8 +255,8 @@ public class DataKey
     public Integer getDataKeySetId() {
         DataKeySet myKey = getDataKeySet();
         return (myKey == null)
-                              ? null
-                              : myKey.getId();
+                               ? null
+                               : myKey.getId();
     }
 
     /**
@@ -271,9 +273,11 @@ public class DataKey
      */
     public Integer getKeyTypeId() {
         SymKeyType myType = getKeyType();
+        DataSet<?, ?> myData = getDataSet();
+        SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
         return (myType == null)
-                               ? null
-                               : myType.getId();
+                                ? null
+                                : myGenerator.getExternalId(myType);
     }
 
     /**

@@ -28,7 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.Signature;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,8 +48,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.AsymmetricR
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to limitations in the RSA implementation. The Asymmetric Keys
- * should only be used for Signatures and Wrapping keys.
+ * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to
+ * limitations in the RSA implementation. The Asymmetric Keys should only be used for Signatures and
+ * Wrapping keys.
  */
 public class AsymmetricKey {
     /**
@@ -77,6 +77,11 @@ public class AsymmetricKey {
      * Encrypted Size for Private Keys.
      */
     public static final int PRIVATESIZE = 1568;
+
+    /**
+     * The salt length.
+     */
+    private static final int SALTLEN = HashRecipe.INITVECTOR_LEN;
 
     /**
      * The Public/Private Key Pair.
@@ -156,20 +161,21 @@ public class AsymmetricKey {
         int myLen = thePublicKeyDef.length;
         theExternalPublic = new byte[myLen + 1];
         System.arraycopy(thePublicKeyDef, 0, theExternalPublic, 1, myLen);
-        theExternalPublic[0] = (byte) theKeyType.getId();
+        SecurityIdManager myManager = theGenerator.getIdManager();
+        theExternalPublic[0] = (byte) myManager.getExternalId(theKeyType);
 
         /* If the key is elliptic */
         if (theKeyType.isElliptic()) {
             /* Create cipher key and SaltBytes */
             theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
-            theSaltBytes = theGenerator.getRandomBytes(HashKey.INITVECTOR_LEN);
+            theSaltBytes = theGenerator.getRandomBytes(SALTLEN);
 
             /* Build external private */
             myLen = thePrivateKeyDef.length
-                    + HashKey.INITVECTOR_LEN;
+                    + SALTLEN;
             theExternalPrivate = new byte[myLen];
-            System.arraycopy(theSaltBytes, 0, theExternalPrivate, 0, HashKey.INITVECTOR_LEN);
-            System.arraycopy(thePrivateKeyDef, 0, theExternalPrivate, HashKey.INITVECTOR_LEN, thePrivateKeyDef.length);
+            System.arraycopy(theSaltBytes, 0, theExternalPrivate, 0, SALTLEN);
+            System.arraycopy(thePrivateKeyDef, 0, theExternalPrivate, SALTLEN, thePrivateKeyDef.length);
 
             /* else non-elliptic */
         } else {
@@ -202,7 +208,8 @@ public class AsymmetricKey {
         theCipherMap = null;
 
         /* Obtain KeyType and Public KeyDef from ExternalPublic */
-        theKeyType = AsymKeyType.fromId(pExternalPublic[0]);
+        SecurityIdManager myManager = theGenerator.getIdManager();
+        theKeyType = myManager.deriveAsymKeyTypeFromExternalId(pExternalPublic[0], AsymKeyType.allTypes());
         theExternalPublic = Arrays.copyOf(pExternalPublic, pExternalPublic.length);
         thePublicKeyDef = Arrays.copyOfRange(pExternalPublic, 1, pExternalPublic.length);
 
@@ -228,7 +235,8 @@ public class AsymmetricKey {
         theGenerator = pGenerator;
 
         /* Obtain KeyType and Public KeyDef from ExternalPublic */
-        theKeyType = AsymKeyType.fromId(pExternalPublic[0]);
+        SecurityIdManager myManager = theGenerator.getIdManager();
+        theKeyType = myManager.deriveAsymKeyTypeFromExternalId(pExternalPublic[0], AsymKeyType.allTypes());
         theExternalPublic = Arrays.copyOf(pExternalPublic, pExternalPublic.length);
         thePublicKeyDef = Arrays.copyOfRange(pExternalPublic, 1, pExternalPublic.length);
         theExternalPrivate = Arrays.copyOf(pExternalPrivate, pExternalPrivate.length);
@@ -236,8 +244,8 @@ public class AsymmetricKey {
         /* If the key is elliptic */
         if (theKeyType.isElliptic()) {
             /* Obtain private keyDef and saltBytes */
-            thePrivateKeyDef = Arrays.copyOfRange(pExternalPrivate, HashKey.INITVECTOR_LEN, pExternalPrivate.length);
-            theSaltBytes = Arrays.copyOf(pExternalPrivate, HashKey.INITVECTOR_LEN);
+            thePrivateKeyDef = Arrays.copyOfRange(pExternalPrivate, SALTLEN, pExternalPrivate.length);
+            theSaltBytes = Arrays.copyOf(pExternalPrivate, SALTLEN);
             theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
 
             /* else non-elliptic */
@@ -311,12 +319,12 @@ public class AsymmetricKey {
      * @throws JOceanusException on error
      */
     protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom);
+        /* Determine random AsymKeyType */
+        SecurityIdManager myManager = pGenerator.getIdManager();
+        AsymKeyType myType = myManager.getRandomASymKeyType(AsymKeyType.allTypes());
 
         /* Generate a AsymmetricKey for the AsymKey type */
-        return generateAsymmetricKey(pGenerator, myType[0]);
+        return generateAsymmetricKey(pGenerator, myType);
     }
 
     /**
@@ -326,12 +334,12 @@ public class AsymmetricKey {
      * @throws JOceanusException on error
      */
     protected static AsymmetricKey generateEllipticAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom, true);
+        /* Determine random AsymKeyType */
+        SecurityIdManager myManager = pGenerator.getIdManager();
+        AsymKeyType myType = myManager.getRandomASymKeyType(AsymKeyType.onlyElliptic());
 
         /* Generate a AsymmetricKey for the AsymKey type */
-        return generateAsymmetricKey(pGenerator, myType[0]);
+        return generateAsymmetricKey(pGenerator, myType);
     }
 
     /**
@@ -362,7 +370,7 @@ public class AsymmetricKey {
             hashCode += Arrays.hashCode(thePrivateKeyDef);
         }
         hashCode *= SecurityGenerator.HASH_PRIME;
-        hashCode += theKeyType.getId();
+        hashCode += theKeyType.hashCode();
         hashCode *= SecurityGenerator.HASH_PRIME;
         hashCode += Arrays.hashCode(thePublicKeyDef);
         return hashCode;
@@ -466,11 +474,13 @@ public class AsymmetricKey {
         try {
             /* Create a new cipher */
             return Cipher.getInstance(bWrap
-                                           ? theKeyType.getAlgorithm()
-                                           : theKeyType.getCipher(), theGenerator.getProviderName());
+                                            ? theKeyType.getAlgorithm()
+                                            : theKeyType.getCipher(), theGenerator.getProviderName());
 
             /* catch exceptions */
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException
+                | NoSuchProviderException
+                | NoSuchPaddingException e) {
             throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
     }
@@ -514,7 +524,8 @@ public class AsymmetricKey {
                 mySymKey = new SymmetricKey(theGenerator, pKeyType, myKey);
             }
 
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException
+                | InvalidKeyException e) {
             throw new JGordianCryptoException("Failed to unwrap key", e);
         }
 
@@ -549,7 +560,8 @@ public class AsymmetricKey {
                 return myCipher.wrap(pKey.getSecretKey());
             }
 
-        } catch (InvalidKeyException | IllegalBlockSizeException e) {
+        } catch (InvalidKeyException
+                | IllegalBlockSizeException e) {
             throw new JGordianCryptoException("Failed to wrap key", e);
         }
     }
@@ -588,7 +600,9 @@ public class AsymmetricKey {
             return theKeyAgreement.generateSecret();
 
             /* Handle exceptions */
-        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
+        } catch (InvalidKeyException
+                | NoSuchAlgorithmException
+                | NoSuchProviderException e) {
             throw new JGordianCryptoException("Failed to negotiate key agreement", e);
         }
     }
@@ -620,7 +634,9 @@ public class AsymmetricKey {
             return mySignature;
 
             /* Catch exceptions */
-        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
+        } catch (InvalidKeyException
+                | NoSuchAlgorithmException
+                | NoSuchProviderException e) {
             throw new JGordianCryptoException("Exception building signature", e);
         }
     }
@@ -711,7 +727,10 @@ public class AsymmetricKey {
 
             /* Return to caller */
             return myOutput;
-        } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (ShortBufferException
+                | IllegalBlockSizeException
+                | BadPaddingException
+                | InvalidKeyException e) {
             throw new JGordianCryptoException(e.getMessage(), e);
         }
     }
@@ -804,7 +823,10 @@ public class AsymmetricKey {
 
             /* Create the string */
             return myOutput;
-        } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (ShortBufferException
+                | IllegalBlockSizeException
+                | BadPaddingException
+                | InvalidKeyException e) {
             throw new JGordianCryptoException(e.getMessage(), e);
         }
     }

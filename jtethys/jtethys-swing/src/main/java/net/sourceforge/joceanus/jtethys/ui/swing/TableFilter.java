@@ -56,19 +56,19 @@ public class TableFilter<T extends Comparable<? super T>>
      */
     public interface TableFilterModel<T extends Comparable<? super T>>
             extends TableModel {
-                /**
-                 * Obtain the item at the model index.
-                 * @param pRowIndex the index
-                 * @return the item
-                 */
-                T getItemAtIndex(final int pRowIndex);
+        /**
+         * Obtain the item at the model index.
+         * @param pRowIndex the index
+         * @return the item
+         */
+        T getItemAtIndex(final int pRowIndex);
 
         /**
          * Do we include row in view.
          * @param pRow the row
          * @return true/false
          */
-                boolean includeRow(final T pRow);
+        boolean includeRow(final T pRow);
     }
 
     /**

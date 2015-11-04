@@ -22,11 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.security.SecureRandom;
-
-import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
-import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import java.util.function.Predicate;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -35,55 +31,72 @@ public enum SymKeyType {
     /**
      * AES.
      */
-    AES(1),
+    AES,
 
     /**
      * TwoFish.
      */
-    TWOFISH(2),
+    TWOFISH,
 
     /**
      * Serpent.
      */
-    SERPENT(3),
+    SERPENT,
 
     /**
      * CAMELLIA.
      */
-    CAMELLIA(4),
+    CAMELLIA,
 
     /**
      * RC6.
      */
-    RC6(5),
+    RC6,
 
     /**
      * CAST6.
      */
-    CAST6(6),
+    CAST6,
 
     /**
      * ThreeFish.
      */
-    THREEFISH(7);
+    THREEFISH,
 
     /**
-     * The external Id of the algorithm.
+     * SM4.
      */
-    private final int theId;
+    SM4,
+
+    /**
+     * Noekeon.
+     */
+    NOEKEON,
+
+    /**
+     * SEED.
+     */
+    SEED;
+
+    /**
+     * Predicate for long keys.
+     */
+    private static final Predicate<SymKeyType> PREDICATE_LONGKEY = p -> p.validForKeyLen(true);
+
+    /**
+     * Predicate for MAC long keys.
+     */
+    private static final Predicate<SymKeyType> PREDICATE_LONGMACKEY = p -> p.validForKeyLen(true) && p.isStdBlock();
+
+    /**
+     * Predicate for short keys.
+     */
+    private static final Predicate<SymKeyType> PREDICATE_SHORTKEY = p -> p.validForKeyLen(false);
 
     /**
      * The String name.
      */
     private String theName;
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    SymKeyType(final int id) {
-        theId = id;
-    }
 
     @Override
     public String toString() {
@@ -95,14 +108,6 @@ public enum SymKeyType {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Obtain the external Id.
-     * @return the external Id
-     */
-    public int getId() {
-        return theId;
     }
 
     /**
@@ -120,18 +125,6 @@ public enum SymKeyType {
             default:
                 return name();
         }
-    }
-
-    /**
-     * Adjust CipherMode.
-     * @param pMode the cipher mode
-     * @return the adjusted cipher mode
-     */
-    public CipherMode adjustCipherMode(final CipherMode pMode) {
-        /* If the mode needs a Standard block cipher and this is not one switch to OFB */
-        return (pMode.needsStdBlock() && !isStdBlock())
-                                                        ? CipherMode.OFB
-                                                        : pMode;
     }
 
     /**
@@ -175,79 +168,42 @@ public enum SymKeyType {
     }
 
     /**
-     * get value from id.
-     * @param id the id value
-     * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * Is this KeyType valid for required keyLength?
+     * @param pLongKeys true/false
+     * @return true/false
      */
-    public static SymKeyType fromId(final int id) throws JOceanusException {
-        for (SymKeyType myType : values()) {
-            if (myType.getId() == id) {
-                return myType;
-            }
+    private boolean validForKeyLen(final boolean pLongKeys) {
+        switch (this) {
+            case THREEFISH:
+                return pLongKeys;
+            case SM4:
+            case SEED:
+            case NOEKEON:
+                return !pLongKeys;
+            default:
+                return true;
         }
-        throw new JGordianDataException("Invalid SymKeyType: "
-                                        + id);
     }
 
     /**
-     * Get random unique set of symmetric key types.
-     * @param pNumTypes the number of types
-     * @param pRandom the random generator
-     * @return the random set
-     * @throws JOceanusException on error
+     * Obtain predicate for all symKeyTypes for KeyLength.
+     * @param pLongKeys true/false
+     * @return the predicate
      */
-    public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws JOceanusException {
-        /* Use all values */
-        return getRandomTypes(pNumTypes, pRandom, false);
+    public static Predicate<SymKeyType> allForKeyLen(final boolean pLongKeys) {
+        return pLongKeys
+                         ? PREDICATE_LONGKEY
+                         : PREDICATE_SHORTKEY;
     }
 
     /**
-     * Get random unique set of symmetric key types.
-     * @param pNumTypes the number of types
-     * @param pRandom the random generator
-     * @param pStdBlock use only standard block size
-     * @return the random set
-     * @throws JOceanusException on error
+     * Obtain predicate for all macSymKeyTypes for KeyLength.
+     * @param pLongKeys true/false
+     * @return the predicate
      */
-    public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom,
-                                              final boolean pStdBlock) throws JOceanusException {
-        /* Access the values */
-        SymKeyType[] myValues = values();
-        int iNumValues = myValues.length;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JGordianLogicException("Invalid number of symmetric keys: "
-                                             + pNumTypes);
-        }
-
-        /* Create the result set */
-        SymKeyType[] myTypes = new SymKeyType[pNumTypes];
-
-        /* Loop through the types */
-        int i = 0;
-        while (i < pNumTypes) {
-            /* Access the next random index */
-            int iIndex = pRandom.nextInt(iNumValues);
-
-            /* If we are using all keyTypes or else this is a standard block */
-            SymKeyType myType = myValues[iIndex];
-            if ((!pStdBlock)
-                || myType.isStdBlock()) {
-                /* Store the type */
-                myTypes[i++] = myValues[iIndex];
-            }
-
-            /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
-            iNumValues--;
-        }
-
-        /* Return the types */
-        return myTypes;
+    public static Predicate<SymKeyType> allMacForKeyLen(final boolean pLongKeys) {
+        return pLongKeys
+                         ? PREDICATE_LONGMACKEY
+                         : PREDICATE_SHORTKEY;
     }
 }

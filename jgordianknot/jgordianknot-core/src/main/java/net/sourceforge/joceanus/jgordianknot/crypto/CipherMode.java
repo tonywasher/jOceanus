@@ -35,9 +35,9 @@ public enum CipherMode {
     CBC(1),
 
     /**
-     * OFB Mode.
+     * SIC(CTR) Mode.
      */
-    OFB(2),
+    SIC(2),
 
     /**
      * CFB Mode.
@@ -45,19 +45,9 @@ public enum CipherMode {
     CFB(3),
 
     /**
-     * SIC(CTR) Mode.
+     * OFB Mode.
      */
-    SIC(4),
-
-    /**
-     * GCM Mode.
-     */
-    GCM(5),
-
-    /**
-     * EAX Mode.
-     */
-    EAX(6);
+    OFB(4);
 
     /**
      * The external Id of the cipherMode.
@@ -92,20 +82,6 @@ public enum CipherMode {
                        + "8";
             default:
                 return name();
-        }
-    }
-
-    /**
-     * Does this cipher mode need a StdBlock.
-     * @return true/false
-     */
-    public boolean needsStdBlock() {
-        switch (this) {
-            case GCM:
-            case EAX:
-                return true;
-            default:
-                return false;
         }
     }
 

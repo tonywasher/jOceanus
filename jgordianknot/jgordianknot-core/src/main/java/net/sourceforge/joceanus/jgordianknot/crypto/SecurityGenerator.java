@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -31,6 +32,11 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Generator class for various security primitives.
  */
 public class SecurityGenerator {
+    /**
+     * The Base personalisation.
+     */
+    protected static final String BASE_PERSONAL = "jG0rd1anKn0t";
+
     /**
      * The Hash prime.
      */
@@ -62,11 +68,6 @@ public class SecurityGenerator {
     private final boolean useRestricted;
 
     /**
-     * Do we use long hashes?
-     */
-    private final boolean useLongHash;
-
-    /**
      * The Number of cipher steps.
      */
     private final int theCipherSteps;
@@ -82,14 +83,19 @@ public class SecurityGenerator {
     private final int theNumActiveKeySets;
 
     /**
-     * The Security phrase.
+     * The Personalisation bytes.
      */
-    private final byte[] theSecurityPhrase;
+    private final byte[] thePersonalisation;
 
     /**
      * The Security provider name.
      */
     private final String theProviderName;
+
+    /**
+     * The Base Hash algorithm.
+     */
+    private final DigestType theHashAlgorithm;
 
     /**
      * The Secure Random builder.
@@ -102,9 +108,34 @@ public class SecurityGenerator {
     private final SecureRandom theRandom;
 
     /**
+     * Security Id Manager.
+     */
+    private final SecurityIdManager theIdManager;
+
+    /**
      * Security Register.
      */
     private final SecurityRegister theRegister;
+
+    /**
+     * The SymKey predicate.
+     */
+    private final Predicate<SymKeyType> theSymPredicate;
+
+    /**
+     * The MacSymKey predicate.
+     */
+    private final Predicate<SymKeyType> theMacSymPredicate;
+
+    /**
+     * The StreamKey predicate.
+     */
+    private final Predicate<StreamKeyType> theStreamPredicate;
+
+    /**
+     * The Digest predicate.
+     */
+    private final Predicate<DigestType> theDigestPredicate;
 
     /**
      * Default Constructor.
@@ -129,28 +160,38 @@ public class SecurityGenerator {
 
         /* Store parameters */
         useRestricted = pParameters.useRestricted();
-        useLongHash = pParameters.useLongHash();
+        theHashAlgorithm = pParameters.getBaseHashAlgorithm();
         theCipherSteps = pParameters.getNumCipherSteps();
         theIterations = pParameters.getNumHashIterations();
         theNumActiveKeySets = pParameters.getNumActiveKeySets();
 
-        /* Store security phrase */
+        /* Calculate personalisation bytes */
+        DataDigest myDigest = generateDigest(theHashAlgorithm);
         String myPhrase = pParameters.getSecurityPhrase();
-        theSecurityPhrase = (myPhrase == null)
-                                              ? null
-                                              : DataConverter.stringToByteArray(myPhrase);
+        myDigest.update(DataConverter.stringToByteArray(BASE_PERSONAL));
+        if (myPhrase != null) {
+            myDigest.update(DataConverter.stringToByteArray(myPhrase));
+        }
+        thePersonalisation = myDigest.finish();
 
         /* Create the random builder */
         theRandomBuilder = new SP800SecureRandomBuilder();
-        theRandomBuilder.setSecurityBytes(theSecurityPhrase);
+        theRandomBuilder.setSecurityBytes(thePersonalisation);
 
         /* Create a new secure random generator */
-        SecureRandom myRandom = theRandomBuilder.getRandom();
-        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
-        theRandom = generateHashSecureRandom(myType[0], false);
+        theRandom = generateHashSecureRandom(theHashAlgorithm, false);
 
         /* Create the register */
         theRegister = new SecurityRegister(this);
+
+        /* Create the id manager */
+        theIdManager = new SecurityIdManager(this);
+
+        /* Determine the Predicates */
+        theSymPredicate = SymKeyType.allForKeyLen(!useRestricted);
+        theMacSymPredicate = SymKeyType.allMacForKeyLen(!useRestricted);
+        theStreamPredicate = StreamKeyType.allForKeyLen(!useRestricted);
+        theDigestPredicate = DigestType.allSupported();
     }
 
     /**
@@ -178,6 +219,22 @@ public class SecurityGenerator {
     }
 
     /**
+     * Access the base hash algorithm.
+     * @return the hash algorithm
+     */
+    protected DigestType getBaseHashAlgorithm() {
+        return theHashAlgorithm;
+    }
+
+    /**
+     * Access the Security Id Manager.
+     * @return the idManager
+     */
+    protected SecurityIdManager getIdManager() {
+        return theIdManager;
+    }
+
+    /**
      * Access the Security Register.
      * @return the register
      */
@@ -194,11 +251,11 @@ public class SecurityGenerator {
     }
 
     /**
-     * Access the security phrase in bytes format.
-     * @return the security phrase
+     * Access the personalisation bytes.
+     * @return the personalisation bytes
      */
-    protected byte[] getSecurityBytes() {
-        return theSecurityPhrase;
+    protected byte[] getPersonalisation() {
+        return thePersonalisation;
     }
 
     /**
@@ -226,11 +283,35 @@ public class SecurityGenerator {
     }
 
     /**
-     * Do we use long hashes.
-     * @return true/false
+     * Obtain SymKeyPredicate.
+     * @return the predicate
      */
-    protected boolean useLongHash() {
-        return useLongHash;
+    public Predicate<SymKeyType> getSymKeyPredicate() {
+        return theSymPredicate;
+    }
+
+    /**
+     * Obtain MacSymKeyPredicate.
+     * @return the predicate
+     */
+    public Predicate<SymKeyType> getMacSymKeyPredicate() {
+        return theMacSymPredicate;
+    }
+
+    /**
+     * Obtain StreamKeyPredicate.
+     * @return the predicate
+     */
+    public Predicate<StreamKeyType> getStreamKeyPredicate() {
+        return theStreamPredicate;
+    }
+
+    /**
+     * Obtain DigestPredicate.
+     * @return the predicate
+     */
+    public Predicate<DigestType> getDigestPredicate() {
+        return theDigestPredicate;
     }
 
     /**
@@ -239,8 +320,8 @@ public class SecurityGenerator {
      */
     protected int getKeyLen() {
         return useRestricted
-                            ? SMALL_KEYLEN
-                            : BIG_KEYLEN;
+                             ? SMALL_KEYLEN
+                             : BIG_KEYLEN;
     }
 
     /**
@@ -329,8 +410,8 @@ public class SecurityGenerator {
      * @throws JOceanusException on error
      */
     public SymKeyType[] generateSymKeyTypes() throws JOceanusException {
-        /* Create the new Symmetric Key */
-        return SymKeyType.getRandomTypes(getNumCipherSteps(), theRandom);
+        /* Determine new SymKeyTypes */
+        return theIdManager.getRandomSymKeyTypes(getNumCipherSteps(), theSymPredicate);
     }
 
     /**
@@ -355,6 +436,24 @@ public class SecurityGenerator {
     }
 
     /**
+     * Obtain external SymKeyId.
+     * @param pKey the symKeyType
+     * @return the external id
+     */
+    public int getExternalId(final SymKeyType pKey) {
+        return theIdManager.getExternalId(pKey);
+    }
+
+    /**
+     * Obtain symKeyType from external SymKeyId.
+     * @param pId the external id
+     * @return the symKeyType
+     */
+    public SymKeyType deriveSymKeyTypeFromExternalId(final int pId) {
+        return theIdManager.deriveSymKeyTypeFromExternalId(pId, theSymPredicate);
+    }
+
+    /**
      * Generate a new Stream Key for the required KeyType.
      * @param pKeyType the Stream Key type
      * @return the newly created Stream Key
@@ -373,6 +472,24 @@ public class SecurityGenerator {
     public StreamKey generateStreamKey() throws JOceanusException {
         /* Create the new Stream Key */
         return StreamKey.generateStreamKey(this);
+    }
+
+    /**
+     * Obtain external StreamKeyId.
+     * @param pKey the streamKeyType
+     * @return the external id
+     */
+    public int getExternalId(final StreamKeyType pKey) {
+        return theIdManager.getExternalId(pKey);
+    }
+
+    /**
+     * Obtain streamKeyType from external StreamKeyId.
+     * @param pId the external id
+     * @return the streamKeyType
+     */
+    public StreamKeyType deriveStreamKeyTypeFromExternalId(final int pId) {
+        return theIdManager.deriveStreamKeyTypeFromExternalId(pId, theStreamPredicate);
     }
 
     /**
@@ -442,6 +559,24 @@ public class SecurityGenerator {
     }
 
     /**
+     * Obtain external DigestId.
+     * @param pDigest the digestType
+     * @return the external id
+     */
+    public int getExternalId(final DigestType pDigest) {
+        return theIdManager.getExternalId(pDigest);
+    }
+
+    /**
+     * Obtain digestType from external digestId.
+     * @param pId the external id
+     * @return the digestType
+     */
+    public DigestType deriveDigestTypeFromExternalId(final int pId) {
+        return theIdManager.deriveDigestTypeFromExternalId(pId, theDigestPredicate);
+    }
+
+    /**
      * Obtain an HMac for a password.
      * @param pDigestType the digest type required
      * @param pPassword the password in byte format
@@ -499,5 +634,23 @@ public class SecurityGenerator {
     public DataMac generateMac() throws JOceanusException {
         /* Create the mac */
         return DataMac.generateRandomMac(this);
+    }
+
+    /**
+     * Obtain external MacId.
+     * @param pMac the macType
+     * @return the external id
+     */
+    public int getExternalId(final MacType pMac) {
+        return theIdManager.getExternalId(pMac);
+    }
+
+    /**
+     * Obtain macType from external macId.
+     * @param pId the external id
+     * @return the macType
+     */
+    public MacType deriveMacTypeFromExternalId(final int pId) {
+        return theIdManager.deriveMacTypeFromExternalId(pId, MacType.allTypes());
     }
 }

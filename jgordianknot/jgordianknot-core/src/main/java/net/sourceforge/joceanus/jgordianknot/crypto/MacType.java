@@ -22,11 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.security.SecureRandom;
-
-import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
-import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import java.util.function.Predicate;
 
 /**
  * Mac types. Available algorithms.
@@ -35,45 +31,37 @@ public enum MacType {
     /**
      * HMAC.
      */
-    HMAC(1),
+    HMAC,
 
     /**
      * GMAC.
      */
-    GMAC(2),
+    GMAC,
 
     /**
      * Poly1305.
      */
-    POLY1305(3),
+    POLY1305,
 
     /**
      * Skein.
      */
-    SKEIN(4),
+    SKEIN,
 
     /**
      * VMPC.
      */
-    VMPC(5);
+    VMPC;
 
     /**
-     * The external Id of the algorithm.
+     * Predicate for all macTypes.
      */
-    private int theId = 0;
+    private static final Predicate<MacType> PREDICATE_ALL = p -> true;
 
     /**
      * The String name.
      */
     private String theName;
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    MacType(final int id) {
-        theId = id;
-    }
 
     @Override
     public String toString() {
@@ -85,30 +73,6 @@ public enum MacType {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Obtain the external Id.
-     * @return the external Id
-     */
-    public int getId() {
-        return theId;
-    }
-
-    /**
-     * get value from id.
-     * @param id the id value
-     * @return the corresponding enumeration object
-     * @throws JOceanusException on error
-     */
-    public static MacType fromId(final int id) throws JOceanusException {
-        for (MacType myType : values()) {
-            if (myType.getId() == id) {
-                return myType;
-            }
-        }
-        throw new JGordianDataException("Invalid MacType: "
-                                        + id);
     }
 
     /**
@@ -134,19 +98,15 @@ public enum MacType {
     }
 
     /**
-     * Obtain the Key generation algorithm.
-     * @param bLong use long hashes?
+     * Obtain the mac algorithm.
      * @return the algorithm
      */
-    public String getAlgorithm(final boolean bLong) {
+    public String getAlgorithm() {
         switch (this) {
             case VMPC:
                 return "VMPC-MAC";
             case SKEIN:
-                return "SKEIN-MAC-"
-                       + (bLong
-                                ? "512-512"
-                                : "256-256");
+                return "SKEIN-MAC-512-512";
             default:
                 return null;
         }
@@ -170,57 +130,24 @@ public enum MacType {
 
     /**
      * Obtain the Key generation algorithm.
-     * @param bLong use long hashes?
      * @return the algorithm
      */
-    public String getKeyAlgorithm(final boolean bLong) {
+    public String getKeyAlgorithm() {
         switch (this) {
             case VMPC:
                 return "VMPC-KSA3";
             case SKEIN:
-                return getAlgorithm(bLong);
+                return getAlgorithm();
             default:
                 return null;
         }
     }
 
     /**
-     * Get random unique set of Mac types.
-     * @param pNumTypes the number of types
-     * @param pRandom the random generator
-     * @return the random set
-     * @throws JOceanusException on error
+     * Obtain predicate for all digestTypes.
+     * @return the predicate
      */
-    public static MacType[] getRandomTypes(final int pNumTypes,
-                                           final SecureRandom pRandom) throws JOceanusException {
-        /* Access the values */
-        MacType[] myValues = values();
-        int iNumValues = myValues.length;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JGordianLogicException("Invalid number of Macs: "
-                                             + pNumTypes);
-        }
-
-        /* Create the result set */
-        MacType[] myTypes = new MacType[pNumTypes];
-
-        /* Loop through the types */
-        for (int i = 0; i < pNumTypes; i++) {
-            /* Access the next random index */
-            int iIndex = pRandom.nextInt(iNumValues);
-
-            /* Store the type */
-            myTypes[i] = myValues[iIndex];
-
-            /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
-            iNumValues--;
-        }
-
-        /* Return the types */
-        return myTypes;
+    public static Predicate<MacType> allTypes() {
+        return PREDICATE_ALL;
     }
 }

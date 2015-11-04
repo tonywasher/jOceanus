@@ -27,7 +27,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.Mac;
@@ -37,6 +36,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.MacRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -45,24 +45,34 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public class DataMac {
     /**
+     * Inner mask.
+     */
+    private static final byte MASK_INNER = 0x36;
+
+    /**
+     * Inner mask.
+     */
+    private static final byte MASK_OUTER = 0x5c;
+
+    /**
      * Creation failure error text.
      */
     private static final String ERROR_CREATE = "failed to create Mac";
 
     /**
-     * Initialisation failure error text.
+     * Creation failure error text.
      */
     private static final String ERROR_INIT = "failed to initialise Mac";
 
     /**
      * Creation failure error text.
      */
-    private static final String ERROR_CALC = "failed to calculate MAC";
+    private static final String ERROR_CALC = "failed to calculate Mac";
 
     /**
      * The Mac.
      */
-    private final Mac theMac;
+    private final MacInterface theMac;
 
     /**
      * The MacType.
@@ -117,26 +127,18 @@ public class DataMac {
         theKeyType = null;
 
         /* Determine the algorithm */
-        boolean useLongHash = pGenerator.useLongHash();
-        theAlgo = pDigestType.getMacAlgorithm(useLongHash);
+        theAlgo = pDigestType.getMacAlgorithm();
 
-        /* Protect against exceptions */
-        try {
-            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
-            if (theKey != null) {
-                theMac.init(theKey);
-            }
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
-            /* Throw the exception */
-            throw new JGordianCryptoException(ERROR_CREATE, e);
+        /* Create the HMac */
+        theMac = new HMac(pGenerator, pDigestType);
+        if (theKey != null) {
+            theMac.initKey(theKey);
         }
 
         /* Create encoded form */
         theEncoded = (theKey != null)
-                                     ? createEncoded()
-                                     : null;
+                                      ? createEncoded()
+                                      : null;
     }
 
     /**
@@ -168,12 +170,13 @@ public class DataMac {
 
         /* Protect against exceptions */
         try {
-            /* Return a Mac for the algorithm */
-            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
-            theMac.init(theKey, new IvParameterSpec(pVector));
+            /* Create the Mac for the algorithm */
+            Mac myMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
+            theMac = new StdMac(myMac, theKey, pVector);
 
             /* Catch exceptions */
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchProviderException
+                | NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new JGordianCryptoException(ERROR_CREATE, e);
         }
@@ -200,25 +203,21 @@ public class DataMac {
         theDigestType = null;
         theKeyType = null;
         theInitVector = (pVector == null)
-                                         ? null
-                                         : Arrays.copyOf(pVector, pVector.length);
+                                          ? null
+                                          : Arrays.copyOf(pVector, pVector.length);
 
         /* Determine the algorithm */
-        boolean useLongHash = pGenerator.useLongHash();
-        theAlgo = pMacType.getAlgorithm(useLongHash);
+        theAlgo = pMacType.getAlgorithm();
 
         /* Protect against exceptions */
         try {
-            /* Return a Mac for the algorithm */
-            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
-            if (pVector != null) {
-                theMac.init(theKey, new IvParameterSpec(pVector));
-            } else {
-                theMac.init(theKey);
-            }
+            /* Create the Mac for the algorithm */
+            Mac myMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
+            theMac = new StdMac(myMac, theKey, pVector);
 
             /* Catch exceptions */
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchProviderException
+                | NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new JGordianCryptoException(ERROR_CREATE, e);
         }
@@ -265,8 +264,8 @@ public class DataMac {
      */
     public byte[] getInitVector() {
         return (theInitVector == null)
-                                      ? null
-                                      : Arrays.copyOf(theInitVector, theInitVector.length);
+                                       ? null
+                                       : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -292,12 +291,12 @@ public class DataMac {
      * @throws JOceanusException on error
      */
     protected static DataMac generateRandomMac(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        MacType[] myType = MacType.getRandomTypes(1, myRandom);
+        /* Determine random MacType */
+        SecurityIdManager myIdManager = pGenerator.getIdManager();
+        MacType myType = myIdManager.getRandomMacType(MacType.allTypes());
 
         /* Generate a random Mac for the Mac type */
-        return generateRandomMac(pGenerator, myType[0]);
+        return generateRandomMac(pGenerator, myType);
     }
 
     /**
@@ -328,12 +327,12 @@ public class DataMac {
      * @throws JOceanusException on error
      */
     protected static DataMac generateRandomDigestMac(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+        /* Determine random DigestType */
+        SecurityIdManager myIdManager = pGenerator.getIdManager();
+        DigestType myType = myIdManager.getRandomDigestType(pGenerator.getDigestPredicate());
 
-        /* Generate a random Mac for the Mac type */
-        return generateRandomDigestMac(pGenerator, myType[0]);
+        /* Generate a random Mac for the Digest type */
+        return generateRandomDigestMac(pGenerator, myType);
     }
 
     /**
@@ -363,12 +362,12 @@ public class DataMac {
      */
     protected static DataMac generateRandomSymKeyMac(final SecurityGenerator pGenerator,
                                                      final MacType pMacType) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom, true);
+        /* Determine random MacSymKeyType */
+        SecurityIdManager myIdManager = pGenerator.getIdManager();
+        SymKeyType myType = myIdManager.getRandomSymKeyType(pGenerator.getMacSymKeyPredicate());
 
         /* Generate a random Mac for the Mac type */
-        return generateRandomSymKeyMac(pGenerator, pMacType, myType[0]);
+        return generateRandomSymKeyMac(pGenerator, pMacType, myType);
     }
 
     /**
@@ -388,8 +387,8 @@ public class DataMac {
         /* Generate an initialisation vector */
         int myIVLen = pMacType.getIVLen();
         byte[] myInitVector = (myIVLen != 0)
-                                            ? pGenerator.getRandomBytes(myIVLen)
-                                            : null;
+                                             ? pGenerator.getRandomBytes(myIVLen)
+                                             : null;
 
         /* Generate the Mac */
         return new DataMac(pGenerator, pMacType, myKey, myInitVector);
@@ -468,21 +467,8 @@ public class DataMac {
      * @throws JOceanusException on error
      */
     public void setSecretKey(final byte[] pKeyBytes) throws JOceanusException {
-        /* Only allowed for HMac */
-        if (theMacType != MacType.HMAC) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* Protect against exceptions */
-        try {
-            SecretKey myKey = new SecretKeySpec(pKeyBytes, theAlgo);
-            theMac.init(myKey);
-
-            /* Catch exceptions */
-        } catch (InvalidKeyException e) {
-            /* Throw the exception */
-            throw new JGordianCryptoException(ERROR_INIT, e);
-        }
+        SecretKey myKey = new SecretKeySpec(pKeyBytes, theAlgo);
+        theMac.initKey(myKey);
     }
 
     /**
@@ -520,7 +506,6 @@ public class DataMac {
     public void update(final byte[] pBytes,
                        final int pOffset,
                        final int pLength) {
-        /* Update the mac */
         theMac.update(pBytes, pOffset, pLength);
     }
 
@@ -529,8 +514,9 @@ public class DataMac {
      * @param pBytes the bytes to update with.
      */
     public void update(final byte[] pBytes) {
-        /* Update the mac */
-        theMac.update(pBytes);
+        if (pBytes != null) {
+            theMac.update(pBytes);
+        }
     }
 
     /**
@@ -538,7 +524,6 @@ public class DataMac {
      * @param pByte the byte to update with.
      */
     public void update(final byte pByte) {
-        /* Update the mac */
         theMac.update(pByte);
     }
 
@@ -547,7 +532,6 @@ public class DataMac {
      * @param pBuffer the buffer to update with.
      */
     public void update(final ByteBuffer pBuffer) {
-        /* Update the mac */
         theMac.update(pBuffer);
     }
 
@@ -555,7 +539,6 @@ public class DataMac {
      * Reset the mac.
      */
     public void reset() {
-        /* Reset the mac */
         theMac.reset();
     }
 
@@ -564,8 +547,7 @@ public class DataMac {
      * @return the code
      */
     public byte[] finish() {
-        /* Calculate the mac */
-        return theMac.doFinal();
+        return theMac.finish();
     }
 
     /**
@@ -574,8 +556,7 @@ public class DataMac {
      * @return the code
      */
     public byte[] finish(final byte[] pBytes) {
-        /* Calculate the mac */
-        return theMac.doFinal(pBytes);
+        return theMac.finish(pBytes);
     }
 
     /**
@@ -586,12 +567,330 @@ public class DataMac {
      */
     public void finish(final byte[] pBuffer,
                        final int pOffset) throws JOceanusException {
-        /* Calculate the mac */
-        try {
-            theMac.doFinal(pBuffer, pOffset);
-        } catch (ShortBufferException | IllegalStateException e) {
-            /* Throw the exception */
-            throw new JGordianCryptoException(ERROR_CALC, e);
+        theMac.finish(pBuffer, pOffset);
+    }
+
+    /**
+     * HMac implementation class.
+     */
+    private interface MacInterface {
+        /**
+         * Obtain the mac length.
+         * @return the mac length
+         */
+        int getMacLength();
+
+        /**
+         * Update the mac with a byte array.
+         * @param pBytes the bytes to update with.
+         */
+        void update(final byte[] pBytes);
+
+        /**
+         * Update the mac with a portion of a byte array.
+         * @param pBytes the bytes to update with.
+         * @param pOffset the offset of the data within the byte array
+         * @param pLength the length of the data to use
+         */
+        void update(final byte[] pBytes,
+                    final int pOffset,
+                    final int pLength);
+
+        /**
+         * Update the mac with a single byte.
+         * @param pByte the byte to update with.
+         */
+        void update(final byte pByte);
+
+        /**
+         * Update the mac with a byteBuffer.
+         * @param pBuffer the buffer to update with.
+         */
+        void update(final ByteBuffer pBuffer);
+
+        /**
+         * Initialise the secretKey.
+         * @param pKey the Key
+         */
+        void initKey(final SecretKey pKey);
+
+        /**
+         * Reset the mac.
+         */
+        void reset();
+
+        /**
+         * Calculate the mac and reset it.
+         * @return the code
+         */
+        byte[] finish();
+
+        /**
+         * Update the MAC, calculate and reset it.
+         * @param pBytes the bytes to update with.
+         * @return the code
+         */
+        byte[] finish(final byte[] pBytes);
+
+        /**
+         * Calculate the MAC, and return it in the buffer provided.
+         * @param pBuffer the buffer to return the mac in.
+         * @param pOffset the offset in the buffer to store the MAC.
+         * @throws JOceanusException if buffer too short
+         */
+        void finish(final byte[] pBuffer,
+                    final int pOffset) throws JOceanusException;
+    }
+
+    /**
+     * Standard Mac implementation class.
+     */
+    private static final class StdMac
+            implements MacInterface {
+        /**
+         * The Mac.
+         */
+        private final Mac theMac;
+
+        /**
+         * Constructor for a standard mac.
+         * @param pMac the mac
+         * @param pKey the secret key
+         * @param pVector the initialisation vector
+         * @throws JOceanusException on error
+         */
+        private StdMac(final Mac pMac,
+                       final SecretKey pKey,
+                       final byte[] pVector) throws JOceanusException {
+            /* Store the mac */
+            theMac = pMac;
+
+            try {
+                /* Initialise appropriately */
+                if (pVector != null) {
+                    theMac.init(pKey, new IvParameterSpec(pVector));
+                } else {
+                    theMac.init(pKey);
+                }
+            } catch (InvalidKeyException
+                    | InvalidAlgorithmParameterException e) {
+                /* Throw the exception */
+                throw new JGordianCryptoException(ERROR_INIT, e);
+            }
+        }
+
+        @Override
+        public int getMacLength() {
+            return theMac.getMacLength();
+        }
+
+        @Override
+        public void update(final byte[] pBytes) {
+            theMac.update(pBytes);
+        }
+
+        @Override
+        public void update(final byte[] pBytes,
+                           final int pOffset,
+                           final int pLength) {
+            theMac.update(pBytes, pOffset, pLength);
+        }
+
+        @Override
+        public void update(final byte pByte) {
+            theMac.update(pByte);
+        }
+
+        @Override
+        public void update(final ByteBuffer pBuffer) {
+            theMac.update(pBuffer);
+        }
+
+        @Override
+        public void reset() {
+            theMac.reset();
+        }
+
+        @Override
+        public void initKey(final SecretKey pKey) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public byte[] finish() {
+            return theMac.doFinal();
+        }
+
+        @Override
+        public byte[] finish(final byte[] pBytes) {
+            return theMac.doFinal(pBytes);
+        }
+
+        @Override
+        public void finish(final byte[] pBuffer,
+                           final int pOffset) throws JOceanusException {
+            /* Calculate the mac */
+            try {
+                theMac.doFinal(pBuffer, pOffset);
+            } catch (ShortBufferException
+                    | IllegalStateException e) {
+                /* Throw the exception */
+                throw new JGordianCryptoException(ERROR_CALC, e);
+            }
+        }
+    }
+
+    /**
+     * HMac implementation class.
+     */
+    private static final class HMac
+            implements MacInterface {
+        /**
+         * The IKeySpec.
+         */
+        private final byte[] theIKeySpec;
+
+        /**
+         * The OKeySpec.
+         */
+        private final byte[] theOKeySpec;
+
+        /**
+         * The Prime Digest.
+         */
+        private final DataDigest thePrimeDigest;
+
+        /**
+         * The Message Digest.
+         */
+        private final DataDigest theMsgDigest;
+
+        /**
+         * Constructor for an hMac.
+         * @param pGenerator the security generator
+         * @param pDigestType DigestType
+         * @throws JOceanusException on error
+         */
+        private HMac(final SecurityGenerator pGenerator,
+                     final DigestType pDigestType) throws JOceanusException {
+            /* Store digests */
+            thePrimeDigest = pGenerator.generateDigest(pDigestType);
+            theMsgDigest = pGenerator.generateDigest(pDigestType);
+
+            /* Allocate key buffers */
+            int myLen = thePrimeDigest.getDigestLength();
+            theIKeySpec = new byte[myLen];
+            theOKeySpec = new byte[myLen];
+        }
+
+        @Override
+        public int getMacLength() {
+            return thePrimeDigest.getDigestLength();
+        }
+
+        @Override
+        public void update(final byte[] pBytes) {
+            theMsgDigest.update(pBytes);
+        }
+
+        @Override
+        public void update(final byte[] pBytes,
+                           final int pOffset,
+                           final int pLength) {
+            theMsgDigest.update(pBytes, pOffset, pLength);
+        }
+
+        @Override
+        public void update(final byte pByte) {
+            theMsgDigest.update(pByte);
+        }
+
+        @Override
+        public void update(final ByteBuffer pBuffer) {
+            theMsgDigest.update(pBuffer);
+        }
+
+        @Override
+        public void reset() {
+            /* Reset the digests */
+            theMsgDigest.reset();
+            thePrimeDigest.reset();
+
+            /* Reinitialise the digests */
+            thePrimeDigest.update(theOKeySpec);
+            theMsgDigest.update(theIKeySpec);
+        }
+
+        @Override
+        public void initKey(final SecretKey pKey) {
+            /* Access keySpec */
+            byte[] myKey = pKey.getEncoded();
+
+            /* If the keySpec is too long */
+            int myLen = thePrimeDigest.getDigestLength();
+            if (myKey.length > myLen) {
+                /* Reset the digest and obtain the key as the digest */
+                thePrimeDigest.reset();
+                myKey = thePrimeDigest.finish(myKey);
+            }
+
+            /* Build the keySpecs */
+            int i = 0;
+            int myKeyLen = myKey.length;
+            while (i < myKeyLen) {
+                byte myVal = myKey[i];
+                theIKeySpec[i] = (byte) (myVal ^ MASK_INNER);
+                theOKeySpec[i++] = (byte) (myVal ^ MASK_OUTER);
+            }
+
+            /* Fill remainder with relevant masks */
+            while (i < myLen) {
+                theIKeySpec[i] = MASK_INNER;
+                theOKeySpec[i++] = MASK_OUTER;
+            }
+
+            /* Reset the Digests */
+            reset();
+        }
+
+        @Override
+        public byte[] finish() {
+            /* Calculate the result */
+            byte[] myMsg = theMsgDigest.finish();
+            thePrimeDigest.update(myMsg);
+            byte[] myResult = thePrimeDigest.finish();
+
+            /* Reset and return the result */
+            reset();
+            return myResult;
+        }
+
+        @Override
+        public byte[] finish(final byte[] pBytes) {
+            /* Update the bytes and return the results */
+            theMsgDigest.update(pBytes);
+            return finish();
+        }
+
+        @Override
+        public void finish(final byte[] pBuffer,
+                           final int pOffset) throws JOceanusException {
+            /* Calculate the results */
+            byte[] myResult = finish();
+            int myLen = thePrimeDigest.getDigestLength();
+
+            /* Check for short buffer */
+            if ((pBuffer == null)
+                || (pOffset < 0)
+                || (pBuffer.length < pOffset + myLen)) {
+                /* Throw the exception */
+                throw new JGordianDataException(ERROR_CALC);
+            }
+
+            /* Set the result */
+            for (int i = 0, j = pOffset; i < myLen;) {
+                pBuffer[j++] = myResult[i++];
+            }
         }
     }
 }

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.swing;
+package net.sourceforge.joceanus.jtethys.help;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +28,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Help Page class. This class maps between the name of a help page and the HTML that the name represents.
+ * Help Page class. This class maps between the name of a help page and the HTML that the name
+ * represents.
  */
 public class HelpPage
         implements Comparable<HelpPage> {
@@ -65,18 +66,12 @@ public class HelpPage
      */
     public HelpPage(final HelpEntry pEntry,
                     final InputStream pStream) throws HelpException {
-        /* Local variables */
-        BufferedReader myReader;
-        InputStreamReader myInputReader;
-
         /* Allocate a string builder */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Protect against exceptions */
-        try {
-            /* Allocate a buffered reader on top of the input stream */
-            myInputReader = new InputStreamReader(pStream, ENCODING);
-            myReader = new BufferedReader(myInputReader);
+        try (InputStreamReader myInputReader = new InputStreamReader(pStream, ENCODING);
+             BufferedReader myReader = new BufferedReader(myInputReader)) {
 
             /* Read the header entry */
             for (;;) {
@@ -151,12 +146,12 @@ public class HelpPage
 
         /* Check for equality */
         boolean isEqual = (theName == null)
-                                           ? myPage.getName() != null
-                                           : theName.equals(myPage.getName());
+                                            ? myPage.getName() != null
+                                            : theName.equals(myPage.getName());
         if (isEqual) {
             isEqual = (theHtml == null)
-                                       ? myPage.getHtml() != null
-                                       : theHtml.equals(myPage.getHtml());
+                                        ? myPage.getHtml() != null
+                                        : theHtml.equals(myPage.getHtml());
         }
         return isEqual;
     }

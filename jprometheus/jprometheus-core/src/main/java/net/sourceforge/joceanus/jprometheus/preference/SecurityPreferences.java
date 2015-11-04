@@ -45,11 +45,6 @@ public class SecurityPreferences
     public static final String NAME_RESTRICTED = "RestrictedKeys";
 
     /**
-     * Registry name for Long Hash.
-     */
-    public static final String NAME_LONGHASH = "LongHash";
-
-    /**
      * Registry name for Cipher Steps.
      */
     public static final String NAME_CIPHER_STEPS = "CipherSteps";
@@ -78,11 +73,6 @@ public class SecurityPreferences
      * Display name for Restricted Security.
      */
     private static final String DISPLAY_RESTRICTED = "Restricted Keys";
-
-    /**
-     * Display name for LongHash.
-     */
-    private static final String DISPLAY_LONGHASH = "Use Long Hash";
 
     /**
      * Display name for Cipher Steps.
@@ -115,11 +105,6 @@ public class SecurityPreferences
     private static final Boolean DEFAULT_RESTRICTED = SecurityParameters.DEFAULT_RESTRICTED;
 
     /**
-     * Default Long Hash.
-     */
-    private static final Boolean DEFAULT_LONGHASH = SecurityParameters.DEFAULT_LONGHASH;
-
-    /**
      * Default Cipher Steps.
      */
     private static final Integer DEFAULT_CIPHER_STEPS = SecurityParameters.DEFAULT_CIPHER_STEPS;
@@ -132,7 +117,7 @@ public class SecurityPreferences
     /**
      * Default Security Phrase.
      */
-    private static final String DEFAULT_SECURITY_PHRASE = SecurityParameters.DEFAULT_SECURITY_PHRASE;
+    private static final String DEFAULT_SECURITY_PHRASE = "Mon3yW1se";
 
     /**
      * Default Number of Active KeySets.
@@ -161,7 +146,6 @@ public class SecurityPreferences
         /* Define the properties */
         definePreference(NAME_PROVIDER, DEFAULT_PROVIDER, SecurityProvider.class);
         defineBooleanPreference(NAME_RESTRICTED, DEFAULT_RESTRICTED);
-        defineBooleanPreference(NAME_LONGHASH, DEFAULT_LONGHASH);
         defineIntegerPreference(NAME_CIPHER_STEPS, DEFAULT_CIPHER_STEPS);
         defineIntegerPreference(NAME_HASH_ITERATIONS, DEFAULT_HASH_ITERATIONS);
         defineStringPreference(NAME_SECURITY_PHRASE, DEFAULT_SECURITY_PHRASE);
@@ -176,9 +160,6 @@ public class SecurityPreferences
         }
         if (pName.equals(NAME_RESTRICTED)) {
             return DISPLAY_RESTRICTED;
-        }
-        if (pName.equals(NAME_LONGHASH)) {
-            return DISPLAY_LONGHASH;
         }
         if (pName.equals(NAME_CIPHER_STEPS)) {
             return DISPLAY_CIPHER_STEPS;
@@ -204,7 +185,6 @@ public class SecurityPreferences
         SecurityParameters myParms = new SecurityParameters(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED));
 
         /* Set other parameters */
-        myParms.setUseLongHash(getBooleanValue(NAME_LONGHASH));
         myParms.setNumCipherSteps(getIntegerValue(NAME_CIPHER_STEPS));
         myParms.setNumIterations(getIntegerValue(NAME_HASH_ITERATIONS));
         myParms.setSecurityPhrase(getStringValue(NAME_SECURITY_PHRASE));

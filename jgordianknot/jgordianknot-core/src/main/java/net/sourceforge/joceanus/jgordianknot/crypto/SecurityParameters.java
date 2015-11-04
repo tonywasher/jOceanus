@@ -37,9 +37,9 @@ public class SecurityParameters {
     public static final Boolean DEFAULT_RESTRICTED = Boolean.FALSE;
 
     /**
-     * Default Long Hash.
+     * Default Hash Algorithm.
      */
-    public static final Boolean DEFAULT_LONGHASH = Boolean.TRUE;
+    public static final DigestType DEFAULT_HASHALGO = DigestType.KECCAK;
 
     /**
      * Default Cipher Steps.
@@ -54,7 +54,7 @@ public class SecurityParameters {
     /**
      * Default Security Phrase.
      */
-    public static final String DEFAULT_SECURITY_PHRASE = "JG0rdianKn0t";
+    protected static final String DEFAULT_SECURITY_PHRASE = "JG0rdianKn0t";
 
     /**
      * Default Active KeySets.
@@ -72,9 +72,9 @@ public class SecurityParameters {
     private final Boolean useRestricted;
 
     /**
-     * Do we use long hashes?
+     * The Base Hash algorithm.
      */
-    private Boolean useLongHash;
+    private DigestType theHashAlgorithm;
 
     /**
      * The Number of cipher steps.
@@ -123,7 +123,7 @@ public class SecurityParameters {
         /* Store parameters */
         theProvider = pProvider;
         useRestricted = pRestricted;
-        useLongHash = DEFAULT_LONGHASH;
+        theHashAlgorithm = DEFAULT_HASHALGO;
         theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
         theActiveKeySets = DEFAULT_ACTIVE_KEYSETS;
@@ -147,11 +147,11 @@ public class SecurityParameters {
     }
 
     /**
-     * Do we use long hashes.
-     * @return true/false
+     * Access the base hash algorithm.
+     * @return the hash algorithm
      */
-    public Boolean useLongHash() {
-        return useLongHash;
+    public DigestType getBaseHashAlgorithm() {
+        return theHashAlgorithm;
     }
 
     /**
@@ -187,21 +187,21 @@ public class SecurityParameters {
     }
 
     /**
-     * Set useLongHash flag.
-     * @param pLongHash use long hash (true/false)
-     */
-    public void setUseLongHash(final boolean pLongHash) {
-        /* Store parameters */
-        useLongHash = pLongHash;
-    }
-
-    /**
      * Set number of cipher steps.
      * @param pNumCipherSteps number of cipher steps
      */
     public void setNumCipherSteps(final int pNumCipherSteps) {
         /* Store parameters */
         theCipherSteps = pNumCipherSteps;
+    }
+
+    /**
+     * Set base hash algorithm.
+     * @param pHashAlgo the algorithm
+     */
+    public void setBaseHashAlgorithm(final DigestType pHashAlgo) {
+        /* Store parameters */
+        theHashAlgorithm = pHashAlgo;
     }
 
     /**

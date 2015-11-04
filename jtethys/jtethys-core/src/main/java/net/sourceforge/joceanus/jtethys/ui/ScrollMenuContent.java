@@ -63,42 +63,42 @@ public abstract class ScrollMenuContent {
      * @param <I> the Icon type
      */
     public interface ScrollMenu<T, I> {
-                /**
-                 * Obtain the selected value.
-                 * @return the selected value
-                 */
-                ScrollMenuItem<T> getSelectedItem();
+        /**
+         * Obtain the selected value.
+         * @return the selected value
+         */
+        ScrollMenuItem<T> getSelectedItem();
 
         /**
          * is the menu empty?
          * @return true/false
          */
-                boolean isEmpty();
+        boolean isEmpty();
 
         /**
          * Set the number of items in the scrolling portion of the menu.
          * @param pMaxDisplayItems the maximum number of items to display
          * @throws IllegalArgumentException if pMaxDisplayItems is 0 or negative
          */
-                void setMaxDisplayItems(final int pMaxDisplayItems);
+        void setMaxDisplayItems(final int pMaxDisplayItems);
 
         /**
          * Set whether menu should auto-close on selection of a toggle item.
          * @param pCloseOnToggle true/false
          */
-                void setCloseOnToggle(final boolean pCloseOnToggle);
+        void setCloseOnToggle(final boolean pCloseOnToggle);
 
         /**
          * Remove all contents.
          */
-                void removeAllItems();
+        void removeAllItems();
 
         /**
          * Add Element.
          * @param pValue the value
          * @return the item added
          */
-                ScrollMenuItem<T> addItem(final T pValue);
+        ScrollMenuItem<T> addItem(final T pValue);
 
         /**
          * Add Element.
@@ -106,8 +106,8 @@ public abstract class ScrollMenuContent {
          * @param pName the display name
          * @return the item added
          */
-                ScrollMenuItem<T> addItem(final T pValue,
-                                          final String pName);
+        ScrollMenuItem<T> addItem(final T pValue,
+                                  final String pName);
 
         /**
          * Add Element.
@@ -115,15 +115,15 @@ public abstract class ScrollMenuContent {
          * @param pGraphic the icon for the item
          * @return the item added
          */
-                ScrollMenuItem<T> addItem(final T pValue,
-                                          final I pGraphic);
+        ScrollMenuItem<T> addItem(final T pValue,
+                                  final I pGraphic);
 
         /**
          * Add Null Element.
          * @param pName the display name
          * @return the item added
          */
-                ScrollMenuItem<T> addNullItem(final String pName);
+        ScrollMenuItem<T> addNullItem(final String pName);
 
         /**
          * Add Null Element.
@@ -131,8 +131,8 @@ public abstract class ScrollMenuContent {
          * @param pGraphic the icon for the item
          * @return the item added
          */
-                ScrollMenuItem<T> addNullItem(final String pName,
-                                              final I pGraphic);
+        ScrollMenuItem<T> addNullItem(final String pName,
+                                      final I pGraphic);
 
         /**
          * Add Element.
@@ -141,16 +141,16 @@ public abstract class ScrollMenuContent {
          * @param pGraphic the icon for the item
          * @return the item added
          */
-                ScrollMenuItem<T> addItem(final T pValue,
-                                          final String pName,
-                                          final I pGraphic);
+        ScrollMenuItem<T> addItem(final T pValue,
+                                  final String pName,
+                                  final I pGraphic);
 
         /**
          * Add subMenu.
          * @param pName the display name
          * @return the menu added
          */
-                ScrollSubMenu<T, I> addSubMenu(final String pName);
+        ScrollSubMenu<T, I> addSubMenu(final String pName);
 
         /**
          * Add subMenu.
@@ -158,15 +158,15 @@ public abstract class ScrollMenuContent {
          * @param pGraphic the icon for the menu
          * @return the menu added
          */
-                ScrollSubMenu<T, I> addSubMenu(final String pName,
-                                               final I pGraphic);
+        ScrollSubMenu<T, I> addSubMenu(final String pName,
+                                       final I pGraphic);
 
         /**
          * Add New toggle item.
          * @param pItem the available item
          * @return the added item
          */
-                ScrollMenuToggleItem<T> addToggleItem(final T pItem);
+        ScrollMenuToggleItem<T> addToggleItem(final T pItem);
 
         /**
          * Add New toggle item.
@@ -174,8 +174,8 @@ public abstract class ScrollMenuContent {
          * @param pName the display name
          * @return the added item
          */
-                ScrollMenuToggleItem<T> addToggleItem(final T pItem,
-                                                      final String pName);
+        ScrollMenuToggleItem<T> addToggleItem(final T pItem,
+                                              final String pName);
 
     }
 
@@ -184,22 +184,22 @@ public abstract class ScrollMenuContent {
      * @param <T> the value type
      */
     public interface ScrollMenuItem<T> {
-                /**
-                 * Obtain the value.
-                 * @return the value
-                 */
-                T getValue();
+        /**
+         * Obtain the value.
+         * @return the value
+         */
+        T getValue();
 
         /**
          * Obtain the text.
          * @return the text
          */
-                String getText();
+        String getText();
 
         /**
          * Ensure that this item is visible immediately the context is displayed.
          */
-                void scrollToItem();
+        void scrollToItem();
     }
 
     /**
@@ -208,22 +208,22 @@ public abstract class ScrollMenuContent {
      */
     public interface ScrollMenuToggleItem<T>
             extends ScrollMenuItem<T> {
-                /**
-                 * is the item selected?
-                 * @return true/false
-                 */
-                boolean isSelected();
+        /**
+         * is the item selected?
+         * @return true/false
+         */
+        boolean isSelected();
 
         /**
          * Set selection status.
          * @param pSelected true/false
          */
-                void setSelected(final boolean pSelected);
+        void setSelected(final boolean pSelected);
 
         /**
          * Toggle selected status.
          */
-                void toggleSelected();
+        void toggleSelected();
     }
 
     /**
@@ -232,10 +232,10 @@ public abstract class ScrollMenuContent {
      * @param <I> the Icon type
      */
     public interface ScrollSubMenu<T, I> {
-                /**
-                 * Obtain the subMenu.
-                 * @return the subMenu
-                 */
-                ScrollMenu<T, I> getSubMenu();
+        /**
+         * Obtain the subMenu.
+         * @return the subMenu
+         */
+        ScrollMenu<T, I> getSubMenu();
     }
 }

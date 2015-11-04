@@ -53,26 +53,25 @@ public abstract class DataEditField<T, N, I>
      * @param <T> the data type
      */
     public interface DataEditConverter<T> {
-
         /**
          * Should we right-align the fields.
          * @return true/false
          */
-                boolean rightAlignFields();
+        boolean rightAlignFields();
 
         /**
          * Format the display value.
          * @param pValue the value
          * @return the display string.
          */
-                String formatDisplayValue(final T pValue);
+        String formatDisplayValue(final T pValue);
 
         /**
          * Format the edit value.
          * @param pValue the value
          * @return the edit string.
          */
-                String formatEditValue(final T pValue);
+        String formatEditValue(final T pValue);
 
         /**
          * Parse the edited value.
@@ -80,7 +79,7 @@ public abstract class DataEditField<T, N, I>
          * @return the parsed value.
          * @throws IllegalArgumentException on parsing error
          */
-                T parseEditedValue(final String pValue);
+        T parseEditedValue(final String pValue);
     }
 
     /**
@@ -94,7 +93,7 @@ public abstract class DataEditField<T, N, I>
     public static final int ACTION_NEW_COMMAND = 101;
 
     /**
-     * Menu build.
+     * Command Menu build.
      */
     public static final int ACTION_CMDMENU_BUILD = 102;
 

@@ -34,6 +34,7 @@ import java.security.Security;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.bouncycastle.util.Arrays;
 
@@ -67,12 +68,12 @@ public class SecurityTestSuite {
      * Interface for Security Manager creator.
      */
     public interface SecurityManagerCreator {
-                /**
-                 * Create a new SecureManager with default parameters.
-                 * @return the new SecureManager
-                 * @throws JOceanusException on error
-                 */
-                SecureManager newSecureManager() throws JOceanusException;
+        /**
+         * Create a new SecureManager with default parameters.
+         * @return the new SecureManager
+         * @throws JOceanusException on error
+         */
+        SecureManager newSecureManager() throws JOceanusException;
 
         /**
          * Create a new SecureManager.
@@ -80,7 +81,7 @@ public class SecurityTestSuite {
          * @return the new SecureManager
          * @throws JOceanusException on error
          */
-                SecureManager newSecureManager(final SecurityParameters pParams) throws JOceanusException;
+        SecureManager newSecureManager(final SecurityParameters pParams) throws JOceanusException;
     }
 
     /**
@@ -247,7 +248,8 @@ public class SecurityTestSuite {
      */
     protected void testSecurity() throws JOceanusException {
         /* Create new Password Hash */
-        SecureManager myManager = theCreator.newSecureManager();
+        SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
+        SecureManager myManager = theCreator.newSecureManager(myParams);
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
         SecurityGenerator myGen = myHash.getSecurityGenerator();
 
@@ -290,7 +292,7 @@ public class SecurityTestSuite {
         byte[] myMacSafe = myHash.secureDataMac(myMac);
 
         /* Start a new session */
-        myManager = theCreator.newSecureManager();
+        myManager = theCreator.newSecureManager(myParams);
         PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
         myGen = myHash.getSecurityGenerator();
 
@@ -432,37 +434,44 @@ public class SecurityTestSuite {
         SecureManager myManager = theCreator.newSecureManager(myParams);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 
-        /* Create instance of each digest */
-        for (DigestType myDigest : DigestType.values()) {
-            myGenerator.generateDigest(myDigest);
-        }
+        /* Access predicates */
+        Predicate<DigestType> myDigestPredicate = myGenerator.getDigestPredicate();
+        Predicate<SymKeyType> mySymKeyPredicate = myGenerator.getSymKeyPredicate();
+        Predicate<SymKeyType> myMacSymKeyPredicate = myGenerator.getMacSymKeyPredicate();
+        Predicate<StreamKeyType> myStreamKeyPredicate = myGenerator.getStreamKeyPredicate();
 
-        /* Create instance of each hMac */
+        /* Create instance of each digest and associated hMac */
         for (DigestType myDigest : DigestType.values()) {
-            myGenerator.generateMac(myDigest, "Hello".getBytes());
+            if (myDigestPredicate.test(myDigest)) {
+                myGenerator.generateDigest(myDigest);
+                myGenerator.generateMac(myDigest, "Hello".getBytes());
+            }
         }
 
         /* Create instance of each cipher Mac */
         for (SymKeyType myType : SymKeyType.values()) {
-            if (!myType.isStdBlock()) {
-                continue;
+            if (myMacSymKeyPredicate.test(myType)) {
+                myGenerator.generateMac(MacType.GMAC, myType);
+                myGenerator.generateMac(MacType.POLY1305, myType);
             }
-            myGenerator.generateMac(MacType.GMAC, myType);
-            myGenerator.generateMac(MacType.POLY1305, myType);
         }
         myGenerator.generateMac(MacType.SKEIN);
         myGenerator.generateMac(MacType.VMPC);
 
         /* Create instance of each symmetric key */
         for (SymKeyType myType : SymKeyType.values()) {
-            SymmetricKey myKey = myGenerator.generateSymmetricKey(myType);
-            myKey.getDataCipher();
+            if (mySymKeyPredicate.test(myType)) {
+                SymmetricKey myKey = myGenerator.generateSymmetricKey(myType);
+                myKey.getDataCipher();
+            }
         }
 
         /* Create instance of each stream key */
         for (StreamKeyType myType : StreamKeyType.values()) {
-            StreamKey myKey = myGenerator.generateStreamKey(myType);
-            myKey.getStreamCipher();
+            if (myStreamKeyPredicate.test(myType)) {
+                StreamKey myKey = myGenerator.generateStreamKey(myType);
+                myKey.getStreamCipher();
+            }
         }
 
         /* Create instance of each asymmetric key */

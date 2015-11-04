@@ -22,11 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.security.SecureRandom;
-
-import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
-import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import java.util.function.Predicate;
 
 /**
  * Stream Key Type.
@@ -35,40 +31,52 @@ public enum StreamKeyType {
     /**
      * XSalsa20.
      */
-    XSALSA20(1),
+    XSALSA20,
 
     /**
-     * HC256.
+     * Salsa20.
      */
-    HC256(2),
+    SALSA20,
+
+    /**
+     * HC.
+     */
+    HC,
 
     /**
      * ChaCha.
      */
-    CHACHA(3),
+    CHACHA,
 
     /**
      * VMPC.
      */
-    VMPC(4);
+    VMPC,
 
     /**
-     * The external Id of the algorithm.
+     * ISAAC.
      */
-    private final int theId;
+    ISAAC,
+
+    /**
+     * Grain.
+     */
+    GRAIN;
+
+    /**
+     * Predicate for long keys.
+     */
+    private static final Predicate<StreamKeyType> PREDICATE_LONGKEY = p -> p.validForKeyLen(true);
+
+    /**
+     * Predicate for short keys.
+     */
+    private static final Predicate<StreamKeyType> PREDICATE_SHORTKEY = p -> p.validForKeyLen(false);
 
     /**
      * The String name.
      */
     private String theName;
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    StreamKeyType(final int id) {
-        theId = id;
-    }
 
     @Override
     public String toString() {
@@ -83,14 +91,6 @@ public enum StreamKeyType {
     }
 
     /**
-     * Obtain the external Id.
-     * @return the external Id
-     */
-    public int getId() {
-        return theId;
-    }
-
-    /**
      * Obtain the algorithm.
      * @param pRestricted use restricted algorithms
      * @return the algorithm
@@ -99,72 +99,43 @@ public enum StreamKeyType {
         switch (this) {
             case VMPC:
                 return "VMPC-KSA3";
-            case HC256:
+            case GRAIN:
+                return "Grain128";
+            case HC:
                 return pRestricted
                                    ? "HC128"
-                                   : name();
-            case XSALSA20:
-                return pRestricted
-                                   ? "SALSA20"
-                                   : name();
+                                   : "HC256";
             default:
                 return name();
         }
     }
 
     /**
-     * get value from id.
-     * @param id the id value
-     * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * Is this KeyType valid for required keyLength?
+     * @param pLongKeys true/false
+     * @return true/false
      */
-    public static StreamKeyType fromId(final int id) throws JOceanusException {
-        for (StreamKeyType myType : values()) {
-            if (myType.getId() == id) {
-                return myType;
-            }
+    private boolean validForKeyLen(final boolean pLongKeys) {
+        switch (this) {
+            case XSALSA20:
+                return pLongKeys;
+            case GRAIN:
+                return !pLongKeys;
+            case ISAAC:
+                return false;
+            default:
+                return true;
         }
-        throw new JGordianDataException("Invalid StreamKeyType: "
-                                        + id);
     }
 
     /**
-     * Get random unique set of stream key types.
-     * @param pNumTypes the number of types
-     * @param pRandom the random generator
-     * @return the random set
-     * @throws JOceanusException on error
+     * Obtain predicate for all symKeyTypes for KeyLength.
+     * @param pLongKeys true/false
+     * @return the predicate
      */
-    public static StreamKeyType[] getRandomTypes(final int pNumTypes,
-                                                 final SecureRandom pRandom) throws JOceanusException {
-        /* Access the values */
-        StreamKeyType[] myValues = values();
-        int iNumValues = myValues.length;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JGordianLogicException("Invalid number of StreamKeys: "
-                                             + pNumTypes);
-        }
-
-        /* Create the result set */
-        StreamKeyType[] myTypes = new StreamKeyType[pNumTypes];
-
-        /* Loop through the types */
-        for (int i = 0; i < pNumTypes; i++) {
-            /* Access the next random index */
-            int iIndex = pRandom.nextInt(iNumValues);
-
-            /* Store the type */
-            myTypes[i] = myValues[iIndex];
-
-            /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
-            iNumValues--;
-        }
-
-        /* Return the types */
-        return myTypes;
+    public static Predicate<StreamKeyType> allForKeyLen(final boolean pLongKeys) {
+        return pLongKeys
+                         ? PREDICATE_LONGKEY
+                         : PREDICATE_SHORTKEY;
     }
 }

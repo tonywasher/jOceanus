@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -66,21 +67,30 @@ public class ZipFileProperties {
     private final List<Property> theList;
 
     /**
-     * Constructor.
+     * Security Generator.
      */
-    protected ZipFileProperties() {
+    private final SecurityGenerator theGenerator;
+
+    /**
+     * Constructor.
+     * @param pGenerator the security generator
+     */
+    protected ZipFileProperties(final SecurityGenerator pGenerator) {
         /* Allocate the array */
         theList = new ArrayList<Property>();
+        theGenerator = pGenerator;
     }
 
     /**
      * Constructor from encoded string.
+     * @param pGenerator the security generator
      * @param pCodedString the encoded string
      * @throws JOceanusException on error
      */
-    protected ZipFileProperties(final String pCodedString) throws JOceanusException {
-        /* Allocate the array */
-        theList = new ArrayList<Property>();
+    protected ZipFileProperties(final SecurityGenerator pGenerator,
+                                final String pCodedString) throws JOceanusException {
+        /* Initialise normally */
+        this(pGenerator);
 
         /* Wrap string in a string builder */
         StringBuilder myString = new StringBuilder(pCodedString);
@@ -101,6 +111,14 @@ public class ZipFileProperties {
 
         /* Parse the remaining property */
         parseEncodedProperty(myString.toString());
+    }
+
+    /**
+     * Obtain the security generator.
+     * @return the generator
+     */
+    protected SecurityGenerator getSecurityGenerator() {
+        return theGenerator;
     }
 
     /**
@@ -201,8 +219,8 @@ public class ZipFileProperties {
 
         /* Return the value */
         return (myValue == null)
-                ? null
-                : DataConverter.byteArrayToString(myValue);
+                                 ? null
+                                 : DataConverter.byteArrayToString(myValue);
     }
 
     /**
@@ -216,8 +234,8 @@ public class ZipFileProperties {
 
         /* Return the value */
         return (myProperty == null)
-                ? null
-                : myProperty.getByteValue();
+                                    ? null
+                                    : myProperty.getByteValue();
     }
 
     /**
@@ -231,8 +249,8 @@ public class ZipFileProperties {
 
         /* Return the value */
         return (myProperty == null)
-                ? null
-                : myProperty.getLongValue();
+                                    ? null
+                                    : myProperty.getLongValue();
     }
 
     /**
@@ -347,11 +365,11 @@ public class ZipFileProperties {
 
         /* Access the separate byte and long values */
         String myLong = (myLoc < myLen - 1)
-                ? myBytes.substring(myLoc + 1)
-                : null;
+                                            ? myBytes.substring(myLoc + 1)
+                                            : null;
         myBytes = (myLoc > 0)
-                ? myBytes.substring(0, myLoc)
-                : null;
+                              ? myBytes.substring(0, myLoc)
+                              : null;
 
         /* Must have at least one of Bytes/Long */
         if ((myBytes == null)
@@ -470,8 +488,8 @@ public class ZipFileProperties {
          */
         private void setByteValue(final byte[] pValue) {
             theByteValue = (pValue == null)
-                    ? null
-                    : Arrays.copyOf(pValue, pValue.length);
+                                            ? null
+                                            : Arrays.copyOf(pValue, pValue.length);
         }
 
         /**

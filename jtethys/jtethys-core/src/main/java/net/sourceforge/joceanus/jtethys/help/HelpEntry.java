@@ -20,19 +20,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.swing;
+package net.sourceforge.joceanus.jtethys.help;
 
-import java.util.Arrays;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Help Entry class. This class provides structure to the help system, providing parent child relationships to implement chapters and also providing maps
- * between the name of a help page and the file that holds the HTML for the page
+ * Help Entry class. This class provides structure to the help system, providing parent child
+ * relationships to implement chapters and also providing maps between the name of a help page and
+ * the file that holds the HTML for the page
  */
 public class HelpEntry {
     /**
@@ -63,32 +62,27 @@ public class HelpEntry {
     /**
      * Title of the entry.
      */
-    private String theTitle = null;
+    private final String theTitle;
 
     /**
      * Name of the entry.
      */
-    private String theName = null;
+    private final String theName;
 
     /**
      * FileName of the entry.
      */
-    private String theFileName = null;
+    private final String theFileName;
 
     /**
      * Children of the entry.
      */
-    private HelpEntry[] theChildren = null;
-
-    /**
-     * TreePath of the entry.
-     */
-    private TreePath thePath = null;
+    private final List<HelpEntry> theChildren;
 
     /**
      * HelpPage.
      */
-    private HelpPage thePage = null;
+    private HelpPage thePage;
 
     /**
      * Constructor for an HTML element built from an XML node.
@@ -109,22 +103,21 @@ public class HelpEntry {
         }
 
         /* Access the title of the element and default it if required */
-        theTitle = pElement.getAttribute(ATTR_TITLE);
-        if (STR_EMPTY.equals(theTitle)) {
-            theTitle = theName;
-        }
+        String myAttr = pElement.getAttribute(ATTR_TITLE);
+        theTitle = STR_EMPTY.equals(myAttr)
+                                            ? theName
+                                            : myAttr;
 
         /* Access the filename for the element and default it if required */
-        theFileName = pElement.getAttribute(ATTR_FILENAME);
-        if (STR_EMPTY.equals(theFileName)) {
-            theFileName = null;
-        }
+        myAttr = pElement.getAttribute(ATTR_FILENAME);
+        theFileName = STR_EMPTY.equals(myAttr)
+                                               ? null
+                                               : myAttr;
 
-        /* If the node has sub-elements */
-        if (pElement.hasChildNodes()) {
-            /* Parse the children */
-            theChildren = getHelpEntryArray(pElement);
-        }
+        /* Parse the children */
+        theChildren = pElement.hasChildNodes()
+                                               ? getHelpEntryList(pElement)
+                                               : null;
     }
 
     /**
@@ -139,6 +132,7 @@ public class HelpEntry {
         theName = pName;
         theTitle = pTitle;
         theFileName = pFileName;
+        theChildren = null;
     }
 
     /**
@@ -149,10 +143,11 @@ public class HelpEntry {
      */
     public HelpEntry(final String pName,
                      final String pTitle,
-                     final HelpEntry[] pChildren) {
+                     final List<HelpEntry> pChildren) {
         theName = pName;
         theTitle = pTitle;
-        theChildren = Arrays.copyOf(pChildren, pChildren.length);
+        theFileName = null;
+        theChildren = new ArrayList<HelpEntry>(pChildren);
     }
 
     /**
@@ -165,11 +160,11 @@ public class HelpEntry {
     protected HelpEntry(final String pName,
                         final String pTitle,
                         final String pFileName,
-                        final HelpEntry[] pChildren) {
+                        final List<HelpEntry> pChildren) {
         theName = pName;
         theTitle = pTitle;
         theFileName = pFileName;
-        theChildren = Arrays.copyOf(pChildren, pChildren.length);
+        theChildren = new ArrayList<HelpEntry>(pChildren);
     }
 
     /**
@@ -200,16 +195,8 @@ public class HelpEntry {
      * Obtain the children.
      * @return the children
      */
-    protected HelpEntry[] getChildren() {
+    public List<HelpEntry> getChildren() {
         return theChildren;
-    }
-
-    /**
-     * Obtain the tree path.
-     * @return the tree path
-     */
-    public TreePath getTreePath() {
-        return thePath;
     }
 
     /**
@@ -234,14 +221,10 @@ public class HelpEntry {
      * @return the HelpEntry array
      * @throws HelpException on error
      */
-    protected static HelpEntry[] getHelpEntryArray(final Element pElement) throws HelpException {
-        Node myNode;
-        Element myChild;
-        HelpEntry myEntry;
-        HelpEntry[] myEntries = null;
-
+    protected static List<HelpEntry> getHelpEntryList(final Element pElement) throws HelpException {
         /* Loop through the children */
-        for (myNode = pElement.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
+        List<HelpEntry> myEntries = new ArrayList<HelpEntry>();
+        for (Node myNode = pElement.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
 
             /* Skip nonElement nodes */
             if (myNode.getNodeType() != Node.ELEMENT_NODE) {
@@ -249,23 +232,11 @@ public class HelpEntry {
             }
 
             /* Access node as element */
-            myChild = (Element) myNode;
+            Element myChild = (Element) myNode;
 
             /* Create an entry based on this node */
-            myEntry = new HelpEntry(myChild);
-
-            /* If this is the first child */
-            if (myEntries == null) {
-                /* Allocate a single entry array and store the element */
-                myEntries = new HelpEntry[1];
-                myEntries[0] = myEntry;
-
-                /* else we already have an entry */
-            } else {
-                /* Extend the array and add entry as last element */
-                myEntries = Arrays.copyOf(myEntries, myEntries.length + 1);
-                myEntries[myEntries.length - 1] = myEntry;
-            }
+            HelpEntry myEntry = new HelpEntry(myChild);
+            myEntries.add(myEntry);
         }
 
         /* Return the entries */
@@ -304,49 +275,5 @@ public class HelpEntry {
 
         /* Return the result */
         return myResult;
-    }
-
-    /**
-     * Construct a top level Tree Node from a set of help entries.
-     * @param pTitle the title for the tree
-     * @param pEntries the help entries
-     * @return the Tree node
-     */
-    protected static DefaultMutableTreeNode createTree(final String pTitle,
-                                                       final HelpEntry[] pEntries) {
-        /* Create an initial tree node */
-        DefaultMutableTreeNode myTree = new DefaultMutableTreeNode(pTitle);
-
-        /* Add the entries into the node */
-        addHelpEntries(myTree, pEntries);
-
-        /* Return the tree */
-        return myTree;
-    }
-
-    /**
-     * Add array of Help entries.
-     * @param pNode the node to add to
-     * @param pEntries the entries to add
-     */
-    private static void addHelpEntries(final DefaultMutableTreeNode pNode,
-                                       final HelpEntry[] pEntries) {
-        DefaultMutableTreeNode myNode;
-
-        /* Loop through the entries */
-        for (HelpEntry myEntry : pEntries) {
-            /* Create a new entry and add it to the node */
-            myNode = new DefaultMutableTreeNode(myEntry);
-            pNode.add(myNode);
-
-            /* Access the tree path for this item */
-            myEntry.thePath = new TreePath(myNode.getPath());
-
-            /* If we have children */
-            if (myEntry.getChildren() != null) {
-                /* Add the children into the tree */
-                addHelpEntries(myNode, myEntry.getChildren());
-            }
-        }
     }
 }

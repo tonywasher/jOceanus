@@ -129,12 +129,12 @@ public class SymmetricKey {
      * @throws JOceanusException on error
      */
     protected static SymmetricKey generateSymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom);
+        /* Determine random StreamKeyType */
+        SecurityIdManager myManager = pGenerator.getIdManager();
+        SymKeyType myType = myManager.getRandomSymKeyType(pGenerator.getSymKeyPredicate());
 
         /* Generate a SymKey for the SymKey type */
-        return generateSymmetricKey(pGenerator, myType[0]);
+        return generateSymmetricKey(pGenerator, myType);
     }
 
     /**

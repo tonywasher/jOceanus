@@ -97,14 +97,14 @@ public abstract class DataFXEditField {
         private final Label theLabel;
 
         /**
-         * The button.
+         * The command button.
          */
-        private final Button theButton;
+        private final Button theCmdButton;
 
         /**
-         * Do we show the button?
+         * Do we show the command button?
          */
-        private boolean doShowButton;
+        private boolean doShowCmdButton;
 
         /**
          * The error text.
@@ -124,10 +124,10 @@ public abstract class DataFXEditField {
             theLabel = new Label();
             theEditNode = new TextField();
 
-            /* Create the button */
-            theButton = new Button();
-            theButton.setGraphic(ArrowIcon.DOWN.getArrow());
-            theButton.setFocusTraversable(false);
+            /* Create the command button */
+            theCmdButton = new Button();
+            theCmdButton.setGraphic(ArrowIcon.DOWN.getArrow());
+            theCmdButton.setFocusTraversable(false);
 
             /* declare the menu */
             declareMenu(new ScrollFXContextMenu<String>());
@@ -182,8 +182,8 @@ public abstract class DataFXEditField {
                 }
             });
 
-            /* handle button key */
-            theButton.setOnAction(new EventHandler<ActionEvent>() {
+            /* handle command button action */
+            theCmdButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(final ActionEvent t) {
                     handleMenuRequest();
@@ -207,7 +207,7 @@ public abstract class DataFXEditField {
 
         @Override
         protected void showMenu() {
-            getMenu().showMenuAtPosition(theButton, Side.RIGHT);
+            getMenu().showMenuAtPosition(theCmdButton, Side.RIGHT);
         }
 
         /**
@@ -271,17 +271,17 @@ public abstract class DataFXEditField {
         }
 
         /**
-         * Show the button.
+         * Show the command button.
          * @param pShow true/false
          */
-        public void showButton(final boolean pShow) {
+        public void showCommandButton(final boolean pShow) {
             /* Remove any button that is displaying */
             theNode.setRight(null);
-            doShowButton = pShow;
+            doShowCmdButton = pShow;
 
             /* If we have a button to display */
-            if (isEditable() && doShowButton) {
-                theNode.setRight(theButton);
+            if (isEditable() && doShowCmdButton) {
+                theNode.setRight(theCmdButton);
             }
         }
 
@@ -324,8 +324,8 @@ public abstract class DataFXEditField {
                 /* If we are setting editable */
                 if (pEditable) {
                     theNode.setCenter(theEditNode);
-                    if (doShowButton) {
-                        theNode.setRight(theButton);
+                    if (doShowCmdButton) {
+                        theNode.setRight(theCmdButton);
                     }
                 } else {
                     theNode.setCenter(theLabel);

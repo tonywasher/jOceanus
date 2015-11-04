@@ -54,8 +54,8 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventL
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.help.swing.HelpException;
-import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.HelpException;
+import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
 
 /**

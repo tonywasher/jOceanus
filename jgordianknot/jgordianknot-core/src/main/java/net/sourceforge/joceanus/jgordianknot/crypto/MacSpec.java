@@ -57,25 +57,27 @@ public class MacSpec {
 
     /**
      * Constructor from Code.
+     * @param pGenerator the security generator
      * @param pCode the encoded specification
      * @throws JOceanusException on error
      */
-    public MacSpec(final int pCode) throws JOceanusException {
+    public MacSpec(final SecurityGenerator pGenerator,
+                   final int pCode) throws JOceanusException {
         /* Determine MacType */
         int myId = pCode
                    & DataConverter.NYBBLE_MASK;
-        theMacType = MacType.fromId(myId);
+        theMacType = pGenerator.deriveMacTypeFromExternalId(myId);
 
         /* Switch on the MacType */
         switch (theMacType) {
             case HMAC:
-                theDigestType = DigestType.fromId(pCode >> DataConverter.NYBBLE_SHIFT);
+                theDigestType = pGenerator.deriveDigestTypeFromExternalId(pCode >> DataConverter.NYBBLE_SHIFT);
                 theKeyType = null;
                 break;
             case GMAC:
             case POLY1305:
                 theDigestType = null;
-                theKeyType = SymKeyType.fromId(pCode >> DataConverter.NYBBLE_SHIFT);
+                theKeyType = pGenerator.deriveSymKeyTypeFromExternalId(pCode >> DataConverter.NYBBLE_SHIFT);
                 break;
             default:
                 theDigestType = null;
@@ -110,20 +112,21 @@ public class MacSpec {
 
     /**
      * Encode the MacSpec.
+     * @param pGenerator the security generator
      * @return the encoded specification
      */
-    public int getEncoded() {
+    public int getEncoded(final SecurityGenerator pGenerator) {
         /* Determine base code */
-        int myCode = theMacType.getId();
+        int myCode = pGenerator.getExternalId(theMacType);
 
         /* Switch on Mac Type */
         switch (theMacType) {
             case HMAC:
-                myCode += theDigestType.getId() << DataConverter.NYBBLE_SHIFT;
+                myCode += pGenerator.getExternalId(theDigestType) << DataConverter.NYBBLE_SHIFT;
                 break;
             case GMAC:
             case POLY1305:
-                myCode += theKeyType.getId() << DataConverter.NYBBLE_SHIFT;
+                myCode += pGenerator.getExternalId(theKeyType) << DataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;

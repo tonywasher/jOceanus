@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Class for assembling/disassembling Hashes.
  */
-public class HashKey {
+public class HashRecipe {
     /**
      * Number of digests.
      */
@@ -53,9 +54,9 @@ public class HashKey {
     protected static final int INITVECTOR_LEN = 32;
 
     /**
-     * The KeyBytes.
+     * The Recipe.
      */
-    private final byte[] theKeyBytes;
+    private final byte[] theRecipe;
 
     /**
      * The Initialisation Vector.
@@ -77,30 +78,33 @@ public class HashKey {
      * @param pGenerator the security generator
      * @throws JOceanusException on error
      */
-    protected HashKey(final SecurityGenerator pGenerator) throws JOceanusException {
+    protected HashRecipe(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access the secureRandom */
         SecureRandom myRandom = pGenerator.getRandom();
 
         /* Create the Random Key */
-        theKeyBytes = new byte[KEYBYTES_LEN];
+        theRecipe = new byte[KEYBYTES_LEN];
 
         /* Create the Initialisation vector */
         theInitVector = new byte[INITVECTOR_LEN];
         myRandom.nextBytes(theInitVector);
 
         /* Allocate new set of parameters */
-        theParams = new HashParameters(myRandom);
+        theParams = new HashParameters(pGenerator);
+        theParams.buildRecipe(pGenerator, theRecipe);
         theHash = null;
     }
 
     /**
      * Constructor for external form parse.
+     * @param pGenerator the security generator
      * @param pPassLength the password length
      * @param pExternal the external form
      * @throws JOceanusException on error
      */
-    protected HashKey(final int pPassLength,
-                      final byte[] pExternal) throws JOceanusException {
+    protected HashRecipe(final SecurityGenerator pGenerator,
+                         final int pPassLength,
+                         final byte[] pExternal) throws JOceanusException {
         /* Determine hash length */
         int myLen = pExternal.length;
         int myHashLen = myLen
@@ -108,7 +112,7 @@ public class HashKey {
                         - INITVECTOR_LEN;
 
         /* Create the byte arrays */
-        theKeyBytes = new byte[KEYBYTES_LEN];
+        theRecipe = new byte[KEYBYTES_LEN];
         theInitVector = new byte[INITVECTOR_LEN];
         theHash = new byte[myHashLen];
 
@@ -118,7 +122,7 @@ public class HashKey {
                                       - HASH_MARGIN);
 
         /* Copy Data into buffers */
-        System.arraycopy(pExternal, 0, theKeyBytes, 0, KEYBYTES_LEN);
+        System.arraycopy(pExternal, 0, theRecipe, 0, KEYBYTES_LEN);
         System.arraycopy(pExternal, KEYBYTES_LEN, theHash, 0, myOffSet);
         System.arraycopy(pExternal, myOffSet
                                     + KEYBYTES_LEN, theInitVector, 0, INITVECTOR_LEN);
@@ -128,7 +132,7 @@ public class HashKey {
                                                                          - myOffSet);
 
         /* Allocate new set of parameters */
-        theParams = new HashParameters();
+        theParams = new HashParameters(pGenerator, theRecipe);
     }
 
     /**
@@ -169,8 +173,8 @@ public class HashKey {
      */
     public byte[] getInitVector() {
         return (theInitVector == null)
-                                      ? null
-                                      : Arrays.copyOf(theInitVector, theInitVector.length);
+                                       ? null
+                                       : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -179,8 +183,8 @@ public class HashKey {
      */
     public byte[] getHash() {
         return (theHash == null)
-                                ? null
-                                : Arrays.copyOf(theHash, theHash.length);
+                                 ? null
+                                 : Arrays.copyOf(theHash, theHash.length);
     }
 
     /**
@@ -204,7 +208,7 @@ public class HashKey {
                                       - HASH_MARGIN);
 
         /* Copy Data into buffer */
-        System.arraycopy(theKeyBytes, 0, myBuffer, 0, KEYBYTES_LEN);
+        System.arraycopy(theRecipe, 0, myBuffer, 0, KEYBYTES_LEN);
         System.arraycopy(pHash, 0, myBuffer, KEYBYTES_LEN, myOffSet);
         System.arraycopy(theInitVector, 0, myBuffer, myOffSet
                                                      + KEYBYTES_LEN, INITVECTOR_LEN);
@@ -220,7 +224,7 @@ public class HashKey {
     /**
      * The parameters class.
      */
-    private final class HashParameters {
+    private static final class HashParameters {
         /**
          * The Prime Digest type.
          */
@@ -243,49 +247,70 @@ public class HashKey {
 
         /**
          * Construct the parameters from random.
-         * @param pRandom the random generator
+         * @param pGenerator the security generator
          * @throws JOceanusException on error
          */
-        private HashParameters(final SecureRandom pRandom) throws JOceanusException {
+        private HashParameters(final SecurityGenerator pGenerator) throws JOceanusException {
             /* Obtain Digest list */
-            DigestType[] myDigest = DigestType.getRandomTypes(NUM_DIGESTS, pRandom);
+            SecurityIdManager myManager = pGenerator.getIdManager();
+            DigestType[] myDigests = myManager.getRandomDigestTypes(NUM_DIGESTS, pGenerator.getDigestPredicate());
 
             /* Store Digest types */
-            thePrimeDigest = myDigest[0];
-            theAlternateDigest = myDigest[1];
-            theSecretDigest = myDigest[2];
+            thePrimeDigest = myDigests[0];
+            theAlternateDigest = myDigests[1];
+            theSecretDigest = myDigests[2];
 
             /* Access random adjustment value */
-            theAdjust = pRandom.nextInt(DataConverter.NYBBLE_MASK + 1);
-
-            /* Build the key bytes */
-            int i = 0;
-            theKeyBytes[i++] = (byte) ((thePrimeDigest.getId() << DataConverter.NYBBLE_SHIFT) + theAlternateDigest.getId());
-            theKeyBytes[i] = (byte) ((theSecretDigest.getId() << DataConverter.NYBBLE_SHIFT) + theAdjust);
+            SecureRandom myRandom = pGenerator.getRandom();
+            theAdjust = myRandom.nextInt(DataConverter.NYBBLE_MASK + 1);
         }
 
         /**
-         * Construct the parameters from key bytes.
+         * Construct the parameters from recipe.
+         * @param pGenerator the security generator
+         * @param pRecipe the recipe bytes
          * @throws JOceanusException on error
          */
-        private HashParameters() throws JOceanusException {
+        private HashParameters(final SecurityGenerator pGenerator,
+                               final byte[] pRecipe) throws JOceanusException {
+            /* Obtain Id manager */
+            SecurityIdManager myManager = pGenerator.getIdManager();
+            Predicate<DigestType> myPredicate = pGenerator.getDigestPredicate();
+
             /* Access prime and alternate digests */
             int i = 0;
-            byte myValue = theKeyBytes[i++];
+            byte myValue = pRecipe[i++];
             int myId = (myValue >> DataConverter.NYBBLE_SHIFT)
                        & DataConverter.NYBBLE_MASK;
-            thePrimeDigest = DigestType.fromId(myId);
+            thePrimeDigest = myManager.deriveDigestTypeFromExternalId(myId, myPredicate);
             myId = myValue
                    & DataConverter.NYBBLE_MASK;
-            theAlternateDigest = DigestType.fromId(myId);
+            theAlternateDigest = myManager.deriveDigestTypeFromExternalId(myId, myPredicate);
 
             /* Access secret and cipher digests */
-            myValue = theKeyBytes[i++];
+            myValue = pRecipe[i];
             myId = (myValue >> DataConverter.NYBBLE_SHIFT)
                    & DataConverter.NYBBLE_MASK;
-            theSecretDigest = DigestType.fromId(myId);
+            theSecretDigest = myManager.deriveDigestTypeFromExternalId(myId, myPredicate);
             theAdjust = myValue
                         & DataConverter.NYBBLE_MASK;
+        }
+
+        /**
+         * Construct the external recipe.
+         * @param pGenerator the security generator
+         * @param pRecipe the recipe bytes to build
+         * @throws JOceanusException on error
+         */
+        private void buildRecipe(final SecurityGenerator pGenerator,
+                                 final byte[] pRecipe) throws JOceanusException {
+            /* Obtain Id manager */
+            SecurityIdManager myManager = pGenerator.getIdManager();
+
+            /* Build the recipe */
+            int i = 0;
+            pRecipe[i++] = (byte) ((myManager.getExternalId(thePrimeDigest) << DataConverter.NYBBLE_SHIFT) + myManager.getExternalId(theAlternateDigest));
+            pRecipe[i] = (byte) ((myManager.getExternalId(theSecretDigest) << DataConverter.NYBBLE_SHIFT) + theAdjust);
         }
 
         /**

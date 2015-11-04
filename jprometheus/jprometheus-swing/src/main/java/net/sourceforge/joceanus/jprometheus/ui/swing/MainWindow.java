@@ -60,8 +60,8 @@ import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.help.swing.HelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.HelpWindow;
+import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.swing.SwingHelpWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,7 +327,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Started Help window.
      */
-    private HelpWindow theHelpWdw = null;
+    private SwingHelpWindow theHelpWdw = null;
 
     /**
      * The Viewer Manager.
@@ -892,7 +892,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private void displayHelp() {
         try {
             /* Create the help window */
-            theHelpWdw = new HelpWindow(theFrame, getHelpModule());
+            theHelpWdw = new SwingHelpWindow(theFrame, getHelpModule());
 
             /* Listen for its closure */
             theHelpWdw.addWindowListener(theListener);

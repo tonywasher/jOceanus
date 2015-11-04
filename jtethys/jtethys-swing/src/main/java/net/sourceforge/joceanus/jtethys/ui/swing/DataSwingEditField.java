@@ -113,14 +113,14 @@ public abstract class DataSwingEditField {
         private final CardLayout theLayout;
 
         /**
-         * The button.
+         * The command button.
          */
-        private final JButton theButton;
+        private final JButton theCmdButton;
 
         /**
-         * Do we show the button?
+         * Do we show the command button?
          */
-        private boolean doShowButton;
+        private boolean doShowCmdButton;
 
         /**
          * The error text.
@@ -146,11 +146,11 @@ public abstract class DataSwingEditField {
             theEditNode = new JPanel();
             theTextField = new JTextField();
 
-            /* Create the button */
-            theButton = new JButton();
-            theButton.setIcon(ArrowIcon.DOWN);
-            theButton.setMargin(new Insets(0, 0, 0, 0));
-            theButton.setFocusable(false);
+            /* Create the comman dbutton */
+            theCmdButton = new JButton();
+            theCmdButton.setIcon(ArrowIcon.DOWN);
+            theCmdButton.setMargin(new Insets(0, 0, 0, 0));
+            theCmdButton.setFocusable(false);
 
             /* declare the menu */
             declareMenu(new ScrollSwingContextMenu<String>());
@@ -216,8 +216,8 @@ public abstract class DataSwingEditField {
                 }
             });
 
-            /* Set action handler */
-            theButton.addActionListener(new ActionListener() {
+            /* Set command button action handler */
+            theCmdButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent event) {
                     handleMenuRequest();
@@ -241,7 +241,7 @@ public abstract class DataSwingEditField {
 
         @Override
         protected void showMenu() {
-            getMenu().showMenuAtPosition(theButton, SwingConstants.RIGHT);
+            getMenu().showMenuAtPosition(theCmdButton, SwingConstants.RIGHT);
         }
 
         /**
@@ -327,12 +327,12 @@ public abstract class DataSwingEditField {
          */
         public void showButton(final boolean pShow) {
             /* Remove any button that is displaying */
-            theEditNode.remove(theButton);
-            doShowButton = pShow;
+            theEditNode.remove(theCmdButton);
+            doShowCmdButton = pShow;
 
             /* If we have a button to display */
-            if (doShowButton) {
-                theEditNode.add(theButton, BorderLayout.LINE_END);
+            if (doShowCmdButton) {
+                theEditNode.add(theCmdButton, BorderLayout.LINE_END);
             }
         }
 

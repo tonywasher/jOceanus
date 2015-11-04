@@ -68,11 +68,6 @@ public class SecurityRegister {
     private final SecureRandom theRandom;
 
     /**
-     * Do we use a long hash?
-     */
-    private final boolean useLongHash;
-
-    /**
      * List of asymmetric registrations.
      */
     private final List<AsymmetricRegister> theAsymRegister;
@@ -101,7 +96,6 @@ public class SecurityRegister {
         theGenerator = pGenerator;
         theRandom = pGenerator.getRandom();
         theProviderName = pGenerator.getProviderName();
-        useLongHash = pGenerator.useLongHash();
 
         /* Allocate the lists */
         theAsymRegister = new ArrayList<AsymmetricRegister>();
@@ -496,18 +490,19 @@ public class SecurityRegister {
             byte[] myKeyBytes = new byte[myKeyLen];
             int myBuilt = 0;
 
-            /* Access the last 8-bytes of the secret as a long */
+            /* Access the last 4-bytes of the secret as an integer */
             int myLen = pSecret.length;
             byte[] mySalt = Arrays.copyOfRange(pSecret, myLen
-                                                        - DataConverter.BYTES_LONG, myLen);
-            long mySeed = DataConverter.byteArrayToLong(mySalt);
+                                                        - DataConverter.BYTES_INTEGER, myLen);
+            int mySeed = DataConverter.byteArrayToInteger(mySalt);
 
             /* Calculate the DigestType to use */
-            DigestType[] myDigest = DigestType.getSeedTypes(1, mySeed);
+            SecurityIdManager myManager = theGenerator.getIdManager();
+            DigestType myDigest = myManager.getSeededDigestType(mySeed, theGenerator.getDigestPredicate());
 
             /* Create the Mac and standard data */
             ByteArrayInteger myCount = new ByteArrayInteger();
-            DataMac myMac = theGenerator.generateMac(myDigest[0], pSecret);
+            DataMac myMac = theGenerator.generateMac(myDigest, pSecret);
 
             /* while we need to generate more bytes */
             while (myBuilt < myKeyLen) {
@@ -550,7 +545,7 @@ public class SecurityRegister {
 
             /* Create the standard data */
             byte[] myAlgo = DataConverter.stringToByteArray(theAlgorithm);
-            byte[] mySeed = theGenerator.getSecurityBytes();
+            byte[] mySeed = theGenerator.getPersonalisation();
 
             /* Update with security bytes, algorithm and section */
             pMac.update(mySeed);
@@ -686,7 +681,7 @@ public class SecurityRegister {
 
             /* Store the variables */
             theMacType = MacType.HMAC;
-            setAlgorithm(pDigestType.getMacAlgorithm(useLongHash));
+            setAlgorithm(pDigestType.getMacAlgorithm());
 
             /* Add it to the registrations */
             theMacRegister.add(this);
@@ -724,7 +719,7 @@ public class SecurityRegister {
 
             /* Store the Mac type */
             theMacType = pMacType;
-            setAlgorithm(pMacType.getKeyAlgorithm(useLongHash));
+            setAlgorithm(pMacType.getKeyAlgorithm());
 
             /* Add it to the registrations */
             theMacRegister.add(this);
@@ -753,7 +748,7 @@ public class SecurityRegister {
             }
 
             /* Check for match */
-            return isMatch(pDigestType.getMacAlgorithm(useLongHash), pKeyLen);
+            return isMatch(pDigestType.getMacAlgorithm(), pKeyLen);
         }
 
         /**
@@ -789,7 +784,7 @@ public class SecurityRegister {
             }
 
             /* Check for match */
-            return isMatch(pMacType.getKeyAlgorithm(useLongHash), pKeyLen);
+            return isMatch(pMacType.getKeyAlgorithm(), pKeyLen);
         }
     }
 }

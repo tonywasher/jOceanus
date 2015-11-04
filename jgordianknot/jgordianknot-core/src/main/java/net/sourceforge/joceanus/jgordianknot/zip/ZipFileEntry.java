@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipStreamSpec.ZipStreamList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -148,14 +149,16 @@ public class ZipFileEntry {
 
     /**
      * Standard constructor from filename.
+     * @param pGenerator the security generator
      * @param pFileName the file name
      */
-    protected ZipFileEntry(final String pFileName) {
+    protected ZipFileEntry(final SecurityGenerator pGenerator,
+                           final String pFileName) {
         /* Store the file name */
         theFileName = pFileName;
 
         /* Allocate the properties */
-        theProperties = new ZipFileProperties();
+        theProperties = new ZipFileProperties(pGenerator);
     }
 
     /**
@@ -299,6 +302,7 @@ public class ZipFileEntry {
         } else {
             /* Allocate properties for the stream list */
             theStreamList.allocateProperties(theProperties);
+
             /* Store the signature */
             theProperties.setProperty(PROP_SIGNATURE, theSignature);
         }

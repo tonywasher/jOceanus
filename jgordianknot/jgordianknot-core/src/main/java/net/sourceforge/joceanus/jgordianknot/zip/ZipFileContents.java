@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -54,26 +55,35 @@ public class ZipFileContents {
     private ZipFileEntry theHeader;
 
     /**
+     * Security Generator.
+     */
+    private final SecurityGenerator theGenerator;
+
+    /**
      * List of files.
      */
     private final List<ZipFileEntry> theList;
 
     /**
      * Constructor.
+     * @param pGenerator the security generator
      */
-    protected ZipFileContents() {
+    protected ZipFileContents(final SecurityGenerator pGenerator) {
         /* Allocate the list */
         theList = new ArrayList<ZipFileEntry>();
+        theGenerator = pGenerator;
     }
 
     /**
      * Constructor from encoded string.
+     * @param pGenerator the security generator
      * @param pCodedString the encoded string
      * @throws JOceanusException on error
      */
-    protected ZipFileContents(final String pCodedString) throws JOceanusException {
-        /* Allocate the list */
-        theList = new ArrayList<ZipFileEntry>();
+    protected ZipFileContents(final SecurityGenerator pGenerator,
+                              final String pCodedString) throws JOceanusException {
+        /* Initialise normally */
+        this(pGenerator);
 
         /* Wrap string in a string builder */
         StringBuilder myString = new StringBuilder(pCodedString);
@@ -118,7 +128,7 @@ public class ZipFileContents {
      */
     protected ZipFileEntry addZipFileHeader() {
         /* Create the new entry */
-        theHeader = new ZipFileEntry(NAME_HEADER);
+        theHeader = new ZipFileEntry(theGenerator, NAME_HEADER);
         theHeader.setHeader();
         theHeader.setParent(this);
 
@@ -133,7 +143,7 @@ public class ZipFileContents {
      */
     protected final ZipFileEntry addZipFileEntry(final String pName) {
         /* Create the new entry */
-        ZipFileEntry myEntry = new ZipFileEntry(pName);
+        ZipFileEntry myEntry = new ZipFileEntry(theGenerator, pName);
 
         /* Add it to the list */
         addZipFileEntry(myEntry);
@@ -271,7 +281,7 @@ public class ZipFileContents {
      */
     private void parseEncodedEntry(final String pCodedString) throws JOceanusException {
         /* Parse the properties */
-        ZipFileProperties myProperties = new ZipFileProperties(pCodedString);
+        ZipFileProperties myProperties = new ZipFileProperties(theGenerator, pCodedString);
 
         /* Add the zip file entry */
         ZipFileEntry myEntry = new ZipFileEntry(myProperties);

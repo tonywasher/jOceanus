@@ -162,7 +162,7 @@ public class EditUIFXExample
 
         /* Create resources */
         theStringField = new StringFXTextField();
-        theStringField.showButton(true);
+        theStringField.showCommandButton(true);
         theShortField = new ShortFXTextField(theFormatter, myParser);
         theIntegerField = new IntegerFXTextField(theFormatter, myParser);
         theLongField = new LongFXTextField(theFormatter, myParser);

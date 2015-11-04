@@ -61,14 +61,24 @@ public enum CryptoResource implements ResourceId {
     DIGEST_GOST("digest.GOST"),
 
     /**
-     * Digest SHA3.
+     * Digest KECCAK.
      */
-    DIGEST_SHA3("digest.SHA3"),
+    DIGEST_KECCAK("digest.KECCAK"),
 
     /**
      * Digest Skein.
      */
     DIGEST_SKEIN("digest.SKEIN"),
+
+    /**
+     * Digest SM3.
+     */
+    DIGEST_SM3("digest.SM3"),
+
+    /**
+     * Digest BLAKE.
+     */
+    DIGEST_BLAKE("digest.BLAKE"),
 
     /**
      * MAC HMAC.
@@ -131,14 +141,34 @@ public enum CryptoResource implements ResourceId {
     SYMKEY_THREEFISH("symKey.THREEFISH"),
 
     /**
-     * StreamKey CHACHA.
+     * SymKey NOEKEON.
+     */
+    SYMKEY_NOEKEON("symKey.NOEKEON"),
+
+    /**
+     * SymKey SEED.
+     */
+    SYMKEY_SEED("symKey.SEED"),
+
+    /**
+     * SymKey SM4.
+     */
+    SYMKEY_SM4("symKey.SM4"),
+
+    /**
+     * StreamKey XSALSA20.
      */
     STREAMKEY_XSALSA20("streamKey.XSALSA20"),
 
     /**
-     * StreamKey HC256.
+     * StreamKey SALSA20.
      */
-    STREAMKEY_HC256("streamKey.HC256"),
+    STREAMKEY_SALSA20("streamKey.SALSA20"),
+
+    /**
+     * StreamKey HC.
+     */
+    STREAMKEY_HC("streamKey.HC"),
 
     /**
      * StreamKey CHACHA.
@@ -149,6 +179,16 @@ public enum CryptoResource implements ResourceId {
      * StreamKey VMPC.
      */
     STREAMKEY_VMPC("streamKey.VMPC"),
+
+    /**
+     * StreamKey ISAAC.
+     */
+    STREAMKEY_ISAAC("streamKey.ISAAC"),
+
+    /**
+     * StreamKey GRAIN.
+     */
+    STREAMKEY_GRAIN("streamKey.GRAIN"),
 
     /**
      * Label Password.
@@ -281,10 +321,14 @@ public enum CryptoResource implements ResourceId {
                 return DIGEST_RIPEMD;
             case GOST:
                 return DIGEST_GOST;
-            case SHA3:
-                return DIGEST_SHA3;
+            case KECCAK:
+                return DIGEST_KECCAK;
             case SKEIN:
                 return DIGEST_SKEIN;
+            case SM3:
+                return DIGEST_SM3;
+            case BLAKE:
+                return DIGEST_BLAKE;
             default:
                 throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pDigest));
         }
@@ -333,6 +377,12 @@ public enum CryptoResource implements ResourceId {
                 return SYMKEY_RC6;
             case THREEFISH:
                 return SYMKEY_THREEFISH;
+            case NOEKEON:
+                return SYMKEY_NOEKEON;
+            case SEED:
+                return SYMKEY_SEED;
+            case SM4:
+                return SYMKEY_SM4;
             default:
                 throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pKeyType));
         }
@@ -347,12 +397,18 @@ public enum CryptoResource implements ResourceId {
         switch (pKeyType) {
             case XSALSA20:
                 return STREAMKEY_XSALSA20;
-            case HC256:
-                return STREAMKEY_HC256;
+            case SALSA20:
+                return STREAMKEY_SALSA20;
+            case HC:
+                return STREAMKEY_HC;
             case CHACHA:
                 return STREAMKEY_CHACHA;
             case VMPC:
                 return STREAMKEY_VMPC;
+            case ISAAC:
+                return STREAMKEY_ISAAC;
+            case GRAIN:
+                return STREAMKEY_GRAIN;
             default:
                 throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pKeyType));
         }

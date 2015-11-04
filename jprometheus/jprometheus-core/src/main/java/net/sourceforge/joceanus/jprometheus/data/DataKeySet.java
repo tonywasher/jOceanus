@@ -24,9 +24,10 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.HashRecipe;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
@@ -43,8 +44,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
- * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
- * DataKeys.
+ * ControlKey definition and list. The Control Key represents the passwordHash that controls
+ * securing of the dataKeys. It maintains a map of the associated DataKeys.
  * @author Tony Washer
  */
 public class DataKeySet
@@ -266,8 +267,8 @@ public class DataKeySet
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
         return (myKey == null)
-                              ? null
-                              : myKey.getId();
+                               ? null
+                               : myKey.getId();
     }
 
     /**
@@ -351,7 +352,7 @@ public class DataKeySet
      * Get the HashKey.
      * @return the HashKey
      */
-    protected final HashKey getHashKey() {
+    protected final HashRecipe getHashKey() {
         return getControlKey().getHashKey();
     }
 
@@ -408,17 +409,25 @@ public class DataKeySet
         DataKeyList myKeys = pData.getDataKeys();
         setNewVersion();
 
+        /* Access the symKeyPredicate */
+        DataSet<?, ?> myData = getDataSet();
+        SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
+        Predicate<SymKeyType> myPredicate = myGenerator.getSymKeyPredicate();
+
         /* Loop through the SymKeyType values */
         for (SymKeyType myType : SymKeyType.values()) {
-            /* Create a new DataKey for this DataKeySet */
-            DataKey myKey = myKeys.createNewKey(this, myType);
-            myKey.setNewVersion();
+            /* If this is valid for this keyLength */
+            if (myPredicate.test(myType)) {
+                /* Create a new DataKey for this DataKeySet */
+                DataKey myKey = myKeys.createNewKey(this, myType);
+                myKey.setNewVersion();
 
-            /* Store the DataKey into the map */
-            theMap.put(myType, myKey);
+                /* Store the DataKey into the map */
+                theMap.put(myType, myKey);
 
-            /* Declare the Cipher */
-            theCipherSet.addCipher(myKey.getCipher());
+                /* Declare the Cipher */
+                theCipherSet.addCipher(myKey.getCipher());
+            }
         }
     }
 
@@ -610,19 +619,26 @@ public class DataKeySet
             DataSet<?, ?> myData = getDataSet();
             DataKeyList myKeys = myData.getDataKeys();
 
+            /* Access the symKeyPredicate */
+            SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
+            Predicate<SymKeyType> myPredicate = myGenerator.getSymKeyPredicate();
+
             /* Loop through the SymKeyType values */
             for (SymKeyType myType : SymKeyType.values()) {
-                /* Access the source Data key */
-                DataKey mySrcKey = pKeySet.theMap.get(myType);
+                /* If this is valid for this keyLength */
+                if (myPredicate.test(myType)) {
+                    /* Access the source Data key */
+                    DataKey mySrcKey = pKeySet.theMap.get(myType);
 
-                /* Create a new DataKey for this ControlKey */
-                DataKey myKey = myKeys.cloneItem(myKeySet, mySrcKey);
+                    /* Create a new DataKey for this ControlKey */
+                    DataKey myKey = myKeys.cloneItem(myKeySet, mySrcKey);
 
-                /* Store the DataKey into the map */
-                myKeySet.theMap.put(myType, myKey);
+                    /* Store the DataKey into the map */
+                    myKeySet.theMap.put(myType, myKey);
 
-                /* Declare the Cipher */
-                myKeySet.theCipherSet.addCipher(myKey.getCipher());
+                    /* Declare the Cipher */
+                    myKeySet.theCipherSet.addCipher(myKey.getCipher());
+                }
             }
 
             /* return the cloned keySet */

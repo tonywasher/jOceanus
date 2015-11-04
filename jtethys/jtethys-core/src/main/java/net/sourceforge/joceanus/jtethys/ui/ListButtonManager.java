@@ -44,23 +44,23 @@ public abstract class ListButtonManager<T, I>
      * @param <I> the Icon type
      */
     public interface ListButton<I> {
-                /**
-                 * Set the button text.
-                 * @param pText the button text to set.
-                 */
-                void setButtonText(final String pText);
+        /**
+         * Set the button text.
+         * @param pText the button text to set.
+         */
+        void setButtonText(final String pText);
 
         /**
          * Set the button icon.
          * @param pIcon the button icon to set.
          */
-                void setButtonIcon(final I pIcon);
+        void setButtonIcon(final I pIcon);
 
         /**
          * Set the button toolTip.
          * @param pToolTip the toolTip to set.
          */
-                void setButtonToolTip(final String pToolTip);
+        void setButtonToolTip(final String pToolTip);
     }
 
     /**

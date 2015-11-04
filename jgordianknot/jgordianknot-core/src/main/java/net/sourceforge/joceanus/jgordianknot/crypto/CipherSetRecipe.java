@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Class for assembling/disassembling data encrypted by a CipherSet.
  */
-public class CipherSetKey {
+public class CipherSetRecipe {
     /**
      * Cipher margins.
      */
@@ -43,9 +44,9 @@ public class CipherSetKey {
     private static final byte NOIV_FLAG = Byte.MIN_VALUE;
 
     /**
-     * The KeyBytes.
+     * The Recipe.
      */
-    private final byte[] theKeyBytes;
+    private final byte[] theRecipe;
 
     /**
      * The Initialisation Vector.
@@ -68,15 +69,15 @@ public class CipherSetKey {
      * @param pCreateIV create an IV
      * @throws JOceanusException on error
      */
-    protected CipherSetKey(final SecurityGenerator pGenerator,
-                           final boolean pCreateIV) throws JOceanusException {
+    protected CipherSetRecipe(final SecurityGenerator pGenerator,
+                              final boolean pCreateIV) throws JOceanusException {
         /* Obtain the secureRandom and the cipher steps */
         SecureRandom myRandom = pGenerator.getRandom();
         int myCipherSteps = pGenerator.getNumCipherSteps();
 
-        /* Create the KeyBytes */
+        /* Create the Recipe Bytes */
         int myLen = 1 + (myCipherSteps >> 1);
-        theKeyBytes = new byte[myLen];
+        theRecipe = new byte[myLen];
 
         /* Create the Initialisation vector if required */
         if (pCreateIV) {
@@ -88,6 +89,7 @@ public class CipherSetKey {
 
         /* Allocate new set of parameters */
         theParams = new CipherParameters(pGenerator);
+        theParams.buildRecipe(pGenerator, theRecipe);
         theBytes = null;
     }
 
@@ -96,17 +98,19 @@ public class CipherSetKey {
      * @param pGenerator the security generator
      * @throws JOceanusException on error
      */
-    protected CipherSetKey(final SecurityGenerator pGenerator) throws JOceanusException {
+    protected CipherSetRecipe(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Default to creating an IV */
         this(pGenerator, true);
     }
 
     /**
      * Constructor for external form parse.
+     * @param pGenerator the security generator
      * @param pExternal the external form
      * @throws JOceanusException on error
      */
-    protected CipherSetKey(final byte[] pExternal) throws JOceanusException {
+    protected CipherSetRecipe(final SecurityGenerator pGenerator,
+                              final byte[] pExternal) throws JOceanusException {
         /* Determine whether we have an IV */
         byte myStart = pExternal[0];
         boolean hasIV = (myStart & NOIV_FLAG) == 0;
@@ -117,53 +121,53 @@ public class CipherSetKey {
                             & DataConverter.NYBBLE_MASK;
 
         /* Determine data length */
-        int myKeyLen = 1 + (myCipherSteps >> 1);
+        int myRecipeLen = 1 + (myCipherSteps >> 1);
         int myLen = pExternal.length;
         int myDataLen = myLen
-                        - myKeyLen;
+                        - myRecipeLen;
 
         /* If we are using an IV */
         if (hasIV) {
             /* Allocate buffers */
             myDataLen -= CipherSet.IVSIZE;
-            theKeyBytes = new byte[myKeyLen];
+            theRecipe = new byte[myRecipeLen];
             theInitVector = new byte[CipherSet.IVSIZE];
             theBytes = new byte[myDataLen];
 
             /* Determine offset position */
-            int myOffSet = pExternal[myKeyLen]
+            int myOffSet = pExternal[myRecipeLen]
                            & DataConverter.NYBBLE_MASK;
             myOffSet += CIPHER_MARGIN;
             myOffSet = Math.min(myOffSet, myDataLen
                                           - CIPHER_MARGIN);
 
             /* Copy Data into buffers */
-            System.arraycopy(pExternal, 0, theKeyBytes, 0, myKeyLen);
-            System.arraycopy(pExternal, myKeyLen, theBytes, 0, myOffSet);
+            System.arraycopy(pExternal, 0, theRecipe, 0, myRecipeLen);
+            System.arraycopy(pExternal, myRecipeLen, theBytes, 0, myOffSet);
             System.arraycopy(pExternal, myOffSet
-                                        + myKeyLen, theInitVector, 0, CipherSet.IVSIZE);
+                                        + myRecipeLen, theInitVector, 0, CipherSet.IVSIZE);
             System.arraycopy(pExternal, myOffSet
-                                        + myKeyLen
+                                        + myRecipeLen
                                         + CipherSet.IVSIZE, theBytes, myOffSet, myDataLen
                                                                                 - myOffSet);
 
             /* else there is no IV */
         } else {
             /* Allocate buffers */
-            theKeyBytes = new byte[myKeyLen];
+            theRecipe = new byte[myRecipeLen];
             theInitVector = null;
             theBytes = new byte[myDataLen];
 
             /* Copy Data into buffers */
-            System.arraycopy(pExternal, 0, theKeyBytes, 0, myKeyLen);
-            System.arraycopy(pExternal, myKeyLen, theBytes, 0, myDataLen);
+            System.arraycopy(pExternal, 0, theRecipe, 0, myRecipeLen);
+            System.arraycopy(pExternal, myRecipeLen, theBytes, 0, myDataLen);
 
             /* Clear the flag */
-            theKeyBytes[0] &= ~NOIV_FLAG;
+            theRecipe[0] &= ~NOIV_FLAG;
         }
 
         /* Allocate new set of parameters */
-        theParams = new CipherParameters();
+        theParams = new CipherParameters(pGenerator, theRecipe);
     }
 
     /**
@@ -180,8 +184,8 @@ public class CipherSetKey {
      */
     public byte[] getInitVector() {
         return (theInitVector == null)
-                                      ? null
-                                      : Arrays.copyOf(theInitVector, theInitVector.length);
+                                       ? null
+                                       : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -190,8 +194,8 @@ public class CipherSetKey {
      */
     public byte[] getBytes() {
         return (theBytes == null)
-                                 ? null
-                                 : Arrays.copyOf(theBytes, theBytes.length);
+                                  ? null
+                                  : Arrays.copyOf(theBytes, theBytes.length);
     }
 
     /**
@@ -202,9 +206,9 @@ public class CipherSetKey {
     public byte[] buildExternal(final byte[] pData) {
         /* Determine lengths */
         boolean useIV = theInitVector != null;
-        int myKeyLen = theKeyBytes.length;
+        int myRecipeLen = theRecipe.length;
         int myDataLen = pData.length;
-        int myLen = myKeyLen
+        int myLen = myRecipeLen
                     + myDataLen;
 
         /* If we have an IV */
@@ -221,12 +225,12 @@ public class CipherSetKey {
                                           - CIPHER_MARGIN);
 
             /* Copy Data into buffer */
-            System.arraycopy(theKeyBytes, 0, myBuffer, 0, myKeyLen);
-            System.arraycopy(pData, 0, myBuffer, myKeyLen, myOffSet);
+            System.arraycopy(theRecipe, 0, myBuffer, 0, myRecipeLen);
+            System.arraycopy(pData, 0, myBuffer, myRecipeLen, myOffSet);
             System.arraycopy(theInitVector, 0, myBuffer, myOffSet
-                                                         + myKeyLen, CipherSet.IVSIZE);
+                                                         + myRecipeLen, CipherSet.IVSIZE);
             System.arraycopy(pData, myOffSet, myBuffer, myOffSet
-                                                        + myKeyLen
+                                                        + myRecipeLen
                                                         + CipherSet.IVSIZE, myDataLen
                                                                             - myOffSet);
             /* return the external format */
@@ -238,8 +242,8 @@ public class CipherSetKey {
             byte[] myBuffer = new byte[myLen];
 
             /* Build the buffer */
-            System.arraycopy(theKeyBytes, 0, myBuffer, 0, myKeyLen);
-            System.arraycopy(pData, 0, myBuffer, myKeyLen, myDataLen);
+            System.arraycopy(theRecipe, 0, myBuffer, 0, myRecipeLen);
+            System.arraycopy(pData, 0, myBuffer, myRecipeLen, myDataLen);
 
             /* Mark the buffer */
             myBuffer[0] |= NOIV_FLAG;
@@ -252,7 +256,7 @@ public class CipherSetKey {
     /**
      * The parameters class.
      */
-    private final class CipherParameters {
+    private static final class CipherParameters {
         /**
          * The CipherSet.
          */
@@ -264,46 +268,41 @@ public class CipherSetKey {
          * @throws JOceanusException on error
          */
         private CipherParameters(final SecurityGenerator pGenerator) throws JOceanusException {
-            /* Obtain Digest list */
-            int myNumCiphers = pGenerator.getNumCipherSteps();
-            theSymKeyTypes = SymKeyType.getRandomTypes(pGenerator.getNumCipherSteps(), pGenerator.getRandom());
-
-            /* Build the key bytes */
-            int i = 0, j = 0;
-            theKeyBytes[i++] = (byte) ((myNumCiphers << DataConverter.NYBBLE_SHIFT) + theSymKeyTypes[j++].getId());
-            while (j < myNumCiphers) {
-                int myByte = theSymKeyTypes[j++].getId();
-                myByte <<= DataConverter.NYBBLE_SHIFT;
-                if (j < myNumCiphers) {
-                    myByte += theSymKeyTypes[j++].getId();
-                }
-                theKeyBytes[i++] = (byte) myByte;
-            }
+            theSymKeyTypes = pGenerator.generateSymKeyTypes();
         }
 
         /**
-         * Construct the parameters from key bytes.
+         * Construct the parameters from recipe.
+         * @param pGenerator the security generator
+         * @param pRecipe the recipe bytes
          * @throws JOceanusException on error
          */
-        private CipherParameters() throws JOceanusException {
+        private CipherParameters(final SecurityGenerator pGenerator,
+                                 final byte[] pRecipe) throws JOceanusException {
+            /* Obtain Id manager */
+            SecurityIdManager myManager = pGenerator.getIdManager();
+
             /* Determine number of cipher steps */
-            int myCipherSteps = (theKeyBytes[0] >> DataConverter.NYBBLE_SHIFT)
+            int myCipherSteps = (pRecipe[0] >> DataConverter.NYBBLE_SHIFT)
                                 & DataConverter.NYBBLE_MASK;
+
+            /* Determine the SymKey predicate */
+            Predicate<SymKeyType> myPredicate = pGenerator.getSymKeyPredicate();
 
             /* Allocate the key types */
             int i = 0, j = 0;
             theSymKeyTypes = new SymKeyType[myCipherSteps];
-            int myId = theKeyBytes[j++]
+            int myId = pRecipe[j++]
                        & DataConverter.NYBBLE_MASK;
-            theSymKeyTypes[i++] = SymKeyType.fromId(myId);
+            theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId, myPredicate);
             while (i < myCipherSteps) {
-                myId = (theKeyBytes[j] >> DataConverter.NYBBLE_SHIFT)
+                myId = (pRecipe[j] >> DataConverter.NYBBLE_SHIFT)
                        & DataConverter.NYBBLE_MASK;
-                theSymKeyTypes[i++] = SymKeyType.fromId(myId);
+                theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId, myPredicate);
                 if (i < myCipherSteps) {
-                    myId = theKeyBytes[j++]
+                    myId = pRecipe[j++]
                            & DataConverter.NYBBLE_MASK;
-                    theSymKeyTypes[i++] = SymKeyType.fromId(myId);
+                    theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId, myPredicate);
                 }
             }
         }
@@ -314,6 +313,31 @@ public class CipherSetKey {
          */
         public SymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
+        }
+
+        /**
+         * Construct the external recipe.
+         * @param pGenerator the security generator
+         * @param pRecipe the recipe bytes to build
+         * @throws JOceanusException on error
+         */
+        private void buildRecipe(final SecurityGenerator pGenerator,
+                                 final byte[] pRecipe) throws JOceanusException {
+            /* Obtain Id manager */
+            SecurityIdManager myManager = pGenerator.getIdManager();
+
+            /* Build the key bytes */
+            int myNumCiphers = theSymKeyTypes.length;
+            int i = 0, j = 0;
+            pRecipe[i++] = (byte) ((myNumCiphers << DataConverter.NYBBLE_SHIFT) + myManager.getExternalId(theSymKeyTypes[j++]));
+            while (j < myNumCiphers) {
+                int myByte = myManager.getExternalId(theSymKeyTypes[j++]);
+                myByte <<= DataConverter.NYBBLE_SHIFT;
+                if (j < myNumCiphers) {
+                    myByte += myManager.getExternalId(theSymKeyTypes[j++]);
+                }
+                pRecipe[i++] = (byte) myByte;
+            }
         }
     }
 }

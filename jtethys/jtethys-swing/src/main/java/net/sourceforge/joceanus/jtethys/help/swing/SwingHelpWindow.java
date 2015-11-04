@@ -25,6 +25,9 @@ package net.sourceforge.joceanus.jtethys.help.swing;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -48,10 +51,14 @@ import javax.swing.tree.TreeSelectionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jtethys.help.HelpEntry;
+import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.HelpPage;
+
 /**
  * Help Window class, responsible for displaying the help.
  */
-public class HelpWindow
+public class SwingHelpWindow
         extends JFrame
         implements HyperlinkListener, TreeSelectionListener {
     /**
@@ -72,7 +79,7 @@ public class HelpWindow
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelpWindow.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwingHelpWindow.class);
 
     /**
      * The editor pane.
@@ -95,25 +102,22 @@ public class HelpWindow
     private final DefaultMutableTreeNode theRoot;
 
     /**
+     * The page map.
+     */
+    private final transient Map<String, TreePath> theTreeMap;
+
+    /**
      * Constructor.
      * @param pParent the parent frame
      * @param pModule the help module to display
      */
-    public HelpWindow(final JFrame pParent,
+    public SwingHelpWindow(final JFrame pParent,
                       final HelpModule pModule) {
-        /* Local variables */
-        JSplitPane mySplit;
-        JScrollPane myDocScroll;
-        JScrollPane myTreeScroll;
-        HTMLEditorKit myKit;
-        StyleSheet myStyle;
-        Document myDoc;
-
         /* Set the title */
         setTitle("Help Manager");
 
         /* Access the Help entries and list */
-        HelpEntry[] myEntries = pModule.getHelpEntries();
+        List<HelpEntry> myEntries = pModule.getHelpEntries();
         theModule = pModule;
 
         /* Access the initial id */
@@ -125,24 +129,27 @@ public class HelpWindow
         theEditor.addHyperlinkListener(this);
 
         /* Add an editor kit to the editor */
-        myKit = new HTMLEditorKit();
+        HTMLEditorKit myKit = new HTMLEditorKit();
         theEditor.setEditorKit(myKit);
 
         /* Create a scroll-pane for the editor */
-        myDocScroll = new JScrollPane(theEditor);
+        JScrollPane myDocScroll = new JScrollPane(theEditor);
 
         /* Create the style-sheet for the window */
-        myStyle = myKit.getStyleSheet();
+        StyleSheet myStyle = myKit.getStyleSheet();
         myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }");
         myStyle.addRule("h1 { color: black; }");
         myStyle.addRule("h2 { color: black; }");
 
         /* Create the document for the window */
-        myDoc = myKit.createDefaultDocument();
+        Document myDoc = myKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
+        /* Create the tree map */
+        theTreeMap = new HashMap<String, TreePath>();
+
         /* Get the tree node from the help entries */
-        theRoot = HelpEntry.createTree(pModule.getTitle(), myEntries);
+        theRoot = createTree(pModule.getTitle(), myEntries);
 
         /* Create the JTree object */
         theTree = new JTree(theRoot);
@@ -154,13 +161,13 @@ public class HelpWindow
         theTree.addTreeSelectionListener(this);
 
         /* Create a scroll-pane for the tree */
-        myTreeScroll = new JScrollPane(theTree);
+        JScrollPane myTreeScroll = new JScrollPane(theTree);
 
         /* display the page */
         displayPage(myName);
 
         /* Create the split pane */
-        mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, myDocScroll);
+        JSplitPane mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, myDocScroll);
         mySplit.setOneTouchExpandable(true);
         mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 
@@ -220,7 +227,7 @@ public class HelpWindow
                 theEditor.requestFocusInWindow();
 
                 /* Sort out the tree */
-                TreePath myPath = myPage.getEntry().getTreePath();
+                TreePath myPath = theTreeMap.get(myPage.getName());
                 theTree.setSelectionPath(myPath);
                 theTree.scrollPathToVisible(myPath);
             }
@@ -276,5 +283,54 @@ public class HelpWindow
 
         /* display the node */
         displayPage(myEntry.getName());
+    }
+
+    /**
+     * Construct a top level Tree Node from a set of help entries.
+     * @param pTitle the title for the tree
+     * @param pEntries the help entries
+     * @return the Tree node
+     */
+    private DefaultMutableTreeNode createTree(final String pTitle,
+                                              final List<HelpEntry> pEntries) {
+        /* Create an initial tree node */
+        DefaultMutableTreeNode myTree = new DefaultMutableTreeNode(pTitle);
+
+        /* Add the entries into the node */
+        addHelpEntries(myTree, pEntries);
+
+        /* Return the tree */
+        return myTree;
+    }
+
+    /**
+     * Add array of Help entries.
+     * @param pNode the node to add to
+     * @param pEntries the entries to add
+     */
+    private void addHelpEntries(final DefaultMutableTreeNode pNode,
+                                final List<HelpEntry> pEntries) {
+        /* Loop through the entries */
+        for (HelpEntry myEntry : pEntries) {
+            /* Create a new entry and add it to the node */
+            DefaultMutableTreeNode myNode = new DefaultMutableTreeNode(myEntry);
+            pNode.add(myNode);
+
+            /* Check that the name is unique */
+            String myName = myEntry.getName();
+            if (theTreeMap.get(myName) != null) {
+                LOGGER.error("Duplicate Help entry " + myName);
+            }
+
+            /* Access the tree path for this item */
+            theTreeMap.put(myName, new TreePath(myNode.getPath()));
+
+            /* If we have children */
+            List<HelpEntry> myChildren = myEntry.getChildren();
+            if (myChildren != null) {
+                /* Add the children into the tree */
+                addHelpEntries(myNode, myChildren);
+            }
+        }
     }
 }

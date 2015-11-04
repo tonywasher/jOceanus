@@ -100,7 +100,7 @@ public class ZipReadFile
             theZipFile = new File(pFile.getPath());
 
             /* Create the file contents */
-            theContents = new ZipFileContents();
+            theContents = new ZipFileContents(null);
 
             /* Loop through the Zip file entries */
             ZipEntry myEntry;
@@ -186,7 +186,7 @@ public class ZipReadFile
 
         /* Parse the decrypted header */
         byte[] myBytes = myHash.decryptBytes(theHeader);
-        theContents = new ZipFileContents(DataConverter.byteArrayToString(myBytes));
+        theContents = new ZipFileContents(myHash.getSecurityGenerator(), DataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
         ZipFileEntry myHeader = theContents.getHeader();

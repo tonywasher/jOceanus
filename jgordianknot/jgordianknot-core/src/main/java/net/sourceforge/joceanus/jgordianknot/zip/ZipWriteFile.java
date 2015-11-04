@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
 import net.sourceforge.joceanus.jtethys.DataConverter;
@@ -150,13 +149,14 @@ public class ZipWriteFile
             theStream = new ZipOutputStream(myOutBuffer);
 
             /*
-             * Set compression level to zero to speed things up. It would be nice to use the STORED method, but this requires calculating the CRC and file size
-             * prior to writing data to the Zip file which will badly affect performance.
+             * Set compression level to zero to speed things up. It would be nice to use the STORED
+             * method, but this requires calculating the CRC and file size prior to writing data to
+             * the Zip file which will badly affect performance.
              */
             theStream.setLevel(ZipOutputStream.STORED);
 
             /* Create the file contents */
-            theContents = new ZipFileContents();
+            theContents = new ZipFileContents(theGenerator);
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -185,7 +185,7 @@ public class ZipWriteFile
             theStream = new ZipOutputStream(myOutBuffer);
 
             /* Create the file contents */
-            theContents = new ZipFileContents();
+            theContents = new ZipFileContents(theGenerator);
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -242,9 +242,9 @@ public class ZipWriteFile
             /* Start the new entry */
             theFileName = pFile.getPath();
             theEntry = new ZipEntry(isEncrypted()
-                                                 ? FILE_PREFIX
-                                                   + theFileNo
-                                                 : theFileName);
+                                                  ? FILE_PREFIX
+                                                    + theFileNo
+                                                  : theFileName);
             theStream.putNextEntry(theEntry);
 
             /* Create a new zipFileEntry */
@@ -262,18 +262,18 @@ public class ZipWriteFile
                 /* Generate a list of encryption types */
                 SymKeyType[] mySymKeyTypes = theGenerator.generateSymKeyTypes();
                 CipherMode[] myModes = CipherMode.values();
-                StreamKeyType[] myStreamKeyTypes = StreamKeyType.getRandomTypes(1, theGenerator.getRandom());
+                int myNumModes = myModes.length;
 
                 /* For each encryption stream */
                 for (int iEncrypt = 0; iEncrypt < theNumEncrypts; iEncrypt++) {
                     /* Create the encryption stream */
                     SymmetricKey myKey = theGenerator.generateSymmetricKey(mySymKeyTypes[iEncrypt]);
-                    EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, myModes[iEncrypt], theOutput);
+                    EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, myModes[iEncrypt % myNumModes], theOutput);
                     theOutput = myEncrypt;
                 }
 
                 /* Create the encryption stream for a stream key */
-                StreamKey myKey = theGenerator.generateStreamKey(myStreamKeyTypes[0]);
+                StreamKey myKey = theGenerator.generateStreamKey();
                 EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, theOutput);
                 theOutput = myEncrypt;
 
@@ -374,7 +374,7 @@ public class ZipWriteFile
                     /* Access the encoded file string */
                     String myHeader = theContents.encodeContents();
 
-                    /* Write the bytes to the zip file and close the entry */
+                    /* Write the bytes to the Zip file and close the entry */
                     byte[] myBytes = DataConverter.stringToByteArray(myHeader);
                     theStream.write(theHash.encryptBytes(myBytes));
                     theStream.closeEntry();

@@ -124,12 +124,12 @@ public class StreamKey {
      * @throws JOceanusException on error
      */
     protected static StreamKey generateStreamKey(final SecurityGenerator pGenerator) throws JOceanusException {
-        /* Access random generator */
-        SecureRandom myRandom = pGenerator.getRandom();
-        StreamKeyType[] myType = StreamKeyType.getRandomTypes(1, myRandom);
+        /* Determine random StreamKeyType */
+        SecurityIdManager myManager = pGenerator.getIdManager();
+        StreamKeyType myType = myManager.getRandomStreamKeyType(pGenerator.getStreamKeyPredicate());
 
         /* Generate a StreamKey for the StreamKey type */
-        return generateStreamKey(pGenerator, myType[0]);
+        return generateStreamKey(pGenerator, myType);
     }
 
     /**

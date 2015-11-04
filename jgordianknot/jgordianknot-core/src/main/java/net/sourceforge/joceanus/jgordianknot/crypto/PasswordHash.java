@@ -25,12 +25,12 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Password Hash implementation.
@@ -62,9 +62,9 @@ public class PasswordHash {
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordHash.class);
 
     /**
-     * Hash Key.
+     * Hash Recipe.
      */
-    private final HashKey theHashKey;
+    private final HashRecipe theRecipe;
 
     /**
      * The security generator.
@@ -108,8 +108,8 @@ public class PasswordHash {
         theGenerator = pGenerator;
         theRandom = theGenerator.getRandom();
 
-        /* Create a random HashKey */
-        theHashKey = new HashKey(theGenerator);
+        /* Create a random HashRecipe */
+        theRecipe = new HashRecipe(theGenerator);
 
         /* Build hash from password */
         setPassword(pPassword);
@@ -130,7 +130,7 @@ public class PasswordHash {
         theHashBytes = Arrays.copyOf(pHashBytes, pHashBytes.length);
 
         /* Parse the hash */
-        theHashKey = new HashKey(pPassword.length, pHashBytes);
+        theRecipe = new HashRecipe(pGenerator, pPassword.length, pHashBytes);
 
         /* Store the secure random generator */
         theGenerator = pGenerator;
@@ -154,8 +154,8 @@ public class PasswordHash {
         theGenerator = pSource.theGenerator;
         theRandom = pSource.theRandom;
 
-        /* Create a random HashKey */
-        theHashKey = new HashKey(theGenerator);
+        /* Create a random HashRecipe */
+        theRecipe = new HashRecipe(theGenerator);
 
         /* Protect against exceptions */
         char[] myPassword = null;
@@ -189,8 +189,8 @@ public class PasswordHash {
      * Obtain the HashKey.
      * @return the HashKey
      */
-    public HashKey getHashKey() {
-        return theHashKey;
+    public HashRecipe getHashRecipe() {
+        return theRecipe;
     }
 
     /**
@@ -257,7 +257,7 @@ public class PasswordHash {
         theHashBytes = generateHashBytes(pPassword);
 
         /* Create the Cipher Set */
-        theCipherSet = new CipherSet(theGenerator, theHashKey);
+        theCipherSet = new CipherSet(theGenerator, theRecipe);
         theCipherSet.buildCiphers(theSecretHash);
 
         /* Protect against exceptions */
@@ -292,7 +292,7 @@ public class PasswordHash {
         }
 
         /* Create the Cipher Set */
-        theCipherSet = new CipherSet(theGenerator, theHashKey);
+        theCipherSet = new CipherSet(theGenerator, theRecipe);
         theCipherSet.buildCiphers(theSecretHash);
 
         /* Protect against exceptions */
@@ -327,21 +327,24 @@ public class PasswordHash {
             byte[] mySecretBytes = null;
 
             /* Obtain configuration details */
-            byte[] mySeed = theGenerator.getSecurityBytes();
+            byte[] mySeed = theGenerator.getPersonalisation();
             int iIterations = theGenerator.getNumHashIterations();
-            int iFinal = theHashKey.getAdjustment()
+            int iFinal = theRecipe.getAdjustment()
                          + iIterations;
 
             /* Convert password to bytes */
             myPassBytes = DataConverter.charsToByteArray(pPassword);
 
             /* Access the MACs */
-            DataMac myPrimeMac = theGenerator.generateMac(theHashKey.getPrimeDigest(), myPassBytes);
-            DataMac myAlternateMac = theGenerator.generateMac(theHashKey.getAlternateDigest(), myPassBytes);
-            DataMac mySecretMac = theGenerator.generateMac(theHashKey.getSecretDigest(), myPassBytes);
+            DataMac myPrimeMac = theGenerator.generateMac(theRecipe.getPrimeDigest(), myPassBytes);
+            DataMac myAlternateMac = theGenerator.generateMac(theRecipe.getAlternateDigest(), myPassBytes);
+            DataMac mySecretMac = theGenerator.generateMac(theRecipe.getSecretDigest(), myPassBytes);
+
+            /* Access final digest */
+            DataDigest myDigest = theGenerator.generateDigest(theGenerator.getBaseHashAlgorithm());
 
             /* Initialise the hash values as the salt bytes */
-            byte[] mySaltBytes = theHashKey.getInitVector();
+            byte[] mySaltBytes = theRecipe.getInitVector();
             byte[] myPrimeHash = mySaltBytes;
             byte[] myAlternateHash = mySaltBytes;
             byte[] mySecretHash = mySaltBytes;
@@ -356,30 +359,13 @@ public class PasswordHash {
                 /* Update the prime Mac */
                 myPrimeMac.update(myPrimeHash);
 
-                /* Add in Alternate Hash every so often */
-                if ((iPass % SAMPLE_PRIME) == 0) {
-                    /* Add in the Alternate hash */
-                    myPrimeMac.update(myAlternateHash);
-                }
-
                 /* Update the alternate Mac */
                 myAlternateMac.update(myAlternateHash);
 
-                /* Add in prime hash every so often */
-                if ((iPass % SAMPLE_ALT) == 0) {
-                    /* Add in the Prime hash */
-                    myAlternateMac.update(myPrimeHash);
-                }
-
                 /* Update the secret Mac */
                 mySecretMac.update(mySecretHash);
-
-                /* Add in prime/alternate hashes every so often */
-                if ((iPass % SAMPLE_SECRET) == 0) {
-                    /* Add in the Prime and Alternate hashes */
-                    mySecretMac.update(myPrimeHash);
-                    mySecretMac.update(myAlternateHash);
-                }
+                mySecretMac.update(myPrimeHash);
+                mySecretMac.update(myAlternateHash);
 
                 /* Recalculate hashes and combine them */
                 myPrimeHash = myPrimeMac.finish();
@@ -391,13 +377,15 @@ public class PasswordHash {
             }
 
             /* Combine the Primary and Alternate hashes */
-            byte[] myExternalHash = DataConverter.combineHashes(myPrimeBytes, myAlternateBytes);
+            myDigest.update(myPrimeBytes);
+            myDigest.update(myAlternateBytes);
+            byte[] myExternalHash = myDigest.finish();
 
             /* Store the Secret Hash */
             theSecretHash = mySecretBytes;
 
             /* Create the external hash */
-            byte[] myHashBytes = theHashKey.buildExternal(pPassword.length, myExternalHash);
+            byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
 
             /* Check whether the HashBytes is too large */
             if (myHashBytes.length > HASHSIZE) {

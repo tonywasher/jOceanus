@@ -382,7 +382,8 @@ public abstract class ZipStreamSpec {
                             & DataConverter.NYBBLE_MASK;
 
             /* Store details */
-            theKeyType = SymKeyType.fromId((int) myId);
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
+            theKeyType = myGenerator.deriveSymKeyTypeFromExternalId((int) myId);
             theCipherMode = CipherMode.fromId((int) myModeId);
             theKeySpec = pProperties.getByteProperty(PROP_TYPE
                                                      + pIndex);
@@ -394,7 +395,8 @@ public abstract class ZipStreamSpec {
         protected void allocateProperties(final int pIndex,
                                           final ZipFileProperties pProperties) {
             /* Determine the Id */
-            int myId = theKeyType.getId() << DataConverter.NYBBLE_SHIFT;
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
+            int myId = myGenerator.getExternalId(theKeyType) << DataConverter.NYBBLE_SHIFT;
             myId += theCipherMode.getId();
 
             /* Set the Stream Properties */
@@ -474,7 +476,8 @@ public abstract class ZipStreamSpec {
             super(ZipStreamType.STREAM);
 
             /* Store details */
-            theKeyType = StreamKeyType.fromId((int) pEncodedId);
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
+            theKeyType = myGenerator.deriveStreamKeyTypeFromExternalId((int) pEncodedId);
             theKeySpec = pProperties.getByteProperty(PROP_TYPE
                                                      + pIndex);
             theInitVector = pProperties.getByteProperty(PROP_VALUE
@@ -485,8 +488,9 @@ public abstract class ZipStreamSpec {
         protected void allocateProperties(final int pIndex,
                                           final ZipFileProperties pProperties) {
             /* Set the Stream Properties */
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
             pProperties.setProperty(PROP_TYPE
-                                    + pIndex, getEncoded(theKeyType.getId()));
+                                    + pIndex, getEncoded(myGenerator.getExternalId(theKeyType)));
             pProperties.setProperty(PROP_TYPE
                                     + pIndex, theKeySpec);
             pProperties.setProperty(PROP_VALUE
@@ -552,7 +556,8 @@ public abstract class ZipStreamSpec {
             super(ZipStreamType.DIGEST);
 
             /* Store details */
-            theDigestType = DigestType.fromId((int) pEncodedId);
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
+            theDigestType = myGenerator.deriveDigestTypeFromExternalId((int) pEncodedId);
             theDigest = pProperties.getByteProperty(PROP_VALUE
                                                     + pIndex);
         }
@@ -561,8 +566,9 @@ public abstract class ZipStreamSpec {
         protected void allocateProperties(final int pIndex,
                                           final ZipFileProperties pProperties) {
             /* Set the Stream Properties */
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
             pProperties.setProperty(PROP_TYPE
-                                    + pIndex, getEncoded(theDigestType.getId()));
+                                    + pIndex, getEncoded(myGenerator.getExternalId(theDigestType)));
             pProperties.setProperty(PROP_VALUE
                                     + pIndex, theDigest);
         }
@@ -606,7 +612,7 @@ public abstract class ZipStreamSpec {
 
         /**
          * Constructor.
-         * @param pStream the DigestOutputStream
+         * @param pStream the MacOutputStream
          * @param pCipherSet the CipherSet
          * @throws JOceanusException on error
          */
@@ -635,7 +641,8 @@ public abstract class ZipStreamSpec {
             super(ZipStreamType.MAC);
 
             /* Store details */
-            theMacSpec = new MacSpec((int) pEncodedId);
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
+            theMacSpec = new MacSpec(myGenerator, (int) pEncodedId);
             theKeySpec = pProperties.getByteProperty(PROP_TYPE
                                                      + pIndex);
             theAuthCode = pProperties.getByteProperty(PROP_VALUE
@@ -646,8 +653,9 @@ public abstract class ZipStreamSpec {
         protected void allocateProperties(final int pIndex,
                                           final ZipFileProperties pProperties) {
             /* Set the Stream Properties */
+            SecurityGenerator myGenerator = pProperties.getSecurityGenerator();
             pProperties.setProperty(PROP_TYPE
-                                    + pIndex, getEncoded(theMacSpec.getEncoded()));
+                                    + pIndex, getEncoded(theMacSpec.getEncoded(myGenerator)));
             pProperties.setProperty(PROP_TYPE
                                     + pIndex, theKeySpec);
             pProperties.setProperty(PROP_VALUE

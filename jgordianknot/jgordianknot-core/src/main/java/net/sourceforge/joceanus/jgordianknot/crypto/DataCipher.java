@@ -37,25 +37,31 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.bouncycastle.util.Arrays;
+
 import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-import org.bouncycastle.util.Arrays;
-
 /**
  * Wrapper class for Cipher used for encryption data objects.
  * <p>
- * This class also includes a KeyWrapper algorithm that is a modified form of RFC3394. The differences are as follows
+ * This class also includes a KeyWrapper algorithm that is a modified form of RFC3394. The
+ * differences are as follows
  * <ol>
- * <li>CBC/NoPadding is used as the encryption mode rather than ECB. This requires an initialisation vector.
- * <li>The initialisation vector is used as the integrity header check value as well as for initialising the cipher.
- * <li>Encryption etc. is performed using the doFinal() method so that the cipher is reinitialised on each step.
- * <li>With the inclusion of ThreeFish (which has a cipher block size of 256-bits), the algorithm will always use a wrap block size of half the cipher block
- * size - normally 64-bits, but 128-bits in the case of ThreeFish. This requires the integrity check value to be expanded to 128-bits on ThreeFish so that is
- * always fills a whole number of blocks.
- * <li>The algorithm supports byte arrays that are not strict multiples of the wrap block size. Such arrays are padded with null bytes up to the block size and
- * the number of padding bytes is stored as the last byte of the integrity check vector.
+ * <li>CBC/NoPadding is used as the encryption mode rather than ECB. This requires an initialisation
+ * vector.
+ * <li>The initialisation vector is used as the integrity header check value as well as for
+ * initialising the cipher.
+ * <li>Encryption etc. is performed using the doFinal() method so that the cipher is reinitialised
+ * on each step.
+ * <li>With the inclusion of ThreeFish (which has a cipher block size of 256-bits), the algorithm
+ * will always use a wrap block size of half the cipher block size - normally 64-bits, but 128-bits
+ * in the case of ThreeFish. This requires the integrity check value to be expanded to 128-bits on
+ * ThreeFish so that is always fills a whole number of blocks.
+ * <li>The algorithm supports byte arrays that are not strict multiples of the wrap block size. Such
+ * arrays are padded with null bytes up to the block size and the number of padding bytes is stored
+ * as the last byte of the integrity check vector.
  * </ol>
  */
 public class DataCipher {
@@ -429,7 +435,7 @@ public class DataCipher {
 
         /* Determine index into array for Key Type */
         int myIndex = VECTOR_SHIFT
-                      * myType.getId();
+                      * (myType.ordinal() + 1);
         myIndex %= myVectorLen;
 
         /* Determine remaining data length in vector */

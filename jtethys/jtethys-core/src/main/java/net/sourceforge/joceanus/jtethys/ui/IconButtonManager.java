@@ -41,13 +41,13 @@ public abstract class IconButtonManager<T, I>
      * @param <I> the Icon type
      */
     public interface IconButton<I> {
-                /**
-                 * Set the state.
-                 * @param pIcon the value to set.
-                 * @param pToolTip the toolTip to set.
-                 */
-                void setButtonState(final I pIcon,
-                                    final String pToolTip);
+        /**
+         * Set the state.
+         * @param pIcon the value to set.
+         * @param pToolTip the toolTip to set.
+         */
+        void setButtonState(final I pIcon,
+                            final String pToolTip);
     }
 
     /**

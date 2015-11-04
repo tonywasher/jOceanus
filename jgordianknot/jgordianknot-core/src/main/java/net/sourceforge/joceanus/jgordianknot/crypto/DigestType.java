@@ -22,11 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.security.SecureRandom;
-
-import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
-import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import java.util.function.Predicate;
 
 /**
  * DataDigest types. Available algorithms.
@@ -35,59 +31,62 @@ public enum DigestType {
     /**
      * SHA2.
      */
-    SHA2(1),
+    SHA2,
 
     /**
      * Tiger.
      */
-    TIGER(2),
+    TIGER,
 
     /**
      * WhirlPool.
      */
-    WHIRLPOOL(3),
+    WHIRLPOOL,
 
     /**
      * RIPEMD.
      */
-    RIPEMD(4),
+    RIPEMD,
 
     /**
      * GOST.
      */
-    GOST(5),
+    GOST,
 
     /**
-     * SHA3.
+     * KECCAK.
      */
-    SHA3(6),
+    KECCAK,
 
     /**
      * Skein.
      */
-    SKEIN(7);
+    SKEIN,
 
     /**
-     * Invalid number of digests error text.
+     * SM3.
      */
-    private static final String ERROR_NUMTYPES = "Invalid number of Digests: ";
+    SM3,
+
     /**
-     * The external Id of the algorithm.
+     * Blake.
      */
-    private int theId = 0;
+    BLAKE;
+
+    /**
+     * Predicate for all digestTypes.
+     */
+    private static final Predicate<DigestType> PREDICATE_ALL = p -> true;
+
+    /**
+     * Predicate for all digest types except Blake2b.
+     */
+    private static final Predicate<DigestType> PREDICATE_SUPPORTED = p -> p != BLAKE;
 
     /**
      * The String name.
      */
     private String theName;
-
-    /**
-     * Constructor.
-     * @param id the id
-     */
-    DigestType(final int id) {
-        theId = id;
-    }
 
     @Override
     public String toString() {
@@ -102,52 +101,23 @@ public enum DigestType {
     }
 
     /**
-     * Obtain the external Id.
-     * @return the external Id
-     */
-    public int getId() {
-        return theId;
-    }
-
-    /**
-     * get value from id.
-     * @param id the id value
-     * @return the corresponding enumeration object
-     * @throws JOceanusException on error
-     */
-    public static DigestType fromId(final int id) throws JOceanusException {
-        for (DigestType myType : values()) {
-            if (myType.getId() == id) {
-                return myType;
-            }
-        }
-        throw new JGordianDataException("Invalid DigestType: "
-                                        + id);
-    }
-
-    /**
      * Return the associated algorithm.
-     * @param bLong use long hash
      * @return the algorithm
      */
-    protected String getAlgorithm(final boolean bLong) {
+    protected String getAlgorithm() {
         switch (this) {
             case SKEIN:
-                return bLong
-                             ? "SKEIN-512-512"
-                             : "SKEIN-256-256";
-            case SHA3:
-                return bLong
-                             ? "SHA3-512"
-                             : "SHA3-256";
+                return "SKEIN-512-512";
+            case KECCAK:
+                return "KECCAK-512";
             case SHA2:
-                return bLong
-                             ? "SHA512"
-                             : "SHA-256";
+                return "SHA512";
             case RIPEMD:
                 return "RIPEMD320";
             case GOST:
                 return "GOST3411";
+            case BLAKE:
+                return "Blake2b";
             default:
                 return name();
         }
@@ -155,98 +125,31 @@ public enum DigestType {
 
     /**
      * Return the associated HMac algorithm.
-     * @param bLong use long hash
      * @return the algorithm
      */
-    protected String getMacAlgorithm(final boolean bLong) {
-        return "HMac"
-               + getAlgorithm(bLong);
+    protected String getMacAlgorithm() {
+        switch (this) {
+            case KECCAK:
+                return "HMacKECCAK512";
+            default:
+                return "HMac"
+                       + getAlgorithm();
+        }
     }
 
     /**
-     * Get random unique set of digest types.
-     * @param pNumTypes the number of types
-     * @param pRandom the random generator
-     * @return the random set
-     * @throws JOceanusException on error
+     * Obtain predicate for all digestTypes.
+     * @return the predicate
      */
-    public static DigestType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws JOceanusException {
-        /* Access the values */
-        DigestType[] myValues = values();
-        int iNumValues = myValues.length;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JGordianLogicException(ERROR_NUMTYPES
-                                             + pNumTypes);
-        }
-
-        /* Create the result set */
-        DigestType[] myTypes = new DigestType[pNumTypes];
-
-        /* Loop through the types */
-        for (int i = 0; i < pNumTypes; i++) {
-            /* Access the next random index */
-            int iIndex = pRandom.nextInt(iNumValues);
-
-            /* Store the type */
-            myTypes[i] = myValues[iIndex];
-
-            /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
-            iNumValues--;
-        }
-
-        /* Return the types */
-        return myTypes;
+    public static Predicate<DigestType> allTypes() {
+        return PREDICATE_ALL;
     }
 
     /**
-     * Get keyed unique set of digest types.
-     * @param pNumTypes the number of types
-     * @param pKeySeed the seed to determine digest
-     * @return the random set
-     * @throws JOceanusException on error
+     * Obtain predicate for all supported digestTypes.
+     * @return the predicate
      */
-    public static DigestType[] getSeedTypes(final int pNumTypes,
-                                            final long pKeySeed) throws JOceanusException {
-        /* Access the values */
-        DigestType[] myValues = values();
-        long myKeySeed = pKeySeed;
-        int iNumValues = myValues.length;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JGordianLogicException(ERROR_NUMTYPES
-                                             + pNumTypes);
-        }
-
-        /* Make sure that seed is positive */
-        if (myKeySeed < 0) {
-            myKeySeed = -myKeySeed;
-        }
-
-        /* Create the result set */
-        DigestType[] myTypes = new DigestType[pNumTypes];
-
-        /* Loop through the types */
-        for (int i = 0; i < pNumTypes; i++) {
-            /* Access the next random index */
-            int iIndex = (int) (myKeySeed % iNumValues);
-            myKeySeed /= iNumValues;
-
-            /* Store the type */
-            myTypes[i] = myValues[iIndex];
-
-            /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
-            iNumValues--;
-        }
-
-        /* Return the types */
-        return myTypes;
+    public static Predicate<DigestType> allSupported() {
+        return PREDICATE_SUPPORTED;
     }
 }

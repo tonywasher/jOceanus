@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -102,7 +103,7 @@ public class CipherSet {
      * @param pHashKey the Hash Key
      */
     public CipherSet(final SecurityGenerator pGenerator,
-                     final HashKey pHashKey) {
+                     final HashRecipe pHashKey) {
         /* Store parameters */
         theGenerator = pGenerator;
         byte[] myIV = pHashKey.getInitVector();
@@ -198,9 +199,13 @@ public class CipherSet {
      */
     public void buildCiphers(final byte[] pSecret) throws JOceanusException {
         /* Loop through the Cipher values */
+        Predicate<SymKeyType> myPredicate = theGenerator.getSymKeyPredicate();
         for (SymKeyType myType : SymKeyType.values()) {
-            /* Build the Cipher */
-            buildCipher(myType, pSecret);
+            /* If this is valid for this keyLength */
+            if (myPredicate.test(myType)) {
+                /* Build the Cipher */
+                buildCipher(myType, pSecret);
+            }
         }
     }
 
@@ -241,9 +246,9 @@ public class CipherSet {
         byte[] myCurBytes = pBytes;
 
         /* Determine the encryption mode */
-        CipherSetKey myKey = new CipherSetKey(theGenerator);
-        SymKeyType[] myKeyTypes = myKey.getSymKeyTypes();
-        byte[] myVector = myKey.getInitVector();
+        CipherSetRecipe myRecipe = new CipherSetRecipe(theGenerator);
+        SymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
+        byte[] myVector = myRecipe.getInitVector();
 
         /* Access Cipher Modes */
         CipherMode[] myModes = CipherMode.values();
@@ -255,9 +260,7 @@ public class CipherSet {
             SymKeyType myType = myKeyTypes[i];
 
             /* Determine the mode */
-            CipherMode myMode = myModes[i
-                                        % myNumModes];
-            myMode = myType.adjustCipherMode(myMode);
+            CipherMode myMode = myModes[i % myNumModes];
 
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
@@ -267,7 +270,7 @@ public class CipherSet {
         }
 
         /* Return the encrypted bytes */
-        return myKey.buildExternal(myCurBytes);
+        return myRecipe.buildExternal(myCurBytes);
     }
 
     /**
@@ -288,10 +291,10 @@ public class CipherSet {
      */
     public byte[] decryptBytes(final byte[] pBytes) throws JOceanusException {
         /* Parse the bytes into the separate parts */
-        CipherSetKey myKey = new CipherSetKey(pBytes);
-        SymKeyType[] myTypes = myKey.getSymKeyTypes();
-        byte[] myVector = myKey.getInitVector();
-        byte[] myBytes = myKey.getBytes();
+        CipherSetRecipe myRecipe = new CipherSetRecipe(theGenerator, pBytes);
+        SymKeyType[] myTypes = myRecipe.getSymKeyTypes();
+        byte[] myVector = myRecipe.getInitVector();
+        byte[] myBytes = myRecipe.getBytes();
 
         /* Access Cipher Modes */
         CipherMode[] myModes = CipherMode.values();
@@ -303,9 +306,7 @@ public class CipherSet {
             SymKeyType myType = myTypes[i];
 
             /* Determine the mode */
-            CipherMode myMode = myModes[i
-                                        % myNumModes];
-            myMode = myType.adjustCipherMode(myMode);
+            CipherMode myMode = myModes[i % myNumModes];
 
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
@@ -329,9 +330,9 @@ public class CipherSet {
         byte[] myCurBytes = pBytes;
 
         /* Determine the encryption mode */
-        CipherSetKey myKey = new CipherSetKey(theGenerator);
-        SymKeyType[] myKeyTypes = myKey.getSymKeyTypes();
-        byte[] myVector = myKey.getInitVector();
+        CipherSetRecipe myRecipe = new CipherSetRecipe(theGenerator);
+        SymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
+        byte[] myVector = myRecipe.getInitVector();
 
         /* Loop through the SymKeyTypes */
         for (int i = 0; i < myKeyTypes.length; i++) {
@@ -346,7 +347,7 @@ public class CipherSet {
         }
 
         /* Return the wrapped bytes */
-        return myKey.buildExternal(myCurBytes);
+        return myRecipe.buildExternal(myCurBytes);
     }
 
     /**
@@ -357,10 +358,10 @@ public class CipherSet {
      */
     public byte[] unwrapBytes(final byte[] pBytes) throws JOceanusException {
         /* Parse the bytes into the separate parts */
-        CipherSetKey myKey = new CipherSetKey(pBytes);
-        SymKeyType[] myTypes = myKey.getSymKeyTypes();
-        byte[] myVector = myKey.getInitVector();
-        byte[] myBytes = myKey.getBytes();
+        CipherSetRecipe myRecipe = new CipherSetRecipe(theGenerator, pBytes);
+        SymKeyType[] myTypes = myRecipe.getSymKeyTypes();
+        byte[] myVector = myRecipe.getInitVector();
+        byte[] myBytes = myRecipe.getBytes();
 
         /* Loop through the SymKeyTypes */
         for (int i = myTypes.length - 1; i >= 0; i--) {

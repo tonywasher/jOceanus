@@ -101,9 +101,10 @@ public class StreamCipher {
             /* Create a new cipher */
             SecurityGenerator myGenerator = pKey.getGenerator();
             SymKeyType myKeyType = pKey.getKeyType();
-            CipherMode myMode = myKeyType.adjustCipherMode(pMode);
-            theCipher = Cipher.getInstance(myKeyType.getDataCipher(myMode), myGenerator.getProviderName());
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
+            theCipher = Cipher.getInstance(myKeyType.getDataCipher(pMode), myGenerator.getProviderName());
+        } catch (NoSuchAlgorithmException
+                | NoSuchPaddingException
+                | NoSuchProviderException e) {
             throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
     }
@@ -124,7 +125,9 @@ public class StreamCipher {
             SecurityGenerator myGenerator = pKey.getGenerator();
             StreamKeyType myKeyType = pKey.getKeyType();
             theCipher = Cipher.getInstance(myKeyType.getAlgorithm(myGenerator.useRestricted()), myGenerator.getProviderName());
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
+        } catch (NoSuchAlgorithmException
+                | NoSuchPaddingException
+                | NoSuchProviderException e) {
             throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
     }

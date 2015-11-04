@@ -48,11 +48,11 @@ public class JOceanusEventRegistrar {
      * Interface for event providers.
      */
     public interface JOceanusEventProvider {
-                /**
-                 * Obtain registration object for listeners.
-                 * @return the registrar
-                 */
-                JOceanusEventRegistrar getEventRegistrar();
+        /**
+         * Obtain registration object for listeners.
+         * @return the registrar
+         */
+        JOceanusEventRegistrar getEventRegistrar();
     }
 
     /**

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.HashRecipe;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
- * DataKeys.
+ * ControlKey definition and list. The Control Key represents the passwordHash that controls
+ * securing of the dataKeys. It maintains a map of the associated DataKeys.
  * @author Tony Washer
  */
 public final class ControlKey
@@ -73,12 +73,12 @@ public final class ControlKey
     public static final JDataField FIELD_ALTPASSHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
 
     /**
-     * Field ID for HashKey.
+     * Field ID for PrimeHashRecipe.
      */
     public static final JDataField FIELD_PRIMEHASHKEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEKEY.getValue());
 
     /**
-     * Field ID for HashKey.
+     * Field ID for AltHashRecipe.
      */
     public static final JDataField FIELD_ALTHASHKEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTKEY.getValue());
 
@@ -273,8 +273,8 @@ public final class ControlKey
     protected PasswordHash getPrimePasswordHash() throws JOceanusException {
         PasswordHash myHash = getPrimePasswordHash(getValueSet());
         return (myHash == null)
-                               ? resolvePrimeHash()
-                               : myHash;
+                                ? resolvePrimeHash()
+                                : myHash;
     }
 
     /**
@@ -285,15 +285,15 @@ public final class ControlKey
     protected PasswordHash getAltPasswordHash() throws JOceanusException {
         PasswordHash myHash = getAltPasswordHash(getValueSet());
         return (myHash == null)
-                               ? resolveAltHash()
-                               : myHash;
+                                ? resolveAltHash()
+                                : myHash;
     }
 
     /**
      * Get the Prime HashKey.
      * @return the prime hash key
      */
-    protected HashKey getPrimeHashKey() {
+    protected HashRecipe getPrimeHashKey() {
         return getPrimeHashKey(getValueSet());
     }
 
@@ -311,7 +311,7 @@ public final class ControlKey
      * Get the Alternate HashKey.
      * @return the alternate hash key
      */
-    protected HashKey getAltHashKey() {
+    protected HashRecipe getAltHashKey() {
         return getAltHashKey(getValueSet());
     }
 
@@ -375,8 +375,8 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the hash mode
      */
-    private static HashKey getPrimeHashKey(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRIMEHASHKEY, HashKey.class);
+    private static HashRecipe getPrimeHashKey(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PRIMEHASHKEY, HashRecipe.class);
     }
 
     /**
@@ -384,8 +384,8 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the hash mode
      */
-    private static HashKey getAltHashKey(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ALTHASHKEY, HashKey.class);
+    private static HashRecipe getAltHashKey(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ALTHASHKEY, HashRecipe.class);
     }
 
     /**
@@ -403,11 +403,11 @@ public final class ControlKey
     private void setValuePrimePasswordHash(final PasswordHash pValue) {
         getValueSet().setValue(FIELD_PRIMEPASSHASH, pValue);
         setValuePrimeHashKey((pValue == null)
-                                             ? null
-                                             : pValue.getHashKey());
+                                              ? null
+                                              : pValue.getHashRecipe());
         setValuePrimeHashBytes((pValue == null)
-                                               ? null
-                                               : pValue.getHashBytes());
+                                                ? null
+                                                : pValue.getHashBytes());
     }
 
     /**
@@ -417,11 +417,11 @@ public final class ControlKey
     private void setValueAltPasswordHash(final PasswordHash pValue) {
         getValueSet().setValue(FIELD_ALTPASSHASH, pValue);
         setValueAltHashKey((pValue == null)
-                                           ? null
-                                           : pValue.getHashKey());
+                                            ? null
+                                            : pValue.getHashRecipe());
         setValueAltHashBytes((pValue == null)
-                                             ? null
-                                             : pValue.getHashBytes());
+                                              ? null
+                                              : pValue.getHashBytes());
     }
 
     /**
@@ -444,7 +444,7 @@ public final class ControlKey
      * Set the Prime Hash Key.
      * @param pValue the Hash Key
      */
-    private void setValuePrimeHashKey(final HashKey pValue) {
+    private void setValuePrimeHashKey(final HashRecipe pValue) {
         getValueSet().setValue(FIELD_PRIMEHASHKEY, pValue);
     }
 
@@ -452,7 +452,7 @@ public final class ControlKey
      * Set the Alternate Hash Key.
      * @param pValue the Hash Key
      */
-    private void setValueAltHashKey(final HashKey pValue) {
+    private void setValueAltHashKey(final HashRecipe pValue) {
         getValueSet().setValue(FIELD_ALTHASHKEY, pValue);
     }
 
@@ -491,15 +491,15 @@ public final class ControlKey
      */
     protected PasswordHash getPasswordHash(final Boolean pUsePrime) throws JOceanusException {
         return pUsePrime
-                        ? getPrimePasswordHash()
-                        : getAltPasswordHash();
+                         ? getPrimePasswordHash()
+                         : getAltPasswordHash();
     }
 
     /**
      * Obtain the active HashKey.
      * @return the active HashKey
      */
-    protected HashKey getHashKey() {
+    protected HashRecipe getHashKey() {
         return getHashKey(isHashPrime());
     }
 
@@ -508,10 +508,10 @@ public final class ControlKey
      * @param pUsePrime return prime hashKey (true/false)
      * @return the active HashKey
      */
-    protected HashKey getHashKey(final Boolean pUsePrime) {
+    protected HashRecipe getHashKey(final Boolean pUsePrime) {
         return pUsePrime
-                        ? getPrimeHashKey()
-                        : getAltHashKey();
+                         ? getPrimeHashKey()
+                         : getAltHashKey();
     }
 
     /**
