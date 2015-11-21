@@ -33,7 +33,7 @@ import java.util.Map;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
@@ -441,7 +441,8 @@ public class TableDefinition {
     public BinaryColumn addEncryptedColumn(final JDataField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(this, pId, CipherSet.IVSIZE + CipherSet.KEYIDLEN + CipherSet.getEncryptionLength(2 * pLength));
+        BinaryColumn myColumn = new BinaryColumn(this, pId, GordianKeySet.getEncryptionOverhead()
+                                                            + GordianKeySet.getEncryptionLength(2 * pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);

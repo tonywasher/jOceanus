@@ -36,27 +36,30 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.AsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.DataDigest;
-import net.sourceforge.joceanus.jgordianknot.crypto.DataMac;
-import net.sourceforge.joceanus.jgordianknot.crypto.DigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.MacType;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
-import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -81,7 +84,7 @@ public class SecurityTestSuite {
          * @return the new SecureManager
          * @throws JOceanusException on error
          */
-        SecureManager newSecureManager(final SecurityParameters pParams) throws JOceanusException;
+        SecureManager newSecureManager(final GordianParameters pParams) throws JOceanusException;
     }
 
     /**
@@ -110,25 +113,25 @@ public class SecurityTestSuite {
      * @return the contents of the zip file
      * @throws JOceanusException on error
      */
-    public ZipFileContents createZipFile(final File pZipFile,
-                                         final File pDirectory,
-                                         final boolean bSecure) throws JOceanusException {
-        ZipWriteFile myZipFile;
+    public GordianZipFileContents createZipFile(final File pZipFile,
+                                                final File pDirectory,
+                                                final boolean bSecure) throws JOceanusException {
+        GordianZipWriteFile myZipFile;
 
         try {
             /* If we are creating a secure zip file */
             if (bSecure) {
                 /* Create new Password Hash */
                 SecureManager myManager = theCreator.newSecureManager();
-                PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
+                GordianKeySetHash myHash = myManager.resolveKeySetHash(null, "New");
 
                 /* Initialise the Zip file */
-                myZipFile = new ZipWriteFile(myHash, pZipFile);
+                myZipFile = new GordianZipWriteFile(myHash, pZipFile);
 
                 /* else */
             } else {
                 /* Just create a standard zip file */
-                myZipFile = new ZipWriteFile(pZipFile);
+                myZipFile = new GordianZipWriteFile(pZipFile);
             }
 
             /* Create a read buffer */
@@ -139,10 +142,10 @@ public class SecurityTestSuite {
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory()) {
                 myZipFile.close();
-                throw new JGordianDataException("Invalid source directory");
+                throw new GordianDataException("Invalid source directory");
             }
 
-            /* Loop through the files is the directory */
+            /* Loop through the files in the directory */
             for (File myFile : pDirectory.listFiles()) {
                 /* Skip directories */
                 if (myFile.isDirectory()) {
@@ -176,7 +179,7 @@ public class SecurityTestSuite {
         } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JGordianIOException("Failed to create Zip File", e);
+            throw new GordianIOException("Failed to create Zip File", e);
         }
     }
 
@@ -189,18 +192,21 @@ public class SecurityTestSuite {
     public void extractZipFile(final File pZipFile,
                                final File pDirectory) throws JOceanusException {
         /* Protect against exceptions */
-        try (ZipReadFile myZipFile = new ZipReadFile(pZipFile)) {
+        try {
+            /* Access the file */
+            GordianZipReadFile myZipFile = new GordianZipReadFile(pZipFile);
+
             /* Check for security */
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
                 /* Resolve security and unlock file */
                 SecureManager myManager = theCreator.newSecureManager();
-                PasswordHash myHash = myManager.resolvePasswordHash(myHashBytes, pZipFile.getName());
-                myZipFile.setPasswordHash(myHash);
+                GordianKeySetHash myHash = myManager.resolveKeySetHash(myHashBytes, pZipFile.getName());
+                myZipFile.setKeySetHash(myHash);
             }
 
             /* Access the contents */
-            ZipFileContents myContents = myZipFile.getContents();
+            GordianZipFileContents myContents = myZipFile.getContents();
 
             /* Create a read buffer */
             int myBufLen = BUFFER_LEN;
@@ -209,13 +215,14 @@ public class SecurityTestSuite {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory()) {
-                throw new JGordianDataException("Invalid source directory");
+                throw new GordianDataException("Invalid target directory");
             }
 
-            Iterator<ZipFileEntry> myIterator = myContents.iterator();
+            /* Loop through the entries */
+            Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
             while (myIterator.hasNext()) {
                 /* Access next entry */
-                ZipFileEntry myEntry = myIterator.next();
+                GordianZipFileEntry myEntry = myIterator.next();
 
                 /* Open the input stream */
                 InputStream myInput = myZipFile.getInputStream(myEntry);
@@ -226,7 +233,7 @@ public class SecurityTestSuite {
 
                 /* Read the entry */
                 while ((myRead = myInput.read(myBuffer, 0, myBufLen)) != -1) {
-                    /* Write the data to the zip file */
+                    /* Write the data to the new file */
                     myOutBuffer.write(myBuffer, 0, myRead);
                 }
 
@@ -238,7 +245,7 @@ public class SecurityTestSuite {
         } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JGordianIOException("Failed to extract Zip File", e);
+            throw new GordianIOException("Failed to extract Zip File", e);
         }
     }
 
@@ -247,71 +254,82 @@ public class SecurityTestSuite {
      * @throws JOceanusException on error
      */
     protected void testSecurity() throws JOceanusException {
+        testSecurity(true, GordianFactoryType.BC);
+        testSecurity(false, GordianFactoryType.BC);
+        testSecurity(true, GordianFactoryType.JCA);
+        testSecurity(false, GordianFactoryType.JCA);
+    }
+
+    /**
+     * Test security algorithms.
+     * @param pRestricted is the factory restricted
+     * @param pType the type of factory
+     * @throws JOceanusException on error
+     */
+    private void testSecurity(final boolean pRestricted,
+                              final GordianFactoryType pType) throws JOceanusException {
         /* Create new Password Hash */
-        SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
+        GordianParameters myParams = new GordianParameters(pRestricted);
+        myParams.setFactoryType(pType);
         SecureManager myManager = theCreator.newSecureManager(myParams);
-        PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
-        SecurityGenerator myGen = myHash.getSecurityGenerator();
+        GordianKeySetHash myHash = myManager.resolveKeySetHash(null, "New");
+        GordianKeySet myKeySet = myHash.getKeySet();
+        GordianFactory myFactory = myKeySet.getFactory();
 
         /* Create new symmetric key and asymmetric Key */
-        SymmetricKey mySym = myGen.generateSymmetricKey();
-        StreamKey myStream = myGen.generateStreamKey();
-        AsymmetricKey myAsym = myGen.generateAsymmetricKey();
+        GordianKey<GordianSymKeyType> mySym = myFactory.generateRandomSymKey();
+        GordianKey<GordianStreamKeyType> myStream = myFactory.generateRandomStreamKey();
 
         /* Secure the keys */
-        byte[] mySymSafe = myHash.secureSymmetricKey(mySym);
-        byte[] myStreamSafe = myHash.secureStreamKey(myStream);
-        byte[] myAsymSafe = myHash.securePrivateKey(myAsym);
-        byte[] myAsymPublic = myAsym.getExternalPublic();
-        byte[] mySymSafe2 = myAsym.secureSymmetricKey(mySym);
+        byte[] mySymSafe = myKeySet.secureKey(mySym);
+        byte[] myStreamSafe = myKeySet.secureKey(myStream);
 
         /* Encrypt some bytes */
         String myTest = "TestString";
         byte[] myBytes = DataConverter.stringToByteArray(myTest);
-        byte[] myEncrypt = myHash.encryptBytes(myBytes);
+        byte[] myEncrypt = myKeySet.encryptBytes(myBytes);
 
         /* Create a data digest */
-        DataDigest myDigest = myGen.generateDigest();
+        GordianDigest myDigest = myFactory.generateRandomDigest();
         myDigest.update(mySymSafe);
         myDigest.update(myStreamSafe);
-        myDigest.update(myAsymSafe);
-        myDigest.update(myAsymPublic);
-        myDigest.update(mySymSafe2);
         byte[] myDigestBytes = myDigest.finish();
 
-        /* Create a data Mac */
-        DataMac myMac = myGen.generateMac();
+        /* Create a data MAC */
+        GordianMac myMac = myFactory.generateRandomMac();
         myMac.update(mySymSafe);
         myMac.update(myStreamSafe);
-        myMac.update(myAsymSafe);
-        myMac.update(myAsymPublic);
-        myMac.update(mySymSafe2);
         byte[] myMacBytes = myMac.finish();
 
         /* Secure the keys */
-        byte[] myMacSafe = myHash.secureDataMac(myMac);
+        byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
+        byte[] myIV = myMac.getInitVector();
+        int myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
-        PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
-        myGen = myHash.getSecurityGenerator();
+        GordianKeySetHash myNewHash = myManager.resolveKeySetHash(myHash.getHash(), "Test");
+        GordianKeySet myKeySet1 = myNewHash.getKeySet();
+        myFactory = myKeySet.getFactory();
+
+        /* Check the keySets are the same */
+        if (!myKeySet1.equals(myKeySet)) {
+            System.out.println("Failed to derive keySet");
+        }
 
         /* Derive the Mac */
-        myMac = myNewHash.deriveDataMac(myMacSafe, myMac.getMacSpec());
+        GordianMacSpec myMacSpec = myKeySet1.deriveTypeFromExternalId(myMacId, GordianMacSpec.class);
+        GordianKey<GordianMacSpec> myMacKey = myKeySet1.deriveKey(myMacSafe, myMacSpec);
+        myMac = myFactory.createMac(myMacSpec);
+        myMac.initMac(myMacKey, myIV);
         myMac.update(mySymSafe);
         myMac.update(myStreamSafe);
-        myMac.update(myAsymSafe);
-        myMac.update(myAsymPublic);
-        myMac.update(mySymSafe2);
         byte[] myMac1Bytes = myMac.finish();
 
         /* Create a message digest */
-        myDigest = myGen.generateDigest(myDigest.getDigestType());
+        myDigest = myFactory.createDigest(myDigest.getDigestType());
         myDigest.update(mySymSafe);
         myDigest.update(myStreamSafe);
-        myDigest.update(myAsymSafe);
-        myDigest.update(myAsymPublic);
-        myDigest.update(mySymSafe2);
         byte[] myNewBytes = myDigest.finish();
 
         /* Check the digests are the same */
@@ -323,27 +341,19 @@ public class SecurityTestSuite {
         }
 
         /* Derive the keys */
-        AsymmetricKey myAsym1 = myNewHash.deriveAsymmetricKey(myAsymSafe, myAsymPublic);
-        SymmetricKey mySym1 = myNewHash.deriveSymmetricKey(mySymSafe, mySym.getKeyType());
-        StreamKey myStm1 = myNewHash.deriveStreamKey(myStreamSafe, myStream.getKeyType());
-        SymmetricKey mySym2 = myAsym1.deriveSymmetricKey(mySymSafe2, mySym.getKeyType());
+        GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
+        GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
 
         /* Check the keys are the same */
-        if (!myAsym1.equals(myAsym)) {
-            System.out.println("Failed to decrypt AsymmetricKey");
-        }
         if (!mySym1.equals(mySym)) {
-            System.out.println("Failed to decrypt SymmetricKey via Hash");
-        }
-        if (!mySym2.equals(mySym)) {
-            System.out.println("Failed to decrypt SymmetricKey via Asym Key");
+            System.out.println("Failed to decrypt SymmetricKey");
         }
         if (!myStm1.equals(myStream)) {
-            System.out.println("Failed to decrypt StreamKey via Hash");
+            System.out.println("Failed to decrypt StreamKey");
         }
 
         /* Decrypt the bytes */
-        byte[] myResult = myHash.decryptBytes(myEncrypt);
+        byte[] myResult = myKeySet1.decryptBytes(myEncrypt);
         String myAnswer = DataConverter.byteArrayToString(myResult);
         if (!myAnswer.equals(myTest)) {
             System.out.println("Failed to decrypt test string");
@@ -354,20 +364,24 @@ public class SecurityTestSuite {
      * List the supported algorithms.
      * @param pProvider the provider
      */
-    protected static void listAlgorithms(final SecurityProvider pProvider) {
+    protected static void listAlgorithms() {
         Set<String> ciphers = new HashSet<String>();
+        Set<String> secretKeyFactories = new HashSet<String>();
         Set<String> keyFactories = new HashSet<String>();
+        Set<String> keyAgreements = new HashSet<String>();
+        Set<String> keyGenerators = new HashSet<String>();
+        Set<String> keyPairGenerators = new HashSet<String>();
         Set<String> messageDigests = new HashSet<String>();
         Set<String> macs = new HashSet<String>();
         Set<String> signatures = new HashSet<String>();
         Set<String> randoms = new HashSet<String>();
         Set<String> remaining = new HashSet<String>();
 
-        pProvider.ensureInstalled();
+        Security.addProvider(new BouncyCastleProvider());
         Provider[] providers = Security.getProviders();
 
         for (int i = 0; i != providers.length; i++) {
-            if (!providers[i].getName().equals(pProvider.getProvider())) {
+            if (!providers[i].getName().equals("BC")) {
                 continue;
             }
             Iterator<Object> it = providers[i].keySet().iterator();
@@ -379,7 +393,15 @@ public class SecurityTestSuite {
                 if (entry.startsWith("Cipher.")) {
                     ciphers.add(entry.substring("Cipher.".length()));
                 } else if (entry.startsWith("SecretKeyFactory.")) {
-                    keyFactories.add(entry.substring("SecretKeyFactory.".length()));
+                    secretKeyFactories.add(entry.substring("SecretKeyFactory.".length()));
+                } else if (entry.startsWith("KeyFactory.")) {
+                    keyFactories.add(entry.substring("KeyFactory.".length()));
+                } else if (entry.startsWith("KeyAgreement.")) {
+                    keyAgreements.add(entry.substring("KeyAgreement.".length()));
+                } else if (entry.startsWith("KeyGenerator.")) {
+                    keyGenerators.add(entry.substring("KeyGenerator.".length()));
+                } else if (entry.startsWith("KeyPairGenerator.")) {
+                    keyPairGenerators.add(entry.substring("KeyPairGenerator.".length()));
                 } else if (entry.startsWith("MessageDigest.")) {
                     messageDigests.add(entry.substring("MessageDigest.".length()));
                 } else if (entry.startsWith("Mac.")) {
@@ -395,7 +417,11 @@ public class SecurityTestSuite {
         }
 
         printSet("Ciphers", ciphers);
-        printSet("SecretKeyFactories", keyFactories);
+        printSet("SecretKeyFactories", secretKeyFactories);
+        printSet("KeyFactories", keyFactories);
+        printSet("KeyAgreements", keyAgreements);
+        printSet("KeyGenerators", keyGenerators);
+        printSet("KeyPairGenerators", keyPairGenerators);
         printSet("MessageDigests", messageDigests);
         printSet("Macs", macs);
         printSet("Signatures", signatures);
@@ -429,55 +455,90 @@ public class SecurityTestSuite {
      * @throws JOceanusException on error
      */
     protected void checkAlgorithms() throws JOceanusException {
+        checkAlgorithms(true, GordianFactoryType.BC);
+        checkAlgorithms(false, GordianFactoryType.BC);
+        checkAlgorithms(true, GordianFactoryType.JCA);
+        checkAlgorithms(false, GordianFactoryType.JCA);
+    }
+
+    /**
+     * Check the supported algorithms.
+     * @param pRestricted is the factory restricted
+     * @param pType the type of factory
+     * @throws JOceanusException on error
+     */
+    private void checkAlgorithms(final boolean pRestricted,
+                                 final GordianFactoryType pType) throws JOceanusException {
         /* Create new Security Generator */
-        SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
+        GordianParameters myParams = new GordianParameters(pRestricted);
+        myParams.setFactoryType(pType);
         SecureManager myManager = theCreator.newSecureManager(myParams);
-        SecurityGenerator myGenerator = myManager.getSecurityGenerator();
+        GordianFactory myFactory = myManager.getSecurityFactory();
 
         /* Access predicates */
-        Predicate<DigestType> myDigestPredicate = myGenerator.getDigestPredicate();
-        Predicate<SymKeyType> mySymKeyPredicate = myGenerator.getSymKeyPredicate();
-        Predicate<SymKeyType> myMacSymKeyPredicate = myGenerator.getMacSymKeyPredicate();
-        Predicate<StreamKeyType> myStreamKeyPredicate = myGenerator.getStreamKeyPredicate();
+        Predicate<GordianDigestType> myDigestPredicate = myFactory.supportedDigests();
+        Predicate<GordianSymKeyType> mySymKeyPredicate = myFactory.supportedSymKeys();
+        Predicate<GordianSymKeyType> myMacSymKeyPredicate = myFactory.standardSymKeys();
+        Predicate<GordianStreamKeyType> myStreamKeyPredicate = myFactory.supportedStreamKeys();
 
         /* Create instance of each digest and associated hMac */
-        for (DigestType myDigest : DigestType.values()) {
+        for (GordianDigestType myDigest : GordianDigestType.values()) {
             if (myDigestPredicate.test(myDigest)) {
-                myGenerator.generateDigest(myDigest);
-                myGenerator.generateMac(myDigest, "Hello".getBytes());
+                myFactory.createDigest(myDigest);
+                GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, myDigest);
+                GordianMac myMac = myFactory.createMac(myMacSpec);
+                GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
+                GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+                myMac.initMac(myKey);
             }
         }
 
         /* Create instance of each cipher Mac */
-        for (SymKeyType myType : SymKeyType.values()) {
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             if (myMacSymKeyPredicate.test(myType)) {
-                myGenerator.generateMac(MacType.GMAC, myType);
-                myGenerator.generateMac(MacType.POLY1305, myType);
+                GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.GMAC, myType);
+                GordianMac myMac = myFactory.createMac(myMacSpec);
+                GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
+                GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+                myMac.initMac(myKey);
+                myMacSpec = new GordianMacSpec(GordianMacType.POLY1305, myType);
+                myMac = myFactory.createMac(new GordianMacSpec(GordianMacType.POLY1305, myType));
+                myGenerator = myFactory.getKeyGenerator(myMacSpec);
+                myKey = myGenerator.generateKey();
+                myMac.initMac(myKey);
             }
         }
-        myGenerator.generateMac(MacType.SKEIN);
-        myGenerator.generateMac(MacType.VMPC);
+
+        /* Create remaining MACs */
+        GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.SKEIN);
+        GordianMac myMac = myFactory.createMac(myMacSpec);
+        GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
+        GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+        myMac.initMac(myKey);
+        myMacSpec = new GordianMacSpec(GordianMacType.VMPC);
+        myMac = myFactory.createMac(myMacSpec);
+        myGenerator = myFactory.getKeyGenerator(myMacSpec);
+        myKey = myGenerator.generateKey();
+        myMac.initMac(myKey);
 
         /* Create instance of each symmetric key */
-        for (SymKeyType myType : SymKeyType.values()) {
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             if (mySymKeyPredicate.test(myType)) {
-                SymmetricKey myKey = myGenerator.generateSymmetricKey(myType);
-                myKey.getDataCipher();
+                GordianKeyGenerator<GordianSymKeyType> mySymGenerator = myFactory.getKeyGenerator(myType);
+                GordianKey<GordianSymKeyType> mySymKey = mySymGenerator.generateKey();
+                GordianCipher<GordianSymKeyType> myCipher = myFactory.createSymKeyCipher(myType, GordianCipherMode.SIC, false);
+                myCipher.initCipher(mySymKey);
             }
         }
 
         /* Create instance of each stream key */
-        for (StreamKeyType myType : StreamKeyType.values()) {
+        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
             if (myStreamKeyPredicate.test(myType)) {
-                StreamKey myKey = myGenerator.generateStreamKey(myType);
-                myKey.getStreamCipher();
+                GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
+                GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
+                GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(myType);
+                myCipher.initCipher(myStreamKey);
             }
-        }
-
-        /* Create instance of each asymmetric key */
-        for (AsymKeyType myType : AsymKeyType.values()) {
-            AsymmetricKey myKey = myGenerator.generateAsymmetricKey(myType);
-            myKey.getSignature(true);
         }
     }
 }

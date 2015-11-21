@@ -118,9 +118,9 @@ public enum AccountInfoClass implements DataInfoClass {
      * @param uOrder the default order.
      * @param pDataType the data type
      */
-    private AccountInfoClass(final int uId,
-                             final int uOrder,
-                             final DataType pDataType) {
+    AccountInfoClass(final int uId,
+                     final int uOrder,
+                     final DataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;

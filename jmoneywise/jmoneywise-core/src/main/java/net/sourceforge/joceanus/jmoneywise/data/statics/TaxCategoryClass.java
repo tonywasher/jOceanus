@@ -257,9 +257,9 @@ public enum TaxCategoryClass implements StaticInterface {
      * @param uOrder the order
      * @param pSection the section
      */
-    private TaxCategoryClass(final int uId,
-                             final int uOrder,
-                             final TaxCategorySection pSection) {
+    TaxCategoryClass(final int uId,
+                     final int uOrder,
+                     final TaxCategorySection pSection) {
         /* Set values */
         theId = uId;
         theOrder = pSection.getBase()

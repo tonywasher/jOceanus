@@ -50,7 +50,7 @@ public enum QSecurityLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QSecurityLineType(final String pSymbol) {
+    QSecurityLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

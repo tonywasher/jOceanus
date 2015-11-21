@@ -495,7 +495,7 @@ public enum AnalysisResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private AnalysisResource(final String pKeyName) {
+    AnalysisResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -503,7 +503,7 @@ public enum AnalysisResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    private AnalysisResource(final ResourceId pResource) {
+    AnalysisResource(final ResourceId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }

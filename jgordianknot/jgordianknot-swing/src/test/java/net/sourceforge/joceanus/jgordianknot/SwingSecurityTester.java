@@ -27,8 +27,7 @@ import java.io.File;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jgordianknot.SecurityTestSuite.SecurityManagerCreator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -56,7 +55,7 @@ public class SwingSecurityTester
     }
 
     @Override
-    public SecureManager newSecureManager(final SecurityParameters pParams) throws JOceanusException {
+    public SecureManager newSecureManager(final GordianParameters pParams) throws JOceanusException {
         return new SwingSecureManager(pParams);
     }
 
@@ -82,7 +81,7 @@ public class SwingSecurityTester
                 theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
             }
         } else {
-            SecurityTestSuite.listAlgorithms(SecurityProvider.BC);
+            SecurityTestSuite.listAlgorithms();
         }
     }
 

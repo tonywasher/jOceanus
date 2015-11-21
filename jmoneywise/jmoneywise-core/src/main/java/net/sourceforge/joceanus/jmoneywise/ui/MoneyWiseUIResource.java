@@ -463,7 +463,7 @@ public enum MoneyWiseUIResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private MoneyWiseUIResource(final String pKeyName) {
+    MoneyWiseUIResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -1035,7 +1035,7 @@ public enum StaticDataResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private StaticDataResource(final String pKeyName) {
+    StaticDataResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -1043,7 +1043,7 @@ public enum StaticDataResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    private StaticDataResource(final ResourceId pResource) {
+    StaticDataResource(final ResourceId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }

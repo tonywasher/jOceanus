@@ -53,7 +53,7 @@ public enum WorkBookType {
      * Constructor.
      * @param pExtension the extension code
      */
-    private WorkBookType(final String pExtension) {
+    WorkBookType(final String pExtension) {
         theExtension = pExtension;
     }
 

@@ -446,9 +446,9 @@ public enum PrometheusDataResource implements ResourceId {
     DATAKEYSET_KEYMAP("DataKeySet.KeyMap"),
 
     /**
-     * DataKeySet CipherSet.
+     * DataKeySet KeySet.
      */
-    DATAKEYSET_CIPHERSET("DataKeySet.CipherSet"),
+    DATAKEYSET_KEYSET("DataKeySet.KeySet"),
 
     /**
      * DataKey Name.
@@ -466,6 +466,11 @@ public enum PrometheusDataResource implements ResourceId {
     DATAKEY_TYPE("DataKey.Type"),
 
     /**
+     * DataKey TypeId.
+     */
+    DATAKEY_TYPEID("DataKey.TypeId"),
+
+    /**
      * DataKey Definition.
      */
     DATAKEY_DEF("DataKey.Definition"),
@@ -474,11 +479,6 @@ public enum PrometheusDataResource implements ResourceId {
      * DataKey Key.
      */
     DATAKEY_KEY("DataKey.Key"),
-
-    /**
-     * DataKey Cipher.
-     */
-    DATAKEY_CIPHER("DataKey.Cipher"),
 
     /**
      * ControlData Name.
@@ -519,7 +519,7 @@ public enum PrometheusDataResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private PrometheusDataResource(final String pKeyName) {
+    PrometheusDataResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

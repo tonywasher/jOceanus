@@ -90,8 +90,8 @@ public enum DepositCategoryClass implements CategoryInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private DepositCategoryClass(final int uId,
-                                 final int uOrder) {
+    DepositCategoryClass(final int uId,
+                         final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }

@@ -33,14 +33,16 @@ public enum CashCategoryClass implements CategoryInterface {
     /**
      * Cash Account.
      * <p>
-     * This is a cash account and represents cash that is held by the client outside of any institution.
+     * This is a cash account and represents cash that is held by the client outside of any
+     * institution.
      */
     CASH(1, 1),
 
     /**
      * AutoExpense Cash Account.
      * <p>
-     * This is a cash account and represents cash that is held by the client outside of any institution.
+     * This is a cash account and represents cash that is held by the client outside of any
+     * institution.
      */
     AUTOEXPENSE(2, 2),
 
@@ -71,8 +73,8 @@ public enum CashCategoryClass implements CategoryInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private CashCategoryClass(final int uId,
-                              final int uOrder) {
+    CashCategoryClass(final int uId,
+                      final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -116,7 +118,8 @@ public enum CashCategoryClass implements CategoryInterface {
 
     /**
      * Determine whether the CashCategoryType is a parent category.
-     * @return <code>true</code> if the cash category type is a parent category, <code>false</code> otherwise.
+     * @return <code>true</code> if the cash category type is a parent category, <code>false</code>
+     * otherwise.
      */
     public boolean isParentCategory() {
         switch (this) {

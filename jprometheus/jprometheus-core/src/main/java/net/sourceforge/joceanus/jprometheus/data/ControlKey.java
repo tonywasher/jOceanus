@@ -24,9 +24,8 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.HashRecipe;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
@@ -63,24 +62,14 @@ public final class ControlKey
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
-     * Field ID for Prime passwordHash.
+     * Field ID for Prime keySetHash.
      */
-    public static final JDataField FIELD_PRIMEPASSHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
+    public static final JDataField FIELD_PRIMEHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
 
     /**
-     * Field ID for Alternate passwordHash.
+     * Field ID for Alternate keySetHash.
      */
-    public static final JDataField FIELD_ALTPASSHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
-
-    /**
-     * Field ID for PrimeHashRecipe.
-     */
-    public static final JDataField FIELD_PRIMEHASHKEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEKEY.getValue());
-
-    /**
-     * Field ID for AltHashRecipe.
-     */
-    public static final JDataField FIELD_ALTHASHKEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTKEY.getValue());
+    public static final JDataField FIELD_ALTHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
 
     /**
      * HashPrime Field Id.
@@ -108,9 +97,9 @@ public final class ControlKey
     public static final String NAME_DATABASE = PrometheusDataResource.CONTROLKEY_DATABASE.getValue();
 
     /**
-     * PasswordHash Length.
+     * KeySetHash Length.
      */
-    public static final int HASHLEN = PasswordHash.HASHSIZE;
+    public static final int HASHLEN = GordianKeySetHash.HASHSIZE;
 
     /**
      * The DataKeySet.
@@ -146,11 +135,11 @@ public final class ControlKey
         }
 
         /* Store the Prime/AltHashBytes */
-        myValue = pValues.getValue(FIELD_PRIMEPASSHASH);
+        myValue = pValues.getValue(FIELD_PRIMEBYTES);
         if (myValue instanceof byte[]) {
             setValuePrimeHashBytes((byte[]) myValue);
         }
-        myValue = pValues.getValue(FIELD_ALTPASSHASH);
+        myValue = pValues.getValue(FIELD_ALTBYTES);
         if (myValue instanceof byte[]) {
             setValueAltHashBytes((byte[]) myValue);
         }
@@ -173,12 +162,12 @@ public final class ControlKey
             DataSet<?, ?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
 
-            /* Create a new password hash with new password */
-            PasswordHash myHash = mySecure.resolvePasswordHash(null, NAME_DATABASE);
+            /* Create a new keySetHash with new password */
+            GordianKeySetHash myHash = mySecure.resolveKeySetHash(null, NAME_DATABASE);
 
             /* Store the password hash */
             setValueHashPrime(Boolean.TRUE);
-            setValuePrimePasswordHash(myHash);
+            setValuePrimeKeySetHash(myHash);
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);
@@ -208,15 +197,15 @@ public final class ControlKey
             SecureManager mySecure = myData.getSecurity();
 
             /* ReSeed the security generator */
-            SecurityGenerator myGenerator = mySecure.getSecurityGenerator();
-            myGenerator.reSeedRandom();
+            GordianFactory myFactory = mySecure.getSecurityFactory();
+            myFactory.reSeedRandom();
 
-            /* Create a clone of the password hash */
-            PasswordHash myHash = mySecure.clonePasswordHash(myData.getPasswordHash());
+            /* Create a similar keySetHash */
+            GordianKeySetHash myHash = mySecure.similarKeySetHash(myData.getKeySetHash());
 
             /* Store the password Hash */
             setValueHashPrime(Boolean.TRUE);
-            setValuePrimePasswordHash(myHash);
+            setValuePrimeKeySetHash(myHash);
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);
@@ -266,63 +255,27 @@ public final class ControlKey
     }
 
     /**
-     * Get the Prime PassWordHash.
-     * @return the prime passwordHash
+     * Get the Prime keySetHash.
+     * @return the prime keySetHash
      * @throws JOceanusException on error
      */
-    protected PasswordHash getPrimePasswordHash() throws JOceanusException {
-        PasswordHash myHash = getPrimePasswordHash(getValueSet());
+    protected GordianKeySetHash getPrimeKeySetHash() throws JOceanusException {
+        GordianKeySetHash myHash = getPrimeKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolvePrimeHash()
                                 : myHash;
     }
 
     /**
-     * Get the Alternate PassWordHash.
-     * @return the alternate passwordHash
+     * Get the Alternate keySetHash.
+     * @return the alternate keySetHash
      * @throws JOceanusException on error
      */
-    protected PasswordHash getAltPasswordHash() throws JOceanusException {
-        PasswordHash myHash = getAltPasswordHash(getValueSet());
+    protected GordianKeySetHash getAltKeySetHash() throws JOceanusException {
+        GordianKeySetHash myHash = getAltKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolveAltHash()
                                 : myHash;
-    }
-
-    /**
-     * Get the Prime HashKey.
-     * @return the prime hash key
-     */
-    protected HashRecipe getPrimeHashKey() {
-        return getPrimeHashKey(getValueSet());
-    }
-
-    /**
-     * Resolve the Prime HashKey.
-     * @throws JOceanusException on error
-     */
-    protected void resolvePrimeHashKey() throws JOceanusException {
-        if (getPrimeHashKey() == null) {
-            resolvePrimeHash();
-        }
-    }
-
-    /**
-     * Get the Alternate HashKey.
-     * @return the alternate hash key
-     */
-    protected HashRecipe getAltHashKey() {
-        return getAltHashKey(getValueSet());
-    }
-
-    /**
-     * Resolve the Alternate HashKey.
-     * @throws JOceanusException on error
-     */
-    protected void resolveAltHashKey() throws JOceanusException {
-        if (getAltHashKey() == null) {
-            resolveAltHash();
-        }
     }
 
     /**
@@ -353,39 +306,21 @@ public final class ControlKey
     }
 
     /**
-     * Get the Prime PasswordHash for the valueSet.
+     * Get the Prime keySetHash for the valueSet.
      * @param pValueSet the ValueSet
-     * @return the passwordHash
+     * @return the keySetHash
      */
-    protected static PasswordHash getPrimePasswordHash(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRIMEPASSHASH, PasswordHash.class);
+    protected static GordianKeySetHash getPrimeKeySetHash(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PRIMEHASH, GordianKeySetHash.class);
     }
 
     /**
-     * Get the Alternate PasswordHash for the valueSet.
+     * Get the Alternate keySetHash for the valueSet.
      * @param pValueSet the ValueSet
-     * @return the passwordHash
+     * @return the keySetHash
      */
-    protected static PasswordHash getAltPasswordHash(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ALTPASSHASH, PasswordHash.class);
-    }
-
-    /**
-     * Get the Prime HashKey for the valueSet.
-     * @param pValueSet the ValueSet
-     * @return the hash mode
-     */
-    private static HashRecipe getPrimeHashKey(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRIMEHASHKEY, HashRecipe.class);
-    }
-
-    /**
-     * Get the Alternate HashKey for the valueSet.
-     * @param pValueSet the ValueSet
-     * @return the hash mode
-     */
-    private static HashRecipe getAltHashKey(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ALTHASHKEY, HashRecipe.class);
+    protected static GordianKeySetHash getAltKeySetHash(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ALTHASH, GordianKeySetHash.class);
     }
 
     /**
@@ -397,31 +332,25 @@ public final class ControlKey
     }
 
     /**
-     * Set the PrimePasswordHash.
-     * @param pValue the PasswordHash
+     * Set the PrimeKeySetHash.
+     * @param pValue the keySetHash
      */
-    private void setValuePrimePasswordHash(final PasswordHash pValue) {
-        getValueSet().setValue(FIELD_PRIMEPASSHASH, pValue);
-        setValuePrimeHashKey((pValue == null)
-                                              ? null
-                                              : pValue.getHashRecipe());
+    private void setValuePrimeKeySetHash(final GordianKeySetHash pValue) {
+        getValueSet().setValue(FIELD_PRIMEHASH, pValue);
         setValuePrimeHashBytes((pValue == null)
                                                 ? null
-                                                : pValue.getHashBytes());
+                                                : pValue.getHash());
     }
 
     /**
-     * Set the AltPasswordHash.
-     * @param pValue the PasswordHash
+     * Set the AltKeySetHash.
+     * @param pValue the keySetHash
      */
-    private void setValueAltPasswordHash(final PasswordHash pValue) {
-        getValueSet().setValue(FIELD_ALTPASSHASH, pValue);
-        setValueAltHashKey((pValue == null)
-                                            ? null
-                                            : pValue.getHashRecipe());
+    private void setValueAltKeySetHash(final GordianKeySetHash pValue) {
+        getValueSet().setValue(FIELD_ALTHASH, pValue);
         setValueAltHashBytes((pValue == null)
                                               ? null
-                                              : pValue.getHashBytes());
+                                              : pValue.getHash());
     }
 
     /**
@@ -438,22 +367,6 @@ public final class ControlKey
      */
     private void setValueAltHashBytes(final byte[] pValue) {
         getValueSet().setValue(FIELD_ALTBYTES, pValue);
-    }
-
-    /**
-     * Set the Prime Hash Key.
-     * @param pValue the Hash Key
-     */
-    private void setValuePrimeHashKey(final HashRecipe pValue) {
-        getValueSet().setValue(FIELD_PRIMEHASHKEY, pValue);
-    }
-
-    /**
-     * Set the Alternate Hash Key.
-     * @param pValue the Hash Key
-     */
-    private void setValueAltHashKey(final HashRecipe pValue) {
-        getValueSet().setValue(FIELD_ALTHASHKEY, pValue);
     }
 
     @Override
@@ -475,54 +388,35 @@ public final class ControlKey
     }
 
     /**
-     * Obtain the active PasswordHash.
-     * @return the active password Hash
+     * Obtain the active keySetHash.
+     * @return the active keySetHash
      * @throws JOceanusException on error
      */
-    protected PasswordHash getPasswordHash() throws JOceanusException {
-        return getPasswordHash(isHashPrime());
+    protected GordianKeySetHash getKeySetHash() throws JOceanusException {
+        return getKeySetHash(isHashPrime());
     }
 
     /**
-     * Obtain the required PasswordHash.
+     * Obtain the required keySetHash.
      * @param pUsePrime return prime hash (true/false)
-     * @return the active password Hash
+     * @return the requested keySetHash
      * @throws JOceanusException on error
      */
-    protected PasswordHash getPasswordHash(final Boolean pUsePrime) throws JOceanusException {
+    protected GordianKeySetHash getKeySetHash(final Boolean pUsePrime) throws JOceanusException {
         return pUsePrime
-                         ? getPrimePasswordHash()
-                         : getAltPasswordHash();
+                         ? getPrimeKeySetHash()
+                         : getAltKeySetHash();
     }
 
     /**
-     * Obtain the active HashKey.
-     * @return the active HashKey
-     */
-    protected HashRecipe getHashKey() {
-        return getHashKey(isHashPrime());
-    }
-
-    /**
-     * Obtain the required HashKey.
-     * @param pUsePrime return prime hashKey (true/false)
-     * @return the active HashKey
-     */
-    protected HashRecipe getHashKey(final Boolean pUsePrime) {
-        return pUsePrime
-                         ? getPrimeHashKey()
-                         : getAltHashKey();
-    }
-
-    /**
-     * Resolve the active HashKey.
+     * Resolve the active Hash.
      * @throws JOceanusException on error
      */
-    protected void resolveHashKey() throws JOceanusException {
+    protected void resolveHash() throws JOceanusException {
         if (isHashPrime()) {
-            resolvePrimeHashKey();
+            resolvePrimeHash();
         } else {
-            resolveAltHashKey();
+            resolveAltHash();
         }
     }
 
@@ -531,16 +425,16 @@ public final class ControlKey
      * @return the resolved Hash
      * @throws JOceanusException on error
      */
-    private PasswordHash resolvePrimeHash() throws JOceanusException {
+    private GordianKeySetHash resolvePrimeHash() throws JOceanusException {
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
         SecureManager mySecure = myData.getSecurity();
 
-        /* Resolve the password hash */
-        PasswordHash myHash = mySecure.resolvePasswordHash(getPrimeHashBytes(), NAME_DATABASE);
+        /* Resolve the keySetHash */
+        GordianKeySetHash myHash = mySecure.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
 
-        /* Store the password hash */
-        setValuePrimePasswordHash(myHash);
+        /* Store the keySetHash */
+        setValuePrimeKeySetHash(myHash);
         return myHash;
     }
 
@@ -549,16 +443,16 @@ public final class ControlKey
      * @return the resolved Hash
      * @throws JOceanusException on error
      */
-    private PasswordHash resolveAltHash() throws JOceanusException {
+    private GordianKeySetHash resolveAltHash() throws JOceanusException {
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
         SecureManager mySecure = myData.getSecurity();
 
-        /* Resolve the password hash */
-        PasswordHash myHash = mySecure.resolvePasswordHash(getAltHashBytes(), NAME_DATABASE);
+        /* Resolve the keySetHash */
+        GordianKeySetHash myHash = mySecure.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);
 
-        /* Store the password hash */
-        setValueAltPasswordHash(myHash);
+        /* Store the keySetHash */
+        setValueAltKeySetHash(myHash);
         return myHash;
     }
 
@@ -586,10 +480,8 @@ public final class ControlKey
         DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
 
-        SecureManager mySecure = pData.getSecurity();
-        int myNumKeySets = mySecure.getSecurityGenerator().getNumActiveKeySets();
-
         /* Loop to create sufficient DataKeySets */
+        int myNumKeySets = pData.getNumActiveKeySets();
         for (int i = 0; i < myNumKeySets; i++) {
             /* Allocate the DataKeySet */
             DataKeySet mySet = new DataKeySet(mySets, this);
@@ -613,10 +505,10 @@ public final class ControlKey
 
     /**
      * Update password hash.
-     * @param pHash the new password hash
+     * @param pHash the new keySetHash
      * @throws JOceanusException on error
      */
-    protected void updatePasswordHash(final PasswordHash pHash) throws JOceanusException {
+    protected void updatePasswordHash(final GordianKeySetHash pHash) throws JOceanusException {
         /* Access current mode */
         Boolean isHashPrime = isHashPrime();
 
@@ -627,31 +519,31 @@ public final class ControlKey
         isHashPrime = !isHashPrime;
         setValueHashPrime(isHashPrime);
 
-        /* Update the password hash */
+        /* Update the keySetHash */
         if (isHashPrime) {
-            setValuePrimePasswordHash(pHash);
+            setValuePrimeKeySetHash(pHash);
         } else {
-            setValueAltPasswordHash(pHash);
+            setValueAltKeySetHash(pHash);
         }
 
         /* Update the hash for the KeySet */
-        ensurePasswordHash();
+        ensureKeySetHash();
 
         /* Check for changes */
         checkForHistory();
     }
 
     /**
-     * Ensure password hash is updated.
+     * Ensure keySetHash is updated.
      * @throws JOceanusException on error
      */
-    protected void ensurePasswordHash() throws JOceanusException {
+    protected void ensureKeySetHash() throws JOceanusException {
         /* Access current mode */
         Boolean isHashPrime = isHashPrime();
-        PasswordHash myHash = getPasswordHash();
+        GordianKeySetHash myHash = getKeySetHash();
 
         /* Update the hash for the KeySet */
-        if (theDataKeySet.updatePasswordHash(isHashPrime, myHash)) {
+        if (theDataKeySet.updateKeySetHash(isHashPrime, myHash)) {
             DataSet<?, ?> myData = getDataSet();
             myData.setVersion(myData.getVersion() + 1);
         }
@@ -862,8 +754,8 @@ public final class ControlKey
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(ControlKey.OBJECT_NAME);
             myValues.addValue(ControlKey.FIELD_ID, pControlKey.getId());
             myValues.addValue(ControlKey.FIELD_HASHPRIME, pControlKey.isHashPrime());
-            myValues.addValue(ControlKey.FIELD_PRIMEPASSHASH, pControlKey.getPrimeHashBytes());
-            myValues.addValue(ControlKey.FIELD_ALTPASSHASH, pControlKey.getAltHashBytes());
+            myValues.addValue(ControlKey.FIELD_PRIMEBYTES, pControlKey.getPrimeHashBytes());
+            myValues.addValue(ControlKey.FIELD_ALTBYTES, pControlKey.getAltHashBytes());
 
             /* Clone the control key */
             ControlKey myControl = addValuesItem(myValues);
@@ -993,12 +885,12 @@ public final class ControlKey
         /**
          * Update the Password Hash.
          * @param pPrimeHash this is the prime hash
-         * @param pHash the new password hash
+         * @param pHash the new keySetHash
          * @return were there changes? true/false
          * @throws JOceanusException on error
          */
-        private boolean updatePasswordHash(final Boolean pPrimeHash,
-                                           final PasswordHash pHash) throws JOceanusException {
+        private boolean updateKeySetHash(final Boolean pPrimeHash,
+                                         final GordianKeySetHash pHash) throws JOceanusException {
             /* Loop through the KeySets */
             boolean bChanges = false;
             Iterator<DataKeySet> myIterator = iterator();
@@ -1006,7 +898,7 @@ public final class ControlKey
                 DataKeySet mySet = myIterator.next();
 
                 /* Update the KeySet */
-                bChanges |= mySet.updatePasswordHash(pPrimeHash, pHash);
+                bChanges |= mySet.updateKeySetHash(pPrimeHash, pHash);
             }
 
             /* return the flag */

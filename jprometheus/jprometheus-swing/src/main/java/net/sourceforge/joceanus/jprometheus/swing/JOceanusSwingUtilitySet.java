@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.swing;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
@@ -60,7 +60,7 @@ public class JOceanusSwingUtilitySet
      * @throws JOceanusException on error
      */
     public JOceanusSwingUtilitySet() throws JOceanusException {
-        this(new SecurityParameters());
+        this(new GordianParameters());
     }
 
     /**
@@ -68,7 +68,7 @@ public class JOceanusSwingUtilitySet
      * @param pParameters the security parameters
      * @throws JOceanusException on error
      */
-    public JOceanusSwingUtilitySet(final SecurityParameters pParameters) throws JOceanusException {
+    public JOceanusSwingUtilitySet(final GordianParameters pParameters) throws JOceanusException {
         this(pParameters, new PreferenceManager());
     }
 
@@ -78,7 +78,7 @@ public class JOceanusSwingUtilitySet
      * @param pPrefMgr the preference manager
      * @throws JOceanusException on error
      */
-    public JOceanusSwingUtilitySet(final SecurityParameters pParameters,
+    public JOceanusSwingUtilitySet(final GordianParameters pParameters,
                                    final PreferenceManager pPrefMgr) throws JOceanusException {
         /* Create secure manager */
         super(new SwingSecureManager(pParameters), pPrefMgr);

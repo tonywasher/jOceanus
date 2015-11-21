@@ -15,14 +15,14 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://localhost/svn/Finance/jOceanus/trunk/jgordianknot/jgordianknot-core/src/main/java/net/sourceforge/joceanus/jgordianknot/crypto/CryptoResource.java $
+ * $Revision: 647 $
+ * $Author: Tony $
+ * $Date: 2015-11-04 08:58:02 +0000 (Wed, 04 Nov 2015) $
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.ResourceId;
 
@@ -31,9 +31,14 @@ import net.sourceforge.joceanus.jtethys.resource.ResourceId;
  */
 public enum CryptoResource implements ResourceId {
     /**
-     * Provider BC.
+     * Factory BC.
      */
-    PROVIDER_BC("provider.BC"),
+    FACTORY_BC("factory.BC"),
+
+    /**
+     * Factory JCA.
+     */
+    FACTORY_JCA("factory.JCA"),
 
     /**
      * Digest SHA2.
@@ -188,67 +193,12 @@ public enum CryptoResource implements ResourceId {
     /**
      * StreamKey GRAIN.
      */
-    STREAMKEY_GRAIN("streamKey.GRAIN"),
-
-    /**
-     * Label Password.
-     */
-    LABEL_PASSWORD("label.password"),
-
-    /**
-     * Label Confirm.
-     */
-    LABEL_CONFIRM("label.confirm"),
-
-    /**
-     * Button OK.
-     */
-    BUTTON_OK("button.ok"),
-
-    /**
-     * Button Cancel.
-     */
-    BUTTON_CANCEL("button.cancel"),
-
-    /**
-     * Title for password.
-     */
-    TITLE_PASSWORD("title.password"),
-
-    /**
-     * Title for new password.
-     */
-    TITLE_NEWPASS("title.newPassword"),
-
-    /**
-     * Title for error.
-     */
-    TITLE_ERROR("title.error"),
-
-    /**
-     * Error Bad Password.
-     */
-    ERROR_BADPASS("error.badPassword"),
-
-    /**
-     * Error Confirm.
-     */
-    ERROR_CONFIRM("error.confirm"),
-
-    /**
-     * Error length 1.
-     */
-    ERROR_LENGTH1("error.length1"),
-
-    /**
-     * Error length 2.
-     */
-    ERROR_LENGTH2("error.length2");
+    STREAMKEY_GRAIN("streamKey.GRAIN");
 
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JGordianCryptoException.class.getCanonicalName());
+    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -291,16 +241,18 @@ public enum CryptoResource implements ResourceId {
     }
 
     /**
-     * Obtain key for Provider.
-     * @param pProvider the Provider
+     * Obtain key for Factory.
+     * @param pFactoryType the factoryType
      * @return the resource key
      */
-    protected static ResourceId getKeyForProvider(final SecurityProvider pProvider) {
-        switch (pProvider) {
+    protected static ResourceId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
+        switch (pFactoryType) {
             case BC:
-                return PROVIDER_BC;
+                return FACTORY_BC;
+            case JCA:
+                return FACTORY_JCA;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pProvider));
+                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pFactoryType));
         }
     }
 
@@ -309,7 +261,7 @@ public enum CryptoResource implements ResourceId {
      * @param pDigest the DigestType
      * @return the resource key
      */
-    protected static ResourceId getKeyForDigest(final DigestType pDigest) {
+    protected static ResourceId getKeyForDigest(final GordianDigestType pDigest) {
         switch (pDigest) {
             case SHA2:
                 return DIGEST_SHA2;
@@ -339,7 +291,7 @@ public enum CryptoResource implements ResourceId {
      * @param pMac the MacType
      * @return the resource key
      */
-    protected static ResourceId getKeyForHMac(final MacType pMac) {
+    protected static ResourceId getKeyForMac(final GordianMacType pMac) {
         switch (pMac) {
             case HMAC:
                 return MAC_HMAC;
@@ -361,7 +313,7 @@ public enum CryptoResource implements ResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static ResourceId getKeyForSym(final SymKeyType pKeyType) {
+    protected static ResourceId getKeyForSym(final GordianSymKeyType pKeyType) {
         switch (pKeyType) {
             case AES:
                 return SYMKEY_AES;
@@ -393,7 +345,7 @@ public enum CryptoResource implements ResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static ResourceId getKeyForStream(final StreamKeyType pKeyType) {
+    protected static ResourceId getKeyForStream(final GordianStreamKeyType pKeyType) {
         switch (pKeyType) {
             case XSALSA20:
                 return STREAMKEY_XSALSA20;

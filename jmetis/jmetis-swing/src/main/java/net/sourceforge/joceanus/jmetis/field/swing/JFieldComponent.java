@@ -638,6 +638,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
     /**
      * The JComboBox implementation.
      * @param <I> ComboBox element type
+     * @param <T> the Data Item type
      */
     protected static final class JFieldCombo<I, T extends JFieldSetItem>
             extends JFieldComponent<T> {

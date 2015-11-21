@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
@@ -131,42 +131,38 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("Loading");
 
         /* Access the zip file */
-        try (ZipReadFile myFile = new ZipReadFile(pFile)) {
-            /* Obtain the hash bytes from the file */
-            byte[] myHashBytes = myFile.getHashBytes();
+        GordianZipReadFile myFile = new GordianZipReadFile(pFile);
 
-            /* Access the Security manager */
-            SecureManager mySecurity = theTask.getSecurity();
+        /* Obtain the hash bytes from the file */
+        byte[] myHashBytes = myFile.getHashBytes();
 
-            /* Obtain the initialised password hash */
-            PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
+        /* Access the Security manager */
+        SecureManager mySecurity = theTask.getSecurity();
 
-            /* Associate this password hash with the ZipFile */
-            myFile.setPasswordHash(myHash);
+        /* Obtain the initialised keySetHash */
+        GordianKeySetHash myHash = mySecurity.resolveKeySetHash(myHashBytes, pFile.getName());
 
-            /* Access ZipFile contents */
-            ZipFileContents myContents = myFile.getContents();
+        /* Associate this keySetHash with the ZipFile */
+        myFile.setKeySetHash(myHash);
 
-            /* Loop through the file entries */
-            Iterator<ZipFileEntry> myIterator = myContents.iterator();
-            ZipFileEntry myEntry = null;
-            while (myIterator.hasNext()) {
-                /* Access the entry */
-                myEntry = myIterator.next();
+        /* Access ZipFile contents */
+        GordianZipFileContents myContents = myFile.getContents();
 
-                /* Break loop if we have the right entry */
-                if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
-                    break;
-                }
+        /* Loop through the file entries */
+        Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
+        GordianZipFileEntry myEntry = null;
+        while (myIterator.hasNext()) {
+            /* Access the entry */
+            myEntry = myIterator.next();
+
+            /* Break loop if we have the right entry */
+            if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
+                break;
             }
-
-            /* Load the workBook */
-            loadEntry(myFile, myEntry);
-
-        } catch (IOException e) {
-            /* Report the error */
-            throw new JPrometheusIOException("Failed to load Backup Workbook: " + pFile.getName(), e);
         }
+
+        /* Load the workBook */
+        loadEntry(myFile, myEntry);
 
         /* Complete the task */
         myTask.end();
@@ -181,8 +177,8 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @param pEntry the zip file entry
      * @throws JOceanusException on error
      */
-    public void loadEntry(final ZipReadFile pFile,
-                          final ZipFileEntry pEntry) throws JOceanusException {
+    public void loadEntry(final GordianZipReadFile pFile,
+                          final GordianZipFileEntry pEntry) throws JOceanusException {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Obtain the active profile */

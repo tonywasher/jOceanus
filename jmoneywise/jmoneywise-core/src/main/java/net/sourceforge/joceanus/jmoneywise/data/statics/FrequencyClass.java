@@ -126,8 +126,8 @@ public enum FrequencyClass implements StaticInterface {
      * @param uId the id
      * @param uOrder the default order
      */
-    private FrequencyClass(final int uId,
-                           final int uOrder) {
+    FrequencyClass(final int uId,
+                   final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }

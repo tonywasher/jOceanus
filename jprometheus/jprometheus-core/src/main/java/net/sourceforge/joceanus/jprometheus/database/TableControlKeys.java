@@ -49,8 +49,8 @@ public class TableControlKeys
 
         /* Define the columns */
         myTableDef.addBooleanColumn(ControlKey.FIELD_HASHPRIME);
-        myTableDef.addBinaryColumn(ControlKey.FIELD_PRIMEPASSHASH, ControlKey.HASHLEN);
-        myTableDef.addNullBinaryColumn(ControlKey.FIELD_ALTPASSHASH, ControlKey.HASHLEN);
+        myTableDef.addBinaryColumn(ControlKey.FIELD_PRIMEBYTES, ControlKey.HASHLEN);
+        myTableDef.addNullBinaryColumn(ControlKey.FIELD_ALTBYTES, ControlKey.HASHLEN);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class TableControlKeys
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_HASHPRIME, myTableDef.getBooleanValue(ControlKey.FIELD_HASHPRIME));
-        myValues.addValue(ControlKey.FIELD_PRIMEPASSHASH, myTableDef.getBinaryValue(ControlKey.FIELD_PRIMEPASSHASH));
-        myValues.addValue(ControlKey.FIELD_ALTPASSHASH, myTableDef.getBinaryValue(ControlKey.FIELD_ALTPASSHASH));
+        myValues.addValue(ControlKey.FIELD_PRIMEBYTES, myTableDef.getBinaryValue(ControlKey.FIELD_PRIMEBYTES));
+        myValues.addValue(ControlKey.FIELD_ALTBYTES, myTableDef.getBinaryValue(ControlKey.FIELD_ALTBYTES));
 
         /* Return the values */
         return myValues;
@@ -80,9 +80,9 @@ public class TableControlKeys
         TableDefinition myTableDef = getTableDef();
         if (ControlKey.FIELD_HASHPRIME.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isHashPrime());
-        } else if (ControlKey.FIELD_PRIMEPASSHASH.equals(iField)) {
+        } else if (ControlKey.FIELD_PRIMEBYTES.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getPrimeHashBytes());
-        } else if (ControlKey.FIELD_ALTPASSHASH.equals(iField)) {
+        } else if (ControlKey.FIELD_ALTBYTES.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getAltHashBytes());
         } else {
             super.setFieldValue(pItem, iField);

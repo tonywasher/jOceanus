@@ -48,14 +48,16 @@ public enum SecurityTypeClass implements StaticInterface {
     /**
      * Life Bond.
      * <p>
-     * This is a LifeBond account, which is a specialised form of an {@link #UNITTRUST} security. It simply differs in tax treatment.
+     * This is a LifeBond account, which is a specialised form of an {@link #UNITTRUST} security. It
+     * simply differs in tax treatment.
      */
     LIFEBOND(3, 2),
 
     /**
      * Endowment.
      * <p>
-     * This is a Endowment account, which is a specialised form of an {@link #UNITTRUST} security. It simply differs in tax treatment.
+     * This is a Endowment account, which is a specialised form of an {@link #UNITTRUST} security.
+     * It simply differs in tax treatment.
      */
     ENDOWMENT(4, 3),
 
@@ -76,7 +78,8 @@ public enum SecurityTypeClass implements StaticInterface {
     /**
      * Generic Asset Account.
      * <p>
-     * This is a generic asset account and represents items whose value is determined by the product of the number units held and the most recent unit price.
+     * This is a generic asset account and represents items whose value is determined by the product
+     * of the number units held and the most recent unit price.
      */
     ASSET(7, 6);
 
@@ -100,8 +103,8 @@ public enum SecurityTypeClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private SecurityTypeClass(final int uId,
-                              final int uOrder) {
+    SecurityTypeClass(final int uId,
+                      final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -145,7 +148,8 @@ public enum SecurityTypeClass implements StaticInterface {
 
     /**
      * Determine whether the SecurityType is a dividend provider.
-     * @return <code>true</code> if the account category type is a dividend provider, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type is a dividend provider,
+     * <code>false</code> otherwise.
      */
     public boolean isDividend() {
         switch (this) {
@@ -159,7 +163,8 @@ public enum SecurityTypeClass implements StaticInterface {
 
     /**
      * Determine whether the AccountCategoryType is shares.
-     * @return <code>true</code> if the account category type is shares, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type is shares, <code>false</code>
+     * otherwise.
      */
     public boolean isShares() {
         return this == SHARES;
@@ -167,7 +172,8 @@ public enum SecurityTypeClass implements StaticInterface {
 
     /**
      * Determine whether the AccountCategoryType needs market as a parent.
-     * @return <code>true</code> if the account category type needs market as a parent, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type needs market as a parent,
+     * <code>false</code> otherwise.
      */
     public boolean needsMarketParent() {
         switch (this) {
@@ -183,7 +189,8 @@ public enum SecurityTypeClass implements StaticInterface {
 
     /**
      * Determine whether the AccountCategoryType can be tax free.
-     * @return <code>true</code> if the account category type can be tax free, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type can be tax free, <code>false</code>
+     * otherwise.
      */
     public boolean canTaxFree() {
         switch (this) {
@@ -198,7 +205,8 @@ public enum SecurityTypeClass implements StaticInterface {
 
     /**
      * Determine whether the AccountCategoryType is subject to Capital Gains.
-     * @return <code>true</code> if the account category type is subject to Capital Gains, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type is subject to Capital Gains,
+     * <code>false</code> otherwise.
      */
     public boolean isCapitalGains() {
         switch (this) {
@@ -212,7 +220,8 @@ public enum SecurityTypeClass implements StaticInterface {
 
     /**
      * Determine whether the AccountCategoryType is Capital.
-     * @return <code>true</code> if the account category type is Capital, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type is Capital, <code>false</code>
+     * otherwise.
      */
     public boolean isCapital() {
         switch (this) {

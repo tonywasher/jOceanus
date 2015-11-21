@@ -50,7 +50,7 @@ public enum TaxCategorySection {
      * Constructor.
      * @param pBase the base
      */
-    private TaxCategorySection(final int pBase) {
+    TaxCategorySection(final int pBase) {
         theBase = pBase;
     }
 

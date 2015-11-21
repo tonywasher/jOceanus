@@ -586,6 +586,26 @@ public final class DataConverter {
     }
 
     /**
+     * Simple function to build a hash result.
+     * @param pResult the result Hash
+     * @param pHash the calculated Hash
+     * @throws JOceanusException on error
+     */
+    public static void buildHashResult(final byte[] pResult,
+                                       final byte[] pHash) throws JOceanusException {
+        /* If the target is smaller than the source */
+        int myLen = pResult.length;
+        if (myLen != pHash.length) {
+            throw new JTethysDataException("Hashes are different lengths");
+        }
+        /* Loop through the array bytes */
+        for (int i = 0; i < myLen; i++) {
+            /* Combine the bytes */
+            pResult[i] ^= pHash[i];
+        }
+    }
+
+    /**
      * Convert a byte array to a Base64 string.
      * @param pBytes the byte array (not null)
      * @return the translated Base64 string (not null)

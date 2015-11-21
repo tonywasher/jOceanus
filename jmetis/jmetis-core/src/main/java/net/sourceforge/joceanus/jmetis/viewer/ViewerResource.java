@@ -129,7 +129,7 @@ public enum ViewerResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private ViewerResource(final String pKeyName) {
+    ViewerResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -303,7 +303,7 @@ public enum PrometheusUIResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private PrometheusUIResource(final String pKeyName) {
+    PrometheusUIResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

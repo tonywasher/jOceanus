@@ -5,19 +5,21 @@ JGordianKnot Project
   jGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. To utilise it you must
 additionally download this library from the {{{http://www.bouncycastle.org/java.html}BouncyCastle webSite}}
   
-  Encryption is performed using a set of keys called a <<CipherSet>> (one key for each supported algorithm). A subset of
-the keys is selected at random (using a SecureRandom instance) from the CipherSet, and the plaintext is encrypted 
+  Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
+the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plaintext is encrypted 
 by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
-initialisation vector. The cipher mode (CBC/OFB etc.) is changed for each turn.
+initialisation vector (which is shifted differently for each key). The cipher mode is CBC then CFB and then SIC to ensure 
+maximal protectionfrom attacks.
 
-  A CipherSet may be defined by a <<PasswordHash>>. This PasswordHash is build from a randomly selected set of three
-MessageDigest algorithms using an interleaved variant of PBKDF2. As the three hashes are calculated from the password,
-intermediate results are periodically swapped between the hashes. Two of the resultant hashes are combined to provide
-the external hash representation. The third hash is used to generate the key definitions for a CipherSet.
+  A KeySet may be defined by a <<KeySetHash>>. This KeySetHash is built from a password and a randomly selected set of three
+HMac algorithms using a simple variant of PBKDF2. One of the MACs (the secret MAC) is also fed the intermediate results of
+the other two MACs. The non secret MACs are calculated and feed into a MessageDigest algorithm (default KECCAK) and combined
+with the initialisation vector and HMac types to provide an external Hash. The result of the secret Mac is then used to generate
+keys for the KeySet via another variant of the PBKDF2 algorithm.
 
-  Asymmetric Keys based on the Elliptic Curve algorithm are also supported. Elliptic Curve Diffie-Hellman is used to
-derive a CipherSet for a pair of AsymmetricKeys. RSA keys are also available, but cannot be associated with a CipherSet.
-
+  On resolving a KeySetHash with a password to obtain the KeySet the algorithm is repeated and the resulting external hash is 
+compared with the expected hash. If it matches, the password is assumed correct and the keySet will be generated. In the unlikely
+event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
 * Supported Algorithms
 
@@ -36,7 +38,13 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * RC6
 
-    * ThreeFish
+    * ThreeFish (unrestricted keys)
+ 
+    * Noekeon (restricted keys)
+
+    * SM4 (restricted keys)
+
+    * SEED (restricted keys) 
 
   The following modes are available for the above keys
 
@@ -48,19 +56,21 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * SIC (CTR)
 
-    * GCM (for all symmetric algorithms except ThreeFish)
-
-    * EAX (for all symmetric algorithms except ThreeFish)
-
-  The following Stream Key algorithms are supported (bracketed versions used for 128 key bytes).
+  The following Stream Key algorithms are supported (bracketed versions used for restricted keys).
 
     * ChaCha
 
-    * XSalsa20(Salsa20)
+    * Salsa20
+
+    * XSalsa20 (unrestricted keys)
 
     * HC256(HC128)
 
     * VMPC 
+
+    * ISAAC 
+
+    * Grain128 (restricted keys)
 
   The following MessageDigest algorithms are supported.
 
@@ -74,9 +84,13 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * RIPEMD320
 
-    * SHA3
+    * KECCAK
 
     * Skein
+
+    * SM3
+
+    * Blake2b
 
   The following Mac Algorithms are supported
 
@@ -89,20 +103,6 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
     * SkeinMAC
 
     * VMPCMAC
-
-  The following Elliptic Curves are supported (see BouncyCastle documentation for details)
-
-    * secp384r1
-
-    * secp521r1
-
-    * c2tnb431r1
-
-    * sect409r1
-
-    * sect571r1
-
-    * brainpoolp384t1
 
 ZipFile support
 

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -29,7 +31,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jgordianknot.SecurityTestSuite.SecurityManagerCreator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.manager.javafx.JavaFXSecureManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -65,7 +67,7 @@ public class JavaFXSecurityTester
     }
 
     @Override
-    public SecureManager newSecureManager(final SecurityParameters pParams) throws JOceanusException {
+    public SecureManager newSecureManager(final GordianParameters pParams) throws JOceanusException {
         JavaFXSecureManager myManager = new JavaFXSecureManager(pParams);
         myManager.setStage(theStage);
         return myManager;
@@ -84,16 +86,16 @@ public class JavaFXSecurityTester
 
         /* handle test security */
         // } else if ("test".equals(pArg)) {
-        theTests.testSecurity();
+        // theTests.testSecurity();
 
         /* handle zip file creation */
         // } else if ("zip".equals(pArg)) {
-        // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-        // theTests.createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-        // theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+        File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
+        theTests.createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
+        theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
         // }
         // } else {
-        // SecurityTestSuite.listAlgorithms(SecurityProvider.BC);
+        // SecurityTestSuite.listAlgorithms();
         // }
     }
 

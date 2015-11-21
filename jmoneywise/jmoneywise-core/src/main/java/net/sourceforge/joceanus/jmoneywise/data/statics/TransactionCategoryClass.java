@@ -330,8 +330,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * @param uId the id
      * @param uOrder the default order.
      */
-    private TransactionCategoryClass(final int uId,
-                                     final int uOrder) {
+    TransactionCategoryClass(final int uId,
+                             final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }

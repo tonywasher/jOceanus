@@ -29,9 +29,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
@@ -40,9 +43,6 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Write control for spreadsheets.
@@ -134,17 +134,17 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         JDataProfile myTask = theTask.getActiveTask();
         myTask = myTask.startTask("Writing");
 
-        /* Create a clone of the security control */
+        /* Create a similar security control */
         SecureManager mySecure = pData.getSecurity();
-        PasswordHash myBase = pData.getPasswordHash();
-        PasswordHash myHash = mySecure.clonePasswordHash(myBase);
+        GordianKeySetHash myBase = pData.getKeySetHash();
+        GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 
         /* Assume failure */
         boolean bSuccess = false;
         String myName = SpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
-        try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, pFile);
+        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile);
              OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
             /* Record the DataSet */
             theData = pData;

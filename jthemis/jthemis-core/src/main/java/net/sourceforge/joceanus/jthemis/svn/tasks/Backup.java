@@ -28,19 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNCancelException;
@@ -57,6 +44,19 @@ import org.tmatesoft.svn.core.wc.admin.ISVNAdminEventHandler;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEvent;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
+
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
 /**
  * Handles backup of a repository.
@@ -145,7 +145,10 @@ public class Backup {
                                final SecureManager pSecurity,
                                final File pZipFile) throws JOceanusException {
         /* Protect against exceptions */
-        try (ZipReadFile myFile = new ZipReadFile(pZipFile)) {
+        try {
+            /* Open file */
+            GordianZipReadFile myFile = new GordianZipReadFile(pZipFile);
+
             /* Install an event handler */
             theAdminClient.setEventHandler(new SubversionHandler());
 
@@ -153,13 +156,13 @@ public class Backup {
             byte[] myHashBytes = myFile.getHashBytes();
 
             /* Obtain the initialised password hash */
-            PasswordHash myHash = pSecurity.resolvePasswordHash(myHashBytes, pZipFile.getName());
+            GordianKeySetHash myHash = pSecurity.resolveKeySetHash(myHashBytes, pZipFile.getName());
 
-            /* Associate this password hash with the ZipFile */
-            myFile.setPasswordHash(myHash);
+            /* Associate this keySetHash with the ZipFile */
+            myFile.setKeySetHash(myHash);
 
             /* Access the relevant entry and obtain the number of revisions */
-            ZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
+            GordianZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
             Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
 
             /* Declare the stage */
@@ -180,8 +183,7 @@ public class Backup {
 
             /* Read the data from the input stream */
             theAdminClient.doLoad(pRepository, myStream);
-        } catch (IOException
-                | SVNException e) {
+        } catch (SVNException e) {
             throw new JThemisIOException("Failed", e);
         }
 
@@ -246,7 +248,7 @@ public class Backup {
             revLast = myRepo.getDatedRevision(new Date());
 
             /* Determine the name of the zip file */
-            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + ZipReadFile.ZIPFILE_EXT);
+            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + GordianZipReadFile.ZIPFILE_EXT);
 
             /* If the backup file exists */
             if (myZipName.exists()) {
@@ -277,13 +279,13 @@ public class Backup {
         boolean doDelete = true;
 
         /* Create a new password hash */
-        PasswordHash myHash = pManager.resolvePasswordHash(null, myName);
+        GordianKeySetHash myHash = pManager.resolveKeySetHash(null, myName);
 
         /* Protect against exceptions */
-        try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, myZipName);
+        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);
              OutputStream myStream = myZipFile.getOutputStream(myEntryName)) {
             /* Access the current entry and set the number of revisions */
-            ZipFileEntry myEntry = myZipFile.getCurrentEntry();
+            GordianZipFileEntry myEntry = myZipFile.getCurrentEntry();
             myEntry.setUserLongProperty(PROP_NUMREV, revLast);
 
             /* Dump the data to the zip file */

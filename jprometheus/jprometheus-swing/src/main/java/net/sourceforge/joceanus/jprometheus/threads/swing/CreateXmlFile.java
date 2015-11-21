@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
@@ -145,7 +145,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + ZipReadFile.ZIPFILE_EXT);
+            myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
 
             /* Access the data */
             T myOldData = theControl.getData();

@@ -38,12 +38,19 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
@@ -52,13 +59,6 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -138,10 +138,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         JDataProfile myTask = theTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("Writing");
 
-        /* Create a clone of the security control */
+        /* Create a similar security control */
         SecureManager mySecure = pData.getSecurity();
-        PasswordHash myBase = pData.getPasswordHash();
-        PasswordHash myHash = mySecure.clonePasswordHash(myBase);
+        GordianKeySetHash myBase = pData.getKeySetHash();
+        GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -150,7 +150,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         boolean bContinue = theTask.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, pFile)) {
+        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile)) {
             /* Loop through the data lists */
             Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (bContinue && myIterator.hasNext()) {
@@ -206,7 +206,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         boolean bContinue = theTask.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        try (ZipWriteFile myZipFile = new ZipWriteFile(pFile)) {
+        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
             /* Loop through the data lists */
             Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (bContinue && myIterator.hasNext()) {
@@ -251,7 +251,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws JOceanusException on error
      */
     private boolean writeXMLListToFile(final DataList<?, E> pList,
-                                       final ZipWriteFile pZipFile,
+                                       final GordianZipWriteFile pZipFile,
                                        final boolean pStoreIds) throws JOceanusException {
         /* Access the list name */
         String myName = pList.listName() + SUFFIX_ENTRY;
@@ -360,32 +360,29 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         myStage.startTask("Parsing");
 
         /* Access the zip file */
-        try (ZipReadFile myZipFile = new ZipReadFile(pFile)) {
-            /* Obtain the hash bytes from the file */
-            byte[] myHashBytes = myZipFile.getHashBytes();
+        GordianZipReadFile myZipFile = new GordianZipReadFile(pFile);
 
-            /* If this is a secure ZipFile */
-            if (myHashBytes != null) {
-                /* Access the Security manager */
-                SecureManager mySecurity = theTask.getSecurity();
+        /* Obtain the hash bytes from the file */
+        byte[] myHashBytes = myZipFile.getHashBytes();
 
-                /* Obtain the initialised password hash */
-                PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
+        /* If this is a secure ZipFile */
+        if (myHashBytes != null) {
+            /* Access the Security manager */
+            SecureManager mySecurity = theTask.getSecurity();
 
-                /* Associate this password hash with the ZipFile */
-                myZipFile.setPasswordHash(myHash);
-            }
+            /* Obtain the initialised password hash */
+            GordianKeySetHash myHash = mySecurity.resolveKeySetHash(myHashBytes, pFile.getName());
 
-            /* Parse the Zip File */
-            boolean bSuccess = parseZipFile(myStage, pData, myZipFile);
-
-            /* Complete the task */
-            myStage.end();
-            return bSuccess;
-
-        } catch (IOException e) {
-            throw new JPrometheusIOException("Failed to load file", e);
+            /* Associate this keySetHash with the ZipFile */
+            myZipFile.setKeySetHash(myHash);
         }
+
+        /* Parse the Zip File */
+        boolean bSuccess = parseZipFile(myStage, pData, myZipFile);
+
+        /* Complete the task */
+        myStage.end();
+        return bSuccess;
     }
 
     /**
@@ -398,7 +395,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private boolean parseZipFile(final JDataProfile pProfile,
                                  final T pData,
-                                 final ZipReadFile pZipFile) throws JOceanusException {
+                                 final GordianZipReadFile pZipFile) throws JOceanusException {
         /* Start new stage */
         JDataProfile myStage = pProfile.startTask("Loading");
 
@@ -446,13 +443,13 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws JOceanusException on error
      */
     private boolean readXMLListFromFile(final DataList<?, E> pList,
-                                        final ZipReadFile pZipFile) throws JOceanusException {
+                                        final GordianZipReadFile pZipFile) throws JOceanusException {
         /* Access the list name */
         String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Locate the correct entry */
-        ZipFileContents myContents = pZipFile.getContents();
-        ZipFileEntry myEntry = myContents.findFileEntry(myName);
+        GordianZipFileContents myContents = pZipFile.getContents();
+        GordianZipFileEntry myEntry = myContents.findFileEntry(myName);
         if (myEntry == null) {
             throw new JPrometheusDataException("List not found " + myName);
         }

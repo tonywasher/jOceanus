@@ -153,9 +153,9 @@ public enum TransactionInfoClass implements DataInfoClass {
      * @param uOrder the default order
      * @param pDataType the data type
      */
-    private TransactionInfoClass(final int uId,
-                                 final int uOrder,
-                                 final DataType pDataType) {
+    TransactionInfoClass(final int uId,
+                         final int uOrder,
+                         final DataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;

@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preference;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -35,14 +35,19 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public class SecurityPreferences
         extends PreferenceSet {
     /**
-     * Registry name for Security Provider.
-     */
-    public static final String NAME_PROVIDER = "SecurityProvider";
-
-    /**
      * Registry name for Restricted Security.
      */
     public static final String NAME_RESTRICTED = "RestrictedKeys";
+
+    /**
+     * Registry name for Factory Type.
+     */
+    public static final String NAME_FACTORY = "FactoryType";
+
+    /**
+     * Registry name for SP800 Type.
+     */
+    public static final String NAME_SP800 = "SP800Type";
 
     /**
      * Registry name for Cipher Steps.
@@ -65,14 +70,19 @@ public class SecurityPreferences
     public static final String NAME_ACTIVE_KEYSETS = "NumActiveKeySets";
 
     /**
-     * Display name for Security Provider.
-     */
-    private static final String DISPLAY_PROVIDER = "Security Provider";
-
-    /**
      * Display name for Restricted Security.
      */
     private static final String DISPLAY_RESTRICTED = "Restricted Keys";
+
+    /**
+     * Display name for Factory Type.
+     */
+    private static final String DISPLAY_FACTORY = "Security Factory Type";
+
+    /**
+     * Display name for SP800 Type.
+     */
+    private static final String DISPLAY_SP800 = "SP800 Random Type";
 
     /**
      * Display name for Cipher Steps.
@@ -95,24 +105,29 @@ public class SecurityPreferences
     private static final String DISPLAY_ACTIVE_KEYSETS = "Number of Active KeySets";
 
     /**
-     * Default Security Provider.
-     */
-    private static final SecurityProvider DEFAULT_PROVIDER = SecurityParameters.DEFAULT_PROVIDER;
-
-    /**
      * Default Restricted Security.
      */
-    private static final Boolean DEFAULT_RESTRICTED = SecurityParameters.DEFAULT_RESTRICTED;
+    private static final Boolean DEFAULT_RESTRICTED = GordianParameters.DEFAULT_RESTRICTED;
+
+    /**
+     * Default Factory.
+     */
+    private static final GordianFactoryType DEFAULT_FACTORY = GordianParameters.DEFAULT_FACTORY;
+
+    /**
+     * Default SP800 Type.
+     */
+    private static final GordianSP800Type DEFAULT_SP800 = GordianParameters.DEFAULT_SP800;
 
     /**
      * Default Cipher Steps.
      */
-    private static final Integer DEFAULT_CIPHER_STEPS = SecurityParameters.DEFAULT_CIPHER_STEPS;
+    private static final Integer DEFAULT_CIPHER_STEPS = GordianParameters.DEFAULT_CIPHER_STEPS;
 
     /**
      * Default Hash iterations.
      */
-    private static final Integer DEFAULT_HASH_ITERATIONS = SecurityParameters.DEFAULT_HASH_ITERATIONS;
+    private static final Integer DEFAULT_HASH_ITERATIONS = GordianParameters.DEFAULT_HASH_ITERATIONS;
 
     /**
      * Default Security Phrase.
@@ -122,7 +137,7 @@ public class SecurityPreferences
     /**
      * Default Number of Active KeySets.
      */
-    private static final int DEFAULT_ACTIVE_KEYSETS = SecurityParameters.DEFAULT_ACTIVE_KEYSETS;
+    private static final int DEFAULT_ACTIVE_KEYSETS = 4;
 
     /**
      * Constructor.
@@ -132,20 +147,12 @@ public class SecurityPreferences
         super();
     }
 
-    /**
-     * Get SecurityGenerator.
-     * @return Security Generator for these preferences
-     * @throws JOceanusException on error
-     */
-    public SecurityGenerator getGenerator() throws JOceanusException {
-        return new SecurityGenerator(getParameters());
-    }
-
     @Override
     protected void definePreferences() {
         /* Define the properties */
-        definePreference(NAME_PROVIDER, DEFAULT_PROVIDER, SecurityProvider.class);
         defineBooleanPreference(NAME_RESTRICTED, DEFAULT_RESTRICTED);
+        definePreference(NAME_FACTORY, DEFAULT_FACTORY, GordianFactoryType.class);
+        definePreference(NAME_SP800, DEFAULT_SP800, GordianSP800Type.class);
         defineIntegerPreference(NAME_CIPHER_STEPS, DEFAULT_CIPHER_STEPS);
         defineIntegerPreference(NAME_HASH_ITERATIONS, DEFAULT_HASH_ITERATIONS);
         defineStringPreference(NAME_SECURITY_PHRASE, DEFAULT_SECURITY_PHRASE);
@@ -155,11 +162,14 @@ public class SecurityPreferences
     @Override
     protected String getDisplayName(final String pName) {
         /* Handle default values */
-        if (pName.equals(NAME_PROVIDER)) {
-            return DISPLAY_PROVIDER;
-        }
         if (pName.equals(NAME_RESTRICTED)) {
             return DISPLAY_RESTRICTED;
+        }
+        if (pName.equals(NAME_FACTORY)) {
+            return DISPLAY_FACTORY;
+        }
+        if (pName.equals(NAME_SP800)) {
+            return DISPLAY_SP800;
         }
         if (pName.equals(NAME_CIPHER_STEPS)) {
             return DISPLAY_CIPHER_STEPS;
@@ -180,15 +190,16 @@ public class SecurityPreferences
      * Get Security Parameters.
      * @return the parameters
      */
-    public SecurityParameters getParameters() {
+    public GordianParameters getParameters() {
         /* Create default preferences */
-        SecurityParameters myParms = new SecurityParameters(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED));
+        GordianParameters myParms = new GordianParameters(getBooleanValue(NAME_RESTRICTED));
 
         /* Set other parameters */
+        myParms.setFactoryType(getEnumValue(NAME_FACTORY, GordianFactoryType.class));
+        myParms.setSP800Type(getEnumValue(NAME_SP800, GordianSP800Type.class));
         myParms.setNumCipherSteps(getIntegerValue(NAME_CIPHER_STEPS));
         myParms.setNumIterations(getIntegerValue(NAME_HASH_ITERATIONS));
         myParms.setSecurityPhrase(getStringValue(NAME_SECURITY_PHRASE));
-        myParms.setNumActiveKeySets(getIntegerValue(NAME_ACTIVE_KEYSETS));
 
         /* return the parameters */
         return myParms;

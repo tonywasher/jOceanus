@@ -326,7 +326,7 @@ public class QIFParser {
          * Constructor.
          * @param pType the type
          */
-        private QIFSection(final String pType) {
+        QIFSection(final String pType) {
             theType = pType;
         }
 

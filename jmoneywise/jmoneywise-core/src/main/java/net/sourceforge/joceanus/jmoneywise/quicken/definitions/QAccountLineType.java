@@ -55,7 +55,7 @@ public enum QAccountLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QAccountLineType(final String pSymbol) {
+    QAccountLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

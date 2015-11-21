@@ -524,7 +524,7 @@ public final class AssetPair
          * Constructor.
          * @param uId the Id
          */
-        private AssetDirection(final int uId) {
+        AssetDirection(final int uId) {
             theId = uId;
         }
 

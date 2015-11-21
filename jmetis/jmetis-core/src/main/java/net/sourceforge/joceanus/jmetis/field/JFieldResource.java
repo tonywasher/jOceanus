@@ -54,7 +54,7 @@ public enum JFieldResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private JFieldResource(final String pKeyName) {
+    JFieldResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

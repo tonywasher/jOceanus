@@ -45,7 +45,7 @@ public enum QClassLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QClassLineType(final String pSymbol) {
+    QClassLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

@@ -27,7 +27,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataDiffers;
@@ -114,8 +114,8 @@ public final class EncryptedData {
      */
     public static <T> T getValue(final EncryptedField<T> pField) {
         return (pField == null)
-                               ? null
-                               : pField.getValue();
+                                ? null
+                                : pField.getValue();
     }
 
     /**
@@ -125,8 +125,8 @@ public final class EncryptedData {
      */
     public static byte[] getBytes(final EncryptedField<?> pField) {
         return (pField == null)
-                               ? null
-                               : pField.getBytes();
+                                ? null
+                                : pField.getBytes();
     }
 
     /**
@@ -136,9 +136,9 @@ public final class EncryptedData {
     public abstract static class EncryptedField<T>
             implements JDataFormat, JDataDiffers {
         /**
-         * Encryption CipherSet.
+         * Encryption KeySet.
          */
-        private CipherSet theCipherSet = null;
+        private GordianKeySet theKeySet = null;
 
         /**
          * Encrypted value.
@@ -157,28 +157,28 @@ public final class EncryptedData {
 
         /**
          * Constructor.
-         * @param pCipherSet the cipher set
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        private EncryptedField(final CipherSet pCipherSet,
+        private EncryptedField(final GordianKeySet pKeySet,
                                final JDataFormatter pFormatter,
                                final byte[] pEncrypted) throws JOceanusException {
-            /* Store the cipherSet and formatter */
-            theCipherSet = pCipherSet;
+            /* Store the keySet and formatter */
+            theKeySet = pKeySet;
             theFormatter = pFormatter;
 
             /* Store the encrypted value */
             theEncrypted = Arrays.copyOf(pEncrypted, pEncrypted.length);
 
             /* Reject if encryption is not initialised */
-            if (theCipherSet == null) {
+            if (theKeySet == null) {
                 throw new JMetisLogicException(ERROR_INIT);
             }
 
             /* Decrypt the Bytes */
-            byte[] myBytes = theCipherSet.decryptBytes(theEncrypted);
+            byte[] myBytes = theKeySet.decryptBytes(theEncrypted);
 
             /* Set the decrypted value */
             theDecrypted = parseBytes(myBytes);
@@ -186,23 +186,23 @@ public final class EncryptedData {
 
         /**
          * Constructor.
-         * @param pCipherSet the CipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        private EncryptedField(final CipherSet pCipherSet,
+        private EncryptedField(final GordianKeySet pKeySet,
                                final JDataFormatter pFormatter,
                                final T pUnencrypted) throws JOceanusException {
-            /* Store the cipherSet and formatter */
-            theCipherSet = pCipherSet;
+            /* Store the keySet and formatter */
+            theKeySet = pKeySet;
             theFormatter = pFormatter;
 
             /* Store the value */
             theDecrypted = pUnencrypted;
 
             /* Return if we have no encryption yet */
-            if (theCipherSet == null) {
+            if (theKeySet == null) {
                 return;
             }
 
@@ -224,7 +224,7 @@ public final class EncryptedData {
          */
         private void encryptValue() throws JOceanusException {
             /* Reject if encryption is not initialised */
-            if (theCipherSet == null) {
+            if (theKeySet == null) {
                 throw new JMetisLogicException(ERROR_INIT);
             }
 
@@ -232,15 +232,15 @@ public final class EncryptedData {
             byte[] myBytes = getBytesForEncryption();
 
             /* Encrypt the Bytes */
-            theEncrypted = theCipherSet.encryptBytes(myBytes);
+            theEncrypted = theKeySet.encryptBytes(myBytes);
         }
 
         /**
-         * Obtain the CipherSet.
-         * @return the Cipher Set
+         * Obtain the keySet.
+         * @return the keySet
          */
-        public CipherSet getCipherSet() {
-            return theCipherSet;
+        public GordianKeySet getKeySet() {
+            return theKeySet;
         }
 
         /**
@@ -249,8 +249,8 @@ public final class EncryptedData {
          */
         public byte[] getBytes() {
             return (theEncrypted == null)
-                                         ? null
-                                         : Arrays.copyOf(theEncrypted, theEncrypted.length);
+                                          ? null
+                                          : Arrays.copyOf(theEncrypted, theEncrypted.length);
         }
 
         /**
@@ -289,12 +289,12 @@ public final class EncryptedData {
 
         /**
          * Apply fresh encryption to value.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @throws JOceanusException on error
          */
-        protected void applyEncryption(final CipherSet pCipherSet) throws JOceanusException {
-            /* Store the CipherSet */
-            theCipherSet = pCipherSet;
+        protected void applyEncryption(final GordianKeySet pKeySet) throws JOceanusException {
+            /* Store the keySet */
+            theKeySet = pKeySet;
 
             /* Encrypt the value */
             encryptValue();
@@ -302,21 +302,21 @@ public final class EncryptedData {
 
         /**
          * Adopt Encryption.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the formatter
          * @param pField field to adopt encryption from
          * @throws JOceanusException on error
          */
-        protected void adoptEncryption(final CipherSet pCipherSet,
+        protected void adoptEncryption(final GordianKeySet pKeySet,
                                        final JDataFormatter pFormatter,
                                        final EncryptedField<?> pField) throws JOceanusException {
-            /* Store the CipherSet and formatter */
-            theCipherSet = pCipherSet;
+            /* Store the keySet and formatter */
+            theKeySet = pKeySet;
             theFormatter = pFormatter;
 
             /* If we need to renew the encryption */
             if ((pField == null)
-                || (Difference.getDifference(pCipherSet, pField.getCipherSet()).isDifferent())
+                || (Difference.getDifference(pKeySet, pField.getKeySet()).isDifferent())
                 || (Difference.getDifference(getValue(), pField.getValue()).isDifferent())) {
                 /* encrypt the value */
                 encryptValue();
@@ -403,28 +403,28 @@ public final class EncryptedData {
             extends EncryptedField<String> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedString(final CipherSet pCipherSet,
+        protected EncryptedString(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
                                   final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedString(final CipherSet pCipherSet,
+        protected EncryptedString(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
                                   final String pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -461,28 +461,28 @@ public final class EncryptedData {
             extends EncryptedField<Short> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedShort(final CipherSet pCipherSet,
+        protected EncryptedShort(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedShort(final CipherSet pCipherSet,
+        protected EncryptedShort(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final Short pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -519,28 +519,28 @@ public final class EncryptedData {
             extends EncryptedField<Integer> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedInteger(final CipherSet pCipherSet,
+        protected EncryptedInteger(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedInteger(final CipherSet pCipherSet,
+        protected EncryptedInteger(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
                                    final Integer pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -577,28 +577,28 @@ public final class EncryptedData {
             extends EncryptedField<Long> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedLong(final CipherSet pCipherSet,
+        protected EncryptedLong(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedLong(final CipherSet pCipherSet,
+        protected EncryptedLong(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
                                 final Long pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -635,28 +635,28 @@ public final class EncryptedData {
             extends EncryptedField<Float> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedFloat(final CipherSet pCipherSet,
+        protected EncryptedFloat(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedFloat(final CipherSet pCipherSet,
+        protected EncryptedFloat(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final Float pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -693,28 +693,28 @@ public final class EncryptedData {
             extends EncryptedField<Double> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDouble(final CipherSet pCipherSet,
+        protected EncryptedDouble(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
                                   final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDouble(final CipherSet pCipherSet,
+        protected EncryptedDouble(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
                                   final Double pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -751,28 +751,28 @@ public final class EncryptedData {
             extends EncryptedField<Boolean> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedBoolean(final CipherSet pCipherSet,
+        protected EncryptedBoolean(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedBoolean(final CipherSet pCipherSet,
+        protected EncryptedBoolean(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
                                    final Boolean pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -814,28 +814,28 @@ public final class EncryptedData {
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDate(final CipherSet pCipherSet,
+        protected EncryptedDate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDate(final CipherSet pCipherSet,
+        protected EncryptedDate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
                                 final Date pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         /**
@@ -890,28 +890,28 @@ public final class EncryptedData {
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDateDay(final CipherSet pCipherSet,
+        protected EncryptedDateDay(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDateDay(final CipherSet pCipherSet,
+        protected EncryptedDateDay(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
                                    final JDateDay pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         /**
@@ -961,28 +961,28 @@ public final class EncryptedData {
             extends EncryptedField<char[]> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedCharArray(final CipherSet pCipherSet,
+        protected EncryptedCharArray(final GordianKeySet pKeySet,
                                      final JDataFormatter pFormatter,
                                      final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedCharArray(final CipherSet pCipherSet,
+        protected EncryptedCharArray(final GordianKeySet pKeySet,
                                      final JDataFormatter pFormatter,
                                      final char[] pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1003,28 +1003,28 @@ public final class EncryptedData {
             extends EncryptedField<BigInteger> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedBigInteger(final CipherSet pCipherSet,
+        protected EncryptedBigInteger(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
                                       final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedBigInteger(final CipherSet pCipherSet,
+        protected EncryptedBigInteger(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
                                       final BigInteger pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1050,28 +1050,28 @@ public final class EncryptedData {
             extends EncryptedField<BigDecimal> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedBigDecimal(final CipherSet pCipherSet,
+        protected EncryptedBigDecimal(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
                                       final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedBigDecimal(final CipherSet pCipherSet,
+        protected EncryptedBigDecimal(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
                                       final BigDecimal pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1108,28 +1108,28 @@ public final class EncryptedData {
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        private EncryptedDecimal(final CipherSet pCipherSet,
+        private EncryptedDecimal(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        private EncryptedDecimal(final CipherSet pCipherSet,
+        private EncryptedDecimal(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final X pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         /**
@@ -1200,28 +1200,28 @@ public final class EncryptedData {
             extends EncryptedDecimal<JMoney> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedMoney(final CipherSet pCipherSet,
+        protected EncryptedMoney(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedMoney(final CipherSet pCipherSet,
+        protected EncryptedMoney(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final JMoney pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1257,28 +1257,28 @@ public final class EncryptedData {
             extends EncryptedDecimal<JUnits> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedUnits(final CipherSet pCipherSet,
+        protected EncryptedUnits(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedUnits(final CipherSet pCipherSet,
+        protected EncryptedUnits(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final JUnits pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1298,28 +1298,28 @@ public final class EncryptedData {
             extends EncryptedDecimal<JRate> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedRate(final CipherSet pCipherSet,
+        protected EncryptedRate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedRate(final CipherSet pCipherSet,
+        protected EncryptedRate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
                                 final JRate pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1340,28 +1340,28 @@ public final class EncryptedData {
             extends EncryptedDecimal<JPrice> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedPrice(final CipherSet pCipherSet,
+        protected EncryptedPrice(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedPrice(final CipherSet pCipherSet,
+        protected EncryptedPrice(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final JPrice pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1397,28 +1397,28 @@ public final class EncryptedData {
             extends EncryptedDecimal<JDilution> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDilution(final CipherSet pCipherSet,
+        protected EncryptedDilution(final GordianKeySet pKeySet,
                                     final JDataFormatter pFormatter,
                                     final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedDilution(final CipherSet pCipherSet,
+        protected EncryptedDilution(final GordianKeySet pKeySet,
                                     final JDataFormatter pFormatter,
                                     final JDilution pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1438,28 +1438,28 @@ public final class EncryptedData {
             extends EncryptedDecimal<JRatio> {
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedRatio(final CipherSet pCipherSet,
+        protected EncryptedRatio(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pEncrypted);
+            super(pKeySet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
-         * @param pCipherSet the cipherSet
+         * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JOceanusException on error
          */
-        protected EncryptedRatio(final CipherSet pCipherSet,
+        protected EncryptedRatio(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
                                  final JRatio pUnencrypted) throws JOceanusException {
-            super(pCipherSet, pFormatter, pUnencrypted);
+            super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override

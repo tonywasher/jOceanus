@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.crypto.DataCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
@@ -70,6 +70,11 @@ public class DataKey
     public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_TYPE.getValue());
 
     /**
+     * KeyTypeId Field Id.
+     */
+    public static final JDataField FIELD_KEYTYPEID = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_TYPEID.getValue());
+
+    /**
      * HashPrime Field Id.
      */
     public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
@@ -85,14 +90,9 @@ public class DataKey
     public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_KEY.getValue());
 
     /**
-     * Cipher Field Id.
-     */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_CIPHER.getValue());
-
-    /**
      * Encrypted Symmetric Key Length.
      */
-    public static final int KEYLEN = SymmetricKey.IDSIZE;
+    public static final int KEYLEN = GordianKeySet.WRAPPED_KEYSIZE;
 
     /**
      * Copy Constructor.
@@ -111,57 +111,79 @@ public class DataKey
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
+    @SuppressWarnings("unchecked")
     private DataKey(final DataKeyList pList,
                     final DataValues<CryptographyDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access the Security manager */
+        DataSet<?, ?> myData = getDataSet();
+
+        /* Store the PrimeHash indicator */
+        Object myValue = pValues.getValue(FIELD_HASHPRIME);
+        Boolean isHashPrime = (myValue instanceof Boolean)
+                                                           ? (Boolean) myValue
+                                                           : Boolean.TRUE;
+        setValueHashPrime(isHashPrime);
+
         /* Store the DataKeySet */
-        Object myValue = pValues.getValue(FIELD_KEYSET);
+        myValue = pValues.getValue(FIELD_KEYSET);
         if (myValue instanceof Integer) {
             /* Store the integer */
-            Integer myInt = (Integer) myValue;
-            setValueDataKeySet(myInt);
+            setValueDataKeySet((Integer) myValue);
 
             /* Resolve the DataKeySet */
-            DataSet<?, ?> myData = getDataSet();
             resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
-            DataKeySet myKeySet = getDataKeySet();
-            SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
+        } else if (myValue instanceof DataKeySet) {
+            /* Store the DataKeySet */
+            setValueDataKeySet((DataKeySet) myValue);
+        }
 
-            /* Store the KeyType */
-            myValue = pValues.getValue(FIELD_KEYTYPE);
+        /* Resolve the DataKeySet */
+        DataKeySet myDataKeySet = getDataKeySet();
+        GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
+        GordianKeySet myKeySet = myHash.getKeySet();
+
+        /* Store the KeyType */
+        myValue = pValues.getValue(FIELD_KEYTYPE);
+        if (myValue instanceof Integer) {
+            /* Store the integer */
+            setValueKeyTypeId((Integer) myValue);
+
+            /* Resolve the KeyType */
+            setValueKeyType(myKeySet.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeyType.class));
+        } else if (myValue instanceof GordianSymKeyType) {
+            /* Store the keyType */
+            setValueKeyType((GordianSymKeyType) myValue);
+
+            /* Look for passed id */
+            myValue = pValues.getValue(FIELD_KEYTYPEID);
             if (myValue instanceof Integer) {
-                myInt = (Integer) myValue;
-                setValueKeyType(myInt);
-                setValueKeyType(myGenerator.deriveSymKeyTypeFromExternalId(myInt));
+                /* Store the id */
+                setValueKeyTypeId((Integer) myValue);
             }
+        }
 
-            /* Store the PrimeHash indicator */
-            myValue = pValues.getValue(FIELD_HASHPRIME);
-            Boolean isHashPrime = (myValue instanceof Boolean)
-                                                               ? (Boolean) myValue
-                                                               : Boolean.TRUE;
-            setValueHashPrime(isHashPrime);
+        /* Store the KeyDef */
+        myValue = pValues.getValue(FIELD_KEYDEF);
+        if (myValue instanceof byte[]) {
+            /* Access the value */
+            byte[] myBytes = (byte[]) myValue;
+            setValueSecuredKeyDef(myBytes);
 
-            /* Store the KeyDef */
-            myValue = pValues.getValue(FIELD_KEYDEF);
-            if (myValue instanceof byte[]) {
-                byte[] myBytes = (byte[]) myValue;
-                setValueSecuredKeyDef(myBytes);
-
+            /* Look for passed key */
+            myValue = pValues.getValue(FIELD_KEY);
+            if (myValue instanceof GordianKey) {
+                setValueDataKey((GordianKey<GordianSymKeyType>) myValue);
+            } else {
                 /* Create the Symmetric Key from the wrapped data */
-                PasswordHash myHash = myKeySet.getPasswordHash(isHashPrime);
-                CipherSet myCipher = myHash.getCipherSet();
-                SymmetricKey myKey = myCipher.deriveSymmetricKey(myBytes, getKeyType());
+                GordianKey<GordianSymKeyType> myKey = myKeySet.deriveKey(myBytes, getKeyType());
                 setValueDataKey(myKey);
-
-                /* Access the Cipher */
-                setValueCipher(myKey.getDataCipher());
-
-                /* Register the DataKey */
-                myKeySet.registerDataKey(this);
             }
+
+            /* Register the DataKey */
+            myDataKeySet.registerDataKey(this);
         }
     }
 
@@ -174,32 +196,33 @@ public class DataKey
      */
     private DataKey(final DataKeyList pList,
                     final DataKeySet pKeySet,
-                    final SymKeyType pKeyType) throws JOceanusException {
+                    final GordianSymKeyType pKeyType) throws JOceanusException {
         /* Initialise the item */
         super(pList, 0);
 
         /* Protect against exceptions */
         try {
-            /* Store the Details */
-            setValueDataKeySet(pKeySet);
-            setValueKeyType(pKeyType);
-
             /* Create the new key */
             Boolean isHashPrime = pKeySet.isHashPrime();
             setValueHashPrime(isHashPrime);
 
             /* Create the new key */
-            PasswordHash myHash = pKeySet.getPasswordHash(isHashPrime);
-            CipherSet myCipher = myHash.getCipherSet();
-            SecurityGenerator myGenerator = myHash.getSecurityGenerator();
-            SymmetricKey myKey = myGenerator.generateSymmetricKey(pKeyType);
+            GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
+            GordianKeySet myKeySet = myHash.getKeySet();
+
+            /* Store the Details */
+            setValueDataKeySet(pKeySet);
+            setValueKeyTypeId(myKeySet.deriveExternalIdForType(pKeyType));
+            setValueKeyType(pKeyType);
+
+            /* Create the new key */
+            GordianFactory myFactory = myKeySet.getFactory();
+            GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
+            GordianKey<GordianSymKeyType> myKey = myGenerator.generateKey();
             setValueDataKey(myKey);
 
             /* Store its secured keyDef */
-            setValueSecuredKeyDef(myCipher.secureSymmetricKey(myKey));
-
-            /* Access the Cipher */
-            setValueCipher(myKey.getDataCipher());
+            setValueSecuredKeyDef(myKeySet.secureKey(myKey));
 
             /* Register the DataKey */
             pKeySet.registerDataKey(this);
@@ -231,8 +254,8 @@ public class DataKey
         setValueDataKey(pDataKey.getDataKey());
         setValueHashPrime(pDataKey.isHashPrime());
         setValueSecuredKeyDef(pDataKey.getSecuredKeyDef());
-        setValueCipher(pDataKey.getCipher());
         setValueKeyType(pDataKey.getKeyType());
+        setValueKeyTypeId(pDataKey.getKeyTypeId());
     }
 
     @Override
@@ -263,7 +286,7 @@ public class DataKey
      * Get the Key Type.
      * @return the key type
      */
-    public SymKeyType getKeyType() {
+    public GordianSymKeyType getKeyType() {
         return getKeyType(getValueSet());
     }
 
@@ -272,12 +295,7 @@ public class DataKey
      * @return the key type id
      */
     public Integer getKeyTypeId() {
-        SymKeyType myType = getKeyType();
-        DataSet<?, ?> myData = getDataSet();
-        SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
-        return (myType == null)
-                                ? null
-                                : myGenerator.getExternalId(myType);
+        return getKeyTypeId(getValueSet());
     }
 
     /**
@@ -300,16 +318,8 @@ public class DataKey
      * Get the DataKey.
      * @return the data key
      */
-    protected SymmetricKey getDataKey() {
+    protected GordianKey<GordianSymKeyType> getDataKey() {
         return getDataKey(getValueSet());
-    }
-
-    /**
-     * Get the Cipher.
-     * @return the cipher
-     */
-    protected DataCipher getCipher() {
-        return getCipher(getValueSet());
     }
 
     /**
@@ -326,8 +336,17 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the Key type
      */
-    public static SymKeyType getKeyType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEYTYPE, SymKeyType.class);
+    public static GordianSymKeyType getKeyType(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYTYPE, GordianSymKeyType.class);
+    }
+
+    /**
+     * Get the Key type Id.
+     * @param pValueSet the valueSet
+     * @return the Key type Id
+     */
+    public static Integer getKeyTypeId(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYTYPEID, Integer.class);
     }
 
     /**
@@ -353,17 +372,9 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the data Key
      */
-    protected static SymmetricKey getDataKey(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEY, SymmetricKey.class);
-    }
-
-    /**
-     * Get the Cipher.
-     * @param pValueSet the valueSet
-     * @return the cipher
-     */
-    protected static DataCipher getCipher(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CIPHER, DataCipher.class);
+    @SuppressWarnings("unchecked")
+    protected static GordianKey<GordianSymKeyType> getDataKey(final ValueSet pValueSet) {
+        return (GordianKey<GordianSymKeyType>) pValueSet.getValue(FIELD_KEY, GordianKey.class);
     }
 
     /**
@@ -386,7 +397,7 @@ public class DataKey
      * Set the Key Type.
      * @param pValue the KeyType
      */
-    private void setValueKeyType(final SymKeyType pValue) {
+    private void setValueKeyType(final GordianSymKeyType pValue) {
         getValueSet().setValue(FIELD_KEYTYPE, pValue);
     }
 
@@ -394,8 +405,8 @@ public class DataKey
      * Set the KeyType id.
      * @param pId the KeyType id
      */
-    private void setValueKeyType(final Integer pId) {
-        getValueSet().setValue(FIELD_KEYTYPE, pId);
+    private void setValueKeyTypeId(final Integer pId) {
+        getValueSet().setValue(FIELD_KEYTYPEID, pId);
     }
 
     /**
@@ -418,16 +429,8 @@ public class DataKey
      * Set the DataKey.
      * @param pValue the dataKey
      */
-    private void setValueDataKey(final SymmetricKey pValue) {
+    private void setValueDataKey(final GordianKey<GordianSymKeyType> pValue) {
         getValueSet().setValue(FIELD_KEY, pValue);
-    }
-
-    /**
-     * Set the Cipher.
-     * @param pValue the cipher
-     */
-    private void setValueCipher(final DataCipher pValue) {
-        getValueSet().setValue(FIELD_CIPHER, pValue);
     }
 
     @Override
@@ -466,23 +469,23 @@ public class DataKey
     }
 
     /**
-     * Update password hash.
+     * Update keySetHash.
      * @param pPrimeHash this is the prime hash
-     * @param pHash the new password hash
+     * @param pHash the new keySetHash
      * @return were there changes? true/false
      * @throws JOceanusException on error
      */
-    protected boolean updatePasswordHash(final Boolean pPrimeHash,
-                                         final PasswordHash pHash) throws JOceanusException {
+    protected boolean updateKeySetHash(final Boolean pPrimeHash,
+                                       final GordianKeySetHash pHash) throws JOceanusException {
         /* Determine whether we need to update */
         if (!pPrimeHash.equals(isHashPrime())) {
             /* Store the current detail into history */
             pushHistory();
 
             /* Update the Security Control Key and obtain the new secured KeyDef */
-            CipherSet myCipher = pHash.getCipherSet();
+            GordianKeySet myKeySet = pHash.getKeySet();
             setValueHashPrime(pPrimeHash);
-            setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
+            setValueSecuredKeyDef(myKeySet.secureKey(getDataKey()));
 
             /* Check for changes */
             if (checkForHistory()) {
@@ -612,7 +615,7 @@ public class DataKey
          * @throws JOceanusException on error
          */
         public DataKey createNewKey(final DataKeySet pKeySet,
-                                    final SymKeyType pKeyType) throws JOceanusException {
+                                    final GordianSymKeyType pKeyType) throws JOceanusException {
             /* Create the key */
             DataKey myKey = new DataKey(this, pKeySet, pKeyType);
 
@@ -628,14 +631,20 @@ public class DataKey
          * @return the new DataKey
          * @throws JOceanusException on error
          */
-        public DataKey cloneItem(final DataKeySet pKeySet,
-                                 final DataKey pDataKey) throws JOceanusException {
-            /* Create the key */
-            DataKey myKey = new DataKey(this, pKeySet, pDataKey);
+        public DataKey cloneDataKey(final DataKeySet pKeySet,
+                                    final DataKey pDataKey) throws JOceanusException {
+            /* Build data values */
+            DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKey.OBJECT_NAME);
+            myValues.addValue(DataKey.FIELD_ID, pDataKey.getId());
+            myValues.addValue(DataKey.FIELD_KEYSET, pKeySet);
+            myValues.addValue(DataKey.FIELD_HASHPRIME, pDataKey.isHashPrime());
+            myValues.addValue(DataKey.FIELD_KEYTYPE, pDataKey.getKeyType());
+            myValues.addValue(DataKey.FIELD_KEYTYPEID, pDataKey.getKeyTypeId());
+            myValues.addValue(DataKey.FIELD_KEYDEF, pDataKey.getSecuredKeyDef());
+            myValues.addValue(DataKey.FIELD_KEY, pDataKey.getDataKey());
 
-            /* Add to the list */
-            add(myKey);
-            return myKey;
+            /* Clone the dataKey */
+            return addValuesItem(myValues);
         }
 
         @Override

@@ -468,7 +468,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private MoneyWiseDataTypeResource(final String pKeyName) {
+    MoneyWiseDataTypeResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

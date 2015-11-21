@@ -83,7 +83,7 @@ public enum AssetType {
      * Constructor.
      * @param uId the Id
      */
-    private AssetType(final int uId) {
+    AssetType(final int uId) {
         theId = uId;
     }
 

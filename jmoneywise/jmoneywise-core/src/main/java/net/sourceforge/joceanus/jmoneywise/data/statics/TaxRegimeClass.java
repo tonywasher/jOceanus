@@ -71,8 +71,8 @@ public enum TaxRegimeClass implements StaticInterface {
      * @param uId the id
      * @param uOrder the default order
      */
-    private TaxRegimeClass(final int uId,
-                           final int uOrder) {
+    TaxRegimeClass(final int uId,
+                   final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }

@@ -129,7 +129,7 @@ public enum MoneyWiseViewResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private MoneyWiseViewResource(final String pKeyName) {
+    MoneyWiseViewResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -26,11 +26,10 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.crypto.HashRecipe;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
@@ -82,24 +81,24 @@ public class DataKeySet
     public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYMAP.getValue());
 
     /**
-     * Field ID for CipherSet.
+     * Field ID for KeySet.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_CIPHERSET.getValue());
+    public static final JDataField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
 
     /**
      * The DataKey Map.
      */
-    private Map<SymKeyType, DataKey> theMap = null;
+    private Map<GordianSymKeyType, DataKey> theMap = null;
 
     /**
-     * The Encryption CipherSet.
+     * The Encryption KeySet.
      */
-    private CipherSet theCipherSet = null;
+    private GordianKeySet theKeySet = null;
 
     /**
-     * The Security Generator.
+     * The Security Factory.
      */
-    private SecurityGenerator theSecurityGenerator = null;
+    private GordianFactory theSecurityFactory = null;
 
     /**
      * The Encryption Field Generator.
@@ -119,10 +118,10 @@ public class DataKeySet
         /* Switch on the LinkStyle */
         switch (getStyle()) {
             case CLONE:
-                theSecurityGenerator = pSource.theSecurityGenerator;
-                theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-                theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-                theFieldGenerator = new EncryptionGenerator(theCipherSet, getDataSet().getDataFormatter());
+                theSecurityFactory = pSource.theSecurityFactory;
+                theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
+                theKeySet = theSecurityFactory.createKeySet();
+                theFieldGenerator = new EncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
             default:
                 break;
@@ -145,6 +144,12 @@ public class DataKeySet
         SecureManager mySecure = myData.getSecurity();
         JDataFormatter myFormatter = myData.getDataFormatter();
 
+        /* Record the security factory */
+        theSecurityFactory = mySecure.getSecurityFactory();
+
+        /* Create the DataKey Map */
+        theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
+
         /* Store the ControlKey */
         Object myValue = pValues.getValue(FIELD_CONTROLKEY);
         if (myValue instanceof Integer) {
@@ -154,34 +159,27 @@ public class DataKeySet
 
             /* Resolve the ControlKey */
             resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-
-            /* Resolve the Active HashKey */
-            resolveHashKey();
-
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
-
-            /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-            /* Create the CipherSet and security generator */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
-
-            /* Register the DataKeySet */
-            getControlKey().registerDataKeySet(this);
-
-            /* Store the CreationDate */
-            myValue = pValues.getValue(FIELD_CREATEDATE);
-            if (!(myValue instanceof JDateDay)) {
-                myValue = new JDateDay();
-            }
-            setValueCreationDate((JDateDay) myValue);
-
-        } else {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM);
+        } else if (myValue instanceof ControlKey) {
+            /* Store the controlKey */
+            setValueControlKey((ControlKey) myValue);
         }
+
+        /* Access the controlKey */
+        ControlKey myControl = getControlKey();
+
+        /* Create the KeySet and security generator */
+        theKeySet = theSecurityFactory.createKeySet();
+        theFieldGenerator = new EncryptionGenerator(theKeySet, myFormatter);
+
+        /* Store the CreationDate */
+        myValue = pValues.getValue(FIELD_CREATEDATE);
+        if (!(myValue instanceof JDateDay)) {
+            myValue = new JDateDay();
+        }
+        setValueCreationDate((JDateDay) myValue);
+
+        /* Register the DataKeySet */
+        myControl.registerDataKeySet(this);
     }
 
     /**
@@ -205,15 +203,15 @@ public class DataKeySet
             SecureManager mySecure = myData.getSecurity();
             JDataFormatter myFormatter = myData.getDataFormatter();
 
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
+            /* Record the security factory */
+            theSecurityFactory = mySecure.getSecurityFactory();
 
             /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
+            theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
 
-            /* Create the CipherSet */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
+            /* Create the KeySet */
+            theKeySet = theSecurityFactory.createKeySet();
+            theFieldGenerator = new EncryptionGenerator(theKeySet, myFormatter);
 
             /* Set the creationDate */
             setValueCreationDate(new JDateDay());
@@ -238,8 +236,8 @@ public class DataKeySet
         if (FIELD_MAP.equals(pField)) {
             return theMap;
         }
-        if (FIELD_CIPHER.equals(pField)) {
-            return theCipherSet;
+        if (FIELD_KEYSET.equals(pField)) {
+            return theKeySet;
         }
         return super.getFieldValue(pField);
     }
@@ -306,12 +304,12 @@ public class DataKeySet
     }
 
     /**
-     * Get the PassWordHash.
-     * @return the passwordHash
+     * Get the keySetHash.
+     * @return the keySetHash
      * @throws JOceanusException on error
      */
-    protected PasswordHash getPasswordHash() throws JOceanusException {
-        return getControlKey().getPasswordHash();
+    protected GordianKeySetHash getKeySetHash() throws JOceanusException {
+        return getControlKey().getKeySetHash();
     }
 
     /**
@@ -320,8 +318,8 @@ public class DataKeySet
      * @return the passwordHash
      * @throws JOceanusException on error
      */
-    protected PasswordHash getPasswordHash(final Boolean useHashPrime) throws JOceanusException {
-        return getControlKey().getPasswordHash(useHashPrime);
+    protected GordianKeySetHash getKeySetHash(final Boolean useHashPrime) throws JOceanusException {
+        return getControlKey().getKeySetHash(useHashPrime);
     }
 
     /**
@@ -349,19 +347,11 @@ public class DataKeySet
     }
 
     /**
-     * Get the HashKey.
-     * @return the HashKey
-     */
-    protected final HashRecipe getHashKey() {
-        return getControlKey().getHashKey();
-    }
-
-    /**
      * Resolve the Active HashKey.
      * @throws JOceanusException on error
      */
-    protected final void resolveHashKey() throws JOceanusException {
-        getControlKey().resolveHashKey();
+    protected final void resolveHash() throws JOceanusException {
+        getControlKey().resolveHash();
     }
 
     @Override
@@ -411,22 +401,16 @@ public class DataKeySet
 
         /* Access the symKeyPredicate */
         DataSet<?, ?> myData = getDataSet();
-        SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
-        Predicate<SymKeyType> myPredicate = myGenerator.getSymKeyPredicate();
+        GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
+        Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeys();
 
         /* Loop through the SymKeyType values */
-        for (SymKeyType myType : SymKeyType.values()) {
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is valid for this keyLength */
             if (myPredicate.test(myType)) {
                 /* Create a new DataKey for this DataKeySet */
                 DataKey myKey = myKeys.createNewKey(this, myType);
                 myKey.setNewVersion();
-
-                /* Store the DataKey into the map */
-                theMap.put(myType, myKey);
-
-                /* Declare the Cipher */
-                theCipherSet.addCipher(myKey.getCipher());
             }
         }
     }
@@ -436,7 +420,7 @@ public class DataKeySet
      */
     protected void deleteDataKeySet() {
         /* Loop through the SymKeyType values */
-        for (SymKeyType myType : SymKeyType.values()) {
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* Access the Data Key */
             DataKey myKey = theMap.get(myType);
 
@@ -453,21 +437,21 @@ public class DataKeySet
     /**
      * Update password hash.
      * @param pPrimeHash this is the prime hash
-     * @param pHash the new password hash
+     * @param pHash the new keySetHash
      * @return were there changes? true/false
      * @throws JOceanusException on error
      */
-    protected boolean updatePasswordHash(final Boolean pPrimeHash,
-                                         final PasswordHash pHash) throws JOceanusException {
+    protected boolean updateKeySetHash(final Boolean pPrimeHash,
+                                       final GordianKeySetHash pHash) throws JOceanusException {
         /* Loop through the SymKeyType values */
         boolean bChanges = false;
-        for (SymKeyType myType : SymKeyType.values()) {
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* Access the Data Key */
             DataKey myKey = theMap.get(myType);
 
             /* Update the password hash */
             if (myKey != null) {
-                bChanges |= myKey.updatePasswordHash(pPrimeHash, pHash);
+                bChanges |= myKey.updateKeySetHash(pPrimeHash, pHash);
             }
         }
 
@@ -478,13 +462,14 @@ public class DataKeySet
     /**
      * Register DataKey.
      * @param pKey the DataKey to register
+     * @throws JOceanusException on error
      */
-    protected void registerDataKey(final DataKey pKey) {
+    protected void registerDataKey(final DataKey pKey) throws JOceanusException {
         /* Store the DataKey into the map */
         theMap.put(pKey.getKeyType(), pKey);
 
-        /* Declare the Cipher */
-        theCipherSet.addCipher(pKey.getCipher());
+        /* Declare the Key */
+        theKeySet.declareKey(pKey.getDataKey());
     }
 
     /**
@@ -609,7 +594,7 @@ public class DataKeySet
             /* Build data values */
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKeySet.OBJECT_NAME);
             myValues.addValue(DataKeySet.FIELD_ID, pKeySet.getId());
-            myValues.addValue(DataKeySet.FIELD_CONTROLKEY, pControlKey.getId());
+            myValues.addValue(DataKeySet.FIELD_CONTROLKEY, pControlKey);
             myValues.addValue(DataKeySet.FIELD_CREATEDATE, pKeySet.getCreationDate());
 
             /* Clone the dataKeySet */
@@ -620,24 +605,24 @@ public class DataKeySet
             DataKeyList myKeys = myData.getDataKeys();
 
             /* Access the symKeyPredicate */
-            SecurityGenerator myGenerator = myData.getSecurity().getSecurityGenerator();
-            Predicate<SymKeyType> myPredicate = myGenerator.getSymKeyPredicate();
+            GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
+            Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeys();
 
             /* Loop through the SymKeyType values */
-            for (SymKeyType myType : SymKeyType.values()) {
+            for (GordianSymKeyType myType : GordianSymKeyType.values()) {
                 /* If this is valid for this keyLength */
                 if (myPredicate.test(myType)) {
                     /* Access the source Data key */
                     DataKey mySrcKey = pKeySet.theMap.get(myType);
 
-                    /* Create a new DataKey for this ControlKey */
-                    DataKey myKey = myKeys.cloneItem(myKeySet, mySrcKey);
+                    /* Clone the DataKey for this DataKeySet */
+                    DataKey myKey = myKeys.cloneDataKey(myKeySet, mySrcKey);
 
                     /* Store the DataKey into the map */
                     myKeySet.theMap.put(myType, myKey);
 
-                    /* Declare the Cipher */
-                    myKeySet.theCipherSet.addCipher(myKey.getCipher());
+                    /* Declare the Key */
+                    myKeySet.theKeySet.declareKey(myKey.getDataKey());
                 }
             }
 

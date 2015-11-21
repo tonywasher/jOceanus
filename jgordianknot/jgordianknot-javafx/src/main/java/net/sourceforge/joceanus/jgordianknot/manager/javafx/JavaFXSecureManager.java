@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.manager.javafx;
 
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -57,7 +57,7 @@ public class JavaFXSecureManager
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    public JavaFXSecureManager(final SecurityParameters pParameters) throws JOceanusException {
+    public JavaFXSecureManager(final GordianParameters pParameters) throws JOceanusException {
         super(pParameters);
     }
 

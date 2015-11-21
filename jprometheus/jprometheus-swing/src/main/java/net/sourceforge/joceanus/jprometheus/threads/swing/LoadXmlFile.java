@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
@@ -94,7 +94,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
                           + CreateXmlFile.SUFFIX_FILE;
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 

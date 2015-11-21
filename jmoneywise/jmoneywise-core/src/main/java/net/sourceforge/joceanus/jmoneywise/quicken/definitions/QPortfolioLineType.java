@@ -95,7 +95,7 @@ public enum QPortfolioLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QPortfolioLineType(final String pSymbol) {
+    QPortfolioLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

@@ -121,12 +121,12 @@ public class MoneyWiseData
     /**
      * Default Currency.
      */
-    private AssetCurrency theDefaultCurrency = null;
+    private AssetCurrency theDefaultCurrency;
 
     /**
      * SecurityHoldings Map.
      */
-    private final SecurityHoldingMap theSecurityHoldings;
+    private SecurityHoldingMap theSecurityHoldings;
 
     /**
      * Check Closed Accounts.
@@ -146,9 +146,6 @@ public class MoneyWiseData
             /* Create the empty list */
             addList(myType, newList(myType));
         }
-
-        /* Create a security holdings map */
-        theSecurityHoldings = new SecurityHoldingMap(this);
     }
 
     /**
@@ -157,9 +154,6 @@ public class MoneyWiseData
      */
     private MoneyWiseData(final MoneyWiseData pSource) {
         super(pSource);
-
-        /* Create a security holdings map */
-        theSecurityHoldings = new SecurityHoldingMap(this);
     }
 
     @Override
@@ -544,6 +538,11 @@ public class MoneyWiseData
      * @return the default currency
      */
     public AssetCurrency getDefaultCurrency() {
+        /* If we have note yet determined the default currency */
+        if (theDefaultCurrency == null) {
+            /* Determine the default currency */
+            theDefaultCurrency = getAccountCurrencies().findDefault();
+        }
         return theDefaultCurrency;
     }
 
@@ -552,6 +551,11 @@ public class MoneyWiseData
      * @return the holdings map
      */
     public SecurityHoldingMap getSecurityHoldingsMap() {
+        /* If we have note yet created the map */
+        if (theSecurityHoldings == null) {
+            /* Create the holdings map */
+            theSecurityHoldings = new SecurityHoldingMap(this);
+        }
         return theSecurityHoldings;
     }
 
@@ -704,9 +708,10 @@ public class MoneyWiseData
     }
 
     /**
-     * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
-     * in this list, but not in the old list will be viewed as inserted. Items that are in the old list but not in this list will be viewed as deleted. Items
-     * that are in both lists but differ will be viewed as changed
+     * Construct a difference extract between two DataSets. The difference extract will only contain
+     * items that differ between the two DataSets. Items that are in this list, but not in the old
+     * list will be viewed as inserted. Items that are in the old list but not in this list will be
+     * viewed as deleted. Items that are in both lists but differ will be viewed as changed
      * @param pTask the task control
      * @param pOld The DataSet to compare to
      * @return the difference extract
@@ -729,7 +734,6 @@ public class MoneyWiseData
      * Calculate the allowed Date Range.
      */
     public void calculateDateRange() {
-        theDefaultCurrency = getAccountCurrencies().findDefault();
         theDateRange = getTaxYears().getRange();
         getTransactions().setRange(theDateRange);
     }
@@ -755,6 +759,6 @@ public class MoneyWiseData
      */
     public void adjustSecurityMap() {
         /* Reset security map names */
-        theSecurityHoldings.resetNames();
+        getSecurityHoldingsMap().resetNames();
     }
 }

@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
@@ -84,7 +84,7 @@ public class SubversionRestore
         String myPrefix = mySVNPreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
+        FileSelector myDialog = new FileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 
@@ -97,8 +97,8 @@ public class SubversionRestore
         /* Determine the name of the repository */
         String myName = myFile.getName();
         myName = myName.substring(myPrefix.length());
-        if (myName.endsWith(ZipReadFile.ZIPFILE_EXT)) {
-            myName = myName.substring(0, myName.length() - ZipReadFile.ZIPFILE_EXT.length());
+        if (myName.endsWith(GordianZipReadFile.ZIPFILE_EXT)) {
+            myName = myName.substring(0, myName.length() - GordianZipReadFile.ZIPFILE_EXT.length());
         }
         myRepo = new File(myRepo.getPath(), myName);
 

@@ -99,7 +99,7 @@ public enum DataResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private DataResource(final String pKeyName) {
+    DataResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

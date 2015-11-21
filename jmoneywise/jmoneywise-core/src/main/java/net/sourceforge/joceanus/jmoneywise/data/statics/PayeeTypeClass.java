@@ -41,43 +41,49 @@ public enum PayeeTypeClass implements StaticInterface {
     /**
      * Employer Account.
      * <p>
-     * This is an employer account which is a specialised form of an {@link #INSTITUTION} payee. It has the ability to pay dividends.
+     * This is an employer account which is a specialised form of an {@link #INSTITUTION} payee. It
+     * has the ability to pay dividends.
      */
     EMPLOYER(2, 1),
 
     /**
      * Institution Payee.
      * <p>
-     * This is an institution (e.g. a bank) that holds another account of behalf of the client. It is a specialised form of payee.
+     * This is an institution (e.g. a bank) that holds another account of behalf of the client. It
+     * is a specialised form of payee.
      */
     INSTITUTION(3, 2),
 
     /**
      * LoanHolder Account.
      * <p>
-     * This is an individual who can own a PrivateLoan account, and who can be inherited from. It is a specialised form of a payee.
+     * This is an individual who can own a PrivateLoan account, and who can be inherited from. It is
+     * a specialised form of a payee.
      */
     INDIVIDUAL(4, 3),
 
     /**
      * Inland Revenue.
      * <p>
-     * This is a singular payee representing the tax authority. All TaxCredits etc. are deemed to have been paid to the single account of this type.
+     * This is a singular payee representing the tax authority. All TaxCredits etc. are deemed to
+     * have been paid to the single account of this type.
      */
     TAXMAN(5, 4),
 
     /**
      * Government.
      * <p>
-     * This is a singular payee representing the government. All Local Taxes should be paid to the single account of this type.
+     * This is a singular payee representing the government. All Local Taxes should be paid to the
+     * single account of this type.
      */
     GOVERNMENT(6, 5),
 
     /**
      * Market pseudo account.
      * <p>
-     * This is a singular payee representing the market. All increases/decreases in value of an asset that are due to fluctuations in unit prices are viewed as
-     * income/expense from the single account of this type.
+     * This is a singular payee representing the market. All increases/decreases in value of an
+     * asset that are due to fluctuations in unit prices are viewed as income/expense from the
+     * single account of this type.
      */
     MARKET(7, 6);
 
@@ -101,8 +107,8 @@ public enum PayeeTypeClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private PayeeTypeClass(final int uId,
-                           final int uOrder) {
+    PayeeTypeClass(final int uId,
+                   final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -175,7 +181,8 @@ public enum PayeeTypeClass implements StaticInterface {
     /**
      * Determine whether the PayeeType can parent the deposit type.
      * @param pClass the Deposit type
-     * @return <code>true</code> if the payee type can the deposit type, <code>false</code> otherwise.
+     * @return <code>true</code> if the payee type can the deposit type, <code>false</code>
+     * otherwise.
      */
     public boolean canParentDeposit(final DepositCategoryClass pClass) {
         switch (this) {
@@ -217,7 +224,8 @@ public enum PayeeTypeClass implements StaticInterface {
     /**
      * Determine whether the PayeeType can parent the security type.
      * @param pClass the Security type
-     * @return <code>true</code> if the payee type can parent the security type, <code>false</code> otherwise.
+     * @return <code>true</code> if the payee type can parent the security type, <code>false</code>
+     * otherwise.
      */
     public boolean canParentSecurity(final SecurityTypeClass pClass) {
         switch (this) {
@@ -237,7 +245,8 @@ public enum PayeeTypeClass implements StaticInterface {
 
     /**
      * Determine whether the PayeeType can parent a portfolio.
-     * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code> otherwise.
+     * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code>
+     * otherwise.
      */
     public boolean canParentPortfolio() {
         switch (this) {
@@ -256,7 +265,8 @@ public enum PayeeTypeClass implements StaticInterface {
 
     /**
      * Determine whether the AccountCategoryType can issue grant income.
-     * @return <code>true</code> if the account category type can grant income, <code>false</code> otherwise.
+     * @return <code>true</code> if the account category type can grant income, <code>false</code>
+     * otherwise.
      */
     public boolean canGrant() {
         switch (this) {

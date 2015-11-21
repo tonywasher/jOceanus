@@ -95,7 +95,7 @@ public enum QEventLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QEventLineType(final String pSymbol) {
+    QEventLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

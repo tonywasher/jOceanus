@@ -74,7 +74,7 @@ public enum ProgramResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private ProgramResource(final String pKeyName) {
+    ProgramResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.manager.swing;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -57,7 +57,7 @@ public class SwingSecureManager
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    public SwingSecureManager(final SecurityParameters pParameters) throws JOceanusException {
+    public SwingSecureManager(final GordianParameters pParameters) throws JOceanusException {
         super(pParameters);
     }
 

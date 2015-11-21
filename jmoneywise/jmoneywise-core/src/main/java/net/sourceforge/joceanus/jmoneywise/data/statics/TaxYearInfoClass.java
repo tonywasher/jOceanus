@@ -158,9 +158,9 @@ public enum TaxYearInfoClass implements DataInfoClass {
      * @param uOrder the default order.
      * @param pDataType the data type
      */
-    private TaxYearInfoClass(final int uId,
-                             final int uOrder,
-                             final DataType pDataType) {
+    TaxYearInfoClass(final int uId,
+                     final int uOrder,
+                     final DataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;

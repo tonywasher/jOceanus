@@ -85,8 +85,8 @@ public class SheetControlKey
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
-        myValues.addValue(ControlKey.FIELD_PRIMEPASSHASH, loadBytes(COL_PRIMEKEYDATA));
-        myValues.addValue(ControlKey.FIELD_ALTPASSHASH, loadBytes(COL_ALTKEYDATA));
+        myValues.addValue(ControlKey.FIELD_PRIMEBYTES, loadBytes(COL_PRIMEKEYDATA));
+        myValues.addValue(ControlKey.FIELD_ALTBYTES, loadBytes(COL_ALTKEYDATA));
 
         /* Return the values */
         return myValues;

@@ -46,7 +46,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CryptoResource;
+import net.sourceforge.joceanus.jgordianknot.manager.MgrResource;
 import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 
 /**
@@ -83,42 +83,42 @@ public class SwingPasswordDialog
     /**
      * Text for Password Label.
      */
-    private static final String NLS_PASSWORD = CryptoResource.LABEL_PASSWORD.getValue();
+    private static final String NLS_PASSWORD = MgrResource.LABEL_PASSWORD.getValue();
 
     /**
      * Text for Confirm Label.
      */
-    private static final String NLS_CONFIRM = CryptoResource.LABEL_CONFIRM.getValue();
+    private static final String NLS_CONFIRM = MgrResource.LABEL_CONFIRM.getValue();
 
     /**
      * Text for OK Button.
      */
-    private static final String NLS_OK = CryptoResource.BUTTON_OK.getValue();
+    private static final String NLS_OK = MgrResource.BUTTON_OK.getValue();
 
     /**
      * Text for Cancel Button.
      */
-    private static final String NLS_CANCEL = CryptoResource.BUTTON_CANCEL.getValue();
+    private static final String NLS_CANCEL = MgrResource.BUTTON_CANCEL.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_ERROR = CryptoResource.TITLE_ERROR.getValue();
+    private static final String NLS_ERROR = MgrResource.TITLE_ERROR.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_CONFIRMERROR = CryptoResource.ERROR_CONFIRM.getValue();
+    private static final String NLS_CONFIRMERROR = MgrResource.ERROR_CONFIRM.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR1 = CryptoResource.ERROR_LENGTH1.getValue();
+    private static final String NLS_LENGTHERR1 = MgrResource.ERROR_LENGTH1.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR2 = CryptoResource.ERROR_LENGTH2.getValue();
+    private static final String NLS_LENGTHERR2 = MgrResource.ERROR_LENGTH2.getValue();
 
     /**
      * Logger.

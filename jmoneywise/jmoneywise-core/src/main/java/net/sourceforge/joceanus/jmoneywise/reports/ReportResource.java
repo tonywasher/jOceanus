@@ -139,7 +139,7 @@ public enum ReportResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private ReportResource(final String pKeyName) {
+    ReportResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

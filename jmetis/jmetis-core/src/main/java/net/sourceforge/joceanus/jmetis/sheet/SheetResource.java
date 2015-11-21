@@ -59,7 +59,7 @@ public enum SheetResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private SheetResource(final String pKeyName) {
+    SheetResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -170,7 +170,7 @@ public enum QActionType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QActionType(final String pSymbol) {
+    QActionType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preference.DataListPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -135,6 +136,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     private ControlDataList theControlData = null;
 
     /**
+     * Number of activeKeySets.
+     */
+    private final int theNumActiveKeySets;
+
+    /**
      * Number of encrypted lists.
      */
     private int theNumEncrypted = 0;
@@ -177,8 +183,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the DataListPreferences */
         PreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
-        DataListPreferences myPreferences = myPrefMgr.getPreferenceSet(DataListPreferences.class);
-        theGranularity = myPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
+        DataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(DataListPreferences.class);
+        theGranularity = myDataPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
+        SecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(SecurityPreferences.class);
+        theNumActiveKeySets = mySecPreferences.getIntegerValue(SecurityPreferences.NAME_ACTIVE_KEYSETS);
 
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);
@@ -203,6 +211,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the Granularity */
         theGranularity = pSource.getGranularity();
+
+        /* Access the #activeKeySets */
+        theNumActiveKeySets = pSource.getNumActiveKeySets();
 
         /* Store the security manager and class */
         theSecurity = pSource.getSecurity();
@@ -331,6 +342,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public int getVersion() {
         return theVersion;
+    }
+
+    /**
+     * Get Number of activeKeySets.
+     * @return the # active KeySets
+     */
+    public int getNumActiveKeySets() {
+        return theNumActiveKeySets;
     }
 
     /**
@@ -955,7 +974,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             /* Make sure that password changes are OK */
             ControlKey myKey = getControlKey();
             if (myKey != null) {
-                myKey.ensurePasswordHash();
+                myKey.ensureKeySetHash();
             }
         }
 
@@ -1007,14 +1026,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the password hash
      * @throws JOceanusException on error
      */
-    public PasswordHash getPasswordHash() throws JOceanusException {
+    public GordianKeySetHash getKeySetHash() throws JOceanusException {
         /* Access the active control key */
         ControlKey myKey = getControlKey();
 
         /* Set the control */
         return (myKey == null)
                                ? null
-                               : myKey.getPasswordHash();
+                               : myKey.getKeySetHash();
     }
 
     /**
@@ -1025,8 +1044,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void updatePasswordHash(final TaskControl<T> pTask,
                                    final String pSource) throws JOceanusException {
-        /* Obtain a new password hash */
-        PasswordHash myHash = theSecurity.resolvePasswordHash(null, pSource);
+        /* Obtain a new keySet hash */
+        GordianKeySetHash myHash = theSecurity.resolveKeySetHash(null, pSource);
 
         /* Update the control details */
         getControlKey().updatePasswordHash(myHash);

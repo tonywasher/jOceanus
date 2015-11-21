@@ -60,7 +60,7 @@ public enum QCategoryLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QCategoryLineType(final String pSymbol) {
+    QCategoryLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }

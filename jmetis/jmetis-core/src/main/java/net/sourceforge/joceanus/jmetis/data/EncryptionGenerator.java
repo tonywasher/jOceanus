@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedBigDecimal;
 import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedBigInteger;
@@ -66,9 +66,9 @@ public class EncryptionGenerator {
     private static final String ERROR_CLASS = "Invalid Object Class for Encryption ";
 
     /**
-     * The CipherSet to use for generation.
+     * The KeySet to use for generation.
      */
-    private final CipherSet theCipherSet;
+    private final GordianKeySet theKeySet;
 
     /**
      * Data formatter.
@@ -77,22 +77,22 @@ public class EncryptionGenerator {
 
     /**
      * Constructor.
-     * @param pCipherSet the CipherSet
+     * @param pKeySet the KeySet
      */
-    public EncryptionGenerator(final CipherSet pCipherSet) {
+    public EncryptionGenerator(final GordianKeySet pKeySet) {
         /* Use new formatter */
-        this(pCipherSet, new JDataFormatter());
+        this(pKeySet, new JDataFormatter());
     }
 
     /**
      * Constructor.
-     * @param pCipherSet the CipherSet
+     * @param pKeySet the KeySet
      * @param pFormatter the formatter
      */
-    public EncryptionGenerator(final CipherSet pCipherSet,
+    public EncryptionGenerator(final GordianKeySet pKeySet,
                                final JDataFormatter pFormatter) {
         /* Store Parameter */
-        theCipherSet = pCipherSet;
+        theKeySet = pKeySet;
         theFormatter = pFormatter;
     }
 
@@ -113,9 +113,9 @@ public class EncryptionGenerator {
         /* Access current value */
         EncryptedField<?> myCurrent = pCurrent;
 
-        /* If we have no cipher or else a different cipher, ignore the current value */
+        /* If we have no keySet or else a different keySet, ignore the current value */
         if ((myCurrent != null)
-            && ((theCipherSet == null) || (!theCipherSet.equals(myCurrent.getCipherSet())))) {
+            && ((theKeySet == null) || (!theKeySet.equals(myCurrent.getKeySet())))) {
             myCurrent = null;
         }
 
@@ -127,62 +127,62 @@ public class EncryptionGenerator {
 
         /* We need a new Field so handle each case individually */
         if (String.class.isInstance(pValue)) {
-            return new EncryptedString(theCipherSet, theFormatter, (String) pValue);
+            return new EncryptedString(theKeySet, theFormatter, (String) pValue);
         }
         if (Short.class.isInstance(pValue)) {
-            return new EncryptedShort(theCipherSet, theFormatter, (Short) pValue);
+            return new EncryptedShort(theKeySet, theFormatter, (Short) pValue);
         }
         if (Integer.class.isInstance(pValue)) {
-            return new EncryptedInteger(theCipherSet, theFormatter, (Integer) pValue);
+            return new EncryptedInteger(theKeySet, theFormatter, (Integer) pValue);
         }
         if (Long.class.isInstance(pValue)) {
-            return new EncryptedLong(theCipherSet, theFormatter, (Long) pValue);
+            return new EncryptedLong(theKeySet, theFormatter, (Long) pValue);
         }
         if (Boolean.class.isInstance(pValue)) {
-            return new EncryptedBoolean(theCipherSet, theFormatter, (Boolean) pValue);
+            return new EncryptedBoolean(theKeySet, theFormatter, (Boolean) pValue);
         }
         if (Date.class.isInstance(pValue)) {
-            return new EncryptedDate(theCipherSet, theFormatter, (Date) pValue);
+            return new EncryptedDate(theKeySet, theFormatter, (Date) pValue);
         }
         if (char[].class.isInstance(pValue)) {
-            return new EncryptedCharArray(theCipherSet, theFormatter, (char[]) pValue);
+            return new EncryptedCharArray(theKeySet, theFormatter, (char[]) pValue);
         }
         if (Float.class.isInstance(pValue)) {
-            return new EncryptedFloat(theCipherSet, theFormatter, (Float) pValue);
+            return new EncryptedFloat(theKeySet, theFormatter, (Float) pValue);
         }
         if (Double.class.isInstance(pValue)) {
-            return new EncryptedDouble(theCipherSet, theFormatter, (Double) pValue);
+            return new EncryptedDouble(theKeySet, theFormatter, (Double) pValue);
         }
 
         /* Handle big integer classes */
         if (BigInteger.class.isInstance(pValue)) {
-            return new EncryptedBigInteger(theCipherSet, theFormatter, (BigInteger) pValue);
+            return new EncryptedBigInteger(theKeySet, theFormatter, (BigInteger) pValue);
         }
         if (BigDecimal.class.isInstance(pValue)) {
-            return new EncryptedBigDecimal(theCipherSet, theFormatter, (BigDecimal) pValue);
+            return new EncryptedBigDecimal(theKeySet, theFormatter, (BigDecimal) pValue);
         }
 
         /* Handle decimal instances */
         if (JDateDay.class.isInstance(pValue)) {
-            return new EncryptedDateDay(theCipherSet, theFormatter, (JDateDay) pValue);
+            return new EncryptedDateDay(theKeySet, theFormatter, (JDateDay) pValue);
         }
         if (JUnits.class.isInstance(pValue)) {
-            return new EncryptedUnits(theCipherSet, theFormatter, (JUnits) pValue);
+            return new EncryptedUnits(theKeySet, theFormatter, (JUnits) pValue);
         }
         if (JRate.class.isInstance(pValue)) {
-            return new EncryptedRate(theCipherSet, theFormatter, (JRate) pValue);
+            return new EncryptedRate(theKeySet, theFormatter, (JRate) pValue);
         }
         if (JPrice.class.isInstance(pValue)) {
-            return new EncryptedPrice(theCipherSet, theFormatter, (JPrice) pValue);
+            return new EncryptedPrice(theKeySet, theFormatter, (JPrice) pValue);
         }
         if (JMoney.class.isInstance(pValue)) {
-            return new EncryptedMoney(theCipherSet, theFormatter, (JMoney) pValue);
+            return new EncryptedMoney(theKeySet, theFormatter, (JMoney) pValue);
         }
         if (JDilution.class.isInstance(pValue)) {
-            return new EncryptedDilution(theCipherSet, theFormatter, (JDilution) pValue);
+            return new EncryptedDilution(theKeySet, theFormatter, (JDilution) pValue);
         }
         if (JRatio.class.isInstance(pValue)) {
-            return new EncryptedRatio(theCipherSet, theFormatter, (JRatio) pValue);
+            return new EncryptedRatio(theKeySet, theFormatter, (JRatio) pValue);
         }
 
         /* Unsupported so reject */
@@ -206,62 +206,62 @@ public class EncryptionGenerator {
 
         /* We need a new Field so handle each case individually */
         if (String.class.equals(pClass)) {
-            return new EncryptedString(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedString(theKeySet, theFormatter, pEncrypted);
         }
         if (Short.class.equals(pClass)) {
-            return new EncryptedShort(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedShort(theKeySet, theFormatter, pEncrypted);
         }
         if (Integer.class.equals(pClass)) {
-            return new EncryptedInteger(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedInteger(theKeySet, theFormatter, pEncrypted);
         }
         if (Long.class.equals(pClass)) {
-            return new EncryptedLong(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedLong(theKeySet, theFormatter, pEncrypted);
         }
         if (Boolean.class.equals(pClass)) {
-            return new EncryptedBoolean(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedBoolean(theKeySet, theFormatter, pEncrypted);
         }
         if (Date.class.equals(pClass)) {
-            return new EncryptedDate(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedDate(theKeySet, theFormatter, pEncrypted);
         }
         if (char[].class.equals(pClass)) {
-            return new EncryptedCharArray(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedCharArray(theKeySet, theFormatter, pEncrypted);
         }
         if (Float.class.equals(pClass)) {
-            return new EncryptedFloat(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedFloat(theKeySet, theFormatter, pEncrypted);
         }
         if (Double.class.equals(pClass)) {
-            return new EncryptedDouble(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedDouble(theKeySet, theFormatter, pEncrypted);
         }
 
         /* Handle BigInteger classes */
         if (BigInteger.class.equals(pClass)) {
-            return new EncryptedBigInteger(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedBigInteger(theKeySet, theFormatter, pEncrypted);
         }
         if (BigDecimal.class.equals(pClass)) {
-            return new EncryptedBigDecimal(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedBigDecimal(theKeySet, theFormatter, pEncrypted);
         }
 
         /* Handle decimal instances */
         if (JDateDay.class.equals(pClass)) {
-            return new EncryptedDateDay(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedDateDay(theKeySet, theFormatter, pEncrypted);
         }
         if (JMoney.class.equals(pClass)) {
-            return new EncryptedMoney(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedMoney(theKeySet, theFormatter, pEncrypted);
         }
         if (JUnits.class.equals(pClass)) {
-            return new EncryptedUnits(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedUnits(theKeySet, theFormatter, pEncrypted);
         }
         if (JRate.class.equals(pClass)) {
-            return new EncryptedRate(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedRate(theKeySet, theFormatter, pEncrypted);
         }
         if (JPrice.class.equals(pClass)) {
-            return new EncryptedPrice(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedPrice(theKeySet, theFormatter, pEncrypted);
         }
         if (JDilution.class.equals(pClass)) {
-            return new EncryptedDilution(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedDilution(theKeySet, theFormatter, pEncrypted);
         }
         if (JRatio.class.equals(pClass)) {
-            return new EncryptedRatio(theCipherSet, theFormatter, pEncrypted);
+            return new EncryptedRatio(theKeySet, theFormatter, pEncrypted);
         }
 
         /* Unsupported so reject */
@@ -278,6 +278,6 @@ public class EncryptionGenerator {
     public void adoptEncryption(final EncryptedField<?> pTarget,
                                 final EncryptedField<?> pSource) throws JOceanusException {
         /* Adopt the encryption */
-        pTarget.adoptEncryption(theCipherSet, theFormatter, pSource);
+        pTarget.adoptEncryption(theKeySet, theFormatter, pSource);
     }
 }

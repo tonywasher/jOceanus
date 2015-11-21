@@ -637,7 +637,7 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private MoneyWiseDataResource(final String pKeyName) {
+    MoneyWiseDataResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -645,7 +645,7 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    private MoneyWiseDataResource(final ResourceId pResource) {
+    MoneyWiseDataResource(final ResourceId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }

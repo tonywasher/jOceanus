@@ -699,7 +699,7 @@ public class CategoryPanel
          * Constructor.
          * @param pDataType the dataType
          */
-        private PanelName(final MoneyWiseDataType pDataType) {
+        PanelName(final MoneyWiseDataType pDataType) {
             theName = pDataType.getListName();
         }
 

@@ -27,43 +27,46 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
-import net.sourceforge.joceanus.jgordianknot.crypto.CryptoResource;
-import net.sourceforge.joceanus.jgordianknot.crypto.InvalidCredentialsException;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianBadCredentialsException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaFactory;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
- * passwords will be attempted. If no match is found, then the user will be prompted for the password.
+ * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
+ * hashes that were not previously resolved, previously used passwords will be attempted. If no
+ * match is found, then the user will be prompted for the password.
  */
 public abstract class SecureManager {
     /**
      * Text for Password title.
      */
-    private static final String NLS_TITLEPASS = CryptoResource.TITLE_PASSWORD.getValue();
+    private static final String NLS_TITLEPASS = MgrResource.TITLE_PASSWORD.getValue();
 
     /**
      * Text for New Password title.
      */
-    private static final String NLS_TITLENEWPASS = CryptoResource.TITLE_NEWPASS.getValue();
+    private static final String NLS_TITLENEWPASS = MgrResource.TITLE_NEWPASS.getValue();
 
     /**
      * Text for Bad Password Error.
      */
-    private static final String NLS_ERRORPASS = CryptoResource.ERROR_BADPASS.getValue();
+    private static final String NLS_ERRORPASS = MgrResource.ERROR_BADPASS.getValue();
 
     /**
-     * Security generator.
+     * Security factory.
      */
-    private final SecurityGenerator theGenerator;
+    private final GordianFactory theFactory;
 
     /**
      * List of resolved password hashes.
      */
-    private final List<PasswordHash> theHashList;
+    private final List<GordianKeySetHash> theHashList;
 
     /**
      * Constructor for default values.
@@ -71,7 +74,7 @@ public abstract class SecureManager {
      */
     protected SecureManager() throws JOceanusException {
         /* Access with defaults */
-        this(new SecurityParameters());
+        this(new GordianParameters());
     }
 
     /**
@@ -79,32 +82,34 @@ public abstract class SecureManager {
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    protected SecureManager(final SecurityParameters pParameters) throws JOceanusException {
-        /* Allocate the security generator */
-        theGenerator = new SecurityGenerator(pParameters);
+    protected SecureManager(final GordianParameters pParameters) throws JOceanusException {
+        /* Allocate the factory */
+        theFactory = (pParameters.getFactoryType() == GordianFactoryType.BC)
+                                                                             ? new BouncyFactory(pParameters)
+                                                                             : new JcaFactory(pParameters);
 
         /* Allocate a new Hash list */
-        theHashList = new ArrayList<PasswordHash>();
+        theHashList = new ArrayList<GordianKeySetHash>();
     }
 
     /**
-     * Obtain the security generator.
-     * @return the security generator
+     * Obtain the security factory.
+     * @return the security factory
      */
-    public SecurityGenerator getSecurityGenerator() {
-        return theGenerator;
+    public GordianFactory getSecurityFactory() {
+        return theFactory;
     }
 
     /**
-     * Resolve the password Hash.
+     * Resolve the keySet Hash.
      * @param pHashBytes the hash bytes to resolve
      * @param pSource the description of the secured resource
      * @return the password Hash
      * @throws JOceanusException on error
      */
-    public PasswordHash resolvePasswordHash(final byte[] pHashBytes,
-                                            final String pSource) throws JOceanusException {
-        PasswordHash myHash = null;
+    public GordianKeySetHash resolveKeySetHash(final byte[] pHashBytes,
+                                               final String pSource) throws JOceanusException {
+        GordianKeySetHash myHash = null;
 
         /* If the hash bytes exist try existing hashes for either absolute or password match */
         if (pHashBytes != null) {
@@ -147,9 +152,9 @@ public abstract class SecureManager {
 
                 /* Check the password */
                 if (needConfirm) {
-                    myHash = theGenerator.generatePasswordHash(myPassword);
+                    myHash = theFactory.generateKeySetHash(myPassword);
                 } else {
-                    myHash = theGenerator.derivePasswordHash(pHashBytes, myPassword);
+                    myHash = theFactory.deriveKeySetHash(pHashBytes, myPassword);
                 }
 
                 /* No exception so we are good to go */
@@ -158,7 +163,7 @@ public abstract class SecureManager {
                 /* Add the hash to the list and break the loop */
                 theHashList.add(myHash);
                 break;
-            } catch (InvalidCredentialsException e) {
+            } catch (GordianBadCredentialsException e) {
                 setError(NLS_ERRORPASS);
             }
         }
@@ -169,7 +174,7 @@ public abstract class SecureManager {
         /* If we did not get a password */
         if (!isPasswordOk) {
             /* Throw an exception */
-            throw new JGordianDataException("Invalid Password");
+            throw new GordianDataException("Invalid Password");
         }
 
         /* Return the password hash */
@@ -208,14 +213,14 @@ public abstract class SecureManager {
     protected abstract void setError(final String pError);
 
     /**
-     * clone password hash.
-     * @param pHash the password hash to clone
-     * @return the cloned password hash
+     * obtain similar (same password) hash.
+     * @param pHash the keySetHash to clone
+     * @return the similar keySetHash
      * @throws JOceanusException on error
      */
-    public PasswordHash clonePasswordHash(final PasswordHash pHash) throws JOceanusException {
+    public GordianKeySetHash similarKeySetHash(final GordianKeySetHash pHash) throws JOceanusException {
         /* clone the hash */
-        PasswordHash myHash = pHash.cloneHash();
+        GordianKeySetHash myHash = pHash.similarHash();
 
         /* Add the hash to the list */
         theHashList.add(myHash);
@@ -229,29 +234,32 @@ public abstract class SecureManager {
      * @param pHashBytes the HashBytes to attempt passwords for
      * @return the new PasswordHash if successful, otherwise null
      */
-    private PasswordHash attemptKnownPasswords(final byte[] pHashBytes) {
-        Iterator<PasswordHash> myIterator;
-        PasswordHash myCurr;
-        PasswordHash myPassHash;
-
-        /* Access the iterator */
-        myIterator = theHashList.listIterator();
-
-        /* Loop through the security controls */
+    private GordianKeySetHash attemptKnownPasswords(final byte[] pHashBytes) {
+        /* Look for the has in the list */
+        Iterator<GordianKeySetHash> myIterator = theHashList.listIterator();
         while (myIterator.hasNext()) {
             /* Access hash */
-            myCurr = myIterator.next();
+            GordianKeySetHash myCurr = myIterator.next();
 
             /* If this is the hash we are looking for, return it */
-            if (Arrays.equals(pHashBytes, myCurr.getHashBytes())) {
+            if (Arrays.equals(pHashBytes, myCurr.getHash())) {
                 return myCurr;
             }
+        }
+
+        /* Loop through the security controls */
+        myIterator = theHashList.listIterator();
+        while (myIterator.hasNext()) {
+            /* Access hash */
+            GordianKeySetHash myCurr = myIterator.next();
 
             /* Attempt to initialise the control from this password */
-            myPassHash = myCurr.attemptPassword(pHashBytes);
+            GordianKeySetHash myPassHash = myCurr.attemptPassword(pHashBytes);
 
-            /* Break loop if we matched */
+            /* If we succeeded */
             if (myPassHash != null) {
+                /* Add the hash to the list and return it */
+                theHashList.add(myPassHash);
                 return myPassHash;
             }
         }

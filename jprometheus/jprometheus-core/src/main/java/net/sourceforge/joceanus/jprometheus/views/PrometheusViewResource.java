@@ -94,7 +94,7 @@ public enum PrometheusViewResource implements ResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    private PrometheusViewResource(final String pKeyName) {
+    PrometheusViewResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

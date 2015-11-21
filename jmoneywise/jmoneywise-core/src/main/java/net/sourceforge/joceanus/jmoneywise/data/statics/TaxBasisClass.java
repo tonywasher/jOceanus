@@ -121,8 +121,8 @@ public enum TaxBasisClass implements StaticInterface {
      * @param uId the id
      * @param uOrder the order
      */
-    private TaxBasisClass(final int uId,
-                          final int uOrder) {
+    TaxBasisClass(final int uId,
+                  final int uOrder) {
         /* Set values */
         theId = uId;
         theOrder = uOrder;

@@ -828,8 +828,8 @@ public enum AssetCurrencyClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private AssetCurrencyClass(final int uId,
-                               final int uOrder) {
+    AssetCurrencyClass(final int uId,
+                       final int uOrder) {
         theId = uId;
         theOrder = uOrder;
         String myName = name();
@@ -876,8 +876,8 @@ public enum AssetCurrencyClass implements StaticInterface {
      */
     public static AssetCurrencyClass fromCurrency(final Currency pCurrency) {
         String myCode = pCurrency == null
-                                         ? null
-                                         : pCurrency.getCurrencyCode();
+                                          ? null
+                                          : pCurrency.getCurrencyCode();
         return AssetCurrencyClass.valueOf(myCode);
     }
 }

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.DataConverter;
  * Simple class that handles a byte array as an integer housing an integer of max value 2
  * <sup>8n</sup> where n is the length of the byte array.
  */
-public class ByteArrayInteger {
+public final class ByteArrayInteger {
     /**
      * The default counter length.
      */
@@ -49,7 +49,7 @@ public class ByteArrayInteger {
     /**
      * Constructor.
      */
-    protected ByteArrayInteger() {
+    public ByteArrayInteger() {
         /* use default length */
         this(COUNTER_LEN);
     }
@@ -58,7 +58,7 @@ public class ByteArrayInteger {
      * Constructor.
      * @param pLen the length of the counter
      */
-    protected ByteArrayInteger(final int pLen) {
+    public ByteArrayInteger(final int pLen) {
         /* initialise the buffer */
         theBuffer = new byte[pLen];
         theLength = pLen;
@@ -69,7 +69,7 @@ public class ByteArrayInteger {
      * Constructor.
      * @param pSource the source byte array
      */
-    protected ByteArrayInteger(final byte[] pSource) {
+    public ByteArrayInteger(final byte[] pSource) {
         /* initialise the buffer */
         theLength = pSource.length;
         theBuffer = new byte[theLength];
@@ -80,14 +80,14 @@ public class ByteArrayInteger {
      * get buffer pointer.
      * @return the buffer
      */
-    protected byte[] getBuffer() {
+    public byte[] getBuffer() {
         return theBuffer;
     }
 
     /**
      * Reset counter to zero.
      */
-    public final void reset() {
+    public void reset() {
         Arrays.fill(theBuffer, (byte) 0);
     }
 
@@ -118,7 +118,7 @@ public class ByteArrayInteger {
      * Iterate.
      * @return the buffer
      */
-    protected byte[] iterate() {
+    public byte[] iterate() {
         /* Loop through the bytes */
         for (int i = theLength - 1; i >= 0; i--) {
             /* Increment the element */
@@ -138,7 +138,7 @@ public class ByteArrayInteger {
      * @param pAdjust the array to add.
      * @return the buffer
      */
-    protected byte[] addTo(final byte[] pAdjust) {
+    public byte[] addTo(final byte[] pAdjust) {
         /* Access length of adjusting array */
         int myLength = Math.min(pAdjust.length, theLength);
 
