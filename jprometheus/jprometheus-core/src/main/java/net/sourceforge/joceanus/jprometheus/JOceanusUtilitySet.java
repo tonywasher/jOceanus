@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
@@ -34,7 +34,7 @@ public abstract class JOceanusUtilitySet {
     /**
      * Secure Manager.
      */
-    private final SecureManager theSecureMgr;
+    private final GordianHashManager theSecureMgr;
 
     /**
      * Preference Manager.
@@ -51,7 +51,7 @@ public abstract class JOceanusUtilitySet {
      * @param pSecureMgr the secure manager
      * @param pPrefMgr the preference manager
      */
-    protected JOceanusUtilitySet(final SecureManager pSecureMgr,
+    protected JOceanusUtilitySet(final GordianHashManager pSecureMgr,
                                  final PreferenceManager pPrefMgr) {
         /* Store parameters */
         theSecureMgr = pSecureMgr;
@@ -65,7 +65,7 @@ public abstract class JOceanusUtilitySet {
      * Obtain the secure manager.
      * @return the secure manager
      */
-    public SecureManager getSecureManager() {
+    public GordianHashManager getSecureManager() {
         return theSecureMgr;
     }
 

@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
@@ -135,7 +135,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        SecureManager mySecure = pData.getSecurity();
+        GordianHashManager mySecure = pData.getSecurity();
         GordianKeySetHash myBase = pData.getKeySetHash();
         GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.manager.javafx;
 
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
-public class JavaFXSecureManager
-        extends SecureManager {
+public class GordianJavaFXHashManager
+        extends GordianHashManager {
     /**
      * Stage to use for password dialog.
      */
@@ -42,13 +42,13 @@ public class JavaFXSecureManager
     /**
      * Password dialog.
      */
-    private JavaFXPasswordDialog theDialog = null;
+    private GordianJavaFXPasswordDialog theDialog = null;
 
     /**
      * Constructor for default values.
      * @throws JOceanusException on error
      */
-    public JavaFXSecureManager() throws JOceanusException {
+    public GordianJavaFXHashManager() throws JOceanusException {
         super();
     }
 
@@ -57,7 +57,7 @@ public class JavaFXSecureManager
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    public JavaFXSecureManager(final GordianParameters pParameters) throws JOceanusException {
+    public GordianJavaFXHashManager(final GordianParameters pParameters) throws JOceanusException {
         super(pParameters);
     }
 
@@ -72,12 +72,12 @@ public class JavaFXSecureManager
     @Override
     protected void createTheDialog(final String pTitle,
                                    final boolean pNeedConfirm) {
-        theDialog = new JavaFXPasswordDialog(theStage, pTitle, pNeedConfirm);
+        theDialog = new GordianJavaFXPasswordDialog(theStage, pTitle, pNeedConfirm);
     }
 
     @Override
     protected boolean showTheDialog() {
-        return JavaFXPasswordDialog.showTheDialog(theDialog);
+        return GordianJavaFXPasswordDialog.showTheDialog(theDialog);
     }
 
     @Override

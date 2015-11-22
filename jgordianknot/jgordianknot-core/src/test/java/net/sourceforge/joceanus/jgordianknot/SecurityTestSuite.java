@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
@@ -76,7 +76,7 @@ public class SecurityTestSuite {
          * @return the new SecureManager
          * @throws JOceanusException on error
          */
-        SecureManager newSecureManager() throws JOceanusException;
+        GordianHashManager newSecureManager() throws JOceanusException;
 
         /**
          * Create a new SecureManager.
@@ -84,7 +84,7 @@ public class SecurityTestSuite {
          * @return the new SecureManager
          * @throws JOceanusException on error
          */
-        SecureManager newSecureManager(final GordianParameters pParams) throws JOceanusException;
+        GordianHashManager newSecureManager(final GordianParameters pParams) throws JOceanusException;
     }
 
     /**
@@ -122,7 +122,7 @@ public class SecurityTestSuite {
             /* If we are creating a secure zip file */
             if (bSecure) {
                 /* Create new Password Hash */
-                SecureManager myManager = theCreator.newSecureManager();
+                GordianHashManager myManager = theCreator.newSecureManager();
                 GordianKeySetHash myHash = myManager.resolveKeySetHash(null, "New");
 
                 /* Initialise the Zip file */
@@ -200,7 +200,7 @@ public class SecurityTestSuite {
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
                 /* Resolve security and unlock file */
-                SecureManager myManager = theCreator.newSecureManager();
+                GordianHashManager myManager = theCreator.newSecureManager();
                 GordianKeySetHash myHash = myManager.resolveKeySetHash(myHashBytes, pZipFile.getName());
                 myZipFile.setKeySetHash(myHash);
             }
@@ -271,7 +271,7 @@ public class SecurityTestSuite {
         /* Create new Password Hash */
         GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
-        SecureManager myManager = theCreator.newSecureManager(myParams);
+        GordianHashManager myManager = theCreator.newSecureManager(myParams);
         GordianKeySetHash myHash = myManager.resolveKeySetHash(null, "New");
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
@@ -472,7 +472,7 @@ public class SecurityTestSuite {
         /* Create new Security Generator */
         GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
-        SecureManager myManager = theCreator.newSecureManager(myParams);
+        GordianHashManager myManager = theCreator.newSecureManager(myParams);
         GordianFactory myFactory = myManager.getSecurityFactory();
 
         /* Access predicates */

@@ -25,15 +25,15 @@ package net.sourceforge.joceanus.jgordianknot.manager.swing;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
  * passwords will be attempted. If no match is found, then the user will be prompted for the password.
  */
-public class SwingSecureManager
-        extends SecureManager {
+public class GordianSwingHashManager
+        extends GordianHashManager {
     /**
      * Frame to use for password dialog.
      */
@@ -42,13 +42,13 @@ public class SwingSecureManager
     /**
      * Password dialog.
      */
-    private SwingPasswordDialog theDialog = null;
+    private GordianSwingPasswordDialog theDialog = null;
 
     /**
      * Constructor for default values.
      * @throws JOceanusException on error
      */
-    public SwingSecureManager() throws JOceanusException {
+    public GordianSwingHashManager() throws JOceanusException {
         super();
     }
 
@@ -57,7 +57,7 @@ public class SwingSecureManager
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    public SwingSecureManager(final GordianParameters pParameters) throws JOceanusException {
+    public GordianSwingHashManager(final GordianParameters pParameters) throws JOceanusException {
         super(pParameters);
     }
 
@@ -72,12 +72,12 @@ public class SwingSecureManager
     @Override
     protected void createTheDialog(final String pTitle,
                                    final boolean pNeedConfirm) {
-        theDialog = new SwingPasswordDialog(theFrame, pTitle, pNeedConfirm);
+        theDialog = new GordianSwingPasswordDialog(theFrame, pTitle, pNeedConfirm);
     }
 
     @Override
     protected boolean showTheDialog() {
-        return SwingPasswordDialog.showTheDialog(theDialog);
+        return GordianSwingPasswordDialog.showTheDialog(theDialog);
     }
 
     @Override

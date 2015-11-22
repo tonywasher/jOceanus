@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -141,7 +141,7 @@ public class DataKeySet
 
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
-        SecureManager mySecure = myData.getSecurity();
+        GordianHashManager mySecure = myData.getSecurity();
         JDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Record the security factory */
@@ -200,7 +200,7 @@ public class DataKeySet
 
             /* Access the Security manager */
             DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
+            GordianHashManager mySecure = myData.getSecurity();
             JDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */

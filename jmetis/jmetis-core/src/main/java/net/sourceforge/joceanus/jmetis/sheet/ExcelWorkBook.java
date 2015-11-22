@@ -28,11 +28,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.JMetisIOException;
-import net.sourceforge.joceanus.jmetis.JMetisLogicException;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -40,6 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -52,6 +48,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
+
+import net.sourceforge.joceanus.jmetis.JMetisIOException;
+import net.sourceforge.joceanus.jmetis.JMetisLogicException;
+import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * The Excel WorkBook.
@@ -261,7 +262,7 @@ public class ExcelWorkBook {
         }
 
         /* Parse the name reference */
-        AreaReference myArea = new AreaReference(myName.getRefersToFormula());
+        AreaReference myArea = new AreaReference(myName.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
 
         /* Determine extent of Range */
         CellReference myRef = myArea.getLastCell();

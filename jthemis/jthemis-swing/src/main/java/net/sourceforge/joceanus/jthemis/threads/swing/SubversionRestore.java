@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
@@ -54,7 +54,7 @@ public class SubversionRestore
     /**
      * The secure manager.
      */
-    private final SecureManager theSecureMgr;
+    private final GordianHashManager theSecureMgr;
 
     /**
      * Constructor (Event Thread).

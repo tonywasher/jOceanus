@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 
@@ -106,7 +106,7 @@ public final class ScmReporter {
          * Obtain secure manager.
          * @return the secure manager
          */
-        SecureManager getSecureMgr();
+        GordianHashManager getSecureMgr();
 
         /**
          * Obtain frame.

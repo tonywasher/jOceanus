@@ -46,7 +46,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
@@ -139,7 +139,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         JDataProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        SecureManager mySecure = pData.getSecurity();
+        GordianHashManager mySecure = pData.getSecurity();
         GordianKeySetHash myBase = pData.getKeySetHash();
         GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 
@@ -368,7 +368,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         /* If this is a secure ZipFile */
         if (myHashBytes != null) {
             /* Access the Security manager */
-            SecureManager mySecurity = theTask.getSecurity();
+            GordianHashManager mySecurity = theTask.getSecurity();
 
             /* Obtain the initialised password hash */
             GordianKeySetHash myHash = mySecurity.resolveKeySetHash(myHashBytes, pFile.getName());

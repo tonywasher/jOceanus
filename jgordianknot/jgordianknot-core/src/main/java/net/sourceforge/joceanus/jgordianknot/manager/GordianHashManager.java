@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
-public abstract class SecureManager {
+public abstract class GordianHashManager {
     /**
      * Text for Password title.
      */
@@ -72,7 +72,7 @@ public abstract class SecureManager {
      * Constructor for default values.
      * @throws JOceanusException on error
      */
-    protected SecureManager() throws JOceanusException {
+    protected GordianHashManager() throws JOceanusException {
         /* Access with defaults */
         this(new GordianParameters());
     }
@@ -82,7 +82,7 @@ public abstract class SecureManager {
      * @param pParameters the Security parameters
      * @throws JOceanusException on error
      */
-    protected SecureManager(final GordianParameters pParameters) throws JOceanusException {
+    protected GordianHashManager(final GordianParameters pParameters) throws JOceanusException {
         /* Allocate the factory */
         theFactory = (pParameters.getFactoryType() == GordianFactoryType.BC)
                                                                              ? new BouncyFactory(pParameters)

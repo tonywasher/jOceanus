@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
@@ -160,7 +160,7 @@ public final class ControlKey
         try {
             /* Access the Security manager */
             DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
+            GordianHashManager mySecure = myData.getSecurity();
 
             /* Create a new keySetHash with new password */
             GordianKeySetHash myHash = mySecure.resolveKeySetHash(null, NAME_DATABASE);
@@ -194,7 +194,7 @@ public final class ControlKey
         try {
             /* Access the Security manager */
             DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
+            GordianHashManager mySecure = myData.getSecurity();
 
             /* ReSeed the security generator */
             GordianFactory myFactory = mySecure.getSecurityFactory();
@@ -428,7 +428,7 @@ public final class ControlKey
     private GordianKeySetHash resolvePrimeHash() throws JOceanusException {
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
-        SecureManager mySecure = myData.getSecurity();
+        GordianHashManager mySecure = myData.getSecurity();
 
         /* Resolve the keySetHash */
         GordianKeySetHash myHash = mySecure.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
@@ -446,7 +446,7 @@ public final class ControlKey
     private GordianKeySetHash resolveAltHash() throws JOceanusException {
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
-        SecureManager mySecure = myData.getSecurity();
+        GordianHashManager mySecure = myData.getSecurity();
 
         /* Resolve the keySetHash */
         GordianKeySetHash myHash = mySecure.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);

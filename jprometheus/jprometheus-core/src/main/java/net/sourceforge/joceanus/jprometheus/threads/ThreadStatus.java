@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
@@ -103,7 +103,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public SecureManager getSecurity() {
+    public GordianHashManager getSecurity() {
         return theControl.getSecureManager();
     }
 

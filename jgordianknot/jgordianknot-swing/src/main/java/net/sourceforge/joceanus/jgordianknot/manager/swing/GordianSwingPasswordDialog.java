@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public class SwingPasswordDialog
+public class GordianSwingPasswordDialog
         extends JDialog
         implements ActionListener {
     /**
@@ -123,7 +123,7 @@ public class SwingPasswordDialog
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwingPasswordDialog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GordianSwingPasswordDialog.class);
 
     /**
      * Obtained password.
@@ -181,9 +181,9 @@ public class SwingPasswordDialog
      * @param pTitle the title
      * @param pNeedConfirm true/false
      */
-    public SwingPasswordDialog(final JFrame pParent,
-                               final String pTitle,
-                               final boolean pNeedConfirm) {
+    public GordianSwingPasswordDialog(final JFrame pParent,
+                                      final String pTitle,
+                                      final boolean pNeedConfirm) {
         /* Initialise the dialog (this calls dialogInit) */
         super(pParent, pTitle, true);
 
@@ -359,7 +359,7 @@ public class SwingPasswordDialog
      * @param pDialog the dialog to show
      * @return successful dialog usage true/false
      */
-    protected static boolean showTheDialog(final SwingPasswordDialog pDialog) {
+    protected static boolean showTheDialog(final GordianSwingPasswordDialog pDialog) {
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */

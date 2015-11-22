@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
@@ -287,7 +287,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain SecureManager.
      * @return the SecureManager
      */
-    public SecureManager getSecureManager() {
+    public GordianHashManager getSecureManager() {
         return theUtilitySet.getSecureManager();
     }
 

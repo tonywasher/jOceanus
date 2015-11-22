@@ -28,8 +28,8 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jgordianknot.SecurityTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -50,13 +50,13 @@ public class SwingSecurityTester
     }
 
     @Override
-    public SecureManager newSecureManager() throws JOceanusException {
-        return new SwingSecureManager();
+    public GordianHashManager newSecureManager() throws JOceanusException {
+        return new GordianSwingHashManager();
     }
 
     @Override
-    public SecureManager newSecureManager(final GordianParameters pParams) throws JOceanusException {
-        return new SwingSecureManager(pParams);
+    public GordianHashManager newSecureManager(final GordianParameters pParams) throws JOceanusException {
+        return new GordianSwingHashManager(pParams);
     }
 
     /**

@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -46,7 +46,7 @@ public class SubversionBackup
     /**
      * The secure manager.
      */
-    private final SecureManager theSecureMgr;
+    private final GordianHashManager theSecureMgr;
 
     /**
      * Report object.

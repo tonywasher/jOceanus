@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
@@ -137,7 +137,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         byte[] myHashBytes = myFile.getHashBytes();
 
         /* Access the Security manager */
-        SecureManager mySecurity = theTask.getSecurity();
+        GordianHashManager mySecurity = theTask.getSecurity();
 
         /* Obtain the initialised keySetHash */
         GordianKeySetHash myHash = mySecurity.resolveKeySetHash(myHashBytes, pFile.getName());

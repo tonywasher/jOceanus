@@ -46,7 +46,7 @@ import org.tmatesoft.svn.core.wc.admin.SVNAdminEvent;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
@@ -142,7 +142,7 @@ public class Backup {
      * @throws JOceanusException on error
      */
     public void loadRepository(final File pRepository,
-                               final SecureManager pSecurity,
+                               final GordianHashManager pSecurity,
                                final File pZipFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
@@ -222,7 +222,7 @@ public class Backup {
      * @param pBackupDir the backup directory
      * @throws JOceanusException on error
      */
-    private void backUpRepository(final SecureManager pManager,
+    private void backUpRepository(final GordianHashManager pManager,
                                   final File pRepository,
                                   final File pBackupDir) throws JOceanusException {
         /* Access the name of the repository */
@@ -317,7 +317,7 @@ public class Backup {
      * @param pManager the secure manager
      * @throws JOceanusException on error
      */
-    public void backUpRepositories(final SecureManager pManager) throws JOceanusException {
+    public void backUpRepositories(final GordianHashManager pManager) throws JOceanusException {
         /* Install an event handler */
         theAdminClient.setEventHandler(new SubversionHandler());
 

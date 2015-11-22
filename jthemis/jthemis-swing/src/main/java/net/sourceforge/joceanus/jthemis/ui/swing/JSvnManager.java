@@ -38,8 +38,8 @@ import javax.swing.WindowConstants;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.PreferencesPanel;
@@ -104,7 +104,7 @@ public final class JSvnManager {
     /**
      * The Security Manager.
      */
-    private final SecureManager theSecureMgr;
+    private final GordianHashManager theSecureMgr;
 
     /**
      * Preferences.
@@ -214,7 +214,7 @@ public final class JSvnManager {
         SecurityPreferences mySecurity = thePrefMgr.getPreferenceSet(SecurityPreferences.class);
 
         /* Create the Secure Manager */
-        theSecureMgr = new SwingSecureManager(mySecurity.getParameters());
+        theSecureMgr = new GordianSwingHashManager(mySecurity.getParameters());
 
         /* Create the fieldManager and viewer manager */
         JFieldPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(JFieldPreferences.class);
@@ -332,7 +332,7 @@ public final class JSvnManager {
      * Obtain secure manager.
      * @return the secure manager
      */
-    protected SecureManager getSecureMgr() {
+    protected GordianHashManager getSecureMgr() {
         return theSecureMgr;
     }
 

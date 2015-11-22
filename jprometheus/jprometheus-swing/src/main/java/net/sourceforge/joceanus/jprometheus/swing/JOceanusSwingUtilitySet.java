@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.swing;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.SwingSecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
@@ -81,7 +81,7 @@ public class JOceanusSwingUtilitySet
     public JOceanusSwingUtilitySet(final GordianParameters pParameters,
                                    final PreferenceManager pPrefMgr) throws JOceanusException {
         /* Create secure manager */
-        super(new SwingSecureManager(pParameters), pPrefMgr);
+        super(new GordianSwingHashManager(pParameters), pPrefMgr);
 
         /* Access the Field Preferences */
         theFieldPreferences = pPrefMgr.getPreferenceSet(JFieldPreferences.class);

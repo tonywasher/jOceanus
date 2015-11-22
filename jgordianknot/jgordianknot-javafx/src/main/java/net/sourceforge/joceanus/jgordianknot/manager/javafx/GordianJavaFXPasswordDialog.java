@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.javafx.GuiUtils;
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public class JavaFXPasswordDialog
+public class GordianJavaFXPasswordDialog
         extends Stage {
     /**
      * Minimum password length.
@@ -119,7 +119,7 @@ public class JavaFXPasswordDialog
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaFXPasswordDialog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GordianJavaFXPasswordDialog.class);
 
     /**
      * Obtained password.
@@ -182,9 +182,9 @@ public class JavaFXPasswordDialog
      * @param pTitle the title
      * @param pNeedConfirm true/false
      */
-    public JavaFXPasswordDialog(final Stage pParent,
-                                final String pTitle,
-                                final boolean pNeedConfirm) {
+    public GordianJavaFXPasswordDialog(final Stage pParent,
+                                       final String pTitle,
+                                       final boolean pNeedConfirm) {
         /* Initialise the dialog */
         initModality(Modality.WINDOW_MODAL);
         initOwner(pParent);
@@ -411,7 +411,7 @@ public class JavaFXPasswordDialog
      * @param pDialog the dialog to show
      * @return successful dialog usage true/false
      */
-    protected static boolean showTheDialog(final JavaFXPasswordDialog pDialog) {
+    protected static boolean showTheDialog(final GordianJavaFXPasswordDialog pDialog) {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
             /* invoke the dialog directly */

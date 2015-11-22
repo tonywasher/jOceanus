@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 
@@ -83,7 +83,7 @@ public interface TaskControl<T extends DataSet<T, ?>> {
      * Access the security manager.
      * @return the security manager
      */
-    SecureManager getSecurity();
+    GordianHashManager getSecurity();
 
     /**
      * Access the data formatter.

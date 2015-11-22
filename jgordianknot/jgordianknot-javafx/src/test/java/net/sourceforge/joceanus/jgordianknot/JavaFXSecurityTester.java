@@ -32,8 +32,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jgordianknot.SecurityTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.manager.javafx.JavaFXSecureManager;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianJavaFXHashManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -60,15 +60,15 @@ public class JavaFXSecurityTester
     }
 
     @Override
-    public SecureManager newSecureManager() throws JOceanusException {
-        JavaFXSecureManager myManager = new JavaFXSecureManager();
+    public GordianHashManager newSecureManager() throws JOceanusException {
+        GordianJavaFXHashManager myManager = new GordianJavaFXHashManager();
         myManager.setStage(theStage);
         return myManager;
     }
 
     @Override
-    public SecureManager newSecureManager(final GordianParameters pParams) throws JOceanusException {
-        JavaFXSecureManager myManager = new JavaFXSecureManager(pParams);
+    public GordianHashManager newSecureManager(final GordianParameters pParams) throws JOceanusException {
+        GordianJavaFXHashManager myManager = new GordianJavaFXHashManager(pParams);
         myManager.setStage(theStage);
         return myManager;
     }
