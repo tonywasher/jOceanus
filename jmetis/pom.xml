@@ -12,6 +12,7 @@
   <modules>
     <module>jmetis-swing</module>
     <module>jmetis-core</module>
+    <module>jmetis-javafx</module>
   </modules>
   <properties>
     <svnComponent>jmetis</svnComponent>

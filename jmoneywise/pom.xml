@@ -12,6 +12,7 @@
   <modules>
     <module>jmoneywise-swing</module>
     <module>jmoneywise-core</module>
+    <module>jmoneywise-javafx</module>
   </modules>
   <properties>
     <svnComponent>jmoneywise</svnComponent>

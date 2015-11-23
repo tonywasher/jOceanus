@@ -12,6 +12,7 @@
   <modules>
     <module>jthemis-swing</module>
     <module>jthemis-core</module>
+    <module>jthemis-javafx</module>
   </modules>
   <properties>
     <svnComponent>jthemis</svnComponent>
