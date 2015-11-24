@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * ArchiveLoader extension for Accounts.
@@ -67,12 +67,12 @@ public final class SheetAccount {
      * @param pData the data set to load into
      * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -132,7 +132,7 @@ public final class SheetAccount {
             resolveAccountLists(pLoader, pData);
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + SHEET_AREA, e);
         }
 
@@ -146,12 +146,12 @@ public final class SheetAccount {
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void processPayee(final ArchiveLoader pLoader,
                                      final MoneyWiseData pData,
                                      final DataView pView,
-                                     final DataRow pRow) throws JOceanusException {
+                                     final DataRow pRow) throws OceanusException {
         /* Skip name and type column */
         int iAdjust = 0;
         iAdjust++;
@@ -178,12 +178,12 @@ public final class SheetAccount {
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void processAccount(final ArchiveLoader pLoader,
                                        final MoneyWiseData pData,
                                        final DataView pView,
-                                       final DataRow pRow) throws JOceanusException {
+                                       final DataRow pRow) throws OceanusException {
         /* Skip name and type column */
         int iAdjust = 0;
         iAdjust++;
@@ -226,9 +226,9 @@ public final class SheetAccount {
     /**
      * Resolve payee account lists.
      * @param pData the DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static void resolvePayeeLists(final MoneyWiseData pData) throws JOceanusException {
+    private static void resolvePayeeLists(final MoneyWiseData pData) throws OceanusException {
         /* PostProcess the Payees */
         PayeeList myPayeeList = pData.getPayees();
         PayeeInfoList myPayeeInfoList = pData.getPayeeInfo();
@@ -240,10 +240,10 @@ public final class SheetAccount {
      * Resolve non-payee account lists.
      * @param pLoader the archive loader
      * @param pData the DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void resolveAccountLists(final ArchiveLoader pLoader,
-                                            final MoneyWiseData pData) throws JOceanusException {
+                                            final MoneyWiseData pData) throws OceanusException {
         /* PostProcess the securities */
         SecurityList mySecurityList = pData.getSecurities();
         SecurityInfoList mySecInfoList = pData.getSecurityInfo();

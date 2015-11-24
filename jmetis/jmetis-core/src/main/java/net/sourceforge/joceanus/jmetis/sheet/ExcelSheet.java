@@ -31,7 +31,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class representing an Excel sheet within a workBook.
@@ -171,7 +171,7 @@ public class ExcelSheet
     @Override
     public void declareRange(final String pName,
                              final CellPosition pFirstCell,
-                             final CellPosition pLastCell) throws JOceanusException {
+                             final CellPosition pLastCell) throws OceanusException {
         if (!isReadOnly) {
             /* Build the area reference */
             String myName = getName();
@@ -187,7 +187,7 @@ public class ExcelSheet
     @Override
     public void applyDataValidation(final CellPosition pFirstCell,
                                     final CellPosition pLastCell,
-                                    final String pName) throws JOceanusException {
+                                    final String pName) throws OceanusException {
         if (!isReadOnly) {
             /* Create the CellAddressList */
             CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
@@ -200,7 +200,7 @@ public class ExcelSheet
 
     @Override
     public void applyDataFilter(final CellPosition pBaseCell,
-                                final int pNumRows) throws JOceanusException {
+                                final int pNumRows) throws OceanusException {
         if (!isReadOnly) {
             /* Create the CellAddressList */
             int myRow = pBaseCell.getRowIndex();

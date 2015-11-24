@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class representing a debit/credit pair of assets.
@@ -161,11 +161,11 @@ public final class AssetPair
      * @param pData the dataSet
      * @param pOwner the owning Transaction
      * @param pField the field to resolve
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void resolveDataLink(final MoneyWiseData pData,
                                    final TransactionBase<?> pOwner,
-                                   final JDataField pField) throws JOceanusException {
+                                   final JDataField pField) throws OceanusException {
         /* Access the values */
         if (pField.equals(Transaction.FIELD_ACCOUNT)) {
             resolveDataLink(pData, pOwner, theAccount, pField);
@@ -180,12 +180,12 @@ public final class AssetPair
      * @param pOwner the owning Transaction
      * @param pAssetType the asset type
      * @param pField the field to resolve
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void resolveDataLink(final MoneyWiseData pData,
                                         final TransactionBase<?> pOwner,
                                         final AssetType pAssetType,
-                                        final JDataField pField) throws JOceanusException {
+                                        final JDataField pField) throws OceanusException {
         /* Handle security holding differently */
         if (pAssetType.isSecurityHolding()) {
             resolveDataLink(pOwner, pData.getSecurityHoldingsMap(), pField);
@@ -227,11 +227,11 @@ public final class AssetPair
      * @param pOwner the owning Transaction
      * @param pList the item list
      * @param pField the field
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void resolveDataLink(final TransactionBase<?> pOwner,
                                         final AssetBaseList<?> pList,
-                                        final JDataField pField) throws JOceanusException {
+                                        final JDataField pField) throws OceanusException {
         /* Access the values */
         ValueSet myValues = pOwner.getValueSet();
 
@@ -268,11 +268,11 @@ public final class AssetPair
      * @param pOwner the owning Transaction
      * @param pMap the security holding map
      * @param pField the field
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public static void resolveDataLink(final DataItem<?> pOwner,
                                        final SecurityHoldingMap pMap,
-                                       final JDataField pField) throws JOceanusException {
+                                       final JDataField pField) throws OceanusException {
         /* Access the values */
         ValueSet myValues = pOwner.getValueSet();
 

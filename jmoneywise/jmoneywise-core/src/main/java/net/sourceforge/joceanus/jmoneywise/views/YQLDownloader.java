@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * YQL DownLoader.
@@ -54,9 +54,9 @@ public final class YQLDownloader {
      * Download prices.
      * @param pPrices the prices list
      * @return changeMade true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static boolean downloadPrices(final SpotSecurityList pPrices) throws JOceanusException {
+    public static boolean downloadPrices(final SpotSecurityList pPrices) throws OceanusException {
         /* Determine currency for the prices */
         MoneyWiseData myData = pPrices.getDataSet();
         AssetCurrency myCurrency = myData.getDefaultCurrency();
@@ -81,7 +81,7 @@ public final class YQLDownloader {
                 }
 
                 /* Access the prices */
-                Map<String, JPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
+                Map<String, TethysPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
 
                 /* re-loop through the securities */
                 myIterator = pPrices.iterator();
@@ -92,7 +92,7 @@ public final class YQLDownloader {
                     if (!mySpot.isDisabled()) {
                         /* Lookup the price */
                         Security mySecurity = mySpot.getSecurity();
-                        JPrice myPrice = myPrices.get(mySecurity.getSymbol());
+                        TethysPrice myPrice = myPrices.get(mySecurity.getSymbol());
 
                         /* If we found a price */
                         if (myPrice != null) {
@@ -107,7 +107,7 @@ public final class YQLDownloader {
                 }
 
                 /* Catch exceptions */
-            } catch (JOceanusException | IOException e) {
+            } catch (OceanusException | IOException e) {
                 throw new JMoneyWiseIOException("Failed to download prices", e);
             }
         }
@@ -120,9 +120,9 @@ public final class YQLDownloader {
      * Download rates.
      * @param pRates the rates list
      * @return changeMade true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static boolean downloadRates(final SpotExchangeList pRates) throws JOceanusException {
+    public static boolean downloadRates(final SpotExchangeList pRates) throws OceanusException {
         /* Determine currency for the prices */
         MoneyWiseData myData = pRates.getDataSet();
         AssetCurrency myCurrency = myData.getDefaultCurrency();
@@ -144,7 +144,7 @@ public final class YQLDownloader {
                 }
 
                 /* Access the rates */
-                Map<Currency, JRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
+                Map<Currency, TethysRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
 
                 /* re-loop through the rates */
                 myIterator = pRates.iterator();
@@ -153,7 +153,7 @@ public final class YQLDownloader {
 
                     /* Lookup the rate */
                     AssetCurrency myCurr = mySpot.getToCurrency();
-                    JRatio myRate = myRates.get(myCurr.getCurrency());
+                    TethysRatio myRate = myRates.get(myCurr.getCurrency());
 
                     /* If we found a rate */
                     if (myRate != null) {
@@ -167,7 +167,7 @@ public final class YQLDownloader {
                 }
 
                 /* Catch exceptions */
-            } catch (JOceanusException | IOException e) {
+            } catch (OceanusException | IOException e) {
                 throw new JMoneyWiseIOException("Failed to download rates", e);
             }
         }

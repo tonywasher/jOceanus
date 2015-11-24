@@ -27,7 +27,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Spreadsheet control.
@@ -59,10 +59,10 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * @param pTask Task Control for task
      * @param pFile the backup file to load from
      * @return the newly loaded data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public T loadBackup(final TaskControl<T> pTask,
-                        final File pFile) throws JOceanusException {
+                        final File pFile) throws OceanusException {
         /* Create a sheet reader object */
         SheetReader<T> myReader = getSheetReader(pTask);
 
@@ -76,12 +76,12 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @param pType the workBookType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void createBackup(final TaskControl<T> pTask,
                              final T pData,
                              final File pFile,
-                             final WorkBookType pType) throws JOceanusException {
+                             final WorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
         SheetWriter<T> myWriter = getSheetWriter(pTask);
 

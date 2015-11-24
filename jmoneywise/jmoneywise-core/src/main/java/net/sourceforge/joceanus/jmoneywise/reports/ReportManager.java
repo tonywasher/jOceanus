@@ -41,10 +41,10 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Provides functionality to hide and restore sections of an HTML document. This is useful for
@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEve
  * document.
  */
 public abstract class ReportManager
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * The id attribute.
      */
@@ -61,7 +61,7 @@ public abstract class ReportManager
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The Transformer.
@@ -93,16 +93,16 @@ public abstract class ReportManager
      * @param pView the view
      * @param pUtilitySet the utility set
      * @param pBuilder the HTML builder
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public ReportManager(final View pView,
                          final JOceanusUtilitySet pUtilitySet,
-                         final HTMLBuilder pBuilder) throws JOceanusException {
+                         final HTMLBuilder pBuilder) throws OceanusException {
         /* Create the builder */
         theBuilder = pBuilder;
 
         /* Create event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Allocate the hashMaps */
         theHiddenMap = new HashMap<String, HiddenElement>();
@@ -120,7 +120,7 @@ public abstract class ReportManager
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -171,9 +171,9 @@ public abstract class ReportManager
      * Hide section.
      * @param pId the id of the section to hide.
      * @return the modified text
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected String hideSection(final String pId) throws JOceanusException {
+    protected String hideSection(final String pId) throws OceanusException {
         /* Ignore if we have no document or transformer */
         if ((theDocument == null)
             || (theXformer == null)) {
@@ -270,9 +270,9 @@ public abstract class ReportManager
      * Restore section.
      * @param pId the id of the section to restore.
      * @return the modified text
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public String restoreSection(final String pId) throws JOceanusException {
+    public String restoreSection(final String pId) throws OceanusException {
         /* Ignore if we have no document or transformer */
         if ((theDocument == null)
             || (theXformer == null)) {
@@ -300,9 +300,9 @@ public abstract class ReportManager
     /**
      * Format XML.
      * @return the formatted XML
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public String formatXML() throws JOceanusException {
+    public String formatXML() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Transform the new document */

@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class represents the contents of an encrypted Zip file.
@@ -69,9 +69,9 @@ public class GordianZipFileContents {
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianZipFileContents(final String pCodedString) throws JOceanusException {
+    protected GordianZipFileContents(final String pCodedString) throws OceanusException {
         /* Initialise normally */
         this();
 
@@ -227,9 +227,9 @@ public class GordianZipFileContents {
     /**
      * Encode the contents.
      * @return the encoded string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected String encodeContents() throws JOceanusException {
+    protected String encodeContents() throws OceanusException {
         StringBuilder myString = new StringBuilder(BUFFER_LEN);
         GordianZipFileProperties myProperties;
 
@@ -267,9 +267,9 @@ public class GordianZipFileContents {
     /**
      * Add a File Entry from encoded string.
      * @param pCodedString the encoded string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void parseEncodedEntry(final String pCodedString) throws JOceanusException {
+    private void parseEncodedEntry(final String pCodedString) throws OceanusException {
         /* Parse the properties */
         GordianZipFileProperties myProperties = new GordianZipFileProperties(pCodedString);
 

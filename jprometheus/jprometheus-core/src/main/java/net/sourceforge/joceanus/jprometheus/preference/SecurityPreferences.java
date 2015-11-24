@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Security preferences.
@@ -141,9 +141,9 @@ public class SecurityPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public SecurityPreferences() throws JOceanusException {
+    public SecurityPreferences() throws OceanusException {
         super();
     }
 

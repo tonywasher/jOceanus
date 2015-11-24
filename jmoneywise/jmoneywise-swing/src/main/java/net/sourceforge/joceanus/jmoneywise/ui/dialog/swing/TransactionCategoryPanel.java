@@ -42,13 +42,13 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
@@ -120,7 +120,7 @@ public class TransactionCategoryPanel
         theFieldSet.addFieldToPanel(TransactionCategory.FIELD_DESC, myPanel);
         theFieldSet.addFieldToPanel(TransactionCategory.FIELD_CATTYPE, myPanel);
         theFieldSet.addFieldToPanel(TransactionCategory.FIELD_PARENT, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Layout the panel */
         layoutPanel();
@@ -167,7 +167,7 @@ public class TransactionCategoryPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         TransactionCategory myCategory = getItem();
@@ -296,7 +296,7 @@ public class TransactionCategoryPanel
      * Category Listener.
      */
     private final class CategoryListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The CategoryType Menu Builder.
          */
@@ -310,12 +310,12 @@ public class TransactionCategoryPanel
         /**
          * ParentMenu Registration.
          */
-        private final JOceanusChangeRegistration theParentMenuReg;
+        private final TethysChangeRegistration theParentMenuReg;
 
         /**
          * TypeMenu Registration.
          */
-        private final JOceanusChangeRegistration theTypeMenuReg;
+        private final TethysChangeRegistration theTypeMenuReg;
 
         /**
          * Constructor.
@@ -329,7 +329,7 @@ public class TransactionCategoryPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu builders */
             if (theTypeMenuReg.isRelevant(pEvent)) {
                 buildCategoryTypeMenu(theTypeMenuBuilder, getItem());

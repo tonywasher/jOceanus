@@ -28,7 +28,7 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Input stream Digest implementation.
@@ -75,9 +75,9 @@ public class GordianDigestInputStream
 
     /**
      * Check result.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void checkResult() throws JOceanusException {
+    private void checkResult() throws OceanusException {
         /* Calculate digest */
         byte[] myResult = theDigest.finish();
 
@@ -113,7 +113,7 @@ public class GordianDigestInputStream
 
         @Override
         public int processBytes(final byte[] pBuffer,
-                                final int pLength) throws JOceanusException {
+                                final int pLength) throws OceanusException {
             /* Initialise variables */
             int iLength = pLength;
 

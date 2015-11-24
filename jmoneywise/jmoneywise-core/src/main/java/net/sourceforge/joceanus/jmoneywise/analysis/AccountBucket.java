@@ -40,11 +40,11 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The Account Bucket class.
@@ -190,7 +190,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected AccountBucket(final Analysis pAnalysis,
                             final AccountBucket<T> pBase,
-                            final JDateDay pDate) {
+                            final TethysDate pDate) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
@@ -213,7 +213,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected AccountBucket(final Analysis pAnalysis,
                             final AccountBucket<T> pBase,
-                            final JDateDayRange pRange) {
+                            final TethysDateRange pRange) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
@@ -247,8 +247,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         AccountAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
                                                        : JDataFieldValue.SKIP;
             }
@@ -358,7 +358,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * Obtain date range.
      * @return the range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -394,7 +394,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+    public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
                                            final AccountAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
@@ -406,7 +406,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JMoney getMoneyDeltaForTransaction(final Transaction pTrans,
+    public TethysMoney getMoneyDeltaForTransaction(final Transaction pTrans,
                                               final AccountAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaMoneyValue(pTrans, pAttr);
@@ -514,9 +514,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param pDelta the delta
      */
     protected void adjustCounter(final AccountAttribute pAttr,
-                                 final JMoney pDelta) {
-        JMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new JMoney(myValue);
+                                 final TethysMoney pDelta) {
+        TethysMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -527,12 +527,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void adjustForDebit(final TransactionHelper pTrans) {
         /* Access event amount */
-        JMoney myAmount = pTrans.getDebitAmount();
+        TethysMoney myAmount = pTrans.getDebitAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* Adjust valuation */
-            myAmount = new JMoney(myAmount);
+            myAmount = new TethysMoney(myAmount);
             myAmount.negate();
             adjustCounter(AccountAttribute.VALUATION, myAmount);
         }
@@ -547,7 +547,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void adjustForCredit(final TransactionHelper pTrans) {
         /* Access event amount */
-        JMoney myAmount = pTrans.getCreditAmount();
+        TethysMoney myAmount = pTrans.getCreditAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
@@ -563,9 +563,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * Set opening balance.
      * @param pBalance the opening balance
      */
-    protected void setOpeningBalance(final JMoney pBalance) {
+    protected void setOpeningBalance(final TethysMoney pBalance) {
         /* Set the base value (this will set the current value as well) */
-        JMoney myBaseValue = getBaseValues().getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myBaseValue = getBaseValues().getMoneyValue(AccountAttribute.VALUATION);
         myBaseValue.addAmount(pBalance);
     }
 
@@ -592,11 +592,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
-        myValue = new JMoney(myValue);
+        TethysMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
+        myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -619,7 +619,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * record the rate of the account at a given date.
      * @param pDate the date of valuation
      */
-    protected void recordRate(final JDateDay pDate) {
+    protected void recordRate(final TethysDate pDate) {
     }
 
     /**
@@ -641,7 +641,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             super(AccountAttribute.class);
 
             /* Initialise valuation and spend to zero */
-            put(AccountAttribute.VALUATION, new JMoney(pCurrency));
+            put(AccountAttribute.VALUATION, new TethysMoney(pCurrency));
         }
 
         /**
@@ -655,8 +655,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             super(AccountAttribute.class);
 
             /* Initialise valuation and spend to zero */
-            put(AccountAttribute.LOCALVALUE, new JMoney(pReportingCurrency));
-            put(AccountAttribute.FOREIGNVALUE, new JMoney(pCurrency));
+            put(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
+            put(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
         }
 
         /**
@@ -678,7 +678,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myValuation = getMoneyValue(AccountAttribute.VALUATION);
+            TethysMoney myValuation = getMoneyValue(AccountAttribute.VALUATION);
             return (myValuation != null) && (myValuation.isNonZero());
         }
     }
@@ -781,7 +781,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pDate the Date
          */
         protected void constructFromBase(final AccountBucketList<B, T> pBase,
-                                         final JDateDay pDate) {
+                                         final TethysDate pDate) {
             /* Loop through the buckets */
             Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
@@ -806,7 +806,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @return the new bucket
          */
         protected abstract B newBucket(final B pBase,
-                                       final JDateDay pDate);
+                                       final TethysDate pDate);
 
         /**
          * Construct a ranged List.
@@ -814,7 +814,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pRange the Date Range
          */
         protected void constructFromBase(final AccountBucketList<B, T> pBase,
-                                         final JDateDayRange pRange) {
+                                         final TethysDateRange pRange) {
             /* Loop through the buckets */
             Iterator<B> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
@@ -838,7 +838,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @return the new bucket
          */
         protected abstract B newBucket(final B pBase,
-                                       final JDateDayRange pRange);
+                                       final TethysDateRange pRange);
 
         /**
          * Obtain the AccountBucket for a given account.
@@ -871,9 +871,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
         /**
          * Mark active accounts.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected void markActiveAccounts() throws JOceanusException {
+        protected void markActiveAccounts() throws OceanusException {
             /* Loop through the buckets */
             Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {

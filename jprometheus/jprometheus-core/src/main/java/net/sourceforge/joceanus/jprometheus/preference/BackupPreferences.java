@@ -26,8 +26,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * Backup preferences.
@@ -118,7 +118,7 @@ public class BackupPreferences
     /**
      * Default value for Last Event.
      */
-    private static final JDateDay DEFAULT_LAST_EVENT = new JDateDay();
+    private static final TethysDate DEFAULT_LAST_EVENT = new TethysDate();
 
     /**
      * Default value for Backup Time.
@@ -127,9 +127,9 @@ public class BackupPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public BackupPreferences() throws JOceanusException {
+    public BackupPreferences() throws OceanusException {
         super();
     }
 

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetStaticData extension for PayeeType.
@@ -74,7 +74,7 @@ public class SheetPayeeType
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(PayeeType.OBJECT_NAME);
     }
@@ -85,11 +85,11 @@ public class SheetPayeeType
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData) throws OceanusException {
         /* Access the list of payee types */
         PayeeTypeList myList = pData.getPayeeTypes();
 
@@ -135,7 +135,7 @@ public class SheetPayeeType
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 

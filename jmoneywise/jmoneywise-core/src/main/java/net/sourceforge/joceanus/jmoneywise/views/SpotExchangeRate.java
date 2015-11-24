@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurre
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * Extension of ExchangeRate to cater for spot rates.
@@ -75,12 +75,12 @@ public final class SpotExchangeRate
     /**
      * the previous date.
      */
-    private JDateDay thePrevDate;
+    private TethysDate thePrevDate;
 
     /**
      * the previous rate.
      */
-    private JRatio thePrevRate;
+    private TethysRatio thePrevRate;
 
     /**
      * Constructor for a new SpotRate where no rate data exists.
@@ -116,7 +116,7 @@ public final class SpotExchangeRate
      * Obtain previous rate.
      * @return the rate.
      */
-    public JRatio getPrevRate() {
+    public TethysRatio getPrevRate() {
         return thePrevRate;
     }
 
@@ -124,7 +124,7 @@ public final class SpotExchangeRate
      * Obtain previous date.
      * @return the date.
      */
-    public JDateDay getPrevDate() {
+    public TethysDate getPrevDate() {
         return thePrevDate;
     }
 
@@ -153,7 +153,7 @@ public final class SpotExchangeRate
     }
 
     @Override
-    public JRatio getExchangeRate() {
+    public TethysRatio getExchangeRate() {
         /* Switch on state */
         switch (getState()) {
             case NEW:
@@ -223,7 +223,7 @@ public final class SpotExchangeRate
         /**
          * The date.
          */
-        private final JDateDay theDate;
+        private final TethysDate theDate;
 
         /**
          * The view.
@@ -238,12 +238,12 @@ public final class SpotExchangeRate
         /**
          * The next date.
          */
-        private JDateDay theNext = null;
+        private TethysDate theNext = null;
 
         /**
          * The previous date.
          */
-        private JDateDay thePrev = null;
+        private TethysDate thePrev = null;
 
         /**
          * Constructor.
@@ -251,7 +251,7 @@ public final class SpotExchangeRate
          * @param pDate the date
          */
         public SpotExchangeList(final View pView,
-                                final JDateDay pDate) {
+                                final TethysDate pDate) {
             /* Build initial list */
             super(pView.getData(), SpotExchangeRate.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
@@ -267,7 +267,7 @@ public final class SpotExchangeRate
             AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
 
             /* Loop through the Currencies */
-            JDateDay myDate = new JDateDay(theDate);
+            TethysDate myDate = new TethysDate(theDate);
             Iterator<AssetCurrency> myCurIterator = myCurrencies.iterator();
             while (myCurIterator.hasNext()) {
                 AssetCurrency myCurrency = myCurIterator.next();
@@ -383,7 +383,7 @@ public final class SpotExchangeRate
          * Obtain the next date.
          * @return the date
          */
-        public JDateDay getNext() {
+        public TethysDate getNext() {
             return theNext;
         }
 
@@ -391,7 +391,7 @@ public final class SpotExchangeRate
          * Obtain the previous date.
          * @return the date
          */
-        public JDateDay getPrev() {
+        public TethysDate getPrev() {
             return thePrev;
         }
 

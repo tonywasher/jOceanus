@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for Schedule.
@@ -97,7 +97,7 @@ public class SheetSchedule
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
         myValues.addValue(Schedule.FIELD_STARTDATE, loadDate(COL_STARTDATE));
@@ -112,7 +112,7 @@ public class SheetSchedule
     }
 
     @Override
-    protected void insertSecureItem(final Schedule pItem) throws JOceanusException {
+    protected void insertSecureItem(final Schedule pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeDate(COL_STARTDATE, pItem.getStartDate());

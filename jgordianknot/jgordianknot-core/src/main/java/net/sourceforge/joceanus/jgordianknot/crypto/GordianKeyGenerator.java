@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot interface for Key Generators.
@@ -110,15 +110,15 @@ public abstract class GordianKeyGenerator<T> {
      * Translate a Key.
      * @param pSource the source key.
      * @return the new Key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract GordianKey<T> translateKey(final GordianKey<?> pSource) throws JOceanusException;
+    protected abstract GordianKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException;
 
     /**
      * Generate a new Key.
      * @param pBytes the bytes for the key.
      * @return the new Key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected abstract GordianKey<T> buildKeyFromBytes(final byte[] pBytes);
 
@@ -127,10 +127,10 @@ public abstract class GordianKeyGenerator<T> {
      * @param pSecret the derived Secret
      * @param pInitVector the initialisation vector
      * @return the new Secret Key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public GordianKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                               final byte[] pInitVector) throws JOceanusException {
+                                               final byte[] pInitVector) throws OceanusException {
         /* Determine the key length in bytes */
         int myKeyLen = theKeyLength
                        / Byte.SIZE;
@@ -172,18 +172,18 @@ public abstract class GordianKeyGenerator<T> {
      * @param pSection the section count
      * @param pInitVector the initialisation vector
      * @return the section
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private byte[] buildCipherSection(final GordianMac pMac,
                                       final byte[] pSection,
-                                      final byte[] pInitVector) throws JOceanusException {
+                                      final byte[] pInitVector) throws OceanusException {
         /* Declare initial value */
         byte[] myResult = new byte[pMac.getMacSize()];
         byte[] myHash = new byte[pMac.getMacSize()];
         byte[] myInput = pInitVector;
 
         /* Create the standard data */
-        byte[] myAlgo = DataConverter.stringToByteArray(theKeyType.toString());
+        byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
         byte[] myPersonal = theFactory.getPersonalisation();
 
         /* Update with personalisation, algorithm and section */
@@ -202,7 +202,7 @@ public abstract class GordianKeyGenerator<T> {
             pMac.finish(myHash, 0);
 
             /* Fold into results */
-            DataConverter.buildHashResult(myResult, myHash);
+            TethysDataConverter.buildHashResult(myResult, myHash);
         }
 
         /* Return the result */

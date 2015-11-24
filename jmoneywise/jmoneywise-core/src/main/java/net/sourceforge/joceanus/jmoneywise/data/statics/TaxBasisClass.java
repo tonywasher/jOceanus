@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Tax Basis Classes.
@@ -154,9 +154,9 @@ public enum TaxBasisClass implements StaticInterface {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static TaxBasisClass fromId(final int id) throws JOceanusException {
+    public static TaxBasisClass fromId(final int id) throws OceanusException {
         for (TaxBasisClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;

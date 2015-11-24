@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * DataList preferences.
@@ -48,9 +48,9 @@ public class DataListPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public DataListPreferences() throws JOceanusException {
+    public DataListPreferences() throws OceanusException {
         super();
     }
 

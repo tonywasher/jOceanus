@@ -44,10 +44,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The TaxBasis Bucket class.
@@ -176,7 +176,7 @@ public class TaxBasisBucket
      */
     protected TaxBasisBucket(final Analysis pAnalysis,
                              final TaxBasisBucket pBase,
-                             final JDateDay pDate) {
+                             final TethysDate pDate) {
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
@@ -204,7 +204,7 @@ public class TaxBasisBucket
      */
     protected TaxBasisBucket(final Analysis pAnalysis,
                              final TaxBasisBucket pBase,
-                             final JDateDayRange pRange) {
+                             final TethysDateRange pRange) {
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
@@ -253,8 +253,8 @@ public class TaxBasisBucket
         TaxBasisAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
                                                        : JDataFieldValue.SKIP;
             }
@@ -375,7 +375,7 @@ public class TaxBasisBucket
      * @param pAttr the attribute
      * @return the value
      */
-    public JMoney getMoneyValue(final TaxBasisAttribute pAttr) {
+    public TethysMoney getMoneyValue(final TaxBasisAttribute pAttr) {
         return theValues.getMoneyValue(pAttr);
     }
 
@@ -403,7 +403,7 @@ public class TaxBasisBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+    public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
                                            final TaxBasisAttribute pAttr) {
         /* Obtain delta for event */
         return theHistory.getDeltaValue(pTrans, pAttr);
@@ -429,7 +429,7 @@ public class TaxBasisBucket
      * Obtain date range.
      * @return the range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -439,7 +439,7 @@ public class TaxBasisBucket
      * @param pValue the value of the attribute
      */
     protected void setValue(final TaxBasisAttribute pAttr,
-                            final JMoney pValue) {
+                            final TethysMoney pValue) {
         /* Set the value into the list */
         theValues.put(pAttr, pValue);
     }
@@ -527,11 +527,11 @@ public class TaxBasisBucket
      */
     private void addIncomeTransaction(final TransactionHelper pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getCreditAmount();
-        JMoney myTaxCredit = pTrans.getTaxCredit();
-        JMoney myNatIns = pTrans.getNatInsurance();
-        JMoney myBenefit = pTrans.getDeemedBenefit();
-        JMoney myDonation = pTrans.getCharityDonation();
+        TethysMoney myAmount = pTrans.getCreditAmount();
+        TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        TethysMoney myNatIns = pTrans.getNatInsurance();
+        TethysMoney myBenefit = pTrans.getDeemedBenefit();
+        TethysMoney myDonation = pTrans.getCharityDonation();
 
         /* Determine style of transaction */
         AssetDirection myDir = pTrans.getDirection();
@@ -544,11 +544,11 @@ public class TaxBasisBucket
         }
 
         /* Obtain zeroed counters */
-        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-        myGross = new JMoney(myGross);
+        TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        myGross = new TethysMoney(myGross);
         myGross.setZero();
-        JMoney myNett = new JMoney(myGross);
-        JMoney myTax = new JMoney(myGross);
+        TethysMoney myNett = new TethysMoney(myGross);
+        TethysMoney myTax = new TethysMoney(myGross);
 
         /* If this is an expense */
         if (myDir.isTo()) {
@@ -631,18 +631,18 @@ public class TaxBasisBucket
      */
     private void addExpenseTransaction(final TransactionHelper pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getDebitAmount();
-        JMoney myTaxCredit = pTrans.getTaxCredit();
+        TethysMoney myAmount = pTrans.getDebitAmount();
+        TethysMoney myTaxCredit = pTrans.getTaxCredit();
 
         /* Determine style of event */
         AssetDirection myDir = pTrans.getDirection();
 
         /* Obtain zeroed counters */
-        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-        myGross = new JMoney(myGross);
+        TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        myGross = new TethysMoney(myGross);
         myGross.setZero();
-        JMoney myNett = new JMoney(myGross);
-        JMoney myTax = new JMoney(myGross);
+        TethysMoney myNett = new TethysMoney(myGross);
+        TethysMoney myTax = new TethysMoney(myGross);
 
         /* If this is a refunded expense */
         if (myDir.isFrom()) {
@@ -691,14 +691,14 @@ public class TaxBasisBucket
      * @param pTax the tax delta value
      */
     protected void registerDeltaValues(final TransactionHelper pTrans,
-                                       final JMoney pGross,
-                                       final JMoney pNett,
-                                       final JMoney pTax) {
+                                       final TethysMoney pGross,
+                                       final TethysMoney pNett,
+                                       final TethysMoney pTax) {
         /* If we have a change to the gross value */
         if (pGross.isNonZero()) {
             /* Adjust Gross figure */
-            JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-            myGross = new JMoney(myGross);
+            TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            myGross = new TethysMoney(myGross);
             myGross.addAmount(pGross);
             setValue(TaxBasisAttribute.GROSS, myGross);
         }
@@ -706,8 +706,8 @@ public class TaxBasisBucket
         /* If we have a change to the net value */
         if (pNett.isNonZero()) {
             /* Adjust Net figure */
-            JMoney myNett = theValues.getMoneyValue(TaxBasisAttribute.NETT);
-            myNett = new JMoney(myNett);
+            TethysMoney myNett = theValues.getMoneyValue(TaxBasisAttribute.NETT);
+            myNett = new TethysMoney(myNett);
             myNett.addAmount(pNett);
             setValue(TaxBasisAttribute.NETT, myNett);
         }
@@ -715,8 +715,8 @@ public class TaxBasisBucket
         /* If we have a change to the tax value */
         if (pTax.isNonZero()) {
             /* Adjust Tax figure */
-            JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-            myTax = new JMoney(myTax);
+            TethysMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
+            myTax = new TethysMoney(myTax);
             myTax.addAmount(pTax);
             setValue(TaxBasisAttribute.TAXCREDIT, myTax);
         }
@@ -731,7 +731,7 @@ public class TaxBasisBucket
      * @param pValue the value
      */
     protected void adjustValue(final TransactionHelper pTrans,
-                               final JMoney pValue) {
+                               final TethysMoney pValue) {
         /* Adjust the value */
         adjustValue(pValue);
 
@@ -749,12 +749,12 @@ public class TaxBasisBucket
      * Adjust value.
      * @param pValue the value
      */
-    private void adjustValue(final JMoney pValue) {
+    private void adjustValue(final TethysMoney pValue) {
         /* Access the counters */
-        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-        myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
-        myNet = new JMoney(myNet);
+        TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        myGross = new TethysMoney(myGross);
+        TethysMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
+        myNet = new TethysMoney(myNet);
 
         /* If we are an expense bucket */
         if (isExpense) {
@@ -787,7 +787,7 @@ public class TaxBasisBucket
      */
     protected void addValues(final TaxBasisBucket pBucket) {
         /* Add the values */
-        JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        TethysMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myAmount.addAmount(pBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         myAmount = theValues.getMoneyValue(TaxBasisAttribute.NETT);
         myAmount.addAmount(pBucket.getMoneyValue(TaxBasisAttribute.NETT));
@@ -829,9 +829,9 @@ public class TaxBasisBucket
             super(TaxBasisAttribute.class);
 
             /* Create all possible values */
-            put(TaxBasisAttribute.GROSS, new JMoney(pCurrency));
-            put(TaxBasisAttribute.NETT, new JMoney(pCurrency));
-            put(TaxBasisAttribute.TAXCREDIT, new JMoney(pCurrency));
+            put(TaxBasisAttribute.GROSS, new TethysMoney(pCurrency));
+            put(TaxBasisAttribute.NETT, new TethysMoney(pCurrency));
+            put(TaxBasisAttribute.TAXCREDIT, new TethysMoney(pCurrency));
         }
 
         /**
@@ -859,14 +859,14 @@ public class TaxBasisBucket
         @Override
         protected void resetBaseValues() {
             /* Create a zero value in the correct currency */
-            JMoney myValue = getMoneyValue(TaxBasisAttribute.GROSS);
-            myValue = new JMoney(myValue);
+            TethysMoney myValue = getMoneyValue(TaxBasisAttribute.GROSS);
+            myValue = new TethysMoney(myValue);
             myValue.setZero();
 
             /* Reset Income and expense values */
             put(TaxBasisAttribute.GROSS, myValue);
-            put(TaxBasisAttribute.NETT, new JMoney(myValue));
-            put(TaxBasisAttribute.TAXCREDIT, new JMoney(myValue));
+            put(TaxBasisAttribute.NETT, new TethysMoney(myValue));
+            put(TaxBasisAttribute.TAXCREDIT, new TethysMoney(myValue));
         }
 
         /**
@@ -874,9 +874,9 @@ public class TaxBasisBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myGross = getMoneyValue(TaxBasisAttribute.GROSS);
-            JMoney myNet = getMoneyValue(TaxBasisAttribute.NETT);
-            JMoney myTax = getMoneyValue(TaxBasisAttribute.TAXCREDIT);
+            TethysMoney myGross = getMoneyValue(TaxBasisAttribute.GROSS);
+            TethysMoney myNet = getMoneyValue(TaxBasisAttribute.NETT);
+            TethysMoney myTax = getMoneyValue(TaxBasisAttribute.TAXCREDIT);
             return (myGross.isNonZero()) || (myNet.isNonZero()) || (myTax.isNonZero());
         }
     }
@@ -941,7 +941,7 @@ public class TaxBasisBucket
          */
         protected TaxBasisBucketList(final Analysis pAnalysis,
                                      final TaxBasisBucketList pBase,
-                                     final JDateDay pDate) {
+                                     final TethysDate pDate) {
             /* Initialise class */
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
@@ -972,7 +972,7 @@ public class TaxBasisBucket
          */
         protected TaxBasisBucketList(final Analysis pAnalysis,
                                      final TaxBasisBucketList pBase,
-                                     final JDateDayRange pRange) {
+                                     final TethysDateRange pRange) {
             /* Initialise class */
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
@@ -1171,7 +1171,7 @@ public class TaxBasisBucket
          */
         protected void adjustValue(final TransactionHelper pTrans,
                                    final TaxBasisClass pClass,
-                                   final JMoney pIncome) {
+                                   final TethysMoney pIncome) {
             /* Access the bucket and adjust it */
             TaxBasisBucket myBucket = getBucket(pClass);
             myBucket.adjustValue(pTrans, pIncome);
@@ -1185,9 +1185,9 @@ public class TaxBasisBucket
         protected void adjustAutoExpense(final TransactionHelper pTrans,
                                          final boolean isExpense) {
             /* Determine value */
-            JMoney myAmount = pTrans.getLocalDebitAmount();
+            TethysMoney myAmount = pTrans.getLocalDebitAmount();
             if (!isExpense) {
-                myAmount = new JMoney(myAmount);
+                myAmount = new TethysMoney(myAmount);
                 myAmount.negate();
             }
 
@@ -1201,10 +1201,10 @@ public class TaxBasisBucket
          * @param pIncome the income
          * @param pExpense the expense
          */
-        protected void adjustMarket(final JMoney pIncome,
-                                    final JMoney pExpense) {
+        protected void adjustMarket(final TethysMoney pIncome,
+                                    final TethysMoney pExpense) {
             /* Calculate the delta */
-            JMoney myDelta = new JMoney(pIncome);
+            TethysMoney myDelta = new TethysMoney(pIncome);
             myDelta.subtractAmount(pExpense);
 
             /* Access the bucket and adjust it */

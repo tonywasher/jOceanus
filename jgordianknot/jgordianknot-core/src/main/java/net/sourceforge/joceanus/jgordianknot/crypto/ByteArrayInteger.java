@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Simple class that handles a byte array as an integer housing an integer of max value 2
@@ -34,7 +34,7 @@ public final class ByteArrayInteger {
     /**
      * The default counter length.
      */
-    private static final int COUNTER_LEN = DataConverter.BYTES_INTEGER;
+    private static final int COUNTER_LEN = TethysDataConverter.BYTES_INTEGER;
 
     /**
      * The counter length.
@@ -98,16 +98,16 @@ public final class ByteArrayInteger {
      */
     public boolean compareLimit(final long pLimit) {
         /* Check that we are long length */
-        if (theLength != DataConverter.BYTES_LONG) {
+        if (theLength != TethysDataConverter.BYTES_LONG) {
             return false;
         }
 
         /* Calculate existing value */
         long myVal = 0;
         for (int i = 0; i < theLength; i++) {
-            myVal <<= DataConverter.NYBBLE_SHIFT;
+            myVal <<= TethysDataConverter.NYBBLE_SHIFT;
             myVal += theBuffer[i]
-                     & DataConverter.BYTE_MASK;
+                     & TethysDataConverter.BYTE_MASK;
         }
 
         /* Determine whether we have reached the limit */
@@ -148,9 +148,9 @@ public final class ByteArrayInteger {
         while (myOffset <= myLength) {
             /* Calculate sum at offset */
             int myNext = (theBuffer[theLength
-                                    - myOffset] & DataConverter.BYTE_MASK)
+                                    - myOffset] & TethysDataConverter.BYTE_MASK)
                          + (pAdjust[myLength
-                                    - myOffset] & DataConverter.BYTE_MASK);
+                                    - myOffset] & TethysDataConverter.BYTE_MASK);
             if (doCarry) {
                 myNext++;
             }
@@ -161,7 +161,7 @@ public final class ByteArrayInteger {
             myOffset++;
 
             /* Determine the carry */
-            doCarry = (myNext & ~DataConverter.BYTE_MASK) != 0;
+            doCarry = (myNext & ~TethysDataConverter.BYTE_MASK) != 0;
         }
 
         /* Adjust remaining bytes for carry */

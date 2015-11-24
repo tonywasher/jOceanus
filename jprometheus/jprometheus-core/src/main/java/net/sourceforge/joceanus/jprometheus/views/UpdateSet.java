@@ -39,10 +39,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
-        implements JDataContents, JOceanusEventProvider, DataListSet<E> {
+        implements JDataContents, TethysEventProvider, DataListSet<E> {
     /**
      * Report fields.
      */
@@ -91,7 +91,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * Report fields.
@@ -129,7 +129,7 @@ public class UpdateSet<E extends Enum<E>>
         theControl = pControl;
 
         /* Create event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create local fields */
         theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
@@ -166,7 +166,7 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -470,7 +470,7 @@ public class UpdateSet<E extends Enum<E>>
                 myEntry.prepareChanges();
             }
 
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("Failed to prepare changes", e);
             bSuccess = false;
         }

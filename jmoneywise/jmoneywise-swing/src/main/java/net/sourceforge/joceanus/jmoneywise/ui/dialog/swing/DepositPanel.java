@@ -56,18 +56,18 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a Deposit.
@@ -218,7 +218,7 @@ public class DepositPanel
         theFieldSet.addFieldElement(Deposit.FIELD_GROSS, Boolean.class, myGrossButton);
 
         /* Create the main panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -231,7 +231,7 @@ public class DepositPanel
         theFieldSet.addFieldToPanel(Deposit.FIELD_CLOSED, myPanel);
         theFieldSet.addFieldToPanel(Deposit.FIELD_TAXFREE, myPanel);
         theFieldSet.addFieldToPanel(Deposit.FIELD_GROSS, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -243,7 +243,7 @@ public class DepositPanel
      */
     private JPanel buildXtrasPanel() {
         /* Allocate fields */
-        JDateDayButton myMaturity = new JDateDayButton(getFormatter().getDateFormatter());
+        TethysSwingDateButton myMaturity = new TethysSwingDateButton(getFormatter().getDateFormatter());
         JTextField mySortCode = new JTextField();
         JTextField myAccount = new JTextField();
         JTextField myReference = new JTextField();
@@ -265,7 +265,7 @@ public class DepositPanel
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
 
         /* Create the extras panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
         SpringLayout mySpring = new SpringLayout();
@@ -275,7 +275,7 @@ public class DepositPanel
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -294,13 +294,13 @@ public class DepositPanel
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -395,7 +395,7 @@ public class DepositPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         Deposit myDeposit = getItem();
@@ -649,7 +649,7 @@ public class DepositPanel
      * Deposit Listener.
      */
     private final class DepositListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The Category Menu Builder.
          */
@@ -668,22 +668,22 @@ public class DepositPanel
         /**
          * CategoryMenu Registration.
          */
-        private final JOceanusChangeRegistration theCategoryMenuReg;
+        private final TethysChangeRegistration theCategoryMenuReg;
 
         /**
          * ParentMenu Registration.
          */
-        private final JOceanusChangeRegistration theParentMenuReg;
+        private final TethysChangeRegistration theParentMenuReg;
 
         /**
          * CurrencyMenu Registration.
          */
-        private final JOceanusChangeRegistration theCurrencyMenuReg;
+        private final TethysChangeRegistration theCurrencyMenuReg;
 
         /**
          * Rates panel Registration.
          */
-        private final JOceanusChangeRegistration theRatesReg;
+        private final TethysChangeRegistration theRatesReg;
 
         /**
          * Constructor.
@@ -700,7 +700,7 @@ public class DepositPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());

@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The Portfolio Cash Bucket class.
@@ -68,7 +68,7 @@ public class PortfolioCashBucket
      */
     protected PortfolioCashBucket(final Analysis pAnalysis,
                                   final PortfolioCashBucket pBase,
-                                  final JDateDay pDate) {
+                                  final TethysDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
     }
@@ -81,7 +81,7 @@ public class PortfolioCashBucket
      */
     protected PortfolioCashBucket(final Analysis pAnalysis,
                                   final PortfolioCashBucket pBase,
-                                  final JDateDayRange pRange) {
+                                  final TethysDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
     }
@@ -100,14 +100,14 @@ public class PortfolioCashBucket
                                  final TransactionHelper pTrans) {
         /* Access transfer amount */
         AccountValues myValues = pSource.getValues();
-        JMoney myAmount = myValues.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myAmount = myValues.getMoneyValue(AccountAttribute.VALUATION);
 
         /* Adjust this valuation */
         adjustCounter(AccountAttribute.VALUATION, myAmount);
         registerTransaction(pTrans);
 
         /* Adjust source valuation */
-        myAmount = new JMoney(myAmount);
+        myAmount = new TethysMoney(myAmount);
         myAmount.negate();
         pSource.adjustCounter(AccountAttribute.VALUATION, myAmount);
         pSource.registerTransaction(pTrans);
@@ -133,9 +133,9 @@ public class PortfolioCashBucket
     private static void addValues(final AccountValues pTotals,
                                   final AccountValues pSource) {
         /* Add valuation values */
-        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
-        myValue = new JMoney(myValue);
-        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        myValue = new TethysMoney(myValue);
+        TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
         pTotals.setValue(AccountAttribute.VALUATION, myValue);
     }

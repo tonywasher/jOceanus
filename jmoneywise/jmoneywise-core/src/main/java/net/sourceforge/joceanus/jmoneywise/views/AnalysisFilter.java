@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionBuilder;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Analysis Filter Classes.
@@ -196,7 +196,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction
      * @return the delta value
      */
-    public abstract JDecimal getDeltaForTransaction(final Transaction pTrans);
+    public abstract TethysDecimal getDeltaForTransaction(final Transaction pTrans);
 
     /**
      * Populate new transaction.
@@ -218,7 +218,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * Obtain starting value for attribute.
      * @return the value
      */
-    public JDecimal getStartingBalance() {
+    public TethysDecimal getStartingBalance() {
         BucketValues<?, T> myValues = getBaseValues();
         return myValues.getDecimalValue(getCurrentAttribute());
     }
@@ -228,7 +228,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return the value
      */
-    public JDecimal getBalanceForTransaction(final Transaction pTrans) {
+    public TethysDecimal getBalanceForTransaction(final Transaction pTrans) {
         BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
         return (myValues == null)
                                  ? null
@@ -240,8 +240,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return the value
      */
-    public JDecimal getDebitForTransaction(final Transaction pTrans) {
-        JDecimal myValue = getDeltaValueForTransaction(pTrans);
+    public TethysDecimal getDebitForTransaction(final Transaction pTrans) {
+        TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
         if (myValue != null) {
             if (myValue.isPositive()
                 || myValue.isZero()) {
@@ -260,8 +260,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return the value
      */
-    public JDecimal getCreditForTransaction(final Transaction pTrans) {
-        JDecimal myValue = getDeltaValueForTransaction(pTrans);
+    public TethysDecimal getCreditForTransaction(final Transaction pTrans) {
+        TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
         return ((myValue != null)
                 && myValue.isPositive() && myValue.isNonZero())
                                                                ? myValue
@@ -273,7 +273,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return the value
      */
-    private JDecimal getDeltaValueForTransaction(final Transaction pTrans) {
+    private TethysDecimal getDeltaValueForTransaction(final Transaction pTrans) {
         return getDeltaForTransaction(pTrans);
     }
 
@@ -363,7 +363,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -531,7 +531,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -614,7 +614,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -680,7 +680,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -726,7 +726,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -772,7 +772,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -824,7 +824,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return null;
         }
 
@@ -879,7 +879,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+        public TethysDecimal getDeltaForTransaction(final Transaction pTrans) {
             return null;
         }
 

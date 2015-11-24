@@ -27,7 +27,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * MultiKey Cipher.
@@ -111,9 +111,9 @@ public final class GordianMultiCipher {
      * Process the passed data and return intermediate results.
      * @param pBytes Bytes to update cipher with
      * @return the intermediate processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] update(final byte[] pBytes) throws JOceanusException {
+    public byte[] update(final byte[] pBytes) throws OceanusException {
         return update(pBytes, 0, pBytes.length);
     }
 
@@ -123,11 +123,11 @@ public final class GordianMultiCipher {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return the intermediate processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] update(final byte[] pBytes,
                          final int pOffset,
-                         final int pLength) throws JOceanusException {
+                         final int pLength) throws OceanusException {
         /* Create output buffer */
         int myLen = getOutputLength(pLength);
         byte[] myOutput = new byte[myLen];
@@ -148,12 +148,12 @@ public final class GordianMultiCipher {
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int update(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
-                      final byte[] pOutput) throws JOceanusException {
+                      final byte[] pOutput) throws OceanusException {
         return update(pBytes, pOffset, pLength, pOutput, 0);
     }
 
@@ -165,13 +165,13 @@ public final class GordianMultiCipher {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int update(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Create an initial buffer */
         byte[] mySource = pBytes;
         int myOffset = pOffset;
@@ -209,9 +209,9 @@ public final class GordianMultiCipher {
     /**
      * Complete the Cipher operation and return final results.
      * @return the remaining processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] finish() throws JOceanusException {
+    public byte[] finish() throws OceanusException {
         /* Create output buffer */
         int myLen = getOutputLength(0);
         byte[] myOutput = new byte[myLen];
@@ -229,9 +229,9 @@ public final class GordianMultiCipher {
      * Process the passed data and return final results.
      * @param pBytes Bytes to update cipher with
      * @return the remaining processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] finish(final byte[] pBytes) throws JOceanusException {
+    public byte[] finish(final byte[] pBytes) throws OceanusException {
         return finish(pBytes, 0, pBytes.length);
     }
 
@@ -241,11 +241,11 @@ public final class GordianMultiCipher {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return the remaining processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] finish(final byte[] pBytes,
                          final int pOffset,
-                         final int pLength) throws JOceanusException {
+                         final int pLength) throws OceanusException {
         /* Create output buffer */
         int myLen = getOutputLength(pLength);
         byte[] myOutput = new byte[myLen];
@@ -266,12 +266,12 @@ public final class GordianMultiCipher {
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int finish(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
-                      final byte[] pOutput) throws JOceanusException {
+                      final byte[] pOutput) throws OceanusException {
         return finish(pBytes, pOffset, pLength, pOutput, 0);
     }
 
@@ -283,13 +283,13 @@ public final class GordianMultiCipher {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int finish(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Update the data */
         int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -302,10 +302,10 @@ public final class GordianMultiCipher {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Create an initial buffer */
         int myDataLen = 0;
 
@@ -339,11 +339,11 @@ public final class GordianMultiCipher {
      * @param pKeyTypes the keyTypes
      * @param pIV the initialisation vector
      * @param pEncrypt true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void initCiphers(final GordianSymKeyType[] pKeyTypes,
                             final byte[] pIV,
-                            final boolean pEncrypt) throws JOceanusException {
+                            final boolean pEncrypt) throws OceanusException {
         /* Check the keys */
         checkSymKeys(pKeyTypes);
 
@@ -368,9 +368,9 @@ public final class GordianMultiCipher {
     /**
      * Check SymKeys.
      * @param pKeyTypes the keyTypes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void checkSymKeys(final GordianSymKeyType[] pKeyTypes) throws JOceanusException {
+    private void checkSymKeys(final GordianSymKeyType[] pKeyTypes) throws OceanusException {
         /* Check length */
         if (pKeyTypes.length != theNumSteps) {
             throw new GordianDataException("Invalid number of keys");
@@ -401,10 +401,10 @@ public final class GordianMultiCipher {
      * @param pKeyType the keyType
      * @param pIndex the index of the cipher
      * @return the Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private GordianCipher<GordianSymKeyType> getCipher(final GordianSymKeyType pKeyType,
-                                                       final int pIndex) throws JOceanusException {
+                                                       final int pIndex) throws OceanusException {
         /* Obtain the ciphers */
         KeyCiphers myCiphers = getKeyCiphers(pKeyType);
 
@@ -426,9 +426,9 @@ public final class GordianMultiCipher {
      * Obtain KeyCipher from map.
      * @param pKeyType the keyType
      * @return the KeyCipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private KeyCiphers getKeyCiphers(final GordianSymKeyType pKeyType) throws JOceanusException {
+    private KeyCiphers getKeyCiphers(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Look up existing ciphers */
         KeyCiphers myCiphers = theCipherMap.get(pKeyType);
         if (myCiphers == null) {
@@ -484,10 +484,10 @@ public final class GordianMultiCipher {
      * @param pKeyTypes the keyTypes
      * @param pKeyToWrap the key to wrap
      * @return the wrapped bytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] wrapKey(final GordianSymKeyType[] pKeyTypes,
-                          final GordianKey<?> pKeyToWrap) throws JOceanusException {
+                          final GordianKey<?> pKeyToWrap) throws OceanusException {
         /* Check the keys */
         checkSymKeys(pKeyTypes);
 
@@ -515,11 +515,11 @@ public final class GordianMultiCipher {
      * @param pBytes the bytes to unwrap
      * @param pKeyType the type of key to be unwrapped
      * @return the unwrapped key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public <T> GordianKey<T> unwrapKey(final GordianSymKeyType[] pKeyTypes,
                                        final byte[] pBytes,
-                                       final T pKeyType) throws JOceanusException {
+                                       final T pKeyType) throws OceanusException {
         /* Check the keys */
         checkSymKeys(pKeyTypes);
 
@@ -569,9 +569,9 @@ public final class GordianMultiCipher {
         /**
          * Constructor.
          * @param pKey the key
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private KeyCiphers(final GordianKey<GordianSymKeyType> pKey) throws JOceanusException {
+        private KeyCiphers(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
             /* Store parameters */
             theKey = pKey;
             GordianSymKeyType myKeyType = theKey.getKeyType();

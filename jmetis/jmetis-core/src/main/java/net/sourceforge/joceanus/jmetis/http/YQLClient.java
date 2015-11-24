@@ -30,11 +30,11 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -139,14 +139,14 @@ public class YQLClient
     /**
      * Decimal parser.
      */
-    private final JDecimalParser theParser;
+    private final TethysDecimalParser theParser;
 
     /**
      * Constructor.
      * @param pFormatter the data formatter
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public YQLClient(final JDataFormatter pFormatter) throws JOceanusException {
+    public YQLClient(final JDataFormatter pFormatter) throws OceanusException {
         super(YQL_WEBSITE);
         theParser = pFormatter.getDecimalParser();
     }
@@ -156,10 +156,10 @@ public class YQLClient
      * @param pSymbol the security symbol
      * @param pCurrency the currency for the price
      * @return the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JPrice obtainSecurityPrice(final String pSymbol,
-                                      final Currency pCurrency) throws JOceanusException {
+    public TethysPrice obtainSecurityPrice(final String pSymbol,
+                                      final Currency pCurrency) throws OceanusException {
         /* Build the query string */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -171,7 +171,7 @@ public class YQLClient
         /* Determine price divisor */
         int myDivisor = 1;
         for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
-            myDivisor *= JDecimal.RADIX_TEN;
+            myDivisor *= TethysDecimal.RADIX_TEN;
         }
 
         /* Perform the query */
@@ -191,7 +191,7 @@ public class YQLClient
             /* If we found the price */
             if (myStrPrice != null) {
                 /* Parse the price and convert from minor units */
-                JPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
                 myPrice.divide(myDivisor);
                 return myPrice;
             }
@@ -210,10 +210,10 @@ public class YQLClient
      * @param pSymbols the security symbols
      * @param pCurrency the currency for the price
      * @return the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Map<String, JPrice> obtainSecurityPrices(final List<String> pSymbols,
-                                                    final Currency pCurrency) throws JOceanusException {
+    public Map<String, TethysPrice> obtainSecurityPrices(final List<String> pSymbols,
+                                                    final Currency pCurrency) throws OceanusException {
         /* Build the query string */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -223,7 +223,7 @@ public class YQLClient
         /* Determine price divisor */
         int myDivisor = 1;
         for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
-            myDivisor *= JDecimal.RADIX_TEN;
+            myDivisor *= TethysDecimal.RADIX_TEN;
         }
 
         /* Build the symbol set */
@@ -243,7 +243,7 @@ public class YQLClient
         expectLargeResponses(true);
 
         /* Create the result map */
-        Map<String, JPrice> myMap = new HashMap<String, JPrice>();
+        Map<String, TethysPrice> myMap = new HashMap<String, TethysPrice>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -265,7 +265,7 @@ public class YQLClient
                 /* If we have a price */
                 if (myStrPrice != null) {
                     /* Parse and convert to proper units */
-                    JPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                    TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
                     myPrice.divide(myDivisor);
 
                     /* Add the the map */
@@ -288,10 +288,10 @@ public class YQLClient
      * @param pFrom the from currency
      * @param pTo the to currency
      * @return the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JRatio obtainExchangeRate(final Currency pFrom,
-                                     final Currency pTo) throws JOceanusException {
+    public TethysRatio obtainExchangeRate(final Currency pFrom,
+                                     final Currency pTo) throws OceanusException {
         /* Build the query string */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -317,7 +317,7 @@ public class YQLClient
 
             /* return parsed rate if possible */
             return (myRate != null)
-                                   ? new JRatio(myRate)
+                                   ? new TethysRatio(myRate)
                                    : null;
 
         } catch (JSONException e) {
@@ -331,10 +331,10 @@ public class YQLClient
      * @param pFrom the from currency
      * @param pToList the list of to currencies
      * @return the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Map<Currency, JRatio> obtainExchangeRates(final Currency pFrom,
-                                                     final List<Currency> pToList) throws JOceanusException {
+    public Map<Currency, TethysRatio> obtainExchangeRates(final Currency pFrom,
+                                                     final List<Currency> pToList) throws OceanusException {
         /* Build the query string */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -357,7 +357,7 @@ public class YQLClient
         myBuilder.append(YQLSEL_END);
 
         /* Create the result map */
-        Map<Currency, JRatio> myMap = new HashMap<Currency, JRatio>();
+        Map<Currency, TethysRatio> myMap = new HashMap<Currency, TethysRatio>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -382,7 +382,7 @@ public class YQLClient
                     String myId = myEntry.getString(YQLFLD_ID);
                     myId = myId.substring(myFrom.length());
                     Currency myCurr = Currency.getInstance(myId);
-                    JRatio myRate = new JRatio(myStrRate);
+                    TethysRatio myRate = new TethysRatio(myStrRate);
 
                     /* Add the the map */
                     myMap.put(myCurr, myRate);

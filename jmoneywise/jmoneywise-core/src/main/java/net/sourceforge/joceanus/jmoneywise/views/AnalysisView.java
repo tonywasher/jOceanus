@@ -41,11 +41,11 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * Analysis Edit View.
  */
 public class AnalysisView
-        implements JDataContents, JOceanusEventProvider {
+        implements JDataContents, TethysEventProvider {
     /**
      * Local Report fields.
      */
@@ -83,7 +83,7 @@ public class AnalysisView
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The View.
@@ -128,7 +128,7 @@ public class AnalysisView
     /**
      * The current range.
      */
-    private JDateDayRange theRange;
+    private TethysDateRange theRange;
 
     /**
      * Constructor.
@@ -146,7 +146,7 @@ public class AnalysisView
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
 
         /* Create event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
     }
 
     @Override
@@ -174,7 +174,7 @@ public class AnalysisView
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -198,7 +198,7 @@ public class AnalysisView
      * Obtain the range.
      * @return the range
      */
-    public JDateDayRange getRange() {
+    public TethysDateRange getRange() {
         return theRange;
     }
 
@@ -236,7 +236,7 @@ public class AnalysisView
      * Set the selected date range.
      * @param pRange the date range
      */
-    public void setRange(final JDateDayRange pRange) {
+    public void setRange(final TethysDateRange pRange) {
         /* If we have changed the range */
         if (!Difference.isEqual(theRange, pRange)) {
             /* Obtain the required analysis and reset to it */
@@ -284,7 +284,7 @@ public class AnalysisView
          * @param pRange the date range
          */
         private TransactionView(final TransactionList pSource,
-                                final JDateDayRange pRange) {
+                                final TethysDateRange pRange) {
             /* Initialise as edit list */
             super(pSource);
             setStyle(ListStyle.EDIT);
@@ -338,7 +338,7 @@ public class AnalysisView
                 theEventManager.fireStateChanged();
 
                 /* Catch exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 LOGGER.error("Failed to analyse changes", e);
             }
         }

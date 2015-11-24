@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectList;
 
@@ -96,9 +96,9 @@ public class MvnProjectDefinition
     /**
      * Constructor.
      * @param pInput the project definition file as input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public MvnProjectDefinition(final InputStream pInput) throws JOceanusException {
+    public MvnProjectDefinition(final InputStream pInput) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Parse the Project definition */
@@ -175,9 +175,9 @@ public class MvnProjectDefinition
      * Parse disk POM file.
      * @param pFile file to load
      * @return project definition.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static MvnProjectDefinition parseProjectFile(final File pFile) throws JOceanusException {
+    public static MvnProjectDefinition parseProjectFile(final File pFile) throws OceanusException {
         /* Protect against exceptions */
         try (FileInputStream myInFile = new FileInputStream(pFile);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
@@ -186,7 +186,7 @@ public class MvnProjectDefinition
             return new MvnProjectDefinition(myInBuffer);
 
             /* Catch exceptions */
-        } catch (JOceanusException
+        } catch (OceanusException
                 | IOException e) {
             /* Throw Exception */
             throw new JThemisIOException("Failed to load Project file for " + pFile.getAbsolutePath(), e);
@@ -195,9 +195,9 @@ public class MvnProjectDefinition
 
     /**
      * Parse dependencies.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void parseDependencies() throws JOceanusException {
+    private void parseDependencies() throws OceanusException {
         /* Obtain the dependency list */
         List<Dependency> myDependencies = theModel.getDependencies();
 
@@ -248,9 +248,9 @@ public class MvnProjectDefinition
     /**
      * Write to file stream.
      * @param pFile the file to write to
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void writeToFile(final File pFile) throws JOceanusException {
+    public void writeToFile(final File pFile) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* delete the file if it exists */

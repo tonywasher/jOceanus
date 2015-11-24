@@ -48,13 +48,13 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Static Data Table.
@@ -109,7 +109,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The new button.
@@ -197,7 +197,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         theNewButton = PrometheusIcons.getNewScrollButton();
 
         /* Create the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
@@ -224,7 +224,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -242,9 +242,9 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void refreshData() throws JOceanusException {
+    protected void refreshData() throws OceanusException {
         /* Access data */
         DataSet<?, E> myData = theControl.getData();
 
@@ -291,7 +291,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * The listener class.
      */
     private final class StaticListener
-            implements PropertyChangeListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, TethysChangeEventListener {
         /**
          * MenuBuilder.
          */
@@ -300,11 +300,11 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         /**
          * Menu Registration.
          */
-        private final JOceanusChangeRegistration theMenuReg;
+        private final TethysChangeRegistration theMenuReg;
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+        private final TethysChangeRegistration theUpdateSetReg;
 
         /**
          * Constructor.
@@ -320,7 +320,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Refresh the model */
@@ -361,7 +361,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                 notifyChanges();
 
                 /* Handle exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 setError(e);
             }
         }
@@ -456,7 +456,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         @Override
         public void setItemValue(final T pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -645,11 +645,11 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void setItemValue(final T pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
+                                  final Object pValue) throws OceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:

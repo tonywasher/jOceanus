@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for Loan.
@@ -101,7 +101,7 @@ public class SheetLoan
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Loan.OBJECT_NAME);
         myValues.addValue(Loan.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
@@ -116,7 +116,7 @@ public class SheetLoan
     }
 
     @Override
-    protected void insertSecureItem(final Loan pItem) throws JOceanusException {
+    protected void insertSecureItem(final Loan pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
@@ -139,12 +139,12 @@ public class SheetLoan
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static void processLoan(final ArchiveLoader pLoader,
                                       final MoneyWiseData pData,
                                       final DataView pView,
-                                      final DataRow pRow) throws JOceanusException {
+                                      final DataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();

@@ -49,15 +49,15 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -170,10 +170,10 @@ public class Transaction
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Transaction(final TransactionList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -184,10 +184,10 @@ public class Transaction
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDateDay((String) myValue));
             }
             /* Catch Exceptions */
@@ -241,7 +241,7 @@ public class Transaction
      * Obtain Date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return getDate(getValueSet());
     }
 
@@ -250,15 +250,15 @@ public class Transaction
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static JDateDay getDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATE, JDateDay.class);
+    public static TethysDate getDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
     /**
      * Set date value.
      * @param pValue the value
      */
-    private void setValueDate(final JDateDay pValue) {
+    private void setValueDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
     }
 
@@ -271,9 +271,9 @@ public class Transaction
      * Obtain Debit Units.
      * @return the Debit Units
      */
-    public final JUnits getDebitUnits() {
+    public final TethysUnits getDebitUnits() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.DEBITUNITS, JUnits.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.DEBITUNITS, TethysUnits.class)
                           : null;
     }
 
@@ -281,9 +281,9 @@ public class Transaction
      * Obtain Credit Units.
      * @return the Credit Units
      */
-    public final JUnits getCreditUnits() {
+    public final TethysUnits getCreditUnits() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.CREDITUNITS, JUnits.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.CREDITUNITS, TethysUnits.class)
                           : null;
     }
 
@@ -291,9 +291,9 @@ public class Transaction
      * Obtain Tax Credit.
      * @return the Tax Credit
      */
-    public final JMoney getTaxCredit() {
+    public final TethysMoney getTaxCredit() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.TAXCREDIT, JMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.TAXCREDIT, TethysMoney.class)
                           : null;
     }
 
@@ -301,9 +301,9 @@ public class Transaction
      * Obtain Dilution.
      * @return the Dilution
      */
-    public final JDilution getDilution() {
+    public final TethysDilution getDilution() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.DILUTION, JDilution.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.DILUTION, TethysDilution.class)
                           : null;
     }
 
@@ -321,9 +321,9 @@ public class Transaction
      * Obtain credit date.
      * @return the credit date
      */
-    public final JDateDay getCreditDate() {
+    public final TethysDate getCreditDate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.CREDITDATE, JDateDay.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.CREDITDATE, TethysDate.class)
                           : null;
     }
 
@@ -331,9 +331,9 @@ public class Transaction
      * Obtain National Insurance.
      * @return the NatInsurance
      */
-    public final JMoney getNatInsurance() {
+    public final TethysMoney getNatInsurance() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.NATINSURANCE, JMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.NATINSURANCE, TethysMoney.class)
                           : null;
     }
 
@@ -341,9 +341,9 @@ public class Transaction
      * Obtain Deemed Benefit.
      * @return the Benefit
      */
-    public final JMoney getDeemedBenefit() {
+    public final TethysMoney getDeemedBenefit() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.DEEMEDBENEFIT, JMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.DEEMEDBENEFIT, TethysMoney.class)
                           : null;
     }
 
@@ -351,9 +351,9 @@ public class Transaction
      * Obtain Pension.
      * @return the Pension
      */
-    public final JMoney getPension() {
+    public final TethysMoney getPension() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.PENSION, JMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.PENSION, TethysMoney.class)
                           : null;
     }
 
@@ -361,9 +361,9 @@ public class Transaction
      * Obtain Donation.
      * @return the Donation
      */
-    public final JMoney getCharityDonation() {
+    public final TethysMoney getCharityDonation() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.CHARITYDONATION, JMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.CHARITYDONATION, TethysMoney.class)
                           : null;
     }
 
@@ -401,9 +401,9 @@ public class Transaction
      * Obtain Partner Amount.
      * @return the Partner Amount
      */
-    public final JMoney getPartnerAmount() {
+    public final TethysMoney getPartnerAmount() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.PARTNERAMOUNT, JMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.PARTNERAMOUNT, TethysMoney.class)
                           : null;
     }
 
@@ -411,9 +411,9 @@ public class Transaction
      * Obtain Exchange Rate.
      * @return the Donation
      */
-    public final JRatio getExchangeRate() {
+    public final TethysRatio getExchangeRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, JRatio.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, TethysRatio.class)
                           : null;
     }
 
@@ -602,7 +602,7 @@ public class Transaction
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Transaction details */
         super.resolveDataSetLinks();
 
@@ -627,13 +627,13 @@ public class Transaction
      */
     @Override
     public void validate() {
-        JDateDay myDate = getDate();
+        TethysDate myDate = getDate();
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
-        JDilution myDilution = getDilution();
-        JUnits myDebitUnits = getDebitUnits();
-        JUnits myCreditUnits = getCreditUnits();
+        TethysDilution myDilution = getDilution();
+        TethysUnits myDebitUnits = getDebitUnits();
+        TethysUnits myCreditUnits = getCreditUnits();
 
         /* Header is always valid */
         if (isHeader()) {
@@ -643,7 +643,7 @@ public class Transaction
 
         /* Determine date range to check for */
         TransactionList myList = getList();
-        JDateDayRange myRange = myList.getValidDateRange();
+        TethysDateRange myRange = myList.getValidDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -705,7 +705,7 @@ public class Transaction
      * Calculate the tax credit for a transaction.
      * @return the calculated tax credit
      */
-    public final JMoney calculateTaxCredit() {
+    public final TethysMoney calculateTaxCredit() {
         MoneyWiseData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
 
@@ -723,7 +723,7 @@ public class Transaction
         TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
-        JRate myRate = isInterest()
+        TethysRate myRate = isInterest()
                                     ? myTax.getIntTaxRate()
                                     : myTax.getDivTaxRate();
 
@@ -735,153 +735,153 @@ public class Transaction
      * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(final JDateDay pDate) {
+    public void setDate(final TethysDate pDate) {
         setValueDate((pDate == null)
                                      ? null
-                                     : new JDateDay(pDate));
+                                     : new TethysDate(pDate));
     }
 
     /**
      * Set a new Debit Units.
      * @param pUnits the new units
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setDebitUnits(final JUnits pUnits) throws JOceanusException {
+    public final void setDebitUnits(final TethysUnits pUnits) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.DEBITUNITS, pUnits);
     }
 
     /**
      * Set a new Credit Units.
      * @param pUnits the new units
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setCreditUnits(final JUnits pUnits) throws JOceanusException {
+    public final void setCreditUnits(final TethysUnits pUnits) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.CREDITUNITS, pUnits);
     }
 
     /**
      * Set a new TaxCredit.
      * @param pCredit the new credit
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setTaxCredit(final JMoney pCredit) throws JOceanusException {
+    public final void setTaxCredit(final TethysMoney pCredit) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.TAXCREDIT, pCredit);
     }
 
     /**
      * Set a new Dilution.
      * @param pDilution the new dilution
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setDilution(final JDilution pDilution) throws JOceanusException {
+    public final void setDilution(final TethysDilution pDilution) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.DILUTION, pDilution);
     }
 
     /**
      * Set a new Qualifying Years.
      * @param pYears the new years
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setYears(final Integer pYears) throws JOceanusException {
+    public final void setYears(final Integer pYears) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.QUALIFYYEARS, pYears);
     }
 
     /**
      * Set a new Credit Date.
      * @param pCreditDate the new credit date
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setCreditDate(final JDateDay pCreditDate) throws JOceanusException {
+    public final void setCreditDate(final TethysDate pCreditDate) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.CREDITDATE, pCreditDate);
     }
 
     /**
      * Set a new NatInsurance.
      * @param pNatIns the new insurance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setNatInsurance(final JMoney pNatIns) throws JOceanusException {
+    public final void setNatInsurance(final TethysMoney pNatIns) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.NATINSURANCE, pNatIns);
     }
 
     /**
      * Set a new Benefit.
      * @param pBenefit the new benefit
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setBenefit(final JMoney pBenefit) throws JOceanusException {
+    public final void setBenefit(final TethysMoney pBenefit) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
     /**
      * Set a new Pension.
      * @param pPension the new pension
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setPension(final JMoney pPension) throws JOceanusException {
+    public final void setPension(final TethysMoney pPension) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.PENSION, pPension);
     }
 
     /**
      * Set a new Donation.
      * @param pDonation the new donation
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setDonation(final JMoney pDonation) throws JOceanusException {
+    public final void setDonation(final TethysMoney pDonation) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.CHARITYDONATION, pDonation);
     }
 
     /**
      * Set a new Partner Amount.
      * @param pValue the new partner amount
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setPartnerAmount(final JMoney pValue) throws JOceanusException {
+    public final void setPartnerAmount(final TethysMoney pValue) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.PARTNERAMOUNT, pValue);
     }
 
     /**
      * Set a new ExchangeRate.
      * @param pValue the new exchangeRate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setXchangeRate(final JRate pValue) throws JOceanusException {
+    public final void setXchangeRate(final TethysRate pValue) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.XCHANGERATE, pValue);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setReference(final String pReference) throws JOceanusException {
+    public final void setReference(final String pReference) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set new Comments.
      * @param pComments the new comments
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setComments(final String pComments) throws JOceanusException {
+    public final void setComments(final String pComments) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.COMMENTS, pComments);
     }
 
     /**
      * Set a new ThirdParty.
      * @param pParty the new thirdParty
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setThirdParty(final Deposit pParty) throws JOceanusException {
+    public final void setThirdParty(final Deposit pParty) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.THIRDPARTY, pParty);
     }
 
     /**
      * Set a transaction tag.
      * @param pTag the tag
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void setTransactionTag(final TransactionTag pTag) throws JOceanusException {
+    public final void setTransactionTag(final TransactionTag pTag) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -894,9 +894,9 @@ public class Transaction
     /**
      * Clear a transaction tag.
      * @param pTag the tag
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void clearTransactionTag(final TransactionTag pTag) throws JOceanusException {
+    public final void clearTransactionTag(final TransactionTag pTag) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -937,10 +937,10 @@ public class Transaction
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final TransactionInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -1116,7 +1116,7 @@ public class Transaction
         }
 
         @Override
-        public Transaction addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Transaction addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the transaction */
             Transaction myTrans = new Transaction(this, pValues);
 
@@ -1153,7 +1153,7 @@ public class Transaction
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
             resolveDataSetLinks();
             reSort();

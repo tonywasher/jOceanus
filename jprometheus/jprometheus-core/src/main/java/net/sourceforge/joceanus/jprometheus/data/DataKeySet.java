@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -132,10 +132,10 @@ public class DataKeySet
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DataKeySet(final DataKeySetList pList,
-                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+                       final DataValues<CryptographyDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -173,10 +173,10 @@ public class DataKeySet
 
         /* Store the CreationDate */
         myValue = pValues.getValue(FIELD_CREATEDATE);
-        if (!(myValue instanceof JDateDay)) {
-            myValue = new JDateDay();
+        if (!(myValue instanceof TethysDate)) {
+            myValue = new TethysDate();
         }
-        setValueCreationDate((JDateDay) myValue);
+        setValueCreationDate((TethysDate) myValue);
 
         /* Register the DataKeySet */
         myControl.registerDataKeySet(this);
@@ -186,10 +186,10 @@ public class DataKeySet
      * Constructor for a new DataKeySet. This will create a set of DataKeys.
      * @param pList the list to which to add the keySet to
      * @param pControlKey the control key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected DataKeySet(final DataKeySetList pList,
-                         final ControlKey pControlKey) throws JOceanusException {
+                         final ControlKey pControlKey) throws OceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -214,13 +214,13 @@ public class DataKeySet
             theFieldGenerator = new EncryptionGenerator(theKeySet, myFormatter);
 
             /* Set the creationDate */
-            setValueCreationDate(new JDateDay());
+            setValueCreationDate(new TethysDate());
 
             /* Allocate the DataKeys */
             allocateDataKeys(myData);
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
@@ -273,7 +273,7 @@ public class DataKeySet
      * Get the CreationDate.
      * @return the creationDate
      */
-    public final JDateDay getCreationDate() {
+    public final TethysDate getCreationDate() {
         return getCreationDate(getValueSet());
     }
 
@@ -291,8 +291,8 @@ public class DataKeySet
      * @param pValueSet the valueSet
      * @return the creationDate
      */
-    public static JDateDay getCreationDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CREATEDATE, JDateDay.class);
+    public static TethysDate getCreationDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CREATEDATE, TethysDate.class);
     }
 
     /**
@@ -306,9 +306,9 @@ public class DataKeySet
     /**
      * Get the keySetHash.
      * @return the keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHash getKeySetHash() throws JOceanusException {
+    protected GordianKeySetHash getKeySetHash() throws OceanusException {
         return getControlKey().getKeySetHash();
     }
 
@@ -316,9 +316,9 @@ public class DataKeySet
      * Get the PassWordHash.
      * @param useHashPrime true/false
      * @return the passwordHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHash getKeySetHash(final Boolean useHashPrime) throws JOceanusException {
+    protected GordianKeySetHash getKeySetHash(final Boolean useHashPrime) throws OceanusException {
         return getControlKey().getKeySetHash(useHashPrime);
     }
 
@@ -342,15 +342,15 @@ public class DataKeySet
      * Set the CreationDate.
      * @param pValue the creationDate
      */
-    private void setValueCreationDate(final JDateDay pValue) {
+    private void setValueCreationDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_CREATEDATE, pValue);
     }
 
     /**
      * Resolve the Active HashKey.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected final void resolveHash() throws JOceanusException {
+    protected final void resolveHash() throws OceanusException {
         getControlKey().resolveHash();
     }
 
@@ -379,7 +379,7 @@ public class DataKeySet
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
@@ -392,9 +392,9 @@ public class DataKeySet
     /**
      * Allocate a new set of DataKeys.
      * @param pData the DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void allocateDataKeys(final DataSet<?, ?> pData) throws JOceanusException {
+    private void allocateDataKeys(final DataSet<?, ?> pData) throws OceanusException {
         /* Access the DataKey List */
         DataKeyList myKeys = pData.getDataKeys();
         setNewVersion();
@@ -439,10 +439,10 @@ public class DataKeySet
      * @param pPrimeHash this is the prime hash
      * @param pHash the new keySetHash
      * @return were there changes? true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected boolean updateKeySetHash(final Boolean pPrimeHash,
-                                       final GordianKeySetHash pHash) throws JOceanusException {
+                                       final GordianKeySetHash pHash) throws OceanusException {
         /* Loop through the SymKeyType values */
         boolean bChanges = false;
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
@@ -462,9 +462,9 @@ public class DataKeySet
     /**
      * Register DataKey.
      * @param pKey the DataKey to register
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void registerDataKey(final DataKey pKey) throws JOceanusException {
+    protected void registerDataKey(final DataKey pKey) throws OceanusException {
         /* Store the DataKey into the map */
         theMap.put(pKey.getKeyType(), pKey);
 
@@ -536,7 +536,7 @@ public class DataKeySet
         }
 
         @Override
-        public DataKeySetList deriveList(final ListStyle pStyle) throws JOceanusException {
+        public DataKeySetList deriveList(final ListStyle pStyle) throws OceanusException {
             return (DataKeySetList) super.deriveList(pStyle);
         }
 
@@ -565,7 +565,7 @@ public class DataKeySet
         }
 
         @Override
-        public DataKeySet addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        public DataKeySet addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the dataKeySet */
             DataKeySet mySet = new DataKeySet(this, pValues);
 
@@ -587,10 +587,10 @@ public class DataKeySet
          * @param pControlKey the ControlKey to clone
          * @param pKeySet the DataKeySet to clone
          * @return the new DataKeySet
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected DataKeySet cloneDataKeySet(final ControlKey pControlKey,
-                                             final DataKeySet pKeySet) throws JOceanusException {
+                                             final DataKeySet pKeySet) throws OceanusException {
             /* Build data values */
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKeySet.OBJECT_NAME);
             myValues.addValue(DataKeySet.FIELD_ID, pKeySet.getId());
@@ -631,7 +631,7 @@ public class DataKeySet
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Just sort the list */
             reSort();
         }

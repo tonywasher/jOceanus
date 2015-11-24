@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValue
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,7 +85,7 @@ public class TaxationBasis
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
-        JDateDayRange myRange = pAnalysis.getDateRange();
+        TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         TaxBasisBucket myTotals = myTaxBasis.getTotals();
@@ -111,8 +111,8 @@ public class TaxationBasis
 
             /* Access the amount */
             TaxBasisValues myValues = myBucket.getValues();
-            JMoney myGross = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
-            JMoney myNett = myValues.getMoneyValue(TaxBasisAttribute.NETT);
+            TethysMoney myGross = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            TethysMoney myNett = myValues.getMoneyValue(TaxBasisAttribute.NETT);
 
             /* If we have a non-zero value */
             if (myGross.isNonZero()) {

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * DepositCategoryType data type.
@@ -66,10 +66,10 @@ public class DepositCategoryType
      * Basic constructor.
      * @param pList The list to associate the Deposit Category Type with
      * @param pName Name of Deposit Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DepositCategoryType(final DepositCategoryTypeList pList,
-                                final String pName) throws JOceanusException {
+                                final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class DepositCategoryType
      * Basic constructor.
      * @param pList The list to associate the Deposit Category Type with
      * @param pClass Class of Deposit Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DepositCategoryType(final DepositCategoryTypeList pList,
-                                final DepositCategoryClass pClass) throws JOceanusException {
+                                final DepositCategoryClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class DepositCategoryType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DepositCategoryType(final DepositCategoryTypeList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -208,9 +208,9 @@ public class DepositCategoryType
         /**
          * Add a DepositCategoryType to the list.
          * @param pDepCatType the Name of the account category type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pDepCatType) throws JOceanusException {
+        public void addBasicItem(final String pDepCatType) throws OceanusException {
             /* Create a new Deposit Category Type */
             DepositCategoryType myDepType = new DepositCategoryType(this, pDepCatType);
 
@@ -225,7 +225,7 @@ public class DepositCategoryType
         }
 
         @Override
-        public DepositCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public DepositCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             DepositCategoryType myType = new DepositCategoryType(this, pValues);
 
@@ -243,7 +243,7 @@ public class DepositCategoryType
         }
 
         @Override
-        protected DepositCategoryType newItem(final DepositCategoryClass pClass) throws JOceanusException {
+        protected DepositCategoryType newItem(final DepositCategoryClass pClass) throws OceanusException {
             /* Create the type */
             DepositCategoryType myType = new DepositCategoryType(this, pClass);
 

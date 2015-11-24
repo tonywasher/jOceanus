@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class for assembling/disassembling KeySetHashes.
@@ -75,9 +75,9 @@ public final class GordianKeySetHashRecipe {
     /**
      * Constructor for random choices.
      * @param pFactory the factory
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHashRecipe(final GordianFactory pFactory) throws JOceanusException {
+    protected GordianKeySetHashRecipe(final GordianFactory pFactory) throws OceanusException {
         /* Access the secureRandom */
         SecureRandom myRandom = pFactory.getRandom();
 
@@ -99,11 +99,11 @@ public final class GordianKeySetHashRecipe {
      * @param pFactory the factory
      * @param pPassLength the password length
      * @param pExternal the external form
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianKeySetHashRecipe(final GordianFactory pFactory,
                                       final int pPassLength,
-                                      final byte[] pExternal) throws JOceanusException {
+                                      final byte[] pExternal) throws OceanusException {
         /* Determine hash length */
         int myLen = pExternal.length;
         int myHashLen = myLen
@@ -247,9 +247,9 @@ public final class GordianKeySetHashRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private HashParameters(final GordianFactory pFactory) throws JOceanusException {
+        private HashParameters(final GordianFactory pFactory) throws OceanusException {
             /* Obtain Digest list */
             GordianIdManager myManager = pFactory.getIdManager();
             GordianDigestType[] myDigests = myManager.generateRandomDigestTypes(NUM_DIGESTS, pFactory.supportedDigests());
@@ -261,55 +261,55 @@ public final class GordianKeySetHashRecipe {
 
             /* Access random adjustment value */
             SecureRandom myRandom = pFactory.getRandom();
-            theAdjust = myRandom.nextInt(DataConverter.NYBBLE_MASK + 1);
+            theAdjust = myRandom.nextInt(TethysDataConverter.NYBBLE_MASK + 1);
         }
 
         /**
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private HashParameters(final GordianFactory pFactory,
-                               final byte[] pRecipe) throws JOceanusException {
+                               final byte[] pRecipe) throws OceanusException {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
             /* Access prime and alternate digests */
             int i = 0;
             byte myValue = pRecipe[i++];
-            int myId = (myValue >> DataConverter.NYBBLE_SHIFT)
-                       & DataConverter.NYBBLE_MASK;
+            int myId = (myValue >> TethysDataConverter.NYBBLE_SHIFT)
+                       & TethysDataConverter.NYBBLE_MASK;
             thePrimeDigest = myManager.deriveDigestTypeFromExternalId(myId);
             myId = myValue
-                   & DataConverter.NYBBLE_MASK;
+                   & TethysDataConverter.NYBBLE_MASK;
             theAlternateDigest = myManager.deriveDigestTypeFromExternalId(myId);
 
             /* Access secret and cipher digests */
             myValue = pRecipe[i];
-            myId = (myValue >> DataConverter.NYBBLE_SHIFT)
-                   & DataConverter.NYBBLE_MASK;
+            myId = (myValue >> TethysDataConverter.NYBBLE_SHIFT)
+                   & TethysDataConverter.NYBBLE_MASK;
             theSecretDigest = myManager.deriveDigestTypeFromExternalId(myId);
             theAdjust = myValue
-                        & DataConverter.NYBBLE_MASK;
+                        & TethysDataConverter.NYBBLE_MASK;
         }
 
         /**
          * Construct the external recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes to build
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void buildRecipe(final GordianFactory pFactory,
-                                 final byte[] pRecipe) throws JOceanusException {
+                                 final byte[] pRecipe) throws OceanusException {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
             /* Build the recipe */
             int i = 0;
-            pRecipe[i++] = (byte) ((myManager.deriveExternalIdFromDigestType(thePrimeDigest) << DataConverter.NYBBLE_SHIFT)
+            pRecipe[i++] = (byte) ((myManager.deriveExternalIdFromDigestType(thePrimeDigest) << TethysDataConverter.NYBBLE_SHIFT)
                                    + myManager.deriveExternalIdFromDigestType(theAlternateDigest));
-            pRecipe[i] = (byte) ((myManager.deriveExternalIdFromDigestType(theSecretDigest) << DataConverter.NYBBLE_SHIFT) + theAdjust);
+            pRecipe[i] = (byte) ((myManager.deriveExternalIdFromDigestType(theSecretDigest) << TethysDataConverter.NYBBLE_SHIFT) + theAdjust);
         }
 
         /**

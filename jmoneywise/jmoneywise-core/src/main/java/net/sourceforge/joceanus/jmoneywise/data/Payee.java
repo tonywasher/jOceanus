@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Payee class.
@@ -139,10 +139,10 @@ public class Payee
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Payee(final PayeeList pList,
-                  final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                  final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -510,9 +510,9 @@ public class Payee
 
     /**
      * Set defaults.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults() throws JOceanusException {
+    public void setDefaults() throws OceanusException {
         /* Set values */
         setPayeeType(getDefaultPayeeType());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
@@ -570,7 +570,7 @@ public class Payee
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Base details */
         super.resolveDataSetLinks();
 
@@ -590,72 +590,72 @@ public class Payee
     /**
      * Set a new WebSite.
      * @param pWebSite the new webSite
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setWebSite(final char[] pWebSite) throws JOceanusException {
+    public void setWebSite(final char[] pWebSite) throws OceanusException {
         setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
     }
 
     /**
      * Set a new CustNo.
      * @param pCustNo the new custNo
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setCustNo(final char[] pCustNo) throws JOceanusException {
+    public void setCustNo(final char[] pCustNo) throws OceanusException {
         setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
     }
 
     /**
      * Set a new UserId.
      * @param pUserId the new userId
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setUserId(final char[] pUserId) throws JOceanusException {
+    public void setUserId(final char[] pUserId) throws OceanusException {
         setInfoSetValue(AccountInfoClass.USERID, pUserId);
     }
 
     /**
      * Set a new Password.
      * @param pPassword the new password
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setPassword(final char[] pPassword) throws JOceanusException {
+    public void setPassword(final char[] pPassword) throws OceanusException {
         setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
     }
 
     /**
      * Set a new SortCode.
      * @param pSortCode the new sort code
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setSortCode(final char[] pSortCode) throws JOceanusException {
+    public void setSortCode(final char[] pSortCode) throws OceanusException {
         setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
     }
 
     /**
      * Set a new Account.
      * @param pAccount the new account
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAccount(final char[] pAccount) throws JOceanusException {
+    public void setAccount(final char[] pAccount) throws OceanusException {
         setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setReference(final char[] pReference) throws JOceanusException {
+    public void setReference(final char[] pReference) throws OceanusException {
         setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
@@ -663,10 +663,10 @@ public class Payee
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -952,7 +952,7 @@ public class Payee
         }
 
         @Override
-        public Payee addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Payee addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the payee */
             Payee myPayee = new Payee(this, pValues);
 

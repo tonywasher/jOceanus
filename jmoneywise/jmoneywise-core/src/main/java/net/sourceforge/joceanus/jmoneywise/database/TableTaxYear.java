@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * DatabaseTable extension for TaxYear.
@@ -71,7 +71,7 @@ public class TableTaxYear
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -86,7 +86,7 @@ public class TableTaxYear
 
     @Override
     protected void setFieldValue(final TaxYear pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (TaxYearBase.FIELD_TAXYEAR.equals(iField)) {

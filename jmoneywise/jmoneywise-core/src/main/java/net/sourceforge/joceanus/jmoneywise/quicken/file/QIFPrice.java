@@ -29,8 +29,8 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * Class representing a QIF Price record.
@@ -65,12 +65,12 @@ public class QIFPrice
     /**
      * The date.
      */
-    private final JDateDay theDate;
+    private final TethysDate theDate;
 
     /**
      * The price.
      */
-    private final JPrice thePrice;
+    private final TethysPrice thePrice;
 
     /**
      * The element list.
@@ -163,7 +163,7 @@ public class QIFPrice
      * Obtain the date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theDate;
     }
 
@@ -171,7 +171,7 @@ public class QIFPrice
      * Obtain the price.
      * @return the security
      */
-    public JPrice getPrice() {
+    public TethysPrice getPrice() {
         return thePrice;
     }
 

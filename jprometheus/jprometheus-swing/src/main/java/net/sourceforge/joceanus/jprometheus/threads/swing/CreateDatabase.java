@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped and redefined. Existing loaded data will be marked as new so
@@ -68,7 +68,7 @@ public class CreateDatabase<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JOceanusException {
+    public Void performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Creating Database");
 

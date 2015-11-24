@@ -80,8 +80,8 @@ import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
 
 /**
  * MoneyWise dataSet.
@@ -116,7 +116,7 @@ public class MoneyWiseData
     /**
      * DataSet range.
      */
-    private JDateDayRange theDateRange = null;
+    private TethysDateRange theDateRange = null;
 
     /**
      * Default Currency.
@@ -529,7 +529,7 @@ public class MoneyWiseData
      * Obtain Date range.
      * @return the Date Range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theDateRange;
     }
 
@@ -681,7 +681,7 @@ public class MoneyWiseData
     }
 
     @Override
-    public MoneyWiseData deriveUpdateSet() throws JOceanusException {
+    public MoneyWiseData deriveUpdateSet() throws OceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myExtract = new MoneyWiseData(this);
 
@@ -693,7 +693,7 @@ public class MoneyWiseData
     }
 
     @Override
-    public MoneyWiseData deriveCloneSet() throws JOceanusException {
+    public MoneyWiseData deriveCloneSet() throws OceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myExtract = new MoneyWiseData(this);
 
@@ -715,11 +715,11 @@ public class MoneyWiseData
      * @param pTask the task control
      * @param pOld The DataSet to compare to
      * @return the difference extract
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     @Override
     public MoneyWiseData getDifferenceSet(final TaskControl<MoneyWiseData> pTask,
-                                          final MoneyWiseData pOld) throws JOceanusException {
+                                          final MoneyWiseData pOld) throws OceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myDiffers = new MoneyWiseData(this);
 
@@ -740,9 +740,9 @@ public class MoneyWiseData
 
     /**
      * Initialise the analysis.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void initialiseAnalysis() throws JOceanusException {
+    public void initialiseAnalysis() throws OceanusException {
         /* Loop through the list types */
         Iterator<Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {

@@ -23,15 +23,15 @@
 package net.sourceforge.joceanus.jmetis.sheet;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute;
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute.Value;
@@ -147,10 +147,10 @@ public class OasisCell
      * @param pSource the string to parse.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private <T> T parseValue(final String pSource,
-                             final Class<T> pClass) throws JOceanusException {
+                             final Class<T> pClass) throws OceanusException {
         OasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pClass);
@@ -167,10 +167,10 @@ public class OasisCell
      * @param pSource the double value.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private <T> T parseValue(final Double pSource,
-                             final Class<T> pClass) throws JOceanusException {
+                             final Class<T> pClass) throws OceanusException {
         OasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pClass);
@@ -188,11 +188,11 @@ public class OasisCell
      * @param pCurrCode the currency code.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private <T> T parseValue(final Double pSource,
                              final String pCurrCode,
-                             final Class<T> pClass) throws JOceanusException {
+                             final Class<T> pClass) throws OceanusException {
         OasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pCurrCode, pClass);
@@ -225,17 +225,17 @@ public class OasisCell
     }
 
     @Override
-    public JDateDay getDateValue() throws JOceanusException {
+    public TethysDate getDateValue() throws OceanusException {
         switch (getValueType()) {
             case DATE:
-                return parseValue(theOasisCell.getOfficeDateValueAttribute(), JDateDay.class);
+                return parseValue(theOasisCell.getOfficeDateValueAttribute(), TethysDate.class);
             default:
                 return null;
         }
     }
 
     @Override
-    public Integer getIntegerValue() throws JOceanusException {
+    public Integer getIntegerValue() throws OceanusException {
         switch (getValueType()) {
             case FLOAT:
                 return theOasisCell.getOfficeValueAttribute().intValue();
@@ -245,65 +245,65 @@ public class OasisCell
     }
 
     @Override
-    public JMoney getMoneyValue() throws JOceanusException {
+    public TethysMoney getMoneyValue() throws OceanusException {
         switch (getValueType()) {
             case CURRENCY:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JMoney.class);
+                return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), TethysMoney.class);
             case FLOAT:
-                return parseValue(getTextContent(), JMoney.class);
+                return parseValue(getTextContent(), TethysMoney.class);
             default:
                 return null;
         }
     }
 
     @Override
-    public JPrice getPriceValue() throws JOceanusException {
+    public TethysPrice getPriceValue() throws OceanusException {
         switch (getValueType()) {
             case CURRENCY:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JPrice.class);
+                return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), TethysPrice.class);
             case FLOAT:
-                return parseValue(getTextContent(), JPrice.class);
+                return parseValue(getTextContent(), TethysPrice.class);
             default:
                 return null;
         }
     }
 
     @Override
-    public JRate getRateValue() throws JOceanusException {
+    public TethysRate getRateValue() throws OceanusException {
         switch (getValueType()) {
             case PERCENTAGE:
             case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), JRate.class);
+                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysRate.class);
             default:
                 return null;
         }
     }
 
     @Override
-    public JUnits getUnitsValue() throws JOceanusException {
+    public TethysUnits getUnitsValue() throws OceanusException {
         switch (getValueType()) {
             case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), JUnits.class);
+                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysUnits.class);
             default:
                 return null;
         }
     }
 
     @Override
-    public JDilution getDilutionValue() throws JOceanusException {
+    public TethysDilution getDilutionValue() throws OceanusException {
         switch (getValueType()) {
             case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), JDilution.class);
+                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysDilution.class);
             default:
                 return null;
         }
     }
 
     @Override
-    public JRatio getRatioValue() throws JOceanusException {
+    public TethysRatio getRatioValue() throws OceanusException {
         switch (getValueType()) {
             case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), JRatio.class);
+                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysRatio.class);
             default:
                 return null;
         }
@@ -342,7 +342,7 @@ public class OasisCell
     }
 
     @Override
-    public void setNullValue() throws JOceanusException {
+    public void setNullValue() throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove Cell content */
@@ -373,7 +373,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) throws JOceanusException {
+    protected void setBoolean(final Boolean pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -387,7 +387,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setDate(final JDateDay pValue) throws JOceanusException {
+    protected void setDate(final TethysDate pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -401,7 +401,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setInteger(final Integer pValue) throws JOceanusException {
+    protected void setInteger(final Integer pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -415,7 +415,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setString(final String pValue) throws JOceanusException {
+    protected void setString(final String pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -429,14 +429,14 @@ public class OasisCell
     }
 
     @Override
-    protected void setDecimal(final JDecimal pValue) throws JOceanusException {
+    protected void setDecimal(final TethysDecimal pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
             removeCellContent();
 
             /* Set value type and value */
-            theOasisCell.setOfficeValueTypeAttribute((pValue instanceof JRate)
+            theOasisCell.setOfficeValueTypeAttribute((pValue instanceof TethysRate)
                                                                               ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
                                                                               : OfficeValueTypeAttribute.Value.FLOAT.toString());
             theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
@@ -448,7 +448,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setMonetary(final JMoney pValue) throws JOceanusException {
+    protected void setMonetary(final TethysMoney pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -466,7 +466,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setHeader(final String pValue) throws JOceanusException {
+    protected void setHeader(final String pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */

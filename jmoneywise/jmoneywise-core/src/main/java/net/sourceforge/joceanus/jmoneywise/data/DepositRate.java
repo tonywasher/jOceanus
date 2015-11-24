@@ -48,10 +48,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * DepositRate data type.
@@ -123,10 +123,10 @@ public class DepositRate
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DepositRate(final DepositRateList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -145,40 +145,40 @@ public class DepositRate
 
             /* Store the Rate */
             myValue = pValues.getValue(FIELD_RATE);
-            if (myValue instanceof JRate) {
-                setValueRate((JRate) myValue);
+            if (myValue instanceof TethysRate) {
+                setValueRate((TethysRate) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueRate((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueRate(myString);
-                setValueRate(myFormatter.parseValue(myString, JRate.class));
+                setValueRate(myFormatter.parseValue(myString, TethysRate.class));
             }
 
             /* Store the Bonus */
             myValue = pValues.getValue(FIELD_BONUS);
-            if (myValue instanceof JRate) {
-                setValueBonus((JRate) myValue);
+            if (myValue instanceof TethysRate) {
+                setValueBonus((TethysRate) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueBonus((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueBonus(myString);
-                setValueBonus(myFormatter.parseValue(myString, JRate.class));
+                setValueBonus(myFormatter.parseValue(myString, TethysRate.class));
             }
 
             /* Store the EndDate */
             myValue = pValues.getValue(FIELD_ENDDATE);
-            if (myValue instanceof JDateDay) {
-                setValueEndDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueEndDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueEndDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Catch Exceptions */
         } catch (IllegalArgumentException
-                | JOceanusException e) {
+                | OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -243,7 +243,7 @@ public class DepositRate
      * Obtain Rate.
      * @return the rate
      */
-    public JRate getRate() {
+    public TethysRate getRate() {
         return getRate(getValueSet());
     }
 
@@ -267,7 +267,7 @@ public class DepositRate
      * Obtain Bonus.
      * @return the bonus rate
      */
-    public JRate getBonus() {
+    public TethysRate getBonus() {
         return getBonus(getValueSet());
     }
 
@@ -291,7 +291,7 @@ public class DepositRate
      * Obtain date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return getEndDate();
     }
 
@@ -299,7 +299,7 @@ public class DepositRate
      * Obtain End Date.
      * @return the End Date
      */
-    public JDateDay getEndDate() {
+    public TethysDate getEndDate() {
         return getEndDate(getValueSet());
     }
 
@@ -347,8 +347,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Rate
      */
-    public static JRate getRate(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_RATE, JRate.class);
+    public static TethysRate getRate(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_RATE, TethysRate.class);
     }
 
     /**
@@ -374,8 +374,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bonus
      */
-    public static JRate getBonus(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_BONUS, JRate.class);
+    public static TethysRate getBonus(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_BONUS, TethysRate.class);
     }
 
     /**
@@ -401,8 +401,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the End Date
      */
-    public static JDateDay getEndDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ENDDATE, JDateDay.class);
+    public static TethysDate getEndDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ENDDATE, TethysDate.class);
     }
 
     /**
@@ -432,19 +432,19 @@ public class DepositRate
     /**
      * Set the rate.
      * @param pValue the rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueRate(final JRate pValue) throws JOceanusException {
+    private void setValueRate(final TethysRate pValue) throws OceanusException {
         setEncryptedValue(FIELD_RATE, pValue);
     }
 
     /**
      * Set the rate.
      * @param pBytes the encrypted rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueRate(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_RATE, pBytes, JRate.class);
+    private void setValueRate(final byte[] pBytes) throws OceanusException {
+        setEncryptedValue(FIELD_RATE, pBytes, TethysRate.class);
     }
 
     /**
@@ -466,19 +466,19 @@ public class DepositRate
     /**
      * Set the bonus rate.
      * @param pValue the bonus rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueBonus(final JRate pValue) throws JOceanusException {
+    private void setValueBonus(final TethysRate pValue) throws OceanusException {
         setEncryptedValue(FIELD_BONUS, pValue);
     }
 
     /**
      * Set the encrypted bonus.
      * @param pBytes the encrypted bonus
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueBonus(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_BONUS, pBytes, JRate.class);
+    private void setValueBonus(final byte[] pBytes) throws OceanusException {
+        setEncryptedValue(FIELD_BONUS, pBytes, TethysRate.class);
     }
 
     /**
@@ -501,7 +501,7 @@ public class DepositRate
      * Set the end date.
      * @param pValue the date
      */
-    private void setValueEndDate(final JDateDay pValue) {
+    private void setValueEndDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_ENDDATE, pValue);
     }
 
@@ -560,7 +560,7 @@ public class DepositRate
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -572,9 +572,9 @@ public class DepositRate
     /**
      * Resolve links in an updateSet.
      * @param pUpdateSet the update Set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
         resolveDataLink(FIELD_DEPOSIT, myDeposits);
@@ -586,9 +586,9 @@ public class DepositRate
     @Override
     public void validate() {
         DepositRateList myList = getList();
-        JDateDay myDate = getEndDate();
-        JRate myRate = getRate();
-        JRate myBonus = getBonus();
+        TethysDate myDate = getEndDate();
+        TethysRate myRate = getRate();
+        TethysRate myBonus = getBonus();
 
         /* Count instances of this date for the account */
         DepositRateDataMap myMap = myList.getDataMap();
@@ -632,18 +632,18 @@ public class DepositRate
     /**
      * Set a new rate.
      * @param pRate the rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setRate(final JRate pRate) throws JOceanusException {
+    public void setRate(final TethysRate pRate) throws OceanusException {
         setValueRate(pRate);
     }
 
     /**
      * Set a new bonus.
      * @param pBonus the rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setBonus(final JRate pBonus) throws JOceanusException {
+    public void setBonus(final TethysRate pBonus) throws OceanusException {
         setValueBonus(pBonus);
     }
 
@@ -651,10 +651,10 @@ public class DepositRate
      * Set a new date.
      * @param pDate the new date
      */
-    public void setEndDate(final JDateDay pDate) {
+    public void setEndDate(final TethysDate pDate) {
         setValueEndDate(pDate == null
                                      ? null
-                                     : new JDateDay(pDate));
+                                     : new TethysDate(pDate));
     }
 
     @Override
@@ -774,9 +774,9 @@ public class DepositRate
          * Construct an edit extract of a Rate list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public DepositRateList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public DepositRateList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             DepositRateList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -828,7 +828,7 @@ public class DepositRate
         }
 
         @Override
-        public DepositRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public DepositRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the rate */
             DepositRate myRate = new DepositRate(this, pValues);
 
@@ -874,7 +874,7 @@ public class DepositRate
         /**
          * Map of Maps.
          */
-        private final Map<Deposit, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<Deposit, Map<TethysDate, Integer>> theMapOfMaps;
 
         /**
          * Map of Rates.
@@ -886,7 +886,7 @@ public class DepositRate
          */
         public DepositRateDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Deposit, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<Deposit, Map<TethysDate, Integer>>();
             theMapOfRates = new HashMap<Deposit, RateList>();
         }
 
@@ -929,14 +929,14 @@ public class DepositRate
             }
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myDeposit);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap == null) {
-                myMap = new HashMap<JDateDay, Integer>();
+                myMap = new HashMap<TethysDate, Integer>();
                 theMapOfMaps.put(myDeposit, myMap);
             }
 
             /* Adjust rate count */
-            JDateDay myDate = pItem.getEndDate();
+            TethysDate myDate = pItem.getEndDate();
             Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
@@ -963,10 +963,10 @@ public class DepositRate
         public boolean validRateCount(final DepositRate pItem) {
             /* Access the Details */
             Deposit myDeposit = pItem.getDeposit();
-            JDateDay myDate = pItem.getEndDate();
+            TethysDate myDate = pItem.getEndDate();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myDeposit);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
@@ -981,9 +981,9 @@ public class DepositRate
          * @return true/false
          */
         public boolean availableDate(final Deposit pDeposit,
-                                     final JDateDay pDate) {
+                                     final TethysDate pDate) {
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pDeposit);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(pDeposit);
             return myMap != null
                                 ? myMap.get(pDate) == null
                                 : true;
@@ -996,7 +996,7 @@ public class DepositRate
          * @return the latest rate for the date.
          */
         public DepositRate getRateForDate(final Deposit pDeposit,
-                                          final JDateDay pDate) {
+                                          final TethysDate pDate) {
             /* Access list for deposit */
             RateList myList = theMapOfRates.get(pDeposit);
             if (myList != null) {
@@ -1006,7 +1006,7 @@ public class DepositRate
                     DepositRate myCurr = myIterator.previous();
 
                     /* Access the date */
-                    JDateDay myDate = myCurr.getDate();
+                    TethysDate myDate = myCurr.getDate();
 
                     /* break loop if we have the correct record */
                     if ((myDate == null)

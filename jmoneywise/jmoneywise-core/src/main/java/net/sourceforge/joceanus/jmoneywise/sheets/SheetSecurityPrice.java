@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * SheetDataItem extension for SecurityPrice.
@@ -90,7 +90,7 @@ public class SheetSecurityPrice
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
         myValues.addValue(SecurityPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
@@ -102,7 +102,7 @@ public class SheetSecurityPrice
     }
 
     @Override
-    protected void insertSecureItem(final SecurityPrice pItem) throws JOceanusException {
+    protected void insertSecureItem(final SecurityPrice pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_SECURITY, pItem.getSecurityId());
@@ -123,12 +123,12 @@ public class SheetSecurityPrice
      * @param pLoader the archive loader
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of prices */
         SecurityPriceList myList = pData.getSecurityPrices();
 
@@ -164,7 +164,7 @@ public class SheetSecurityPrice
 
                 /* Access date */
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
-                JDateDay myDate = myCell.getDateValue();
+                TethysDate myDate = myCell.getDateValue();
 
                 /* If the price is too late */
                 if (!pLoader.checkDate(myDate)) {
@@ -209,7 +209,7 @@ public class SheetSecurityPrice
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 

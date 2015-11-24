@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QAccountLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Class representing a QIF Account record.
@@ -215,7 +215,7 @@ public class QIFAccount
                         myClass = myQLine.getAccountClass();
                         break;
                     case CREDITLIMIT:
-                        JMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        TethysMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
                         addLine(new QIFAccountLimitLine(myMoney));
                         break;
                     default:
@@ -419,7 +419,7 @@ public class QIFAccount
          * Constructor.
          * @param pLimit the Credit Limit
          */
-        protected QIFAccountLimitLine(final JMoney pLimit) {
+        protected QIFAccountLimitLine(final TethysMoney pLimit) {
             /* Call super-constructor */
             super(pLimit);
         }
@@ -433,7 +433,7 @@ public class QIFAccount
          * Obtain credit limit.
          * @return the credit limit
          */
-        public JMoney getCreditLimit() {
+        public TethysMoney getCreditLimit() {
             return getMoney();
         }
     }

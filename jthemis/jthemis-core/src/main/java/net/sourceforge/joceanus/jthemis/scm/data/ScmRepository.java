@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
 
@@ -99,9 +99,9 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
     /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public ScmRepository(final PreferenceManager pPreferenceMgr) throws JOceanusException {
+    public ScmRepository(final PreferenceManager pPreferenceMgr) throws OceanusException {
         /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
 

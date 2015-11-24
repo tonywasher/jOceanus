@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to change the password. The user will be prompted for a new password and this will be used to create a new Password Hash. The controlKey will be
@@ -69,7 +69,7 @@ public class UpdatePassword<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public T performTask() throws JOceanusException {
+    public T performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Updating Password");
 

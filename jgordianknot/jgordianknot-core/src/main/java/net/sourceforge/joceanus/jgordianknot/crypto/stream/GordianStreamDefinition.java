@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Stream definition.
@@ -79,15 +79,15 @@ public final class GordianStreamDefinition {
      * @param pTypeDef the type definition
      * @param pInitVector the IV
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public GordianStreamDefinition(final long pExternalId,
                                    final byte[] pTypeDef,
                                    final byte[] pInitVector,
-                                   final byte[] pValue) throws JOceanusException {
-        int myStreamId = (int) (pExternalId & DataConverter.NYBBLE_MASK);
+                                   final byte[] pValue) throws OceanusException {
+        int myStreamId = (int) (pExternalId & TethysDataConverter.NYBBLE_MASK);
         theType = StreamType.fromId(myStreamId);
-        theTypeId = (int) pExternalId >> DataConverter.NYBBLE_SHIFT;
+        theTypeId = (int) pExternalId >> TethysDataConverter.NYBBLE_SHIFT;
         theTypeDefinition = pTypeDef;
         theInitVector = pInitVector;
         theValue = pValue;
@@ -98,10 +98,10 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pKeySet the KeySet
      * @param pStream the DigestOutputStream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianStreamDefinition(final GordianKeySet pKeySet,
-                                      final GordianDigestOutputStream pStream) throws JOceanusException {
+                                      final GordianDigestOutputStream pStream) throws OceanusException {
         theType = StreamType.DIGEST;
         GordianDigest myDigest = pStream.getDigest();
         theTypeId = pKeySet.deriveExternalIdForType(myDigest.getDigestType());
@@ -115,10 +115,10 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pKeySet the KeySet
      * @param pStream the MacOutputStream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianStreamDefinition(final GordianKeySet pKeySet,
-                                      final GordianMacOutputStream pStream) throws JOceanusException {
+                                      final GordianMacOutputStream pStream) throws OceanusException {
         theType = StreamType.MAC;
         GordianMac myMac = pStream.getMac();
         theTypeId = pKeySet.deriveExternalIdForType(myMac.getMacSpec());
@@ -132,10 +132,10 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pKeySet the KeySet
      * @param pStream the CipherOutputStream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianStreamDefinition(final GordianKeySet pKeySet,
-                                      final GordianCipherOutputStream<?> pStream) throws JOceanusException {
+                                      final GordianCipherOutputStream<?> pStream) throws OceanusException {
         GordianCipher<?> myCipher = pStream.getCipher();
         if (pStream.isSymKeyStream()) {
             theType = StreamType.SYMMETRIC;
@@ -153,9 +153,9 @@ public final class GordianStreamDefinition {
     /**
      * Constructor.
      * @param pStream the LZMAOutputStream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianStreamDefinition(final GordianLZMAOutputStream pStream) throws JOceanusException {
+    protected GordianStreamDefinition(final GordianLZMAOutputStream pStream) throws OceanusException {
         theType = StreamType.LZMA;
         theTypeId = 0;
         theTypeDefinition = null;
@@ -169,7 +169,7 @@ public final class GordianStreamDefinition {
      * @return the encoded value
      */
     public long getExternalId() {
-        return ((long) theTypeId << DataConverter.NYBBLE_SHIFT)
+        return ((long) theTypeId << TethysDataConverter.NYBBLE_SHIFT)
                + theType.getId();
     }
 
@@ -226,10 +226,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected InputStream buildInputStream(final GordianKeySet pKeySet,
-                                           final InputStream pCurrent) throws JOceanusException {
+                                           final InputStream pCurrent) throws OceanusException {
         switch (theType) {
             case DIGEST:
                 return buildDigestInputStream(pKeySet, pCurrent);
@@ -250,10 +250,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private InputStream buildDigestInputStream(final GordianKeySet pKeySet,
-                                               final InputStream pCurrent) throws JOceanusException {
+                                               final InputStream pCurrent) throws OceanusException {
         /* Parse the TypeId */
         GordianDigestType myType = pKeySet.deriveTypeFromExternalId(theTypeId, GordianDigestType.class);
 
@@ -270,10 +270,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private InputStream buildMacInputStream(final GordianKeySet pKeySet,
-                                            final InputStream pCurrent) throws JOceanusException {
+                                            final InputStream pCurrent) throws OceanusException {
         /* Parse the TypeId */
         GordianMacSpec mySpec = pKeySet.deriveTypeFromExternalId(theTypeId, GordianMacSpec.class);
 
@@ -292,10 +292,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private InputStream buildSymKeyInputStream(final GordianKeySet pKeySet,
-                                               final InputStream pCurrent) throws JOceanusException {
+                                               final InputStream pCurrent) throws OceanusException {
         /* Parse the TypeId */
         CipherDef myDef = new CipherDef(pKeySet, (int) theTypeId);
         GordianSymKeyType myType = myDef.theKeyType;
@@ -317,10 +317,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private InputStream buildStreamKeyInputStream(final GordianKeySet pKeySet,
-                                                  final InputStream pCurrent) throws JOceanusException {
+                                                  final InputStream pCurrent) throws OceanusException {
         /* Parse the TypeId */
         GordianStreamKeyType myType = pKeySet.deriveTypeFromExternalId(theTypeId, GordianStreamKeyType.class);
 
@@ -367,15 +367,15 @@ public final class GordianStreamDefinition {
          * Constructor.
          * @param pKeySet the keySet
          * @param pExternalId the externalId
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private CipherDef(final GordianKeySet pKeySet,
-                          final int pExternalId) throws JOceanusException {
+                          final int pExternalId) throws OceanusException {
             /* Determine Id parts */
-            int myKeyId = pExternalId & DataConverter.NYBBLE_MASK;
-            int myId = pExternalId >> DataConverter.NYBBLE_SHIFT;
-            int myModeId = myId & DataConverter.NYBBLE_MASK;
-            myId >>= DataConverter.NYBBLE_SHIFT;
+            int myKeyId = pExternalId & TethysDataConverter.NYBBLE_MASK;
+            int myId = pExternalId >> TethysDataConverter.NYBBLE_SHIFT;
+            int myModeId = myId & TethysDataConverter.NYBBLE_MASK;
+            myId >>= TethysDataConverter.NYBBLE_SHIFT;
 
             /* Store values */
             theKeyType = pKeySet.deriveTypeFromExternalId(myKeyId, GordianSymKeyType.class);
@@ -388,18 +388,18 @@ public final class GordianStreamDefinition {
          * @param pKeySet the keySet
          * @param pCipher the cipher
          * @return the externalId
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
 
         protected static int deriveExternalId(final GordianKeySet pKeySet,
-                                              final GordianCipher<?> pCipher) throws JOceanusException {
+                                              final GordianCipher<?> pCipher) throws OceanusException {
             /* Determine the id */
             int myId = pCipher.isPadded()
                                           ? 1
                                           : 0;
-            myId <<= DataConverter.NYBBLE_SHIFT;
+            myId <<= TethysDataConverter.NYBBLE_SHIFT;
             myId += pKeySet.deriveExternalIdForType(pCipher.getMode());
-            myId <<= DataConverter.NYBBLE_SHIFT;
+            myId <<= TethysDataConverter.NYBBLE_SHIFT;
             myId += pKeySet.deriveExternalIdForType(pCipher.getKeyType());
             return myId;
         }
@@ -459,9 +459,9 @@ public final class GordianStreamDefinition {
          * get value from id.
          * @param id the id value
          * @return the corresponding enumeration object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public static StreamType fromId(final int id) throws JOceanusException {
+        public static StreamType fromId(final int id) throws OceanusException {
             for (StreamType myType : values()) {
                 if (myType.getId() == id) {
                     return myType;

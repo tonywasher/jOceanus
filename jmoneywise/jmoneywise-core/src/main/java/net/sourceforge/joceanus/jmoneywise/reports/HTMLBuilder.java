@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Build a report document.
@@ -249,10 +249,10 @@ public abstract class HTMLBuilder {
      * Constructor.
      * @param pView the view
      * @param pUtilitySet the utility set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected HTMLBuilder(final View pView,
-                          final JOceanusUtilitySet pUtilitySet) throws JOceanusException {
+                          final JOceanusUtilitySet pUtilitySet) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the formatter */
@@ -451,9 +451,9 @@ public abstract class HTMLBuilder {
         String myClass = CLASS_DATAVALUE;
 
         /* If this is an instance of JDecimal */
-        if (myValue instanceof JDecimal) {
+        if (myValue instanceof TethysDecimal) {
             /* Access as decimal */
-            JDecimal myDec = (JDecimal) myValue;
+            TethysDecimal myDec = (TethysDecimal) myValue;
 
             /* Ignore value if zero */
             if (myDec.isZero()) {

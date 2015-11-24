@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.http.JiraClient;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedObject;
 
@@ -60,9 +60,9 @@ public class JiraSecurity {
     /**
      * Constructor.
      * @param pServer the server
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JiraSecurity(final JiraServer pServer) throws JOceanusException {
+    protected JiraSecurity(final JiraServer pServer) throws OceanusException {
         /* Access clients */
         theClient = pServer.getClient();
 
@@ -75,9 +75,9 @@ public class JiraSecurity {
      * Obtain User.
      * @param pName the name of the user
      * @return the User
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraUser getUser(final String pName) throws JOceanusException {
+    public JiraUser getUser(final String pName) throws OceanusException {
         /* Look up user in the cache */
         JiraUser myUser = theUsers.get(pName);
 
@@ -99,9 +99,9 @@ public class JiraSecurity {
      * Obtain Group.
      * @param pName the name of the group
      * @return the Group
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraGroup getGroup(final String pName) throws JOceanusException {
+    public JiraGroup getGroup(final String pName) throws OceanusException {
         /* Look up group in the cache */
         JiraGroup myGroup = theGroups.get(pName);
 
@@ -147,9 +147,9 @@ public class JiraSecurity {
         /**
          * Constructor.
          * @param pUser the underlying user
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraUser(final JSONObject pUser) throws JOceanusException {
+        private JiraUser(final JSONObject pUser) throws OceanusException {
             /* Parse base details */
             super(pUser);
 
@@ -188,9 +188,9 @@ public class JiraSecurity {
         /**
          * Obtain the group iterator.
          * @return the iterator
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public Iterator<JiraGroup> groupIterator() throws JOceanusException {
+        public Iterator<JiraGroup> groupIterator() throws OceanusException {
             /* If we have not resolved the groups */
             if (!isResolved) {
                 /* Protect against exceptions */
@@ -239,9 +239,9 @@ public class JiraSecurity {
         /**
          * Constructor.
          * @param pGroup the base group object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraGroup(final JSONObject pGroup) throws JOceanusException {
+        private JiraGroup(final JSONObject pGroup) throws OceanusException {
             /* Parse base details */
             super(pGroup);
 
@@ -253,9 +253,9 @@ public class JiraSecurity {
         /**
          * Obtain the member iterator.
          * @return the iterator
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public Iterator<JiraUser> memberIterator() throws JOceanusException {
+        public Iterator<JiraUser> memberIterator() throws OceanusException {
             /* If we have not resolved the users */
             if (!isResolved) {
                 /* Protect against exceptions */

@@ -36,15 +36,15 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -164,9 +164,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     /**
      * Load the DataItems from a spreadsheet.
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public boolean loadSpreadSheet() throws JOceanusException {
+    public boolean loadSpreadSheet() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the workbook */
@@ -216,7 +216,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
             postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JPrometheusIOException("Failed to Load " + theRangeName, e);
         }
 
@@ -227,9 +227,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     /**
      * Write the DataItems to a spreadsheet.
      * @return continue to write <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected boolean writeSpreadSheet() throws JOceanusException {
+    protected boolean writeSpreadSheet() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Declare the new stage */
@@ -285,7 +285,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
             if (theCurrRow > theBaseRow) {
                 nameRange();
             }
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JPrometheusIOException("Failed to create " + theRangeName, e);
         }
 
@@ -296,25 +296,25 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     /**
      * Load secure item from spreadsheet.
      * @return the secure values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract DataValues<E> loadSecureValues() throws JOceanusException;
+    protected abstract DataValues<E> loadSecureValues() throws OceanusException;
 
     /**
      * Insert secure item into spreadsheet.
      * @param pItem the item
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void insertSecureItem(final T pItem) throws JOceanusException {
+    protected void insertSecureItem(final T pItem) throws OceanusException {
         /* Write the id */
         writeInteger(COL_ID, pItem.getId());
     }
 
     /**
      * PostProcess on load.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void postProcessOnLoad() throws JOceanusException {
+    protected void postProcessOnLoad() throws OceanusException {
         /* postProcess the list */
         theList.postProcessOnLoad();
     }
@@ -335,9 +335,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Name the basic range.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void nameRange() throws JOceanusException {
+    protected void nameRange() throws OceanusException {
         /* Adjust column if necessary */
         int myCol = getLastColumn();
 
@@ -351,10 +351,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Name the column range.
      * @param pOffset offset of column
      * @param pName name of range
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void nameColumnRange(final int pOffset,
-                                   final String pName) throws JOceanusException {
+                                   final String pName) throws OceanusException {
         /* Name the range */
         CellPosition myFirst = new CellPosition(pOffset, theBaseRow);
         CellPosition myLast = new CellPosition(pOffset, theCurrRow - 1);
@@ -365,10 +365,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Apply Data Validation.
      * @param pOffset offset of column
      * @param pList name of validation range
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void applyDataValidation(final int pOffset,
-                                    final String pList) throws JOceanusException {
+                                    final String pList) throws OceanusException {
         /* Name the range */
         CellPosition myFirst = new CellPosition(pOffset, theBaseRow);
         CellPosition myLast = new CellPosition(pOffset, theCurrRow - 1);
@@ -387,9 +387,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     /**
      * Freeze titles.
      * @param pOffset column offset to freeze at
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void applyDataFilter(final int pOffset) throws JOceanusException {
+    protected void applyDataFilter(final int pOffset) throws OceanusException {
         /* Freeze the top row */
         CellPosition myPoint = new CellPosition(pOffset, 0);
         theWorkSheet.applyDataFilter(myPoint, theCurrRow);
@@ -498,9 +498,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access an integer from the WorkSheet.
      * @param pOffset the column offset
      * @return the integer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected Integer loadInteger(final int pOffset) throws JOceanusException {
+    protected Integer loadInteger(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -529,9 +529,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a date from the WorkSheet.
      * @param pOffset the column offset
      * @return the date
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JDateDay loadDate(final int pOffset) throws JOceanusException {
+    protected TethysDate loadDate(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -545,9 +545,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a money value from the WorkSheet.
      * @param pOffset the column offset
      * @return the money
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JMoney loadMoney(final int pOffset) throws JOceanusException {
+    protected TethysMoney loadMoney(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -561,9 +561,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a price value from the WorkSheet.
      * @param pOffset the column offset
      * @return the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JPrice loadPrice(final int pOffset) throws JOceanusException {
+    protected TethysPrice loadPrice(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -577,9 +577,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a rate value from the WorkSheet.
      * @param pOffset the column offset
      * @return the rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JRate loadRate(final int pOffset) throws JOceanusException {
+    protected TethysRate loadRate(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -593,9 +593,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a units value from the WorkSheet.
      * @param pOffset the column offset
      * @return the units
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JUnits loadUnits(final int pOffset) throws JOceanusException {
+    protected TethysUnits loadUnits(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -609,9 +609,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a dilution value from the WorkSheet.
      * @param pOffset the column offset
      * @return the dilution
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JDilution loadDilution(final int pOffset) throws JOceanusException {
+    protected TethysDilution loadDilution(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -625,9 +625,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a ratio value from the WorkSheet.
      * @param pOffset the column offset
      * @return the ratio
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JRatio loadRatio(final int pOffset) throws JOceanusException {
+    protected TethysRatio loadRatio(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -656,9 +656,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a byte array from the WorkSheet.
      * @param pOffset the column offset
      * @return the byte array
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected byte[] loadBytes(final int pOffset) throws JOceanusException {
+    protected byte[] loadBytes(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -672,9 +672,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Access a char array from the WorkSheet.
      * @param pOffset the column offset
      * @return the char array
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected char[] loadChars(final int pOffset) throws JOceanusException {
+    protected char[] loadChars(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -688,10 +688,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write an integer to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the integer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeInteger(final int pOffset,
-                                final Integer pValue) throws JOceanusException {
+                                final Integer pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -704,10 +704,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a boolean to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the boolean
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeBoolean(final int pOffset,
-                                final Boolean pValue) throws JOceanusException {
+                                final Boolean pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -720,10 +720,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a date to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the date
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeDate(final int pOffset,
-                             final JDateDay pValue) throws JOceanusException {
+                             final TethysDate pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -736,10 +736,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a decimal to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the number
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeDecimal(final int pOffset,
-                                final JDecimal pValue) throws JOceanusException {
+                                final TethysDecimal pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -752,10 +752,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a Header to the WorkSheet.
      * @param pOffset the column offset
      * @param pHeader the header text
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeHeader(final int pOffset,
-                               final String pHeader) throws JOceanusException {
+                               final String pHeader) throws OceanusException {
         /* If we have non-null value */
         if (pHeader != null) {
             /* Create the cell and set its value */
@@ -768,10 +768,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a string to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeString(final int pOffset,
-                               final String pValue) throws JOceanusException {
+                               final String pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -784,10 +784,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a byte array to the WorkSheet.
      * @param pOffset the column offset
      * @param pBytes the byte array
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeBytes(final int pOffset,
-                              final byte[] pBytes) throws JOceanusException {
+                              final byte[] pBytes) throws OceanusException {
         /* If we have non-null bytes */
         if (pBytes != null) {
             /* Create the cell and set its value */
@@ -800,10 +800,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Write a char array to the WorkSheet.
      * @param pOffset the column offset
      * @param pChars the char array
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void writeChars(final int pOffset,
-                              final char[] pChars) throws JOceanusException {
+                              final char[] pChars) throws OceanusException {
         /* If we have non-null chars */
         if (pChars != null) {
             /* Create the cell and set its value */
@@ -816,9 +816,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * Obtain row values.
      * @param pName the name of the item
      * @return the row values.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
         DataValues<E> myValues = new DataValues<E>(pName);
 

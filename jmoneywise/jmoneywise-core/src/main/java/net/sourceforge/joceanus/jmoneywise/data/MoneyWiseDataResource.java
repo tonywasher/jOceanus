@@ -26,13 +26,13 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise Data Fields.
  */
-public enum MoneyWiseDataResource implements ResourceId {
+public enum MoneyWiseDataResource implements TethysResourceId {
     /**
      * MoneyWiseData Name.
      */
@@ -621,7 +621,7 @@ public enum MoneyWiseDataResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
 
     /**
      * The Id.
@@ -645,7 +645,7 @@ public enum MoneyWiseDataResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    MoneyWiseDataResource(final ResourceId pResource) {
+    MoneyWiseDataResource(final TethysResourceId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -677,7 +677,7 @@ public enum MoneyWiseDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForAssetType(final AssetType pValue) {
+    protected static TethysResourceId getKeyForAssetType(final AssetType pValue) {
         switch (pValue) {
             case PAYEE:
                 return ASSETTYPE_PAYEE;
@@ -696,7 +696,7 @@ public enum MoneyWiseDataResource implements ResourceId {
             case SECURITYHOLDING:
                 return ASSETTYPE_SECURITYHOLDING;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -705,14 +705,14 @@ public enum MoneyWiseDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForAssetDirection(final AssetDirection pValue) {
+    protected static TethysResourceId getKeyForAssetDirection(final AssetDirection pValue) {
         switch (pValue) {
             case TO:
                 return ASSETDIRECTION_TO;
             case FROM:
                 return ASSETDIRECTION_FROM;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

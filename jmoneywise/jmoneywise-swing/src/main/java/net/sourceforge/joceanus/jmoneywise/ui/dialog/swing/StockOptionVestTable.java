@@ -50,11 +50,11 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display a list of Vests associated with a StockOption.
@@ -99,7 +99,7 @@ public class StockOptionVestTable
     /**
      * The panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The Table Model.
@@ -165,13 +165,13 @@ public class StockOptionVestTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
 
         /* Create the layout for the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -289,7 +289,7 @@ public class StockOptionVestTable
         @Override
         public void setItemValue(final StockOptionVest pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -333,8 +333,8 @@ public class StockOptionVestTable
 
                 /* Set the item value */
                 myVest.setStockOption(theOption);
-                myVest.setDate(new JDateDay());
-                myVest.setUnits(JUnits.getWholeUnits(1));
+                myVest.setDate(new TethysDate());
+                myVest.setUnits(TethysUnits.getWholeUnits(1));
 
                 /* Add to the list */
                 myVest.setNewVersion();
@@ -344,9 +344,9 @@ public class StockOptionVestTable
                 myVest.validate();
 
                 /* Handle Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 /* Build the error */
-                JOceanusException myError = new JMoneyWiseDataException("Failed to create new vest", e);
+                OceanusException myError = new JMoneyWiseDataException("Failed to create new vest", e);
 
                 /* Show the error */
                 setError(myError);
@@ -416,7 +416,7 @@ public class StockOptionVestTable
         /**
          * Date configuration.
          */
-        private final transient JDateDayConfig theDateConfig;
+        private final transient TethysSwingDateConfig theDateConfig;
 
         /**
          * Action Icon editor.
@@ -528,18 +528,18 @@ public class StockOptionVestTable
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void setItemValue(final StockOptionVest pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
+                                  final Object pValue) throws OceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    pItem.setDate((JDateDay) pValue);
+                    pItem.setDate((TethysDate) pValue);
                     break;
                 case COLUMN_UNITS:
-                    pItem.setUnits((JUnits) pValue);
+                    pItem.setUnits((TethysUnits) pValue);
                     break;
                 case COLUMN_ACTION:
                     if (pItem.isHeader()) {

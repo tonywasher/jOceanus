@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * AssetCurrency data type.
@@ -79,10 +79,10 @@ public class AssetCurrency
      * Basic constructor.
      * @param pList The list to associate the Account Currency with
      * @param pName Name of Account Currency
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private AssetCurrency(final AssetCurrencyList pList,
-                          final String pName) throws JOceanusException {
+                          final String pName) throws OceanusException {
         super(pList, pName);
         setValueDefault(Boolean.FALSE);
         setValueEnabled(Boolean.FALSE);
@@ -93,10 +93,10 @@ public class AssetCurrency
      * Basic constructor.
      * @param pList The list to associate the Account Currency with
      * @param pClass Class of Account Currency
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private AssetCurrency(final AssetCurrencyList pList,
-                          final AssetCurrencyClass pClass) throws JOceanusException {
+                          final AssetCurrencyClass pClass) throws OceanusException {
         super(pList, pClass);
         setValueDefault(Boolean.FALSE);
         setValueEnabled(Boolean.TRUE);
@@ -107,10 +107,10 @@ public class AssetCurrency
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private AssetCurrency(final AssetCurrencyList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
 
         /* Store the Default */
@@ -214,7 +214,7 @@ public class AssetCurrency
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -373,9 +373,9 @@ public class AssetCurrency
         /**
          * Add an AccountCurrency to the list.
          * @param pCurrency the Name of the account currency
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pCurrency) throws JOceanusException {
+        public void addBasicItem(final String pCurrency) throws OceanusException {
             /* Create a new Account Currency */
             AssetCurrency myCurr = new AssetCurrency(this, pCurrency);
 
@@ -390,7 +390,7 @@ public class AssetCurrency
         }
 
         @Override
-        public AssetCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public AssetCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the currency */
             AssetCurrency myCurrency = new AssetCurrency(this, pValues);
 
@@ -408,7 +408,7 @@ public class AssetCurrency
         }
 
         @Override
-        public void populateDefaults() throws JOceanusException {
+        public void populateDefaults() throws OceanusException {
             /* Initialise the default currency */
             initialiseDefault();
 
@@ -464,7 +464,7 @@ public class AssetCurrency
         }
 
         @Override
-        protected AssetCurrency newItem(final AssetCurrencyClass pClass) throws JOceanusException {
+        protected AssetCurrency newItem(final AssetCurrencyClass pClass) throws OceanusException {
             /* Create the currency */
             AssetCurrency myCurr = new AssetCurrency(this, pClass);
 

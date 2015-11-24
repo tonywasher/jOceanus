@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class for assembling/disassembling data encrypted by a KeySet.
@@ -71,10 +71,10 @@ public final class GordianKeySetRecipe {
      * Constructor for random choices.
      * @param pFactory the factory
      * @param pCreateIV create an IV
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final boolean pCreateIV) throws JOceanusException {
+                                  final boolean pCreateIV) throws OceanusException {
         /* Obtain the secureRandom and the cipher steps */
         SecureRandom myRandom = pFactory.getRandom();
         int myCipherSteps = pFactory.getNumCipherSteps();
@@ -101,18 +101,18 @@ public final class GordianKeySetRecipe {
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pExternal the external form
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final byte[] pExternal) throws JOceanusException {
+                                  final byte[] pExternal) throws OceanusException {
         /* Determine whether we have an IV */
         byte myStart = pExternal[0];
         boolean hasIV = (myStart & NOIV_FLAG) == 0;
         myStart &= ~NOIV_FLAG;
 
         /* Determine number of cipher steps */
-        int myCipherSteps = (myStart >> DataConverter.NYBBLE_SHIFT)
-                            & DataConverter.NYBBLE_MASK;
+        int myCipherSteps = (myStart >> TethysDataConverter.NYBBLE_SHIFT)
+                            & TethysDataConverter.NYBBLE_MASK;
 
         /* Determine data length */
         int myRecipeLen = 1 + (myCipherSteps >> 1);
@@ -268,9 +268,9 @@ public final class GordianKeySetRecipe {
         /**
          * Construct the parameters from random key.
          * @param pFactory the factory
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private KeySetParameters(final GordianFactory pFactory) throws JOceanusException {
+        private KeySetParameters(final GordianFactory pFactory) throws OceanusException {
             GordianIdManager myManager = pFactory.getIdManager();
             theSymKeyTypes = myManager.generateRandomSymKeyTypes(pFactory.getNumCipherSteps(), pFactory.standardSymKeys());
         }
@@ -279,30 +279,30 @@ public final class GordianKeySetRecipe {
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private KeySetParameters(final GordianFactory pFactory,
-                                 final byte[] pRecipe) throws JOceanusException {
+                                 final byte[] pRecipe) throws OceanusException {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
             /* Determine number of cipher steps */
-            int myCipherSteps = (pRecipe[0] >> DataConverter.NYBBLE_SHIFT)
-                                & DataConverter.NYBBLE_MASK;
+            int myCipherSteps = (pRecipe[0] >> TethysDataConverter.NYBBLE_SHIFT)
+                                & TethysDataConverter.NYBBLE_MASK;
 
             /* Allocate the key types */
             int i = 0, j = 0;
             theSymKeyTypes = new GordianSymKeyType[myCipherSteps];
             int myId = pRecipe[j++]
-                       & DataConverter.NYBBLE_MASK;
+                       & TethysDataConverter.NYBBLE_MASK;
             theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId);
             while (i < myCipherSteps) {
-                myId = (pRecipe[j] >> DataConverter.NYBBLE_SHIFT)
-                       & DataConverter.NYBBLE_MASK;
+                myId = (pRecipe[j] >> TethysDataConverter.NYBBLE_SHIFT)
+                       & TethysDataConverter.NYBBLE_MASK;
                 theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId);
                 if (i < myCipherSteps) {
                     myId = pRecipe[j++]
-                           & DataConverter.NYBBLE_MASK;
+                           & TethysDataConverter.NYBBLE_MASK;
                     theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId);
                 }
             }
@@ -320,20 +320,20 @@ public final class GordianKeySetRecipe {
          * Construct the external recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes to build
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void buildRecipe(final GordianFactory pFactory,
-                                 final byte[] pRecipe) throws JOceanusException {
+                                 final byte[] pRecipe) throws OceanusException {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
             /* Build the key bytes */
             int myNumCiphers = theSymKeyTypes.length;
             int i = 0, j = 0;
-            pRecipe[i++] = (byte) ((myNumCiphers << DataConverter.NYBBLE_SHIFT) + myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]));
+            pRecipe[i++] = (byte) ((myNumCiphers << TethysDataConverter.NYBBLE_SHIFT) + myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]));
             while (j < myNumCiphers) {
                 int myByte = myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]);
-                myByte <<= DataConverter.NYBBLE_SHIFT;
+                myByte <<= TethysDataConverter.NYBBLE_SHIFT;
                 if (j < myNumCiphers) {
                     myByte += myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]);
                 }

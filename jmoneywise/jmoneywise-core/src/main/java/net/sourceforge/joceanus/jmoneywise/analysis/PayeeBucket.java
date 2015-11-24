@@ -41,10 +41,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The Payee Bucket class.
@@ -149,7 +149,7 @@ public final class PayeeBucket
      */
     private PayeeBucket(final Analysis pAnalysis,
                         final PayeeBucket pBase,
-                        final JDateDay pDate) {
+                        final TethysDate pDate) {
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
@@ -171,7 +171,7 @@ public final class PayeeBucket
      */
     private PayeeBucket(final Analysis pAnalysis,
                         final PayeeBucket pBase,
-                        final JDateDayRange pRange) {
+                        final TethysDateRange pRange) {
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
@@ -209,8 +209,8 @@ public final class PayeeBucket
         PayeeAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
                                                        : JDataFieldValue.SKIP;
             }
@@ -281,7 +281,7 @@ public final class PayeeBucket
      * Obtain date range.
      * @return the range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -317,7 +317,7 @@ public final class PayeeBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+    public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
                                            final PayeeAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
@@ -425,9 +425,9 @@ public final class PayeeBucket
      * @param pDelta the delta
      */
     protected void adjustCounter(final PayeeAttribute pAttr,
-                                 final JMoney pDelta) {
-        JMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new JMoney(myValue);
+                                 final TethysMoney pDelta) {
+        TethysMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -440,38 +440,38 @@ public final class PayeeBucket
         /* Access the class */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         boolean isIncome = myClass.isIncome();
-        JMoney myIncome = null;
-        JMoney myExpense = null;
+        TethysMoney myIncome = null;
+        TethysMoney myExpense = null;
 
         /* Access amount */
-        JMoney myAmount = pTrans.getLocalDebitAmount();
+        TethysMoney myAmount = pTrans.getLocalDebitAmount();
         if (myAmount.isNonZero()) {
             /* If this is an income */
             if (isIncome) {
                 /* Allocate the income */
-                myIncome = new JMoney(myAmount);
+                myIncome = new TethysMoney(myAmount);
 
                 /* else this is a refunded expense */
             } else {
                 /* Update the expense */
-                myExpense = new JMoney(myAmount);
+                myExpense = new TethysMoney(myAmount);
                 myExpense.negate();
             }
         }
 
         /* If there is a non-zero TaxCredit */
-        JMoney myTaxCred = pTrans.getTaxCredit();
+        TethysMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new JMoney(myTaxCred);
+                    myIncome = new TethysMoney(myTaxCred);
                 } else {
                     myIncome.addAmount(myTaxCred);
                 }
             } else {
                 if (myExpense == null) {
-                    myExpense = new JMoney(myTaxCred);
+                    myExpense = new TethysMoney(myTaxCred);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myTaxCred);
@@ -480,18 +480,18 @@ public final class PayeeBucket
         }
 
         /* If there is National Insurance */
-        JMoney myNatIns = pTrans.getNatInsurance();
+        TethysMoney myNatIns = pTrans.getNatInsurance();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new JMoney(myNatIns);
+                    myIncome = new TethysMoney(myNatIns);
                 } else {
                     myIncome.addAmount(myNatIns);
                 }
             } else {
                 if (myExpense == null) {
-                    myExpense = new JMoney(myNatIns);
+                    myExpense = new TethysMoney(myNatIns);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myNatIns);
@@ -500,29 +500,29 @@ public final class PayeeBucket
         }
 
         /* If there is Charity Donation */
-        JMoney myDonation = pTrans.getCharityDonation();
+        TethysMoney myDonation = pTrans.getCharityDonation();
         if ((myDonation != null) && (myDonation.isNonZero())) {
             /* Adjust for Charity Donation */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new JMoney(myDonation);
+                    myIncome = new TethysMoney(myDonation);
                 } else {
                     myIncome.addAmount(myDonation);
                 }
                 if (myExpense == null) {
-                    myExpense = new JMoney(myDonation);
+                    myExpense = new TethysMoney(myDonation);
                 } else {
                     myExpense.addAmount(myDonation);
                 }
             } else {
                 if (myIncome == null) {
-                    myIncome = new JMoney(myDonation);
+                    myIncome = new TethysMoney(myDonation);
                     myIncome.negate();
                 } else {
                     myIncome.subtractAmount(myDonation);
                 }
                 if (myExpense == null) {
-                    myExpense = new JMoney(myAmount);
+                    myExpense = new TethysMoney(myAmount);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myDonation);
@@ -550,38 +550,38 @@ public final class PayeeBucket
         /* Analyse the transaction */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         boolean isExpense = !myClass.isIncome();
-        JMoney myExpense = null;
-        JMoney myIncome = null;
+        TethysMoney myExpense = null;
+        TethysMoney myIncome = null;
 
         /* Access amount */
-        JMoney myAmount = pTrans.getLocalCreditAmount();
+        TethysMoney myAmount = pTrans.getLocalCreditAmount();
         if (myAmount.isNonZero()) {
             /* If this is an expense */
             if (isExpense) {
                 /* Allocate the expense */
-                myExpense = new JMoney(myAmount);
+                myExpense = new TethysMoney(myAmount);
 
                 /* else this is a refunded income */
             } else {
                 /* Update the income */
-                myIncome = new JMoney(myAmount);
+                myIncome = new TethysMoney(myAmount);
                 myIncome.negate();
             }
         }
 
         /* If there is a non-zero TaxCredit */
-        JMoney myTaxCred = pTrans.getTaxCredit();
+        TethysMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
             if (isExpense) {
                 if (myExpense == null) {
-                    myExpense = new JMoney(myTaxCred);
+                    myExpense = new TethysMoney(myTaxCred);
                 } else {
                     myExpense.addAmount(myTaxCred);
                 }
             } else {
                 if (myIncome == null) {
-                    myIncome = new JMoney(myTaxCred);
+                    myIncome = new TethysMoney(myTaxCred);
                     myIncome.negate();
                 } else {
                     myIncome.subtractAmount(myTaxCred);
@@ -609,7 +609,7 @@ public final class PayeeBucket
      */
     protected void adjustForTaxCredit(final TransactionHelper pTrans) {
         /* Access amount */
-        JMoney myTaxCred = pTrans.getTaxCredit();
+        TethysMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred.isNonZero()) {
             TransactionCategoryClass myClass = pTrans.getCategoryClass();
             if (myClass.isExpense()) {
@@ -632,19 +632,19 @@ public final class PayeeBucket
     protected void adjustForTaxPayments(final TransactionHelper pTrans) {
         /* Determine transaction type */
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
-        JMoney myAmount = null;
+        TethysMoney myAmount = null;
 
         /* Adjust for Tax credit */
-        JMoney myTaxCred = pTrans.getTaxCredit();
+        TethysMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
-            myAmount = new JMoney(myTaxCred);
+            myAmount = new TethysMoney(myTaxCred);
         }
 
         /* Adjust for national insurance */
-        JMoney myNatIns = pTrans.getNatInsurance();
+        TethysMoney myNatIns = pTrans.getNatInsurance();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             if (myAmount == null) {
-                myAmount = new JMoney(myNatIns);
+                myAmount = new TethysMoney(myNatIns);
             } else {
                 myAmount.addAmount(myNatIns);
             }
@@ -677,7 +677,7 @@ public final class PayeeBucket
      * Add income value.
      * @param pValue the value to add
      */
-    protected void addIncome(final JMoney pValue) {
+    protected void addIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(PayeeAttribute.INCOME, pValue);
@@ -688,10 +688,10 @@ public final class PayeeBucket
      * Subtract income value.
      * @param pValue the value to subtract
      */
-    protected void subtractIncome(final JMoney pValue) {
+    protected void subtractIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myIncome = new JMoney(pValue);
+            TethysMoney myIncome = new TethysMoney(pValue);
             myIncome.negate();
             setValue(PayeeAttribute.INCOME, myIncome);
         }
@@ -703,7 +703,7 @@ public final class PayeeBucket
      * @param pValue the value to add
      */
     protected void addExpense(final TransactionHelper pTrans,
-                              final JMoney pValue) {
+                              final TethysMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
@@ -715,7 +715,7 @@ public final class PayeeBucket
      * Add expense value.
      * @param pValue the value to add
      */
-    protected void addExpense(final JMoney pValue) {
+    protected void addExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(PayeeAttribute.EXPENSE, pValue);
@@ -728,7 +728,7 @@ public final class PayeeBucket
      * @param pValue the value to subtract
      */
     protected void subtractExpense(final TransactionHelper pTrans,
-                                   final JMoney pValue) {
+                                   final TethysMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
@@ -740,10 +740,10 @@ public final class PayeeBucket
      * Subtract expense value.
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final JMoney pValue) {
+    protected void subtractExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            JMoney myExpense = new JMoney(pValue);
+            TethysMoney myExpense = new TethysMoney(pValue);
             myExpense.negate();
             adjustCounter(PayeeAttribute.EXPENSE, myExpense);
         }
@@ -758,8 +758,8 @@ public final class PayeeBucket
         PayeeValues mySource = pSource.getValues();
 
         /* Add income values */
-        JMoney myValue = theValues.getMoneyValue(PayeeAttribute.INCOME);
-        JMoney mySrcValue = mySource.getMoneyValue(PayeeAttribute.INCOME);
+        TethysMoney myValue = theValues.getMoneyValue(PayeeAttribute.INCOME);
+        TethysMoney mySrcValue = mySource.getMoneyValue(PayeeAttribute.INCOME);
         myValue.addAmount(mySrcValue);
 
         /* Add expense values */
@@ -804,8 +804,8 @@ public final class PayeeBucket
             super(PayeeAttribute.class);
 
             /* Initialise income/expense to zero */
-            put(PayeeAttribute.INCOME, new JMoney(pCurrency));
-            put(PayeeAttribute.EXPENSE, new JMoney(pCurrency));
+            put(PayeeAttribute.INCOME, new TethysMoney(pCurrency));
+            put(PayeeAttribute.EXPENSE, new TethysMoney(pCurrency));
         }
 
         /**
@@ -833,14 +833,14 @@ public final class PayeeBucket
         @Override
         protected void resetBaseValues() {
             /* Create a zero value in the correct currency */
-            JMoney myValue = getMoneyValue(PayeeAttribute.INCOME);
-            myValue = new JMoney(myValue);
+            TethysMoney myValue = getMoneyValue(PayeeAttribute.INCOME);
+            myValue = new TethysMoney(myValue);
             myValue.setZero();
 
             /* Reset Income and expense values */
             put(PayeeAttribute.INCOME, myValue);
-            put(PayeeAttribute.EXPENSE, new JMoney(myValue));
-            put(PayeeAttribute.PROFIT, new JMoney(myValue));
+            put(PayeeAttribute.EXPENSE, new TethysMoney(myValue));
+            put(PayeeAttribute.PROFIT, new TethysMoney(myValue));
         }
 
         /**
@@ -848,11 +848,11 @@ public final class PayeeBucket
          */
         private void calculateDelta() {
             /* Obtain a copy of the value */
-            JMoney myDelta = getMoneyValue(PayeeAttribute.INCOME);
-            myDelta = new JMoney(myDelta);
+            TethysMoney myDelta = getMoneyValue(PayeeAttribute.INCOME);
+            myDelta = new TethysMoney(myDelta);
 
             /* Subtract the expense value */
-            JMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
+            TethysMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
@@ -864,8 +864,8 @@ public final class PayeeBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myIncome = getMoneyValue(PayeeAttribute.INCOME);
-            JMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
+            TethysMoney myIncome = getMoneyValue(PayeeAttribute.INCOME);
+            TethysMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
             return (myIncome.isNonZero()) || (myExpense.isNonZero());
         }
     }
@@ -932,7 +932,7 @@ public final class PayeeBucket
          */
         protected PayeeBucketList(final Analysis pAnalysis,
                                   final PayeeBucketList pBase,
-                                  final JDateDay pDate) {
+                                  final TethysDate pDate) {
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
@@ -963,7 +963,7 @@ public final class PayeeBucket
          */
         protected PayeeBucketList(final Analysis pAnalysis,
                                   final PayeeBucketList pBase,
-                                  final JDateDayRange pRange) {
+                                  final TethysDateRange pRange) {
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;

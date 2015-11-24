@@ -22,16 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -114,58 +114,58 @@ public abstract class DataCell {
     /**
      * Obtain date value of the cell.
      * @return the date value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JDateDay getDateValue() throws JOceanusException;
+    public abstract TethysDate getDateValue() throws OceanusException;
 
     /**
      * Obtain integer value of the cell.
      * @return the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract Integer getIntegerValue() throws JOceanusException;
+    public abstract Integer getIntegerValue() throws OceanusException;
 
     /**
      * Obtain money value of the cell.
      * @return the money value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JMoney getMoneyValue() throws JOceanusException;
+    public abstract TethysMoney getMoneyValue() throws OceanusException;
 
     /**
      * Obtain price value of the cell.
      * @return the price value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JPrice getPriceValue() throws JOceanusException;
+    public abstract TethysPrice getPriceValue() throws OceanusException;
 
     /**
      * Obtain rate value of the cell.
      * @return the rate value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JRate getRateValue() throws JOceanusException;
+    public abstract TethysRate getRateValue() throws OceanusException;
 
     /**
      * Obtain units value of the cell.
      * @return the units value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JUnits getUnitsValue() throws JOceanusException;
+    public abstract TethysUnits getUnitsValue() throws OceanusException;
 
     /**
      * Obtain dilution value of the cell.
      * @return the dilution value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JDilution getDilutionValue() throws JOceanusException;
+    public abstract TethysDilution getDilutionValue() throws OceanusException;
 
     /**
      * Obtain ratio value of the cell.
      * @return the ratio value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract JRatio getRatioValue() throws JOceanusException;
+    public abstract TethysRatio getRatioValue() throws OceanusException;
 
     /**
      * Obtain string value of the cell.
@@ -176,39 +176,39 @@ public abstract class DataCell {
     /**
      * Obtain byte array value of the cell.
      * @return the byte array value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] getBytesValue() throws JOceanusException {
+    public byte[] getBytesValue() throws OceanusException {
         String myValue = getStringValue();
         return (myValue == null)
                                 ? null
-                                : DataConverter.base64ToByteArray(myValue);
+                                : TethysDataConverter.base64ToByteArray(myValue);
     }
 
     /**
      * Obtain char array value of the cell.
      * @return the char array value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public char[] getCharArrayValue() throws JOceanusException {
+    public char[] getCharArrayValue() throws OceanusException {
         byte[] myValue = getBytesValue();
         return (myValue == null)
                                 ? null
-                                : DataConverter.bytesToCharArray(myValue);
+                                : TethysDataConverter.bytesToCharArray(myValue);
     }
 
     /**
      * Set null value for the cell.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract void setNullValue() throws JOceanusException;
+    public abstract void setNullValue() throws OceanusException;
 
     /**
      * Set boolean value of the cell.
      * @param pValue the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setBooleanValue(final Boolean pValue) throws JOceanusException {
+    public void setBooleanValue(final Boolean pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -221,23 +221,23 @@ public abstract class DataCell {
     /**
      * Set non-null boolean value of the cell.
      * @param pValue the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setBoolean(final Boolean pValue) throws JOceanusException;
+    protected abstract void setBoolean(final Boolean pValue) throws OceanusException;
 
     /**
      * Set non-null date value of the cell.
      * @param pValue the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setDate(final JDateDay pValue) throws JOceanusException;
+    protected abstract void setDate(final TethysDate pValue) throws OceanusException;
 
     /**
      * Set date value of the cell.
      * @param pValue the date value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDateValue(final JDateDay pValue) throws JOceanusException {
+    public void setDateValue(final TethysDate pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -250,9 +250,9 @@ public abstract class DataCell {
     /**
      * Set integer value of the cell.
      * @param pValue the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setIntegerValue(final Integer pValue) throws JOceanusException {
+    public void setIntegerValue(final Integer pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -265,16 +265,16 @@ public abstract class DataCell {
     /**
      * Set non-null integer value of the cell.
      * @param pValue the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setInteger(final Integer pValue) throws JOceanusException;
+    protected abstract void setInteger(final Integer pValue) throws OceanusException;
 
     /**
      * Set string value of the cell.
      * @param pValue the string value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setStringValue(final String pValue) throws JOceanusException {
+    public void setStringValue(final String pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -287,16 +287,16 @@ public abstract class DataCell {
     /**
      * Set non-null string value of the cell.
      * @param pValue the string value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setString(final String pValue) throws JOceanusException;
+    protected abstract void setString(final String pValue) throws OceanusException;
 
     /**
      * Set decimal value of the cell.
      * @param pValue the decimal value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDecimalValue(final JDecimal pValue) throws JOceanusException {
+    public void setDecimalValue(final TethysDecimal pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -309,16 +309,16 @@ public abstract class DataCell {
     /**
      * Set non-null decimal value of the cell.
      * @param pValue the decimal value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setDecimal(final JDecimal pValue) throws JOceanusException;
+    protected abstract void setDecimal(final TethysDecimal pValue) throws OceanusException;
 
     /**
      * Set monetary value of the cell.
      * @param pValue the monetary value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setMonetaryValue(final JMoney pValue) throws JOceanusException {
+    public void setMonetaryValue(final TethysMoney pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -331,16 +331,16 @@ public abstract class DataCell {
     /**
      * Set non-null monetary value of the cell.
      * @param pValue the monetary value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setMonetary(final JMoney pValue) throws JOceanusException;
+    protected abstract void setMonetary(final TethysMoney pValue) throws OceanusException;
 
     /**
      * Set header value of the cell.
      * @param pValue the string value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setHeaderValue(final String pValue) throws JOceanusException {
+    public void setHeaderValue(final String pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -353,37 +353,37 @@ public abstract class DataCell {
     /**
      * Set non-null header value of the cell.
      * @param pValue the header value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void setHeader(final String pValue) throws JOceanusException;
+    protected abstract void setHeader(final String pValue) throws OceanusException;
 
     /**
      * Set byte array value of the cell.
      * @param pValue the byte array value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setBytesValue(final byte[] pValue) throws JOceanusException {
+    public void setBytesValue(final byte[] pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
             /* Convert value to string */
-            setStringValue(DataConverter.byteArrayToBase64(pValue));
+            setStringValue(TethysDataConverter.byteArrayToBase64(pValue));
         }
     }
 
     /**
      * Set char array value of the cell.
      * @param pValue the byte array value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setCharArrayValue(final char[] pValue) throws JOceanusException {
+    public void setCharArrayValue(final char[] pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
             /* Convert value to string */
-            setBytesValue(DataConverter.charsToByteArray(pValue));
+            setBytesValue(TethysDataConverter.charsToByteArray(pValue));
         }
     }
 
@@ -392,23 +392,23 @@ public abstract class DataCell {
      * @param pValue the value
      * @return the required CellStyle
      */
-    protected static CellStyleType getCellStyle(final JDecimal pValue) {
-        if (pValue instanceof JPrice) {
+    protected static CellStyleType getCellStyle(final TethysDecimal pValue) {
+        if (pValue instanceof TethysPrice) {
             return CellStyleType.PRICE;
         }
-        if (pValue instanceof JMoney) {
+        if (pValue instanceof TethysMoney) {
             return CellStyleType.MONEY;
         }
-        if (pValue instanceof JUnits) {
+        if (pValue instanceof TethysUnits) {
             return CellStyleType.UNITS;
         }
-        if (pValue instanceof JRate) {
+        if (pValue instanceof TethysRate) {
             return CellStyleType.RATE;
         }
-        if (pValue instanceof JDilution) {
+        if (pValue instanceof TethysDilution) {
             return CellStyleType.DILUTION;
         }
-        if (pValue instanceof JRatio) {
+        if (pValue instanceof TethysRatio) {
             return CellStyleType.RATIO;
         }
         return null;

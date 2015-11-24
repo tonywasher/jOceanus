@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 
 /**
  * JOceanus Swing Utility Set.
@@ -57,18 +57,18 @@ public class JOceanusSwingUtilitySet
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet() throws JOceanusException {
+    public JOceanusSwingUtilitySet() throws OceanusException {
         this(new GordianParameters());
     }
 
     /**
      * Constructor.
      * @param pParameters the security parameters
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet(final GordianParameters pParameters) throws JOceanusException {
+    public JOceanusSwingUtilitySet(final GordianParameters pParameters) throws OceanusException {
         this(pParameters, new PreferenceManager());
     }
 
@@ -76,10 +76,10 @@ public class JOceanusSwingUtilitySet
      * Constructor.
      * @param pParameters the security parameters
      * @param pPrefMgr the preference manager
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public JOceanusSwingUtilitySet(final GordianParameters pParameters,
-                                   final PreferenceManager pPrefMgr) throws JOceanusException {
+                                   final PreferenceManager pPrefMgr) throws OceanusException {
         /* Create secure manager */
         super(new GordianSwingHashManager(pParameters), pPrefMgr);
 
@@ -99,9 +99,9 @@ public class JOceanusSwingUtilitySet
     /**
      * Create default UtilitySet.
      * @return the utility set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static JOceanusSwingUtilitySet createDefault() throws JOceanusException {
+    public static JOceanusSwingUtilitySet createDefault() throws OceanusException {
         /* Preference Manager */
         PreferenceManager myPrefMgr = new PreferenceManager();
 
@@ -129,11 +129,11 @@ public class JOceanusSwingUtilitySet
      * Preference listener class.
      */
     private final class PreferenceListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration thePrefReg;
+        private final TethysChangeRegistration thePrefReg;
 
         /**
          * Constructor.
@@ -143,7 +143,7 @@ public class JOceanusSwingUtilitySet
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (thePrefReg.isRelevant(pEvent)) {
                 /* Update new configuration */

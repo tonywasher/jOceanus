@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmetis.data;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper class to facilitate reporting of exception.
@@ -104,10 +104,10 @@ public class JMetisExceptionWrapper
             return theWrapped.getCause();
         }
         if (FIELD_OBJECT.equals(pField)) {
-            if (!(theWrapped instanceof JOceanusException)) {
+            if (!(theWrapped instanceof OceanusException)) {
                 return JDataFieldValue.SKIP;
             }
-            JOceanusException myWrapped = (JOceanusException) theWrapped;
+            OceanusException myWrapped = (OceanusException) theWrapped;
             Object myObject = myWrapped.getObject();
             return (myObject == null)
                                      ? JDataFieldValue.SKIP

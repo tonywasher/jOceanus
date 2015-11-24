@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cryptography Exception.
  */
 public class GordianIOException
-        extends JOceanusException {
+        extends OceanusException {
     /**
      * SerialId.
      */

@@ -50,21 +50,21 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.jdatebutton.swing.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldValue;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellEditor;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateCellEditor;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.JOceanusItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
@@ -94,7 +94,7 @@ public final class JFieldCellEditor {
      */
     public static class StringCellEditor
             extends AbstractCellEditor
-            implements TableCellEditor, JOceanusEventProvider {
+            implements TableCellEditor, TethysEventProvider {
         /**
          * Serial Id.
          */
@@ -103,7 +103,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient JOceanusEventManager theEventManager;
+        private final transient TethysEventManager theEventManager;
 
         /**
          * The text field.
@@ -121,11 +121,11 @@ public final class JFieldCellEditor {
         protected StringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
-            theEventManager = new JOceanusEventManager();
+            theEventManager = new TethysEventManager();
         }
 
         @Override
-        public JOceanusEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -529,7 +529,7 @@ public final class JFieldCellEditor {
      */
     public static class ScrollButtonCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, JOceanusEventProvider {
+            implements TableCellEditor, TethysEventProvider {
         /**
          * Serial Id.
          */
@@ -553,7 +553,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient JOceanusEventManager theEventManager;
+        private final transient TethysEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -607,7 +607,7 @@ public final class JFieldCellEditor {
             theMenuBuilder.getEventRegistrar().addChangeListener(theButtonListener);
 
             /* Create event manager */
-            theEventManager = new JOceanusEventManager();
+            theEventManager = new TethysEventManager();
         }
 
         /**
@@ -619,7 +619,7 @@ public final class JFieldCellEditor {
         }
 
         @Override
-        public JOceanusEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -678,7 +678,7 @@ public final class JFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements PropertyChangeListener, JOceanusChangeEventListener {
+                implements PropertyChangeListener, TethysChangeEventListener {
             @Override
             public void propertyChange(final PropertyChangeEvent pEvent) {
                 /* Store value and stop editing */
@@ -692,7 +692,7 @@ public final class JFieldCellEditor {
             }
 
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 if (theMenuBuilder.buildingMenu()) {
                     theEventManager.fireStateChanged();
                 } else {
@@ -747,7 +747,7 @@ public final class JFieldCellEditor {
      */
     public static class ScrollListButtonCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, JOceanusEventProvider {
+            implements TableCellEditor, TethysEventProvider {
         /**
          * Serial Id.
          */
@@ -766,7 +766,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient JOceanusEventManager theEventManager;
+        private final transient TethysEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -806,12 +806,12 @@ public final class JFieldCellEditor {
 
             /* sort out listeners */
             theButton.setFocusPainted(false);
-            JOceanusEventRegistrar myRegistrar = theMenuBuilder.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theMenuBuilder.getEventRegistrar();
             myRegistrar.addItemListener(theButtonListener);
             myRegistrar.addChangeListener(theButtonListener);
 
             /* Create event manager */
-            theEventManager = new JOceanusEventManager();
+            theEventManager = new TethysEventManager();
         }
 
         /**
@@ -823,7 +823,7 @@ public final class JFieldCellEditor {
         }
 
         @Override
-        public JOceanusEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -886,14 +886,14 @@ public final class JFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements JOceanusItemEventListener, JOceanusChangeEventListener {
+                implements JOceanusItemEventListener, TethysChangeEventListener {
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 theEventManager.fireStateChanged();
             }
 
             @Override
-            public void processItemEvent(final JOceanusItemEvent pEvent) {
+            public void processItemEvent(final TethysItemEvent pEvent) {
                 /* Access the table model */
                 TableModel myModel = theTable.getModel();
 
@@ -954,7 +954,7 @@ public final class JFieldCellEditor {
      */
     public static class ComboBoxCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, JOceanusEventProvider {
+            implements TableCellEditor, TethysEventProvider {
         /**
          * Serial Id.
          */
@@ -973,7 +973,7 @@ public final class JFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient JOceanusEventManager theEventManager;
+        private final transient TethysEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -1002,7 +1002,7 @@ public final class JFieldCellEditor {
             theCombo = new JComboBox<T>();
 
             /* Create event manager */
-            theEventManager = new JOceanusEventManager();
+            theEventManager = new TethysEventManager();
         }
 
         /**
@@ -1014,7 +1014,7 @@ public final class JFieldCellEditor {
         }
 
         @Override
-        public JOceanusEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -1118,7 +1118,7 @@ public final class JFieldCellEditor {
      * Calendar Cell Editor.
      */
     public static class CalendarCellEditor
-            extends JDateDayCellEditor {
+            extends TethysSwingDateCellEditor {
         /**
          * Serial Id.
          */
@@ -1127,7 +1127,7 @@ public final class JFieldCellEditor {
         /**
          * The Select-able range.
          */
-        private transient JDateDayRange theRange = null;
+        private transient TethysDateRange theRange = null;
 
         /**
          * Is null date allowed?
@@ -1138,7 +1138,7 @@ public final class JFieldCellEditor {
          * Constructor.
          * @param pFormatter the formatter
          */
-        protected CalendarCellEditor(final JDateDayFormatter pFormatter) {
+        protected CalendarCellEditor(final TethysDateFormatter pFormatter) {
             /* Create a new configuration */
             super(pFormatter);
         }
@@ -1147,7 +1147,7 @@ public final class JFieldCellEditor {
          * Set the select-able range.
          * @param pRange the range
          */
-        public void setRange(final JDateDayRange pRange) {
+        public void setRange(final TethysDateRange pRange) {
             theRange = pRange;
         }
 
@@ -1166,20 +1166,20 @@ public final class JFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Access the range */
-            JDateDay myStart = (theRange == null)
+            TethysDate myStart = (theRange == null)
                                                   ? null
                                                   : theRange.getStart();
-            JDateDay myEnd = (theRange == null)
+            TethysDate myEnd = (theRange == null)
                                                 ? null
                                                 : theRange.getEnd();
-            JDateDay myCurr;
+            TethysDate myCurr;
 
             /* If the value is null */
             if ((pValue == null)
                 || (JFieldValue.ERROR.equals(pValue))) {
-                myCurr = new JDateDay();
+                myCurr = new TethysDate();
             } else {
-                myCurr = (JDateDay) pValue;
+                myCurr = (TethysDate) pValue;
             }
 
             /* Set up initial values and range */
@@ -1198,7 +1198,7 @@ public final class JFieldCellEditor {
 
         @Override
         public boolean stopCellEditing() {
-            JDateDay myDate = (JDateDay) getCellEditorValue();
+            TethysDate myDate = (TethysDate) getCellEditorValue();
             if (myDate == null) {
                 fireEditingCanceled();
                 return false;
@@ -1212,7 +1212,7 @@ public final class JFieldCellEditor {
      */
     public static class DateDayCellEditor
             extends AbstractCellEditor
-            implements TableCellEditor, JDateEditor, JOceanusEventProvider {
+            implements TableCellEditor, JDateEditor, TethysEventProvider {
         /**
          * Serial Id.
          */
@@ -1221,12 +1221,12 @@ public final class JFieldCellEditor {
         /**
          * The Button.
          */
-        private transient JDateDayButton theButton;
+        private transient TethysSwingDateButton theButton;
 
         /**
          * The Event Manager.
          */
-        private final transient JOceanusEventManager theEventManager;
+        private final transient TethysEventManager theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -1237,17 +1237,17 @@ public final class JFieldCellEditor {
          * Constructor.
          * @param pFormatter the formatter
          */
-        protected DateDayCellEditor(final JDateDayFormatter pFormatter) {
+        protected DateDayCellEditor(final TethysDateFormatter pFormatter) {
             /* Create a new button */
-            theButton = new JDateDayButton(pFormatter);
+            theButton = new TethysSwingDateButton(pFormatter);
             theButton.setEditor(this);
 
             /* Create event manager */
-            theEventManager = new JOceanusEventManager();
+            theEventManager = new TethysEventManager();
         }
 
         @Override
-        public JOceanusEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -1255,7 +1255,7 @@ public final class JFieldCellEditor {
          * Obtain the DateConfig.
          * @return the configuration
          */
-        public JDateDayConfig getDateConfig() {
+        public TethysSwingDateConfig getDateConfig() {
             return theButton.getDateConfig();
         }
 
@@ -1282,8 +1282,8 @@ public final class JFieldCellEditor {
             theEventManager.fireStateChanged();
 
             /* If the value is the date */
-            if (pValue instanceof JDateDay) {
-                JDateDay myDate = (JDateDay) pValue;
+            if (pValue instanceof TethysDate) {
+                TethysDate myDate = (TethysDate) pValue;
                 /* Set the selected date */
                 theButton.setSelectedDateDay(myDate);
 
@@ -1332,9 +1332,9 @@ public final class JFieldCellEditor {
             Object o = pValue;
 
             /* If we have a decimal value passed */
-            if (o instanceof JDecimal) {
+            if (o instanceof TethysDecimal) {
                 /* Format it */
-                o = ((JDecimal) o).toString();
+                o = ((TethysDecimal) o).toString();
             }
 
             /* Pass through to super-class */
@@ -1355,13 +1355,13 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected RateCellEditor(final JDecimalParser pParser) {
+        protected RateCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1393,7 +1393,7 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * The assumed currency.
@@ -1404,7 +1404,7 @@ public final class JFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected MoneyCellEditor(final JDecimalParser pParser) {
+        protected MoneyCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
             theCurrency = theParser.getDefaultCurrency();
         }
@@ -1445,13 +1445,13 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected UnitsCellEditor(final JDecimalParser pParser) {
+        protected UnitsCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1483,13 +1483,13 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected RatioCellEditor(final JDecimalParser pParser) {
+        protected RatioCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1521,13 +1521,13 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected DilutionCellEditor(final JDecimalParser pParser) {
+        protected DilutionCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1559,7 +1559,7 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * The assumed currency.
@@ -1570,7 +1570,7 @@ public final class JFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected PriceCellEditor(final JDecimalParser pParser) {
+        protected PriceCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
             theCurrency = theParser.getDefaultCurrency();
         }
@@ -1611,7 +1611,7 @@ public final class JFieldCellEditor {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalParser theParser;
+        private final transient TethysDecimalParser theParser;
 
         /**
          * The assumed currency.
@@ -1622,7 +1622,7 @@ public final class JFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected DilutedPriceCellEditor(final JDecimalParser pParser) {
+        protected DilutedPriceCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
             theCurrency = theParser.getDefaultCurrency();
         }

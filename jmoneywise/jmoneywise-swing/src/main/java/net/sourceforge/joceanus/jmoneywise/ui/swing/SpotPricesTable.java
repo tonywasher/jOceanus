@@ -64,17 +64,17 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * SpotPrices panel.
@@ -150,7 +150,7 @@ public class SpotPricesTable
     /**
      * The panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The column model.
@@ -160,7 +160,7 @@ public class SpotPricesTable
     /**
      * The selected date.
      */
-    private transient JDateDay theDate = null;
+    private transient TethysDate theDate = null;
 
     /**
      * The Portfolio.
@@ -239,7 +239,7 @@ public class SpotPricesTable
         myHeader.add(theActionButtons);
 
         /* Create the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
@@ -262,7 +262,7 @@ public class SpotPricesTable
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -295,7 +295,7 @@ public class SpotPricesTable
 
             /* Create SavePoint */
             theSelect.createSavePoint();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Show the error */
             theView.addError(e);
 
@@ -328,10 +328,10 @@ public class SpotPricesTable
      * Set Selection to the specified portfolio and date.
      * @param pPortfolio the portfolio
      * @param pDate the Date for the extract
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setSelection(final Portfolio pPortfolio,
-                             final JDateDay pDate) throws JOceanusException {
+                             final TethysDate pDate) throws OceanusException {
         /* Record selection */
         theDate = pDate;
         thePortfolio = pPortfolio;
@@ -379,7 +379,7 @@ public class SpotPricesTable
                 theModel.fireNewDataEvents();
                 notifyChanges();
             }
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Show the error */
             setError(e);
         }
@@ -389,36 +389,36 @@ public class SpotPricesTable
      * SpotView listener class.
      */
     private final class SpotViewListener
-            implements JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements TethysActionEventListener, TethysChangeEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+        private final TethysChangeRegistration theUpdateSetReg;
 
         /**
          * View Registration.
          */
-        private final JOceanusChangeRegistration theViewReg;
+        private final TethysChangeRegistration theViewReg;
 
         /**
          * Error Registration.
          */
-        private final JOceanusChangeRegistration theErrorReg;
+        private final TethysChangeRegistration theErrorReg;
 
         /**
          * Selection Registration.
          */
-        private final JOceanusChangeRegistration theSelectReg;
+        private final TethysChangeRegistration theSelectReg;
 
         /**
          * Download Registration.
          */
-        private final JOceanusActionRegistration theDownloadReg;
+        private final TethysActionRegistration theDownloadReg;
 
         /**
          * Action Registration.
          */
-        private final JOceanusActionRegistration theActionReg;
+        private final TethysActionRegistration theActionReg;
 
         /**
          * Constructor.
@@ -429,13 +429,13 @@ public class SpotPricesTable
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
             theErrorReg = theError.getEventRegistrar().addChangeListener(this);
             theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
-            JOceanusEventRegistrar myRegistrar = theSelect.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theSelect.getEventRegistrar();
             theSelectReg = myRegistrar.addChangeListener(this);
             theDownloadReg = myRegistrar.addActionListener(this);
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the data view */
             if (theViewReg.isRelevant(pEvent)) {
                 /* Refresh Data */
@@ -453,7 +453,7 @@ public class SpotPricesTable
 
                 /* Access selection */
                 Portfolio myPortfolio = theSelect.getPortfolio();
-                JDateDay myDate = theSelect.getDate();
+                TethysDate myDate = theSelect.getDate();
 
                 /* If the selection differs */
                 if (!Difference.isEqual(theDate, myDate) || !Difference.isEqual(thePortfolio, myPortfolio)) {
@@ -466,9 +466,9 @@ public class SpotPricesTable
                         theSelect.createSavePoint();
 
                         /* Catch Exceptions */
-                    } catch (JOceanusException e) {
+                    } catch (OceanusException e) {
                         /* Build the error */
-                        JOceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
+                        OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
 
                         /* Show the error */
                         setError(myError);
@@ -495,7 +495,7 @@ public class SpotPricesTable
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* Cancel Editing */
             cancelEditing();
 
@@ -595,7 +595,7 @@ public class SpotPricesTable
         @Override
         public void setItemValue(final SpotSecurityPrice pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -749,15 +749,15 @@ public class SpotPricesTable
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public void setItemValue(final SpotSecurityPrice pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_PRICE:
-                    pItem.setPrice((JPrice) pValue);
+                    pItem.setPrice((TethysPrice) pValue);
                     break;
                 case COLUMN_ACTION:
                     pItem.setPrice(null);
@@ -814,7 +814,7 @@ public class SpotPricesTable
          * EditorListener.
          */
         private final class EditorListener
-                implements JOceanusChangeEventListener {
+                implements TethysChangeEventListener {
             /**
              * Constructor.
              */
@@ -823,7 +823,7 @@ public class SpotPricesTable
             }
 
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 /* Access details */
                 Point myCell = thePriceEditor.getPoint();
 

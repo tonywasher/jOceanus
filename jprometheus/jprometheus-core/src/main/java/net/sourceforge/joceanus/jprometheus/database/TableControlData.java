@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Database table class for ControlData.
@@ -59,7 +59,7 @@ public class TableControlData
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadValues() throws JOceanusException {
+    protected DataValues<CryptographyDataType> loadValues() throws OceanusException {
         /* Access table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -74,7 +74,7 @@ public class TableControlData
 
     @Override
     protected void setFieldValue(final ControlData pItem,
-                                 final JDataField pField) throws JOceanusException {
+                                 final JDataField pField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (ControlData.FIELD_DATAVERSION.equals(pField)) {

@@ -40,13 +40,13 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingArrowIcon;
 
 /**
  * SpotRates selection panel.
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
  */
 public class SpotRatesSelect
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -93,7 +93,7 @@ public class SpotRatesSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The data view.
@@ -108,7 +108,7 @@ public class SpotRatesSelect
     /**
      * The date button.
      */
-    private final JDateDayButton theDateButton;
+    private final TethysSwingDateButton theDateButton;
 
     /**
      * The next button.
@@ -144,14 +144,14 @@ public class SpotRatesSelect
         theView = pView;
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create Labels */
         JLabel myCurr = new JLabel(NLS_CURRENCY);
         JLabel myDate = new JLabel(NLS_DATE);
 
         /* Create the DateButton */
-        theDateButton = new JDateDayButton();
+        theDateButton = new TethysSwingDateButton();
 
         /* Create the Download Button */
         theDownloadButton = MoneyWiseIcons.getDownloadButton();
@@ -160,8 +160,8 @@ public class SpotRatesSelect
         theCurrLabel = new JLabel();
 
         /* Create the Buttons */
-        theNext = new JButton(ArrowIcon.RIGHT);
-        thePrev = new JButton(ArrowIcon.LEFT);
+        theNext = new JButton(TethysSwingArrowIcon.RIGHT);
+        thePrev = new JButton(TethysSwingArrowIcon.LEFT);
         theNext.setToolTipText(NLS_NEXTTIP);
         thePrev.setToolTipText(NLS_PREVTIP);
 
@@ -202,7 +202,7 @@ public class SpotRatesSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -210,7 +210,7 @@ public class SpotRatesSelect
      * Get the selected date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theState.getDate();
     }
 
@@ -219,7 +219,7 @@ public class SpotRatesSelect
      */
     public final void refreshData() {
         /* Access the data */
-        JDateDayRange myRange = theView.getRange();
+        TethysDateRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
@@ -236,11 +236,11 @@ public class SpotRatesSelect
      * Set the range for the date box.
      * @param pRange the Range to set
      */
-    private void setRange(final JDateDayRange pRange) {
-        JDateDay myStart = (pRange == null)
+    private void setRange(final TethysDateRange pRange) {
+        TethysDate myStart = (pRange == null)
                                             ? null
                                             : pRange.getStart();
-        JDateDay myEnd = (pRange == null)
+        TethysDate myEnd = (pRange == null)
                                           ? null
                                           : pRange.getEnd();
 
@@ -281,8 +281,8 @@ public class SpotRatesSelect
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
-    public void setAdjacent(final JDateDay pPrev,
-                            final JDateDay pNext) {
+    public void setAdjacent(final TethysDate pPrev,
+                            final TethysDate pNext) {
         /* Record the dates */
         theState.setAdjacent(pPrev, pNext);
     }
@@ -297,7 +297,7 @@ public class SpotRatesSelect
          */
         private SpotRatesListener() {
             /* Declare listener */
-            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, this);
+            theDateButton.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, this);
             theDownloadButton.addActionListener(this);
             theNext.addActionListener(this);
             thePrev.addActionListener(this);
@@ -345,23 +345,23 @@ public class SpotRatesSelect
         /**
          * Selected date.
          */
-        private JDateDay theDate = null;
+        private TethysDate theDate = null;
 
         /**
          * Next date.
          */
-        private JDateDay theNextDate = null;
+        private TethysDate theNextDate = null;
 
         /**
          * Previous date.
          */
-        private JDateDay thePrevDate = null;
+        private TethysDate thePrevDate = null;
 
         /**
          * Constructor.
          */
         private SpotRatesState() {
-            theDate = new JDateDay();
+            theDate = new TethysDate();
         }
 
         /**
@@ -369,12 +369,12 @@ public class SpotRatesSelect
          * @param pState state to copy from
          */
         private SpotRatesState(final SpotRatesState pState) {
-            theDate = new JDateDay(pState.getDate());
+            theDate = new TethysDate(pState.getDate());
             if (pState.getNextDate() != null) {
-                theNextDate = new JDateDay(pState.getNextDate());
+                theNextDate = new TethysDate(pState.getNextDate());
             }
             if (pState.getPrevDate() != null) {
-                thePrevDate = new JDateDay(pState.getPrevDate());
+                thePrevDate = new TethysDate(pState.getPrevDate());
             }
         }
 
@@ -382,7 +382,7 @@ public class SpotRatesSelect
          * Get the selected date.
          * @return the date
          */
-        private JDateDay getDate() {
+        private TethysDate getDate() {
             return theDate;
         }
 
@@ -390,7 +390,7 @@ public class SpotRatesSelect
          * Get the next date.
          * @return the date
          */
-        private JDateDay getNextDate() {
+        private TethysDate getNextDate() {
             return theNextDate;
         }
 
@@ -398,7 +398,7 @@ public class SpotRatesSelect
          * Get the previous date.
          * @return the date
          */
-        private JDateDay getPrevDate() {
+        private TethysDate getPrevDate() {
             return thePrevDate;
         }
 
@@ -407,9 +407,9 @@ public class SpotRatesSelect
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final JDateDayButton pButton) {
+        private boolean setDate(final TethysSwingDateButton pButton) {
             /* Adjust the date and build the new range */
-            JDateDay myDate = new JDateDay(pButton.getSelectedDate());
+            TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
@@ -422,7 +422,7 @@ public class SpotRatesSelect
          */
         private void setNext() {
             /* Copy date */
-            theDate = new JDateDay(theNextDate);
+            theDate = new TethysDate(theNextDate);
             applyState();
         }
 
@@ -431,7 +431,7 @@ public class SpotRatesSelect
          */
         private void setPrev() {
             /* Copy date */
-            theDate = new JDateDay(thePrevDate);
+            theDate = new TethysDate(thePrevDate);
             applyState();
         }
 
@@ -440,8 +440,8 @@ public class SpotRatesSelect
          * @param pPrev the previous Date
          * @param pNext the next Date
          */
-        private void setAdjacent(final JDateDay pPrev,
-                                 final JDateDay pNext) {
+        private void setAdjacent(final TethysDate pPrev,
+                                 final TethysDate pNext) {
             /* Record the dates */
             thePrevDate = pPrev;
             theNextDate = pNext;
@@ -459,7 +459,7 @@ public class SpotRatesSelect
             theDateButton.setSelectedDateDay(theDate);
 
             /* Determine whether we are todays date */
-            boolean isToday = Difference.isEqual(theDate, new JDateDay());
+            boolean isToday = Difference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

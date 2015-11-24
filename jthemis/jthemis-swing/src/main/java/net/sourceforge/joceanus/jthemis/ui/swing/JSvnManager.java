@@ -49,8 +49,8 @@ import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
@@ -203,9 +203,9 @@ public final class JSvnManager {
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSvnManager() throws JOceanusException {
+    protected JSvnManager() throws OceanusException {
         /* Create the preference manager */
         thePrefMgr = new PreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
@@ -225,7 +225,7 @@ public final class JSvnManager {
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
 
         /* Create the Tabbed Pane */
-        JEnableTabbed myTabs = new JEnableTabbed();
+        TethysSwingEnableTabbed myTabs = new TethysSwingEnableTabbed();
 
         /* Create the panel */
         theStatusPanel = new JSvnStatusWindow(this);
@@ -417,7 +417,7 @@ public final class JSvnManager {
      * process error.
      * @param pError the error
      */
-    private void processError(final JOceanusException pError) {
+    private void processError(final OceanusException pError) {
         /* If we have an error */
         if (pError != null) {
             /* Ensure that we have an error entry */

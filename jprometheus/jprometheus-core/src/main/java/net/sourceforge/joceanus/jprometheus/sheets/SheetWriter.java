@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Write control for spreadsheets.
@@ -125,11 +125,11 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @param pType the workBookType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void createBackup(final T pData,
                              final File pFile,
-                             final WorkBookType pType) throws JOceanusException {
+                             final WorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
         myTask = myTask.startTask("Writing");
@@ -187,9 +187,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * Create the list of sheets to write.
      * @param pType the workBookType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void initialiseWorkBook(final WorkBookType pType) throws JOceanusException {
+    private void initialiseWorkBook(final WorkBookType pType) throws OceanusException {
         /* Create the workbook attached to the output stream */
         theWorkBook = new DataWorkBook(pType);
 
@@ -209,10 +209,10 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * Write the WorkBook.
      * @param pStream the output stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      * @throws IOException on write error
      */
-    private void writeWorkBook(final OutputStream pStream) throws JOceanusException, IOException {
+    private void writeWorkBook(final OutputStream pStream) throws OceanusException, IOException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
 

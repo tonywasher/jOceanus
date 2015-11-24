@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Data Exception.
  */
 public class GordianDataException
-        extends JOceanusException {
+        extends OceanusException {
     /**
      * SerialId.
      */

@@ -59,16 +59,16 @@ import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.ui.swing.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
 
 /**
  * Maintenance Tab panel.
@@ -76,7 +76,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
  */
 public class MaintenanceTab
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * The serial Id.
      */
@@ -110,7 +110,7 @@ public class MaintenanceTab
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The Data View.
@@ -125,7 +125,7 @@ public class MaintenanceTab
     /**
      * The Tabs.
      */
-    private final JEnableTabbed theTabs;
+    private final TethysSwingEnableTabbed theTabs;
 
     /**
      * The TaxYear Panel.
@@ -162,10 +162,10 @@ public class MaintenanceTab
         theParent = pTop;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the Tabbed Pane */
-        theTabs = new JEnableTabbed();
+        theTabs = new TethysSwingEnableTabbed();
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
@@ -221,7 +221,7 @@ public class MaintenanceTab
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -271,7 +271,7 @@ public class MaintenanceTab
             theTaxYearTab.refreshData();
             theStatic.refreshData();
 
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Show the error */
             theView.addError(e);
         }
@@ -332,7 +332,7 @@ public class MaintenanceTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    protected void selectMaintenance(final JOceanusActionEvent pEvent) {
+    protected void selectMaintenance(final TethysActionEvent pEvent) {
         /* Switch on the subId */
         switch (pEvent.getActionId()) {
             /* View the requested account */
@@ -498,11 +498,11 @@ public class MaintenanceTab
      * The listener class.
      */
     private final class MaintenanceListener
-            implements ChangeListener, JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements ChangeListener, TethysActionEventListener, TethysChangeEventListener {
         /**
          * View Registration.
          */
-        private final JOceanusChangeRegistration theViewReg;
+        private final TethysChangeRegistration theViewReg;
 
         /**
          * Refreshing flag.
@@ -517,7 +517,7 @@ public class MaintenanceTab
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
 
             /* Handle sub-panels */
-            JOceanusEventRegistrar myRegistrar = theAccountTab.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theAccountTab.getEventRegistrar();
             myRegistrar.addChangeListener(this);
             myRegistrar.addActionListener(this);
             myRegistrar = theCategoryTab.getEventRegistrar();
@@ -536,7 +536,7 @@ public class MaintenanceTab
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the data view */
             if (theViewReg.isRelevant(pEvent)) {
                 /* Refresh the data locking visibility setting for the duration */
@@ -566,7 +566,7 @@ public class MaintenanceTab
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* else handle or cascade */
             switch (pEvent.getActionId()) {
                 /* Pass through the event */

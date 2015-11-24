@@ -41,13 +41,13 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel.RowTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableScroll;
-import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter;
 
 /**
  * Template class to provide a table to handle a data type.
@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter;
  */
 public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends JTable
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -81,7 +81,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * FieldManager.
@@ -116,7 +116,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Scroll Pane.
      */
-    private JEnableScroll theScroll = null;
+    private TethysSwingEnableScroll theScroll = null;
 
     /**
      * Is Enabled?
@@ -134,11 +134,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -146,7 +146,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Cascade action event.
      * @param pEvent the event to cascade
      */
-    protected void cascadeActionEvent(final JOceanusActionEvent pEvent) {
+    protected void cascadeActionEvent(final TethysActionEvent pEvent) {
         /* Fire the event */
         theEventManager.cascadeActionEvent(pEvent);
     }
@@ -250,7 +250,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Set the error details.
      * @param pError the error
      */
-    protected abstract void setError(final JOceanusException pError);
+    protected abstract void setError(final OceanusException pError);
 
     /**
      * Increment version.
@@ -287,7 +287,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theModel = pModel;
 
         /* Create the filter and record it */
-        TableFilter<T> myFilter = new TableFilter<T>(theModel, true);
+        TethysSwingTableFilter<T> myFilter = new TethysSwingTableFilter<T>(theModel, true);
         theModel.registerFilter(myFilter);
         setRowSorter(myFilter);
 
@@ -308,7 +308,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         myRowHdrTable.setSelectionModel(getSelectionModel());
 
         /* Create a new Scroll Pane and add this table to it */
-        theScroll = new JEnableScroll();
+        theScroll = new TethysSwingEnableScroll();
         theScroll.setViewportView(this);
 
         /* Add as the row header */

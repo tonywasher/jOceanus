@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for ExchangeRate.
@@ -87,7 +87,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
         myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
@@ -100,7 +100,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void insertSecureItem(final ExchangeRate pItem) throws JOceanusException {
+    protected void insertSecureItem(final ExchangeRate pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_FROM, pItem.getFromCurrencyId());

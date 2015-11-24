@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * Quicken Preferences.
@@ -74,13 +74,13 @@ public class QIFPreference
     /**
      * Default value for Last Event.
      */
-    private static final JDateDay DEFAULT_LASTEVENT = new JDateDay();
+    private static final TethysDate DEFAULT_LASTEVENT = new TethysDate();
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public QIFPreference() throws JOceanusException {
+    public QIFPreference() throws OceanusException {
         super();
     }
 

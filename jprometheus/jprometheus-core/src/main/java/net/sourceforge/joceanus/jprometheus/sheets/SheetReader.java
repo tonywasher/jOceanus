@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Load control for spreadsheets.
@@ -123,9 +123,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * Load a Backup Workbook.
      * @param pFile the backup file to load from
      * @return the loaded DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public T loadBackup(final File pFile) throws JOceanusException {
+    public T loadBackup(final File pFile) throws OceanusException {
         /* Start the task */
         JDataProfile myTask = theTask.getActiveTask();
         myTask = myTask.startTask("Loading");
@@ -175,10 +175,10 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * Load a Backup Workbook.
      * @param pFile the zip file
      * @param pEntry the zip file entry
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void loadEntry(final GordianZipReadFile pFile,
-                          final GordianZipFileEntry pEntry) throws JOceanusException {
+                          final GordianZipFileEntry pEntry) throws OceanusException {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Obtain the active profile */
@@ -224,11 +224,11 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @param pStream the input stream
      * @return continue true/false
      * @param pType the workBookType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      * @throws IOException on read error
      */
     private boolean initialiseWorkBook(final InputStream pStream,
-                                       final WorkBookType pType) throws JOceanusException, IOException {
+                                       final WorkBookType pType) throws OceanusException, IOException {
         /* Create the new DataSet */
         theData = newDataSet();
 
@@ -264,9 +264,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
     /**
      * Load the WorkBook.
      * @return continue true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean loadWorkBook() throws JOceanusException {
+    private boolean loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
 

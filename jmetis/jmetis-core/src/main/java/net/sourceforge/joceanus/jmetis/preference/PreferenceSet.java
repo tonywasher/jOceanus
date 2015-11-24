@@ -36,18 +36,18 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.JFieldState;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Wrapper class for java preferences.
  * @author Tony Washer
  */
 public abstract class PreferenceSet
-        implements JFieldSetItem, JOceanusEventProvider {
+        implements JFieldSetItem, TethysEventProvider {
     /**
      * Unknown preference string.
      */
@@ -61,7 +61,7 @@ public abstract class PreferenceSet
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * Report fields.
@@ -85,15 +85,15 @@ public abstract class PreferenceSet
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public PreferenceSet() throws JOceanusException {
+    public PreferenceSet() throws OceanusException {
         /* Access the handle */
         theHandle = Preferences.userNodeForPackage(this.getClass());
         theHandle = theHandle.node(this.getClass().getSimpleName());
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Allocate the preference map */
         theMap = new LinkedHashMap<String, PreferenceItem>();
@@ -118,7 +118,7 @@ public abstract class PreferenceSet
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -244,7 +244,7 @@ public abstract class PreferenceSet
      * @return the preference item
      */
     protected DatePreference defineDatePreference(final String pName,
-                                                  final JDateDay pDefault) {
+                                                  final TethysDate pDefault) {
         /* Define the preference */
         DatePreference myPref = new DatePreference(pName, pDefault);
 
@@ -374,7 +374,7 @@ public abstract class PreferenceSet
      * @param pName the name of the preference
      * @return the Date
      */
-    public JDateDay getDateValue(final String pName) {
+    public TethysDate getDateValue(final String pName) {
         /* Access preference */
         PreferenceItem myPref = getPreference(pName);
 
@@ -465,9 +465,9 @@ public abstract class PreferenceSet
 
     /**
      * Store preference changes.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final void storeChanges() throws JOceanusException {
+    public final void storeChanges() throws OceanusException {
         /* Loop through all the preferences */
         for (PreferenceItem myPref : theMap.values()) {
             /* Store any changes */
@@ -905,7 +905,7 @@ public abstract class PreferenceSet
          * @param pDefault the default value
          */
         public DatePreference(final String pName,
-                              final JDateDay pDefault) {
+                              final TethysDate pDefault) {
             /* Store name */
             super(pName, pDefault, PreferenceType.DATE);
 
@@ -920,7 +920,7 @@ public abstract class PreferenceSet
                     bExists = false;
                 } else {
                     /* Parse the Date */
-                    JDateDay myDate = new JDateDay(myValue);
+                    TethysDate myDate = new TethysDate(myValue);
 
                     /* Set as initial value */
                     setTheValue(myDate);
@@ -935,20 +935,20 @@ public abstract class PreferenceSet
         }
 
         @Override
-        public JDateDay getValue() {
-            return (JDateDay) super.getValue();
+        public TethysDate getValue() {
+            return (TethysDate) super.getValue();
         }
 
         /**
          * Set value.
          * @param pNewValue the new value
          */
-        public void setValue(final JDateDay pNewValue) {
-            JDateDay myNewValue = pNewValue;
+        public void setValue(final TethysDate pNewValue) {
+            TethysDate myNewValue = pNewValue;
 
             /* Take a copy if not null */
             if (myNewValue != null) {
-                myNewValue = new JDateDay(myNewValue);
+                myNewValue = new TethysDate(myNewValue);
             }
 
             /* Set the new value */
@@ -958,7 +958,7 @@ public abstract class PreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) {
             /* Store the value */
-            theHandle.put(getName(), ((JDateDay) pNewValue).toString());
+            theHandle.put(getName(), ((TethysDate) pNewValue).toString());
         }
     }
 

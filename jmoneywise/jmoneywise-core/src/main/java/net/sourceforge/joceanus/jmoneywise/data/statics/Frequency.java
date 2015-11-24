@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Frequency data type.
@@ -66,10 +66,10 @@ public class Frequency
      * Basic Constructor.
      * @param pList The list to associate the Frequency with
      * @param pName Name of Frequency
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final String pName) throws JOceanusException {
+                      final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class Frequency
      * Basic constructor.
      * @param pList The list to associate the Frequency with
      * @param pClass Class of Frequency
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final FrequencyClass pClass) throws JOceanusException {
+                      final FrequencyClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class Frequency
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -264,9 +264,9 @@ public class Frequency
         /**
          * Add a Frequency.
          * @param pFrequency the Name of the frequency
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pFrequency) throws JOceanusException {
+        public void addBasicItem(final String pFrequency) throws OceanusException {
             /* Create a new Frequency */
             Frequency myFrequency = new Frequency(this, pFrequency);
 
@@ -281,7 +281,7 @@ public class Frequency
         }
 
         @Override
-        public Frequency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Frequency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the frequency */
             Frequency myFreq = new Frequency(this, pValues);
 
@@ -299,7 +299,7 @@ public class Frequency
         }
 
         @Override
-        protected Frequency newItem(final FrequencyClass pClass) throws JOceanusException {
+        protected Frequency newItem(final FrequencyClass pClass) throws OceanusException {
             /* Create the frequency */
             Frequency myFreq = new Frequency(this, pClass);
 

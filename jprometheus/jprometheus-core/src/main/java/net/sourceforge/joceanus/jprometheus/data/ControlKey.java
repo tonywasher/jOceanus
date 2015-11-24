@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -121,10 +121,10 @@ public final class ControlKey
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private ControlKey(final ControlKeyList pList,
-                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+                       final DataValues<CryptographyDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -150,9 +150,9 @@ public final class ControlKey
      * <p>
      * This will create a new DataKeySet with a new set of DataKeys.
      * @param pList the list to which to add the key to
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private ControlKey(final ControlKeyList pList) throws JOceanusException {
+    private ControlKey(final ControlKeyList pList) throws OceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -173,7 +173,7 @@ public final class ControlKey
             allocateDataKeySets(myData);
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
@@ -184,9 +184,9 @@ public final class ControlKey
      * <p>
      * This will create a new DataKeySet with a new cloned set of DataKeys.
      * @param pKey the key to copy
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private ControlKey(final ControlKey pKey) throws JOceanusException {
+    private ControlKey(final ControlKey pKey) throws OceanusException {
         /* Initialise the item */
         super(pKey.getList(), 0);
 
@@ -211,7 +211,7 @@ public final class ControlKey
             allocateDataKeySets(myData);
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
@@ -257,9 +257,9 @@ public final class ControlKey
     /**
      * Get the Prime keySetHash.
      * @return the prime keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHash getPrimeKeySetHash() throws JOceanusException {
+    protected GordianKeySetHash getPrimeKeySetHash() throws OceanusException {
         GordianKeySetHash myHash = getPrimeKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolvePrimeHash()
@@ -269,9 +269,9 @@ public final class ControlKey
     /**
      * Get the Alternate keySetHash.
      * @return the alternate keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHash getAltKeySetHash() throws JOceanusException {
+    protected GordianKeySetHash getAltKeySetHash() throws OceanusException {
         GordianKeySetHash myHash = getAltKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolveAltHash()
@@ -390,9 +390,9 @@ public final class ControlKey
     /**
      * Obtain the active keySetHash.
      * @return the active keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHash getKeySetHash() throws JOceanusException {
+    protected GordianKeySetHash getKeySetHash() throws OceanusException {
         return getKeySetHash(isHashPrime());
     }
 
@@ -400,9 +400,9 @@ public final class ControlKey
      * Obtain the required keySetHash.
      * @param pUsePrime return prime hash (true/false)
      * @return the requested keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianKeySetHash getKeySetHash(final Boolean pUsePrime) throws JOceanusException {
+    protected GordianKeySetHash getKeySetHash(final Boolean pUsePrime) throws OceanusException {
         return pUsePrime
                          ? getPrimeKeySetHash()
                          : getAltKeySetHash();
@@ -410,9 +410,9 @@ public final class ControlKey
 
     /**
      * Resolve the active Hash.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void resolveHash() throws JOceanusException {
+    protected void resolveHash() throws OceanusException {
         if (isHashPrime()) {
             resolvePrimeHash();
         } else {
@@ -423,9 +423,9 @@ public final class ControlKey
     /**
      * Resolve prime Hash.
      * @return the resolved Hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private GordianKeySetHash resolvePrimeHash() throws JOceanusException {
+    private GordianKeySetHash resolvePrimeHash() throws OceanusException {
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
         GordianHashManager mySecure = myData.getSecurity();
@@ -441,9 +441,9 @@ public final class ControlKey
     /**
      * Resolve alternate Hash.
      * @return the resolved Hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private GordianKeySetHash resolveAltHash() throws JOceanusException {
+    private GordianKeySetHash resolveAltHash() throws OceanusException {
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
         GordianHashManager mySecure = myData.getSecurity();
@@ -473,9 +473,9 @@ public final class ControlKey
     /**
      * Allocate a new DataKeySet.
      * @param pData the DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void allocateDataKeySets(final DataSet<?, ?> pData) throws JOceanusException {
+    private void allocateDataKeySets(final DataSet<?, ?> pData) throws OceanusException {
         /* Access the DataKeySet List */
         DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
@@ -506,9 +506,9 @@ public final class ControlKey
     /**
      * Update password hash.
      * @param pHash the new keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void updatePasswordHash(final GordianKeySetHash pHash) throws JOceanusException {
+    protected void updatePasswordHash(final GordianKeySetHash pHash) throws OceanusException {
         /* Access current mode */
         Boolean isHashPrime = isHashPrime();
 
@@ -535,9 +535,9 @@ public final class ControlKey
 
     /**
      * Ensure keySetHash is updated.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void ensureKeySetHash() throws JOceanusException {
+    protected void ensureKeySetHash() throws OceanusException {
         /* Access current mode */
         Boolean isHashPrime = isHashPrime();
         GordianKeySetHash myHash = getKeySetHash();
@@ -622,7 +622,7 @@ public final class ControlKey
         }
 
         @Override
-        public ControlKeyList deriveList(final ListStyle pStyle) throws JOceanusException {
+        public ControlKeyList deriveList(final ListStyle pStyle) throws OceanusException {
             return (ControlKeyList) super.deriveList(pStyle);
         }
 
@@ -651,7 +651,7 @@ public final class ControlKey
         }
 
         @Override
-        public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the controlKey */
             ControlKey myKey = new ControlKey(this, pValues);
 
@@ -671,9 +671,9 @@ public final class ControlKey
         /**
          * Create a new ControlKey (with associated DataKeys).
          * @return the new item
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public ControlKey createNewKeySet() throws JOceanusException {
+        public ControlKey createNewKeySet() throws OceanusException {
             /* Create the key */
             ControlKey myKey = new ControlKey(this);
 
@@ -686,9 +686,9 @@ public final class ControlKey
          * Add a cloned ControlKey (with associated DataKeys).
          * @param pSource the source key
          * @return the new item
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public ControlKey cloneItem(final ControlKey pSource) throws JOceanusException {
+        public ControlKey cloneItem(final ControlKey pSource) throws OceanusException {
             /* Create the key */
             ControlKey myKey = new ControlKey(pSource);
 
@@ -700,9 +700,9 @@ public final class ControlKey
         /**
          * Initialise Security from a DataBase for a SpreadSheet load.
          * @param pDatabase the DataSet for the Database
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws JOceanusException {
+        protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws OceanusException {
             /* Access the active control key from the database */
             DataSet<?, ?> myData = getDataSet();
             ControlKey myDatabaseKey = pDatabase.getControlKey();
@@ -747,9 +747,9 @@ public final class ControlKey
          * Clone ControlKey from dataBase.
          * @param pControlKey the ControlKey to clone
          * @return the new control key
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private ControlKey cloneControlKey(final ControlKey pControlKey) throws JOceanusException {
+        private ControlKey cloneControlKey(final ControlKey pControlKey) throws OceanusException {
             /* Build data values */
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(ControlKey.OBJECT_NAME);
             myValues.addValue(ControlKey.FIELD_ID, pControlKey.getId());
@@ -773,7 +773,7 @@ public final class ControlKey
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Just sort the list */
             reSort();
         }
@@ -887,10 +887,10 @@ public final class ControlKey
          * @param pPrimeHash this is the prime hash
          * @param pHash the new keySetHash
          * @return were there changes? true/false
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private boolean updateKeySetHash(final Boolean pPrimeHash,
-                                         final GordianKeySetHash pHash) throws JOceanusException {
+                                         final GordianKeySetHash pHash) throws OceanusException {
             /* Loop through the KeySets */
             boolean bChanges = false;
             Iterator<DataKeySet> myIterator = iterator();
@@ -910,10 +910,10 @@ public final class ControlKey
          * @param pControlKey the ControlKey to clone
          * @param pKeySets the DataKeySetList
          * @return the new DataKeySet
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private DataKeySetResource cloneDataKeySetResource(final ControlKey pControlKey,
-                                                           final DataKeySetList pKeySets) throws JOceanusException {
+                                                           final DataKeySetList pKeySets) throws OceanusException {
             /* Create a new resource */
             DataKeySetResource myResource = new DataKeySetResource();
 

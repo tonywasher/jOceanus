@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.http.JiraClient;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraProject.JiraComponent;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraProject.JiraVersion;
@@ -170,10 +170,10 @@ public class JiraIssue
      * Constructor.
      * @param pServer the server
      * @param pIssue the underlying issue
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JiraIssue(final JiraServer pServer,
-                        final JSONObject pIssue) throws JOceanusException {
+                        final JSONObject pIssue) throws OceanusException {
         /* Store parameters */
         super(pIssue);
         theServer = pServer;
@@ -326,9 +326,9 @@ public class JiraIssue
     /**
      * Get the parent of the issue.
      * @return the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraIssue getParent() throws JOceanusException {
+    public JiraIssue getParent() throws OceanusException {
         return theParent == null
                                 ? null
                                 : theParent.getIssue();
@@ -487,9 +487,9 @@ public class JiraIssue
         /**
          * Constructor.
          * @param pKey the issue key
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraIssueReference(final String pKey) throws JOceanusException {
+        private JiraIssueReference(final String pKey) throws OceanusException {
             /* record the details */
             theKey = pKey;
         }
@@ -505,9 +505,9 @@ public class JiraIssue
         /**
          * Get the issue.
          * @return the issue
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JiraIssue getIssue() throws JOceanusException {
+        public JiraIssue getIssue() throws OceanusException {
             if (theIssue == null) {
                 theIssue = theServer.getIssue(theKey);
             }
@@ -532,9 +532,9 @@ public class JiraIssue
         /**
          * Constructor.
          * @param pLink the underlying link
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraIssueLink(final JSONObject pLink) throws JOceanusException {
+        private JiraIssueLink(final JSONObject pLink) throws OceanusException {
             /* Access the details */
             JSONObject myLinkDtl = pLink.getJSONObject("issuelinktype");
             theType = theServer.getIssueLinkType(myLinkDtl.getString(JiraIssueLinkType.FIELD_NAME));
@@ -563,9 +563,9 @@ public class JiraIssue
         /**
          * Get the issue.
          * @return the issue
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JiraIssue getIssue() throws JOceanusException {
+        public JiraIssue getIssue() throws OceanusException {
             return theReference.getIssue();
         }
     }

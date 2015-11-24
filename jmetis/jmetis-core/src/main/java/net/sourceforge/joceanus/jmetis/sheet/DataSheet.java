@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class representing a sheet within a workBook.
@@ -107,20 +107,20 @@ public abstract class DataSheet {
      * @param pName the name of the range
      * @param pFirstCell the first cell in the range
      * @param pLastCell the last cell in the range
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract void declareRange(final String pName,
                                       final CellPosition pFirstCell,
-                                      final CellPosition pLastCell) throws JOceanusException;
+                                      final CellPosition pLastCell) throws OceanusException;
 
     /**
      * Name a single cell as a range.
      * @param pName the name of the range
      * @param pSingleCell the cell to name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void declareRange(final String pName,
-                             final CellPosition pSingleCell) throws JOceanusException {
+                             final CellPosition pSingleCell) throws OceanusException {
         /* declare the range */
         declareRange(pName, pSingleCell, pSingleCell);
     }
@@ -130,20 +130,20 @@ public abstract class DataSheet {
      * @param pFirstCell the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pName the name of the validation range list
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract void applyDataValidation(final CellPosition pFirstCell,
                                              final CellPosition pLastCell,
-                                             final String pName) throws JOceanusException;
+                                             final String pName) throws OceanusException;
 
     /**
      * Apply data validation to a range of cells.
      * @param pBaseCell the first cell in the range
      * @param pNumRows the number of rows in the filter
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract void applyDataFilter(final CellPosition pBaseCell,
-                                         final int pNumRows) throws JOceanusException;
+                                         final int pNumRows) throws OceanusException;
 
     /**
      * Create freeze panes.

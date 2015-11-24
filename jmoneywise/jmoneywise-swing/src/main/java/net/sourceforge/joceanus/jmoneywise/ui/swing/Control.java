@@ -31,7 +31,7 @@ import java.awt.SplashScreen;
 import java.util.Properties;
 
 import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public final class Control {
             theWindow = new MainTab(pProfile);
             theWindow.makeFrame();
 
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
         }
     }

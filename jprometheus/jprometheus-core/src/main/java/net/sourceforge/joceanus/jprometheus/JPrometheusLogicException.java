@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Prometheus Logic Exception.
  */
 public class JPrometheusLogicException
-        extends JOceanusException {
+        extends OceanusException {
     /**
      * SerialId.
      */

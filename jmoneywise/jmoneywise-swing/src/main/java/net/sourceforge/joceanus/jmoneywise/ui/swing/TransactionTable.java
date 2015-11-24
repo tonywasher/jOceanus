@@ -81,23 +81,23 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Analysis Statement.
@@ -302,12 +302,12 @@ public class TransactionTable
     /**
      * The panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The date range.
      */
-    private transient JDateDayRange theRange;
+    private transient TethysDateRange theRange;
 
     /**
      * The analysis filter.
@@ -401,7 +401,7 @@ public class TransactionTable
         myHeader.add(theActionButtons);
 
         /* Create the layout for the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(myHeader);
         thePanel.add(getScrollPane());
@@ -502,7 +502,7 @@ public class TransactionTable
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -660,7 +660,7 @@ public class TransactionTable
         @Override
         public void setItemValue(final Transaction pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -710,36 +710,36 @@ public class TransactionTable
      * Listener class.
      */
     private final class AnalysisListener
-            implements ActionListener, JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements ActionListener, TethysActionEventListener, TethysChangeEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+        private final TethysChangeRegistration theUpdateSetReg;
 
         /**
          * View Registration.
          */
-        private final JOceanusChangeRegistration theViewReg;
+        private final TethysChangeRegistration theViewReg;
 
         /**
          * Error Registration.
          */
-        private final JOceanusChangeRegistration theErrorReg;
+        private final TethysChangeRegistration theErrorReg;
 
         /**
          * Action Registration.
          */
-        private final JOceanusActionRegistration theActionReg;
+        private final TethysActionRegistration theActionReg;
 
         /**
          * Selection Registration.
          */
-        private final JOceanusChangeRegistration theSelectReg;
+        private final TethysChangeRegistration theSelectReg;
 
         /**
          * TransPanel Change Registration.
          */
-        private final JOceanusChangeRegistration theTransPanelReg;
+        private final TethysChangeRegistration theTransPanelReg;
 
         /**
          * Constructor.
@@ -751,7 +751,7 @@ public class TransactionTable
             theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
             theErrorReg = theError.getEventRegistrar().addChangeListener(this);
             theSelectReg = theSelect.getEventRegistrar().addChangeListener(this);
-            JOceanusEventRegistrar myRegistrar = theActiveTrans.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theActiveTrans.getEventRegistrar();
             theTransPanelReg = myRegistrar.addChangeListener(this);
             myRegistrar.addActionListener(this);
 
@@ -760,7 +760,7 @@ public class TransactionTable
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the data view */
             if (theViewReg.isRelevant(pEvent)) {
                 /* Refresh Data */
@@ -813,7 +813,7 @@ public class TransactionTable
                                                                  : AnalysisColumnSet.BALANCE);
 
                 /* Set the selection */
-                JDateDayRange myRange = theSelect.getRange();
+                TethysDateRange myRange = theSelect.getRange();
                 if (Difference.isEqual(myRange, theRange)) {
                     /* Handle a simple filter change */
                     theModel.fireNewDataEvents();
@@ -827,7 +827,7 @@ public class TransactionTable
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
                 cancelEditing();
@@ -1408,15 +1408,15 @@ public class TransactionTable
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void setItemValue(final Transaction pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
+                                  final Object pValue) throws OceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    pItem.setDate((JDateDay) pValue);
+                    pItem.setDate((TethysDate) pValue);
                     break;
                 case COLUMN_CATEGORY:
                     pItem.setCategory((TransactionCategory) pValue);
@@ -1438,20 +1438,20 @@ public class TransactionTable
                     pItem.setComments((String) pValue);
                     break;
                 case COLUMN_AMOUNT:
-                    pItem.setAmount((JMoney) pValue);
+                    pItem.setAmount((TethysMoney) pValue);
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_REF:
                     pItem.setReference((String) pValue);
                     break;
                 case COLUMN_CREDUNITS:
-                    pItem.setCreditUnits((JUnits) pValue);
+                    pItem.setCreditUnits((TethysUnits) pValue);
                     break;
                 case COLUMN_DEBUNITS:
-                    pItem.setDebitUnits((JUnits) pValue);
+                    pItem.setDebitUnits((TethysUnits) pValue);
                     break;
                 case COLUMN_DILUTION:
-                    pItem.setDilution((JDilution) pValue);
+                    pItem.setDilution((TethysDilution) pValue);
                     break;
                 case COLUMN_QUALYEARS:
                     pItem.setYears((Integer) pValue);
@@ -1460,16 +1460,16 @@ public class TransactionTable
                     pItem.setThirdParty((Deposit) pValue);
                     break;
                 case COLUMN_TAXCREDIT:
-                    pItem.setTaxCredit((JMoney) pValue);
+                    pItem.setTaxCredit((TethysMoney) pValue);
                     break;
                 case COLUMN_NATINS:
-                    pItem.setNatInsurance((JMoney) pValue);
+                    pItem.setNatInsurance((TethysMoney) pValue);
                     break;
                 case COLUMN_BENEFIT:
-                    pItem.setBenefit((JMoney) pValue);
+                    pItem.setBenefit((TethysMoney) pValue);
                     break;
                 case COLUMN_DONATION:
-                    pItem.setDonation((JMoney) pValue);
+                    pItem.setDonation((TethysMoney) pValue);
                     break;
                 case COLUMN_RECONCILED:
                     pItem.setReconciled((Boolean) pValue);
@@ -1478,7 +1478,7 @@ public class TransactionTable
                     pItem.setDeleted(true);
                     break;
                 case COLUMN_TAGS:
-                    theActiveTrans.updateTag(pItem, (JOceanusItemEvent) pValue);
+                    theActiveTrans.updateTag(pItem, (TethysItemEvent) pValue);
                     break;
                 default:
                     break;
@@ -1691,26 +1691,26 @@ public class TransactionTable
          * EditorListener.
          */
         private final class EditorListener
-                implements JOceanusChangeEventListener {
+                implements TethysChangeEventListener {
             /**
              * Category Registration.
              */
-            private final JOceanusChangeRegistration theCategoryReg;
+            private final TethysChangeRegistration theCategoryReg;
 
             /**
              * Account Registration.
              */
-            private final JOceanusChangeRegistration theAccountReg;
+            private final TethysChangeRegistration theAccountReg;
 
             /**
              * ThirdParty Registration.
              */
-            private final JOceanusChangeRegistration theThirdPartyReg;
+            private final TethysChangeRegistration theThirdPartyReg;
 
             /**
              * Tag Registration.
              */
-            private final JOceanusChangeRegistration theTagReg;
+            private final TethysChangeRegistration theTagReg;
 
             /**
              * Constructor.
@@ -1723,7 +1723,7 @@ public class TransactionTable
             }
 
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 if (theCategoryReg.isRelevant(pEvent)) {
                     buildCategoryMenu();
                 } else if (theAccountReg.isRelevant(pEvent)) {

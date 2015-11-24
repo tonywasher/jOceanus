@@ -27,16 +27,16 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * All transactions Selection.
  */
 public class AllSelect
         extends JPanel
-        implements AnalysisFilterSelection, JOceanusEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -45,7 +45,7 @@ public class AllSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The filter.
@@ -60,11 +60,11 @@ public class AllSelect
         theFilter = AnalysisFilter.FILTER_ALL;
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

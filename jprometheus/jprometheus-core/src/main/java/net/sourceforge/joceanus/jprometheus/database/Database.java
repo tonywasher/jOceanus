@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.preference.JDBCDriver;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,9 +92,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Construct a new Database class.
      * @param pPreferences the preferences
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Database(final DatabasePreferences pPreferences) throws JOceanusException {
+    public Database(final DatabasePreferences pPreferences) throws OceanusException {
         /* Create the connection */
         try {
             /* Access the batch size */
@@ -206,9 +206,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
      * Load data from the database.
      * @param pTask the task control
      * @return the new DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public T loadDatabase(final TaskControl<T> pTask) throws JOceanusException {
+    public T loadDatabase(final TaskControl<T> pTask) throws OceanusException {
         boolean bContinue = true;
 
         /* Set the number of stages */
@@ -256,10 +256,10 @@ public abstract class Database<T extends DataSet<T, ?>> {
      * Update data into database.
      * @param pTask the task control
      * @param pData the data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void updateDatabase(final TaskControl<T> pTask,
-                               final T pData) throws JOceanusException {
+                               final T pData) throws OceanusException {
         boolean bContinue = true;
         BatchControl myBatch = new BatchControl(theBatchSize);
 
@@ -336,9 +336,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Create tables.
      * @param pTask the task control
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void createTables(final TaskControl<T> pTask) throws JOceanusException {
+    public void createTables(final TaskControl<T> pTask) throws OceanusException {
         /* Drop any existing tables */
         dropTables(pTask);
 
@@ -370,9 +370,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Drop tables.
      * @param pTask the task control
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void dropTables(final TaskControl<T> pTask) throws JOceanusException {
+    public void dropTables(final TaskControl<T> pTask) throws OceanusException {
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {
             return;
@@ -401,9 +401,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Purge tables.
      * @param pTask the task control
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void purgeTables(final TaskControl<T> pTask) throws JOceanusException {
+    public void purgeTables(final TaskControl<T> pTask) throws OceanusException {
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {
             return;

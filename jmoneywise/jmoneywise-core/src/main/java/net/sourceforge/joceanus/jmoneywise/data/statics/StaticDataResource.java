@@ -24,13 +24,13 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise DataType Fields.
  */
-public enum StaticDataResource implements ResourceId {
+public enum StaticDataResource implements TethysResourceId {
     /**
      * CategoryType Parent.
      */
@@ -1019,7 +1019,7 @@ public enum StaticDataResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
 
     /**
      * The Id.
@@ -1043,7 +1043,7 @@ public enum StaticDataResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    StaticDataResource(final ResourceId pResource) {
+    StaticDataResource(final TethysResourceId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -1075,7 +1075,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForDepositType(final DepositCategoryClass pValue) {
+    protected static TethysResourceId getKeyForDepositType(final DepositCategoryClass pValue) {
         switch (pValue) {
             case CHECKING:
                 return DEPOSITTYPE_CHECKING;
@@ -1088,7 +1088,7 @@ public enum StaticDataResource implements ResourceId {
             case PARENT:
                 return CATEGORYTYPE_PARENT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1097,7 +1097,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForCashType(final CashCategoryClass pValue) {
+    protected static TethysResourceId getKeyForCashType(final CashCategoryClass pValue) {
         switch (pValue) {
             case CASH:
                 return CASHTYPE_CASH;
@@ -1106,7 +1106,7 @@ public enum StaticDataResource implements ResourceId {
             case PARENT:
                 return CATEGORYTYPE_PARENT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1115,7 +1115,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForLoanType(final LoanCategoryClass pValue) {
+    protected static TethysResourceId getKeyForLoanType(final LoanCategoryClass pValue) {
         switch (pValue) {
             case CREDITCARD:
                 return LOANTYPE_CREDIT;
@@ -1126,7 +1126,7 @@ public enum StaticDataResource implements ResourceId {
             case PARENT:
                 return CATEGORYTYPE_PARENT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1135,7 +1135,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForSecurityType(final SecurityTypeClass pValue) {
+    protected static TethysResourceId getKeyForSecurityType(final SecurityTypeClass pValue) {
         switch (pValue) {
             case SHARES:
                 return SECURITYTYPE_SHARES;
@@ -1152,7 +1152,7 @@ public enum StaticDataResource implements ResourceId {
             case ASSET:
                 return SECURITYTYPE_ASSET;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1161,7 +1161,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForPayeeType(final PayeeTypeClass pValue) {
+    protected static TethysResourceId getKeyForPayeeType(final PayeeTypeClass pValue) {
         switch (pValue) {
             case TAXMAN:
                 return PAYEETYPE_TAXMAN;
@@ -1178,7 +1178,7 @@ public enum StaticDataResource implements ResourceId {
             case PAYEE:
                 return PAYEETYPE_PAYEE;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1187,7 +1187,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTransType(final TransactionCategoryClass pValue) {
+    protected static TethysResourceId getKeyForTransType(final TransactionCategoryClass pValue) {
         switch (pValue) {
             case TAXEDINCOME:
                 return TRANSTYPE_TAXEDINCOME;
@@ -1294,7 +1294,7 @@ public enum StaticDataResource implements ResourceId {
             case TOTALS:
                 return TRANSTYPE_TOTALS;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1303,7 +1303,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTaxBasis(final TaxBasisClass pValue) {
+    protected static TethysResourceId getKeyForTaxBasis(final TaxBasisClass pValue) {
         switch (pValue) {
             case SALARY:
                 return TAXBASIS_SALARY;
@@ -1334,7 +1334,7 @@ public enum StaticDataResource implements ResourceId {
             case VIRTUAL:
                 return TAXBASIS_VIRTUAL;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1343,7 +1343,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTaxCategory(final TaxCategoryClass pValue) {
+    protected static TethysResourceId getKeyForTaxCategory(final TaxCategoryClass pValue) {
         switch (pValue) {
             case GROSSINCOME:
                 return TAXTYPE_BASE_INCOME;
@@ -1426,7 +1426,7 @@ public enum StaticDataResource implements ResourceId {
             case TAXPROFITLOSS:
                 return TAXTYPE_TOTAL_PROFITLOSS;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1435,7 +1435,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTaxRegime(final TaxRegimeClass pValue) {
+    protected static TethysResourceId getKeyForTaxRegime(final TaxRegimeClass pValue) {
         switch (pValue) {
             case ARCHIVE:
                 return TAXREGIME_ARCHIVE;
@@ -1446,7 +1446,7 @@ public enum StaticDataResource implements ResourceId {
             case ADDITIONALBAND:
                 return TAXREGIME_ADDBAND;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1455,7 +1455,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForFrequency(final FrequencyClass pValue) {
+    protected static TethysResourceId getKeyForFrequency(final FrequencyClass pValue) {
         switch (pValue) {
             case ONCE:
                 return FREQUENCY_ONCE;
@@ -1488,7 +1488,7 @@ public enum StaticDataResource implements ResourceId {
             case LASTWEEK:
                 return FREQUENCY_LASTWEEK;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1497,7 +1497,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTaxInfo(final TaxYearInfoClass pValue) {
+    protected static TethysResourceId getKeyForTaxInfo(final TaxYearInfoClass pValue) {
         switch (pValue) {
             case ALLOWANCE:
                 return TAXINFO_ALLOWANCE;
@@ -1540,7 +1540,7 @@ public enum StaticDataResource implements ResourceId {
             case HICAPITALTAXRATE:
                 return TAXINFO_HICAPRATE;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1549,7 +1549,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForAccountInfo(final AccountInfoClass pValue) {
+    protected static TethysResourceId getKeyForAccountInfo(final AccountInfoClass pValue) {
         switch (pValue) {
             case MATURITY:
                 return ACCOUNTINFO_MATURITY;
@@ -1576,7 +1576,7 @@ public enum StaticDataResource implements ResourceId {
             case NOTES:
                 return ACCOUNTINFO_NOTES;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -1585,7 +1585,7 @@ public enum StaticDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTransInfo(final TransactionInfoClass pValue) {
+    protected static TethysResourceId getKeyForTransInfo(final TransactionInfoClass pValue) {
         switch (pValue) {
             case TAXCREDIT:
                 return TRANSTYPE_TAXCREDIT;
@@ -1626,7 +1626,7 @@ public enum StaticDataResource implements ResourceId {
             case XCHANGERATE:
                 return TRANSINFO_XCHANGERATE;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

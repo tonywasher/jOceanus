@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to an encrypted data type.
@@ -62,13 +62,13 @@ public abstract class SheetEncrypted<T extends EncryptedItem<E> & Comparable<? s
     }
 
     @Override
-    protected void insertSecureItem(final T pItem) throws JOceanusException {
+    protected void insertSecureItem(final T pItem) throws OceanusException {
         super.insertSecureItem(pItem);
         writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
         DataValues<E> myValues = super.getRowValues(pName);
 

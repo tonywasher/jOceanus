@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Generic implementation of a DataList for DataItems.
@@ -469,10 +469,10 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Derive an cloned extract of the source list.
      * @param pData the dataSet
      * @param pSource the source list
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void cloneList(final DataSet<?, ?> pData,
-                             final DataList<?, E> pSource) throws JOceanusException {
+                             final DataList<?, E> pSource) throws OceanusException {
         /* Correct the dataSet reference */
         theDataSet = pData;
 
@@ -488,9 +488,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Derive an extract of this list.
      * @param pStyle the Style of the extract
      * @return the derived list
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public DataList<T, E> deriveList(final ListStyle pStyle) throws JOceanusException {
+    public DataList<T, E> deriveList(final ListStyle pStyle) throws OceanusException {
         /* Obtain an empty list of the correct style */
         DataList<T, E> myList = getEmptyList(pStyle);
 
@@ -504,9 +504,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Populate a list extract.
      * @param pList the list to populate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void populateList(final DataList<?, E> pList) throws JOceanusException {
+    protected void populateList(final DataList<?, E> pList) throws OceanusException {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = myStyle == ListStyle.UPDATE;
@@ -539,9 +539,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * Adjust links.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Loop through the list */
         Iterator<? extends DataItem<E>> myIterator = iterator();
         while (myIterator.hasNext()) {
@@ -784,9 +784,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * Perform a validation on data load.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void validateOnLoad() throws JOceanusException {
+    public void validateOnLoad() throws OceanusException {
         /* Validate the list */
         DataErrorList<DataItem<E>> myErrors = validate();
         if (myErrors != null) {
@@ -843,9 +843,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * PostProcess a loaded list.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void postProcessOnLoad() throws JOceanusException {
+    public void postProcessOnLoad() throws OceanusException {
         /* Default action is to resolve links and then sort */
         resolveDataSetLinks();
         reSort();
@@ -938,9 +938,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Create a new element according to the DataValues.
      * @param pValues the data values
      * @return the newly allocated item
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract T addValuesItem(final DataValues<E> pValues) throws JOceanusException;
+    public abstract T addValuesItem(final DataValues<E> pValues) throws OceanusException;
 
     /**
      * Locate an item by name (if possible).

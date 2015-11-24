@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamDefinition;
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamManager;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class used to build a ZipFile.
@@ -114,10 +114,10 @@ public class GordianZipWriteFile
      * Constructor for new output zip file with security.
      * @param pHash the password hash to use
      * @param pFile the file details for the new zip file
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public GordianZipWriteFile(final GordianKeySetHash pHash,
-                               final File pFile) throws JOceanusException {
+                               final File pFile) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Record hash */
@@ -158,9 +158,9 @@ public class GordianZipWriteFile
     /**
      * Constructor for new output zip file with no security.
      * @param pFile the file details for the new zip file
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianZipWriteFile(final File pFile) throws JOceanusException {
+    public GordianZipWriteFile(final File pFile) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* record null security */
@@ -211,9 +211,9 @@ public class GordianZipWriteFile
      * Obtain an output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public OutputStream getOutputStream(final File pFile) throws JOceanusException {
+    public OutputStream getOutputStream(final File pFile) throws OceanusException {
         /* Reject call if we have closed the stream */
         if (theStream == null) {
             throw new GordianLogicException("ZipFile is closed");
@@ -292,7 +292,7 @@ public class GordianZipWriteFile
             theOutput = null;
 
             /* Catch exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new IOException(e);
         }
     }
@@ -331,7 +331,7 @@ public class GordianZipWriteFile
                     String myHeader = theContents.encodeContents();
 
                     /* Write the bytes to the Zip file and close the entry */
-                    byte[] myBytes = DataConverter.stringToByteArray(myHeader);
+                    byte[] myBytes = TethysDataConverter.stringToByteArray(myHeader);
                     GordianKeySet myKeySet = theHash.getKeySet();
                     theStream.write(myKeySet.encryptBytes(myBytes));
                     theStream.closeEntry();
@@ -343,7 +343,7 @@ public class GordianZipWriteFile
                 theStream = null;
 
                 /* Catch exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new IOException(e);
             }
         }

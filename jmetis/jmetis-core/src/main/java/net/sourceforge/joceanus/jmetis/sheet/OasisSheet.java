@@ -31,7 +31,7 @@ import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class representing an Oasis sheet within a workBook.
@@ -213,7 +213,7 @@ public class OasisSheet
     @Override
     public void declareRange(final String pName,
                              final CellPosition pFirstCell,
-                             final CellPosition pLastCell) throws JOceanusException {
+                             final CellPosition pLastCell) throws OceanusException {
         if (!isReadOnly) {
             /* Build the range */
             OasisCellRange myRange = new OasisCellRange(getName(), pFirstCell, pLastCell);
@@ -226,7 +226,7 @@ public class OasisSheet
     @Override
     public void applyDataValidation(final CellPosition pFirstCell,
                                     final CellPosition pLastCell,
-                                    final String pName) throws JOceanusException {
+                                    final String pName) throws OceanusException {
         if (!isReadOnly) {
             /* Declare to workBook */
             theOasisBook.applyDataValidation(this, pFirstCell, pLastCell, pName);
@@ -235,7 +235,7 @@ public class OasisSheet
 
     @Override
     public void applyDataFilter(final CellPosition pBaseCell,
-                                final int pNumRows) throws JOceanusException {
+                                final int pNumRows) throws OceanusException {
         if (!isReadOnly) {
             /* Build the range */
             CellPosition myEnd = new CellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);

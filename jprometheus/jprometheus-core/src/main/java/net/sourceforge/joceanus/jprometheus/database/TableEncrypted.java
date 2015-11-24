@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.database;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Database table class for Encrypted Items. Each data type that uses encrypted data should extend this class.
@@ -48,7 +48,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (EncryptedItem.FIELD_KEYSET.equals(iField)) {
@@ -59,7 +59,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         DataValues<E> myValues = super.getRowValues(pName);
         TableDefinition myTableDef = getTableDef();

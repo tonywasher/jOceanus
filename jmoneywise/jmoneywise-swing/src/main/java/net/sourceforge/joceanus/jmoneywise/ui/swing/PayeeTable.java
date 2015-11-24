@@ -68,14 +68,14 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Payee Table.
@@ -165,12 +165,12 @@ public class PayeeTable
     /**
      * The panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The filter panel.
      */
-    private final JEnablePanel theFilterPanel;
+    private final TethysSwingEnablePanel theFilterPanel;
 
     /**
      * The locked check box.
@@ -240,7 +240,7 @@ public class PayeeTable
         theNewButton = MoneyWiseIcons.getNewButton();
 
         /* Create the filter panel */
-        theFilterPanel = new JEnablePanel();
+        theFilterPanel = new TethysSwingEnablePanel();
         theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
         theFilterPanel.add(Box.createHorizontalGlue());
         theFilterPanel.add(theLockedCheckBox);
@@ -249,7 +249,7 @@ public class PayeeTable
         theFilterPanel.add(Box.createRigidArea(new Dimension(AccountPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
@@ -335,7 +335,7 @@ public class PayeeTable
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -447,7 +447,7 @@ public class PayeeTable
         @Override
         public void setItemValue(final Payee pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -492,9 +492,9 @@ public class PayeeTable
                 theActiveAccount.setNewItem(myPayee);
 
                 /* Handle Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 /* Build the error */
-                JOceanusException myError = new JMoneyWiseDataException("Failed to create new account", e);
+                OceanusException myError = new JMoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);
@@ -506,16 +506,16 @@ public class PayeeTable
      * Listener class.
      */
     private final class PayeeListener
-            implements ActionListener, ItemListener, JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements ActionListener, ItemListener, TethysActionEventListener, TethysChangeEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+        private final TethysChangeRegistration theUpdateSetReg;
 
         /**
          * Account Change Registration.
          */
-        private final JOceanusChangeRegistration theActPanelReg;
+        private final TethysChangeRegistration theActPanelReg;
 
         /**
          * Constructor.
@@ -532,7 +532,7 @@ public class PayeeTable
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
@@ -570,7 +570,7 @@ public class PayeeTable
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             cascadeActionEvent(pEvent);
         }
 
@@ -782,11 +782,11 @@ public class PayeeTable
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void setItemValue(final Payee pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
+                                  final Object pValue) throws OceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:
@@ -858,11 +858,11 @@ public class PayeeTable
          * EditorListener.
          */
         private final class EditorListener
-                implements JOceanusChangeEventListener {
+                implements TethysChangeEventListener {
             /**
              * Category Registration.
              */
-            private final JOceanusChangeRegistration theTypeReg;
+            private final TethysChangeRegistration theTypeReg;
 
             /**
              * Constructor.
@@ -872,7 +872,7 @@ public class PayeeTable
             }
 
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 if (theTypeReg.isRelevant(pEvent)) {
                     buildPayeeTypeMenu();
                 }

@@ -50,16 +50,16 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurre
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a Portfolio.
@@ -178,7 +178,7 @@ public class PortfolioPanel
         theFieldSet.addFieldElement(Portfolio.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
 
         /* Create the main panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -189,7 +189,7 @@ public class PortfolioPanel
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -229,7 +229,7 @@ public class PortfolioPanel
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), DataType.CHARARRAY, myPassWord);
 
         /* Create the extras panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
         SpringLayout mySpring = new SpringLayout();
@@ -241,7 +241,7 @@ public class PortfolioPanel
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), myPanel);
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), myPanel);
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -260,13 +260,13 @@ public class PortfolioPanel
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -340,7 +340,7 @@ public class PortfolioPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         Portfolio myPortfolio = getItem();
@@ -497,7 +497,7 @@ public class PortfolioPanel
      * Portfolio Listener.
      */
     private final class PortfolioListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The Parent Menu Builder.
          */
@@ -511,12 +511,12 @@ public class PortfolioPanel
         /**
          * ParentMenu Registration.
          */
-        private final JOceanusChangeRegistration theParentMenuReg;
+        private final TethysChangeRegistration theParentMenuReg;
 
         /**
          * CurrencyMenu Registration.
          */
-        private final JOceanusChangeRegistration theCurrencyMenuReg;
+        private final TethysChangeRegistration theCurrencyMenuReg;
 
         /**
          * Constructor.
@@ -530,7 +530,7 @@ public class PortfolioPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theParentMenuReg.isRelevant(pEvent)) {
                 buildParentMenu(theParentMenuBuilder, getItem());

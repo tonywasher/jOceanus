@@ -35,9 +35,9 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
 
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonSt
  */
 public class ActionButtons
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -66,7 +66,7 @@ public class ActionButtons
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The update set.
@@ -107,7 +107,7 @@ public class ActionButtons
         theUpdateSet = pUpdateSet;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the button states */
         DefaultIconButtonState<Boolean> myCommitState = new DefaultIconButtonState<Boolean>();
@@ -167,7 +167,7 @@ public class ActionButtons
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

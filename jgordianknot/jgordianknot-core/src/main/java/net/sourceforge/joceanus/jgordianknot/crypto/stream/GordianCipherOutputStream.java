@@ -27,7 +27,7 @@ import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Output stream cipher implementation.
@@ -112,7 +112,7 @@ public class GordianCipherOutputStream<T>
             }
 
             /* Catch exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new IOException(e);
         }
     }
@@ -132,7 +132,7 @@ public class GordianCipherOutputStream<T>
             }
 
             /* Catch exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new IOException(e);
         }
     }

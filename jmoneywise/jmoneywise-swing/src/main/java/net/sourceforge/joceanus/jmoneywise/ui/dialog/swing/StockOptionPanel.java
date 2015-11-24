@@ -53,19 +53,19 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a StockOption.
@@ -95,12 +95,12 @@ public class StockOptionPanel
     /**
      * GrantDate Button Field.
      */
-    private final JDateDayButton theGrantButton;
+    private final TethysSwingDateButton theGrantButton;
 
     /**
      * ExpiryDate Button Field.
      */
-    private final JDateDayButton theExpiryButton;
+    private final TethysSwingDateButton theExpiryButton;
 
     /**
      * Closed Button Field.
@@ -128,9 +128,9 @@ public class StockOptionPanel
         theHoldingButton = new JScrollButton<SecurityHolding>();
 
         /* Create date buttons */
-        JDateDayFormatter myFormatter = getFormatter().getDateFormatter();
-        theGrantButton = new JDateDayButton(myFormatter);
-        theExpiryButton = new JDateDayButton(myFormatter);
+        TethysDateFormatter myFormatter = getFormatter().getDateFormatter();
+        theGrantButton = new TethysSwingDateButton(myFormatter);
+        theExpiryButton = new TethysSwingDateButton(myFormatter);
 
         /* Set closed button */
         theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
@@ -198,7 +198,7 @@ public class StockOptionPanel
         theFieldSet.addFieldElement(StockOption.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -210,7 +210,7 @@ public class StockOptionPanel
         theFieldSet.addFieldToPanel(StockOption.FIELD_EXPIREDATE, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_PRICE, myPanel);
         theFieldSet.addFieldToPanel(StockOption.FIELD_CLOSED, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -229,13 +229,13 @@ public class StockOptionPanel
         theFieldSet.addFieldElement(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -295,7 +295,7 @@ public class StockOptionPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         StockOption myOption = getItem();
@@ -465,7 +465,7 @@ public class StockOptionPanel
      * Options Listener.
      */
     private final class StockOptionListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The Holding Menu Builder.
          */
@@ -474,12 +474,12 @@ public class StockOptionPanel
         /**
          * HoldingMenu Registration.
          */
-        private final JOceanusChangeRegistration theHoldingMenuReg;
+        private final TethysChangeRegistration theHoldingMenuReg;
 
         /**
          * Vests panel Registration.
          */
-        private final JOceanusChangeRegistration theVestsReg;
+        private final TethysChangeRegistration theVestsReg;
 
         /**
          * Constructor.
@@ -492,7 +492,7 @@ public class StockOptionPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theHoldingMenuReg.isRelevant(pEvent)) {
                 buildHoldingMenu(theHoldingMenuBuilder, getItem());

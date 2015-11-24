@@ -55,17 +55,17 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a Loan.
@@ -182,7 +182,7 @@ public class LoanPanel
         theFieldSet.addFieldElement(Loan.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -193,7 +193,7 @@ public class LoanPanel
         theFieldSet.addFieldToPanel(Loan.FIELD_PARENT, myPanel);
         theFieldSet.addFieldToPanel(Loan.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Loan.FIELD_CLOSED, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -224,7 +224,7 @@ public class LoanPanel
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
 
         /* Create the extras panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
         SpringLayout mySpring = new SpringLayout();
@@ -233,7 +233,7 @@ public class LoanPanel
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -252,13 +252,13 @@ public class LoanPanel
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -328,7 +328,7 @@ public class LoanPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         Loan myLoan = getItem();
@@ -537,7 +537,7 @@ public class LoanPanel
      * Loan Listener.
      */
     private final class LoanListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The Category Menu Builder.
          */
@@ -556,17 +556,17 @@ public class LoanPanel
         /**
          * CategoryMenu Registration.
          */
-        private final JOceanusChangeRegistration theCategoryMenuReg;
+        private final TethysChangeRegistration theCategoryMenuReg;
 
         /**
          * ParentMenu Registration.
          */
-        private final JOceanusChangeRegistration theParentMenuReg;
+        private final TethysChangeRegistration theParentMenuReg;
 
         /**
          * CurrencyMenu Registration.
          */
-        private final JOceanusChangeRegistration theCurrencyMenuReg;
+        private final TethysChangeRegistration theCurrencyMenuReg;
 
         /**
          * Constructor.
@@ -582,7 +582,7 @@ public class LoanPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());

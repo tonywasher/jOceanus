@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmetis.viewer;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for JMetis viewer.
  */
-public enum ViewerResource implements ResourceId {
+public enum ViewerResource implements TethysResourceId {
     /**
      * Viewer window title.
      */
@@ -113,7 +113,7 @@ public enum ViewerResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
 
     /**
      * The Id.

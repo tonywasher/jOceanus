@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jprometheus.views;
 
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jPrometheus View Fields.
  */
-public enum PrometheusViewResource implements ResourceId {
+public enum PrometheusViewResource implements TethysResourceId {
     /**
      * DataEntry Underlying Data.
      */
@@ -78,7 +78,7 @@ public enum PrometheusViewResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
 
     /**
      * The Id.

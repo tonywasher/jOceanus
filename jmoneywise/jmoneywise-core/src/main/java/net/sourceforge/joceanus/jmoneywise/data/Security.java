@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Security class.
@@ -167,10 +167,10 @@ public class Security
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Security(final SecurityList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -211,7 +211,7 @@ public class Security
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -496,18 +496,18 @@ public class Security
     /**
      * Set symbol value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueSymbol(final String pValue) throws JOceanusException {
+    private void setValueSymbol(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_SYMBOL, pValue);
     }
 
     /**
      * Set symbol value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueSymbol(final byte[] pBytes) throws JOceanusException {
+    private void setValueSymbol(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_SYMBOL, pBytes, String.class);
     }
 
@@ -698,9 +698,9 @@ public class Security
     /**
      * Set defaults.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setSecurityType(getDefaultSecurityType());
@@ -713,9 +713,9 @@ public class Security
     /**
      * autoCorrect values after change.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Access category class and parent */
         SecurityTypeClass myClass = getSecurityTypeClass();
         Payee myParent = getParent();
@@ -806,7 +806,7 @@ public class Security
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -818,7 +818,7 @@ public class Security
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -835,9 +835,9 @@ public class Security
     /**
      * Set a new symbol.
      * @param pSymbol the symbol
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setSymbol(final String pSymbol) throws JOceanusException {
+    public void setSymbol(final String pSymbol) throws OceanusException {
         setValueSymbol(pSymbol);
     }
 
@@ -852,18 +852,18 @@ public class Security
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws JOceanusException {
+    public void setParent(final Payee pParent) throws OceanusException {
         setValueParent(pParent);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
@@ -871,10 +871,10 @@ public class Security
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -1150,9 +1150,9 @@ public class Security
          * Derive Edit list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public SecurityList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public SecurityList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             SecurityList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -1254,7 +1254,7 @@ public class Security
         }
 
         @Override
-        public Security addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Security addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the security */
             Security mySecurity = new Security(this, pValues);
 

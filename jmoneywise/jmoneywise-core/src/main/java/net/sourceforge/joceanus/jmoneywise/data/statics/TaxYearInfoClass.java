@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Tax Year Info Classes.
@@ -207,9 +207,9 @@ public enum TaxYearInfoClass implements DataInfoClass {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static TaxYearInfoClass fromId(final int id) throws JOceanusException {
+    public static TaxYearInfoClass fromId(final int id) throws OceanusException {
         for (TaxYearInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;

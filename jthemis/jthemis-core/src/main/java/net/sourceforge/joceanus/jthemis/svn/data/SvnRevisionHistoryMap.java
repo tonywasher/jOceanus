@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnSourceDir;
@@ -102,9 +102,9 @@ public class SvnRevisionHistoryMap
      * Discover branch history.
      * @param pBranch the branch
      * @return the revisionPath
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected SvnRevisionPath discoverBranch(final SvnBranch pBranch) throws JOceanusException {
+    protected SvnRevisionPath discoverBranch(final SvnBranch pBranch) throws OceanusException {
         /* Set current owner */
         theOwner = pBranch;
 
@@ -122,9 +122,9 @@ public class SvnRevisionHistoryMap
      * Discover tag history.
      * @param pTag the tag
      * @return the revisionPath
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected SvnRevisionPath discoverTag(final SvnTag pTag) throws JOceanusException {
+    protected SvnRevisionPath discoverTag(final SvnTag pTag) throws OceanusException {
         /* Set current owner */
         theOwner = pTag;
 
@@ -207,10 +207,10 @@ public class SvnRevisionHistoryMap
          * Constructor.
          * @param pHistoryMap the History Map
          * @param pPath the path to document
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public SvnRevisionPath(final SvnRevisionHistoryMap pHistoryMap,
-                               final String pPath) throws JOceanusException {
+                               final String pPath) throws OceanusException {
             /* Default to HEAD revision */
             this(pHistoryMap, pPath, SVNRevision.HEAD);
         }
@@ -219,10 +219,10 @@ public class SvnRevisionHistoryMap
          * Constructor.
          * @param pHistoryMap the History Map
          * @param pKey the revisionPath
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public SvnRevisionPath(final SvnRevisionHistoryMap pHistoryMap,
-                               final SvnRevisionKey pKey) throws JOceanusException {
+                               final SvnRevisionKey pKey) throws OceanusException {
             /* Extract the details from the revisionKey */
             this(pHistoryMap, pKey.getPath(), pKey.getRevision());
         }
@@ -232,11 +232,11 @@ public class SvnRevisionHistoryMap
          * @param pHistoryMap the History Map
          * @param pPath the path to document
          * @param pRevision the base revision
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public SvnRevisionPath(final SvnRevisionHistoryMap pHistoryMap,
                                final String pPath,
-                               final SVNRevision pRevision) throws JOceanusException {
+                               final SVNRevision pRevision) throws OceanusException {
             /* Determine the prefix */
             SvnRepository myRepo = pHistoryMap.getRepository();
             String myPrefix = myRepo.getPath();
@@ -302,9 +302,9 @@ public class SvnRevisionHistoryMap
 
         /**
          * Discover Revisions.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void discoverRevisions() throws JOceanusException {
+        private void discoverRevisions() throws OceanusException {
             /* Access the log client */
             SvnRepository myRepo = theHistoryMap.getRepository();
             SVNClientManager myClientMgr = myRepo.getClientManager();
@@ -331,9 +331,9 @@ public class SvnRevisionHistoryMap
 
         /**
          * Expand SourceDirectories.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void expandSourceDirs() throws JOceanusException {
+        private void expandSourceDirs() throws OceanusException {
             /* loop through the revisions */
             for (SvnRevisionHistory myRevision = theFirstHistory; myRevision != null; myRevision = myRevision.getBasedOn()) {
                 /* Ignore if no sourceDirs */
@@ -404,7 +404,7 @@ public class SvnRevisionHistoryMap
                 /* Analyse the entry */
                 try {
                     myHistory = new SvnRevisionHistory(theOwner, thePath, pEntry);
-                } catch (JOceanusException e) {
+                } catch (OceanusException e) {
                     SVNErrorMessage myMessage = SVNErrorMessage.create(SVNErrorCode.EXTERNAL_PROGRAM, e);
                     throw new SVNException(myMessage);
                 }

@@ -27,7 +27,7 @@ import org.bouncycastle.crypto.KeyGenerationParameters;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper for BouncyCastle KeyGenerator.
@@ -70,7 +70,7 @@ public final class BouncyKeyGenerator<T>
     }
 
     @Override
-    protected BouncyKey<T> translateKey(final GordianKey<?> pSource) throws JOceanusException {
+    protected BouncyKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException {
         /* Access key correctly */
         BouncyKey<?> mySource = BouncyKey.accessKey(pSource);
 
@@ -86,7 +86,7 @@ public final class BouncyKeyGenerator<T>
 
     @Override
     public BouncyKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                              final byte[] pInitVector) throws JOceanusException {
+                                              final byte[] pInitVector) throws OceanusException {
         return (BouncyKey<T>) super.generateKeyFromSecret(pSecret, pInitVector);
     }
 }

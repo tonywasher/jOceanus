@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Encrypted Data Item and List.
@@ -86,10 +86,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * Values Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is assigned to the item.
      * @param pList the list that this item is associated with
      * @param pValues the data values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public EncryptedItem(final EncryptedList<?, E> pList,
-                         final DataValues<E> pValues) throws JOceanusException {
+                         final DataValues<E> pValues) throws OceanusException {
         super(pList, pValues);
 
         /* Access dataKeySet id */
@@ -181,9 +181,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Set DataKeySet id.
      * @param pKeySetId the KeySet Id
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected final void setDataKeySet(final Integer pKeySetId) throws JOceanusException {
+    protected final void setDataKeySet(final Integer pKeySetId) throws OceanusException {
         /* Store the id */
         setValueDataKeySet(pKeySetId);
 
@@ -197,10 +197,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * Set encrypted value.
      * @param pField the field to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected final void setEncryptedValue(final JDataField pField,
-                                           final Object pValue) throws JOceanusException {
+                                           final Object pValue) throws OceanusException {
         /* Obtain the existing value */
         EncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
@@ -223,11 +223,11 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pField the field to set
      * @param pEncrypted the encrypted value to set
      * @param pClass the class of the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected final void setEncryptedValue(final JDataField pField,
                                            final byte[] pEncrypted,
-                                           final Class<?> pClass) throws JOceanusException {
+                                           final Class<?> pClass) throws OceanusException {
         /* Create the new encrypted value */
         EncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 
@@ -260,7 +260,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
@@ -270,10 +270,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * Adopt security for all encrypted values.
      * @param pKeySet the new KeySet
      * @param pBase the base item
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void adoptSecurity(final DataKeySet pKeySet,
-                                 final EncryptedItem<E> pBase) throws JOceanusException {
+                                 final EncryptedItem<E> pBase) throws OceanusException {
         /* Set the DataKeySet */
         setValueDataKeySet(pKeySet);
 
@@ -287,9 +287,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Initialise security for all encrypted values.
      * @param pKeySet the new KeySet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void initialiseSecurity(final DataKeySet pKeySet) throws JOceanusException {
+    protected void initialiseSecurity(final DataKeySet pKeySet) throws OceanusException {
         /* Set the DataKeySet */
         setValueDataKeySet(pKeySet);
 
@@ -300,9 +300,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Update security for all encrypted values.
      * @param pKeySet the new KeySet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void updateSecurity(final DataKeySet pKeySet) throws JOceanusException {
+    protected void updateSecurity(final DataKeySet pKeySet) throws OceanusException {
         /* Ignore call if we have the same keySet */
         if (pKeySet.equals(getDataKeySet())) {
             return;
@@ -386,10 +386,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pTask the task control
          * @param pControl the control key to apply
          * @return Continue <code>true/false</code>
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public boolean updateSecurity(final TaskControl<?> pTask,
-                                      final ControlKey pControl) throws JOceanusException {
+                                      final ControlKey pControl) throws OceanusException {
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;
@@ -433,11 +433,11 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from
          * @return Continue <code>true/false</code>
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected boolean adoptSecurity(final TaskControl<?> pTask,
                                         final ControlKey pControl,
-                                        final EncryptedList<?, E> pBase) throws JOceanusException {
+                                        final EncryptedList<?, E> pBase) throws OceanusException {
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;

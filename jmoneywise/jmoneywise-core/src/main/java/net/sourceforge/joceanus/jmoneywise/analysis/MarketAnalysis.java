@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Market analysis.
@@ -37,22 +37,22 @@ public class MarketAnalysis {
     /**
      * Market Payee Income.
      */
-    private final JMoney theMarketIncome = new JMoney();
+    private final TethysMoney theMarketIncome = new TethysMoney();
 
     /**
      * Market Payee Expense.
      */
-    private final JMoney theMarketExpense = new JMoney();
+    private final TethysMoney theMarketExpense = new TethysMoney();
 
     /**
      * MarketGrowth Income.
      */
-    private final JMoney theGrowthIncome = new JMoney();
+    private final TethysMoney theGrowthIncome = new TethysMoney();
 
     /**
      * MarketGrowth Expense.
      */
-    private final JMoney theGrowthExpense = new JMoney();
+    private final TethysMoney theGrowthExpense = new TethysMoney();
 
     /**
      * Process security bucket.
@@ -61,8 +61,8 @@ public class MarketAnalysis {
     protected void processSecurity(final SecurityBucket pBucket) {
         /* Access market and gains */
         SecurityValues myValues = pBucket.getValues();
-        JMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKET);
-        JMoney myGains = myValues.getMoneyValue(SecurityAttribute.GAINS);
+        TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.GAINS);
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {

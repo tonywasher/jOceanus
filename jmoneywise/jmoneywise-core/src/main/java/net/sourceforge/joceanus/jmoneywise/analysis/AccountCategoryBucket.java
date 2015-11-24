@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Account Category Bucket.
@@ -97,8 +97,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         AccountAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
                                                        : JDataFieldValue.SKIP;
             }
@@ -152,7 +152,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      * @param pValue the value of the attribute
      */
     protected void setValue(final AccountAttribute pAttr,
-                            final JMoney pValue) {
+                            final TethysMoney pValue) {
         /* Set the value into the list */
         theValues.put(pAttr, pValue);
     }
@@ -220,11 +220,11 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
-        myValue = new JMoney(myValue);
+        TethysMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
+        myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -275,8 +275,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private static void addValues(final AccountValues pTotals,
                                   final AccountValues pSource) {
         /* Add base values */
-        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
-        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -288,8 +288,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private static void addValues(final AccountValues pTotals,
                                   final SecurityValues pSource) {
         /* Add base values */
-        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
-        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
+        TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 }

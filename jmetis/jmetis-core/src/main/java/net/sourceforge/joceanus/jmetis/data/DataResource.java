@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmetis.data;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for JMetis viewer.
  */
-public enum DataResource implements ResourceId {
+public enum DataResource implements TethysResourceId {
     /**
      * Difference IDENTICAL.
      */
@@ -83,7 +83,7 @@ public enum DataResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -130,7 +130,7 @@ public enum DataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForDifference(final Difference pValue) {
+    protected static TethysResourceId getKeyForDifference(final Difference pValue) {
         switch (pValue) {
             case IDENTICAL:
                 return DIFFERENCE_IDENTICAL;
@@ -139,7 +139,7 @@ public enum DataResource implements ResourceId {
             case DIFFERENT:
                 return DIFFERENCE_DIFFERENT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -148,14 +148,14 @@ public enum DataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForFieldValue(final JDataFieldValue pValue) {
+    protected static TethysResourceId getKeyForFieldValue(final JDataFieldValue pValue) {
         switch (pValue) {
             case UNKNOWN:
                 return FIELDVALUE_UNKNOWN;
             case SKIP:
                 return FIELDVALUE_SKIP;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

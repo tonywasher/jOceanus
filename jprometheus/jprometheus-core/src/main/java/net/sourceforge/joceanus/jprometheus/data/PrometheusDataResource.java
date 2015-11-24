@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jPrometheus Data Fields.
  */
-public enum PrometheusDataResource implements ResourceId {
+public enum PrometheusDataResource implements TethysResourceId {
     /**
      * DataSet Name.
      */
@@ -503,7 +503,7 @@ public enum PrometheusDataResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
 
     /**
      * The Id.
@@ -550,7 +550,7 @@ public enum PrometheusDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForCryptoItem(final CryptographyDataType pValue) {
+    protected static TethysResourceId getKeyForCryptoItem(final CryptographyDataType pValue) {
         switch (pValue) {
             case CONTROLKEY:
                 return CONTROLKEY_NAME;
@@ -561,7 +561,7 @@ public enum PrometheusDataResource implements ResourceId {
             case CONTROLDATA:
                 return CONTROLDATA_NAME;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -570,7 +570,7 @@ public enum PrometheusDataResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForCryptoList(final CryptographyDataType pValue) {
+    protected static TethysResourceId getKeyForCryptoList(final CryptographyDataType pValue) {
         switch (pValue) {
             case CONTROLKEY:
                 return CONTROLKEY_LIST;
@@ -581,7 +581,7 @@ public enum PrometheusDataResource implements ResourceId {
             case CONTROLDATA:
                 return CONTROLDATA_LIST;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

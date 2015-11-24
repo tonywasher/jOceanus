@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preference.DataListPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -371,16 +371,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Construct a Clone for a DataSet.
      * @return the extract
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract T deriveCloneSet() throws JOceanusException;
+    public abstract T deriveCloneSet() throws OceanusException;
 
     /**
      * Build an empty clone dataSet.
      * @param pSource the source DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void buildEmptyCloneSet(final DataSet<T, E> pSource) throws JOceanusException {
+    protected void buildEmptyCloneSet(final DataSet<T, E> pSource) throws OceanusException {
         /* Clone the Security items */
         theControlKeys = pSource.getControlKeys().getEmptyList(ListStyle.CLONE);
         theDataKeySets = pSource.getDataKeySets().getEmptyList(ListStyle.CLONE);
@@ -404,9 +404,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Construct a Clone for a DataSet.
      * @param pSource the source DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void deriveCloneSet(final DataSet<T, E> pSource) throws JOceanusException {
+    protected void deriveCloneSet(final DataSet<T, E> pSource) throws OceanusException {
         /* Clone the Security items */
         theControlKeys.cloneList(this, pSource.getControlKeys());
         theDataKeySets.cloneList(this, pSource.getDataKeySets());
@@ -434,16 +434,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Construct an update extract for a FinanceData Set.
      * @return the extract
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract T deriveUpdateSet() throws JOceanusException;
+    public abstract T deriveUpdateSet() throws OceanusException;
 
     /**
      * Construct an update extract for a DataSet.
      * @param pSource the source of the extract
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void deriveUpdateSet(final T pSource) throws JOceanusException {
+    protected void deriveUpdateSet(final T pSource) throws OceanusException {
         /* Build the security extract */
         theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
         theDataKeySets = pSource.getDataKeySets().deriveList(ListStyle.UPDATE);
@@ -478,10 +478,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pTask the task control
      * @param pOld The old list to extract from
      * @return the difference set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract T getDifferenceSet(final TaskControl<T> pTask,
-                                       final T pOld) throws JOceanusException;
+                                       final T pOld) throws OceanusException;
 
     /**
      * Construct a difference extract between two DataSets. The difference extract will only contain
@@ -491,11 +491,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pTask the task control
      * @param pNew The new list to compare
      * @param pOld The old list to compare
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void deriveDifferences(final TaskControl<T> pTask,
                                      final T pNew,
-                                     final T pOld) throws JOceanusException {
+                                     final T pOld) throws OceanusException {
         /* Access current profile */
         JDataProfile myTask = pTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("checkDifferences");
@@ -532,10 +532,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * ReBase this data set against an earlier version.
      * @param pTask the task control
      * @param pOld The old data to reBase against
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void reBase(final TaskControl<T> pTask,
-                       final T pOld) throws JOceanusException {
+                       final T pOld) throws OceanusException {
         /* Access current profile */
         JDataProfile myTask = pTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("ReBase");
@@ -878,10 +878,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pTask the task control
      * @param pBase the database data
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public boolean initialiseSecurity(final TaskControl<T> pTask,
-                                      final T pBase) throws JOceanusException {
+                                      final T pBase) throws OceanusException {
         /* Access current profile */
         JDataProfile myTask = pTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("InitSecurity");
@@ -931,9 +931,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Renew Security.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public boolean renewSecurity(final TaskControl<T> pTask) throws JOceanusException {
+    public boolean renewSecurity(final TaskControl<T> pTask) throws OceanusException {
         /* Access current profile */
         JDataProfile myTask = pTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("ReNewSecurity");
@@ -959,9 +959,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Check Security for incomplete security operations.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public boolean checkSecurity(final TaskControl<T> pTask) throws JOceanusException {
+    public boolean checkSecurity(final TaskControl<T> pTask) throws OceanusException {
         /* Access current profile */
         JDataProfile myTask = pTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("CheckSecurity");
@@ -987,9 +987,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Update Security.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public boolean updateSecurity(final TaskControl<T> pTask) throws JOceanusException {
+    public boolean updateSecurity(final TaskControl<T> pTask) throws OceanusException {
         /* Access the control key */
         ControlKey myControl = getControlKey();
 
@@ -1024,9 +1024,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Get the Password Hash.
      * @return the password hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianKeySetHash getKeySetHash() throws JOceanusException {
+    public GordianKeySetHash getKeySetHash() throws OceanusException {
         /* Access the active control key */
         ControlKey myKey = getControlKey();
 
@@ -1040,10 +1040,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Update data with a new password.
      * @param pTask the task control
      * @param pSource the source of the data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void updatePasswordHash(final TaskControl<T> pTask,
-                                   final String pSource) throws JOceanusException {
+                                   final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
         GordianKeySetHash myHash = theSecurity.resolveKeySetHash(null, pSource);
 

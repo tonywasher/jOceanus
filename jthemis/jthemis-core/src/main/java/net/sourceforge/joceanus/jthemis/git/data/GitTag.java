@@ -28,7 +28,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmTag;
@@ -201,9 +201,9 @@ public final class GitTag
         /**
          * Discover tag list from repository.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JOceanusException {
+        public void discover(final ReportStatus pReport) throws OceanusException {
             /* Reset the list */
             clear();
 
@@ -220,9 +220,9 @@ public final class GitTag
         /**
          * Discover tag list from repository.
          * @param pGit git instance
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void discoverTags(final Git pGit) throws JOceanusException {
+        private void discoverTags(final Git pGit) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Access list of branches */
@@ -263,9 +263,9 @@ public final class GitTag
         /**
          * Analyses tags.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void analyseTags(final ReportStatus pReport) throws JOceanusException {
+        private void analyseTags(final ReportStatus pReport) throws OceanusException {
             /* Access repository */
             GitRepository myRepo = theComponent.getRepository();
 

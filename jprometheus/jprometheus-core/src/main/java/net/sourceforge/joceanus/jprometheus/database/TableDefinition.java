@@ -52,14 +52,14 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ReferenceC
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.StringColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.UnitsColumn;
 import net.sourceforge.joceanus.jprometheus.preference.JDBCDriver;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Database field definition class. Maps each dataType to a database field.
@@ -539,9 +539,9 @@ public class TableDefinition {
      * Insert values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void insertValues(final PreparedStatement pStmt) throws SQLException, JOceanusException {
+    protected void insertValues(final PreparedStatement pStmt) throws SQLException, OceanusException {
         /* Store the Statement */
         theStatement = pStmt;
 
@@ -566,9 +566,9 @@ public class TableDefinition {
      * Update values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void updateValues(final PreparedStatement pStmt) throws SQLException, JOceanusException {
+    protected void updateValues(final PreparedStatement pStmt) throws SQLException, OceanusException {
         ColumnDefinition myId = null;
 
         /* Store the Statement */
@@ -612,9 +612,9 @@ public class TableDefinition {
      * Get Integer value for column.
      * @param pId the column id
      * @return the integer value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Integer getIntegerValue(final JDataField pId) throws JOceanusException {
+    public Integer getIntegerValue(final JDataField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -632,9 +632,9 @@ public class TableDefinition {
      * Get Long value for column.
      * @param pId the column id
      * @return the long value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Long getLongValue(final JDataField pId) throws JOceanusException {
+    public Long getLongValue(final JDataField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -652,9 +652,9 @@ public class TableDefinition {
      * Get Date value for column.
      * @param pId the column id
      * @return the Date value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JDateDay getDateValue(final JDataField pId) throws JOceanusException {
+    public TethysDate getDateValue(final JDataField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -672,9 +672,9 @@ public class TableDefinition {
      * Get Boolean value for column.
      * @param pId the column id
      * @return the boolean value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Boolean getBooleanValue(final JDataField pId) throws JOceanusException {
+    public Boolean getBooleanValue(final JDataField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -692,9 +692,9 @@ public class TableDefinition {
      * Get String value for column.
      * @param pId the column id
      * @return the String value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public String getStringValue(final JDataField pId) throws JOceanusException {
+    public String getStringValue(final JDataField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -713,10 +713,10 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Money value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JMoney getMoneyValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JOceanusException {
+    public TethysMoney getMoneyValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -735,10 +735,10 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the price value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JPrice getPriceValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JOceanusException {
+    public TethysPrice getPriceValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -757,10 +757,10 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the rate value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JRate getRateValue(final JDataField pId,
-                              final JDataFormatter pFormatter) throws JOceanusException {
+    public TethysRate getRateValue(final JDataField pId,
+                              final JDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -779,10 +779,10 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Units value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JUnits getUnitsValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JOceanusException {
+    public TethysUnits getUnitsValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -801,10 +801,10 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Dilution value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JDilution getDilutionValue(final JDataField pId,
-                                      final JDataFormatter pFormatter) throws JOceanusException {
+    public TethysDilution getDilutionValue(final JDataField pId,
+                                      final JDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -823,10 +823,10 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Ratio value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JRatio getRatioValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JOceanusException {
+    public TethysRatio getRatioValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -844,9 +844,9 @@ public class TableDefinition {
      * Get Binary value for column.
      * @param pId the column id
      * @return the binary value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] getBinaryValue(final JDataField pId) throws JOceanusException {
+    public byte[] getBinaryValue(final JDataField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -864,10 +864,10 @@ public class TableDefinition {
      * Set Integer value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setIntegerValue(final JDataField pId,
-                                final Integer pValue) throws JOceanusException {
+                                final Integer pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -885,10 +885,10 @@ public class TableDefinition {
      * Set Long value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setLongValue(final JDataField pId,
-                             final Long pValue) throws JOceanusException {
+                             final Long pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -906,10 +906,10 @@ public class TableDefinition {
      * Set Boolean value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setBooleanValue(final JDataField pId,
-                                final Boolean pValue) throws JOceanusException {
+                                final Boolean pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -927,10 +927,10 @@ public class TableDefinition {
      * Set Date value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setDateValue(final JDataField pId,
-                             final JDateDay pValue) throws JOceanusException {
+                             final TethysDate pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -948,10 +948,10 @@ public class TableDefinition {
      * Set String value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setStringValue(final JDataField pId,
-                               final String pValue) throws JOceanusException {
+                               final String pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -969,10 +969,10 @@ public class TableDefinition {
      * Set Binary value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setBinaryValue(final JDataField pId,
-                               final byte[] pValue) throws JOceanusException {
+                               final byte[] pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -990,10 +990,10 @@ public class TableDefinition {
      * Set Money value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setMoneyValue(final JDataField pId,
-                              final JMoney pValue) throws JOceanusException {
+                              final TethysMoney pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -1011,10 +1011,10 @@ public class TableDefinition {
      * Set Rate value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setRateValue(final JDataField pId,
-                             final JRate pValue) throws JOceanusException {
+                             final TethysRate pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -1032,10 +1032,10 @@ public class TableDefinition {
      * Set Ratio value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setRatioValue(final JDataField pId,
-                              final JRatio pValue) throws JOceanusException {
+                              final TethysRatio pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -1053,9 +1053,9 @@ public class TableDefinition {
      * Locate column for id.
      * @param pId the id of the column
      * @return the column
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private ColumnDefinition getColumnForId(final JDataField pId) throws JOceanusException {
+    private ColumnDefinition getColumnForId(final JDataField pId) throws OceanusException {
         /* Access the definition */
         ColumnDefinition myDef = theMap.get(pId);
 
@@ -1402,9 +1402,9 @@ public class TableDefinition {
     /**
      * Build the update string for a list of columns.
      * @return the SQL string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected String getUpdateString() throws JOceanusException {
+    protected String getUpdateString() throws OceanusException {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial update */

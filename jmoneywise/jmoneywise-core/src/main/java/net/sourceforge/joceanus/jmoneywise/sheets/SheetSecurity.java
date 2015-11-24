@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for Security.
@@ -108,7 +108,7 @@ public class SheetSecurity
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
@@ -124,7 +124,7 @@ public class SheetSecurity
     }
 
     @Override
-    protected void insertSecureItem(final Security pItem) throws JOceanusException {
+    protected void insertSecureItem(final Security pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getSecurityTypeId());
@@ -148,12 +148,12 @@ public class SheetSecurity
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static void processSecurity(final ArchiveLoader pLoader,
                                           final MoneyWiseData pData,
                                           final DataView pView,
-                                          final DataRow pRow) throws JOceanusException {
+                                          final DataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();

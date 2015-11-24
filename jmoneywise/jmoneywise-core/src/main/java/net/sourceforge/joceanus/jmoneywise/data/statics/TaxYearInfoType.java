@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TaxYearInfoType data type.
@@ -67,10 +67,10 @@ public class TaxYearInfoType
      * Basic Constructor.
      * @param pList The list to associate the TaxYear Info Type with
      * @param pName Name of TaxYear Info Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxYearInfoType(final TaxYearInfoTypeList pList,
-                            final String pName) throws JOceanusException {
+                            final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -78,10 +78,10 @@ public class TaxYearInfoType
      * Basic constructor.
      * @param pList The list to associate the TaxYearInfo Type with
      * @param pClass Class of TaxYearInfo Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxYearInfoType(final TaxYearInfoTypeList pList,
-                            final TaxYearInfoClass pClass) throws JOceanusException {
+                            final TaxYearInfoClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -89,10 +89,10 @@ public class TaxYearInfoType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxYearInfoType(final TaxYearInfoTypeList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -208,9 +208,9 @@ public class TaxYearInfoType
         /**
          * Add a TaxYearInfoType to the list.
          * @param pInfoType the Name of the TaxYear info type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pInfoType) throws JOceanusException {
+        public void addBasicItem(final String pInfoType) throws OceanusException {
             /* Create a new TaxYear Info Type */
             TaxYearInfoType myInfoType = new TaxYearInfoType(this, pInfoType);
 
@@ -225,7 +225,7 @@ public class TaxYearInfoType
         }
 
         @Override
-        public TaxYearInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TaxYearInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the regime */
             TaxYearInfoType myType = new TaxYearInfoType(this, pValues);
 
@@ -243,7 +243,7 @@ public class TaxYearInfoType
         }
 
         @Override
-        protected TaxYearInfoType newItem(final TaxYearInfoClass pClass) throws JOceanusException {
+        protected TaxYearInfoType newItem(final TaxYearInfoClass pClass) throws OceanusException {
             /* Create the type */
             TaxYearInfoType myType = new TaxYearInfoType(this, pClass);
 

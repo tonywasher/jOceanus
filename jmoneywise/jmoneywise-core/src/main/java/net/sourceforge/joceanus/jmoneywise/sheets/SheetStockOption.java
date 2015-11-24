@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for StockOption.
@@ -102,7 +102,7 @@ public class SheetStockOption
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(StockOption.OBJECT_NAME);
         myValues.addValue(StockOption.FIELD_STOCKHOLDING, loadInteger(COL_HOLDING));
@@ -118,7 +118,7 @@ public class SheetStockOption
     }
 
     @Override
-    protected void insertSecureItem(final StockOption pItem) throws JOceanusException {
+    protected void insertSecureItem(final StockOption pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_HOLDING, pItem.getStockHoldingId());

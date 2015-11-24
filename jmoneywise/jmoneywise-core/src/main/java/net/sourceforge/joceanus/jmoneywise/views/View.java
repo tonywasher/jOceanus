@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
 
 /**
  * Data Control for MoneyWiseApp.
@@ -55,7 +55,7 @@ public class View
     /**
      * The Date range for the view.
      */
-    private JDateDayRange theRange = null;
+    private TethysDateRange theRange = null;
 
     /**
      * The analysis manager.
@@ -81,10 +81,10 @@ public class View
      * Constructor.
      * @param pUtilitySet the utility set
      * @param pProfile the startup profile
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public View(final JOceanusUtilitySet pUtilitySet,
-                final JDataProfile pProfile) throws JOceanusException {
+                final JDataProfile pProfile) throws OceanusException {
         /* Call super-constructor */
         super(pUtilitySet, pProfile);
 
@@ -96,7 +96,7 @@ public class View
      * Obtain the date range.
      * @return the date range
      */
-    public JDateDayRange getRange() {
+    public TethysDateRange getRange() {
         return theRange;
     }
 
@@ -142,7 +142,7 @@ public class View
     }
 
     @Override
-    public Database<MoneyWiseData> getDatabase() throws JOceanusException {
+    public Database<MoneyWiseData> getDatabase() throws OceanusException {
         return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(DatabasePreferences.class));
     }
 
@@ -170,9 +170,9 @@ public class View
      * Analyse the data.
      * @param pData the data
      * @return the analysis
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public final TransactionAnalyser analyseData(final MoneyWiseData pData) throws JOceanusException {
+    public final TransactionAnalyser analyseData(final MoneyWiseData pData) throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
@@ -237,7 +237,7 @@ public class View
             deriveUpdates();
 
             /* Catch any exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             if (!bPreserve) {
                 addError(e);
             }

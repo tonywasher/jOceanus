@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
@@ -59,7 +59,7 @@ public class UpdateWorkingCopy
     /**
      * The Error.
      */
-    private JOceanusException theError;
+    private OceanusException theError;
 
     /**
      * Constructor.
@@ -87,7 +87,7 @@ public class UpdateWorkingCopy
     }
 
     @Override
-    public JOceanusException getError() {
+    public OceanusException getError() {
         return theError;
     }
 
@@ -101,7 +101,7 @@ public class UpdateWorkingCopy
 
             /* Discover new workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

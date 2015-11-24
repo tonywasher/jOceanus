@@ -64,8 +64,8 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -148,10 +148,10 @@ public class NetWorth
         CashCategoryBucketList myCash = theAnalysis.getCashCategories();
         LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        JDateDay myDate = theAnalysis.getDateRange().getEnd();
+        TethysDate myDate = theAnalysis.getDateRange().getEnd();
 
         /* Create the totals */
-        JMoney myTotal = new JMoney();
+        TethysMoney myTotal = new TethysMoney();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -231,7 +231,7 @@ public class NetWorth
             /* Access totals */
             PortfolioBucket myTotals = myPortfolios.getTotals();
             SecurityValues myValues = myTotals.getValues();
-            JMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
+            TethysMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableStaticData extension for PayeeType.
@@ -57,7 +57,7 @@ public class TablePayeeType
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Build data values */
         return getRowValues(PayeeType.OBJECT_NAME);
     }

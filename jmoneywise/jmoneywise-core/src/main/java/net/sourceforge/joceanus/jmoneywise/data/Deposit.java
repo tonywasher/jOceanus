@@ -53,9 +53,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Deposit class.
@@ -179,10 +179,10 @@ public class Deposit
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Deposit(final DepositList pList,
-                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                    final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -314,9 +314,9 @@ public class Deposit
      * Obtain Maturity.
      * @return the maturity date
      */
-    public JDateDay getMaturity() {
+    public TethysDate getMaturity() {
         return hasInfoSet
-                          ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
+                          ? theInfoSet.getValue(AccountInfoClass.MATURITY, TethysDate.class)
                           : null;
     }
 
@@ -364,9 +364,9 @@ public class Deposit
      * Obtain Opening Balance.
      * @return the Opening balance
      */
-    public JMoney getOpeningBalance() {
+    public TethysMoney getOpeningBalance() {
         return hasInfoSet
-                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, TethysMoney.class)
                           : null;
     }
 
@@ -718,9 +718,9 @@ public class Deposit
     /**
      * Set defaults.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setDepositCategory(getDefaultCategory());
@@ -734,9 +734,9 @@ public class Deposit
     /**
      * autoCorrect values after change.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Access category class */
         DepositCategoryClass myClass = getCategoryClass();
         Payee myParent = getParent();
@@ -751,7 +751,7 @@ public class Deposit
         if (!DepositCategoryClass.BOND.equals(myClass)) {
             setMaturity(null);
         } else if (getMaturity() == null) {
-            JDateDay myDate = new JDateDay();
+            TethysDate myDate = new TethysDate();
             myDate.adjustYear(1);
             setMaturity(myDate);
         }
@@ -841,7 +841,7 @@ public class Deposit
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -866,7 +866,7 @@ public class Deposit
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -891,9 +891,9 @@ public class Deposit
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws JOceanusException {
+    public void setParent(final Payee pParent) throws OceanusException {
         setValueParent(pParent);
     }
 
@@ -916,54 +916,54 @@ public class Deposit
     /**
      * Set a new Maturity.
      * @param pMaturity the new maturity
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setMaturity(final JDateDay pMaturity) throws JOceanusException {
+    public void setMaturity(final TethysDate pMaturity) throws OceanusException {
         setInfoSetValue(AccountInfoClass.MATURITY, pMaturity);
     }
 
     /**
      * Set a new SortCode.
      * @param pSortCode the new sort code
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setSortCode(final char[] pSortCode) throws JOceanusException {
+    public void setSortCode(final char[] pSortCode) throws OceanusException {
         setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
     }
 
     /**
      * Set a new Account.
      * @param pAccount the new account
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAccount(final char[] pAccount) throws JOceanusException {
+    public void setAccount(final char[] pAccount) throws OceanusException {
         setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setReference(final char[] pReference) throws JOceanusException {
+    public void setReference(final char[] pReference) throws OceanusException {
         setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
     /**
      * Set a new opening balance.
      * @param pBalance the new opening balance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setOpeningBalance(final JMoney pBalance) throws JOceanusException {
+    public void setOpeningBalance(final TethysMoney pBalance) throws OceanusException {
         setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
@@ -971,10 +971,10 @@ public class Deposit
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -985,7 +985,7 @@ public class Deposit
     }
 
     @Override
-    public void adjustClosed() throws JOceanusException {
+    public void adjustClosed() throws OceanusException {
         /* Adjust closed date */
         super.adjustClosed();
 
@@ -1263,9 +1263,9 @@ public class Deposit
          * Derive Edit list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public DepositList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public DepositList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             DepositList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -1338,7 +1338,7 @@ public class Deposit
         }
 
         @Override
-        public Deposit addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Deposit addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the deposit */
             Deposit myDeposit = new Deposit(this, pValues);
 

@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Class to analyse tax liability.
@@ -56,12 +56,12 @@ public class TaxAnalysis {
     /**
      * Allowance Quotient.
      */
-    private static final JMoney ALLOWANCE_QUOTIENT = JMoney.getWholeUnits(2);
+    private static final TethysMoney ALLOWANCE_QUOTIENT = TethysMoney.getWholeUnits(2);
 
     /**
      * Allowance Multiplier.
      */
-    private static final JMoney ALLOWANCE_MULTIPLIER = JMoney.getWholeUnits(1);
+    private static final TethysMoney ALLOWANCE_MULTIPLIER = TethysMoney.getWholeUnits(1);
 
     /**
      * Analysis.
@@ -116,13 +116,13 @@ public class TaxAnalysis {
         /**
          * Default value for BirthDate.
          */
-        private static final JDateDay DEFAULT_BIRTHDATE = new JDateDay(1970, Month.JANUARY, 1);
+        private static final TethysDate DEFAULT_BIRTHDATE = new TethysDate(1970, Month.JANUARY, 1);
 
         /**
          * Constructor.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public TaxPreferences() throws JOceanusException {
+        public TaxPreferences() throws OceanusException {
             super();
         }
 
@@ -176,8 +176,8 @@ public class TaxAnalysis {
 
         /* Calculate the gross income */
         calculateGrossIncome();
-        JMoney myIncome = new JMoney();
-        JMoney myTax = new JMoney();
+        TethysMoney myIncome = new TethysMoney();
+        TethysMoney myTax = new TethysMoney();
 
         /* Calculate the allowances and tax bands */
         TaxBands myBands = calculateAllowances(myManager);
@@ -225,7 +225,7 @@ public class TaxAnalysis {
 
         /* Build the TaxProfitBucket */
         myBucket = myList.getBucket(TaxCategoryClass.TAXPROFITLOSS);
-        myBucket.setAmount(new JMoney());
+        myBucket.setAmount(new TethysMoney());
         myBucket.setTaxation(myTax);
 
         /* Prune the tax category list */
@@ -244,7 +244,7 @@ public class TaxAnalysis {
         /* Access Tax Basis and Calculations */
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
-        JMoney myIncome = new JMoney();
+        TethysMoney myIncome = new TethysMoney();
 
         /* Access the salary bucket and add to income */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.SALARY);
@@ -252,7 +252,7 @@ public class TaxAnalysis {
 
         /* Access the rental bucket */
         mySrcBucket = myBasis.getBucket(TaxBasisClass.RENTALINCOME);
-        JMoney myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        TethysMoney myChargeable = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getRentalAllowance()) > 0) {
@@ -283,7 +283,7 @@ public class TaxAnalysis {
 
         /* Access the capital gains bucket */
         mySrcBucket = myBasis.getBucket(TaxBasisClass.CAPITALGAINS);
-        myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        myChargeable = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getCapitalAllow()) > 0) {
@@ -308,8 +308,8 @@ public class TaxAnalysis {
 
         /* Allocate the tax bands class */
         TaxBands myBands = new TaxBands();
-        JMoney myAllowance;
-        JMoney myAdjust;
+        TethysMoney myAllowance;
+        TethysMoney myAdjust;
 
         /* Access the taxation properties */
         TaxPreferences myPreferences = pManager.getPreferenceSet(TaxPreferences.class);
@@ -334,14 +334,14 @@ public class TaxAnalysis {
 
         /* Access the gross income */
         TaxCalcBucket myBucket = myList.getBucket(TaxCategoryClass.GROSSINCOME);
-        JMoney myGrossIncome = myBucket.getMoneyValue(TaxAttribute.AMOUNT);
+        TethysMoney myGrossIncome = myBucket.getMoneyValue(TaxAttribute.AMOUNT);
         myBucket.setParent(myParentBucket);
 
         /* If we are using age allowance and the gross income is above the Age Allowance Limit */
         if ((hasAgeAllowance)
             && (myGrossIncome.compareTo(theYear.getAgeAllowLimit()) > 0)) {
             /* Calculate the margin by which we exceeded the limit */
-            myAdjust = new JMoney(myGrossIncome);
+            myAdjust = new TethysMoney(myGrossIncome);
             myAdjust.subtractAmount(theYear.getAgeAllowLimit());
 
             /* Calculate the allowance reduction by dividing by £2 and then multiply up by £1 */
@@ -349,7 +349,7 @@ public class TaxAnalysis {
             myAdjust.multiply(ALLOWANCE_MULTIPLIER.unscaledValue());
 
             /* Adjust the allowance by this value */
-            myAllowance = new JMoney(myAllowance);
+            myAllowance = new TethysMoney(myAllowance);
             myAllowance.subtractAmount(myAdjust);
 
             /* If we have reduced below the standard allowance */
@@ -367,14 +367,14 @@ public class TaxAnalysis {
         }
 
         /* Set Allowance and Tax Bands */
-        myBands.theAllowance = new JMoney(myAllowance);
-        myBands.theLoBand = new JMoney(theYear.getLoBand());
-        myBands.theBasicBand = new JMoney(theYear.getBasicBand());
+        myBands.theAllowance = new TethysMoney(myAllowance);
+        myBands.theLoBand = new TethysMoney(theYear.getLoBand());
+        myBands.theBasicBand = new TethysMoney(theYear.getBasicBand());
 
         /* If we have an additional tax band */
         if (theYear.hasAdditionalTaxBand()) {
             /* Set the High tax band */
-            myBands.theHiBand = new JMoney(theYear.getAddIncBound());
+            myBands.theHiBand = new TethysMoney(theYear.getAddIncBound());
 
             /* Remove the basic band from this one */
             myBands.theHiBand.subtractAmount(myBands.theBasicBand);
@@ -387,7 +387,7 @@ public class TaxAnalysis {
             /* If the gross income is above the Additional Allowance Limit */
             if (myGrossIncome.compareTo(theYear.getAddAllowLimit()) > 0) {
                 /* Calculate the margin by which we exceeded the limit */
-                myAdjust = new JMoney(myGrossIncome);
+                myAdjust = new TethysMoney(myGrossIncome);
                 myAdjust.subtractAmount(theYear.getAddAllowLimit());
 
                 /* Calculate the allowance reduction by dividing by £2 and then multiply up by £1 */
@@ -395,13 +395,13 @@ public class TaxAnalysis {
                 myAdjust.multiply(ALLOWANCE_MULTIPLIER.unscaledValue());
 
                 /* Adjust the allowance by this value */
-                myAllowance = new JMoney(myAllowance);
+                myAllowance = new TethysMoney(myAllowance);
                 myAllowance.subtractAmount(myAdjust);
 
                 /* If we have used up the entire allowance */
                 if (!myAllowance.isPositive()) {
                     /* Personal allowance is reduced to zero */
-                    myBands.theAllowance = new JMoney();
+                    myBands.theAllowance = new TethysMoney();
                 }
 
                 /* Record the adjusted allowance */
@@ -428,8 +428,8 @@ public class TaxAnalysis {
 
         /* Access Salary */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.SALARY);
-        JMoney mySalary = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-        JMoney myTax = new JMoney();
+        TethysMoney mySalary = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        TethysMoney myTax = new TethysMoney();
         boolean isFinished = false;
 
         /* Store the total into the TaxDueSalary Bucket */
@@ -587,8 +587,8 @@ public class TaxAnalysis {
 
         /* Access Rental */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.RENTALINCOME);
-        JMoney myRental = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-        JMoney myTax = new JMoney();
+        TethysMoney myRental = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        TethysMoney myTax = new TethysMoney();
         boolean isFinished = false;
 
         /* Store the total into the TaxDueRental Bucket */
@@ -600,7 +600,7 @@ public class TaxAnalysis {
         myTaxBucket.setParent(myTopBucket);
 
         /* Pick up the rental allowance */
-        JMoney myAllowance = theYear.getRentalAllowance();
+        TethysMoney myAllowance = theYear.getRentalAllowance();
 
         /* If the rental is less than the rental allowance */
         if (myRental.compareTo(myAllowance) < 0) {
@@ -774,8 +774,8 @@ public class TaxAnalysis {
 
         /* Access Interest */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXEDINTEREST);
-        JMoney myInterest = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-        JMoney myTax = new JMoney();
+        TethysMoney myInterest = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        TethysMoney myTax = new TethysMoney();
         boolean isFinished = false;
 
         /* Add any UnTaxed Interest */
@@ -930,8 +930,8 @@ public class TaxAnalysis {
 
         /* Access Dividends */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.DIVIDEND);
-        JMoney myDividends = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-        JMoney myTax = new JMoney();
+        TethysMoney myDividends = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        TethysMoney myTax = new TethysMoney();
         boolean isFinished = false;
 
         /* Access Unit Trust Dividends */
@@ -1024,9 +1024,9 @@ public class TaxAnalysis {
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
 
         /* Access Gains */
-        JMoney myGains = theCharges.getGainsTotal();
-        JMoney myBaseGains = new JMoney(myGains);
-        JMoney myTax = new JMoney();
+        TethysMoney myGains = theCharges.getGainsTotal();
+        TethysMoney myBaseGains = new TethysMoney(myGains);
+        TethysMoney myTax = new TethysMoney();
         boolean isFinished = false;
         TaxCalcBucket myTaxBucket;
 
@@ -1115,7 +1115,7 @@ public class TaxAnalysis {
         /* If we are not finished then we need top-slicing relief */
         if (!isFinished) {
             /* Access the taxable slice */
-            JMoney mySlice = theCharges.getSliceTotal();
+            TethysMoney mySlice = theCharges.getSliceTotal();
             hasGainsSlices = true;
 
             /* Access the TaxDueSlice Bucket */
@@ -1159,7 +1159,7 @@ public class TaxAnalysis {
                 myTaxBucket.setAmount(pBands.theBasicBand);
 
                 /* Remember this taxation amount to remove from HiTax bucket */
-                JMoney myHiTax = new JMoney(myTaxBucket.getMoneyValue(TaxAttribute.AMOUNT));
+                TethysMoney myHiTax = new TethysMoney(myTaxBucket.getMoneyValue(TaxAttribute.AMOUNT));
                 myHiTax.negate();
 
                 /* Access the HiSliceBucket */
@@ -1245,7 +1245,7 @@ public class TaxAnalysis {
 
         /* Access base bucket */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxBasisClass.CAPITALGAINS);
-        JMoney myCapital = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        TethysMoney myCapital = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueCapital Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TAXDUECAPITAL);
@@ -1256,8 +1256,8 @@ public class TaxAnalysis {
         myTaxBucket.setParent(myTopBucket);
 
         /* Pick up the capital allowance */
-        JMoney myAllowance = theYear.getCapitalAllow();
-        JMoney myTax = new JMoney();
+        TethysMoney myAllowance = theYear.getCapitalAllow();
+        TethysMoney myTax = new TethysMoney();
         TaxRegime myRegime = theYear.getTaxRegime();
         boolean isFinished = false;
 
@@ -1337,21 +1337,21 @@ public class TaxAnalysis {
         /**
          * The allowance.
          */
-        private JMoney theAllowance = null;
+        private TethysMoney theAllowance = null;
 
         /**
          * The Lo Tax Band.
          */
-        private JMoney theLoBand = null;
+        private TethysMoney theLoBand = null;
 
         /**
          * The Basic Tax Band.
          */
-        private JMoney theBasicBand = null;
+        private TethysMoney theBasicBand = null;
 
         /**
          * The High Tax Band.
          */
-        private JMoney theHiBand = null;
+        private TethysMoney theHiBand = null;
     }
 }

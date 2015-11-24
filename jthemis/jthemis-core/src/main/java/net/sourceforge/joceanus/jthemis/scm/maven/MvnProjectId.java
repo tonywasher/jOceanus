@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -108,9 +108,9 @@ public final class MvnProjectId
     /**
      * Constructor.
      * @param pModel the project model
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected MvnProjectId(final Model pModel) throws JOceanusException {
+    protected MvnProjectId(final Model pModel) throws OceanusException {
         /* Store model */
         theModel = pModel;
         theDependency = null;
@@ -141,10 +141,10 @@ public final class MvnProjectId
      * Constructor.
      * @param pDependency the project dependency
      * @param pProject the parent project
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected MvnProjectId(final Dependency pDependency,
-                           final MvnProjectId pProject) throws JOceanusException {
+                           final MvnProjectId pProject) throws OceanusException {
         /* Store dependency */
         theModel = null;
         theDependency = pDependency;

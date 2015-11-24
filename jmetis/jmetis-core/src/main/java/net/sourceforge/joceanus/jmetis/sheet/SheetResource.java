@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmetis.sheet;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for JMetis Sheet.
  */
-public enum SheetResource implements ResourceId {
+public enum SheetResource implements TethysResourceId {
     /**
      * WorkBook ExcelXLS.
      */
@@ -43,7 +43,7 @@ public enum SheetResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -90,14 +90,14 @@ public enum SheetResource implements ResourceId {
      * @param pType the Type
      * @return the resource key
      */
-    protected static ResourceId getKeyForWorkBook(final WorkBookType pType) {
+    protected static TethysResourceId getKeyForWorkBook(final WorkBookType pType) {
         switch (pType) {
             case EXCELXLS:
                 return WORKBOOK_EXCELXLS;
             case OASISODS:
                 return WORKBOOK_OASISODS;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pType));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pType));
         }
     }
 }

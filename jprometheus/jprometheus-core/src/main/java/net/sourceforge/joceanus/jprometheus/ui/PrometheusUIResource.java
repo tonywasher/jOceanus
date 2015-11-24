@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jPrometheus UI Fields.
  */
-public enum PrometheusUIResource implements ResourceId {
+public enum PrometheusUIResource implements TethysResourceId {
     /**
      * Data Menu.
      */
@@ -287,7 +287,7 @@ public enum PrometheusUIResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(PrometheusUIResource.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(PrometheusUIResource.class.getCanonicalName());
 
     /**
      * The Id.

@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +110,7 @@ public class PortfolioView
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
-        JDateDay myDate = pAnalysis.getDateRange().getEnd();
+        TethysDate myDate = pAnalysis.getDateRange().getEnd();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -237,12 +237,12 @@ public class PortfolioView
      */
     private void checkPortfolioProfit(final PortfolioBucket pBucket) {
         SecurityValues myValues = pBucket.getValues();
-        JMoney myCalcProfit = pBucket.getNonCashValue(false);
+        TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
-        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
         }
@@ -254,12 +254,12 @@ public class PortfolioView
      */
     private void checkSecurityProfit(final SecurityBucket pBucket) {
         SecurityValues myValues = pBucket.getValues();
-        JMoney myCalcProfit = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
-        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
         }

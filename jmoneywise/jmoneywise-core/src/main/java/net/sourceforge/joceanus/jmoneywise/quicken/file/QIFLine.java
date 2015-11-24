@@ -28,13 +28,13 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * A standard event line in the QIF file.
@@ -210,13 +210,13 @@ public abstract class QIFLine<T extends QLineType> {
         /**
          * The money.
          */
-        private final JMoney theMoney;
+        private final TethysMoney theMoney;
 
         /**
          * Constructor.
          * @param pMoney the Money
          */
-        protected QIFMoneyLine(final JMoney pMoney) {
+        protected QIFMoneyLine(final TethysMoney pMoney) {
             /* Store data */
             theMoney = pMoney;
         }
@@ -230,7 +230,7 @@ public abstract class QIFLine<T extends QLineType> {
          * Obtain Money.
          * @return the money
          */
-        protected JMoney getMoney() {
+        protected TethysMoney getMoney() {
             return theMoney;
         }
 
@@ -238,7 +238,7 @@ public abstract class QIFLine<T extends QLineType> {
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
-            JDecimal myDecimal = new JDecimal(theMoney);
+            TethysDecimal myDecimal = new TethysDecimal(theMoney);
 
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
@@ -287,13 +287,13 @@ public abstract class QIFLine<T extends QLineType> {
         /**
          * The date.
          */
-        private final JDateDay theDate;
+        private final TethysDate theDate;
 
         /**
          * Constructor.
          * @param pDate the Date
          */
-        protected QIFDateLine(final JDateDay pDate) {
+        protected QIFDateLine(final TethysDate pDate) {
             /* Store the date */
             theDate = pDate;
         }
@@ -307,7 +307,7 @@ public abstract class QIFLine<T extends QLineType> {
          * Obtain Date.
          * @return the date
          */
-        public JDateDay getDate() {
+        public TethysDate getDate() {
             return theDate;
         }
 
@@ -462,13 +462,13 @@ public abstract class QIFLine<T extends QLineType> {
         /**
          * The price.
          */
-        private final JPrice thePrice;
+        private final TethysPrice thePrice;
 
         /**
          * Constructor.
          * @param pPrice the Price
          */
-        protected QIFPriceLine(final JPrice pPrice) {
+        protected QIFPriceLine(final TethysPrice pPrice) {
             /* Store data */
             thePrice = pPrice;
         }
@@ -482,7 +482,7 @@ public abstract class QIFLine<T extends QLineType> {
          * Obtain price.
          * @return the price
          */
-        protected JPrice getPrice() {
+        protected TethysPrice getPrice() {
             return thePrice;
         }
 
@@ -490,7 +490,7 @@ public abstract class QIFLine<T extends QLineType> {
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
-            JDecimal myDecimal = new JDecimal(thePrice);
+            TethysDecimal myDecimal = new TethysDecimal(thePrice);
 
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
@@ -539,13 +539,13 @@ public abstract class QIFLine<T extends QLineType> {
         /**
          * The units.
          */
-        private final JUnits theUnits;
+        private final TethysUnits theUnits;
 
         /**
          * Constructor.
          * @param pUnits the Units
          */
-        protected QIFUnitsLine(final JUnits pUnits) {
+        protected QIFUnitsLine(final TethysUnits pUnits) {
             /* Store data */
             theUnits = pUnits;
         }
@@ -559,7 +559,7 @@ public abstract class QIFLine<T extends QLineType> {
          * Obtain units.
          * @return the units
          */
-        protected JUnits getUnits() {
+        protected TethysUnits getUnits() {
             return theUnits;
         }
 
@@ -613,13 +613,13 @@ public abstract class QIFLine<T extends QLineType> {
         /**
          * The Rate.
          */
-        private final JRate theRate;
+        private final TethysRate theRate;
 
         /**
          * Constructor.
          * @param pPercent the percentage
          */
-        protected QIFRateLine(final JRate pPercent) {
+        protected QIFRateLine(final TethysRate pPercent) {
             /* Store data */
             theRate = pPercent;
         }
@@ -633,7 +633,7 @@ public abstract class QIFLine<T extends QLineType> {
          * Obtain rate.
          * @return the rate
          */
-        protected JRate getRate() {
+        protected TethysRate getRate() {
             return theRate;
         }
 
@@ -687,13 +687,13 @@ public abstract class QIFLine<T extends QLineType> {
         /**
          * The ratio.
          */
-        private final JRatio theRatio;
+        private final TethysRatio theRatio;
 
         /**
          * Constructor.
          * @param pRatio the Ratio
          */
-        protected QIFRatioLine(final JRatio pRatio) {
+        protected QIFRatioLine(final TethysRatio pRatio) {
             /* Store data */
             theRatio = pRatio;
         }
@@ -707,7 +707,7 @@ public abstract class QIFLine<T extends QLineType> {
          * Obtain ratio.
          * @return the ratio
          */
-        protected JRatio getRatio() {
+        protected TethysRatio getRatio() {
             return theRatio;
         }
 

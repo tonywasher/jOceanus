@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.jira;
 import java.util.Properties;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -51,7 +51,7 @@ public class TestJira {
             JiraServer myServer = new JiraServer(new PreferenceManager());
             myServer.getIssue("FIN-47");
             System.exit(0);
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
         }
     }
 }

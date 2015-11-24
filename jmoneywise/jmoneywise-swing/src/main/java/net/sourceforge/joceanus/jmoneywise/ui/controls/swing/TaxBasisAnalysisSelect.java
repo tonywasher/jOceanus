@@ -45,12 +45,12 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class TaxBasisAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, JOceanusEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -83,7 +83,7 @@ public class TaxBasisAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The active tax basis bucket list.
@@ -119,7 +119,7 @@ public class TaxBasisAnalysisSelect
         theAccountButton = new JScrollButton<TaxBasisAccountBucket>();
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the labels */
         JLabel myBasisLabel = new JLabel(NLS_BASIS + JFieldElement.STR_COLON);
@@ -146,7 +146,7 @@ public class TaxBasisAnalysisSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -276,7 +276,7 @@ public class TaxBasisAnalysisSelect
      * Listener class.
      */
     private final class BasisListener
-            implements PropertyChangeListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, TethysChangeEventListener {
         /**
          * Tax menu builder.
          */
@@ -290,12 +290,12 @@ public class TaxBasisAnalysisSelect
         /**
          * TaxBasisMenu Registration.
          */
-        private final JOceanusChangeRegistration theBasisMenuReg;
+        private final TethysChangeRegistration theBasisMenuReg;
 
         /**
          * AccountMenu Registration.
          */
-        private final JOceanusChangeRegistration theAccountMenuReg;
+        private final TethysChangeRegistration theAccountMenuReg;
 
         /**
          * Constructor.
@@ -313,7 +313,7 @@ public class TaxBasisAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the TaxBasisMenu */
             if (theBasisMenuReg.isRelevant(pEvent)) {
                 buildBasisMenu();

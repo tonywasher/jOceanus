@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +54,10 @@ public class SwingReportManager
      * Constructor.
      * @param pView the view
      * @param pEditor the editor pane
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public SwingReportManager(final SwingView pView,
-                              final JEditorPane pEditor) throws JOceanusException {
+                              final JEditorPane pEditor) throws OceanusException {
         /* Create the builder */
         super(pView, pView.getUtilitySet(), new SwingHTMLBuilder(pView, pEditor));
     }
@@ -121,7 +121,7 @@ public class SwingReportManager
                 /* Return immediately */
                 return;
             }
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("Failed to process reference", e);
             myText = null;
         }

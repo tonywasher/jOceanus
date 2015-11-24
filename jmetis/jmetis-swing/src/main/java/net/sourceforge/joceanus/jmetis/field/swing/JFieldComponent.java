@@ -57,10 +57,10 @@ import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObjectList;
 import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
 import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.JFieldState;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEventListener;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.JOceanusItemEventListener;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
@@ -208,9 +208,9 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             JModelString<X> myModel = new JModelString<X>(mySet, myField, pClass);
             return new JFieldArea<X>((JTextArea) pComponent, myModel);
         }
-        if (pComponent instanceof JDateDayButton) {
+        if (pComponent instanceof TethysSwingDateButton) {
             JModelDateDay<X> myModel = new JModelDateDay<X>(mySet, myField, pClass);
-            return new JFieldDate<X>((JDateDayButton) pComponent, myModel);
+            return new JFieldDate<X>((TethysSwingDateButton) pComponent, myModel);
         }
         if (pComponent instanceof JCheckBox) {
             JModelBoolean<X> myModel = new JModelBoolean<X>(mySet, myField, pClass);
@@ -715,7 +715,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         /**
          * The Component.
          */
-        private final JDateDayButton theComponent;
+        private final TethysSwingDateButton theComponent;
 
         /**
          * The DataModel.
@@ -727,7 +727,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        protected JFieldDate(final JDateDayButton pComponent,
+        protected JFieldDate(final TethysSwingDateButton pComponent,
                              final JModelDateDay<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
@@ -738,13 +738,13 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Create the listener and attach it */
             DateListener myListener = new DateListener();
-            pComponent.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, myListener);
+            pComponent.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, myListener);
         }
 
         @Override
         protected void displayField() {
             /* Access value from model */
-            JDateDay myValue = theModel.getValue();
+            TethysDate myValue = theModel.getValue();
 
             /* Display it */
             theComponent.setSelectedDateDay(myValue);
@@ -929,7 +929,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         private final class ButtonListener
                 implements JOceanusItemEventListener {
             @Override
-            public void processItemEvent(final JOceanusItemEvent pEvent) {
+            public void processItemEvent(final TethysItemEvent pEvent) {
                 /* Record the value */
                 theModel.processValue(pEvent);
             }

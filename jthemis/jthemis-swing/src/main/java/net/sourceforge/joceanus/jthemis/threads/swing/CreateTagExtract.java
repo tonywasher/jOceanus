@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 import java.io.File;
 import java.util.Collection;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
@@ -61,7 +61,7 @@ public class CreateTagExtract
     /**
      * The Error.
      */
-    private JOceanusException theError = null;
+    private OceanusException theError = null;
 
     /**
      * Constructor.
@@ -87,7 +87,7 @@ public class CreateTagExtract
 
             /* Access tag list for extract */
             // myTags = SvnTag.getTagMap(pTags).values();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
             cancel(true);
@@ -98,7 +98,7 @@ public class CreateTagExtract
     }
 
     @Override
-    public JOceanusException getError() {
+    public OceanusException getError() {
         return theError;
     }
 
@@ -109,7 +109,7 @@ public class CreateTagExtract
             /* Check out the branches */
             CheckOut myCheckOut = new CheckOut(theRepository, this);
             myCheckOut.exportTags(theTags, theLocation);
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

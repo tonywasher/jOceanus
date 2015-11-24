@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -228,9 +228,9 @@ public final class SvnComponent
      * Get FileURL as input stream.
      * @param pPath the base URL path
      * @return the stream of null if file does not exists
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public MvnProjectDefinition parseProjectURL(final String pPath) throws JOceanusException {
+    public MvnProjectDefinition parseProjectURL(final String pPath) throws OceanusException {
         InputStream myInput = null;
         /* Build the URL */
         try {
@@ -294,9 +294,9 @@ public final class SvnComponent
      * Get FileURL as input stream.
      * @param pURL the URL to stream
      * @return the stream of null if file does not exists
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public InputStream getFileURLasInputStream(final SVNURL pURL) throws JOceanusException {
+    public InputStream getFileURLasInputStream(final SVNURL pURL) throws OceanusException {
         /* Access client */
         SvnRepository myRepo = getRepository();
         SVNClientManager myMgr = myRepo.getClientManager();
@@ -362,9 +362,9 @@ public final class SvnComponent
         /**
          * Discover component list from repository.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JOceanusException {
+        public void discover(final ReportStatus pReport) throws OceanusException {
             /* Reset the list */
             clear();
 

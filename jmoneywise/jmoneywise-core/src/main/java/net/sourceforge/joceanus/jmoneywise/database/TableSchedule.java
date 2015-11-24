@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TabelEncrypted extension for Schedule.
@@ -74,7 +74,7 @@ public class TableSchedule
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -93,7 +93,7 @@ public class TableSchedule
 
     @Override
     protected void setFieldValue(final Schedule pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (Schedule.FIELD_STARTDATE.equals(iField)) {

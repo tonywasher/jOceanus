@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.ui.swing.DataItemPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 
@@ -65,7 +65,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     /**
      * The GoToMenuBuilder.
      */
-    private transient JScrollMenuBuilder<JOceanusActionEvent> theGoToBuilder;
+    private transient JScrollMenuBuilder<TethysActionEvent> theGoToBuilder;
 
     /**
      * The DataItem GoToMenuMap.
@@ -92,7 +92,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     }
 
     @Override
-    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<JOceanusActionEvent> pBuilder) {
+    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<TethysActionEvent> pBuilder) {
         theGoToBuilder = pBuilder;
     }
 
@@ -207,7 +207,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             }
 
             /* Build the item */
-            JOceanusActionEvent myEvent = createActionEvent(myId, myItem);
+            TethysActionEvent myEvent = createActionEvent(myId, myItem);
             theGoToBuilder.addItem(myMenu, myEvent, myName);
         }
     }
@@ -236,7 +236,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             int myId = MainTab.ACTION_VIEWSTATEMENT;
 
             /* Build the item */
-            JOceanusActionEvent myEvent = createActionEvent(myId, myStatement);
+            TethysActionEvent myEvent = createActionEvent(myId, myStatement);
             theGoToBuilder.addItem(myMenu, myEvent, myFilter.getName());
         }
     }

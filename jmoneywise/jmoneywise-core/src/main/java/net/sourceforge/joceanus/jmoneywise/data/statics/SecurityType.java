@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SecurityType data type.
@@ -65,10 +65,10 @@ public class SecurityType
      * Basic constructor.
      * @param pList The list to associate the SecurityType with
      * @param pName Name of SecurityType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private SecurityType(final SecurityTypeList pList,
-                         final String pName) throws JOceanusException {
+                         final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -76,10 +76,10 @@ public class SecurityType
      * Basic constructor.
      * @param pList The list to associate the SecurityType with
      * @param pClass Class of SecurityType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private SecurityType(final SecurityTypeList pList,
-                         final SecurityTypeClass pClass) throws JOceanusException {
+                         final SecurityTypeClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -87,10 +87,10 @@ public class SecurityType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private SecurityType(final SecurityTypeList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -198,9 +198,9 @@ public class SecurityType
         /**
          * Add a SecurityType to the list.
          * @param pSecType the Name of the security type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pSecType) throws JOceanusException {
+        public void addBasicItem(final String pSecType) throws OceanusException {
             /* Create a new Security Type */
             SecurityType mySecType = new SecurityType(this, pSecType);
 
@@ -215,7 +215,7 @@ public class SecurityType
         }
 
         @Override
-        public SecurityType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public SecurityType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             SecurityType myType = new SecurityType(this, pValues);
 
@@ -233,7 +233,7 @@ public class SecurityType
         }
 
         @Override
-        protected SecurityType newItem(final SecurityTypeClass pClass) throws JOceanusException {
+        protected SecurityType newItem(final SecurityTypeClass pClass) throws OceanusException {
             /* Create the type */
             SecurityType myType = new SecurityType(this, pClass);
 

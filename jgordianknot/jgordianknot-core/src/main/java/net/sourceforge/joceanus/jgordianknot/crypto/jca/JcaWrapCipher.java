@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for BouncyCastle Wrap Ciphers.
@@ -50,7 +50,7 @@ public class JcaWrapCipher
 
     @Override
     public byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                          final GordianKey<?> pKeyToWrap) throws JOceanusException {
+                          final GordianKey<?> pKeyToWrap) throws OceanusException {
         /* Access the keyToWrap */
         JcaKey<?> myKeyToWrap = JcaKey.accessKey(pKeyToWrap);
         return wrapBytes(pKey, myKeyToWrap.getKey().getEncoded());
@@ -59,7 +59,7 @@ public class JcaWrapCipher
     @Override
     public <T> JcaKey<T> unwrapKey(final GordianKey<GordianSymKeyType> pKey,
                                    final byte[] pBytes,
-                                   final T pKeyType) throws JOceanusException {
+                                   final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
         byte[] myBytes = unwrapBytes(pKey, pBytes);
 

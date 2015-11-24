@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 import java.io.File;
 import java.util.Collection;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -98,11 +98,11 @@ public class CheckOut {
      * @param pBranch the branch to check out.
      * @param pRevision the revision to check out
      * @param pPath the path to check out to.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void checkOutBranch(final SvnBranch pBranch,
                                 final SVNRevision pRevision,
-                                final File pPath) throws JOceanusException {
+                                final File pPath) throws OceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -123,10 +123,10 @@ public class CheckOut {
      * Switch the Branch at the specified directory.
      * @param pBranch the branch to check out.
      * @param pPath the path to check out to.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void switchBranch(final SvnBranch pBranch,
-                              final File pPath) throws JOceanusException {
+                              final File pPath) throws OceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -144,9 +144,9 @@ public class CheckOut {
     /**
      * Update working copy.
      * @param pPath the path to update.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void updateWorkingCopy(final File pPath) throws JOceanusException {
+    private void updateWorkingCopy(final File pPath) throws OceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -163,9 +163,9 @@ public class CheckOut {
     /**
      * Revert working copy.
      * @param pPath the path to revert.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void revertWorkingCopy(final File pPath) throws JOceanusException {
+    private void revertWorkingCopy(final File pPath) throws OceanusException {
         /* Access update client */
         SVNWCClient myClient = theMgr.getWCClient();
 
@@ -187,10 +187,10 @@ public class CheckOut {
      * Export the Tag to the specified directory.
      * @param pTag the tag to export.
      * @param pPath the path to export to.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void exportTag(final SvnTag pTag,
-                           final File pPath) throws JOceanusException {
+                           final File pPath) throws OceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -210,11 +210,11 @@ public class CheckOut {
      * @param pBranches the branches to check out.
      * @param pRevision the revision to check out
      * @param pPath the path to export to.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void checkOutBranches(final Collection<SvnBranch> pBranches,
                                  final SVNRevision pRevision,
-                                 final File pPath) throws JOceanusException {
+                                 final File pPath) throws OceanusException {
         /* Loop through branches */
         for (SvnBranch myBranch : pBranches) {
             /* Check for cancellation */
@@ -234,10 +234,10 @@ public class CheckOut {
      * Switch the Branches in the specified directory.
      * @param pBranches the branches to switch.
      * @param pPath the path to export to.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void switchBranches(final Collection<SvnBranch> pBranches,
-                               final File pPath) throws JOceanusException {
+                               final File pPath) throws OceanusException {
         /* Loop through branches */
         for (SvnBranch myBranch : pBranches) {
             /* Build path */
@@ -251,9 +251,9 @@ public class CheckOut {
     /**
      * Update Working Set.
      * @param pSet the working set to update.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void updateWorkingCopySet(final SvnWorkingCopySet pSet) throws JOceanusException {
+    public void updateWorkingCopySet(final SvnWorkingCopySet pSet) throws OceanusException {
         /* Loop through copies */
         for (SvnWorkingCopy myCopy : pSet) {
             /* Access path */
@@ -267,9 +267,9 @@ public class CheckOut {
     /**
      * Revert Working Set.
      * @param pSet the working set to revert.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void revertWorkingCopySet(final SvnWorkingCopySet pSet) throws JOceanusException {
+    public void revertWorkingCopySet(final SvnWorkingCopySet pSet) throws OceanusException {
         /* Loop through copies */
         for (SvnWorkingCopy myCopy : pSet) {
             /* Access path */
@@ -284,10 +284,10 @@ public class CheckOut {
      * Export the Tags to the specified directory.
      * @param pTags the tags to export.
      * @param pPath the path to export to.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void exportTags(final Collection<SvnTag> pTags,
-                           final File pPath) throws JOceanusException {
+                           final File pPath) throws OceanusException {
         /* Loop through tags */
         for (SvnTag myTag : pTags) {
             /* Check for cancellation */

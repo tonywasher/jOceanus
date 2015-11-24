@@ -40,14 +40,14 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.preference.ColumnType;
 import net.sourceforge.joceanus.jprometheus.preference.JDBCDriver;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Column definition classes handling data-type specifics.
@@ -802,7 +802,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JDateDay pValue) {
+        protected void setValue(final TethysDate pValue) {
             super.setObject(pValue);
         }
 
@@ -810,8 +810,8 @@ public abstract class ColumnDefinition {
          * Get the value.
          * @return the value
          */
-        protected JDateDay getValue() {
-            return (JDateDay) super.getObject();
+        protected TethysDate getValue() {
+            return (TethysDate) super.getObject();
         }
 
         @Override
@@ -820,14 +820,14 @@ public abstract class ColumnDefinition {
             Date myValue = pResults.getDate(pIndex);
             setValue((myValue == null)
                                       ? null
-                                      : new JDateDay(myValue));
+                                      : new TethysDate(myValue));
         }
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
             java.sql.Date myDate = null;
-            JDateDay myValue = getValue();
+            TethysDate myValue = getValue();
 
             /* Build the date as a SQL date */
             if (myValue != null) {
@@ -988,7 +988,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JMoney pValue) {
+        protected void setValue(final TethysMoney pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1011,11 +1011,11 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JMoney getValue(final JDataFormatter pFormatter) throws JOceanusException {
+        public TethysMoney getValue(final JDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), JMoney.class);
+                return pFormatter.parseValue(getValue(), TethysMoney.class);
             } catch (IllegalArgumentException e) {
                 throw new JPrometheusDataException(getValue(), "Bad Money Value", e);
             }
@@ -1053,7 +1053,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JRate pValue) {
+        protected void setValue(final TethysRate pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1076,11 +1076,11 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JRate getValue(final JDataFormatter pFormatter) throws JOceanusException {
+        public TethysRate getValue(final JDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), JRate.class);
+                return pFormatter.parseValue(getValue(), TethysRate.class);
             } catch (IllegalArgumentException e) {
                 throw new JPrometheusDataException(getValue(), "Bad Rate Value", e);
             }
@@ -1118,7 +1118,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JPrice pValue) {
+        protected void setValue(final TethysPrice pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1130,11 +1130,11 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JPrice getValue(final JDataFormatter pFormatter) throws JOceanusException {
+        public TethysPrice getValue(final JDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), JPrice.class);
+                return pFormatter.parseValue(getValue(), TethysPrice.class);
             } catch (IllegalArgumentException e) {
                 throw new JPrometheusDataException(getValue(), "Bad Price Value", e);
             }
@@ -1172,7 +1172,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JUnits pValue) {
+        protected void setValue(final TethysUnits pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1184,11 +1184,11 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JUnits getValue(final JDataFormatter pFormatter) throws JOceanusException {
+        public TethysUnits getValue(final JDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), JUnits.class);
+                return pFormatter.parseValue(getValue(), TethysUnits.class);
             } catch (IllegalArgumentException e) {
                 throw new JPrometheusDataException(getValue(), "Bad Units Value", e);
             }
@@ -1226,7 +1226,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JDilution pValue) {
+        protected void setValue(final TethysDilution pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1238,11 +1238,11 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JDilution getValue(final JDataFormatter pFormatter) throws JOceanusException {
+        public TethysDilution getValue(final JDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), JDilution.class);
+                return pFormatter.parseValue(getValue(), TethysDilution.class);
             } catch (IllegalArgumentException e) {
                 throw new JPrometheusDataException(getValue(), "Bad Dilution Value", e);
             }
@@ -1280,7 +1280,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final JRatio pValue) {
+        protected void setValue(final TethysRatio pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1292,11 +1292,11 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public JRatio getValue(final JDataFormatter pFormatter) throws JOceanusException {
+        public TethysRatio getValue(final JDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), JRatio.class);
+                return pFormatter.parseValue(getValue(), TethysRatio.class);
             } catch (IllegalArgumentException e) {
                 throw new JPrometheusDataException(getValue(), "Bad Ratio Value", e);
             }

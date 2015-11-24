@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The Deposit Bucket class.
@@ -110,7 +110,7 @@ public final class DepositBucket
      */
     private DepositBucket(final Analysis pAnalysis,
                           final DepositBucket pBase,
-                          final JDateDay pDate) {
+                          final TethysDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
@@ -128,7 +128,7 @@ public final class DepositBucket
      */
     private DepositBucket(final Analysis pAnalysis,
                           final DepositBucket pBase,
-                          final JDateDayRange pRange) {
+                          final TethysDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -183,13 +183,13 @@ public final class DepositBucket
     }
 
     @Override
-    protected void recordRate(final JDateDay pDate) {
+    protected void recordRate(final TethysDate pDate) {
         /* Obtain the appropriate rate record */
         MoneyWiseData myData = theAnalysis.getData();
         DepositRateDataMap myRateMap = myData.getDepositRateDataMap();
         Deposit myDeposit = getAccount();
         DepositRate myRate = myRateMap.getRateForDate(myDeposit, pDate);
-        JDateDay myDate = myDeposit.getMaturity();
+        TethysDate myDate = myDeposit.getMaturity();
 
         /* If we have a rate */
         if (myRate != null) {
@@ -214,7 +214,7 @@ public final class DepositBucket
         if ((isPeer2Peer)
             && pTrans.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
             /* Access the amount */
-            JMoney myAmount = pTrans.getDebitAmount();
+            TethysMoney myAmount = pTrans.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -233,12 +233,12 @@ public final class DepositBucket
         if ((isPeer2Peer)
             && pTrans.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
             /* Access the amount */
-            JMoney myAmount = pTrans.getCreditAmount();
+            TethysMoney myAmount = pTrans.getCreditAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* Adjust bad debt */
-                myAmount = new JMoney(myAmount);
+                myAmount = new TethysMoney(myAmount);
                 myAmount.negate();
                 adjustCounter(AccountAttribute.BADDEBT, myAmount);
             }
@@ -267,7 +267,7 @@ public final class DepositBucket
             super(pCurrency);
 
             /* Initialise BadDebt to zero */
-            put(AccountAttribute.BADDEBT, new JMoney(pCurrency));
+            put(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
         }
 
         /**
@@ -281,7 +281,7 @@ public final class DepositBucket
             super(pCurrency, pReportingCurrency);
 
             /* Initialise BadDebt to zero */
-            put(AccountAttribute.BADDEBT, new JMoney(pCurrency));
+            put(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
         }
 
         /**
@@ -340,7 +340,7 @@ public final class DepositBucket
          */
         protected DepositBucketList(final Analysis pAnalysis,
                                     final DepositBucketList pBase,
-                                    final JDateDay pDate) {
+                                    final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -356,7 +356,7 @@ public final class DepositBucket
          */
         protected DepositBucketList(final Analysis pAnalysis,
                                     final DepositBucketList pBase,
-                                    final JDateDayRange pRange) {
+                                    final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -391,13 +391,13 @@ public final class DepositBucket
 
         @Override
         protected DepositBucket newBucket(final DepositBucket pBase,
-                                          final JDateDay pDate) {
+                                          final TethysDate pDate) {
             return new DepositBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
         protected DepositBucket newBucket(final DepositBucket pBase,
-                                          final JDateDayRange pRange) {
+                                          final TethysDateRange pRange) {
             return new DepositBucket(getAnalysis(), pBase, pRange);
         }
     }

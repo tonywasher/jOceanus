@@ -50,8 +50,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Cash class.
@@ -145,10 +145,10 @@ public class Cash
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Cash(final CashList pList,
-                 final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                 final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -266,9 +266,9 @@ public class Cash
      * Obtain Opening Balance.
      * @return the Opening balance
      */
-    public JMoney getOpeningBalance() {
+    public TethysMoney getOpeningBalance() {
         return hasInfoSet
-                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, TethysMoney.class)
                           : null;
     }
 
@@ -518,9 +518,9 @@ public class Cash
     /**
      * Set defaults.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCashCategory(getDefaultCategory());
@@ -532,9 +532,9 @@ public class Cash
     /**
      * autoCorrect values after change.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* autoCorrect the infoSet */
         theInfoSet.autoCorrect(pUpdateSet);
     }
@@ -593,7 +593,7 @@ public class Cash
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -622,36 +622,36 @@ public class Cash
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
     /**
      * Set a new autoExpense.
      * @param pCategory the new autoExpense
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAutoExpense(final TransactionCategory pCategory) throws JOceanusException {
+    public void setAutoExpense(final TransactionCategory pCategory) throws OceanusException {
         setInfoSetValue(AccountInfoClass.AUTOEXPENSE, pCategory);
     }
 
     /**
      * Set a new autoPayee.
      * @param pPayee the new autoPayee
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAutoPayee(final Payee pPayee) throws JOceanusException {
+    public void setAutoPayee(final Payee pPayee) throws OceanusException {
         setInfoSetValue(AccountInfoClass.AUTOPAYEE, pPayee);
     }
 
     /**
      * Set a new opening balance.
      * @param pBalance the new opening balance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setOpeningBalance(final JMoney pBalance) throws JOceanusException {
+    public void setOpeningBalance(final TethysMoney pBalance) throws OceanusException {
         setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
@@ -659,10 +659,10 @@ public class Cash
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -922,7 +922,7 @@ public class Cash
         }
 
         @Override
-        public Cash addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Cash addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the deposit */
             Cash myCash = new Cash(this, pValues);
 

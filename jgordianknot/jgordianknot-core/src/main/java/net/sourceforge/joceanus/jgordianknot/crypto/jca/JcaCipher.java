@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for JCA BouncyCastle Ciphers.
@@ -74,7 +74,7 @@ public final class JcaCipher<T>
     }
 
     @Override
-    public void initCipher(final GordianKey<T> pKey) throws JOceanusException {
+    public void initCipher(final GordianKey<T> pKey) throws OceanusException {
         /* Determine the required length of IV */
         int myLen = getIVLength();
         byte[] myIV = null;
@@ -104,7 +104,7 @@ public final class JcaCipher<T>
     @Override
     public void initCipher(final GordianKey<T> pKey,
                            final byte[] pIV,
-                           final boolean pEncrypt) throws JOceanusException {
+                           final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
         JcaKey<T> myJcaKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
@@ -140,7 +140,7 @@ public final class JcaCipher<T>
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -154,7 +154,7 @@ public final class JcaCipher<T>
 
     @Override
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Finish the operation */

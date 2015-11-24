@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanInfo;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataInfo extension for LoanInfo.
@@ -67,7 +67,7 @@ public class SheetLoanInfo
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(LoanInfo.OBJECT_NAME);
     }

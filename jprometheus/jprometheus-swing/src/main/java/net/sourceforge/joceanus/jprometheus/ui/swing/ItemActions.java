@@ -52,22 +52,22 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Utility panel to handle actions on selected item.
  * @param <E> the data type enum class
  */
 public class ItemActions<E extends Enum<E>>
-        extends JEnablePanel {
+        extends TethysSwingEnablePanel {
     /**
      * Serial Id.
      */
@@ -81,7 +81,7 @@ public class ItemActions<E extends Enum<E>>
     /**
      * The goTo button.
      */
-    private final JScrollButton<JOceanusActionEvent> theGoToButton;
+    private final JScrollButton<TethysActionEvent> theGoToButton;
 
     /**
      * The edit button.
@@ -160,16 +160,16 @@ public class ItemActions<E extends Enum<E>>
      * Item Listener.
      */
     private final class ItemListener
-            implements PropertyChangeListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, TethysChangeEventListener {
         /**
          * MenuBuilder.
          */
-        private JScrollMenuBuilder<JOceanusActionEvent> theMenuBuilder;
+        private JScrollMenuBuilder<TethysActionEvent> theMenuBuilder;
 
         /**
          * MenuBuilder Registration.
          */
-        private final JOceanusChangeRegistration theBuilderReg;
+        private final TethysChangeRegistration theBuilderReg;
 
         /**
          * Constructor.
@@ -195,7 +195,7 @@ public class ItemActions<E extends Enum<E>>
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the Builder Menu */
             if (theBuilderReg.isRelevant(pEvent)) {
                 theMenuBuilder.clearMenu();

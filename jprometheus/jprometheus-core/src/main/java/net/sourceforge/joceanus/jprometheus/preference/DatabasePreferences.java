@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for a database.
@@ -137,9 +137,9 @@ public class DatabasePreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public DatabasePreferences() throws JOceanusException {
+    public DatabasePreferences() throws OceanusException {
         super();
     }
 

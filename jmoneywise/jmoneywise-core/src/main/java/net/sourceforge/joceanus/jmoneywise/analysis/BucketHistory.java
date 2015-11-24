@@ -28,11 +28,11 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * History for a bucket.
@@ -91,7 +91,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * @param pDate the date for history cut-off
      */
     protected BucketHistory(final BucketHistory<T, E> pHistory,
-                            final JDateDay pDate) {
+                            final TethysDate pDate) {
         /* Copy the base values */
         theBaseValues = pHistory.getBaseValues().getSnapShot();
         theLastValues = theBaseValues;
@@ -135,7 +135,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * @param pRange the date range for history cut-off
      */
     protected BucketHistory(final BucketHistory<T, E> pHistory,
-                            final JDateDayRange pRange) {
+                            final TethysDateRange pRange) {
         /* Record first and last events */
         BucketSnapShot<T, E> myFirst = null;
         BucketSnapShot<T, E> myLatest = null;
@@ -267,7 +267,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaValue(final Transaction pTrans,
+    public TethysDecimal getDeltaValue(final Transaction pTrans,
                                   final E pAttr) {
         /* Locate the transaction in the map */
         BucketSnapShot<T, E> myTrans = get(pTrans.getId());
@@ -282,7 +282,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JMoney getDeltaMoneyValue(final Transaction pTrans,
+    public TethysMoney getDeltaMoneyValue(final Transaction pTrans,
                                      final E pAttr) {
         /* Locate the transaction in the map */
         BucketSnapShot<T, E> myTrans = get(pTrans.getId());
@@ -297,7 +297,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JUnits getDeltaUnitsValue(final Transaction pTrans,
+    public TethysUnits getDeltaUnitsValue(final Transaction pTrans,
                                      final E pAttr) {
         /* Locate the transaction in the map */
         BucketSnapShot<T, E> myTrans = get(pTrans.getId());

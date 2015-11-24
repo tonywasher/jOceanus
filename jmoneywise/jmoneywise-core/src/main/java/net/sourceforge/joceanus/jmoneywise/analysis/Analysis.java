@@ -52,9 +52,9 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Data Analysis.
@@ -165,7 +165,7 @@ public class Analysis
     /**
      * The DataRange.
      */
-    private final JDateDayRange theDateRange;
+    private final TethysDateRange theDateRange;
 
     /**
      * The deposit buckets.
@@ -286,7 +286,7 @@ public class Analysis
         theDateRange = pSource.getDateRange();
 
         /* Access the underlying maps/lists */
-        JDateDay myStart = theDateRange.getStart();
+        TethysDate myStart = theDateRange.getStart();
         theCharges = new ChargeableEventList();
         theDilutions = myStart == null
                                        ? new DilutionEventMap()
@@ -315,12 +315,12 @@ public class Analysis
      * @param pDate the date for the analysis
      */
     protected Analysis(final Analysis pSource,
-                       final JDateDay pDate) {
+                       final TethysDate pDate) {
         /* Store the data */
         theData = pSource.getData();
         theCurrency = pSource.getCurrency();
         thePreferences = pSource.getPreferenceMgr();
-        theDateRange = new JDateDayRange(null, pDate);
+        theDateRange = new TethysDateRange(null, pDate);
 
         /* Access the underlying maps/lists */
         theCharges = pSource.getCharges();
@@ -349,7 +349,7 @@ public class Analysis
      * @param pRange the range for the analysis
      */
     protected Analysis(final Analysis pSource,
-                       final JDateDayRange pRange) {
+                       final TethysDateRange pRange) {
         /* Store the data */
         theData = pSource.getData();
         theCurrency = pSource.getCurrency();
@@ -506,7 +506,7 @@ public class Analysis
      * Obtain the date range.
      * @return the date range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theDateRange;
     }
 
@@ -640,7 +640,7 @@ public class Analysis
             Deposit myDeposit = myDepIterator.next();
 
             /* If the deposit has an opening balance */
-            JMoney myBalance = myDeposit.getOpeningBalance();
+            TethysMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual deposit bucket */
                 DepositBucket myBucket = theDeposits.getBucket(myDeposit);
@@ -654,7 +654,7 @@ public class Analysis
             Cash myCash = myCashIterator.next();
 
             /* If the cash has an opening balance */
-            JMoney myBalance = myCash.getOpeningBalance();
+            TethysMoney myBalance = myCash.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual cash bucket */
                 CashBucket myBucket = theCash.getBucket(myCash);
@@ -668,7 +668,7 @@ public class Analysis
             Loan myLoan = myLoanIterator.next();
 
             /* If the loan has an opening balance */
-            JMoney myBalance = myLoan.getOpeningBalance();
+            TethysMoney myBalance = myLoan.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual loan bucket */
                 LoanBucket myBucket = theLoans.getBucket(myLoan);

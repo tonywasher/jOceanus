@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for Cryptographic package.
  */
-public enum CryptoResource implements ResourceId {
+public enum CryptoResource implements TethysResourceId {
     /**
      * Factory BC.
      */
@@ -198,7 +198,7 @@ public enum CryptoResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -245,14 +245,14 @@ public enum CryptoResource implements ResourceId {
      * @param pFactoryType the factoryType
      * @return the resource key
      */
-    protected static ResourceId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
+    protected static TethysResourceId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
         switch (pFactoryType) {
             case BC:
                 return FACTORY_BC;
             case JCA:
                 return FACTORY_JCA;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pFactoryType));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pFactoryType));
         }
     }
 
@@ -261,7 +261,7 @@ public enum CryptoResource implements ResourceId {
      * @param pDigest the DigestType
      * @return the resource key
      */
-    protected static ResourceId getKeyForDigest(final GordianDigestType pDigest) {
+    protected static TethysResourceId getKeyForDigest(final GordianDigestType pDigest) {
         switch (pDigest) {
             case SHA2:
                 return DIGEST_SHA2;
@@ -282,7 +282,7 @@ public enum CryptoResource implements ResourceId {
             case BLAKE:
                 return DIGEST_BLAKE;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pDigest));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pDigest));
         }
     }
 
@@ -291,7 +291,7 @@ public enum CryptoResource implements ResourceId {
      * @param pMac the MacType
      * @return the resource key
      */
-    protected static ResourceId getKeyForMac(final GordianMacType pMac) {
+    protected static TethysResourceId getKeyForMac(final GordianMacType pMac) {
         switch (pMac) {
             case HMAC:
                 return MAC_HMAC;
@@ -304,7 +304,7 @@ public enum CryptoResource implements ResourceId {
             case VMPC:
                 return MAC_VMPC;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pMac));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pMac));
         }
     }
 
@@ -313,7 +313,7 @@ public enum CryptoResource implements ResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static ResourceId getKeyForSym(final GordianSymKeyType pKeyType) {
+    protected static TethysResourceId getKeyForSym(final GordianSymKeyType pKeyType) {
         switch (pKeyType) {
             case AES:
                 return SYMKEY_AES;
@@ -336,7 +336,7 @@ public enum CryptoResource implements ResourceId {
             case SM4:
                 return SYMKEY_SM4;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pKeyType));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pKeyType));
         }
     }
 
@@ -345,7 +345,7 @@ public enum CryptoResource implements ResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static ResourceId getKeyForStream(final GordianStreamKeyType pKeyType) {
+    protected static TethysResourceId getKeyForStream(final GordianStreamKeyType pKeyType) {
         switch (pKeyType) {
             case XSALSA20:
                 return STREAMKEY_XSALSA20;
@@ -362,7 +362,7 @@ public enum CryptoResource implements ResourceId {
             case GRAIN:
                 return STREAMKEY_GRAIN;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pKeyType));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pKeyType));
         }
     }
 }

@@ -83,7 +83,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.sp800.SP800Factory;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Factory for BouncyCastle Classes.
@@ -142,18 +142,18 @@ public final class BouncyFactory
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public BouncyFactory() throws JOceanusException {
+    public BouncyFactory() throws OceanusException {
         this(new GordianParameters());
     }
 
     /**
      * Constructor.
      * @param pParameters the parameters
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public BouncyFactory(final GordianParameters pParameters) throws JOceanusException {
+    public BouncyFactory(final GordianParameters pParameters) throws OceanusException {
         /* Initialise underlying class */
         super(pParameters);
 
@@ -170,13 +170,13 @@ public final class BouncyFactory
     }
 
     @Override
-    public SecureRandom createRandom(final GordianSP800Type pRandomType) throws JOceanusException {
+    public SecureRandom createRandom(final GordianSP800Type pRandomType) throws OceanusException {
         /* Create random instance */
         return getSP800SecureRandom(pRandomType);
     }
 
     @Override
-    public BouncyDigest createDigest(final GordianDigestType pDigestType) throws JOceanusException {
+    public BouncyDigest createDigest(final GordianDigestType pDigestType) throws OceanusException {
         /* Check validity of Digests */
         if (!supportedDigests().test(pDigestType)) {
             throw new GordianDataException(getInvalidText(pDigestType));
@@ -193,7 +193,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncyMac createMac(final GordianMacSpec pMacSpec) throws JOceanusException {
+    public BouncyMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         Mac myBCMac = getBCMac(pMacSpec);
         return new BouncyMac(this, pMacSpec, myBCMac);
     }
@@ -204,7 +204,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public <T> BouncyKeyGenerator<T> getKeyGenerator(final T pKeyType) throws JOceanusException {
+    public <T> BouncyKeyGenerator<T> getKeyGenerator(final T pKeyType) throws OceanusException {
         /* Look up in the cache */
         BouncyKeyGenerator<T> myGenerator = theGeneratorCache.getCachedKeyGenerator(pKeyType);
         if (myGenerator == null) {
@@ -221,7 +221,7 @@ public final class BouncyFactory
     @Override
     public BouncySymKeyCipher createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                  final GordianCipherMode pMode,
-                                                 final boolean pPadding) throws JOceanusException {
+                                                 final boolean pPadding) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -243,7 +243,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws JOceanusException {
+    public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
         /* Check validity of StreamKey */
         if (!supportedStreamKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -260,7 +260,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncyWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws JOceanusException {
+    public BouncyWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -275,9 +275,9 @@ public final class BouncyFactory
      * Create the SP800 SecureRandom instance.
      * @param pRandomType the SP800 type
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private SecureRandom getSP800SecureRandom(final GordianSP800Type pRandomType) throws JOceanusException {
+    private SecureRandom getSP800SecureRandom(final GordianSP800Type pRandomType) throws OceanusException {
         switch (pRandomType) {
             case HASH:
                 return theSP800Factory.buildHash(createDigest(getDefaultDigest()), null, false);
@@ -293,9 +293,9 @@ public final class BouncyFactory
      * Create the BouncyCastle digest.
      * @param pDigestType the digest type
      * @return the digest
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static Digest getBCDigest(final GordianDigestType pDigestType) throws JOceanusException {
+    private static Digest getBCDigest(final GordianDigestType pDigestType) throws OceanusException {
         switch (pDigestType) {
             case SHA2:
                 return new SHA512Digest();
@@ -324,9 +324,9 @@ public final class BouncyFactory
      * Create the BouncyCastle MAC.
      * @param pMacSpec the MacSpec
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Mac getBCMac(final GordianMacSpec pMacSpec) throws JOceanusException {
+    private Mac getBCMac(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getBCHMac(pMacSpec.getDigestType());
@@ -347,9 +347,9 @@ public final class BouncyFactory
      * Create the BouncyCastle HMAC.
      * @param pDigestType the digest type
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Mac getBCHMac(final GordianDigestType pDigestType) throws JOceanusException {
+    private Mac getBCHMac(final GordianDigestType pDigestType) throws OceanusException {
         BouncyDigest myDigest = createDigest(pDigestType);
         return new HMac(myDigest.getDigest());
     }
@@ -358,9 +358,9 @@ public final class BouncyFactory
      * Create the BouncyCastle GMac.
      * @param pSymKeyType the SymKeyType
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Mac getBCGMac(final GordianSymKeyType pSymKeyType) throws JOceanusException {
+    private Mac getBCGMac(final GordianSymKeyType pSymKeyType) throws OceanusException {
         return new GMac(new GCMBlockCipher(getBCStdSymEngine(pSymKeyType)));
     }
 
@@ -368,9 +368,9 @@ public final class BouncyFactory
      * Create the BouncyCastle Poly1305Mac.
      * @param pSymKeyType the SymKeyType
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Mac getBCPoly1305Mac(final GordianSymKeyType pSymKeyType) throws JOceanusException {
+    private Mac getBCPoly1305Mac(final GordianSymKeyType pSymKeyType) throws OceanusException {
         return new Poly1305(getBCStdSymEngine(pSymKeyType));
     }
 
@@ -396,11 +396,11 @@ public final class BouncyFactory
      * @param pMode the cipher mode
      * @param pPadding use padding true/false
      * @return the Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static BufferedBlockCipher getBCBlockCipher(final GordianSymKeyType pKeyType,
                                                         final GordianCipherMode pMode,
-                                                        final boolean pPadding) throws JOceanusException {
+                                                        final boolean pPadding) throws OceanusException {
         /* Build the cipher */
         BlockCipher myEngine = getBCSymEngine(pKeyType);
         BlockCipher myMode = getBCSymModeCipher(myEngine, pMode);
@@ -411,9 +411,9 @@ public final class BouncyFactory
      * Create the BouncyCastle Stream Cipher.
      * @param pKeyType the keyType
      * @return the Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private StreamCipher getBCStreamCipher(final GordianStreamKeyType pKeyType) throws JOceanusException {
+    private StreamCipher getBCStreamCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
         switch (pKeyType) {
             case HC:
                 return isRestricted()
@@ -440,9 +440,9 @@ public final class BouncyFactory
      * Create the BouncyCastle Standard Cipher Engine.
      * @param pKeyType the SymKeyType
      * @return the Engine
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private BlockCipher getBCStdSymEngine(final GordianSymKeyType pKeyType) throws JOceanusException {
+    private BlockCipher getBCStdSymEngine(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!standardSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -455,9 +455,9 @@ public final class BouncyFactory
      * Create the BouncyCastle Cipher Engine.
      * @param pKeyType the SymKeyType
      * @return the Engine
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static BlockCipher getBCSymEngine(final GordianSymKeyType pKeyType) throws JOceanusException {
+    private static BlockCipher getBCSymEngine(final GordianSymKeyType pKeyType) throws OceanusException {
         switch (pKeyType) {
             case AES:
                 return new AESEngine();
@@ -489,10 +489,10 @@ public final class BouncyFactory
      * @param pEngine the underlying engine
      * @param pMode the cipher mode
      * @return the Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static BlockCipher getBCSymModeCipher(final BlockCipher pEngine,
-                                                  final GordianCipherMode pMode) throws JOceanusException {
+                                                  final GordianCipherMode pMode) throws OceanusException {
         switch (pMode) {
             case CBC:
                 return new CBCBlockCipher(pEngine);

@@ -48,12 +48,12 @@ import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
  */
 public class CashAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, JOceanusEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -82,7 +82,7 @@ public class CashAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The active category bucket list.
@@ -125,7 +125,7 @@ public class CashAnalysisSelect
         theCatButton = new JScrollButton<CashCategory>();
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
@@ -152,7 +152,7 @@ public class CashAnalysisSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -299,7 +299,7 @@ public class CashAnalysisSelect
      * Listener class.
      */
     private final class CashListener
-            implements PropertyChangeListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, TethysChangeEventListener {
         /**
          * Category menu builder.
          */
@@ -313,12 +313,12 @@ public class CashAnalysisSelect
         /**
          * CategoryMenu Registration.
          */
-        private final JOceanusChangeRegistration theCategoryMenuReg;
+        private final TethysChangeRegistration theCategoryMenuReg;
 
         /**
          * CashMenu Registration.
          */
-        private final JOceanusChangeRegistration theCashMenuReg;
+        private final TethysChangeRegistration theCashMenuReg;
 
         /**
          * Constructor.
@@ -336,7 +336,7 @@ public class CashAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the CategoryMenu */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 /* Build the category menu */

@@ -22,16 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Excel/Oasis format string builder class.
@@ -92,7 +92,7 @@ public final class DataFormats {
         StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(JDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
 
         /* Return the format */
         return myBuilder.toString();
@@ -103,22 +103,22 @@ public final class DataFormats {
      * @param pValue the example decimal
      * @return the format
      */
-    private static String getStandardFormat(final JDecimal pValue) {
+    private static String getStandardFormat(final TethysDecimal pValue) {
         /* Create String builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(JDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
 
         /* Determine scale */
         int myScale = pValue.scale();
         if (myScale > 0) {
             /* Append the decimal point */
-            myBuilder.append(JDecimalFormatter.STR_DEC);
+            myBuilder.append(TethysDecimalFormatter.STR_DEC);
 
             for (int i = 0; i < myScale; i++) {
                 /* Append the decimal places */
-                myBuilder.append(JDecimalFormatter.CHAR_ZERO);
+                myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
             }
         }
 
@@ -131,23 +131,23 @@ public final class DataFormats {
      * @param pValue the example rate
      * @return the format
      */
-    private static String getRateFormat(final JRate pValue) {
+    private static String getRateFormat(final TethysRate pValue) {
         /* Create String builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(JDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
 
         /* Determine scale */
         int myScale = pValue.scale()
-                      - JDecimalParser.ADJUST_PERCENT;
+                      - TethysDecimalParser.ADJUST_PERCENT;
         if (myScale > 0) {
             /* Append the decimal point */
-            myBuilder.append(JDecimalFormatter.STR_DEC);
+            myBuilder.append(TethysDecimalFormatter.STR_DEC);
 
             for (int i = 0; i < myScale; i++) {
                 /* Append the decimal places */
-                myBuilder.append(JDecimalFormatter.CHAR_ZERO);
+                myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
             }
         }
 
@@ -163,7 +163,7 @@ public final class DataFormats {
      * @param pValue the example decimal
      * @return the format
      */
-    private static String getExtendedFormat(final JDecimal pValue) {
+    private static String getExtendedFormat(final TethysDecimal pValue) {
         /* Create String builder */
         StringBuilder myBuilder = new StringBuilder();
 
@@ -173,7 +173,7 @@ public final class DataFormats {
         /* Insert initial values */
         myBuilder.insert(0, CHAR_DIGIT);
         myBuilder.insert(0, CHAR_DIGIT);
-        myBuilder.insert(0, JDecimalFormatter.CHAR_GROUP);
+        myBuilder.insert(0, TethysDecimalFormatter.CHAR_GROUP);
         myBuilder.insert(0, CHAR_DIGIT);
 
         /* Return the format */
@@ -185,7 +185,7 @@ public final class DataFormats {
      * @param pValue the example currency
      * @return the format
      */
-    private static String getCurrencyFormat(final JMoney pValue) {
+    private static String getCurrencyFormat(final TethysMoney pValue) {
         /* Create String builder */
         StringBuilder myBuilder = new StringBuilder();
 
@@ -200,7 +200,7 @@ public final class DataFormats {
         myBuilder.append(myFormat);
         myBuilder.append(CHAR_SEP);
         myBuilder.append(STR_RED);
-        myBuilder.append(JDecimalFormatter.CHAR_MINUS);
+        myBuilder.append(TethysDecimalFormatter.CHAR_MINUS);
         myBuilder.append(myCurrency);
         myBuilder.append(myFormat);
 
@@ -213,7 +213,7 @@ public final class DataFormats {
      * @param pValue the example currency
      * @return the format
      */
-    private static String getAccountingFormat(final JMoney pValue) {
+    private static String getAccountingFormat(final TethysMoney pValue) {
         /* Create String builder */
         StringBuilder myBuilder = new StringBuilder();
 
@@ -227,8 +227,8 @@ public final class DataFormats {
         myBuilder.append(myFormat);
         myBuilder.append(CHAR_SEP);
         myBuilder.append(myCurrency);
-        myBuilder.append(JDecimalFormatter.CHAR_BLANK);
-        myBuilder.append(JDecimalFormatter.CHAR_MINUS);
+        myBuilder.append(TethysDecimalFormatter.CHAR_BLANK);
+        myBuilder.append(TethysDecimalFormatter.CHAR_MINUS);
 
         /* Return the format */
         return myBuilder.toString();
@@ -242,23 +242,23 @@ public final class DataFormats {
     protected static String getDataFormatString(final CellStyleType pType) {
         switch (pType) {
             case DATE:
-                return getDataFormatString(new JDateDay());
+                return getDataFormatString(new TethysDate());
             case BOOLEAN:
                 return getDataFormatString(Boolean.TRUE);
             case INTEGER:
                 return getDataFormatString(Integer.valueOf(0));
             case MONEY:
-                return getDataFormatString(new JMoney(STR_ZERO));
+                return getDataFormatString(new TethysMoney(STR_ZERO));
             case PRICE:
-                return getDataFormatString(new JPrice(STR_ZERO));
+                return getDataFormatString(new TethysPrice(STR_ZERO));
             case RATE:
-                return getDataFormatString(new JRate(STR_ZERO));
+                return getDataFormatString(new TethysRate(STR_ZERO));
             case UNITS:
-                return getDataFormatString(new JUnits(STR_ZERO));
+                return getDataFormatString(new TethysUnits(STR_ZERO));
             case DILUTION:
-                return getDataFormatString(new JDilution(STR_ZERO));
+                return getDataFormatString(new TethysDilution(STR_ZERO));
             case RATIO:
-                return getDataFormatString(new JRatio(STR_ZERO));
+                return getDataFormatString(new TethysRatio(STR_ZERO));
             default:
                 return null;
         }
@@ -270,7 +270,7 @@ public final class DataFormats {
      * @return the format string
      */
     protected static String getDataFormatString(final Object pValue) {
-        if (pValue instanceof JDateDay) {
+        if (pValue instanceof TethysDate) {
             return FORMAT_DATE;
         }
         if (pValue instanceof Boolean) {
@@ -279,17 +279,17 @@ public final class DataFormats {
         if (pValue instanceof Integer) {
             return getIntegerFormat();
         }
-        if (pValue instanceof JMoney) {
-            return getAccountingFormat((JMoney) pValue);
+        if (pValue instanceof TethysMoney) {
+            return getAccountingFormat((TethysMoney) pValue);
         }
-        if (pValue instanceof JRate) {
-            return getRateFormat((JRate) pValue);
+        if (pValue instanceof TethysRate) {
+            return getRateFormat((TethysRate) pValue);
         }
-        if (pValue instanceof JUnits) {
-            return getExtendedFormat((JUnits) pValue);
+        if (pValue instanceof TethysUnits) {
+            return getExtendedFormat((TethysUnits) pValue);
         }
-        if (pValue instanceof JDecimal) {
-            return getStandardFormat((JDecimal) pValue);
+        if (pValue instanceof TethysDecimal) {
+            return getStandardFormat((TethysDecimal) pValue);
         }
         return null;
     }
@@ -300,8 +300,8 @@ public final class DataFormats {
      * @return the format string
      */
     protected static String getAlternateFormatString(final Object pValue) {
-        if (pValue instanceof JMoney) {
-            return getCurrencyFormat((JMoney) pValue);
+        if (pValue instanceof TethysMoney) {
+            return getCurrencyFormat((TethysMoney) pValue);
         }
         return null;
     }
@@ -328,23 +328,23 @@ public final class DataFormats {
             case STRING:
                 return getFormatName(STR_NULL);
             case DATE:
-                return getFormatName(new JDateDay());
+                return getFormatName(new TethysDate());
             case BOOLEAN:
                 return getFormatName(Boolean.TRUE);
             case INTEGER:
                 return getFormatName(Integer.valueOf(0));
             case MONEY:
-                return getFormatName(new JMoney(STR_ZERO));
+                return getFormatName(new TethysMoney(STR_ZERO));
             case PRICE:
-                return getFormatName(new JPrice(STR_ZERO));
+                return getFormatName(new TethysPrice(STR_ZERO));
             case RATE:
-                return getFormatName(new JRate(STR_ZERO));
+                return getFormatName(new TethysRate(STR_ZERO));
             case UNITS:
-                return getFormatName(new JUnits(STR_ZERO));
+                return getFormatName(new TethysUnits(STR_ZERO));
             case DILUTION:
-                return getFormatName(new JDilution(STR_ZERO));
+                return getFormatName(new TethysDilution(STR_ZERO));
             case RATIO:
-                return getFormatName(new JRatio(STR_ZERO));
+                return getFormatName(new TethysRatio(STR_ZERO));
             default:
                 return null;
         }
@@ -362,33 +362,33 @@ public final class DataFormats {
         if (pValue instanceof Boolean) {
             return getStyleName(Boolean.class.getSimpleName());
         }
-        if (pValue instanceof JDateDay) {
-            return getStyleName(JDateDay.class.getSimpleName());
+        if (pValue instanceof TethysDate) {
+            return getStyleName(TethysDate.class.getSimpleName());
         }
         if (pValue instanceof Integer) {
             return getStyleName(Integer.class.getSimpleName());
         }
-        if (pValue instanceof JPrice) {
-            String myCurr = ((JPrice) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(JPrice.class.getSimpleName()
+        if (pValue instanceof TethysPrice) {
+            String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(TethysPrice.class.getSimpleName()
                                 + myCurr);
         }
-        if (pValue instanceof JMoney) {
-            String myCurr = ((JMoney) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(JMoney.class.getSimpleName()
+        if (pValue instanceof TethysMoney) {
+            String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(TethysMoney.class.getSimpleName()
                                 + myCurr);
         }
-        if (pValue instanceof JRate) {
-            return getStyleName(JRate.class.getSimpleName());
+        if (pValue instanceof TethysRate) {
+            return getStyleName(TethysRate.class.getSimpleName());
         }
-        if (pValue instanceof JUnits) {
-            return getStyleName(JUnits.class.getSimpleName());
+        if (pValue instanceof TethysUnits) {
+            return getStyleName(TethysUnits.class.getSimpleName());
         }
-        if (pValue instanceof JDilution) {
-            return getStyleName(JDilution.class.getSimpleName());
+        if (pValue instanceof TethysDilution) {
+            return getStyleName(TethysDilution.class.getSimpleName());
         }
-        if (pValue instanceof JRatio) {
-            return getStyleName(JRatio.class.getSimpleName());
+        if (pValue instanceof TethysRatio) {
+            return getStyleName(TethysRatio.class.getSimpleName());
         }
         return null;
     }
@@ -403,15 +403,15 @@ public final class DataFormats {
             return getStyleName(CellStyleType.HEADER.toString());
         }
         String myXtra = "Curr";
-        if (pValue instanceof JPrice) {
-            String myCurr = ((JPrice) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(JPrice.class.getSimpleName()
+        if (pValue instanceof TethysPrice) {
+            String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(TethysPrice.class.getSimpleName()
                                 + myXtra
                                 + myCurr);
         }
-        if (pValue instanceof JMoney) {
-            String myCurr = ((JMoney) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(JMoney.class.getSimpleName()
+        if (pValue instanceof TethysMoney) {
+            String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(TethysMoney.class.getSimpleName()
                                 + myXtra
                                 + myCurr);
         }
@@ -449,7 +449,7 @@ public final class DataFormats {
         if (pValue instanceof String) {
             return CellStyleType.STRING;
         }
-        if (pValue instanceof JDateDay) {
+        if (pValue instanceof TethysDate) {
             return CellStyleType.DATE;
         }
         if (pValue instanceof Boolean) {
@@ -458,22 +458,22 @@ public final class DataFormats {
         if (pValue instanceof Integer) {
             return CellStyleType.INTEGER;
         }
-        if (pValue instanceof JPrice) {
+        if (pValue instanceof TethysPrice) {
             return CellStyleType.PRICE;
         }
-        if (pValue instanceof JMoney) {
+        if (pValue instanceof TethysMoney) {
             return CellStyleType.MONEY;
         }
-        if (pValue instanceof JRate) {
+        if (pValue instanceof TethysRate) {
             return CellStyleType.RATE;
         }
-        if (pValue instanceof JUnits) {
+        if (pValue instanceof TethysUnits) {
             return CellStyleType.UNITS;
         }
-        if (pValue instanceof JDilution) {
+        if (pValue instanceof TethysDilution) {
             return CellStyleType.DILUTION;
         }
-        if (pValue instanceof JRatio) {
+        if (pValue instanceof TethysRatio) {
             return CellStyleType.RATIO;
         }
         return null;

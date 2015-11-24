@@ -22,20 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
-import net.sourceforge.joceanus.jtethys.help.HelpException;
-import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 
 /**
  * Help Module for FinanceApp.
  * @author Tony Washer
  */
 public class MoneyWiseHelp
-        extends HelpModule {
+        extends TethysHelpModule {
     /**
      * Constructor.
-     * @throws HelpException on error
+     * @throws TethysHelpException on error
      */
-    public MoneyWiseHelp() throws HelpException {
+    public MoneyWiseHelp() throws TethysHelpException {
         super(MoneyWiseHelp.class, "help.xml");
     }
 }

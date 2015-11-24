@@ -38,10 +38,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public class TransactionBuilder {
     /**
      * The Date Range.
      */
-    private JDateDayRange theRange;
+    private TethysDateRange theRange;
 
     /**
      * The Transaction list.
@@ -83,7 +83,7 @@ public class TransactionBuilder {
      * Obtain range.
      * @return the date range
      */
-    public JDateDayRange getRange() {
+    public TethysDateRange getRange() {
         return theRange;
     }
 
@@ -93,7 +93,7 @@ public class TransactionBuilder {
      * @param pRange the date range
      */
     public void setParameters(final TransactionList pList,
-                              final JDateDayRange pRange) {
+                              final TethysDateRange pRange) {
         theList = pList;
         theRange = pRange;
     }
@@ -101,15 +101,15 @@ public class TransactionBuilder {
     /**
      * autoCorrect transaction after change.
      * @param pTrans the transaction
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final Transaction pTrans) throws JOceanusException {
+    public void autoCorrect(final Transaction pTrans) throws OceanusException {
         /* Access details */
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionAsset myPartner = pTrans.getPartner();
         TransactionCategory myCategory = pTrans.getCategory();
         AssetDirection myDir = pTrans.getDirection();
-        JMoney myAmount = pTrans.getAmount();
+        TethysMoney myAmount = pTrans.getAmount();
         Currency myCurrency = myAccount.getCurrency();
 
         /* Check that category is valid */
@@ -142,7 +142,7 @@ public class TransactionBuilder {
         if (myCategory.getCategoryTypeClass().needsZeroAmount()
             && myAmount.isNonZero()) {
             /* Create a zero amount */
-            pTrans.setAmount(new JMoney(myCurrency));
+            pTrans.setAmount(new TethysMoney(myCurrency));
         }
 
         /* AutoCorrect the InfoSet */
@@ -187,7 +187,7 @@ public class TransactionBuilder {
                 /* Build default category transaction */
                 return buildDefaultTransactionForCategory((TransactionCategory) pKey);
             }
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("Unable to build transaction", e);
         }
 
@@ -198,14 +198,14 @@ public class TransactionBuilder {
     /**
      * Build standard details.
      * @param pTrans the transaction to build
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void buildStandardDetails(final Transaction pTrans) throws JOceanusException {
+    private void buildStandardDetails(final Transaction pTrans) throws OceanusException {
         /* Access standard range */
-        JDateDayRange myRange = theRange;
+        TethysDateRange myRange = theRange;
 
         /* Determine date */
-        JDateDay myDate = new JDateDay();
+        TethysDate myDate = new TethysDate();
         int iResult = myRange.compareTo(myDate);
         if (iResult < 0) {
             myDate = myRange.getEnd();
@@ -217,15 +217,15 @@ public class TransactionBuilder {
         /* Create a zero amount */
         TransactionAsset myAccount = pTrans.getAccount();
         Currency myCurrency = myAccount.getCurrency();
-        pTrans.setAmount(new JMoney(myCurrency));
+        pTrans.setAmount(new TethysMoney(myCurrency));
     }
 
     /**
      * Build default transaction.
      * @return the valid transaction (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Transaction buildDefaultTransaction() throws JOceanusException {
+    private Transaction buildDefaultTransaction() throws OceanusException {
         TransactionCategory myCategory = getDefaultCategory();
         if (myCategory == null) {
             return null;
@@ -239,9 +239,9 @@ public class TransactionBuilder {
      * Build default transaction for payee.
      * @param pPayee the payee to build for
      * @return the valid transaction (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Transaction buildDefaultTransactionForPayee(final Payee pPayee) throws JOceanusException {
+    private Transaction buildDefaultTransactionForPayee(final Payee pPayee) throws OceanusException {
         /* Check for closed/hidden payee */
         if (pPayee.isClosed() || pPayee.isHidden()) {
             return null;
@@ -286,9 +286,9 @@ public class TransactionBuilder {
      * Build default transaction for category.
      * @param pCategory the category to build for
      * @return the valid transaction (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Transaction buildDefaultTransactionForCategory(final TransactionCategory pCategory) throws JOceanusException {
+    private Transaction buildDefaultTransactionForCategory(final TransactionCategory pCategory) throws OceanusException {
         /* Check for hidden category */
         if (pCategory.isHidden()) {
             return null;
@@ -328,9 +328,9 @@ public class TransactionBuilder {
      * Build default transaction for Deposit/Loan/Cash.
      * @param pAccount the Deposit/Loan/Cash to build for
      * @return the valid transaction (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Transaction buildDefaultTransactionForAccount(final TransactionAsset pAccount) throws JOceanusException {
+    private Transaction buildDefaultTransactionForAccount(final TransactionAsset pAccount) throws OceanusException {
         /* Check for closed account */
         if (pAccount.isClosed()) {
             return null;
@@ -370,9 +370,9 @@ public class TransactionBuilder {
      * Build default transaction for securityHolding.
      * @param pHolding the SecurityHolding to build for
      * @return the valid transaction (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Transaction buildDefaultTransactionForHolding(final SecurityHolding pHolding) throws JOceanusException {
+    private Transaction buildDefaultTransactionForHolding(final SecurityHolding pHolding) throws OceanusException {
         /* Check for closed holding */
         if (pHolding.isClosed()) {
             return null;

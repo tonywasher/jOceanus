@@ -27,7 +27,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
@@ -82,7 +82,7 @@ public class CreateGitRepo
     }
 
     @Override
-    protected Void doInBackground() throws JOceanusException {
+    protected Void doInBackground() throws OceanusException {
         /* Access git repository */
         theGitRepo = new GitRepository(thePreferenceMgr, this);
 

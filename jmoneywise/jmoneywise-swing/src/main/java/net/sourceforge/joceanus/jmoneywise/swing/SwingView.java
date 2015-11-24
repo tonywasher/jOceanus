@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Extension of view to cast utilities properly.
@@ -37,9 +37,9 @@ public class SwingView
     /**
      * Constructor.
      * @param pProfile the profile
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public SwingView(final JDataProfile pProfile) throws JOceanusException {
+    public SwingView(final JDataProfile pProfile) throws OceanusException {
         super(JOceanusSwingUtilitySet.createDefault(), pProfile);
     }
 

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.
@@ -77,7 +77,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     }
 
     @Override
-    protected void insertSecureItem(final T pItem) throws JOceanusException {
+    protected void insertSecureItem(final T pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeBoolean(COL_ENABLED, pItem.getEnabled());
@@ -93,7 +93,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         DataValues<E> myValues = super.getRowValues(pName);
 

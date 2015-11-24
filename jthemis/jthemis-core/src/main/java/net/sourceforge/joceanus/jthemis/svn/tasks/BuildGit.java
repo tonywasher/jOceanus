@@ -28,8 +28,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.git.data.GitBranch;
@@ -92,10 +92,10 @@ public class BuildGit {
      * Constructor.
      * @param pSource the source subversion component
      * @param pGitRepo the target Git repository
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public BuildGit(final SvnComponent pSource,
-                    final GitRepository pGitRepo) throws JOceanusException {
+                    final GitRepository pGitRepo) throws OceanusException {
         /* Create the target component */
         GitComponent myTarget = pGitRepo.createComponent(pSource.getName());
 
@@ -117,9 +117,9 @@ public class BuildGit {
     /**
      * Build the repository.
      * @param pReport the report status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void buildRepository(final ReportStatus pReport) throws JOceanusException {
+    public void buildRepository(final ReportStatus pReport) throws OceanusException {
         /* Report start of analysis */
         pReport.initTask("Building Git Component");
 
@@ -166,9 +166,9 @@ public class BuildGit {
      * Try to build the branches.
      * @param pReport the report status
      * @return the extract status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private SvnExtractStatus tryBuildBranches(final ReportStatus pReport) throws JOceanusException {
+    private SvnExtractStatus tryBuildBranches(final ReportStatus pReport) throws OceanusException {
         /* Create flags */
         boolean isBlocked = false;
         boolean isExtracted = false;
@@ -218,9 +218,9 @@ public class BuildGit {
      * Try to build the tags.
      * @param pReport the report status
      * @return the extract status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private SvnExtractStatus tryBuildTags(final ReportStatus pReport) throws JOceanusException {
+    private SvnExtractStatus tryBuildTags(final ReportStatus pReport) throws OceanusException {
         /* Create flags */
         boolean isBlocked = false;
         boolean isExtracted = false;
@@ -269,9 +269,9 @@ public class BuildGit {
     /**
      * Build the trunk.
      * @param pReport the report status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void buildTrunk(final ReportStatus pReport) throws JOceanusException {
+    private void buildTrunk(final ReportStatus pReport) throws OceanusException {
         /* Access the plan */
         SvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
         Object myOwner = myPlan.getOwner();
@@ -288,11 +288,11 @@ public class BuildGit {
      * @param pReport the report status
      * @param pBranchPlan the branch to build
      * @param pLastCommit the commit to branch from
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void buildBranch(final ReportStatus pReport,
                              final SvnBranchExtractPlan pBranchPlan,
-                             final RevCommit pLastCommit) throws JOceanusException {
+                             final RevCommit pLastCommit) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
@@ -329,11 +329,11 @@ public class BuildGit {
      * @param pReport the report status
      * @param pTagPlan the tag to build
      * @param pLastCommit the commit to branch from
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void buildTag(final ReportStatus pReport,
                           final SvnTagExtractPlan pTagPlan,
-                          final RevCommit pLastCommit) throws JOceanusException {
+                          final RevCommit pLastCommit) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
@@ -379,19 +379,19 @@ public class BuildGit {
      * @param pOwner the owner
      * @param pBaseCommit the base commit
      * @param pIterator the view iterator
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void commitPlan(final ReportStatus pReport,
                             final Object pOwner,
                             final RevCommit pBaseCommit,
-                            final Iterator<SvnExtractView> pIterator) throws JOceanusException {
+                            final Iterator<SvnExtractView> pIterator) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Determine the base commit */
             RevCommit myLastCommit = pBaseCommit;
 
             /* Access a date formatter */
-            JDateDayFormatter myFormatter = new JDateDayFormatter();
+            TethysDateFormatter myFormatter = new TethysDateFormatter();
 
             /* Iterate through the elements */
             while (pIterator.hasNext()) {
@@ -450,9 +450,9 @@ public class BuildGit {
 
     /**
      * Perform garbage collection.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void garbageCollect() throws JOceanusException {
+    private void garbageCollect() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Switch back to master */
@@ -527,9 +527,9 @@ public class BuildGit {
          * Obtain the commit for the revision.
          * @param pRevision the revision
          * @return the commit
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private RevCommit getCommit(final long pRevision) throws JOceanusException {
+        private RevCommit getCommit(final long pRevision) throws OceanusException {
             /* Note commit */
             RevCommit myCommit = null;
 
@@ -590,9 +590,9 @@ public class BuildGit {
          * Obtain the commit for the anchor.
          * @param pAnchor the anchor
          * @return the commit
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private RevCommit getCommit(final SvnExtractAnchor pAnchor) throws JOceanusException {
+        private RevCommit getCommit(final SvnExtractAnchor pAnchor) throws OceanusException {
             /* Access the list */
             SvnRevisionCommitList myList = get(pAnchor.getOwner());
             if (myList != null) {

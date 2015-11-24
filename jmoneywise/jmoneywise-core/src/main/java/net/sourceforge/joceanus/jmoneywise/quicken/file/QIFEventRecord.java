@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * Class representing a QIF Event record.
@@ -47,7 +47,7 @@ public abstract class QIFEventRecord<T extends Enum<T> & QLineType>
      * Obtain the date.
      * @return the date.
      */
-    public abstract JDateDay getDate();
+    public abstract TethysDate getDate();
 
     /**
      * Is the record cleared.

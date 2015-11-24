@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.swing.LoaderThread;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
@@ -70,7 +70,7 @@ public class LoadArchive
     }
 
     @Override
-    public MoneyWiseData performTask() throws JOceanusException {
+    public MoneyWiseData performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Loading Extract");
 

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Deposit Category class.
@@ -77,10 +77,10 @@ public class DepositCategory
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DepositCategory(final DepositCategoryList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -195,9 +195,9 @@ public class DepositCategory
     /**
      * Set defaults.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final DepositCategory pParent) throws JOceanusException {
+    public void setDefaults(final DepositCategory pParent) throws OceanusException {
         /* Set values */
         DepositCategoryTypeList myTypes = getDataSet().getDepositCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
@@ -208,7 +208,7 @@ public class DepositCategory
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the underlying details */
         super.resolveDataSetLinks();
 
@@ -218,7 +218,7 @@ public class DepositCategory
     }
 
     @Override
-    protected void resolveUpdateSetLinks() throws JOceanusException {
+    protected void resolveUpdateSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(FIELD_PARENT, getList());
     }
@@ -422,7 +422,7 @@ public class DepositCategory
         }
 
         @Override
-        public DepositCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public DepositCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
             DepositCategory myCategory = new DepositCategory(this, pValues);
 

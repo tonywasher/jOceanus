@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
@@ -68,7 +68,7 @@ public class SubversionBackup
     }
 
     @Override
-    public Void doInBackground() throws JOceanusException {
+    public Void doInBackground() throws OceanusException {
         Backup myAccess = null;
 
         /* Create backup */

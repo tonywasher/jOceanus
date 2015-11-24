@@ -30,7 +30,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper for BouncyCastle MAC.
@@ -62,7 +62,7 @@ public final class BouncyMac
 
     @Override
     public void initMac(final GordianKey<GordianMacSpec> pKey,
-                        final byte[] pIV) throws JOceanusException {
+                        final byte[] pIV) throws OceanusException {
         /* Access and validate the key */
         BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);

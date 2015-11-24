@@ -61,14 +61,14 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.StringPreference
 import net.sourceforge.joceanus.jmetis.preference.PreferenceType;
 import net.sourceforge.joceanus.jmetis.preference.ValueClass;
 import net.sourceforge.joceanus.jmetis.preference.swing.SwingPreferenceSet.ColorPreference;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.GridBagUtilities;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridBagUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -78,7 +78,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class PreferenceSetPanel
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -122,7 +122,7 @@ public class PreferenceSetPanel
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The PreferenceSet for this panel.
@@ -162,11 +162,11 @@ public class PreferenceSetPanel
     public PreferenceSetPanel(final JFieldManager pFieldMgr,
                               final PreferenceSet pSet) {
         /* Options SubPanel */
-        JEnablePanel myOptions = null;
+        TethysSwingEnablePanel myOptions = null;
         int myRow = 0;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Record the set and manager */
         thePreferences = pSet;
@@ -201,7 +201,7 @@ public class PreferenceSetPanel
                     /* If we do not yet have an options panel */
                     if (myOptions == null) {
                         /* Create options */
-                        myOptions = new JEnablePanel();
+                        myOptions = new TethysSwingEnablePanel();
                         myOptions.setLayout(new FlowLayout(FlowLayout.LEADING));
                         myOptions.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
                         theCompList.add(myOptions);
@@ -212,38 +212,38 @@ public class PreferenceSetPanel
                     break;
                 case STRING:
                     /* Add the Label into the first slot */
-                    GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
+                    TethysSwingGridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
                     add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
-                    GridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
+                    TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
                     add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
                     break;
                 case DIRECTORY:
                 case FILE:
                     /* Add the Label into the first slot */
-                    GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
+                    TethysSwingGridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
                     add(myItem.getLabel(), myConstraints);
                     theCompList.add(myItem.getLabel());
 
                     /* Add the Component into the second slot */
-                    GridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
+                    TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
                     add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
                     break;
                 default:
                     /* Add the Label into the first slot */
-                    GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
+                    TethysSwingGridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
                     add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
-                    GridBagUtilities.setPanelField(myConstraints, myRow, 1, 1);
+                    TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow, 1, 1);
                     add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
 
                     /* Add padding to the remainder */
-                    GridBagUtilities.setPanelField(myConstraints, myRow++, 2, GridBagConstraints.REMAINDER);
+                    TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow++, 2, GridBagConstraints.REMAINDER);
                     add(new JLabel(), myConstraints);
                     break;
             }
@@ -252,13 +252,13 @@ public class PreferenceSetPanel
         /* If we have an options panel */
         if (myOptions != null) {
             /* Add the Label into the first slot */
-            GridBagUtilities.setPanelRow(myConstraints, myRow);
+            TethysSwingGridBagUtilities.setPanelRow(myConstraints, myRow);
             add(myOptions, myConstraints);
         }
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -288,9 +288,9 @@ public class PreferenceSetPanel
 
     /**
      * Store changes.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void storeChanges() throws JOceanusException {
+    public void storeChanges() throws OceanusException {
         /* Reset changes and clear flag */
         thePreferences.storeChanges();
 
@@ -732,7 +732,7 @@ public class PreferenceSetPanel
             /**
              * The underlying button field.
              */
-            private final JDateDayButton theField;
+            private final TethysSwingDateButton theField;
 
             /**
              * The preference as a datePreference.
@@ -746,10 +746,10 @@ public class PreferenceSetPanel
             private DateField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theDate = (DatePreference) pPreference;
-                theField = new JDateDayButton();
+                theField = new TethysSwingDateButton();
 
                 /* Add property change listener */
-                theField.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, new PreferenceListener());
+                theField.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, new PreferenceListener());
             }
 
             @Override
@@ -780,7 +780,7 @@ public class PreferenceSetPanel
                     /* If this is our preference */
                     if (theField.equals(o)) {
                         /* Set the new value of the preference */
-                        JDateDay myValue = new JDateDay(theField.getSelectedDate());
+                        TethysDate myValue = new TethysDate(theField.getSelectedDate());
                         theDate.setValue(myValue);
 
                         /* Note if we have any changes */

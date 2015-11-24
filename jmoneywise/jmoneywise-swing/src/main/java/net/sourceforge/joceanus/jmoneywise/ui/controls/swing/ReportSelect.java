@@ -38,12 +38,12 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDatePeriod;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class ReportSelect
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -82,7 +82,7 @@ public class ReportSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * Reports scroll button.
@@ -92,7 +92,7 @@ public class ReportSelect
     /**
      * Range select.
      */
-    private final JDateDayRangeSelect theRangeSelect;
+    private final TethysSwingDateRangeSelect theRangeSelect;
 
     /**
      * Print button.
@@ -118,7 +118,7 @@ public class ReportSelect
         buildReportMenu();
 
         /* Create the Range Select and disable its border */
-        theRangeSelect = new JDateDayRangeSelect();
+        theRangeSelect = new TethysSwingDateRangeSelect();
         theRangeSelect.setBorder(BorderFactory.createEmptyBorder());
 
         /* Create initial state */
@@ -132,7 +132,7 @@ public class ReportSelect
         thePrintButton = new JButton(NLS_PRINT);
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the selection panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
@@ -157,7 +157,7 @@ public class ReportSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -173,7 +173,7 @@ public class ReportSelect
      * Obtain the selected date range.
      * @return the date range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theState.getRange();
     }
 
@@ -181,7 +181,7 @@ public class ReportSelect
      * Obtain the date range selection control.
      * @return the date range selection
      */
-    public JDateDayRangeSelect getDateRangeSelect() {
+    public TethysSwingDateRangeSelect getDateRangeSelect() {
         return theRangeSelect;
     }
 
@@ -203,7 +203,7 @@ public class ReportSelect
      * Set the range for the date box.
      * @param pRange the date range
      */
-    public final void setRange(final JDateDayRange pRange) {
+    public final void setRange(final TethysDateRange pRange) {
         /* Set up range */
         theRangeSelect.setOverallRange(pRange);
     }
@@ -250,7 +250,7 @@ public class ReportSelect
         private ReportListener() {
             thePrintButton.addActionListener(this);
             theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, this);
+            theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, this);
         }
 
         @Override
@@ -300,7 +300,7 @@ public class ReportSelect
         /**
          * The selected range.
          */
-        private JDateDayRange theRange = null;
+        private TethysDateRange theRange = null;
 
         /**
          * The selected report type.
@@ -326,7 +326,7 @@ public class ReportSelect
          * Obtain the selected range.
          * @return the range
          */
-        private JDateDayRange getRange() {
+        private TethysDateRange getRange() {
             return theRange;
         }
 
@@ -343,9 +343,9 @@ public class ReportSelect
          * @param pSelect the Panel with the new range
          * @return true/false did a change occur
          */
-        private boolean setRange(final JDateDayRangeSelect pSelect) {
+        private boolean setRange(final TethysSwingDateRangeSelect pSelect) {
             /* Adjust the date and build the new range */
-            JDateDayRange myRange = new JDateDayRange(pSelect.getRange());
+            TethysDateRange myRange = new TethysDateRange(pSelect.getRange());
             if (!Difference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;
@@ -371,14 +371,14 @@ public class ReportSelect
                 if (theType.isPointInTime() != isPointInTime) {
                     /* Switch it appropriately */
                     theRangeSelect.setPeriod(isPointInTime
-                                                           ? JDatePeriod.FISCALYEAR
-                                                           : JDatePeriod.DATESUPTO);
+                                                           ? TethysDatePeriod.FISCALYEAR
+                                                           : TethysDatePeriod.DATESUPTO);
                     theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
                 } else if (theType == ReportType.TAXCALC) {
                     /* Switch explicitly to Fiscal Year */
-                    theRangeSelect.setPeriod(JDatePeriod.FISCALYEAR);
+                    theRangeSelect.setPeriod(TethysDatePeriod.FISCALYEAR);
                 }
 
                 /* Apply the state */

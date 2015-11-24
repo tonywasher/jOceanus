@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Builder class for QIF File.
@@ -202,8 +202,8 @@ public class QIFBuilder {
      * @param pBalance the opening balance
      */
     protected void processBalance(final Deposit pDeposit,
-                                  final JDateDay pStartDate,
-                                  final JMoney pBalance) {
+                                  final TethysDate pStartDate,
+                                  final TethysMoney pBalance) {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(pDeposit);
 
@@ -460,7 +460,7 @@ public class QIFBuilder {
         List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Obtain basic amount */
-        JMoney myAmount = pTrans.getAmount();
+        TethysMoney myAmount = pTrans.getAmount();
 
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
@@ -468,15 +468,15 @@ public class QIFBuilder {
         myEvent.recordAmount(myAmount);
 
         /* Add Split event */
-        myAmount = new JMoney(myAmount);
+        myAmount = new TethysMoney(myAmount);
         myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
-        JMoney myTaxCredit = pTrans.getTaxCredit();
+        TethysMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Add to amount */
             myAmount.addAmount(myTaxCredit);
-            myTaxCredit = new JMoney(myTaxCredit);
+            myTaxCredit = new TethysMoney(myTaxCredit);
             myTaxCredit.negate();
 
             /* Access the Category details */
@@ -487,11 +487,11 @@ public class QIFBuilder {
         }
 
         /* Handle National Insurance */
-        JMoney myNatIns = pTrans.getNatInsurance();
+        TethysMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
             /* Add to amount */
             myAmount.addAmount(myNatIns);
-            myNatIns = new JMoney(myNatIns);
+            myNatIns = new TethysMoney(myNatIns);
             myNatIns.negate();
 
             /* Access the Category details */
@@ -502,11 +502,11 @@ public class QIFBuilder {
         }
 
         /* Handle Deemed Benefit */
-        JMoney myBenefit = pTrans.getDeemedBenefit();
+        TethysMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Add to amount */
             myAmount.addAmount(myBenefit);
-            myBenefit = new JMoney(myBenefit);
+            myBenefit = new TethysMoney(myBenefit);
             myBenefit.negate();
 
             /* Access the Category details */
@@ -542,7 +542,7 @@ public class QIFBuilder {
         List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        JMoney myAmount = new JMoney(pTrans.getAmount());
+        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
@@ -578,7 +578,7 @@ public class QIFBuilder {
         List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Obtain basic amount */
-        JMoney myAmount = new JMoney(pTrans.getAmount());
+        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
@@ -587,11 +587,11 @@ public class QIFBuilder {
         myEvent.recordAmount(myAmount);
 
         /* Add Split event */
-        myAmount = new JMoney(myAmount);
+        myAmount = new TethysMoney(myAmount);
         myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
-        JMoney myTaxCredit = pTrans.getTaxCredit();
+        TethysMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myTaxCredit);
@@ -604,7 +604,7 @@ public class QIFBuilder {
         }
 
         /* Handle National Insurance */
-        JMoney myNatIns = pTrans.getNatInsurance();
+        TethysMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myNatIns);
@@ -617,7 +617,7 @@ public class QIFBuilder {
         }
 
         /* Handle Deemed Benefit */
-        JMoney myBenefit = pTrans.getDeemedBenefit();
+        TethysMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myBenefit);
@@ -643,7 +643,7 @@ public class QIFBuilder {
                                            final TransactionAsset pCredit,
                                            final Transaction pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getAmount();
+        TethysMoney myAmount = pTrans.getAmount();
 
         /* Access the Account details */
         QIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);
@@ -664,7 +664,7 @@ public class QIFBuilder {
         myCreditAccount.addEvent(myEvent);
 
         /* Build out amount */
-        JMoney myOutAmount = new JMoney(myAmount);
+        TethysMoney myOutAmount = new TethysMoney(myAmount);
         myOutAmount.negate();
 
         /* Create a new event */
@@ -731,7 +731,7 @@ public class QIFBuilder {
                                    final TransactionAsset pCredit,
                                    final Transaction pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getAmount();
+        TethysMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
         boolean isRecursive = pDebit.equals(pCredit);
@@ -771,22 +771,22 @@ public class QIFBuilder {
             /* Record basic details */
             myEvent.recordAmount(isRecursive
                                             ? myAmount
-                                            : new JMoney());
+                                            : new TethysMoney());
             myEvent.recordPayee(myPayee);
 
             /* Add Split event */
-            myAmount = new JMoney(myAmount);
+            myAmount = new TethysMoney(myAmount);
             myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
             /* Handle Tax Credit */
-            JMoney myTaxCredit = pTrans.getTaxCredit();
+            TethysMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
                 /* Access tax payee */
                 QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
 
                 /* Add to amount */
                 myAmount.addAmount(myTaxCredit);
-                myTaxCredit = new JMoney(myTaxCredit);
+                myTaxCredit = new TethysMoney(myTaxCredit);
                 myTaxCredit.negate();
 
                 /* Access the Category details */
@@ -797,11 +797,11 @@ public class QIFBuilder {
             }
 
             /* Handle Charity Donation */
-            JMoney myDonation = pTrans.getCharityDonation();
+            TethysMoney myDonation = pTrans.getCharityDonation();
             if (myDonation != null) {
                 /* Add to amount */
                 myAmount.addAmount(myDonation);
-                myDonation = new JMoney(myDonation);
+                myDonation = new TethysMoney(myDonation);
                 myDonation.negate();
 
                 /* Access the Category details */
@@ -814,7 +814,7 @@ public class QIFBuilder {
             /* Handle Non-Recursion */
             if (!isRecursive) {
                 /* Add to amount */
-                JMoney myOutAmount = new JMoney(pTrans.getAmount());
+                TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
                 myOutAmount.negate();
 
                 /* Access the Account details */
@@ -858,7 +858,7 @@ public class QIFBuilder {
                                    final TransactionAsset pCredit,
                                    final Transaction pTrans) {
         /* Access details */
-        JMoney myAmount = pTrans.getAmount();
+        TethysMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
         boolean isRecursive = pDebit.equals(pCredit);
@@ -895,15 +895,15 @@ public class QIFBuilder {
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Record basic details */
-            myEvent.recordAmount(new JMoney());
+            myEvent.recordAmount(new TethysMoney());
             myEvent.recordPayee(myPayee);
 
             /* Add Split event */
-            myAmount = new JMoney(myAmount);
+            myAmount = new TethysMoney(myAmount);
             myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
             /* Add to amount */
-            JMoney myOutAmount = new JMoney(pTrans.getAmount());
+            TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
             myOutAmount.negate();
 
             /* Access the Account details */
@@ -959,13 +959,13 @@ public class QIFBuilder {
         List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        JMoney myInAmount = pTrans.getAmount();
-        JMoney myOutAmount = new JMoney(myInAmount);
+        TethysMoney myInAmount = pTrans.getAmount();
+        TethysMoney myOutAmount = new TethysMoney(myInAmount);
         myOutAmount.negate();
 
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
-        myEvent.recordAmount(new JMoney());
+        myEvent.recordAmount(new TethysMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());
         myEvent.recordSplitRecord(myAutoCategory, myList, myOutAmount, pCash.getAutoPayee().getName());
@@ -997,13 +997,13 @@ public class QIFBuilder {
         List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        JMoney myInAmount = pTrans.getAmount();
-        JMoney myOutAmount = new JMoney(myInAmount);
+        TethysMoney myInAmount = pTrans.getAmount();
+        TethysMoney myOutAmount = new TethysMoney(myInAmount);
         myOutAmount.negate();
 
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
-        myEvent.recordAmount(new JMoney());
+        myEvent.recordAmount(new TethysMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
         myEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());
@@ -1034,7 +1034,7 @@ public class QIFBuilder {
         QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Access the amount */
-        JMoney myAmount = new JMoney(pTrans.getAmount());
+        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */

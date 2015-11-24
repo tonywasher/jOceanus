@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Transaction.
@@ -77,7 +77,7 @@ public class TableTransaction
 
     /* Load the event */
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -97,7 +97,7 @@ public class TableTransaction
 
     @Override
     protected void setFieldValue(final Transaction pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (Transaction.FIELD_DATE.equals(iField)) {

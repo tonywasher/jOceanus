@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -157,11 +157,11 @@ public class SvnRevisionHistory
      * @param pOwner the owner
      * @param pPath the location path
      * @param pEntry the log source
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected SvnRevisionHistory(final Object pOwner,
                                  final String pPath,
-                                 final SVNLogEntry pEntry) throws JOceanusException {
+                                 final SVNLogEntry pEntry) throws OceanusException {
         /* Record details */
         theOwner = pOwner;
         theRevision = SVNRevision.create(pEntry.getRevision());
@@ -576,10 +576,10 @@ public class SvnRevisionHistory
          * Constructor.
          * @param pSource the copyFrom path
          * @param pRevision the source revision
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private SvnSourceDir(final String pSource,
-                             final long pRevision) throws JOceanusException {
+                             final long pRevision) throws OceanusException {
             /* Split according to directory parts */
             SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
 
@@ -704,9 +704,9 @@ public class SvnRevisionHistory
         /**
          * Add item to list (discarding duplicates).
          * @param pDir the directory to add.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void addItem(final SvnSourceDir pDir) throws JOceanusException {
+        private void addItem(final SvnSourceDir pDir) throws OceanusException {
             /* Loop through the existing items */
             Iterator<SvnSourceDir> myIterator = iterator();
             while (myIterator.hasNext()) {
@@ -816,9 +816,9 @@ public class SvnRevisionHistory
         /**
          * Constructor.
          * @param pSource the source path
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public SvnSourceDefinition(final String pSource) throws JOceanusException {
+        public SvnSourceDefinition(final String pSource) throws OceanusException {
             /* First character must be Separator */
             if (pSource.charAt(0) != SvnRepository.SEP_URL) {
                 throw new JThemisDataException(pSource, "Invalid source");

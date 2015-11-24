@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper for JCA Digest.
@@ -50,10 +50,10 @@ public final class JcaDigest
      * Constructor.
      * @param pDigestType the digest type
      * @param pDigest the digest
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JcaDigest(final GordianDigestType pDigestType,
-                        final MessageDigest pDigest) throws JOceanusException {
+                        final MessageDigest pDigest) throws OceanusException {
         theDigestType = pDigestType;
         theDigest = pDigest;
     }
@@ -102,7 +102,7 @@ public final class JcaDigest
 
     @Override
     public int finish(final byte[] pBuffer,
-                      final int pOffset) throws JOceanusException {
+                      final int pOffset) throws OceanusException {
         try {
             return theDigest.digest(pBuffer, pOffset, getDigestSize());
         } catch (DigestException e) {
@@ -114,9 +114,9 @@ public final class JcaDigest
      * Return the associated algorithm.
      * @param pDigestType the digest type
      * @return the algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected static String getAlgorithm(final GordianDigestType pDigestType) throws JOceanusException {
+    protected static String getAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
         switch (pDigestType) {
             case SKEIN:
                 return "SKEIN-512-512";

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatusControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * A wrapper for a worker thread.
@@ -80,7 +80,7 @@ public abstract class WorkerThread<T>
      * Add Error.
      * @param pError the Error for the task
      */
-    protected void addError(final JOceanusException pError) {
+    protected void addError(final OceanusException pError) {
         /* Store the error */
         theErrors.add(new JMetisExceptionWrapper(pError));
     }
@@ -119,12 +119,12 @@ public abstract class WorkerThread<T>
     /**
      * Task for worker thread.
      * @return the result
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract T performTask() throws JOceanusException;
+    protected abstract T performTask() throws OceanusException;
 
     @Override
-    public T doInBackground() throws JOceanusException {
+    public T doInBackground() throws OceanusException {
         /* Call work function */
         return performTask();
     }

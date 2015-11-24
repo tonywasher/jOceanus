@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Category Base class.
@@ -115,10 +115,10 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected CategoryBase(final CategoryBaseList<T, S, C> pList,
-                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                           final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -152,7 +152,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             resolveSubCategory();
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -378,18 +378,18 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final String pValue) throws JOceanusException {
+    private void setValueName(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JOceanusException {
+    private void setValueName(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -404,18 +404,18 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final String pValue) throws JOceanusException {
+    private void setValueDesc(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set description value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
+    private void setValueDesc(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -503,7 +503,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -513,9 +513,9 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
     /**
      * Resolve links within an update set.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void resolveUpdateSetLinks() throws JOceanusException;
+    protected abstract void resolveUpdateSetLinks() throws OceanusException;
 
     /**
      * Resolve subCategory name.
@@ -540,9 +540,9 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Set a new category name.
      * @param pName the new name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setCategoryName(final String pName) throws JOceanusException {
+    public void setCategoryName(final String pName) throws OceanusException {
         setValueName(pName);
 
         /* Resolve the subCategory */
@@ -553,19 +553,19 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Set a new category name.
      * @param pParentName the parent name
      * @param pSubCatName the subCategory name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setCategoryName(final String pParentName,
-                                final String pSubCatName) throws JOceanusException {
+                                final String pSubCatName) throws OceanusException {
         setCategoryName(pParentName + STR_SEP + pSubCatName);
     }
 
     /**
      * Set a new category name.
      * @param pName the new name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setSubCategoryName(final String pName) throws JOceanusException {
+    public void setSubCategoryName(final String pName) throws OceanusException {
         /* Obtain parent */
         T myParent = getParentCategory();
         String myName = getName();
@@ -608,18 +608,18 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDescription(final String pDesc) throws JOceanusException {
+    public void setDescription(final String pDesc) throws OceanusException {
         setValueDesc(pDesc);
     }
 
     /**
      * Set a new parent category.
      * @param pParent the new parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setParentCategory(final T pParent) throws JOceanusException {
+    public void setParentCategory(final T pParent) throws OceanusException {
         setValueParent(pParent);
         String mySubName = getSubCategory();
         if (mySubName != null) {
@@ -814,9 +814,9 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         /**
          * Update Children.
          * @param pParent the parent item
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void updateChildren(final T pParent) throws JOceanusException {
+        private void updateChildren(final T pParent) throws OceanusException {
             /* Determine the id */
             Integer myId = pParent.getId();
             String myName = pParent.getName();
@@ -839,9 +839,9 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
         /**
          * Resolve update set links.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void resolveUpdateSetLinks() throws JOceanusException {
+        public void resolveUpdateSetLinks() throws OceanusException {
             /* Loop through the items */
             Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {

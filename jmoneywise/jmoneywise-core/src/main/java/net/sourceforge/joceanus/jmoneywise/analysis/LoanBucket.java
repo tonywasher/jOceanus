@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The Loan Bucket class.
@@ -105,7 +105,7 @@ public final class LoanBucket
      */
     private LoanBucket(final Analysis pAnalysis,
                        final LoanBucket pBase,
-                       final JDateDay pDate) {
+                       final TethysDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
@@ -122,7 +122,7 @@ public final class LoanBucket
      */
     private LoanBucket(final Analysis pAnalysis,
                        final LoanBucket pBase,
-                       final JDateDayRange pRange) {
+                       final TethysDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -183,7 +183,7 @@ public final class LoanBucket
         /* If this is a credit card */
         if (isCreditCard) {
             /* Access the amount */
-            JMoney myAmount = pTrans.getDebitAmount();
+            TethysMoney myAmount = pTrans.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -215,7 +215,7 @@ public final class LoanBucket
             super(pCurrency);
 
             /* Initialise spend to zero */
-            put(AccountAttribute.SPEND, new JMoney(pCurrency));
+            put(AccountAttribute.SPEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -229,7 +229,7 @@ public final class LoanBucket
             super(pCurrency, pReportingCurrency);
 
             /* Initialise spend to zero */
-            put(AccountAttribute.SPEND, new JMoney(pCurrency));
+            put(AccountAttribute.SPEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -255,9 +255,9 @@ public final class LoanBucket
         @Override
         protected void resetBaseValues() {
             /* Reset spend values */
-            JMoney mySpend = getMoneyValue(AccountAttribute.SPEND);
+            TethysMoney mySpend = getMoneyValue(AccountAttribute.SPEND);
             if (mySpend.isNonZero()) {
-                mySpend = new JMoney(mySpend);
+                mySpend = new TethysMoney(mySpend);
                 mySpend.setZero();
                 put(AccountAttribute.SPEND, mySpend);
             }
@@ -306,7 +306,7 @@ public final class LoanBucket
          */
         protected LoanBucketList(final Analysis pAnalysis,
                                  final LoanBucketList pBase,
-                                 final JDateDay pDate) {
+                                 final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -322,7 +322,7 @@ public final class LoanBucket
          */
         protected LoanBucketList(final Analysis pAnalysis,
                                  final LoanBucketList pBase,
-                                 final JDateDayRange pRange) {
+                                 final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -357,13 +357,13 @@ public final class LoanBucket
 
         @Override
         protected LoanBucket newBucket(final LoanBucket pBase,
-                                       final JDateDay pDate) {
+                                       final TethysDate pDate) {
             return new LoanBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
         protected LoanBucket newBucket(final LoanBucket pBase,
-                                       final JDateDayRange pRange) {
+                                       final TethysDateRange pRange) {
             return new LoanBucket(getAnalysis(), pBase, pRange);
         }
     }

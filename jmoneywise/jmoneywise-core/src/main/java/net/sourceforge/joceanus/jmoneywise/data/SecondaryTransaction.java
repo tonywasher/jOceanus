@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Secondary Transaction data type.
@@ -63,10 +63,10 @@ public abstract class SecondaryTransaction<S extends SecondaryTransaction<S, O>,
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected SecondaryTransaction(final TransactionBaseList<S> pList,
-                                   final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                                   final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 

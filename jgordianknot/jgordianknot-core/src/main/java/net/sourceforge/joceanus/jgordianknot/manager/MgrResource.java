@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jgordianknot.manager;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for Cryptographic package.
  */
-public enum MgrResource implements ResourceId {
+public enum MgrResource implements TethysResourceId {
     /**
      * Provider BC.
      */
@@ -93,7 +93,7 @@ public enum MgrResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
 
     /**
      * The Id.

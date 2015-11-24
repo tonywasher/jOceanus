@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * Class representing an account that can be part of a transaction.
@@ -120,7 +120,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Close Date.
      */
-    private JDateDay theCloseDate;
+    private TethysDate theCloseDate;
 
     /**
      * Earliest Transaction.
@@ -163,10 +163,10 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected AssetBase(final AssetBaseList<T> pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -200,7 +200,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -325,7 +325,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Get the close Date of the account.
      * @return the closeDate
      */
-    public JDateDay getCloseDate() {
+    public TethysDate getCloseDate() {
         return theCloseDate;
     }
 
@@ -514,18 +514,18 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final String pValue) throws JOceanusException {
+    private void setValueName(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JOceanusException {
+    private void setValueName(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -540,18 +540,18 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final String pValue) throws JOceanusException {
+    private void setValueDesc(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set description value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
+    private void setValueDesc(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -606,11 +606,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
     /**
      * Adjust closed date.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void adjustClosed() throws JOceanusException {
+    public void adjustClosed() throws OceanusException {
         /* Access latest activity date */
-        JDateDay myCloseDate = (theLatest == null)
+        TethysDate myCloseDate = (theLatest == null)
                                                   ? null
                                                   : theLatest.getDate();
 
@@ -710,7 +710,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -727,27 +727,27 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Resolve update Set links.
      * @param pUpdateSet the updateSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* No action by default */
     }
 
     /**
      * Set a new name.
      * @param pName the new name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setName(final String pName) throws JOceanusException {
+    public void setName(final String pName) throws OceanusException {
         setValueName(pName);
     }
 
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDescription(final String pDesc) throws JOceanusException {
+    public void setDescription(final String pDesc) throws OceanusException {
         setValueDesc(pDesc);
     }
 
@@ -891,7 +891,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
             resolveDataSetLinks();
             reSort();

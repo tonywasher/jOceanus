@@ -39,9 +39,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * The Tax Bucket class.
@@ -96,7 +96,7 @@ public final class TaxCalcBucket
     /**
      * Attribute Map.
      */
-    private final Map<TaxAttribute, JDecimal> theAttributes;
+    private final Map<TaxAttribute, TethysDecimal> theAttributes;
 
     /**
      * The parent.
@@ -118,10 +118,10 @@ public final class TaxCalcBucket
         theTaxSection = theTaxCategory.getTaxClass().getClassSection();
 
         /* Create the attribute map */
-        theAttributes = new EnumMap<TaxAttribute, JDecimal>(TaxAttribute.class);
+        theAttributes = new EnumMap<TaxAttribute, TethysDecimal>(TaxAttribute.class);
 
         /* Create all possible values */
-        setAttribute(TaxAttribute.AMOUNT, new JMoney());
+        setAttribute(TaxAttribute.AMOUNT, new TethysMoney());
     }
 
     @Override
@@ -150,8 +150,8 @@ public final class TaxCalcBucket
         TaxAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                         ? myValue
                                                         : JDataFieldValue.SKIP;
             }
@@ -217,7 +217,7 @@ public final class TaxCalcBucket
      * @param pValue the value of the attribute
      */
     protected void setAttribute(final TaxAttribute pAttr,
-                                final JDecimal pValue) {
+                                final TethysDecimal pValue) {
         /* Set the value into the list */
         theAttributes.put(pAttr, pValue);
     }
@@ -254,7 +254,7 @@ public final class TaxCalcBucket
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    private <X extends JDecimal> X getValue(final TaxAttribute pAttr,
+    private <X extends TethysDecimal> X getValue(final TaxAttribute pAttr,
                                             final Class<X> pClass) {
         /* Obtain the attribute */
         return pClass.cast(getValue(pAttr));
@@ -275,9 +275,9 @@ public final class TaxCalcBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JMoney getMoneyValue(final TaxAttribute pAttr) {
+    public TethysMoney getMoneyValue(final TaxAttribute pAttr) {
         /* Obtain the attribute */
-        return getValue(pAttr, JMoney.class);
+        return getValue(pAttr, TethysMoney.class);
     }
 
     /**
@@ -285,9 +285,9 @@ public final class TaxCalcBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JRate getRateValue(final TaxAttribute pAttr) {
+    public TethysRate getRateValue(final TaxAttribute pAttr) {
         /* Obtain the attribute */
-        return getValue(pAttr, JRate.class);
+        return getValue(pAttr, TethysRate.class);
     }
 
     @Override
@@ -341,8 +341,8 @@ public final class TaxCalcBucket
      */
     protected boolean isRelevant() {
         /* Check for non-zero amount */
-        JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
-        JMoney myTax = getMoneyValue(TaxAttribute.TAXATION);
+        TethysMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
+        TethysMoney myTax = getMoneyValue(TaxAttribute.TAXATION);
         return myAmount.isNonZero() || ((myTax != null) && (myTax.isNonZero()));
     }
 
@@ -351,18 +351,18 @@ public final class TaxCalcBucket
      * @param pAmount Amount to set
      * @return the taxation on this bucket
      */
-    protected JMoney setAmount(final JMoney pAmount) {
+    protected TethysMoney setAmount(final TethysMoney pAmount) {
         /* Access the rate */
-        JRate myRate = getRateValue(TaxAttribute.RATE);
+        TethysRate myRate = getRateValue(TaxAttribute.RATE);
 
         /* Set the value */
-        JMoney myAmount = new JMoney(pAmount);
+        TethysMoney myAmount = new TethysMoney(pAmount);
         setAttribute(TaxAttribute.AMOUNT, myAmount);
 
         /* Calculate the tax if we have a rate */
-        JMoney myTaxation = (myRate != null)
+        TethysMoney myTaxation = (myRate != null)
                                              ? myAmount.valueAtRate(myRate)
-                                             : new JMoney();
+                                             : new TethysMoney();
 
         /* Return the taxation amount */
         setAttribute(TaxAttribute.TAXATION, myTaxation);
@@ -373,9 +373,9 @@ public final class TaxCalcBucket
      * Set explicit taxation value.
      * @param pAmount Amount to set
      */
-    protected void setTaxation(final JMoney pAmount) {
+    protected void setTaxation(final TethysMoney pAmount) {
         /* Set the value */
-        setAttribute(TaxAttribute.TAXATION, new JMoney(pAmount));
+        setAttribute(TaxAttribute.TAXATION, new TethysMoney(pAmount));
     }
 
     /**
@@ -391,9 +391,9 @@ public final class TaxCalcBucket
      * Set a tax rate.
      * @param pRate Amount to set
      */
-    protected void setRate(final JRate pRate) {
+    protected void setRate(final TethysRate pRate) {
         /* Set the value */
-        setAttribute(TaxAttribute.RATE, new JRate(pRate));
+        setAttribute(TaxAttribute.RATE, new TethysRate(pRate));
     }
 
     /**
@@ -402,7 +402,7 @@ public final class TaxCalcBucket
      */
     protected void addValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
+        TethysMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
         myAmount.addAmount(pBucket.getMoneyValue(TaxAttribute.AMOUNT));
     }
 
@@ -412,7 +412,7 @@ public final class TaxCalcBucket
      */
     protected void subtractValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
+        TethysMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
         myAmount.subtractAmount(pBucket.getMoneyValue(TaxAttribute.AMOUNT));
     }
 

@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFRateLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Split Event Record.
@@ -51,12 +51,12 @@ public class QIFSplitEvent
     /**
      * The Amount.
      */
-    private JMoney theAmount;
+    private TethysMoney theAmount;
 
     /**
      * The Percentage.
      */
-    private JRate thePercentage;
+    private TethysRate thePercentage;
 
     /**
      * The Comment.
@@ -150,7 +150,7 @@ public class QIFSplitEvent
      * Obtain the amount.
      * @return the amount.
      */
-    public JMoney getAmount() {
+    public TethysMoney getAmount() {
         return theAmount;
     }
 
@@ -158,7 +158,7 @@ public class QIFSplitEvent
      * Obtain the percentage.
      * @return the percentage.
      */
-    public JRate getPercentage() {
+    public TethysRate getPercentage() {
         return thePercentage;
     }
 
@@ -174,7 +174,7 @@ public class QIFSplitEvent
      * Set the split amount.
      * @param pAmount the amount
      */
-    protected void setSplitAmount(final JMoney pAmount) {
+    protected void setSplitAmount(final TethysMoney pAmount) {
         /* Add the line */
         addLine(new QIFEventSplitAmountLine(pAmount));
         theAmount = pAmount;
@@ -184,7 +184,7 @@ public class QIFSplitEvent
      * Set the split percentage.
      * @param pPercent the percentage
      */
-    protected void setSplitPercentage(final JRate pPercent) {
+    protected void setSplitPercentage(final TethysRate pPercent) {
         /* Add the line */
         addLine(new QIFEventSplitPercentLine(pPercent));
         thePercentage = pPercent;
@@ -271,7 +271,7 @@ public class QIFSplitEvent
          * Constructor.
          * @param pAmount the amount
          */
-        protected QIFEventSplitAmountLine(final JMoney pAmount) {
+        protected QIFEventSplitAmountLine(final TethysMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
         }
@@ -280,7 +280,7 @@ public class QIFSplitEvent
          * Obtain Amount.
          * @return the amount
          */
-        public JMoney getAmount() {
+        public TethysMoney getAmount() {
             return getMoney();
         }
 
@@ -299,7 +299,7 @@ public class QIFSplitEvent
          * Constructor.
          * @param pPercent the percentage
          */
-        protected QIFEventSplitPercentLine(final JRate pPercent) {
+        protected QIFEventSplitPercentLine(final TethysRate pPercent) {
             /* Call super-constructor */
             super(pPercent);
         }
@@ -308,7 +308,7 @@ public class QIFSplitEvent
          * Obtain Percentage.
          * @return the percentage
          */
-        public JRate getPercentage() {
+        public TethysRate getPercentage() {
             return getRate();
         }
 

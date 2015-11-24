@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 
 /**
  * Dilution Events relating to stock dilution.
@@ -96,12 +96,12 @@ public final class DilutionEvent
     /**
      * The Date.
      */
-    private final JDateDay theDate;
+    private final TethysDate theDate;
 
     /**
      * The Dilution.
      */
-    private final JDilution theDilution;
+    private final TethysDilution theDilution;
 
     /**
      * The Transaction.
@@ -171,7 +171,7 @@ public final class DilutionEvent
      * Obtain the Date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theDate;
     }
 
@@ -179,7 +179,7 @@ public final class DilutionEvent
      * Obtain the Dilution.
      * @return the dilution
      */
-    public JDilution getDilution() {
+    public TethysDilution getDilution() {
         return theDilution;
     }
 
@@ -352,7 +352,7 @@ public final class DilutionEvent
          * @param pDate the last date
          */
         protected DilutionEventMap(final DilutionEventMap pSource,
-                                   final JDateDay pDate) {
+                                   final TethysDate pDate) {
             /* Iterate through the source map */
             Iterator<Entry<Integer, DilutionEventList>> myIterator = pSource.entrySet().iterator();
             while (myIterator.hasNext()) {
@@ -429,8 +429,8 @@ public final class DilutionEvent
          * @param pDate the date of the price
          * @return the dilution factor
          */
-        public JDilution getDilutionFactor(final Security pSecurity,
-                                           final JDateDay pDate) {
+        public TethysDilution getDilutionFactor(final Security pSecurity,
+                                           final TethysDate pDate) {
             /* Access the dilutions for this security */
             List<DilutionEvent> myList = get(pSecurity.getId());
             if (myList == null) {
@@ -439,7 +439,7 @@ public final class DilutionEvent
 
             /* Loop through the items */
             ListIterator<DilutionEvent> myIterator = myList.listIterator(myList.size());
-            JDilution myDilution = new JDilution(JDilution.MAX_DILUTION);
+            TethysDilution myDilution = new TethysDilution(TethysDilution.MAX_DILUTION);
             while (myIterator.hasPrevious()) {
                 DilutionEvent myEvent = myIterator.previous();
 
@@ -453,7 +453,7 @@ public final class DilutionEvent
             }
 
             /* If there is no dilution at all */
-            if (myDilution.compareTo(JDilution.MAX_DILUTION) == 0) {
+            if (myDilution.compareTo(TethysDilution.MAX_DILUTION) == 0) {
                 myDilution = null;
             }
 

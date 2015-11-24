@@ -41,13 +41,13 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFSecurityLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFUnitsLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Class representing a QIF Portfolio Event record.
@@ -57,7 +57,7 @@ public class QIFPortfolioEvent
     /**
      * The Date.
      */
-    private final JDateDay theDate;
+    private final TethysDate theDate;
 
     /**
      * The Cleared Flag.
@@ -111,13 +111,13 @@ public class QIFPortfolioEvent
         super(pFile, QPortfolioLineType.class);
 
         /* Determine details */
-        JDateDay myDate = null;
+        TethysDate myDate = null;
         QActionType myAction = null;
         Boolean myCleared = null;
 
         /* Obtain parsers */
-        JDateDayFormatter myDateParser = pFormatter.getDateFormatter();
-        JDecimalParser myDecParser = pFormatter.getDecimalParser();
+        TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
+        TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
@@ -133,7 +133,7 @@ public class QIFPortfolioEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        JDateDay myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
+                        TethysDate myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFPortfolioDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -143,7 +143,7 @@ public class QIFPortfolioEvent
                         myCleared = myFlag;
                         break;
                     case AMOUNT:
-                        JMoney myMoney = myDecParser.parseMoneyValue(myData);
+                        TethysMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioAmountLine(myMoney));
                         break;
                     case COMMENT:
@@ -154,7 +154,7 @@ public class QIFPortfolioEvent
                         addLine(new QIFPortfolioActionLine(myAction));
                         break;
                     case PRICE:
-                        JPrice myPrice = myDecParser.parsePriceValue(myData);
+                        TethysPrice myPrice = myDecParser.parsePriceValue(myData);
                         addLine(new QIFPortfolioPriceLine(myPrice));
                         break;
                     case COMMISSION:
@@ -165,7 +165,7 @@ public class QIFPortfolioEvent
                         addLine(new QIFPortfolioPayeeDescLine(myData));
                         break;
                     case QUANTITY:
-                        JUnits myUnits = myDecParser.parseUnitsValue(myData);
+                        TethysUnits myUnits = myDecParser.parseUnitsValue(myData);
                         addLine(new QIFPortfolioQuantityLine(myUnits));
                         break;
                     case SECURITY:
@@ -209,7 +209,7 @@ public class QIFPortfolioEvent
     }
 
     @Override
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theDate;
     }
 
@@ -259,7 +259,7 @@ public class QIFPortfolioEvent
      * record amount.
      * @param pAmount the amount
      */
-    protected void recordAmount(final JMoney pAmount) {
+    protected void recordAmount(final TethysMoney pAmount) {
         /* Add amount line */
         addLine(new QIFPortfolioAmountLine(pAmount));
     }
@@ -288,7 +288,7 @@ public class QIFPortfolioEvent
      * @param pAmount the transfer amount
      */
     protected void recordXfer(final QIFAccount pAccount,
-                              final JMoney pAmount) {
+                              final TethysMoney pAmount) {
         /* Add transfer lines */
         addLine(new QIFPortfolioAccountLine(pAccount));
         addLine(new QIFPortfolioXferAmountLine(pAmount));
@@ -302,7 +302,7 @@ public class QIFPortfolioEvent
      */
     protected void recordXfer(final QIFAccount pAccount,
                               final List<QIFClass> pClasses,
-                              final JMoney pAmount) {
+                              final TethysMoney pAmount) {
         /* Add transfer lines */
         addLine(new QIFPortfolioAccountLine(pAccount, pClasses));
         addLine(new QIFPortfolioXferAmountLine(pAmount));
@@ -314,7 +314,7 @@ public class QIFPortfolioEvent
      * @param pAmount the transfer amount
      */
     protected void recordXfer(final QIFEventCategory pCategory,
-                              final JMoney pAmount) {
+                              final TethysMoney pAmount) {
         /* Add transfer lines */
         addLine(new QIFPortfolioCategoryLine(pCategory));
         addLine(new QIFPortfolioXferAmountLine(pAmount));
@@ -324,7 +324,7 @@ public class QIFPortfolioEvent
      * record quantity.
      * @param pQuantity the units quantity
      */
-    protected void recordQuantity(final JUnits pQuantity) {
+    protected void recordQuantity(final TethysUnits pQuantity) {
         /* Add quantity line */
         addLine(new QIFPortfolioQuantityLine(pQuantity));
     }
@@ -333,7 +333,7 @@ public class QIFPortfolioEvent
      * record quantity.
      * @param pRatio the split ratio
      */
-    protected void recordQuantity(final JRatio pRatio) {
+    protected void recordQuantity(final TethysRatio pRatio) {
         /* Add quantity line */
         addLine(new QIFPortfolioSplitRatioLine(pRatio));
     }
@@ -342,7 +342,7 @@ public class QIFPortfolioEvent
      * record price.
      * @param pPrice the price
      */
-    protected void recordPrice(final JPrice pPrice) {
+    protected void recordPrice(final TethysPrice pPrice) {
         /* Add price line */
         addLine(new QIFPortfolioPriceLine(pPrice));
     }
@@ -351,7 +351,7 @@ public class QIFPortfolioEvent
      * record commission.
      * @param pCommission the commission
      */
-    protected void recordCommission(final JMoney pCommission) {
+    protected void recordCommission(final TethysMoney pCommission) {
         /* Add commission line */
         addLine(new QIFPortfolioCommissionLine(pCommission));
     }
@@ -382,10 +382,10 @@ public class QIFPortfolioEvent
         if (myLine instanceof QIFPortfolioQuantityLine) {
             /* Extract action */
             QIFPortfolioQuantityLine myQuantity = (QIFPortfolioQuantityLine) myLine;
-            JUnits myUnits = myQuantity.getUnits();
+            TethysUnits myUnits = myQuantity.getUnits();
 
             /* Convert to ratio line */
-            JRatio myRatio = new JRatio(myUnits.toString());
+            TethysRatio myRatio = new TethysRatio(myUnits.toString());
             addLine(new QIFPortfolioSplitRatioLine(myRatio));
         }
     }
@@ -399,7 +399,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pDate the Date
          */
-        protected QIFPortfolioDateLine(final JDateDay pDate) {
+        protected QIFPortfolioDateLine(final TethysDate pDate) {
             /* Call super-constructor */
             super(pDate);
         }
@@ -467,7 +467,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pAmount the amount
          */
-        protected QIFPortfolioAmountLine(final JMoney pAmount) {
+        protected QIFPortfolioAmountLine(final TethysMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
         }
@@ -481,7 +481,7 @@ public class QIFPortfolioEvent
          * Obtain Amount.
          * @return the amount
          */
-        public JMoney getAmount() {
+        public TethysMoney getAmount() {
             return getMoney();
         }
     }
@@ -495,7 +495,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pCommission the commission
          */
-        protected QIFPortfolioCommissionLine(final JMoney pCommission) {
+        protected QIFPortfolioCommissionLine(final TethysMoney pCommission) {
             /* Call super-constructor */
             super(pCommission);
         }
@@ -509,7 +509,7 @@ public class QIFPortfolioEvent
          * Obtain Commission.
          * @return the commission
          */
-        public JMoney getCommission() {
+        public TethysMoney getCommission() {
             return getMoney();
         }
     }
@@ -523,7 +523,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pPrice the price
          */
-        protected QIFPortfolioPriceLine(final JPrice pPrice) {
+        protected QIFPortfolioPriceLine(final TethysPrice pPrice) {
             /* Call super-constructor */
             super(pPrice);
         }
@@ -543,7 +543,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pUnits the units
          */
-        protected QIFPortfolioQuantityLine(final JUnits pUnits) {
+        protected QIFPortfolioQuantityLine(final TethysUnits pUnits) {
             /* Call super-constructor */
             super(pUnits);
         }
@@ -563,7 +563,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pRatio the ratio
          */
-        protected QIFPortfolioSplitRatioLine(final JRatio pRatio) {
+        protected QIFPortfolioSplitRatioLine(final TethysRatio pRatio) {
             /* Call super-constructor */
             super(pRatio);
         }
@@ -780,7 +780,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pAmount the amount
          */
-        protected QIFPortfolioXferAmountLine(final JMoney pAmount) {
+        protected QIFPortfolioXferAmountLine(final TethysMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
         }
@@ -794,7 +794,7 @@ public class QIFPortfolioEvent
          * Obtain Amount.
          * @return the amount
          */
-        public JMoney getAmount() {
+        public TethysMoney getAmount() {
             return getMoney();
         }
     }

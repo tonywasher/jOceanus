@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -130,10 +130,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @return success true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public boolean createBackup(final T pData,
-                                final File pFile) throws JOceanusException {
+                                final File pFile) throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("Writing");
@@ -191,10 +191,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pData Data to write out
      * @param pFile the extract file to write to
      * @return success true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public boolean createExtract(final T pData,
-                                 final File pFile) throws JOceanusException {
+                                 final File pFile) throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("Writing");
@@ -248,11 +248,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pZipFile the output zipFile
      * @param pStoreIds do we include IDs in XML
      * @return continue true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private boolean writeXMLListToFile(final DataList<?, E> pList,
                                        final GordianZipWriteFile pZipFile,
-                                       final boolean pStoreIds) throws JOceanusException {
+                                       final boolean pStoreIds) throws OceanusException {
         /* Access the list name */
         String myName = pList.listName() + SUFFIX_ENTRY;
 
@@ -350,10 +350,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pData DataSet to load into
      * @param pFile the file to load
      * @return success true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public boolean loadZipFile(final T pData,
-                               final File pFile) throws JOceanusException {
+                               final File pFile) throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theTask.getActiveTask();
         JDataProfile myStage = myTask.startTask("Loading");
@@ -391,11 +391,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pData DataSet to load into
      * @param pZipFile the file to parse
      * @return success true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private boolean parseZipFile(final JDataProfile pProfile,
                                  final T pData,
-                                 final GordianZipReadFile pZipFile) throws JOceanusException {
+                                 final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
         JDataProfile myStage = pProfile.startTask("Loading");
 
@@ -440,10 +440,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pList the data list
      * @param pZipFile the input zipFile
      * @return continue true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private boolean readXMLListFromFile(final DataList<?, E> pList,
-                                        final GordianZipReadFile pZipFile) throws JOceanusException {
+                                        final GordianZipReadFile pZipFile) throws OceanusException {
         /* Access the list name */
         String myName = pList.listName() + SUFFIX_ENTRY;
 
@@ -472,10 +472,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pDocument the document that holds the list.
      * @param pList the data list
      * @return continue true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private boolean parseXMLDocument(final Document pDocument,
-                                     final DataList<?, E> pList) throws JOceanusException {
+                                     final DataList<?, E> pList) throws OceanusException {
         /* Access the parent element */
         Element myElement = pDocument.getDocumentElement();
         E myItemType = pList.getItemType();
@@ -542,10 +542,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pFormatter the formatter.
      * @param pElement the element that holds the count.
      * @return the list count
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static Integer getListCount(final JDataFormatter pFormatter,
-                                        final Element pElement) throws JOceanusException {
+                                        final Element pElement) throws OceanusException {
         try {
             /* Access the list count */
             String mySize = pElement.getAttribute(DataValues.ATTR_SIZE);

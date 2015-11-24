@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to load data from the database.
@@ -68,7 +68,7 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public T performTask() throws JOceanusException {
+    public T performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Loading Database");
 

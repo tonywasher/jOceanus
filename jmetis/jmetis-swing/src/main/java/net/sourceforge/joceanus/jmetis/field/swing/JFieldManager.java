@@ -54,16 +54,16 @@ import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButton
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.RowCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Class to determine rendering details for an item.
  * @author Tony Washer
  */
 public class JFieldManager
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Money accounting format width.
      */
@@ -132,7 +132,7 @@ public class JFieldManager
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * General formatter.
@@ -158,7 +158,7 @@ public class JFieldManager
         theConfig = pConfig;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create data formatter */
         theFormatter = new JDataFormatter();
@@ -166,7 +166,7 @@ public class JFieldManager
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Pattern for Schedule.
@@ -118,9 +118,9 @@ public abstract class SchedulePattern
      * allocate pattern.
      * @param pFrequency the frequency
      * @return the resulting pattern
-     * @throws JOceanusException one error
+     * @throws OceanusException one error
      */
-    public static SchedulePattern allocatePattern(final Frequency pFrequency) throws JOceanusException {
+    public static SchedulePattern allocatePattern(final Frequency pFrequency) throws OceanusException {
         return allocatePattern(pFrequency, 0);
     }
 
@@ -129,10 +129,10 @@ public abstract class SchedulePattern
      * @param pFrequency the frequency
      * @param pPattern the integer pattern value
      * @return the resulting pattern
-     * @throws JOceanusException one error
+     * @throws OceanusException one error
      */
     public static SchedulePattern allocatePattern(final Frequency pFrequency,
-                                                  final Integer pPattern) throws JOceanusException {
+                                                  final Integer pPattern) throws OceanusException {
         switch (pFrequency.getFrequency()) {
             case WEEKLY:
                 return new WeeklyPattern(pPattern);
@@ -148,10 +148,10 @@ public abstract class SchedulePattern
      * @param pFrequency the frequency
      * @param pPattern the string pattern value
      * @return the resulting pattern
-     * @throws JOceanusException one error
+     * @throws OceanusException one error
      */
     public static SchedulePattern parsePattern(final Frequency pFrequency,
-                                               final String pPattern) throws JOceanusException {
+                                               final String pPattern) throws OceanusException {
         switch (pFrequency.getFrequency()) {
             case WEEKLY:
                 return parseWeeklyPattern(pPattern);
@@ -166,9 +166,9 @@ public abstract class SchedulePattern
      * parse a string representation of a Weekly pattern.
      * @param pPattern the string pattern value
      * @return the resulting pattern
-     * @throws JOceanusException one error
+     * @throws OceanusException one error
      */
-    private static WeeklyPattern parseWeeklyPattern(final String pPattern) throws JOceanusException {
+    private static WeeklyPattern parseWeeklyPattern(final String pPattern) throws OceanusException {
         StringBuilder myBuilder = new StringBuilder(pPattern);
         int myValue = 0;
         for (int iIndex = myBuilder.indexOf(ITEM_SEP); iIndex != -1; myBuilder.delete(0, iIndex + 1)) {
@@ -182,9 +182,9 @@ public abstract class SchedulePattern
      * parse a string representation of a Monthly pattern.
      * @param pPattern the string pattern value
      * @return the resulting pattern
-     * @throws JOceanusException one error
+     * @throws OceanusException one error
      */
-    private static MonthlyPattern parseMonthlyPattern(final String pPattern) throws JOceanusException {
+    private static MonthlyPattern parseMonthlyPattern(final String pPattern) throws OceanusException {
         StringBuilder myBuilder = new StringBuilder(pPattern);
         int myValue = 0;
         for (int iIndex = myBuilder.indexOf(ITEM_SEP); iIndex != -1; myBuilder.delete(0, iIndex + 1)) {
@@ -264,9 +264,9 @@ public abstract class SchedulePattern
          * parse flag.
          * @param pName the flag name
          * @return the flag value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private static int parseFlag(final String pName) throws JOceanusException {
+        private static int parseFlag(final String pName) throws OceanusException {
             /* handle special cases */
             if (pName.equals(ITEM_NONE)) {
                 return 0;
@@ -390,9 +390,9 @@ public abstract class SchedulePattern
          * parse flag.
          * @param pName the flag name
          * @return the value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private static int parseFlag(final String pName) throws JOceanusException {
+        private static int parseFlag(final String pName) throws OceanusException {
             /* handle special cases */
             if (pName.equals(ITEM_NONE)) {
                 return 0;

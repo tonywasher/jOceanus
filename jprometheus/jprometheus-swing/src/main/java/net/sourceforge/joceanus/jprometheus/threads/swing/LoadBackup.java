@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so
@@ -77,7 +77,7 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public T performTask() throws JOceanusException {
+    public T performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Loading Backup");
 

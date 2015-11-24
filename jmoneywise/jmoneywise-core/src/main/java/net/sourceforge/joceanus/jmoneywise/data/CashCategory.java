@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cash Category class.
@@ -77,10 +77,10 @@ public class CashCategory
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private CashCategory(final CashCategoryList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -195,9 +195,9 @@ public class CashCategory
     /**
      * Set defaults.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final CashCategory pParent) throws JOceanusException {
+    public void setDefaults(final CashCategory pParent) throws OceanusException {
         /* Set values */
         CashCategoryTypeList myTypes = getDataSet().getCashCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
@@ -208,7 +208,7 @@ public class CashCategory
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the underlying details */
         super.resolveDataSetLinks();
 
@@ -218,7 +218,7 @@ public class CashCategory
     }
 
     @Override
-    protected void resolveUpdateSetLinks() throws JOceanusException {
+    protected void resolveUpdateSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(FIELD_PARENT, getList());
     }
@@ -422,7 +422,7 @@ public class CashCategory
         }
 
         @Override
-        public CashCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public CashCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
             CashCategory myCategory = new CashCategory(this, pValues);
 

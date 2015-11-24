@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Hash from which to derive KeySet.
@@ -79,10 +79,10 @@ public final class GordianKeySetHash {
      * Constructor for a completely new keySetHash.
      * @param pFactory the factory
      * @param pPassword the password (cleared after usage)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianKeySetHash(final GordianFactory pFactory,
-                                final char[] pPassword) throws JOceanusException {
+                                final char[] pPassword) throws OceanusException {
         /* Store the factory */
         theFactory = pFactory;
 
@@ -99,11 +99,11 @@ public final class GordianKeySetHash {
      * @param pHashBytes the Hash bytes
      * @param pPassword the password (cleared after usage)
      * @throws GordianBadCredentialsException if wrong password is given
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GordianKeySetHash(final GordianFactory pFactory,
                                 final byte[] pHashBytes,
-                                final char[] pPassword) throws JOceanusException {
+                                final char[] pPassword) throws OceanusException {
         /* Store the factory */
         theFactory = pFactory;
 
@@ -120,9 +120,9 @@ public final class GordianKeySetHash {
     /**
      * Constructor for alternate hash sharing same password.
      * @param pSource the source hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private GordianKeySetHash(final GordianKeySetHash pSource) throws JOceanusException {
+    private GordianKeySetHash(final GordianKeySetHash pSource) throws OceanusException {
         /* Build the encryption cipher */
         GordianKeySet mySet = pSource.theKeySet;
 
@@ -138,7 +138,7 @@ public final class GordianKeySetHash {
         try {
             /* Access the original password */
             myBytes = mySet.decryptBytes(pSource.thePassword);
-            myPassword = DataConverter.bytesToCharArray(myBytes);
+            myPassword = TethysDataConverter.bytesToCharArray(myBytes);
 
             /* Build hash from password */
             setPassword(myPassword);
@@ -179,9 +179,9 @@ public final class GordianKeySetHash {
     /**
      * obtain similar keySetHash (same password).
      * @return the similar hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianKeySetHash similarHash() throws JOceanusException {
+    public GordianKeySetHash similarHash() throws OceanusException {
         /* Return the similar hash */
         return new GordianKeySetHash(this);
     }
@@ -189,9 +189,9 @@ public final class GordianKeySetHash {
     /**
      * Build the password hash from the password.
      * @param pPassword the password (cleared after usage)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setPassword(final char[] pPassword) throws JOceanusException {
+    private void setPassword(final char[] pPassword) throws OceanusException {
         /* Generate the Hash */
         theHash = generateHash(pPassword);
 
@@ -203,7 +203,7 @@ public final class GordianKeySetHash {
         byte[] myBytes = null;
         try {
             /* Encrypt the password */
-            myBytes = DataConverter.charsToByteArray(pPassword);
+            myBytes = TethysDataConverter.charsToByteArray(pPassword);
             thePassword = theKeySet.encryptBytes(myBytes);
         } finally {
             /* Clear out the password */
@@ -218,9 +218,9 @@ public final class GordianKeySetHash {
      * Attempt to match the password hash with the password.
      * @param pPassword the password (cleared after usage)
      * @throws GordianBadCredentialsException on wrong password
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void attemptPassword(final char[] pPassword) throws JOceanusException {
+    private void attemptPassword(final char[] pPassword) throws OceanusException {
         /* Generate the HashBytes */
         byte[] myHash = generateHash(pPassword);
 
@@ -238,7 +238,7 @@ public final class GordianKeySetHash {
         byte[] myBytes = null;
         try {
             /* Encrypt the password */
-            myBytes = DataConverter.charsToByteArray(pPassword);
+            myBytes = TethysDataConverter.charsToByteArray(pPassword);
             thePassword = theKeySet.encryptBytes(myBytes);
         } finally {
             /* Clear out the password */
@@ -253,9 +253,9 @@ public final class GordianKeySetHash {
      * Generate Hash.
      * @param pPassword the password for the keys
      * @return the Salt and Hash array
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private byte[] generateHash(final char[] pPassword) throws JOceanusException {
+    private byte[] generateHash(final char[] pPassword) throws OceanusException {
         byte[] myPassBytes = null;
 
         /* Protect against exceptions */
@@ -267,7 +267,7 @@ public final class GordianKeySetHash {
                          + iIterations;
 
             /* Convert password to bytes */
-            myPassBytes = DataConverter.charsToByteArray(pPassword);
+            myPassBytes = TethysDataConverter.charsToByteArray(pPassword);
 
             /* Create the primeMac */
             GordianMacSpec mySpec = new GordianMacSpec(GordianMacType.HMAC, theRecipe.getPrimeDigest());
@@ -326,11 +326,11 @@ public final class GordianKeySetHash {
 
                 /* Recalculate hashes and combine them */
                 myPrimeMac.finish(myPrimeHash, 0);
-                DataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
+                TethysDataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
                 myAlternateMac.finish(myAlternateHash, 0);
-                DataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
+                TethysDataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
                 mySecretMac.finish(mySecretHash, 0);
-                DataConverter.buildHashResult(mySecretBytes, mySecretHash);
+                TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
             }
 
             /* Combine the Primary and Alternate hashes */
@@ -372,13 +372,13 @@ public final class GordianKeySetHash {
         try {
             /* Access the original password */
             myBytes = theKeySet.decryptBytes(thePassword);
-            myPassword = DataConverter.bytesToCharArray(myBytes);
+            myPassword = TethysDataConverter.bytesToCharArray(myBytes);
 
             /* Try to initialise the hash and return it */
             return new GordianKeySetHash(theFactory, pHashBytes, myPassword);
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("Password attempt failed", e);
             return null;
         } catch (GordianBadCredentialsException e) {

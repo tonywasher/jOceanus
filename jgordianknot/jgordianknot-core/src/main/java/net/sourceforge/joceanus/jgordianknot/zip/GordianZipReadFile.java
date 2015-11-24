@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamManager;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class used to extract from a ZipFile.
@@ -82,9 +82,9 @@ public class GordianZipReadFile {
     /**
      * Constructor.
      * @param pFile the file to read
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianZipReadFile(final File pFile) throws JOceanusException {
+    public GordianZipReadFile(final File pFile) throws OceanusException {
         /* Protect against exceptions */
         try (FileInputStream myInFile = new FileInputStream(pFile);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
@@ -157,9 +157,9 @@ public class GordianZipReadFile {
     /**
      * Set the keySet hash.
      * @param pHash the keySet hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setKeySetHash(final GordianKeySetHash pHash) throws JOceanusException {
+    public void setKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
         /* Ignore if we have no security */
         if (!isEncrypted()) {
             return;
@@ -175,7 +175,7 @@ public class GordianZipReadFile {
 
         /* Parse the decrypted header */
         byte[] myBytes = myKeySet.decryptBytes(theHeader);
-        theContents = new GordianZipFileContents(DataConverter.byteArrayToString(myBytes));
+        theContents = new GordianZipFileContents(TethysDataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
         GordianZipFileEntry myHeader = theContents.getHeader();
@@ -239,10 +239,10 @@ public class GordianZipReadFile {
      * Obtain an input stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     @SuppressWarnings("resource")
-    public InputStream getInputStream(final GordianZipFileEntry pFile) throws JOceanusException {
+    public InputStream getInputStream(final GordianZipFileEntry pFile) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Check that entry belongs to this zip file */

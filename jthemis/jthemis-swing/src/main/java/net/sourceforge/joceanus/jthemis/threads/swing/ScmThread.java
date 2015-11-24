@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
@@ -50,7 +50,7 @@ public abstract class ScmThread
     /**
      * The Error.
      */
-    private JOceanusException theError = null;
+    private OceanusException theError = null;
 
     /**
      * Constructor.
@@ -65,7 +65,7 @@ public abstract class ScmThread
      * Obtain the error.
      * @return the error
      */
-    public JOceanusException getError() {
+    public OceanusException getError() {
         return theError;
     }
 
@@ -73,7 +73,7 @@ public abstract class ScmThread
      * Set the error.
      * @param pError the error
      */
-    public void setError(final JOceanusException pError) {
+    public void setError(final OceanusException pError) {
         theError = pError;
     }
 

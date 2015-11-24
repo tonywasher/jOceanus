@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFPayeeLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Class representing a QIF Event record.
@@ -49,7 +49,7 @@ public class QIFEvent
     /**
      * The Date.
      */
-    private final JDateDay theDate;
+    private final TethysDate theDate;
 
     /**
      * The Cleared Flag.
@@ -93,7 +93,7 @@ public class QIFEvent
      * @param pStartDate the start date
      */
     protected QIFEvent(final QIFFile pFile,
-                       final JDateDay pStartDate) {
+                       final TethysDate pStartDate) {
         /* Call super-constructor */
         super(pFile, QEventLineType.class);
 
@@ -120,15 +120,15 @@ public class QIFEvent
         super(pFile, QEventLineType.class);
 
         /* Determine details */
-        JDateDay myDate = null;
+        TethysDate myDate = null;
         Boolean myCleared = null;
 
         /* Current split record */
         QIFSplitEvent mySplit = null;
 
         /* Obtain parsers */
-        JDateDayFormatter myDateParser = pFormatter.getDateFormatter();
-        JDecimalParser myDecParser = pFormatter.getDecimalParser();
+        TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
+        TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
@@ -144,7 +144,7 @@ public class QIFEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        JDateDay myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
+                        TethysDate myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -154,7 +154,7 @@ public class QIFEvent
                         myCleared = myFlag;
                         break;
                     case AMOUNT:
-                        JMoney myMoney = myDecParser.parseMoneyValue(myData);
+                        TethysMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFEventAmountLine(myMoney));
                         break;
                     case COMMENT:
@@ -204,7 +204,7 @@ public class QIFEvent
                         mySplit.setSplitAmount(myMoney);
                         break;
                     case SPLITPERCENT:
-                        JRate myRate = myDecParser.parseRateValue(myData);
+                        TethysRate myRate = myDecParser.parseRateValue(myData);
                         mySplit.setSplitPercentage(myRate);
                         break;
                     case SPLITCOMMENT:
@@ -222,7 +222,7 @@ public class QIFEvent
     }
 
     @Override
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theDate;
     }
 
@@ -271,7 +271,7 @@ public class QIFEvent
      * record amount.
      * @param pAmount the amount
      */
-    protected void recordAmount(final JMoney pAmount) {
+    protected void recordAmount(final TethysMoney pAmount) {
         /* Add amount line */
         addLine(new QIFEventAmountLine(pAmount));
     }
@@ -323,7 +323,7 @@ public class QIFEvent
      * @param pComment the comment
      */
     protected void recordSplitRecord(final QIFAccount pAccount,
-                                     final JMoney pAmount,
+                                     final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pAccount);
@@ -343,7 +343,7 @@ public class QIFEvent
      */
     protected void recordSplitRecord(final QIFAccount pAccount,
                                      final List<QIFClass> pClasses,
-                                     final JMoney pAmount,
+                                     final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pAccount, pClasses);
@@ -361,7 +361,7 @@ public class QIFEvent
      * @param pComment the comment
      */
     protected void recordSplitRecord(final QIFEventCategory pCategory,
-                                     final JMoney pAmount,
+                                     final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pCategory);
@@ -381,7 +381,7 @@ public class QIFEvent
      */
     protected void recordSplitRecord(final QIFEventCategory pCategory,
                                      final List<QIFClass> pClasses,
-                                     final JMoney pAmount,
+                                     final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pCategory, pClasses);
@@ -418,7 +418,7 @@ public class QIFEvent
          * Constructor.
          * @param pDate the Date
          */
-        protected QIFEventDateLine(final JDateDay pDate) {
+        protected QIFEventDateLine(final TethysDate pDate) {
             /* Call super-constructor */
             super(pDate);
         }
@@ -554,7 +554,7 @@ public class QIFEvent
          * Constructor.
          * @param pAmount the amount
          */
-        protected QIFEventAmountLine(final JMoney pAmount) {
+        protected QIFEventAmountLine(final TethysMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
         }
@@ -568,7 +568,7 @@ public class QIFEvent
          * Obtain Amount.
          * @return the amount
          */
-        public JMoney getAmount() {
+        public TethysMoney getAmount() {
             return getMoney();
         }
     }

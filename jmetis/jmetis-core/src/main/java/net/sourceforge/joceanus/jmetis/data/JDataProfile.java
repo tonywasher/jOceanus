@@ -28,7 +28,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Viewable version of SLF4J Profile data.
@@ -98,12 +98,12 @@ public class JDataProfile
     /**
      * Elapsed (in milliseconds).
      */
-    private JDecimal theElapsed;
+    private TethysDecimal theElapsed;
 
     /**
      * Hidden Elapsed (in milliseconds).
      */
-    private JDecimal theHidden;
+    private TethysDecimal theHidden;
 
     /**
      * Current subTask.
@@ -246,7 +246,7 @@ public class JDataProfile
 
             /* Stop the task and calculate the elapsed time */
             theEnd = System.nanoTime();
-            theElapsed = new JDecimal(theEnd - theStart, NUM_DECIMALS);
+            theElapsed = new TethysDecimal(theEnd - theStart, NUM_DECIMALS);
             theHidden = theSubTasks == null
                                            ? null
                                            : calculateHidden();
@@ -260,9 +260,9 @@ public class JDataProfile
      * Calculate the hidden time.
      * @return the hidden time
      */
-    private JDecimal calculateHidden() {
+    private TethysDecimal calculateHidden() {
         /* Initialise hidden value */
-        JDecimal myHidden = new JDecimal(theElapsed);
+        TethysDecimal myHidden = new TethysDecimal(theElapsed);
 
         /* Loop through the subTasks */
         Iterator<JDataProfile> myIterator = theSubTasks.iterator();

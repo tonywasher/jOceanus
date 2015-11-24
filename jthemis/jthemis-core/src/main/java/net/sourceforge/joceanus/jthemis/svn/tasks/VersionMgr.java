@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
@@ -111,10 +111,10 @@ public class VersionMgr {
      * Create branch in temporary working copy.
      * @param pTarget the branch to create
      * @param pSource the tag to base the branch on
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void createBranch(final SvnBranch pTarget,
-                                final SvnTag pSource) throws JOceanusException {
+                                final SvnTag pSource) throws OceanusException {
         /* Access details */
         SvnComponent myComp = pTarget.getComponent();
 
@@ -156,10 +156,10 @@ public class VersionMgr {
      * Create tag in temporary working copy.
      * @param pTarget the tag to create
      * @param pSource the branch to create the tag for
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void createTag(final SvnTag pTarget,
-                           final SvnBranch pSource) throws JOceanusException {
+                           final SvnBranch pSource) throws OceanusException {
         /* Access details */
         SvnComponent myComp = pTarget.getComponent();
 
@@ -201,9 +201,9 @@ public class VersionMgr {
      * Create new Tags to the specified directory.
      * @param pBranches the branches to tag.
      * @return the list of tags that were created
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public List<SvnTag> createTags(final Collection<SvnBranch> pBranches) throws JOceanusException {
+    public List<SvnTag> createTags(final Collection<SvnBranch> pBranches) throws OceanusException {
         /* Create the list of tags */
         List<SvnTag> myList = new ArrayList<SvnTag>();
         SvnTag myTag;
@@ -240,10 +240,10 @@ public class VersionMgr {
      * @param pTags the tags to branch from.
      * @param pBranchType the type of branches to create
      * @return the list of branches that were created
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public List<SvnBranch> createBranches(final Collection<SvnTag> pTags,
-                                          final ScmBranchOpType pBranchType) throws JOceanusException {
+                                          final ScmBranchOpType pBranchType) throws OceanusException {
         /* Create the list of branches */
         List<SvnBranch> myList = new ArrayList<SvnBranch>();
 
@@ -272,9 +272,9 @@ public class VersionMgr {
     /**
      * Adjust dependencies.
      * @param pBranches the branches to adjust.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void adjustBranchDependencies(final List<SvnBranch> pBranches) throws JOceanusException {
+    private void adjustBranchDependencies(final List<SvnBranch> pBranches) throws OceanusException {
         /* Loop through the branches */
         for (SvnBranch myBranch : pBranches) {
             /* Access version */
@@ -305,9 +305,9 @@ public class VersionMgr {
     /**
      * Adjust dependencies.
      * @param pTags the tags to adjust.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void adjustTagDependencies(final List<SvnTag> pTags) throws JOceanusException {
+    private void adjustTagDependencies(final List<SvnTag> pTags) throws OceanusException {
         /* Loop through the tags */
         for (SvnTag myTag : pTags) {
             /* Access version */

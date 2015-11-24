@@ -58,25 +58,25 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Selection panel for Analysis Statement.
  */
 public class AnalysisSelect
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -135,7 +135,7 @@ public class AnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * View.
@@ -200,7 +200,7 @@ public class AnalysisSelect
     /**
      * DateDayRange Select Panel.
      */
-    private final JDateDayRangeSelect theRangeSelect;
+    private final TethysSwingDateRangeSelect theRangeSelect;
 
     /**
      * Filter Select Panel.
@@ -260,7 +260,7 @@ public class AnalysisSelect
     /**
      * The card panel.
      */
-    private final JEnablePanel theCardPanel;
+    private final TethysSwingEnablePanel theCardPanel;
 
     /**
      * The card layout.
@@ -296,15 +296,15 @@ public class AnalysisSelect
         theAnalysisView = pAnalysisView;
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the range button */
-        theRangeButton = new JButton(ArrowIcon.DOWN);
+        theRangeButton = new JButton(TethysSwingArrowIcon.DOWN);
         theRangeButton.setVerticalTextPosition(AbstractButton.CENTER);
         theRangeButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter button */
-        theFilterButton = new JButton(ArrowIcon.DOWN);
+        theFilterButton = new JButton(TethysSwingArrowIcon.DOWN);
         theFilterButton.setVerticalTextPosition(AbstractButton.CENTER);
         theFilterButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -320,7 +320,7 @@ public class AnalysisSelect
         theBucketButton = new JScrollButton<BucketAttribute>();
 
         /* Create the Range Select panel */
-        theRangeSelect = new JDateDayRangeSelect();
+        theRangeSelect = new TethysSwingDateRangeSelect();
 
         /* Create the panel map */
         theMap = new EnumMap<AnalysisType, AnalysisFilterSelection>(AnalysisType.class);
@@ -338,7 +338,7 @@ public class AnalysisSelect
         theAllSelect = new AllSelect();
 
         /* Create the card panel */
-        theCardPanel = new JEnablePanel();
+        theCardPanel = new TethysSwingEnablePanel();
         theLayout = new CardLayout();
         theCardPanel.setLayout(theLayout);
 
@@ -375,7 +375,7 @@ public class AnalysisSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -383,7 +383,7 @@ public class AnalysisSelect
      * Obtain the DateDayRange.
      * @return the range.
      */
-    public JDateDayRange getRange() {
+    public TethysDateRange getRange() {
         return theState.getRange();
     }
 
@@ -539,7 +539,7 @@ public class AnalysisSelect
         isRefreshing = true;
 
         /* Update the range */
-        JDateDayRangeSelect mySelect = pSelect.getRangeSelect();
+        TethysSwingDateRangeSelect mySelect = pSelect.getRangeSelect();
         if (mySelect != null) {
             theRangeSelect.setSelection(mySelect);
             theRangeSelect.lockPeriod(false);
@@ -572,7 +572,7 @@ public class AnalysisSelect
      */
     public void refreshData() {
         /* Update the range selection */
-        JDateDayRange myRange = theView.getRange();
+        TethysDateRange myRange = theView.getRange();
         theRangeSelect.setOverallRange(myRange);
 
         /* Refresh the analysisView */
@@ -756,7 +756,7 @@ public class AnalysisSelect
      * Listener.
      */
     private final class AnalysisListener
-            implements PropertyChangeListener, ActionListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, ActionListener, TethysChangeEventListener {
         /**
          * AnalysisType menu builder.
          */
@@ -775,67 +775,67 @@ public class AnalysisSelect
         /**
          * AnalysisView Registration.
          */
-        private final JOceanusChangeRegistration theAnalysisViewReg;
+        private final TethysChangeRegistration theAnalysisViewReg;
 
         /**
          * TypeMenu Registration.
          */
-        private final JOceanusChangeRegistration theTypeMenuReg;
+        private final TethysChangeRegistration theTypeMenuReg;
 
         /**
          * BucketMenu Registration.
          */
-        private final JOceanusChangeRegistration theBucketMenuReg;
+        private final TethysChangeRegistration theBucketMenuReg;
 
         /**
          * ColumnMenu Registration.
          */
-        private final JOceanusChangeRegistration theColumnMenuReg;
+        private final TethysChangeRegistration theColumnMenuReg;
 
         /**
          * Deposit Registration.
          */
-        private final JOceanusChangeRegistration theDepositReg;
+        private final TethysChangeRegistration theDepositReg;
 
         /**
          * Cash Registration.
          */
-        private final JOceanusChangeRegistration theLoanReg;
+        private final TethysChangeRegistration theLoanReg;
 
         /**
          * Loan Registration.
          */
-        private final JOceanusChangeRegistration theCashReg;
+        private final TethysChangeRegistration theCashReg;
 
         /**
          * Security Registration.
          */
-        private final JOceanusChangeRegistration theSecurityReg;
+        private final TethysChangeRegistration theSecurityReg;
 
         /**
          * Portfolio Registration.
          */
-        private final JOceanusChangeRegistration thePortfolioReg;
+        private final TethysChangeRegistration thePortfolioReg;
 
         /**
          * Payee Registration.
          */
-        private final JOceanusChangeRegistration thePayeeReg;
+        private final TethysChangeRegistration thePayeeReg;
 
         /**
          * Category Registration.
          */
-        private final JOceanusChangeRegistration theCategoryReg;
+        private final TethysChangeRegistration theCategoryReg;
 
         /**
          * TaxBasis Registration.
          */
-        private final JOceanusChangeRegistration theBasisReg;
+        private final TethysChangeRegistration theBasisReg;
 
         /**
          * Tag Registration.
          */
-        private final JOceanusChangeRegistration theTagReg;
+        private final TethysChangeRegistration theTagReg;
 
         /**
          * Constructor.
@@ -843,7 +843,7 @@ public class AnalysisSelect
         private AnalysisListener() {
             /* Listen to the objects */
             theRangeButton.addActionListener(this);
-            theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, this);
+            theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, this);
             theFilterButton.addActionListener(this);
             theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
             theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
@@ -940,8 +940,8 @@ public class AnalysisSelect
                 /* Toggle visibility of range selection */
                 boolean isVisible = theRangeSelect.isVisible();
                 theRangeButton.setIcon(isVisible
-                                                 ? ArrowIcon.DOWN
-                                                 : ArrowIcon.UP);
+                                                 ? TethysSwingArrowIcon.DOWN
+                                                 : TethysSwingArrowIcon.UP);
                 theRangeSelect.setVisible(!isVisible);
             }
 
@@ -950,8 +950,8 @@ public class AnalysisSelect
                 /* Toggle visibility of filter selection */
                 boolean isVisible = theFilterSelect.isVisible();
                 theFilterButton.setIcon(isVisible
-                                                  ? ArrowIcon.DOWN
-                                                  : ArrowIcon.UP);
+                                                  ? TethysSwingArrowIcon.DOWN
+                                                  : TethysSwingArrowIcon.UP);
                 theFilterSelect.setVisible(!isVisible);
             }
         }
@@ -1039,7 +1039,7 @@ public class AnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Ignore if we are refreshing */
             if (isRefreshing) {
                 return;
@@ -1182,7 +1182,7 @@ public class AnalysisSelect
         /**
          * The Range.
          */
-        private JDateDayRange theRange;
+        private TethysDateRange theRange;
 
         /**
          * The AnalysisType.
@@ -1238,7 +1238,7 @@ public class AnalysisSelect
          * Obtain the DateDayRange.
          * @return the range.
          */
-        private JDateDayRange getRange() {
+        private TethysDateRange getRange() {
             return theRange;
         }
 
@@ -1301,9 +1301,9 @@ public class AnalysisSelect
          * @param pSelect the selection panel
          * @return true/false did a change occur
          */
-        private boolean setRange(final JDateDayRangeSelect pSelect) {
+        private boolean setRange(final TethysSwingDateRangeSelect pSelect) {
             /* Adjust the selected account */
-            JDateDayRange myRange = pSelect.getRange();
+            TethysDateRange myRange = pSelect.getRange();
             if (!Difference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;
@@ -1409,7 +1409,7 @@ public class AnalysisSelect
         /**
          * The Range Selection.
          */
-        private final JDateDayRangeSelect theRangeSelect;
+        private final TethysSwingDateRangeSelect theRangeSelect;
 
         /**
          * The AnalysisFilter.
@@ -1421,7 +1421,7 @@ public class AnalysisSelect
          * @param pRangeSelect the range selection
          * @param pFilter the analysis filter
          */
-        public StatementSelect(final JDateDayRangeSelect pRangeSelect,
+        public StatementSelect(final TethysSwingDateRangeSelect pRangeSelect,
                                final AnalysisFilter<?, ?> pFilter) {
             /* Store parameters */
             theRangeSelect = pRangeSelect;
@@ -1432,7 +1432,7 @@ public class AnalysisSelect
          * Obtain the RangeSelection.
          * @return the filter
          */
-        public JDateDayRangeSelect getRangeSelect() {
+        public TethysSwingDateRangeSelect getRangeSelect() {
             return theRangeSelect;
         }
 

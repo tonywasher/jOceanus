@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for SecurityPrice.
@@ -73,7 +73,7 @@ public class TableSecurityPrice
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -89,7 +89,7 @@ public class TableSecurityPrice
 
     @Override
     protected void setFieldValue(final SecurityPrice pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (SecurityPrice.FIELD_SECURITY.equals(iField)) {

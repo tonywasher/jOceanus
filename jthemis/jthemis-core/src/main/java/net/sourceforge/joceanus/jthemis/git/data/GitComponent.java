@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitBranch.GitBranchList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
@@ -89,10 +89,10 @@ public final class GitComponent
      * Constructor.
      * @param pParent the Parent repository
      * @param pName the component name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected GitComponent(final GitRepository pParent,
-                           final String pName) throws JOceanusException {
+                           final String pName) throws OceanusException {
         /* Call super constructor */
         super(pParent, pName);
 
@@ -134,9 +134,9 @@ public final class GitComponent
     /**
      * Build repository access.
      * @return the Git repository
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Repository getRepositoryAccess() throws JOceanusException {
+    private Repository getRepositoryAccess() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* StringBuilder */
@@ -163,10 +163,10 @@ public final class GitComponent
      * @param pCommitId the commit id within which the file exists
      * @param pPath the base path
      * @return the stream of null if file does not exists
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public MvnProjectDefinition parseProjectObject(final ObjectId pCommitId,
-                                                   final String pPath) throws JOceanusException {
+                                                   final String pPath) throws OceanusException {
         InputStream myInput = null;
 
         /* Protect against exceptions */
@@ -227,10 +227,10 @@ public final class GitComponent
      * @param pCommitId the commit id within which the file exists
      * @param pPath the file to stream
      * @return the stream of null if file does not exists
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public InputStream getFileObjectAsInputStream(final ObjectId pCommitId,
-                                                  final String pPath) throws JOceanusException {
+                                                  final String pPath) throws OceanusException {
         /* Protect against exceptions */
         try (RevWalk myRevWalk = new RevWalk(theGitRepo);
              TreeWalk myTreeWalk = new TreeWalk(theGitRepo)) {
@@ -258,9 +258,9 @@ public final class GitComponent
     /**
      * Obtain status for component.
      * @return the status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Status getStatus() throws JOceanusException {
+    public Status getStatus() throws OceanusException {
         /* Protect against exceptions */
         try (Git myGit = new Git(theGitRepo)) {
             StatusCommand myCmd = myGit.status();
@@ -306,9 +306,9 @@ public final class GitComponent
         /**
          * Discover component list from repository.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JOceanusException {
+        public void discover(final ReportStatus pReport) throws OceanusException {
             /* Reset the list */
             clear();
 

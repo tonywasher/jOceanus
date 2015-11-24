@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Tag for a transaction.
@@ -92,10 +92,10 @@ public class TransactionTag
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TransactionTag(final TransactionTagList pList,
-                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                           final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -118,7 +118,7 @@ public class TransactionTag
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -267,18 +267,18 @@ public class TransactionTag
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final String pValue) throws JOceanusException {
+    private void setValueName(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JOceanusException {
+    private void setValueName(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -293,18 +293,18 @@ public class TransactionTag
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final String pValue) throws JOceanusException {
+    private void setValueDesc(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set description value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
+    private void setValueDesc(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -333,9 +333,9 @@ public class TransactionTag
 
     /**
      * Set defaults.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults() throws JOceanusException {
+    public void setDefaults() throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName());
     }
@@ -363,18 +363,18 @@ public class TransactionTag
     /**
      * Set a new tag name.
      * @param pName the new name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setName(final String pName) throws JOceanusException {
+    public void setName(final String pName) throws OceanusException {
         setValueName(pName);
     }
 
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDescription(final String pDesc) throws JOceanusException {
+    public void setDescription(final String pDesc) throws OceanusException {
         setValueDesc(pDesc);
     }
 
@@ -602,7 +602,7 @@ public class TransactionTag
         }
 
         @Override
-        public TransactionTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TransactionTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the tag */
             TransactionTag myTag = new TransactionTag(this, pValues);
 
@@ -625,7 +625,7 @@ public class TransactionTag
         }
 
         @Override
-        public void resolveDataSetLinks() throws JOceanusException {
+        public void resolveDataSetLinks() throws OceanusException {
             /* We have no links so disable this */
         }
     }

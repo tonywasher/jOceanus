@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Template for a Static Data item and List.
@@ -108,10 +108,10 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Basic Constructor.
      * @param pList The list to associate the Static Data with
      * @param pValue the name of the new item
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected StaticData(final StaticList<T, S, E> pList,
-                         final String pValue) throws JOceanusException {
+                         final String pValue) throws OceanusException {
         /* Call super constructor */
         super(pList, 0);
 
@@ -128,10 +128,10 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Basic Constructor.
      * @param pList The list to associate the Static Data with
      * @param pClass the class of the new item
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected StaticData(final StaticList<T, S, E> pList,
-                         final S pClass) throws JOceanusException {
+                         final S pClass) throws OceanusException {
         /* Call super constructor */
         super(pList, 0);
 
@@ -160,10 +160,10 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected StaticData(final StaticList<T, S, E> pList,
-                         final DataValues<E> pValues) throws JOceanusException {
+                         final DataValues<E> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -219,7 +219,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
             /* Catch Exceptions */
         } catch (NumberFormatException
-                | JOceanusException e) {
+                | OceanusException e) {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
@@ -432,18 +432,18 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Set the Name.
      * @param pValue the name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final String pValue) throws JOceanusException {
+    private void setValueName(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set the Name.
      * @param pBytes the encrypted name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JOceanusException {
+    private void setValueName(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -458,18 +458,18 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Set the Description.
      * @param pValue the description
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected final void setValueDesc(final String pValue) throws JOceanusException {
+    protected final void setValueDesc(final String pValue) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set the Description.
      * @param pBytes the encrypted description
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
+    private void setValueDesc(final byte[] pBytes) throws OceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -591,9 +591,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Parse enum type.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void parseEnumValue(final String pValue) throws JOceanusException {
+    private void parseEnumValue(final String pValue) throws OceanusException {
         Class<S> myClass = getEnumClass();
         S[] myEnums = myClass.getEnumConstants();
 
@@ -620,9 +620,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Parse enum type.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void parseEnumValue(final Integer pValue) throws JOceanusException {
+    private void parseEnumValue(final Integer pValue) throws OceanusException {
         Class<S> myClass = getEnumClass();
         S[] myEnums = myClass.getEnumConstants();
 
@@ -649,18 +649,18 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Set a new name.
      * @param pName the name
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setName(final String pName) throws JOceanusException {
+    public void setName(final String pName) throws OceanusException {
         setValueName(pName);
     }
 
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDescription(final String pDesc) throws JOceanusException {
+    public void setDescription(final String pDesc) throws OceanusException {
         /* Set the appropriate value */
         setValueDesc(pDesc);
     }
@@ -849,9 +849,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * Add Item for class.
          * @param pClass the class to add
          * @return the added class
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public T addNewItem(final S pClass) throws JOceanusException {
+        public T addNewItem(final S pClass) throws OceanusException {
             /* Create the new item */
             T myItem = newItem(pClass);
             add(myItem);
@@ -862,15 +862,15 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * Create new Item for class.
          * @param pClass the class to create
          * @return the created class
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected abstract T newItem(final S pClass) throws JOceanusException;
+        protected abstract T newItem(final S pClass) throws OceanusException;
 
         /**
          * Populate default values.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void populateDefaults() throws JOceanusException {
+        public void populateDefaults() throws OceanusException {
             /* Loop through all elements */
             for (S myClass : getEnumClass().getEnumConstants()) {
                 /* Create new element */
@@ -898,7 +898,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         @Override
-        public void resolveDataSetLinks() throws JOceanusException {
+        public void resolveDataSetLinks() throws OceanusException {
             /* We have no links so disable this */
         }
     }

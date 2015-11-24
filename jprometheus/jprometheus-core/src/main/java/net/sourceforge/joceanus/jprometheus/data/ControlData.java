@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * ControlData definition and list. The Control Data represents the data version of the entire data set, allowing for migration code to be written to map
@@ -86,10 +86,10 @@ public class ControlData
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private ControlData(final ControlDataList pList,
-                        final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+                        final DataValues<CryptographyDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -219,7 +219,7 @@ public class ControlData
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
@@ -228,9 +228,9 @@ public class ControlData
     /**
      * Set a new ControlKey.
      * @param pControl the new control key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void setControlKey(final ControlKey pControl) throws JOceanusException {
+    protected void setControlKey(final ControlKey pControl) throws OceanusException {
         /* If we do not have a control Key */
         if (getControlKey() == null) {
             /* Store the control details and return */
@@ -320,7 +320,7 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList deriveList(final ListStyle pStyle) throws JOceanusException {
+        public ControlDataList deriveList(final ListStyle pStyle) throws OceanusException {
             return (ControlDataList) super.deriveList(pStyle);
         }
 
@@ -351,9 +351,9 @@ public class ControlData
         /**
          * Add new ControlData item for new security.
          * @param pVersion the version
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addNewControl(final Integer pVersion) throws JOceanusException {
+        public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(ControlData.OBJECT_NAME);
             myValues.addValue(FIELD_DATAVERSION, pVersion);
@@ -363,7 +363,7 @@ public class ControlData
         }
 
         @Override
-        public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the controlData */
             ControlData myControl = new ControlData(this, pValues);
 
@@ -381,7 +381,7 @@ public class ControlData
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Just sort the list */
             reSort();
         }

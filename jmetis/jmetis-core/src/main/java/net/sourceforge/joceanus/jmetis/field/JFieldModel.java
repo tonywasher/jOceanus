@@ -30,16 +30,16 @@ import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
 
 /**
  * JFieldSet data model abstraction.
@@ -180,12 +180,12 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         /**
          * The Decimal Parser.
          */
-        private final JDecimalParser theParser;
+        private final TethysDecimalParser theParser;
 
         /**
          * The Decimal Formatter.
          */
-        private final JDecimalFormatter theFormatter;
+        private final TethysDecimalFormatter theFormatter;
 
         /**
          * Are we in error mode?
@@ -350,39 +350,39 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                 theDisplay = theEdit;
 
                 /* If this is a JMoney */
-            } else if (myValue instanceof JMoney) {
+            } else if (myValue instanceof TethysMoney) {
                 /* Set edit/display values */
-                JMoney myMoney = (JMoney) myValue;
+                TethysMoney myMoney = (TethysMoney) myValue;
                 theEdit = myMoney.toString();
                 theDisplay = theFormatter.formatMoney(myMoney);
                 /* If this is a JRate */
-            } else if (myValue instanceof JRate) {
+            } else if (myValue instanceof TethysRate) {
                 /* Set edit/display values */
-                JRate myRate = (JRate) myValue;
+                TethysRate myRate = (TethysRate) myValue;
                 theEdit = myRate.toString();
                 theDisplay = theFormatter.formatRate(myRate);
                 /* If this is a JPrice */
-            } else if (myValue instanceof JPrice) {
+            } else if (myValue instanceof TethysPrice) {
                 /* Set edit/display values */
-                JPrice myPrice = (JPrice) myValue;
+                TethysPrice myPrice = (TethysPrice) myValue;
                 theEdit = myPrice.toString();
                 theDisplay = theFormatter.formatPrice(myPrice);
                 /* If this is a JUnits */
-            } else if (myValue instanceof JUnits) {
+            } else if (myValue instanceof TethysUnits) {
                 /* Set edit/display values */
-                JUnits myUnits = (JUnits) myValue;
+                TethysUnits myUnits = (TethysUnits) myValue;
                 theEdit = myUnits.toString();
                 theDisplay = theFormatter.formatUnits(myUnits);
                 /* If this is a JDilution */
-            } else if (myValue instanceof JDilution) {
+            } else if (myValue instanceof TethysDilution) {
                 /* Set edit/display values */
-                JDilution myDilution = (JDilution) myValue;
+                TethysDilution myDilution = (TethysDilution) myValue;
                 theEdit = myDilution.toString();
                 theDisplay = theFormatter.formatDilution(myDilution);
                 /* If this is a JDilution */
-            } else if (myValue instanceof JRatio) {
+            } else if (myValue instanceof TethysRatio) {
                 /* Set edit/display values */
-                JRatio myRatio = (JRatio) myValue;
+                TethysRatio myRatio = (TethysRatio) myValue;
                 theEdit = myRatio.toString();
                 theDisplay = theFormatter.formatRatio(myRatio);
             }
@@ -555,7 +555,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process Object value.
          * @param pValue the value
          */
-        public void processValue(final JOceanusItemEvent pValue) {
+        public void processValue(final TethysItemEvent pValue) {
             /* Record new value */
             setValue(pValue);
         }
@@ -652,7 +652,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * Process DateDay value.
          * @param pValue the value
          */
-        public void processValue(final JDateDay pValue) {
+        public void processValue(final TethysDate pValue) {
             /* If this is a new value */
             if (!Difference.isEqual(pValue, getValue())) {
                 /* Record new value */
@@ -661,8 +661,8 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         }
 
         @Override
-        public JDateDay getValue() {
-            return (JDateDay) super.getValue();
+        public TethysDate getValue() {
+            return (TethysDate) super.getValue();
         }
     }
 }

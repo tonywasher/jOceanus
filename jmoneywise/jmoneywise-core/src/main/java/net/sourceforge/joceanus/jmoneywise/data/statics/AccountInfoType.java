@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * AccountInfoType data type.
@@ -87,10 +87,10 @@ public class AccountInfoType
      * Basic Constructor.
      * @param pList The list to associate the Account Info Type with
      * @param pName Name of Account Info Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final String pName) throws JOceanusException {
+                            final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -98,10 +98,10 @@ public class AccountInfoType
      * Basic constructor.
      * @param pList The list to associate the Account Info Type with
      * @param pClass Class of Account Info Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final AccountInfoClass pClass) throws JOceanusException {
+                            final AccountInfoClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -109,10 +109,10 @@ public class AccountInfoType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -236,9 +236,9 @@ public class AccountInfoType
         /**
          * Add a Basic Open AccountInfoType to the list.
          * @param pInfoType the Name of the account info type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pInfoType) throws JOceanusException {
+        public void addBasicItem(final String pInfoType) throws OceanusException {
             /* Create a new Account Info Type */
             AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
 
@@ -253,7 +253,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public AccountInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             AccountInfoType myType = new AccountInfoType(this, pValues);
 
@@ -271,7 +271,7 @@ public class AccountInfoType
         }
 
         @Override
-        protected AccountInfoType newItem(final AccountInfoClass pClass) throws JOceanusException {
+        protected AccountInfoType newItem(final AccountInfoClass pClass) throws OceanusException {
             /* Create the type */
             AccountInfoType myType = new AccountInfoType(this, pClass);
 

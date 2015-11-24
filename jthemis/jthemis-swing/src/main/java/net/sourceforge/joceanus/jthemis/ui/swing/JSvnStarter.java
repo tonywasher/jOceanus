@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public final class JSvnStarter {
             /* Create the SvnManager program */
             theManager = new JSvnManager();
 
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
         }
     }

@@ -31,20 +31,20 @@ import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataDifference;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Generic Data object formatter.
@@ -59,17 +59,17 @@ public class JDataFormatter {
     /**
      * The Decimal formatter.
      */
-    private final JDecimalFormatter theDecimalFormatter;
+    private final TethysDecimalFormatter theDecimalFormatter;
 
     /**
      * The Decimal parser.
      */
-    private final JDecimalParser theDecimalParser;
+    private final TethysDecimalParser theDecimalParser;
 
     /**
      * The Date formatter.
      */
-    private final JDateDayFormatter theDateFormatter;
+    private final TethysDateFormatter theDateFormatter;
 
     /**
      * Constructor.
@@ -83,16 +83,16 @@ public class JDataFormatter {
      * @param pLocale the locale
      */
     public JDataFormatter(final Locale pLocale) {
-        theDecimalFormatter = new JDecimalFormatter(pLocale);
-        theDecimalParser = new JDecimalParser(pLocale);
-        theDateFormatter = new JDateDayFormatter(pLocale);
+        theDecimalFormatter = new TethysDecimalFormatter(pLocale);
+        theDecimalParser = new TethysDecimalParser(pLocale);
+        theDateFormatter = new TethysDateFormatter(pLocale);
     }
 
     /**
      * Obtain the DecimalParser.
      * @return the decimal parser
      */
-    public JDecimalParser getDecimalParser() {
+    public TethysDecimalParser getDecimalParser() {
         return theDecimalParser;
     }
 
@@ -100,7 +100,7 @@ public class JDataFormatter {
      * Obtain the DecimalFormatter.
      * @return the decimal formatter
      */
-    public JDecimalFormatter getDecimalFormatter() {
+    public TethysDecimalFormatter getDecimalFormatter() {
         return theDecimalFormatter;
     }
 
@@ -108,7 +108,7 @@ public class JDataFormatter {
      * Obtain the Date formatter.
      * @return the date formatter
      */
-    public JDateDayFormatter getDateFormatter() {
+    public TethysDateFormatter getDateFormatter() {
         return theDateFormatter;
     }
 
@@ -211,7 +211,7 @@ public class JDataFormatter {
 
         /* Handle Native array classes */
         if (byte[].class.equals(myClass)) {
-            return DataConverter.bytesToHexString((byte[]) pValue);
+            return TethysDataConverter.bytesToHexString((byte[]) pValue);
         }
         if (char[].class.equals(myClass)) {
             return new String((char[]) pValue);
@@ -227,16 +227,16 @@ public class JDataFormatter {
         if (LocalDate.class.equals(myClass)) {
             return theDateFormatter.formatLocalDate((LocalDate) pValue);
         }
-        if (JDateDay.class.equals(myClass)) {
-            return theDateFormatter.formatDateDay((JDateDay) pValue);
+        if (TethysDate.class.equals(myClass)) {
+            return theDateFormatter.formatDateDay((TethysDate) pValue);
         }
-        if (JDateDayRange.class.equals(myClass)) {
-            return theDateFormatter.formatDateDayRange((JDateDayRange) pValue);
+        if (TethysDateRange.class.equals(myClass)) {
+            return theDateFormatter.formatDateDayRange((TethysDateRange) pValue);
         }
 
         /* Handle decimal classes */
-        if (JDecimal.class.isInstance(pValue)) {
-            return theDecimalFormatter.formatDecimal((JDecimal) pValue);
+        if (TethysDecimal.class.isInstance(pValue)) {
+            return theDecimalFormatter.formatDecimal((TethysDecimal) pValue);
         }
 
         /* Handle difference class */
@@ -245,7 +245,7 @@ public class JDataFormatter {
         }
 
         /* Handle JOceanusExceptions */
-        if (JOceanusException.class.isInstance(pValue)) {
+        if (OceanusException.class.isInstance(pValue)) {
             return myClass.getSimpleName();
         }
 
@@ -292,7 +292,7 @@ public class JDataFormatter {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseDate(pSource));
         }
-        if (JDateDay.class.equals(pClass)) {
+        if (TethysDate.class.equals(pClass)) {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseDateDay(pSource));
         }
@@ -304,27 +304,27 @@ public class JDataFormatter {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseLocalDate(pSource));
         }
-        if (JPrice.class.equals(pClass)) {
+        if (TethysPrice.class.equals(pClass)) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.parsePriceValue(pSource));
         }
-        if (JMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClass)) {
             /* Parse the money */
             return pClass.cast(theDecimalParser.parseMoneyValue(pSource));
         }
-        if (JRate.class.equals(pClass)) {
+        if (TethysRate.class.equals(pClass)) {
             /* Parse the rate */
             return pClass.cast(theDecimalParser.parseRateValue(pSource));
         }
-        if (JUnits.class.equals(pClass)) {
+        if (TethysUnits.class.equals(pClass)) {
             /* Parse the units */
             return pClass.cast(theDecimalParser.parseUnitsValue(pSource));
         }
-        if (JDilution.class.equals(pClass)) {
+        if (TethysDilution.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseDilutionValue(pSource));
         }
-        if (JRatio.class.equals(pClass)) {
+        if (TethysRatio.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseRatioValue(pSource));
         }
@@ -341,27 +341,27 @@ public class JDataFormatter {
      */
     public <T> T parseValue(final Double pSource,
                             final Class<T> pClass) {
-        if (JPrice.class.equals(pClass)) {
+        if (TethysPrice.class.equals(pClass)) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource));
         }
-        if (JMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClass)) {
             /* Parse the money */
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource));
         }
-        if (JRate.class.equals(pClass)) {
+        if (TethysRate.class.equals(pClass)) {
             /* Parse the rate */
             return pClass.cast(theDecimalParser.createRateFromDouble(pSource));
         }
-        if (JUnits.class.equals(pClass)) {
+        if (TethysUnits.class.equals(pClass)) {
             /* Parse the units */
             return pClass.cast(theDecimalParser.createUnitsFromDouble(pSource));
         }
-        if (JDilution.class.equals(pClass)) {
+        if (TethysDilution.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.createDilutionFromDouble(pSource));
         }
-        if (JRatio.class.equals(pClass)) {
+        if (TethysRatio.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.createRatioFromDouble(pSource));
         }
@@ -380,11 +380,11 @@ public class JDataFormatter {
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
                             final Class<T> pClass) {
-        if (JPrice.class.equals(pClass)) {
+        if (TethysPrice.class.equals(pClass)) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));
         }
-        if (JMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClass)) {
             /* Parse the money */
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }

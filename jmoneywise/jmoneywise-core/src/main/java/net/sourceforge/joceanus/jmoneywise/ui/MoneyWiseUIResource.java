@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise UI Fields.
  */
-public enum MoneyWiseUIResource implements ResourceId {
+public enum MoneyWiseUIResource implements TethysResourceId {
     /**
      * Frozen ToolTip.
      */
@@ -447,7 +447,7 @@ public enum MoneyWiseUIResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseUIResource.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseUIResource.class.getCanonicalName());
 
     /**
      * The Id.
@@ -494,7 +494,7 @@ public enum MoneyWiseUIResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForColumnSet(final AnalysisColumnSet pValue) {
+    protected static TethysResourceId getKeyForColumnSet(final AnalysisColumnSet pValue) {
         switch (pValue) {
             case BALANCE:
                 return COLUMNSET_BALANCE;
@@ -511,7 +511,7 @@ public enum MoneyWiseUIResource implements ResourceId {
             case ALL:
                 return COLUMNSET_ALL;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

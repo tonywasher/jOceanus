@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the
@@ -109,11 +109,11 @@ public class DataKey
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     @SuppressWarnings("unchecked")
     private DataKey(final DataKeyList pList,
-                    final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+                    final DataValues<CryptographyDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -192,11 +192,11 @@ public class DataKey
      * @param pList the list to add to
      * @param pKeySet the KeySet to which this key belongs
      * @param pKeyType the Key type of the new key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DataKey(final DataKeyList pList,
                     final DataKeySet pKeySet,
-                    final GordianSymKeyType pKeyType) throws JOceanusException {
+                    final GordianSymKeyType pKeyType) throws OceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -228,7 +228,7 @@ public class DataKey
             pKeySet.registerDataKey(this);
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
@@ -239,11 +239,11 @@ public class DataKey
      * @param pList the list to add to
      * @param pKeySet the ControlKey to which this key belongs
      * @param pDataKey the DataKey to clone
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private DataKey(final DataKeyList pList,
                     final DataKeySet pKeySet,
-                    final DataKey pDataKey) throws JOceanusException {
+                    final DataKey pDataKey) throws OceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -458,7 +458,7 @@ public class DataKey
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
@@ -473,10 +473,10 @@ public class DataKey
      * @param pPrimeHash this is the prime hash
      * @param pHash the new keySetHash
      * @return were there changes? true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected boolean updateKeySetHash(final Boolean pPrimeHash,
-                                       final GordianKeySetHash pHash) throws JOceanusException {
+                                       final GordianKeySetHash pHash) throws OceanusException {
         /* Determine whether we need to update */
         if (!pPrimeHash.equals(isHashPrime())) {
             /* Store the current detail into history */
@@ -561,7 +561,7 @@ public class DataKey
         }
 
         @Override
-        public DataKeyList deriveList(final ListStyle pStyle) throws JOceanusException {
+        public DataKeyList deriveList(final ListStyle pStyle) throws OceanusException {
             return (DataKeyList) super.deriveList(pStyle);
         }
 
@@ -590,7 +590,7 @@ public class DataKey
         }
 
         @Override
-        public DataKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        public DataKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the dataKey */
             DataKey myKey = new DataKey(this, pValues);
 
@@ -612,10 +612,10 @@ public class DataKey
          * @param pKeySet the dataKeySet
          * @param pKeyType the KeyType
          * @return the new DataKey
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public DataKey createNewKey(final DataKeySet pKeySet,
-                                    final GordianSymKeyType pKeyType) throws JOceanusException {
+                                    final GordianSymKeyType pKeyType) throws OceanusException {
             /* Create the key */
             DataKey myKey = new DataKey(this, pKeySet, pKeyType);
 
@@ -629,10 +629,10 @@ public class DataKey
          * @param pKeySet the KeySet
          * @param pDataKey the DataKey
          * @return the new DataKey
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public DataKey cloneDataKey(final DataKeySet pKeySet,
-                                    final DataKey pDataKey) throws JOceanusException {
+                                    final DataKey pDataKey) throws OceanusException {
             /* Build data values */
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKey.OBJECT_NAME);
             myValues.addValue(DataKey.FIELD_ID, pDataKey.getId());
@@ -648,7 +648,7 @@ public class DataKey
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Just sort the list */
             reSort();
         }

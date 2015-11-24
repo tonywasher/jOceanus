@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Portfolio class.
@@ -158,10 +158,10 @@ public class Portfolio
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Portfolio(final PortfolioList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -595,9 +595,9 @@ public class Portfolio
     /**
      * Set defaults.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setParent(getDefaultParent(pUpdateSet));
@@ -654,7 +654,7 @@ public class Portfolio
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Base details */
         super.resolveDataSetLinks();
 
@@ -672,7 +672,7 @@ public class Portfolio
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent/holding within list */
         PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -681,9 +681,9 @@ public class Portfolio
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws JOceanusException {
+    public void setParent(final Payee pParent) throws OceanusException {
         setValueParent(pParent);
     }
 
@@ -706,72 +706,72 @@ public class Portfolio
     /**
      * Set a new WebSite.
      * @param pWebSite the new webSite
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setWebSite(final char[] pWebSite) throws JOceanusException {
+    public void setWebSite(final char[] pWebSite) throws OceanusException {
         setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
     }
 
     /**
      * Set a new CustNo.
      * @param pCustNo the new custNo
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setCustNo(final char[] pCustNo) throws JOceanusException {
+    public void setCustNo(final char[] pCustNo) throws OceanusException {
         setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
     }
 
     /**
      * Set a new UserId.
      * @param pUserId the new userId
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setUserId(final char[] pUserId) throws JOceanusException {
+    public void setUserId(final char[] pUserId) throws OceanusException {
         setInfoSetValue(AccountInfoClass.USERID, pUserId);
     }
 
     /**
      * Set a new Password.
      * @param pPassword the new password
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setPassword(final char[] pPassword) throws JOceanusException {
+    public void setPassword(final char[] pPassword) throws OceanusException {
         setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
     }
 
     /**
      * Set a new SortCode.
      * @param pSortCode the new sort code
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setSortCode(final char[] pSortCode) throws JOceanusException {
+    public void setSortCode(final char[] pSortCode) throws OceanusException {
         setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
     }
 
     /**
      * Set a new Account.
      * @param pAccount the new account
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAccount(final char[] pAccount) throws JOceanusException {
+    public void setAccount(final char[] pAccount) throws OceanusException {
         setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setReference(final char[] pReference) throws JOceanusException {
+    public void setReference(final char[] pReference) throws OceanusException {
         setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
@@ -779,10 +779,10 @@ public class Portfolio
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -1027,9 +1027,9 @@ public class Portfolio
          * Derive Edit list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             PortfolioList myList = getEmptyList(ListStyle.EDIT);
             DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
@@ -1112,7 +1112,7 @@ public class Portfolio
         }
 
         @Override
-        public Portfolio addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Portfolio addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the portfolio */
             Portfolio myPortfolio = new Portfolio(this, pValues);
 

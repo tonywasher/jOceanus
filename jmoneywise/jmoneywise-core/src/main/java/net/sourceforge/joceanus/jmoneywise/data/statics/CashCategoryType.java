@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * AccountCategoryType data type.
@@ -66,10 +66,10 @@ public class CashCategoryType
      * Basic constructor.
      * @param pList The list to associate the Cash Category Type with
      * @param pName Name of Cash Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private CashCategoryType(final CashCategoryTypeList pList,
-                             final String pName) throws JOceanusException {
+                             final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class CashCategoryType
      * Basic constructor.
      * @param pList The list to associate the Cash Category Type with
      * @param pClass Class of Cash Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private CashCategoryType(final CashCategoryTypeList pList,
-                             final CashCategoryClass pClass) throws JOceanusException {
+                             final CashCategoryClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class CashCategoryType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private CashCategoryType(final CashCategoryTypeList pList,
-                             final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                             final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -208,9 +208,9 @@ public class CashCategoryType
         /**
          * Add a CashCategoryType to the list.
          * @param pCatType the Name of the cash category type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pCatType) throws JOceanusException {
+        public void addBasicItem(final String pCatType) throws OceanusException {
             /* Create a new Cash Category Type */
             CashCategoryType myCashType = new CashCategoryType(this, pCatType);
 
@@ -225,7 +225,7 @@ public class CashCategoryType
         }
 
         @Override
-        public CashCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public CashCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             CashCategoryType myType = new CashCategoryType(this, pValues);
 
@@ -243,7 +243,7 @@ public class CashCategoryType
         }
 
         @Override
-        protected CashCategoryType newItem(final CashCategoryClass pClass) throws JOceanusException {
+        protected CashCategoryType newItem(final CashCategoryClass pClass) throws OceanusException {
             /* Create the type */
             CashCategoryType myType = new CashCategoryType(this, pClass);
 

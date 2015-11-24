@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
@@ -139,11 +139,11 @@ public class Backup {
      * @param pRepository the repository directory
      * @param pSecurity the secure manager
      * @param pZipFile the zipFile to load
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void loadRepository(final File pRepository,
                                final GordianHashManager pSecurity,
-                               final File pZipFile) throws JOceanusException {
+                               final File pZipFile) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Open file */
@@ -220,11 +220,11 @@ public class Backup {
      * @param pManager the secure manager
      * @param pRepository the repository directory
      * @param pBackupDir the backup directory
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void backUpRepository(final GordianHashManager pManager,
                                   final File pRepository,
-                                  final File pBackupDir) throws JOceanusException {
+                                  final File pBackupDir) throws OceanusException {
         /* Access the name of the repository */
         String myName = pRepository.getName();
         File myEntryName = new File(DATA_NAME);
@@ -315,9 +315,9 @@ public class Backup {
     /**
      * Backup repositories.
      * @param pManager the secure manager
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void backUpRepositories(final GordianHashManager pManager) throws JOceanusException {
+    public void backUpRepositories(final GordianHashManager pManager) throws OceanusException {
         /* Install an event handler */
         theAdminClient.setEventHandler(new SubversionHandler());
 

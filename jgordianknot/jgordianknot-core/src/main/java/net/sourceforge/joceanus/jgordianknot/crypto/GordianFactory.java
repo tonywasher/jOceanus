@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for Factory.
@@ -87,9 +87,9 @@ public abstract class GordianFactory {
     /**
      * Constructor.
      * @param pParameters the parameters
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianFactory(final GordianParameters pParameters) throws JOceanusException {
+    protected GordianFactory(final GordianParameters pParameters) throws OceanusException {
         /* Store parameters */
         theParameters = pParameters;
         isRestricted = theParameters.useRestricted();
@@ -97,9 +97,9 @@ public abstract class GordianFactory {
         /* Calculate personalisation bytes */
         String myPhrase = theParameters.getSecurityPhrase();
         GordianDigest myDigest = createDigest(getDefaultDigest());
-        myDigest.update(DataConverter.stringToByteArray(BASE_PERSONAL));
+        myDigest.update(TethysDataConverter.stringToByteArray(BASE_PERSONAL));
         if (myPhrase != null) {
-            myDigest.update(DataConverter.stringToByteArray(myPhrase));
+            myDigest.update(TethysDataConverter.stringToByteArray(myPhrase));
         }
         thePersonalisation = myDigest.finish();
 
@@ -204,9 +204,9 @@ public abstract class GordianFactory {
      * @param <X> the key class
      * @param pKeyType the keyType
      * @return the keyLength
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public <X> String getKeyAlgorithm(final X pKeyType) throws JOceanusException {
+    public <X> String getKeyAlgorithm(final X pKeyType) throws OceanusException {
         return pKeyType.toString();
     }
 
@@ -222,9 +222,9 @@ public abstract class GordianFactory {
      * Generate a keySetHash for the given password.
      * @param pPassword the password
      * @return the Password hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianKeySetHash generateKeySetHash(final char[] pPassword) throws JOceanusException {
+    public GordianKeySetHash generateKeySetHash(final char[] pPassword) throws OceanusException {
         return new GordianKeySetHash(this, pPassword);
     }
 
@@ -233,11 +233,11 @@ public abstract class GordianFactory {
      * @param pHashBytes the hash bytes
      * @param pPassword the password
      * @return the Password hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      * @throws GordianBadCredentialsException if password does not match
      */
     public GordianKeySetHash deriveKeySetHash(final byte[] pHashBytes,
-                                              final char[] pPassword) throws JOceanusException {
+                                              final char[] pPassword) throws OceanusException {
         return new GordianKeySetHash(this, pHashBytes, pPassword);
     }
 
@@ -245,16 +245,16 @@ public abstract class GordianFactory {
      * create SecureRandom.
      * @param pRandomType the SP800 RandomType
      * @return the new SecureRandom
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract SecureRandom createRandom(final GordianSP800Type pRandomType) throws JOceanusException;
+    public abstract SecureRandom createRandom(final GordianSP800Type pRandomType) throws OceanusException;
 
     /**
      * generate random GordianDigest.
      * @return the new Digest
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianDigest generateRandomDigest() throws JOceanusException {
+    public GordianDigest generateRandomDigest() throws OceanusException {
         GordianDigestType myType = theIdManager.generateRandomDigestType(supportedDigests());
         return createDigest(myType);
     }
@@ -263,9 +263,9 @@ public abstract class GordianFactory {
      * create GordianDigest.
      * @param pDigestType the DigestType
      * @return the new Digest
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract GordianDigest createDigest(final GordianDigestType pDigestType) throws JOceanusException;
+    public abstract GordianDigest createDigest(final GordianDigestType pDigestType) throws OceanusException;
 
     /**
      * Obtain predicate for supported digestTypes.
@@ -276,9 +276,9 @@ public abstract class GordianFactory {
     /**
      * generate random GordianMac.
      * @return the new MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianMac generateRandomMac() throws JOceanusException {
+    public GordianMac generateRandomMac() throws OceanusException {
         /* Determine a random specification */
         GordianMacSpec mySpec = generateRandomMacSpec();
 
@@ -317,9 +317,9 @@ public abstract class GordianFactory {
      * create GordianMac.
      * @param pMacSpec the MacSpec
      * @return the new MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract GordianMac createMac(final GordianMacSpec pMacSpec) throws JOceanusException;
+    public abstract GordianMac createMac(final GordianMacSpec pMacSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported macTypes.
@@ -332,16 +332,16 @@ public abstract class GordianFactory {
      * @param <T> the keyClass
      * @param pKeyType the KeyType
      * @return the new KeyGenerator
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract <T> GordianKeyGenerator<T> getKeyGenerator(final T pKeyType) throws JOceanusException;
+    public abstract <T> GordianKeyGenerator<T> getKeyGenerator(final T pKeyType) throws OceanusException;
 
     /**
      * generate random SymKey.
      * @return the new key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianKey<GordianSymKeyType> generateRandomSymKey() throws JOceanusException {
+    public GordianKey<GordianSymKeyType> generateRandomSymKey() throws OceanusException {
         /* Determine a random keyType */
         GordianSymKeyType myType = theIdManager.generateRandomSymKeyType(supportedSymKeys());
 
@@ -353,9 +353,9 @@ public abstract class GordianFactory {
     /**
      * generate random SymKeyList.
      * @return the list of keys
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public List<GordianKey<GordianSymKeyType>> generateRandomSymKeyList() throws JOceanusException {
+    public List<GordianKey<GordianSymKeyType>> generateRandomSymKeyList() throws OceanusException {
         /* Determine a random set of keyType */
         int myCount = getNumCipherSteps();
         GordianSymKeyType[] myTypes = theIdManager.generateRandomSymKeyTypes(myCount, supportedSymKeys());
@@ -379,11 +379,11 @@ public abstract class GordianFactory {
      * @param pMode the cipher mode
      * @param pPadding use padding true/false
      * @return the new Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract GordianCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                                         final GordianCipherMode pMode,
-                                                                        final boolean pPadding) throws JOceanusException;
+                                                                        final boolean pPadding) throws OceanusException;
 
     /**
      * Obtain predicate for supported SymKeyTypes.
@@ -408,9 +408,9 @@ public abstract class GordianFactory {
     /**
      * generate random StreamKey.
      * @return the new key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws JOceanusException {
+    public GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws OceanusException {
         /* Determine a random keyType */
         GordianStreamKeyType myType = theIdManager.generateRandomStreamKeyType(supportedStreamKeys());
 
@@ -423,9 +423,9 @@ public abstract class GordianFactory {
      * create GordianStreamCipher.
      * @param pKeyType the KeyType
      * @return the new Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract GordianCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws JOceanusException;
+    public abstract GordianCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws OceanusException;
 
     /**
      * Obtain predicate for supported StreamKeyTypes.
@@ -437,9 +437,9 @@ public abstract class GordianFactory {
      * create GordianWrapCipher.
      * @param pKeyType the KeyType
      * @return the new Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws JOceanusException;
+    public abstract GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException;
 
     /**
      * Build Invalid text string.

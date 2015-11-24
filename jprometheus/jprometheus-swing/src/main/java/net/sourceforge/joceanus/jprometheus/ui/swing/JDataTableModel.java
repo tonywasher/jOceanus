@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter;
-import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSwingTableFilterModel;
 
 /**
  * Data Table model class.
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TableFilter.TableFilterModel;
  */
 public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends AbstractTableModel
-        implements PopulateFieldData, TableFilterModel<T> {
+        implements PopulateFieldData, TethysSwingTableFilterModel<T> {
     /**
      * Serial Id.
      */
@@ -76,7 +76,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     /**
      * The table filter.
      */
-    private transient TableFilter<T> theFilter = null;
+    private transient TethysSwingTableFilter<T> theFilter = null;
 
     /**
      * Constructor.
@@ -92,7 +92,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * Obtain the table filter.
      * @return the filter
      */
-    public TableFilter<T> getFilter() {
+    public TethysSwingTableFilter<T> getFilter() {
         return theFilter;
     }
 
@@ -212,12 +212,12 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
             setItemValue(myItem, pColIndex, obj);
 
             /* Handle Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Reset values */
             myItem.popHistory();
 
             /* Build the error */
-            JOceanusException myError = new JPrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
+            OceanusException myError = new JPrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
 
             /* Show the error */
             theTable.setError(myError);
@@ -240,18 +240,18 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * @param pItem the item
      * @param pColIndex the column
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setItemValue(final T pItem,
                              final int pColIndex,
-                             final Object pValue) throws JOceanusException {
+                             final Object pValue) throws OceanusException {
     }
 
     /**
      * Register the data filter.
      * @param pFilter the filter
      */
-    public void registerFilter(final TableFilter<T> pFilter) {
+    public void registerFilter(final TethysSwingTableFilter<T> pFilter) {
         theFilter = pFilter;
     }
 

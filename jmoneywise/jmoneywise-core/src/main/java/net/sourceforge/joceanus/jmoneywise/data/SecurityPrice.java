@@ -49,11 +49,11 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * SecurityPrice data type.
@@ -121,10 +121,10 @@ public class SecurityPrice
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private SecurityPrice(final SecurityPriceList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -135,10 +135,10 @@ public class SecurityPrice
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDateDay((String) myValue));
             }
 
@@ -152,19 +152,19 @@ public class SecurityPrice
 
             /* Store the Price */
             myValue = pValues.getValue(FIELD_PRICE);
-            if (myValue instanceof JPrice) {
-                setValuePrice((JPrice) myValue);
+            if (myValue instanceof TethysPrice) {
+                setValuePrice((TethysPrice) myValue);
             } else if (myValue instanceof byte[]) {
                 setValuePrice((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValuePrice(myString);
-                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
+                setValuePrice(myFormatter.parseValue(myString, TethysPrice.class));
             }
 
             /* Catch Exceptions */
         } catch (IllegalArgumentException
-                | JOceanusException e) {
+                | OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -224,7 +224,7 @@ public class SecurityPrice
      * Obtain Price.
      * @return the price
      */
-    public JPrice getPrice() {
+    public TethysPrice getPrice() {
         return getPrice(getValueSet());
     }
 
@@ -248,7 +248,7 @@ public class SecurityPrice
      * Obtain Date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return getDate(getValueSet());
     }
 
@@ -296,8 +296,8 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static JDateDay getDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATE, JDateDay.class);
+    public static TethysDate getDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
     /**
@@ -305,8 +305,8 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Price
      */
-    public static JPrice getPrice(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, JPrice.class);
+    public static TethysPrice getPrice(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, TethysPrice.class);
     }
 
     /**
@@ -354,27 +354,27 @@ public class SecurityPrice
     /**
      * Set the price.
      * @param pValue the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValuePrice(final JPrice pValue) throws JOceanusException {
+    private void setValuePrice(final TethysPrice pValue) throws OceanusException {
         setEncryptedValue(FIELD_PRICE, pValue);
     }
 
     /**
      * Set the encrypted price.
      * @param pBytes the encrypted price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValuePrice(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_PRICE, pBytes, JPrice.class);
+    private void setValuePrice(final byte[] pBytes) throws OceanusException {
+        setEncryptedValue(FIELD_PRICE, pBytes, TethysPrice.class);
     }
 
     /**
      * Set the price.
      * @param pValue the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValuePrice(final String pValue) throws JOceanusException {
+    private void setValuePrice(final String pValue) throws OceanusException {
         getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
@@ -390,7 +390,7 @@ public class SecurityPrice
      * Set the date.
      * @param pValue the date
      */
-    private void setValueDate(final JDateDay pValue) {
+    private void setValueDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
     }
 
@@ -445,7 +445,7 @@ public class SecurityPrice
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -457,9 +457,9 @@ public class SecurityPrice
     /**
      * Resolve links in an updateSet.
      * @param pUpdateSet the update Set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         resolveDataLink(FIELD_SECURITY, mySecurities);
@@ -471,8 +471,8 @@ public class SecurityPrice
     @Override
     public void validate() {
         Security mySecurity = getSecurity();
-        JDateDay myDate = getDate();
-        JPrice myPrice = getPrice();
+        TethysDate myDate = getDate();
+        TethysPrice myPrice = getPrice();
         SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
         MoneyWiseData mySet = getDataSet();
 
@@ -534,9 +534,9 @@ public class SecurityPrice
     /**
      * Set a new price.
      * @param pPrice the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setPrice(final JPrice pPrice) throws JOceanusException {
+    public void setPrice(final TethysPrice pPrice) throws OceanusException {
         setValuePrice(pPrice);
     }
 
@@ -544,7 +544,7 @@ public class SecurityPrice
      * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(final JDateDay pDate) {
+    public void setDate(final TethysDate pDate) {
         setValueDate(pDate);
     }
 
@@ -711,7 +711,7 @@ public class SecurityPrice
         }
 
         @Override
-        public SecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public SecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the price */
             SecurityPrice myPrice = new SecurityPrice(this, pValues);
 
@@ -754,7 +754,7 @@ public class SecurityPrice
         /**
          * Map of Maps.
          */
-        private final Map<Security, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<Security, Map<TethysDate, Integer>> theMapOfMaps;
 
         /**
          * Map of Prices.
@@ -766,7 +766,7 @@ public class SecurityPrice
          */
         public SecurityPriceDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Security, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<Security, Map<TethysDate, Integer>>();
             theMapOfPrices = new HashMap<Security, PriceList>();
         }
 
@@ -809,14 +809,14 @@ public class SecurityPrice
             }
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(mySecurity);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap == null) {
-                myMap = new HashMap<JDateDay, Integer>();
+                myMap = new HashMap<TethysDate, Integer>();
                 theMapOfMaps.put(mySecurity, myMap);
             }
 
             /* Adjust price count */
-            JDateDay myDate = pItem.getDate();
+            TethysDate myDate = pItem.getDate();
             Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
@@ -843,10 +843,10 @@ public class SecurityPrice
         public boolean validPriceCount(final SecurityPrice pItem) {
             /* Access the Details */
             Security mySecurity = pItem.getSecurity();
-            JDateDay myDate = pItem.getDate();
+            TethysDate myDate = pItem.getDate();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(mySecurity);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
@@ -861,9 +861,9 @@ public class SecurityPrice
          * @return true/false
          */
         public boolean availableDate(final Security pSecurity,
-                                     final JDateDay pDate) {
+                                     final TethysDate pDate) {
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pSecurity);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(pSecurity);
             return myMap != null
                                 ? myMap.get(pDate) == null
                                 : true;
@@ -875,8 +875,8 @@ public class SecurityPrice
          * @param pDate the date
          * @return the latest price for the date.
          */
-        public JPrice getPriceForDate(final AssetBase<?> pSecurity,
-                                      final JDateDay pDate) {
+        public TethysPrice getPriceForDate(final AssetBase<?> pSecurity,
+                                      final TethysDate pDate) {
             /* Access as security */
             Security mySecurity = Security.class.cast(pSecurity);
 
@@ -897,7 +897,7 @@ public class SecurityPrice
 
             /* return single unit price */
             Currency myCurrency = mySecurity.getCurrency();
-            return JPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
+            return TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
         }
 
         /**
@@ -906,12 +906,12 @@ public class SecurityPrice
          * @param pRange the date range
          * @return the two deep array of prices for the range.
          */
-        public JPrice[] getPricesForRange(final Security pSecurity,
-                                          final JDateDayRange pRange) {
+        public TethysPrice[] getPricesForRange(final Security pSecurity,
+                                          final TethysDateRange pRange) {
             /* Set price */
             Currency myCurrency = pSecurity.getCurrency();
-            JPrice myFirst = JPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
-            JPrice myLatest = null;
+            TethysPrice myFirst = TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
+            TethysPrice myLatest = null;
 
             /* Access list for security */
             PriceList myList = theMapOfPrices.get(pSecurity);
@@ -940,7 +940,7 @@ public class SecurityPrice
             }
 
             /* Return the prices */
-            return new JPrice[]
+            return new TethysPrice[]
             { myFirst, myLatest };
         }
 

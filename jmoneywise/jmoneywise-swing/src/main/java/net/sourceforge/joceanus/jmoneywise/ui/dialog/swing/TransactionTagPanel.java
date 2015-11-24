@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a TransactionTag.
@@ -85,7 +85,7 @@ public class TransactionTagPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionTag.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(TransactionTag.FIELD_DESC, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Layout the panel */
         layoutPanel();
@@ -112,7 +112,7 @@ public class TransactionTagPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         TransactionTag myTag = getItem();

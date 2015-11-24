@@ -30,8 +30,8 @@ import java.net.URLEncoder;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
 import net.sourceforge.joceanus.jmetis.JMetisIOException;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -113,9 +113,9 @@ public abstract class DataClient
     /**
      * Constructor.
      * @param pBaseAddress the base address for the client.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected DataClient(final String pBaseAddress) throws JOceanusException {
+    protected DataClient(final String pBaseAddress) throws OceanusException {
         this(pBaseAddress, null);
     }
 
@@ -123,17 +123,17 @@ public abstract class DataClient
      * Constructor.
      * @param pBaseAddress the base address for the client.
      * @param pAuth the auth string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected DataClient(final String pBaseAddress,
-                         final String pAuth) throws JOceanusException {
+                         final String pAuth) throws OceanusException {
         theBaseAddress = pBaseAddress;
         theClient = HttpClients.createDefault();
 
         /* If we have an authorisation string */
         if (pAuth != null) {
-            byte[] myBytes = DataConverter.stringToByteArray(pAuth);
-            theAuth = HEADER_AUTH_BASIC + DataConverter.byteArrayToBase64(myBytes);
+            byte[] myBytes = TethysDataConverter.stringToByteArray(pAuth);
+            theAuth = HEADER_AUTH_BASIC + TethysDataConverter.byteArrayToBase64(myBytes);
         } else {
             theAuth = null;
         }
@@ -154,9 +154,9 @@ public abstract class DataClient
      * Obtain query results from explicit object as JSON object.
      * @param pURL the URL
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSONObject getAbsoluteJSONObject(final String pURL) throws JOceanusException {
+    protected JSONObject getAbsoluteJSONObject(final String pURL) throws OceanusException {
         JSONTokener myTokener = performJSONQuery(pURL);
         return new JSONObject(myTokener);
     }
@@ -165,9 +165,9 @@ public abstract class DataClient
      * Obtain query results from explicit object as JSON array.
      * @param pURL the URL
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSONArray getAbsoluteJSONArray(final String pURL) throws JOceanusException {
+    protected JSONArray getAbsoluteJSONArray(final String pURL) throws OceanusException {
         JSONTokener myTokener = performJSONQuery(pURL);
         return new JSONArray(myTokener);
     }
@@ -176,9 +176,9 @@ public abstract class DataClient
      * Obtain query results as JSON object.
      * @param pHeader the header string
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSONObject getJSONObject(final String pHeader) throws JOceanusException {
+    protected JSONObject getJSONObject(final String pHeader) throws OceanusException {
         return queryJSONObjectWithHeaderAndTrailer(pHeader, null, null);
     }
 
@@ -186,9 +186,9 @@ public abstract class DataClient
      * Obtain query results as JSON object.
      * @param pQuery the query string
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSONObject queryJSONObject(final String pQuery) throws JOceanusException {
+    protected JSONObject queryJSONObject(final String pQuery) throws OceanusException {
         return queryJSONObjectWithHeaderAndTrailer(null, pQuery, null);
     }
 
@@ -197,10 +197,10 @@ public abstract class DataClient
      * @param pHeader the leading details
      * @param pQuery the query string
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JSONObject queryJSONObjectWithHeader(final String pHeader,
-                                                   final String pQuery) throws JOceanusException {
+                                                   final String pQuery) throws OceanusException {
         return queryJSONObjectWithHeaderAndTrailer(pHeader, pQuery, null);
     }
 
@@ -209,10 +209,10 @@ public abstract class DataClient
      * @param pQuery the query string
      * @param pTrailer the trailing details
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JSONObject queryJSONObjectWithTrailer(final String pQuery,
-                                                    final String pTrailer) throws JOceanusException {
+                                                    final String pTrailer) throws OceanusException {
         return queryJSONObjectWithHeaderAndTrailer(null, pQuery, pTrailer);
     }
 
@@ -222,11 +222,11 @@ public abstract class DataClient
      * @param pQuery the query string
      * @param pTrailer the trailing details
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JSONObject queryJSONObjectWithHeaderAndTrailer(final String pHeader,
                                                              final String pQuery,
-                                                             final String pTrailer) throws JOceanusException {
+                                                             final String pTrailer) throws OceanusException {
         /* Parse result as object */
         JSONTokener myTokener = performJSONQuery(pHeader, pQuery, pTrailer);
         return new JSONObject(myTokener);
@@ -236,9 +236,9 @@ public abstract class DataClient
      * Obtain query results as JSON array.
      * @param pHeader the header string
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSONArray getJSONArray(final String pHeader) throws JOceanusException {
+    protected JSONArray getJSONArray(final String pHeader) throws OceanusException {
         return queryJSONArrayWithHeaderAndTrailer(pHeader, null, null);
     }
 
@@ -246,9 +246,9 @@ public abstract class DataClient
      * Obtain query results as JSON array.
      * @param pQuery the query string
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JSONArray queryJSONArray(final String pQuery) throws JOceanusException {
+    protected JSONArray queryJSONArray(final String pQuery) throws OceanusException {
         return queryJSONArrayWithHeaderAndTrailer(null, pQuery, null);
     }
 
@@ -257,10 +257,10 @@ public abstract class DataClient
      * @param pHeader the leading details
      * @param pQuery the query string
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JSONArray queryJSONArrayWithHeader(final String pHeader,
-                                                 final String pQuery) throws JOceanusException {
+                                                 final String pQuery) throws OceanusException {
         return queryJSONArrayWithHeaderAndTrailer(pHeader, pQuery, null);
     }
 
@@ -269,10 +269,10 @@ public abstract class DataClient
      * @param pQuery the query string
      * @param pTrailer the trailing details
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JSONArray queryJSONArrayWithTrailer(final String pQuery,
-                                                  final String pTrailer) throws JOceanusException {
+                                                  final String pTrailer) throws OceanusException {
         return queryJSONArrayWithHeaderAndTrailer(null, pQuery, pTrailer);
     }
 
@@ -282,11 +282,11 @@ public abstract class DataClient
      * @param pQuery the query string
      * @param pTrailer the trailing details
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JSONArray queryJSONArrayWithHeaderAndTrailer(final String pHeader,
                                                            final String pQuery,
-                                                           final String pTrailer) throws JOceanusException {
+                                                           final String pTrailer) throws OceanusException {
         /* Parse result as array */
         JSONTokener myTokener = performJSONQuery(pHeader, pQuery, pTrailer);
         return new JSONArray(myTokener);
@@ -298,11 +298,11 @@ public abstract class DataClient
      * @param pQuery the query string
      * @param pTrailer the trailing details
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private JSONTokener performJSONQuery(final String pHeader,
                                          final String pQuery,
-                                         final String pTrailer) throws JOceanusException {
+                                         final String pTrailer) throws OceanusException {
         /* Build the correct URL */
         String myURL = buildURL(pHeader, pQuery, pTrailer);
 
@@ -314,9 +314,9 @@ public abstract class DataClient
      * Obtain query results as JSON object.
      * @param pURL the location to be queried
      * @return the query results
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private JSONTokener performJSONQuery(final String pURL) throws JOceanusException {
+    private JSONTokener performJSONQuery(final String pURL) throws OceanusException {
         /* Create the get request */
         HttpGet myGet = new HttpGet(pURL);
         if (theAuth != null) {
@@ -363,11 +363,11 @@ public abstract class DataClient
      * @param pQuery the query string
      * @param pTrailer the trailing details
      * @return the requested URL
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private String buildURL(final String pHeader,
                             final String pQuery,
-                            final String pTrailer) throws JOceanusException {
+                            final String pTrailer) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Build up the URL */

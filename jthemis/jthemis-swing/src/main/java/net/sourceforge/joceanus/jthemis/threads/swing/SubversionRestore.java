@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
@@ -71,7 +71,7 @@ public class SubversionRestore
     }
 
     @Override
-    public Void doInBackground() throws JOceanusException {
+    public Void doInBackground() throws OceanusException {
         Backup myAccess = null;
 
         /* Access the BackUp preferences */

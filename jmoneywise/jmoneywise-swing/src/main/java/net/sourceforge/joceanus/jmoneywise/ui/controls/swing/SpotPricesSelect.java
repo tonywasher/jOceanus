@@ -50,18 +50,18 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingArrowIcon;
 
 /**
  * SpotPrice selection panel.
@@ -69,7 +69,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class SpotPricesSelect
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -113,7 +113,7 @@ public class SpotPricesSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The data view.
@@ -123,7 +123,7 @@ public class SpotPricesSelect
     /**
      * The date button.
      */
-    private final JDateDayButton theDateButton;
+    private final TethysSwingDateButton theDateButton;
 
     /**
      * The showClosed checkBox.
@@ -184,7 +184,7 @@ public class SpotPricesSelect
         theView = pView;
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create Labels */
         JLabel myDate = new JLabel(NLS_DATE);
@@ -195,14 +195,14 @@ public class SpotPricesSelect
         theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
-        theDateButton = new JDateDayButton();
+        theDateButton = new TethysSwingDateButton();
 
         /* Create the Download Button */
         theDownloadButton = MoneyWiseIcons.getDownloadButton();
 
         /* Create the Buttons */
-        theNext = new JButton(ArrowIcon.RIGHT);
-        thePrev = new JButton(ArrowIcon.LEFT);
+        theNext = new JButton(TethysSwingArrowIcon.RIGHT);
+        thePrev = new JButton(TethysSwingArrowIcon.LEFT);
         theNext.setToolTipText(NLS_NEXTTIP);
         thePrev.setToolTipText(NLS_PREVTIP);
 
@@ -247,7 +247,7 @@ public class SpotPricesSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -255,7 +255,7 @@ public class SpotPricesSelect
      * Get the selected date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theState.getDate();
     }
 
@@ -283,7 +283,7 @@ public class SpotPricesSelect
      */
     public final void refreshData() {
         /* Access the data */
-        JDateDayRange myRange = theView.getRange();
+        TethysDateRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
@@ -335,13 +335,13 @@ public class SpotPricesSelect
      * Set the range for the date box.
      * @param pRange the Range to set
      */
-    public final void setRange(final JDateDayRange pRange) {
-        JDateDay myStart = (pRange == null)
+    public final void setRange(final TethysDateRange pRange) {
+        TethysDate myStart = (pRange == null)
+                                              ? null
+                                              : pRange.getStart();
+        TethysDate myEnd = (pRange == null)
                                             ? null
-                                            : pRange.getStart();
-        JDateDay myEnd = (pRange == null)
-                                          ? null
-                                          : pRange.getEnd();
+                                            : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -381,8 +381,8 @@ public class SpotPricesSelect
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
-    public void setAdjacent(final JDateDay pPrev,
-                            final JDateDay pNext) {
+    public void setAdjacent(final TethysDate pPrev,
+                            final TethysDate pNext) {
         /* Record the dates */
         theState.setAdjacent(pPrev, pNext);
     }
@@ -391,7 +391,7 @@ public class SpotPricesSelect
      * Listener class.
      */
     private final class SpotPricesListener
-            implements ActionListener, JOceanusChangeEventListener, PropertyChangeListener, ItemListener {
+            implements ActionListener, TethysChangeEventListener, PropertyChangeListener, ItemListener {
         /**
          * The portfolio menu builder.
          */
@@ -400,7 +400,7 @@ public class SpotPricesSelect
         /**
          * PortfolioMenu Registration.
          */
-        private final JOceanusChangeRegistration thePortMenuReg;
+        private final TethysChangeRegistration thePortMenuReg;
 
         /**
          * Constructor.
@@ -411,7 +411,7 @@ public class SpotPricesSelect
             thePortMenuReg = thePortMenuBuilder.getEventRegistrar().addChangeListener(this);
 
             /* Add swing listeners */
-            theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATEDAY, this);
+            theDateButton.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, this);
             theShowClosed.addItemListener(this);
             theNext.addActionListener(this);
             thePrev.addActionListener(this);
@@ -478,7 +478,7 @@ public class SpotPricesSelect
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the PortfolioMenu */
             if (thePortMenuReg.isRelevant(pEvent)) {
                 buildPortfolioMenu();
@@ -528,23 +528,23 @@ public class SpotPricesSelect
         /**
          * Selected date.
          */
-        private JDateDay theDate = null;
+        private TethysDate theDate = null;
 
         /**
          * Next date.
          */
-        private JDateDay theNextDate = null;
+        private TethysDate theNextDate = null;
 
         /**
          * Previous date.
          */
-        private JDateDay thePrevDate = null;
+        private TethysDate thePrevDate = null;
 
         /**
          * Constructor.
          */
         private SpotPricesState() {
-            theDate = new JDateDay();
+            theDate = new TethysDate();
         }
 
         /**
@@ -553,12 +553,12 @@ public class SpotPricesSelect
          */
         private SpotPricesState(final SpotPricesState pState) {
             thePortfolio = pState.getPortfolio();
-            theDate = new JDateDay(pState.getDate());
+            theDate = new TethysDate(pState.getDate());
             if (pState.getNextDate() != null) {
-                theNextDate = new JDateDay(pState.getNextDate());
+                theNextDate = new TethysDate(pState.getNextDate());
             }
             if (pState.getPrevDate() != null) {
-                thePrevDate = new JDateDay(pState.getPrevDate());
+                thePrevDate = new TethysDate(pState.getPrevDate());
             }
         }
 
@@ -574,7 +574,7 @@ public class SpotPricesSelect
          * Get the selected date.
          * @return the date
          */
-        private JDateDay getDate() {
+        private TethysDate getDate() {
             return theDate;
         }
 
@@ -582,7 +582,7 @@ public class SpotPricesSelect
          * Get the next date.
          * @return the date
          */
-        private JDateDay getNextDate() {
+        private TethysDate getNextDate() {
             return theNextDate;
         }
 
@@ -590,7 +590,7 @@ public class SpotPricesSelect
          * Get the previous date.
          * @return the date
          */
-        private JDateDay getPrevDate() {
+        private TethysDate getPrevDate() {
             return thePrevDate;
         }
 
@@ -613,9 +613,9 @@ public class SpotPricesSelect
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final JDateDayButton pButton) {
+        private boolean setDate(final TethysSwingDateButton pButton) {
             /* Adjust the date and build the new range */
-            JDateDay myDate = new JDateDay(pButton.getSelectedDate());
+            TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
@@ -628,7 +628,7 @@ public class SpotPricesSelect
          */
         private void setNext() {
             /* Copy date */
-            theDate = new JDateDay(theNextDate);
+            theDate = new TethysDate(theNextDate);
             applyState();
         }
 
@@ -637,7 +637,7 @@ public class SpotPricesSelect
          */
         private void setPrev() {
             /* Copy date */
-            theDate = new JDateDay(thePrevDate);
+            theDate = new TethysDate(thePrevDate);
             applyState();
         }
 
@@ -646,8 +646,8 @@ public class SpotPricesSelect
          * @param pPrev the previous Date
          * @param pNext the next Date
          */
-        private void setAdjacent(final JDateDay pPrev,
-                                 final JDateDay pNext) {
+        private void setAdjacent(final TethysDate pPrev,
+                                 final TethysDate pNext) {
             /* Record the dates */
             thePrevDate = pPrev;
             theNextDate = pNext;
@@ -666,7 +666,7 @@ public class SpotPricesSelect
             thePortButton.setValue(thePortfolio);
 
             /* Determine whether we are todays date */
-            boolean isToday = Difference.isEqual(theDate, new JDateDay());
+            boolean isToday = Difference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

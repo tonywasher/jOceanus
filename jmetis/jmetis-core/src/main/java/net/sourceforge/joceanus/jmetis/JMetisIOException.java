@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * JMetis IO Exception.
  */
 public class JMetisIOException
-        extends JOceanusException {
+        extends OceanusException {
     /**
      * SerialId.
      */

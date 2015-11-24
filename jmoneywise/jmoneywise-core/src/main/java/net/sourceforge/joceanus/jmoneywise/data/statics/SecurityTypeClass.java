@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Security Type Classes.
@@ -135,9 +135,9 @@ public enum SecurityTypeClass implements StaticInterface {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static SecurityTypeClass fromId(final int id) throws JOceanusException {
+    public static SecurityTypeClass fromId(final int id) throws OceanusException {
         for (SecurityTypeClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;

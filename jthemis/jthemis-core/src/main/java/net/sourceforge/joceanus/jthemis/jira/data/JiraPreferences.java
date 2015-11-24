@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jthemis.jira.data;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Jira Preferences.
@@ -93,9 +93,9 @@ public class JiraPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraPreferences() throws JOceanusException {
+    public JiraPreferences() throws OceanusException {
         super();
     }
 

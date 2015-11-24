@@ -49,16 +49,16 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a Payee.
@@ -159,7 +159,7 @@ public class PayeePanel
         theFieldSet.addFieldElement(Payee.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -168,7 +168,7 @@ public class PayeePanel
         theFieldSet.addFieldToPanel(Payee.FIELD_DESC, myPanel);
         theFieldSet.addFieldToPanel(Payee.FIELD_PAYEETYPE, myPanel);
         theFieldSet.addFieldToPanel(Payee.FIELD_CLOSED, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -208,7 +208,7 @@ public class PayeePanel
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), DataType.CHARARRAY, myPassWord);
 
         /* Create the extras panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
         SpringLayout mySpring = new SpringLayout();
@@ -220,7 +220,7 @@ public class PayeePanel
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), myPanel);
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.USERID), myPanel);
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -239,13 +239,13 @@ public class PayeePanel
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -310,7 +310,7 @@ public class PayeePanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         Payee myPayee = getItem();
@@ -430,7 +430,7 @@ public class PayeePanel
      * Payee Listener.
      */
     private final class PayeeListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The PayeeType Menu Builder.
          */
@@ -439,7 +439,7 @@ public class PayeePanel
         /**
          * TypeMenu Registration.
          */
-        private final JOceanusChangeRegistration theTypeMenuReg;
+        private final TethysChangeRegistration theTypeMenuReg;
 
         /**
          * Constructor.
@@ -451,7 +451,7 @@ public class PayeePanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theTypeMenuReg.isRelevant(pEvent)) {
                 buildPayeeTypeMenu(theTypeMenuBuilder, getItem());

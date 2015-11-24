@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionC
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for TransactionCategory.
@@ -94,7 +94,7 @@ public class SheetTransCategory
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
         myValues.addValue(TransactionCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
@@ -107,7 +107,7 @@ public class SheetTransCategory
     }
 
     @Override
-    protected void insertSecureItem(final TransactionCategory pItem) throws JOceanusException {
+    protected void insertSecureItem(final TransactionCategory pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
@@ -129,12 +129,12 @@ public class SheetTransCategory
      * @param pData the data set to load into
      * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of categories */
         TransactionCategoryList myList = pData.getTransCategories();
 
@@ -204,7 +204,7 @@ public class SheetTransCategory
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 

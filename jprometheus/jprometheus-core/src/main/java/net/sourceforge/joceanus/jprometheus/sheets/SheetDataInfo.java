@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a data info type.
@@ -72,7 +72,7 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
     }
 
     @Override
-    protected void insertSecureItem(final T pItem) throws JOceanusException {
+    protected void insertSecureItem(final T pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_INFOTYPE, pItem.getInfoTypeId());
@@ -87,7 +87,7 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         DataValues<E> myValues = super.getRowValues(pName);
 

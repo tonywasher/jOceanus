@@ -66,8 +66,8 @@ import net.sourceforge.joceanus.jmetis.JMetisIOException;
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * The Oasis WorkBook.
@@ -202,9 +202,9 @@ public class OasisWorkBook {
     /**
      * Constructor.
      * @param pInput the input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public OasisWorkBook(final InputStream pInput) throws JOceanusException {
+    public OasisWorkBook(final InputStream pInput) throws OceanusException {
         try {
             /* Access book and contents */
             theBook = SpreadsheetDocument.loadDocument(pInput);
@@ -236,9 +236,9 @@ public class OasisWorkBook {
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public OasisWorkBook() throws JOceanusException {
+    public OasisWorkBook() throws OceanusException {
         try {
             /* Create an empty document */
             theBook = SpreadsheetDocument.newSpreadsheetDocument();
@@ -291,9 +291,9 @@ public class OasisWorkBook {
     /**
      * Save the workBook to output stream.
      * @param pOutput the output stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void saveToStream(final OutputStream pOutput) throws JOceanusException {
+    public void saveToStream(final OutputStream pOutput) throws OceanusException {
         try {
             theBook.save(pOutput);
         } catch (Exception e) {
@@ -368,9 +368,9 @@ public class OasisWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range or null if range does not exist
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected DataView getRangeView(final String pName) throws JOceanusException {
+    protected DataView getRangeView(final String pName) throws OceanusException {
         /* Locate the named range in the map */
         TableNamedRangeElement myRange = theRangeMap.get(pName);
         if (myRange == null) {
@@ -434,10 +434,10 @@ public class OasisWorkBook {
      * Declare the named range.
      * @param pName the name of the range
      * @param pRange the range to declare
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void declareRange(final String pName,
-                                final OasisCellRange pRange) throws JOceanusException {
+                                final OasisCellRange pRange) throws OceanusException {
         /* Check for existing range */
         if (theRangeMap.get(pName) != null) {
             throw new JMetisLogicException("Name "
@@ -462,12 +462,12 @@ public class OasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pValidRange the name of the validation range
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void applyDataValidation(final OasisSheet pSheet,
                                        final CellPosition pFirstCell,
                                        final CellPosition pLastCell,
-                                       final String pValidRange) throws JOceanusException {
+                                       final String pValidRange) throws OceanusException {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValidRange);
         if (myConstraint == null) {
@@ -488,12 +488,12 @@ public class OasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pValueList the value list
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void applyDataValidation(final OasisSheet pSheet,
                                        final CellPosition pFirstCell,
                                        final CellPosition pLastCell,
-                                       final String[] pValueList) throws JOceanusException {
+                                       final String[] pValueList) throws OceanusException {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
@@ -528,12 +528,12 @@ public class OasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pConstraint the constraint
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void applyDataConstraint(final OasisSheet pSheet,
                                             final CellPosition pFirstCell,
                                             final CellPosition pLastCell,
-                                            final TableContentValidationElement pConstraint) throws JOceanusException {
+                                            final TableContentValidationElement pConstraint) throws OceanusException {
         /* Determine size of range */
         String myName = pConstraint.getTableNameAttribute();
         int iRow = pFirstCell.getRowIndex();
@@ -556,9 +556,9 @@ public class OasisWorkBook {
      * Create Data Constraint.
      * @param pConstraint the constraint list
      * @return the constraint
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private TableContentValidationElement createDataConstraint(final String pConstraint) throws JOceanusException {
+    private TableContentValidationElement createDataConstraint(final String pConstraint) throws OceanusException {
         /* Build the name */
         String myName = "val"
                         + ++theNumConstraints;
@@ -583,9 +583,9 @@ public class OasisWorkBook {
     /**
      * Apply Data Filter.
      * @param pRange the range to apply the filter to
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void applyDataFilter(final OasisCellRange pRange) throws JOceanusException {
+    protected void applyDataFilter(final OasisCellRange pRange) throws OceanusException {
         /* Create the new filter */
         TableDatabaseRangeElement myFilter = theFilters.newTableDatabaseRangeElement("Events.E1:Events.E15");
         myFilter.setTableNameAttribute("__Anonymous_Sheet_DB__14");
@@ -705,7 +705,7 @@ public class OasisWorkBook {
                         myNeg = new OdfNumberStyle(theContentDom, myParts[0], myNegName);
                         myPos.setMapNegative(myNegName);
                         myNegStyle = new StyleTextPropertiesElement(theContentDom);
-                        myNegStyle.setFoColorAttribute(DataConverter.colorToHexString(Color.red));
+                        myNegStyle.setFoColorAttribute(TethysDataConverter.colorToHexString(Color.red));
                         myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
                         theStyles.appendChild(myNeg);
                         theStyles.appendChild(myPos);
@@ -724,7 +724,7 @@ public class OasisWorkBook {
                         myZero.setMapNegative(myNegName);
                         myZero.setMapPositive(myPosName);
                         myNegStyle = new StyleTextPropertiesElement(theContentDom);
-                        myNegStyle.setFoColorAttribute(DataConverter.colorToHexString(Color.red));
+                        myNegStyle.setFoColorAttribute(TethysDataConverter.colorToHexString(Color.red));
                         myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
                         theStyles.appendChild(myNeg);
                         theStyles.appendChild(myPos);

@@ -37,18 +37,18 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Class to enable display/editing of and individual dataItem.
@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -86,7 +86,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The DataFormatter.
@@ -162,7 +162,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theError = pError;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Access the formatter */
         theFormatter = pFieldMgr.getDataFormatter();
@@ -171,7 +171,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theFieldSet = new JFieldSet<T>(pFieldMgr);
 
         /* Create the main panel */
-        theMainPanel = new JEnablePanel();
+        theMainPanel = new TethysSwingEnablePanel();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         /* create the action panels */
@@ -183,7 +183,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -401,9 +401,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Update the field.
      * @param pUpdate the update
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract void updateField(final FieldUpdate pUpdate) throws JOceanusException;
+    protected abstract void updateField(final FieldUpdate pUpdate) throws OceanusException;
 
     /**
      * Obtain the list for a class in base updateSet.
@@ -572,13 +572,13 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Declare the GoTo menu Builder.
      * @param pBuilder the menu builder
      */
-    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<JOceanusActionEvent> pBuilder);
+    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<TethysActionEvent> pBuilder);
 
     /**
      * Process goTo request.
      * @param pEvent the goTo request event
      */
-    protected void processGoToRequest(final JOceanusActionEvent pEvent) {
+    protected void processGoToRequest(final TethysActionEvent pEvent) {
         theEventManager.cascadeActionEvent(pEvent);
     }
 
@@ -593,8 +593,8 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * @param pDetails the details of the event
      * @return the action event
      */
-    protected JOceanusActionEvent createActionEvent(final int pActionId,
-                                                    final Object pDetails) {
+    protected TethysActionEvent createActionEvent(final int pActionId,
+                                                  final Object pDetails) {
         return theEventManager.createActionEvent(pActionId, pDetails);
     }
 
@@ -609,16 +609,16 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * FieldListener class.
      */
     private final class FieldListener
-            implements JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements TethysActionEventListener, TethysChangeEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+        private final TethysChangeRegistration theUpdateSetReg;
 
         /**
          * FieldSet Registration.
          */
-        private final JOceanusActionRegistration theFieldSetReg;
+        private final TethysActionRegistration theFieldSetReg;
 
         /**
          * Constructor.
@@ -630,7 +630,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Note refresh */
@@ -639,7 +639,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* If this is a field update */
             if (theFieldSetReg.isRelevant(pEvent)) {
                 /* Update the item */
@@ -662,12 +662,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
                 updateField(pUpdate);
 
                 /* Handle Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 /* Reset values */
                 theItem.popHistory();
 
                 /* Build the error */
-                JOceanusException myError = new JPrometheusDataException("Failed to update field", e);
+                OceanusException myError = new JPrometheusDataException("Failed to update field", e);
 
                 /* Show the error */
                 theError.addError(myError);

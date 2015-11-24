@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper for JCA MAC.
@@ -50,11 +50,11 @@ public final class JcaMac
      * @param pFactory the Security Factory
      * @param pMacSpec the MacSpec
      * @param pMac the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JcaMac(final JcaFactory pFactory,
                      final GordianMacSpec pMacSpec,
-                     final Mac pMac) throws JOceanusException {
+                     final Mac pMac) throws OceanusException {
         super(pFactory, pMacSpec);
         theMac = pMac;
     }
@@ -66,7 +66,7 @@ public final class JcaMac
 
     @Override
     public void initMac(final GordianKey<GordianMacSpec> pKey,
-                        final byte[] pIV) throws JOceanusException {
+                        final byte[] pIV) throws OceanusException {
         /* Access and validate the key */
         JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
@@ -126,7 +126,7 @@ public final class JcaMac
 
     @Override
     public int finish(final byte[] pBuffer,
-                      final int pOffset) throws JOceanusException {
+                      final int pOffset) throws OceanusException {
         try {
             theMac.doFinal(pBuffer, pOffset);
             return getMacSize();

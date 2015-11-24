@@ -24,13 +24,13 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise Analysis Fields.
  */
-public enum AnalysisResource implements ResourceId {
+public enum AnalysisResource implements TethysResourceId {
     /**
      * Analysis Name.
      */
@@ -479,7 +479,7 @@ public enum AnalysisResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
 
     /**
      * The Id.
@@ -503,7 +503,7 @@ public enum AnalysisResource implements ResourceId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    AnalysisResource(final ResourceId pResource) {
+    AnalysisResource(final TethysResourceId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -535,7 +535,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForAccountAttr(final AccountAttribute pValue) {
+    protected static TethysResourceId getKeyForAccountAttr(final AccountAttribute pValue) {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
@@ -560,7 +560,7 @@ public enum AnalysisResource implements ResourceId {
             case BADDEBT:
                 return ACCOUNTATTR_BADDEBT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -569,7 +569,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForEventAttr(final TransactionAttribute pValue) {
+    protected static TethysResourceId getKeyForEventAttr(final TransactionAttribute pValue) {
         switch (pValue) {
             case INCOME:
                 return PAYEEATTR_INCOME;
@@ -578,7 +578,7 @@ public enum AnalysisResource implements ResourceId {
             case PROFIT:
                 return ACCOUNTATTR_PROFIT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -587,7 +587,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForPayeeAttr(final PayeeAttribute pValue) {
+    protected static TethysResourceId getKeyForPayeeAttr(final PayeeAttribute pValue) {
         switch (pValue) {
             case INCOME:
                 return PAYEEATTR_INCOME;
@@ -596,7 +596,7 @@ public enum AnalysisResource implements ResourceId {
             case PROFIT:
                 return ACCOUNTATTR_PROFIT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -605,7 +605,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForSecurityAttr(final SecurityAttribute pValue) {
+    protected static TethysResourceId getKeyForSecurityAttr(final SecurityAttribute pValue) {
         switch (pValue) {
             case VALUATION:
                 return ACCOUNTATTR_VALUATION;
@@ -650,7 +650,7 @@ public enum AnalysisResource implements ResourceId {
             case PRICE:
                 return SECURITYATTR_PRICE;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -659,7 +659,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForTaxAttr(final TaxBasisAttribute pValue) {
+    protected static TethysResourceId getKeyForTaxAttr(final TaxBasisAttribute pValue) {
         switch (pValue) {
             case GROSS:
                 return TAXATTR_GROSS;
@@ -668,7 +668,7 @@ public enum AnalysisResource implements ResourceId {
             case TAXCREDIT:
                 return TAXATTR_TAX;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -677,7 +677,7 @@ public enum AnalysisResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForAnalysisType(final AnalysisType pValue) {
+    protected static TethysResourceId getKeyForAnalysisType(final AnalysisType pValue) {
         switch (pValue) {
             case DEPOSIT:
                 return MoneyWiseDataTypeResource.DEPOSIT_NAME;
@@ -700,7 +700,7 @@ public enum AnalysisResource implements ResourceId {
             case ALL:
                 return FILTER_ALL;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

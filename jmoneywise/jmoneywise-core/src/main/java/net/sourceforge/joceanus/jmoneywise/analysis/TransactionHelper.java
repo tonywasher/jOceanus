@@ -34,12 +34,12 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Resource IDs for jMoneyWise Analysis Fields.
@@ -68,7 +68,7 @@ public class TransactionHelper {
     /**
      * The current date.
      */
-    private JDateDay theDate;
+    private TethysDate theDate;
 
     /**
      * The account detail.
@@ -113,7 +113,7 @@ public class TransactionHelper {
      * Obtain date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return theDate;
     }
 
@@ -186,7 +186,7 @@ public class TransactionHelper {
      * Obtain debit amount.
      * @return the debit amount.
      */
-    public JMoney getDebitAmount() {
+    public TethysMoney getDebitAmount() {
         return theAccountDetail.getDebitAmount();
     }
 
@@ -194,7 +194,7 @@ public class TransactionHelper {
      * Obtain local debit amount.
      * @return the debit amount.
      */
-    public JMoney getLocalDebitAmount() {
+    public TethysMoney getLocalDebitAmount() {
         return theAccountDetail.getLocalDebitAmount();
     }
 
@@ -202,7 +202,7 @@ public class TransactionHelper {
      * Obtain debit exchange rate.
      * @return the debit exchange rate.
      */
-    public JRatio getDebitExchangeRate() {
+    public TethysRatio getDebitExchangeRate() {
         return theAccountDetail.getDebitExchangeRate();
     }
 
@@ -210,7 +210,7 @@ public class TransactionHelper {
      * Obtain credit amount.
      * @return the credit amount.
      */
-    public JMoney getCreditAmount() {
+    public TethysMoney getCreditAmount() {
         return theAccountDetail.getCreditAmount();
     }
 
@@ -218,7 +218,7 @@ public class TransactionHelper {
      * Obtain local credit amount.
      * @return the credit amount.
      */
-    public JMoney getLocalCreditAmount() {
+    public TethysMoney getLocalCreditAmount() {
         return theAccountDetail.getLocalCreditAmount();
     }
 
@@ -226,7 +226,7 @@ public class TransactionHelper {
      * Obtain credit exchange rate.
      * @return the credit exchange rate.
      */
-    public JRatio getCreditExchangeRate() {
+    public TethysRatio getCreditExchangeRate() {
         return theAccountDetail.getCreditExchangeRate();
     }
 
@@ -234,7 +234,7 @@ public class TransactionHelper {
      * Obtain tax credit.
      * @return the tax credit.
      */
-    public JMoney getTaxCredit() {
+    public TethysMoney getTaxCredit() {
         return theAccountDetail.getTaxCredit();
     }
 
@@ -242,7 +242,7 @@ public class TransactionHelper {
      * Obtain national insurance.
      * @return the national insurance.
      */
-    public JMoney getNatInsurance() {
+    public TethysMoney getNatInsurance() {
         return theAccountDetail.getNatInsurance();
     }
 
@@ -250,7 +250,7 @@ public class TransactionHelper {
      * Obtain benefit.
      * @return the benefit.
      */
-    public JMoney getDeemedBenefit() {
+    public TethysMoney getDeemedBenefit() {
         return theAccountDetail.getBenefit();
     }
 
@@ -258,7 +258,7 @@ public class TransactionHelper {
      * Obtain donation.
      * @return the donation.
      */
-    public JMoney getCharityDonation() {
+    public TethysMoney getCharityDonation() {
         return theAccountDetail.getDonation();
     }
 
@@ -274,7 +274,7 @@ public class TransactionHelper {
      * Obtain debit units.
      * @return the debit units
      */
-    public JUnits getDebitUnits() {
+    public TethysUnits getDebitUnits() {
         return theAccountDetail.getDebitUnits();
     }
 
@@ -282,7 +282,7 @@ public class TransactionHelper {
      * Obtain credit units.
      * @return the credit units
      */
-    public JUnits getCreditUnits() {
+    public TethysUnits getCreditUnits() {
         return theAccountDetail.getCreditUnits();
     }
 
@@ -290,7 +290,7 @@ public class TransactionHelper {
      * Obtain dilution.
      * @return the dilution
      */
-    public JDilution getDilution() {
+    public TethysDilution getDilution() {
         return theAccountDetail.getDilution();
     }
 
@@ -298,7 +298,7 @@ public class TransactionHelper {
      * Obtain debit price.
      * @return the debit price
      */
-    public JPrice getDebitPrice() {
+    public TethysPrice getDebitPrice() {
         return theAccountDetail.getDebitPrice();
     }
 
@@ -306,7 +306,7 @@ public class TransactionHelper {
      * Obtain credit price.
      * @return the credit price
      */
-    public JPrice getCreditPrice() {
+    public TethysPrice getCreditPrice() {
         return theAccountDetail.getCreditPrice();
     }
 
@@ -337,12 +337,12 @@ public class TransactionHelper {
         /**
          * The amount.
          */
-        private final JMoney theAmount;
+        private final TethysMoney theAmount;
 
         /**
          * The partner amount.
          */
-        private final JMoney thePartnerAmount;
+        private final TethysMoney thePartnerAmount;
 
         /**
          * The ThirdParty.
@@ -352,47 +352,47 @@ public class TransactionHelper {
         /**
          * The tax credit.
          */
-        private final JMoney theTaxCredit;
+        private final TethysMoney theTaxCredit;
 
         /**
          * The natInsurance.
          */
-        private final JMoney theNatIns;
+        private final TethysMoney theNatIns;
 
         /**
          * The benefit amount.
          */
-        private final JMoney theBenefit;
+        private final TethysMoney theBenefit;
 
         /**
          * The donation amount.
          */
-        private final JMoney theDonation;
+        private final TethysMoney theDonation;
 
         /**
          * The debit units.
          */
-        private final JUnits theDebitUnits;
+        private final TethysUnits theDebitUnits;
 
         /**
          * The credit units.
          */
-        private final JUnits theCreditUnits;
+        private final TethysUnits theCreditUnits;
 
         /**
          * The dilution.
          */
-        private final JDilution theDilution;
+        private final TethysDilution theDilution;
 
         /**
          * The account price.
          */
-        private final JPrice theAccountPrice;
+        private final TethysPrice theAccountPrice;
 
         /**
          * The partner price.
          */
-        private final JPrice thePartnerPrice;
+        private final TethysPrice thePartnerPrice;
 
         /**
          * The foreign account details.
@@ -531,7 +531,7 @@ public class TransactionHelper {
          * Obtain debit amount.
          * @return the debit amount
          */
-        private JMoney getDebitAmount() {
+        private TethysMoney getDebitAmount() {
             return theDirection.isFrom() || thePartnerAmount == null
                                                                     ? theAmount
                                                                     : thePartnerAmount;
@@ -541,7 +541,7 @@ public class TransactionHelper {
          * Obtain local debit amount.
          * @return the local debit amount
          */
-        private JMoney getLocalDebitAmount() {
+        private TethysMoney getLocalDebitAmount() {
             return theDirection.isFrom() && thePartnerAmount != null
                                                                     ? getLocalPartnerAmount()
                                                                     : getLocalAmount();
@@ -551,7 +551,7 @@ public class TransactionHelper {
          * Obtain local account amount.
          * @return the local partner amount
          */
-        private JMoney getLocalAmount() {
+        private TethysMoney getLocalAmount() {
             return theForeignAccount != null
                                             ? theForeignAccount.theAmount
                                             : theAmount;
@@ -561,7 +561,7 @@ public class TransactionHelper {
          * Obtain local partner amount.
          * @return the local partner amount
          */
-        private JMoney getLocalPartnerAmount() {
+        private TethysMoney getLocalPartnerAmount() {
             return theForeignPartner != null
                                             ? theForeignPartner.theAmount
                                             : thePartnerAmount;
@@ -571,7 +571,7 @@ public class TransactionHelper {
          * Obtain debit exchange rate.
          * @return the debit exchange rate
          */
-        private JRatio getDebitExchangeRate() {
+        private TethysRatio getDebitExchangeRate() {
             return theDirection.isFrom() || theForeignPartner == null
                                                                      ? theForeignAccount.theExchangeRate
                                                                      : theForeignPartner.theExchangeRate;
@@ -581,7 +581,7 @@ public class TransactionHelper {
          * Obtain credit amount.
          * @return the credit amount
          */
-        private JMoney getCreditAmount() {
+        private TethysMoney getCreditAmount() {
             return theDirection.isTo() && thePartnerAmount != null
                                                                   ? thePartnerAmount
                                                                   : theAmount;
@@ -591,7 +591,7 @@ public class TransactionHelper {
          * Obtain local credit amount.
          * @return the local debit amount
          */
-        private JMoney getLocalCreditAmount() {
+        private TethysMoney getLocalCreditAmount() {
             return theDirection.isTo() && thePartnerAmount != null
                                                                   ? getLocalPartnerAmount()
                                                                   : getLocalAmount();
@@ -601,7 +601,7 @@ public class TransactionHelper {
          * Obtain credit exchange rate.
          * @return the credit exchange rate
          */
-        private JRatio getCreditExchangeRate() {
+        private TethysRatio getCreditExchangeRate() {
             return theDirection.isTo() && theForeignPartner != null
                                                                    ? theForeignPartner.theExchangeRate
                                                                    : theForeignAccount.theExchangeRate;
@@ -611,7 +611,7 @@ public class TransactionHelper {
          * Obtain debit price.
          * @return the debit price
          */
-        private JPrice getDebitPrice() {
+        private TethysPrice getDebitPrice() {
             return theDirection.isFrom()
                                         ? thePartnerPrice
                                         : theAccountPrice;
@@ -621,7 +621,7 @@ public class TransactionHelper {
          * Obtain credit price.
          * @return the credit price
          */
-        private JPrice getCreditPrice() {
+        private TethysPrice getCreditPrice() {
             return theDirection.isTo()
                                       ? thePartnerPrice
                                       : theAccountPrice;
@@ -631,7 +631,7 @@ public class TransactionHelper {
          * Obtain taxCredit.
          * @return the tax credit
          */
-        private JMoney getTaxCredit() {
+        private TethysMoney getTaxCredit() {
             return theForeignAccount != null
                                             ? theForeignAccount.theTaxCredit
                                             : theTaxCredit;
@@ -641,7 +641,7 @@ public class TransactionHelper {
          * Obtain natInsurance.
          * @return the national insurance
          */
-        private JMoney getNatInsurance() {
+        private TethysMoney getNatInsurance() {
             return theForeignAccount != null
                                             ? theForeignAccount.theNatIns
                                             : theNatIns;
@@ -651,7 +651,7 @@ public class TransactionHelper {
          * Obtain benefit.
          * @return the benefit
          */
-        private JMoney getBenefit() {
+        private TethysMoney getBenefit() {
             return theForeignAccount != null
                                             ? theForeignAccount.theBenefit
                                             : theBenefit;
@@ -661,7 +661,7 @@ public class TransactionHelper {
          * Obtain donation.
          * @return the donation
          */
-        private JMoney getDonation() {
+        private TethysMoney getDonation() {
             return theForeignAccount != null
                                             ? theForeignAccount.theDonation
                                             : theDonation;
@@ -671,7 +671,7 @@ public class TransactionHelper {
          * Obtain debit units.
          * @return the debit units
          */
-        private JUnits getDebitUnits() {
+        private TethysUnits getDebitUnits() {
             return theDebitUnits;
         }
 
@@ -679,7 +679,7 @@ public class TransactionHelper {
          * Obtain credit units.
          * @return the credit units
          */
-        private JUnits getCreditUnits() {
+        private TethysUnits getCreditUnits() {
             return theCreditUnits;
         }
 
@@ -687,7 +687,7 @@ public class TransactionHelper {
          * Obtain dilution.
          * @return the dilution
          */
-        private JDilution getDilution() {
+        private TethysDilution getDilution() {
             return theDilution;
         }
     }
@@ -699,32 +699,32 @@ public class TransactionHelper {
         /**
          * The exchange rate.
          */
-        private final JRatio theExchangeRate;
+        private final TethysRatio theExchangeRate;
 
         /**
          * The amount.
          */
-        private final JMoney theAmount;
+        private final TethysMoney theAmount;
 
         /**
          * The tax credit.
          */
-        private final JMoney theTaxCredit;
+        private final TethysMoney theTaxCredit;
 
         /**
          * The natInsurance.
          */
-        private final JMoney theNatIns;
+        private final TethysMoney theNatIns;
 
         /**
          * The benefit amount.
          */
-        private final JMoney theBenefit;
+        private final TethysMoney theBenefit;
 
         /**
          * The donation amount.
          */
-        private final JMoney theDonation;
+        private final TethysMoney theDonation;
 
         /**
          * Constructor.
@@ -735,11 +735,11 @@ public class TransactionHelper {
                                      final AssetCurrency pCurrency) {
             /* Obtain the required exchange rate */
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            JRatio myRate = theExchangeRate.getInverseRatio();
+            TethysRatio myRate = theExchangeRate.getInverseRatio();
             Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
-            JMoney myValue = pTrans.theAmount;
+            TethysMoney myValue = pTrans.theAmount;
             theAmount = myValue.convertCurrency(myCurrency, myRate);
 
             /* Obtain tax value */
@@ -774,12 +774,12 @@ public class TransactionHelper {
         /**
          * The exchange rate.
          */
-        private final JRatio theExchangeRate;
+        private final TethysRatio theExchangeRate;
 
         /**
          * The amount.
          */
-        private final JMoney theAmount;
+        private final TethysMoney theAmount;
 
         /**
          * Constructor.
@@ -790,11 +790,11 @@ public class TransactionHelper {
                                      final AssetCurrency pCurrency) {
             /* Obtain the required exchange rate */
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            JRatio myRate = theExchangeRate.getInverseRatio();
+            TethysRatio myRate = theExchangeRate.getInverseRatio();
             Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
-            JMoney myValue = pTrans.theAmount;
+            TethysMoney myValue = pTrans.theAmount;
             theAmount = myValue.convertCurrency(myCurrency, myRate);
         }
     }

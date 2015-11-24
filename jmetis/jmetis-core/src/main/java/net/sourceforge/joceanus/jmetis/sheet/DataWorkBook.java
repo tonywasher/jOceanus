@@ -27,7 +27,7 @@ import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * WorkBook class.
@@ -133,10 +133,10 @@ public class DataWorkBook {
      * Load Excel workBook from file.
      * @param pInput the input stream
      * @param pType the workbook type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public DataWorkBook(final InputStream pInput,
-                        final WorkBookType pType) throws JOceanusException {
+                        final WorkBookType pType) throws OceanusException {
         /* This is a readOnly sheet */
         isReadOnly = true;
 
@@ -161,9 +161,9 @@ public class DataWorkBook {
     /**
      * Create empty workBook.
      * @param pType the workbook type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public DataWorkBook(final WorkBookType pType) throws JOceanusException {
+    public DataWorkBook(final WorkBookType pType) throws OceanusException {
         /* This is not a readOnly sheet */
         isReadOnly = false;
 
@@ -219,9 +219,9 @@ public class DataWorkBook {
 
     /**
      * Check for readOnly.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void checkReadOnly() throws JOceanusException {
+    private void checkReadOnly() throws OceanusException {
         if (isReadOnly) {
             throw new JMetisLogicException("Attempt to modify readOnly Book");
         }
@@ -230,9 +230,9 @@ public class DataWorkBook {
     /**
      * Save the workBook to output stream.
      * @param pOutput the output stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void saveToStream(final OutputStream pOutput) throws JOceanusException {
+    public void saveToStream(final OutputStream pOutput) throws OceanusException {
         /* Switch on workbook type */
         switch (theBookType) {
             case EXCELXLS:
@@ -250,9 +250,9 @@ public class DataWorkBook {
      * Create a new Sheet with the given name.
      * @param pName the name of the new sheet
      * @return the new sheet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public DataSheet newSheet(final String pName) throws JOceanusException {
+    public DataSheet newSheet(final String pName) throws OceanusException {
         /* Check for modification rights */
         checkReadOnly();
 
@@ -273,11 +273,11 @@ public class DataWorkBook {
      * @param pNumRows the number of rows to allocate
      * @param pNumCols the number of columns to allocate
      * @return the new sheet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public DataSheet newSheet(final String pName,
                               final int pNumRows,
-                              final int pNumCols) throws JOceanusException {
+                              final int pNumCols) throws OceanusException {
         /* Check for modification rights */
         checkReadOnly();
 
@@ -313,9 +313,9 @@ public class DataWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public DataView getRangeView(final String pName) throws JOceanusException {
+    public DataView getRangeView(final String pName) throws OceanusException {
         /* Switch on workbook type */
         switch (theBookType) {
             case EXCELXLS:

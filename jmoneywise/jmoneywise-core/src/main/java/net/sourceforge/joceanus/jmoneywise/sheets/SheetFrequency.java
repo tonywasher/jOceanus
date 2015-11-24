@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetStaticData extension for Frequency.
@@ -74,7 +74,7 @@ public class SheetFrequency
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(Frequency.OBJECT_NAME);
     }
@@ -85,11 +85,11 @@ public class SheetFrequency
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData) throws OceanusException {
         /* Access the list of frequencies */
         FrequencyList myList = pData.getFrequencys();
 
@@ -135,7 +135,7 @@ public class SheetFrequency
             myList.postProcessOnLoad();
 
             /* Handle Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
 

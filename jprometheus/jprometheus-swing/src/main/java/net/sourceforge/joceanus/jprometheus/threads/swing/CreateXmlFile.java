@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * LoaderThread extension to create an XML backup.
@@ -103,7 +103,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public T performTask() throws JOceanusException {
+    public T performTask() throws OceanusException {
         boolean doDelete = false;
         File myFile = null;
 
@@ -131,7 +131,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             /* If we are doing time-stamps */
             if (doTimeStamp) {
                 /* Obtain the current date/time */
-                JDateDay myNow = new JDateDay();
+                TethysDate myNow = new TethysDate();
 
                 myName.append(myNow.getYear());
                 if (myNow.getMonth() < TEN) {

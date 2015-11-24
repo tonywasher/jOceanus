@@ -60,16 +60,16 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * TaxYear Table.
@@ -149,7 +149,7 @@ public class TaxYearTable
     /**
      * The panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The TaxYear dialog.
@@ -211,13 +211,13 @@ public class TaxYearTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the main panel */
-        JPanel myMain = new JEnablePanel();
+        JPanel myMain = new TethysSwingEnablePanel();
         myMain.setLayout(new BoxLayout(myMain, BoxLayout.X_AXIS));
         myMain.add(getScrollPane());
         myMain.add(theActionButtons);
 
         /* Create the layout for the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(theError);
         thePanel.add(myMain);
@@ -293,7 +293,7 @@ public class TaxYearTable
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -427,7 +427,7 @@ public class TaxYearTable
         @Override
         public void setItemValue(final TaxYear pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -454,26 +454,26 @@ public class TaxYearTable
      * Listener class.
      */
     private final class TaxYearListener
-            implements JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements TethysActionEventListener, TethysChangeEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusChangeRegistration theUpdateSetReg;
+        private final TethysChangeRegistration theUpdateSetReg;
 
         /**
          * Error Registration.
          */
-        private final JOceanusChangeRegistration theErrorReg;
+        private final TethysChangeRegistration theErrorReg;
 
         /**
          * Action Registration.
          */
-        private final JOceanusActionRegistration theActionReg;
+        private final TethysActionRegistration theActionReg;
 
         /**
          * Tax Panel Change Registration.
          */
-        private final JOceanusChangeRegistration theTaxPanelReg;
+        private final TethysChangeRegistration theTaxPanelReg;
 
         /**
          * Constructor.
@@ -483,13 +483,13 @@ public class TaxYearTable
             theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
             theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
             theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            JOceanusEventRegistrar myRegistrar = theActiveYear.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theActiveYear.getEventRegistrar();
             theTaxPanelReg = myRegistrar.addChangeListener(this);
             myRegistrar.addActionListener(this);
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
@@ -526,7 +526,7 @@ public class TaxYearTable
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
                 cancelEditing();
@@ -661,11 +661,11 @@ public class TaxYearTable
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void setItemValue(final TaxYear pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
+                                  final Object pValue) throws OceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
                 case COLUMN_REGIME:
@@ -738,7 +738,7 @@ public class TaxYearTable
          * EditorListener.
          */
         private final class EditorListener
-                implements JOceanusChangeEventListener {
+                implements TethysChangeEventListener {
             /**
              * Constructor.
              */
@@ -747,7 +747,7 @@ public class TaxYearTable
             }
 
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 buildRegimeMenu();
             }
 

@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * The TaxBasis Account Bucket class.
@@ -91,7 +91,7 @@ public final class TaxBasisAccountBucket
     private TaxBasisAccountBucket(final Analysis pAnalysis,
                                   final TaxBasisBucket pParent,
                                   final TaxBasisAccountBucket pBase,
-                                  final JDateDay pDate) {
+                                  final TethysDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
         theAccount = pBase.getAccount();
@@ -108,7 +108,7 @@ public final class TaxBasisAccountBucket
     private TaxBasisAccountBucket(final Analysis pAnalysis,
                                   final TaxBasisBucket pParent,
                                   final TaxBasisAccountBucket pBase,
-                                  final JDateDayRange pRange) {
+                                  final TethysDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
         theAccount = pBase.getAccount();
@@ -279,7 +279,7 @@ public final class TaxBasisAccountBucket
         protected TaxBasisAccountBucketList(final Analysis pAnalysis,
                                             final TaxBasisBucket pParent,
                                             final TaxBasisAccountBucketList pBase,
-                                            final JDateDay pDate) {
+                                            final TethysDate pDate) {
             /* Initialise class */
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
@@ -315,7 +315,7 @@ public final class TaxBasisAccountBucket
         protected TaxBasisAccountBucketList(final Analysis pAnalysis,
                                             final TaxBasisBucket pParent,
                                             final TaxBasisAccountBucketList pBase,
-                                            final JDateDayRange pRange) {
+                                            final TethysDateRange pRange) {
             /* Initialise class */
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
@@ -373,9 +373,9 @@ public final class TaxBasisAccountBucket
          * @param pTax the tax delta value
          */
         protected void registerDeltaValues(final TransactionHelper pTrans,
-                                           final JMoney pGross,
-                                           final JMoney pNett,
-                                           final JMoney pTax) {
+                                           final TethysMoney pGross,
+                                           final TethysMoney pNett,
+                                           final TethysMoney pTax) {
             /* Determine required asset */
             TransactionAsset myAsset = deriveAsset(pTrans);
 
@@ -392,7 +392,7 @@ public final class TaxBasisAccountBucket
          * @param pGross the gross delta value
          */
         protected void adjustValue(final TransactionHelper pTrans,
-                                   final JMoney pGross) {
+                                   final TethysMoney pGross) {
             /* Determine required asset */
             TransactionAsset myAsset = deriveAsset(pTrans);
 

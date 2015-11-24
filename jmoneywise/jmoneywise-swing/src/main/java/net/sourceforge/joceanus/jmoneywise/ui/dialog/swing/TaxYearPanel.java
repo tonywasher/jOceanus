@@ -50,14 +50,14 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a TaxYear.
@@ -179,7 +179,7 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYear.FIELD_REGIME, TaxRegime.class, theRegimeButton);
 
         /* Create the allow panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the allow panel */
         SpringLayout mySpring = new SpringLayout();
@@ -187,10 +187,10 @@ public class TaxYearPanel
         myPanel.add(myLabel);
         myPanel.add(theYear);
         theFieldSet.addFieldToPanel(TaxYear.FIELD_REGIME, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create a panel to contain this panel */
-        JEnablePanel myXtraPanel = new JEnablePanel();
+        TethysSwingEnablePanel myXtraPanel = new TethysSwingEnablePanel();
         myXtraPanel.setLayout(new BoxLayout(myXtraPanel, BoxLayout.Y_AXIS));
         myXtraPanel.add(myPanel);
         myXtraPanel.add(Box.createVerticalGlue());
@@ -229,7 +229,7 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalAllow);
 
         /* Create the allow panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the allow panel */
         SpringLayout mySpring = new SpringLayout();
@@ -239,7 +239,7 @@ public class TaxYearPanel
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -266,14 +266,14 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLimit);
 
         /* Create the limits panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the limits panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -303,7 +303,7 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncBdy);
 
         /* Create the bands panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the bands panel */
         SpringLayout mySpring = new SpringLayout();
@@ -311,7 +311,7 @@ public class TaxYearPanel
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -344,7 +344,7 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxRate);
 
         /* Create the rates panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
@@ -353,7 +353,7 @@ public class TaxYearPanel
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -386,7 +386,7 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxRate);
 
         /* Create the rates panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
@@ -395,7 +395,7 @@ public class TaxYearPanel
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -422,14 +422,14 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxRate);
 
         /* Create the rates panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -471,7 +471,7 @@ public class TaxYearPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         TaxYear myYear = getItem();
@@ -609,7 +609,7 @@ public class TaxYearPanel
      * TaxYear Listener.
      */
     private final class TaxYearListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The Regime Menu Builder.
          */
@@ -618,7 +618,7 @@ public class TaxYearPanel
         /**
          * RegimeMenu Registration.
          */
-        private final JOceanusChangeRegistration theRegimeMenuReg;
+        private final TethysChangeRegistration theRegimeMenuReg;
 
         /**
          * Constructor.
@@ -630,7 +630,7 @@ public class TaxYearPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theRegimeMenuReg.isRelevant(pEvent)) {
                 buildRegimeMenu(theMenuBuilder, getItem());

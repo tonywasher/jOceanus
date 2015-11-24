@@ -83,9 +83,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysFiscalYear;
 
 /**
  * Class to load an archive SpreadSheet.
@@ -120,7 +120,7 @@ public class ArchiveLoader {
     /**
      * The last event.
      */
-    private JDateDay theLastEvent;
+    private TethysDate theLastEvent;
 
     /**
      * The list of years.
@@ -200,7 +200,7 @@ public class ArchiveLoader {
      * @param pDate the date to check
      * @return in range true/false
      */
-    protected boolean checkDate(final JDateDay pDate) {
+    protected boolean checkDate(final TethysDate pDate) {
         return theLastEvent.compareTo(pDate) >= 0;
     }
 
@@ -209,10 +209,10 @@ public class ArchiveLoader {
      * @param pTask Task Control for task
      * @param pPreferences the backup preferences
      * @return the newly loaded data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public MoneyWiseData loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                     final BackupPreferences pPreferences) throws JOceanusException {
+                                     final BackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
         String myName = pPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE);
         theLastEvent = pPreferences.getDateValue(BackupPreferences.NAME_LAST_EVENT);
@@ -243,11 +243,11 @@ public class ArchiveLoader {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                 final DataWorkBook pWorkBook,
-                                final MoneyWiseData pData) throws JOceanusException {
+                                final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
         DataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
@@ -277,11 +277,11 @@ public class ArchiveLoader {
      * @param pStream Input stream to load from
      * @param pType the workBookType
      * @return the newly loaded data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
                                             final InputStream pStream,
-                                            final WorkBookType pType) throws JOceanusException {
+                                            final WorkBookType pType) throws OceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
@@ -429,9 +429,9 @@ public class ArchiveLoader {
     /**
      * Declare asset.
      * @param pAsset the asset to declare.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void declareAsset(final AssetBase<?> pAsset) throws JOceanusException {
+    protected void declareAsset(final AssetBase<?> pAsset) throws OceanusException {
         /* Access the asset name */
         String myName = pAsset.getName();
 
@@ -447,9 +447,9 @@ public class ArchiveLoader {
     /**
      * Declare category.
      * @param pCategory the category to declare.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void declareCategory(final TransactionCategory pCategory) throws JOceanusException {
+    protected void declareCategory(final TransactionCategory pCategory) throws OceanusException {
         /* Access the asset name */
         String myName = pCategory.getName();
 
@@ -466,10 +466,10 @@ public class ArchiveLoader {
      * Declare security holding.
      * @param pSecurity the security.
      * @param pPortfolio the portfolio
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void declareSecurityHolding(final Security pSecurity,
-                                          final String pPortfolio) throws JOceanusException {
+                                          final String pPortfolio) throws OceanusException {
         /* Access the name */
         String myName = pSecurity.getName();
 
@@ -487,11 +487,11 @@ public class ArchiveLoader {
      * @param pName the security holding name
      * @param pAlias the alias name.
      * @param pPortfolio the portfolio
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void declareAliasHolding(final String pName,
                                        final String pAlias,
-                                       final String pPortfolio) throws JOceanusException {
+                                       final String pPortfolio) throws OceanusException {
         /* Check for name already exists */
         Object myHolding = theNameMap.get(pAlias);
         if (!(myHolding instanceof SecurityHoldingDef)) {
@@ -537,11 +537,11 @@ public class ArchiveLoader {
      * @param pData the dataSet
      * @param pSource the source asset
      * @param pTarget the target asset
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void resolvePortfolioXfer(final MoneyWiseData pData,
                                         final Object pSource,
-                                        final Object pTarget) throws JOceanusException {
+                                        final Object pTarget) throws OceanusException {
         /* Target must be portfolio */
         if (!(pTarget instanceof Portfolio)) {
             throw new JMoneyWiseDataException(pTarget, "Inconsistent portfolios");
@@ -579,7 +579,7 @@ public class ArchiveLoader {
         /**
          * The date.
          */
-        private final JDateDay theDate;
+        private final TethysDate theDate;
 
         /**
          * The range name.
@@ -606,8 +606,8 @@ public class ArchiveLoader {
             }
 
             /* Create the date */
-            JFiscalYear myFiscal = JFiscalYear.UK;
-            theDate = new JDateDay(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());
+            TethysFiscalYear myFiscal = TethysFiscalYear.UK;
+            theDate = new TethysDate(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());
             theDate.adjustDay(-1);
         }
 
@@ -615,7 +615,7 @@ public class ArchiveLoader {
          * Get the date.
          * @return the date
          */
-        protected JDateDay getDate() {
+        protected TethysDate getDate() {
             return theDate;
         }
 
@@ -718,7 +718,7 @@ public class ArchiveLoader {
         /**
          * Resolved Date.
          */
-        private JDateDay theDate;
+        private TethysDate theDate;
 
         /**
          * AssetPair Id.
@@ -761,10 +761,10 @@ public class ArchiveLoader {
          * @param pAmount the amount
          * @param pReconciled is the transaction reconciled?
          * @return the new transaction
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected Transaction buildTransaction(final String pAmount,
-                                               final boolean pReconciled) throws JOceanusException {
+                                               final boolean pReconciled) throws OceanusException {
             /* Build data values */
             DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Transaction.OBJECT_NAME);
             myValues.addValue(Transaction.FIELD_DATE, theDate);
@@ -795,12 +795,12 @@ public class ArchiveLoader {
          * @param pCredit the name of the credit object
          * @param pCategory the name of the category object
          * @return continue true/false
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected boolean resolveValues(final JDateDay pDate,
+        protected boolean resolveValues(final TethysDate pDate,
                                         final String pDebit,
                                         final String pCredit,
-                                        final String pCategory) throws JOceanusException {
+                                        final String pCategory) throws OceanusException {
             /* If the Date is null */
             if (pDate == null) {
                 /* Resolve child values */
@@ -842,11 +842,11 @@ public class ArchiveLoader {
          * @param pDebit the name of the debit object
          * @param pCredit the name of the credit object
          * @param pCategory the name of the category object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void resolveChildValues(final String pDebit,
                                         final String pCredit,
-                                        final String pCategory) throws JOceanusException {
+                                        final String pCategory) throws OceanusException {
             /* Handle no LastParent */
             if (theLastParent == null) {
                 throw new JMoneyWiseDataException(theDate, "Missing parent transaction");
@@ -877,9 +877,9 @@ public class ArchiveLoader {
 
         /**
          * Resolve assets.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void resolveAssets() throws JOceanusException {
+        private void resolveAssets() throws OceanusException {
             boolean isDebitHolding = theLastDebit instanceof SecurityHolding;
             boolean isCreditHolding = theLastCredit instanceof SecurityHolding;
 

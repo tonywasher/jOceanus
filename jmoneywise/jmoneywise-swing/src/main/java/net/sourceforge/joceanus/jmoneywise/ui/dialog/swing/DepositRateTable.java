@@ -52,14 +52,14 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display a list of DepositRates associated with a Deposit.
@@ -109,7 +109,7 @@ public class DepositRateTable
     /**
      * The panel.
      */
-    private final JEnablePanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The Table Model.
@@ -175,13 +175,13 @@ public class DepositRateTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
 
         /* Create the layout for the panel */
-        thePanel = new JEnablePanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
     }
 
     @Override
-    protected void setError(final JOceanusException pError) {
+    protected void setError(final OceanusException pError) {
         theError.addError(pError);
     }
 
@@ -299,7 +299,7 @@ public class DepositRateTable
         @Override
         public void setItemValue(final DepositRate pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -343,12 +343,12 @@ public class DepositRateTable
             try {
                 /* Set the item value */
                 myRate.setDeposit(theDeposit);
-                myRate.setRate(JRate.getWholePercentage(0));
+                myRate.setRate(TethysRate.getWholePercentage(0));
 
                 /* Handle Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 /* Build the error */
-                JOceanusException myError = new JMoneyWiseDataException("Failed to create new rate", e);
+                OceanusException myError = new JMoneyWiseDataException("Failed to create new rate", e);
 
                 /* Show the error */
                 setError(myError);
@@ -368,7 +368,7 @@ public class DepositRateTable
                 /* Update date to todays date. */
                 myLatest.pushHistory();
                 myLatest.setNewVersion();
-                myLatest.setEndDate(new JDateDay());
+                myLatest.setEndDate(new TethysDate());
             }
 
             /* Add the new item */
@@ -444,7 +444,7 @@ public class DepositRateTable
         /**
          * Date configuration.
          */
-        private final transient JDateDayConfig theDateConfig;
+        private final transient TethysSwingDateConfig theDateConfig;
 
         /**
          * Action Icon editor.
@@ -495,7 +495,7 @@ public class DepositRateTable
          */
         private void setDateRange() {
             /* Access date range */
-            JDateDayRange myRange = theRates.getDataSet().getDateRange();
+            TethysDateRange myRange = theRates.getDataSet().getDateRange();
 
             /* Adjust editor range */
             theDateConfig.setEarliestDateDay(myRange.getStart());
@@ -576,21 +576,21 @@ public class DepositRateTable
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value to set
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void setItemValue(final DepositRate pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
+                                  final Object pValue) throws OceanusException {
             /* Set the appropriate value */
             switch (pColIndex) {
                 case COLUMN_RATE:
-                    pItem.setRate((JRate) pValue);
+                    pItem.setRate((TethysRate) pValue);
                     break;
                 case COLUMN_BONUS:
-                    pItem.setBonus((JRate) pValue);
+                    pItem.setBonus((TethysRate) pValue);
                     break;
                 case COLUMN_ENDDATE:
-                    pItem.setEndDate((JDateDay) pValue);
+                    pItem.setEndDate((TethysDate) pValue);
                     break;
                 case COLUMN_ACTION:
                     if (pItem.isHeader()) {
@@ -644,7 +644,7 @@ public class DepositRateTable
          * EditorListener.
          */
         private final class EditorListener
-                implements JOceanusChangeEventListener {
+                implements TethysChangeEventListener {
             /**
              * Constructor.
              */
@@ -653,7 +653,7 @@ public class DepositRateTable
             }
 
             @Override
-            public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+            public void processChangeEvent(final TethysChangeEvent pEvent) {
                 /* Access details */
                 Point myCell = theDateEditor.getPoint();
 

@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * Quick access to dated exchange Rates on an analysis pass.
@@ -65,8 +65,8 @@ public class ExchangeRateCursor {
      * @param pDate the date
      * @return the exchange rate
      */
-    public JRatio getExchangeRate(final AssetCurrency pCurrency,
-                                  final JDateDay pDate) {
+    public TethysRatio getExchangeRate(final AssetCurrency pCurrency,
+                                  final TethysDate pDate) {
         /* Access cursor and return rate */
         CurrencyCursor myCursor = getCursor(pCurrency);
         return myCursor.getExchangeRate(pDate);
@@ -104,17 +104,17 @@ public class ExchangeRateCursor {
         /**
          * The current exchange rate.
          */
-        private JRatio theCurrent = JRatio.ONE;
+        private TethysRatio theCurrent = TethysRatio.ONE;
 
         /**
          * The next date.
          */
-        private JDateDay theNextDate = null;
+        private TethysDate theNextDate = null;
 
         /**
          * The next exchange rate.
          */
-        private JRatio theNextRate = null;
+        private TethysRatio theNextRate = null;
 
         /**
          * Constructor.
@@ -152,7 +152,7 @@ public class ExchangeRateCursor {
          * @param pDate the date
          * @return the exchange rate
          */
-        private JRatio getExchangeRate(final JDateDay pDate) {
+        private TethysRatio getExchangeRate(final TethysDate pDate) {
             /* if we have a later rate */
             if (theNextDate != null) {
                 /* while we need to move the cursor */

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * LoanInfoSet class.
@@ -210,7 +210,7 @@ public class LoanInfoSet
             switch (myClass) {
                 case OPENINGBALANCE:
                     /* Access data */
-                    JMoney myBalance = myInfo.getValue(JMoney.class);
+                    TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
                     if (!myBalance.getCurrency().equals(myLoan.getCurrency())) {
                         myLoan.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
                     }

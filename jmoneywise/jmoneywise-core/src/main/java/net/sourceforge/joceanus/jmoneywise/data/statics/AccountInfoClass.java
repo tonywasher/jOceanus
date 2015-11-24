@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.data.DataType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Account Info Classes.
@@ -167,9 +167,9 @@ public enum AccountInfoClass implements DataInfoClass {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static AccountInfoClass fromId(final int id) throws JOceanusException {
+    public static AccountInfoClass fromId(final int id) throws OceanusException {
         for (AccountInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;

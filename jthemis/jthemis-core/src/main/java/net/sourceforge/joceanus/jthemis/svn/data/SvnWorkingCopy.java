@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
@@ -123,11 +123,11 @@ public final class SvnWorkingCopy
      * @param pLocation the location
      * @param pBranch the branch
      * @param pRevision the checked out revision
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private SvnWorkingCopy(final File pLocation,
                            final SvnBranch pBranch,
-                           final SVNRevision pRevision) throws JOceanusException {
+                           final SVNRevision pRevision) throws OceanusException {
         /* Store parameters */
         theBranch = pBranch;
         theLocation = pLocation;
@@ -241,9 +241,9 @@ public final class SvnWorkingCopy
     /**
      * Discover updates.
      * @param pReport the report object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void discoverUpdates(final ReportStatus pReport) throws JOceanusException {
+    public void discoverUpdates(final ReportStatus pReport) throws OceanusException {
         /* Access client */
         SvnRepository myRepository = theBranch.getRepository();
         SVNClientManager myMgr = myRepository.getClientManager();
@@ -330,10 +330,10 @@ public final class SvnWorkingCopy
      * @param pRepo the repository
      * @param pFile the file to get status for
      * @return the status (null if not under VC)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public static SVNStatus getFileStatus(final SvnRepository pRepo,
-                                          final File pFile) throws JOceanusException {
+                                          final File pFile) throws OceanusException {
         /* File must exist */
         if (!pFile.exists()) {
             return null;
@@ -412,11 +412,11 @@ public final class SvnWorkingCopy
          * @param pRepository the repository
          * @param pLocation the location
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public SvnWorkingCopySet(final SvnRepository pRepository,
                                  final File pLocation,
-                                 final ReportStatus pReport) throws JOceanusException {
+                                 final ReportStatus pReport) throws OceanusException {
             /* Call super constructor */
             super(SvnWorkingCopy.class);
 
@@ -432,10 +432,10 @@ public final class SvnWorkingCopy
          * Constructor.
          * @param pRepository the repository
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public SvnWorkingCopySet(final SvnRepository pRepository,
-                                 final ReportStatus pReport) throws JOceanusException {
+                                 final ReportStatus pReport) throws OceanusException {
             /* Call super constructor */
             super(SvnWorkingCopy.class);
 
@@ -497,9 +497,9 @@ public final class SvnWorkingCopy
         /**
          * Analyse WorkingSet.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void analyseWorkingCopySet(final ReportStatus pReport) throws JOceanusException {
+        private void analyseWorkingCopySet(final ReportStatus pReport) throws OceanusException {
             /* Report start of analysis */
             pReport.initTask("Analysing Working Copies");
 
@@ -535,9 +535,9 @@ public final class SvnWorkingCopy
         /**
          * Locate working copies.
          * @param pLocation location
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void locateWorkingDirectories(final File pLocation) throws JOceanusException {
+        private void locateWorkingDirectories(final File pLocation) throws OceanusException {
             /* Return if file is not a directory */
             if (!pLocation.isDirectory()) {
                 return;
@@ -556,9 +556,9 @@ public final class SvnWorkingCopy
         /**
          * Register a check out branch if represented by file.
          * @param pFile the file
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void registerBranch(final File pFile) throws JOceanusException {
+        private void registerBranch(final File pFile) throws OceanusException {
             /* Ignore if file is not a directory */
             if (!pFile.isDirectory()) {
                 return;

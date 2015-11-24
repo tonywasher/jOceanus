@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for AccountCategory.
@@ -62,11 +62,11 @@ public final class SheetAccountCategory {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -108,7 +108,7 @@ public final class SheetAccountCategory {
             resolveCategoryLists(pData);
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + AREA_ACTCATEGORIES, e);
         }
 
@@ -121,11 +121,11 @@ public final class SheetAccountCategory {
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static void processCategory(final MoneyWiseData pData,
                                         final DataView pView,
-                                        final DataRow pRow) throws JOceanusException {
+                                        final DataRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
@@ -196,9 +196,9 @@ public final class SheetAccountCategory {
     /**
      * Resolve category lists.
      * @param pData the DataSet
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static void resolveCategoryLists(final MoneyWiseData pData) throws JOceanusException {
+    private static void resolveCategoryLists(final MoneyWiseData pData) throws OceanusException {
         /* Post process the deposit category list */
         DepositCategoryList myDepositList = pData.getDepositCategories();
         myDepositList.postProcessOnLoad();

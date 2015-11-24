@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.database;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Database table class for DataInfo Items. Each data type that represents DataInfo should extend this class.
@@ -56,7 +56,7 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (DataInfo.FIELD_INFOTYPE.equals(iField)) {
@@ -71,7 +71,7 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         DataValues<E> myValues = super.getRowValues(pName);
         TableDefinition myTableDef = getTableDef();

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for BouncyCastle Symmetric Ciphers.
@@ -69,7 +69,7 @@ public final class BouncySymKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws JOceanusException {
+    public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create a random IV */
         int myLen = theCipher.getBlockSize();
         byte[] myIV = new byte[myLen];
@@ -82,7 +82,7 @@ public final class BouncySymKeyCipher
     @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey,
                            final byte[] pIV,
-                           final boolean pEncrypt) throws JOceanusException {
+                           final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
         BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
@@ -107,7 +107,7 @@ public final class BouncySymKeyCipher
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -122,7 +122,7 @@ public final class BouncySymKeyCipher
 
     @Override
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Finish the operation */

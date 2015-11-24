@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * CashInfoSet class.
@@ -281,7 +281,7 @@ public class CashInfoSet
             switch (myClass) {
                 case OPENINGBALANCE:
                     /* Access data */
-                    JMoney myBalance = myInfo.getValue(JMoney.class);
+                    TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
                     if (!myBalance.getCurrency().equals(myCash.getCurrency())) {
                         myCash.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
@@ -309,7 +309,7 @@ public class CashInfoSet
 
     @Override
     protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
-                                   final AccountInfoClass pClass) throws JOceanusException {
+                                   final AccountInfoClass pClass) throws OceanusException {
         /* Switch on the class */
         switch (pClass) {
             case AUTOEXPENSE:

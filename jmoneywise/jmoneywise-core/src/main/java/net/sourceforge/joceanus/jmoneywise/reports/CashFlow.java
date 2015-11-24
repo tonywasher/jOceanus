@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,7 +71,7 @@ public class CashFlow
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         PayeeBucketList myPayees = pAnalysis.getPayees();
-        JDateDayRange myRange = pAnalysis.getDateRange();
+        TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         PayeeBucket myTotals = myPayees.getTotals();

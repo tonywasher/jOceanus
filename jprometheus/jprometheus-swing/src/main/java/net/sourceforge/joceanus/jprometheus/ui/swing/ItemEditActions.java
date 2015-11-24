@@ -30,7 +30,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
 
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonSt
  * @param <E> the data type enum class
  */
 public class ItemEditActions<E extends Enum<E>>
-        extends JEnablePanel {
+        extends TethysSwingEnablePanel {
     /**
      * Serial Id.
      */

@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -248,9 +248,9 @@ public final class SvnBranch
 
     /**
      * Discover HistoryPath.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void discoverHistory() throws JOceanusException {
+    private void discoverHistory() throws OceanusException {
         /* Access history map */
         SvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
 
@@ -301,9 +301,9 @@ public final class SvnBranch
         /**
          * Discover branch list from repository.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JOceanusException {
+        public void discover(final ReportStatus pReport) throws OceanusException {
             /* Reset the list */
             clear();
 

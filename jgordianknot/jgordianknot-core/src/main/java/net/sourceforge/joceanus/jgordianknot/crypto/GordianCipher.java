@@ -26,7 +26,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for Cipher.
@@ -147,9 +147,9 @@ public abstract class GordianCipher<T> {
     /**
      * Check that the key matches the keyType.
      * @param pKey the passed key.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void checkValidKey(final GordianKey<T> pKey) throws JOceanusException {
+    protected void checkValidKey(final GordianKey<T> pKey) throws OceanusException {
         if (!theKeyType.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on keyType");
         }
@@ -158,20 +158,20 @@ public abstract class GordianCipher<T> {
     /**
      * Initialise the cipher for encryption with random IV.
      * @param pKey the key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract void initCipher(final GordianKey<T> pKey) throws JOceanusException;
+    public abstract void initCipher(final GordianKey<T> pKey) throws OceanusException;
 
     /**
      * Initialise the cipher.
      * @param pKey the key
      * @param pIV the initialisation vector
      * @param pEncrypt true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract void initCipher(final GordianKey<T> pKey,
                                     final byte[] pIV,
-                                    final boolean pEncrypt) throws JOceanusException;
+                                    final boolean pEncrypt) throws OceanusException;
 
     /**
      * Determine the maximum number of output bytes that will be produced for the given number of
@@ -185,9 +185,9 @@ public abstract class GordianCipher<T> {
      * Process the passed data and return intermediate results.
      * @param pBytes Bytes to update cipher with
      * @return the intermediate processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] update(final byte[] pBytes) throws JOceanusException {
+    public byte[] update(final byte[] pBytes) throws OceanusException {
         return update(pBytes, 0, pBytes.length);
     }
 
@@ -197,11 +197,11 @@ public abstract class GordianCipher<T> {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return the intermediate processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] update(final byte[] pBytes,
                          final int pOffset,
-                         final int pLength) throws JOceanusException {
+                         final int pLength) throws OceanusException {
         /* Create output buffer */
         int myLen = getOutputLength(pLength);
         byte[] myOutput = new byte[myLen];
@@ -222,12 +222,12 @@ public abstract class GordianCipher<T> {
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int update(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
-                      final byte[] pOutput) throws JOceanusException {
+                      final byte[] pOutput) throws OceanusException {
         return update(pBytes, pOffset, pLength, pOutput, 0);
     }
 
@@ -239,20 +239,20 @@ public abstract class GordianCipher<T> {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract int update(final byte[] pBytes,
                                final int pOffset,
                                final int pLength,
                                final byte[] pOutput,
-                               final int pOutOffset) throws JOceanusException;
+                               final int pOutOffset) throws OceanusException;
 
     /**
      * Complete the Cipher operation and return final results.
      * @return the remaining processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] finish() throws JOceanusException {
+    public byte[] finish() throws OceanusException {
         /* Create output buffer */
         int myLen = getOutputLength(0);
         byte[] myOutput = new byte[myLen];
@@ -270,9 +270,9 @@ public abstract class GordianCipher<T> {
      * Process the passed data and return final results.
      * @param pBytes Bytes to update cipher with
      * @return the remaining processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] finish(final byte[] pBytes) throws JOceanusException {
+    public byte[] finish(final byte[] pBytes) throws OceanusException {
         return finish(pBytes, 0, pBytes.length);
     }
 
@@ -282,11 +282,11 @@ public abstract class GordianCipher<T> {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return the remaining processed data
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] finish(final byte[] pBytes,
                          final int pOffset,
-                         final int pLength) throws JOceanusException {
+                         final int pLength) throws OceanusException {
         /* Create output buffer */
         int myLen = getOutputLength(pLength);
         byte[] myOutput = new byte[myLen];
@@ -307,12 +307,12 @@ public abstract class GordianCipher<T> {
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int finish(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
-                      final byte[] pOutput) throws JOceanusException {
+                      final byte[] pOutput) throws OceanusException {
         return finish(pBytes, pOffset, pLength, pOutput, 0);
     }
 
@@ -324,13 +324,13 @@ public abstract class GordianCipher<T> {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public int finish(final byte[] pBytes,
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Update the data */
         int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -343,8 +343,8 @@ public abstract class GordianCipher<T> {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract int finish(final byte[] pOutput,
-                               final int pOutOffset) throws JOceanusException;
+                               final int pOutOffset) throws OceanusException;
 }

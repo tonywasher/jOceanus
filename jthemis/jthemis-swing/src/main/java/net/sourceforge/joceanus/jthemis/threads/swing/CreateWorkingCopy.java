@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 import java.io.File;
 import java.util.Collection;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
@@ -74,7 +74,7 @@ public class CreateWorkingCopy
     /**
      * The Error.
      */
-    private JOceanusException theError = null;
+    private OceanusException theError = null;
 
     /**
      * Constructor.
@@ -103,7 +103,7 @@ public class CreateWorkingCopy
 
             /* Access branch list for extract */
             // myBranches = SvnBranch.getBranchMap(pBranches).values();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
             cancel(true);
@@ -122,7 +122,7 @@ public class CreateWorkingCopy
     }
 
     @Override
-    public JOceanusException getError() {
+    public OceanusException getError() {
         return theError;
     }
 
@@ -136,7 +136,7 @@ public class CreateWorkingCopy
 
             /* Discover workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for JMetis Field.
  */
-public enum JFieldResource implements ResourceId {
+public enum JFieldResource implements TethysResourceId {
     /**
      * FieldValue ERROR.
      */
@@ -38,7 +38,7 @@ public enum JFieldResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -85,12 +85,12 @@ public enum JFieldResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForFieldValue(final JFieldValue pValue) {
+    protected static TethysResourceId getKeyForFieldValue(final JFieldValue pValue) {
         switch (pValue) {
             case ERROR:
                 return FIELDVALUE_ERROR;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

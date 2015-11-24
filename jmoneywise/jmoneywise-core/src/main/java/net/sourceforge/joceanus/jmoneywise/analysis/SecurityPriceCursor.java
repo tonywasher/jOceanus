@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * Quick access to dated security Prices on an analysis pass.
@@ -67,8 +67,8 @@ public class SecurityPriceCursor {
      * @param pDate the date
      * @return the security price
      */
-    public JPrice getSecurityPrice(final Security pSecurity,
-                                   final JDateDay pDate) {
+    public TethysPrice getSecurityPrice(final Security pSecurity,
+                                   final TethysDate pDate) {
         /* Access cursor and return rate */
         SecurityCursor myCursor = getCursor(pSecurity);
         return myCursor.getSecurityPrice(pDate);
@@ -106,17 +106,17 @@ public class SecurityPriceCursor {
         /**
          * The current price.
          */
-        private JPrice theCurrent;
+        private TethysPrice theCurrent;
 
         /**
          * The next date.
          */
-        private JDateDay theNextDate = null;
+        private TethysDate theNextDate = null;
 
         /**
          * The next price.
          */
-        private JPrice theNextPrice = null;
+        private TethysPrice theNextPrice = null;
 
         /**
          * Constructor.
@@ -125,7 +125,7 @@ public class SecurityPriceCursor {
         private SecurityCursor(final Security pSecurity) {
             /* Create the default price */
             Currency myCurrency = pSecurity.getCurrency();
-            theCurrent = JPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
+            theCurrent = TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
 
             /* Access the Price list */
             theIterator = theDataMap.priceIterator(pSecurity);
@@ -158,7 +158,7 @@ public class SecurityPriceCursor {
          * @param pDate the date
          * @return the security price
          */
-        private JPrice getSecurityPrice(final JDateDay pDate) {
+        private TethysPrice getSecurityPrice(final TethysDate pDate) {
             /* if we have a later price */
             if (theNextDate != null) {
                 /* while we need to move the cursor */

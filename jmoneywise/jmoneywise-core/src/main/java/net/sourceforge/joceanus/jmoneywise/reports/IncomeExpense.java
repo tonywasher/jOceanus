@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -80,7 +80,7 @@ public class IncomeExpense
         /* Access the bucket list */
         theAnalysis = pAnalysis;
         TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
-        JDateDayRange myRange = theAnalysis.getDateRange();
+        TethysDateRange myRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         TransactionCategoryBucket myTotals = myCategories.getTotals();

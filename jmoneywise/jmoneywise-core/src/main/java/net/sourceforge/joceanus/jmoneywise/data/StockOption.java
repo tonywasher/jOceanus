@@ -54,11 +54,11 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * StockOption class.
@@ -177,10 +177,10 @@ public class StockOption
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private StockOption(final StockOptionList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -201,36 +201,36 @@ public class StockOption
 
             /* Store GrantDate */
             myValue = pValues.getValue(FIELD_GRANTDATE);
-            if (myValue instanceof JDateDay) {
-                setValueGrantDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueGrantDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueGrantDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store ExpiryDate */
             myValue = pValues.getValue(FIELD_EXPIREDATE);
-            if (myValue instanceof JDateDay) {
-                setValueExpiryDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueExpiryDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueExpiryDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store the Price */
             myValue = pValues.getValue(FIELD_PRICE);
-            if (myValue instanceof JPrice) {
-                setValuePrice((JPrice) myValue);
+            if (myValue instanceof TethysPrice) {
+                setValuePrice((TethysPrice) myValue);
             } else if (myValue instanceof byte[]) {
                 setValuePrice((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValuePrice(myString);
-                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
+                setValuePrice(myFormatter.parseValue(myString, TethysPrice.class));
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -388,7 +388,7 @@ public class StockOption
      * Obtain GrantDate.
      * @return the grantDate
      */
-    public JDateDay getGrantDate() {
+    public TethysDate getGrantDate() {
         return getGrantDate(getValueSet());
     }
 
@@ -396,7 +396,7 @@ public class StockOption
      * Obtain ExpiryDate.
      * @return the expiryDate
      */
-    public JDateDay getExpiryDate() {
+    public TethysDate getExpiryDate() {
         return getExpiryDate(getValueSet());
     }
 
@@ -404,7 +404,7 @@ public class StockOption
      * Obtain Price.
      * @return the price
      */
-    public JPrice getPrice() {
+    public TethysPrice getPrice() {
         return getPrice(getValueSet());
     }
 
@@ -438,8 +438,8 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the grantDate
      */
-    public static JDateDay getGrantDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_GRANTDATE, JDateDay.class);
+    public static TethysDate getGrantDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_GRANTDATE, TethysDate.class);
     }
 
     /**
@@ -447,8 +447,8 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the expiryDate
      */
-    public static JDateDay getExpiryDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_EXPIREDATE, JDateDay.class);
+    public static TethysDate getExpiryDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_EXPIREDATE, TethysDate.class);
     }
 
     /**
@@ -456,8 +456,8 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the symbol
      */
-    public static JPrice getPrice(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, JPrice.class);
+    public static TethysPrice getPrice(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, TethysPrice.class);
     }
 
     /**
@@ -506,7 +506,7 @@ public class StockOption
      * Set grantDate value.
      * @param pValue the value
      */
-    private void setValueGrantDate(final JDateDay pValue) {
+    private void setValueGrantDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_GRANTDATE, pValue);
     }
 
@@ -514,25 +514,25 @@ public class StockOption
      * Set expiryDate value.
      * @param pValue the value
      */
-    private void setValueExpiryDate(final JDateDay pValue) {
+    private void setValueExpiryDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_EXPIREDATE, pValue);
     }
 
     /**
      * Set price value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValuePrice(final JPrice pValue) throws JOceanusException {
+    private void setValuePrice(final TethysPrice pValue) throws OceanusException {
         setEncryptedValue(FIELD_PRICE, pValue);
     }
 
     /**
      * Set price value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValuePrice(final String pValue) throws JOceanusException {
+    private void setValuePrice(final String pValue) throws OceanusException {
         getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
@@ -547,10 +547,10 @@ public class StockOption
     /**
      * Set price value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValuePrice(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_PRICE, pBytes, JPrice.class);
+    private void setValuePrice(final byte[] pBytes) throws OceanusException {
+        setEncryptedValue(FIELD_PRICE, pBytes, TethysPrice.class);
     }
 
     @Override
@@ -706,9 +706,9 @@ public class StockOption
     /**
      * Set defaults.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set name */
         setName(getList().getUniqueName(NAME_NEWOPTION));
         setClosed(Boolean.FALSE);
@@ -721,14 +721,14 @@ public class StockOption
         setStockHolding(myHolding);
 
         /* Determine dates */
-        JDateDay myDate = new JDateDay();
+        TethysDate myDate = new TethysDate();
         setGrantDate(myDate);
-        myDate = new JDateDay(myDate);
+        myDate = new TethysDate(myDate);
         myDate.adjustYear(1);
         setExpiryDate(myDate);
 
         /* Set default price */
-        setPrice(JPrice.getWholeUnits(1, mySecurity.getCurrency()));
+        setPrice(TethysPrice.getWholeUnits(1, mySecurity.getCurrency()));
     }
 
     /**
@@ -791,7 +791,7 @@ public class StockOption
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -801,7 +801,7 @@ public class StockOption
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve data links */
         SecurityHoldingMap myMap = getList().getSecurityHoldings();
         AssetPair.resolveDataLink(this, myMap, FIELD_STOCKHOLDING);
@@ -810,45 +810,45 @@ public class StockOption
     /**
      * Set a new stock Holding.
      * @param pHolding the stockHolding
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setStockHolding(final SecurityHolding pHolding) throws JOceanusException {
+    public void setStockHolding(final SecurityHolding pHolding) throws OceanusException {
         setValueStockHolding(pHolding);
     }
 
     /**
      * Set a new grantDate.
      * @param pGrantDate the date
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setGrantDate(final JDateDay pGrantDate) throws JOceanusException {
+    public void setGrantDate(final TethysDate pGrantDate) throws OceanusException {
         setValueGrantDate(pGrantDate);
     }
 
     /**
      * Set a new expiryDate.
      * @param pExpiryDate the date
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setExpiryDate(final JDateDay pExpiryDate) throws JOceanusException {
+    public void setExpiryDate(final TethysDate pExpiryDate) throws OceanusException {
         setValueExpiryDate(pExpiryDate);
     }
 
     /**
      * Set a new price.
      * @param pPrice the price
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setPrice(final JPrice pPrice) throws JOceanusException {
+    public void setPrice(final TethysPrice pPrice) throws OceanusException {
         setValuePrice(pPrice);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
@@ -856,10 +856,10 @@ public class StockOption
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -891,10 +891,10 @@ public class StockOption
     public void validate() {
         SecurityHolding myHolding = getStockHolding();
         Currency myCurrency = getCurrency();
-        JDateDay myGrant = getGrantDate();
-        JDateDay myExpiry = getExpiryDate();
-        JPrice myPrice = getPrice();
-        JDateDayRange myRange = getDataSet().getDateRange();
+        TethysDate myGrant = getGrantDate();
+        TethysDate myExpiry = getExpiryDate();
+        TethysPrice myPrice = getPrice();
+        TethysDateRange myRange = getDataSet().getDateRange();
 
         /* Validate base components */
         super.validate();
@@ -1106,9 +1106,9 @@ public class StockOption
          * Derive Edit list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public StockOptionList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public StockOptionList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             StockOptionList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -1193,7 +1193,7 @@ public class StockOption
         }
 
         @Override
-        public StockOption addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public StockOption addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the option */
             StockOption myOption = new StockOption(this, pValues);
 

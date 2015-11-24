@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraIssue;
@@ -123,10 +123,10 @@ public class CommitMgr {
      * Commit the changes to the repository.
      * @param pIssue the issue to commit against.
      * @param pComments the comments for the change
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void commitChanges(final JiraIssue pIssue,
-                              final String pComments) throws JOceanusException {
+                              final String pComments) throws OceanusException {
         /* Access commit client */
         SVNCommitClient myCommit = theMgr.getCommitClient();
 

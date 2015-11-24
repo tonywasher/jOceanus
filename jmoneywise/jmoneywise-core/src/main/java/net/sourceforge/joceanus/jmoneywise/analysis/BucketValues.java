@@ -25,13 +25,13 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.EnumMap;
 
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Values for a bucket.
@@ -112,7 +112,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the delta
      */
-    protected JDecimal getDeltaValue(final T pPrevious,
+    protected TethysDecimal getDeltaValue(final T pPrevious,
                                      final E pAttr) {
         switch (pAttr.getDataType()) {
             case MONEY:
@@ -130,14 +130,14 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the delta
      */
-    protected JMoney getDeltaMoneyValue(final T pPrevious,
+    protected TethysMoney getDeltaMoneyValue(final T pPrevious,
                                         final E pAttr) {
         /* Access current and previous values */
-        JMoney myCurr = getMoneyValue(pAttr);
-        JMoney myPrev = pPrevious.getMoneyValue(pAttr);
+        TethysMoney myCurr = getMoneyValue(pAttr);
+        TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
 
         /* Calculate delta */
-        myCurr = new JMoney(myCurr);
+        myCurr = new TethysMoney(myCurr);
         myCurr.subtractAmount(myPrev);
         return myCurr;
     }
@@ -148,14 +148,14 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the delta
      */
-    protected JUnits getDeltaUnitsValue(final T pPrevious,
+    protected TethysUnits getDeltaUnitsValue(final T pPrevious,
                                         final E pAttr) {
         /* Access current and previous values */
-        JUnits myCurr = getUnitsValue(pAttr);
-        JUnits myPrev = pPrevious.getUnitsValue(pAttr);
+        TethysUnits myCurr = getUnitsValue(pAttr);
+        TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
 
         /* Calculate delta */
-        myCurr = new JUnits(myCurr);
+        myCurr = new TethysUnits(myCurr);
         myCurr.subtractUnits(myPrev);
         return myCurr;
     }
@@ -168,9 +168,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     protected void adjustMoneyToBase(final T pBase,
                                      final E pAttr) {
         /* Adjust spend values */
-        JMoney myValue = getMoneyValue(pAttr);
-        myValue = new JMoney(myValue);
-        JMoney myBaseValue = pBase.getMoneyValue(pAttr);
+        TethysMoney myValue = getMoneyValue(pAttr);
+        myValue = new TethysMoney(myValue);
+        TethysMoney myBaseValue = pBase.getMoneyValue(pAttr);
         myValue.subtractAmount(myBaseValue);
         put(pAttr, myValue);
     }
@@ -220,9 +220,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JDecimal getDecimalValue(final E pAttr) {
+    public TethysDecimal getDecimalValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JDecimal.class);
+        return getValue(pAttr, TethysDecimal.class);
     }
 
     /**
@@ -230,9 +230,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JUnits getUnitsValue(final E pAttr) {
+    public TethysUnits getUnitsValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JUnits.class);
+        return getValue(pAttr, TethysUnits.class);
     }
 
     /**
@@ -240,9 +240,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JPrice getPriceValue(final E pAttr) {
+    public TethysPrice getPriceValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JPrice.class);
+        return getValue(pAttr, TethysPrice.class);
     }
 
     /**
@@ -250,9 +250,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JMoney getMoneyValue(final E pAttr) {
+    public TethysMoney getMoneyValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JMoney.class);
+        return getValue(pAttr, TethysMoney.class);
     }
 
     /**
@@ -260,9 +260,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JRate getRateValue(final E pAttr) {
+    public TethysRate getRateValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JRate.class);
+        return getValue(pAttr, TethysRate.class);
     }
 
     /**
@@ -270,9 +270,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JRatio getRatioValue(final E pAttr) {
+    public TethysRatio getRatioValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JRatio.class);
+        return getValue(pAttr, TethysRatio.class);
     }
 
     /**
@@ -280,9 +280,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JDateDay getDateValue(final E pAttr) {
+    public TethysDate getDateValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, JDateDay.class);
+        return getValue(pAttr, TethysDate.class);
     }
 
     /**

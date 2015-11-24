@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 
 /**
@@ -57,9 +57,9 @@ public final class Directory2 {
     /**
      * Create a directory.
      * @param pDir the create
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static void createDirectory(final File pDir) throws JOceanusException {
+    public static void createDirectory(final File pDir) throws OceanusException {
         /* Use standard method */
         createDirectory(pDir == null
                                     ? null
@@ -69,9 +69,9 @@ public final class Directory2 {
     /**
      * Create a directory.
      * @param pDir the create
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static void createDirectory(final Path pDir) throws JOceanusException {
+    public static void createDirectory(final Path pDir) throws OceanusException {
         /* Handle null directory */
         if (pDir == null) {
             return;
@@ -93,9 +93,9 @@ public final class Directory2 {
     /**
      * Remove a directory and all of its contents.
      * @param pDir the directory to remove
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static void removeDirectory(final File pDir) throws JOceanusException {
+    public static void removeDirectory(final File pDir) throws OceanusException {
         /* Remove the directory */
         removeDirectory(pDir == null
                                     ? null
@@ -105,9 +105,9 @@ public final class Directory2 {
     /**
      * Remove a directory and all of its contents.
      * @param pDir the directory to remove
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static void removeDirectory(final Path pDir) throws JOceanusException {
+    public static void removeDirectory(final Path pDir) throws OceanusException {
         /* If the directory does not exist just return */
         if ((pDir == null)
             || (!Files.exists(pDir))) {
@@ -130,9 +130,9 @@ public final class Directory2 {
     /**
      * Clear a directory of all of its contents.
      * @param pDir the directory to clear
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static void clearDirectory(final File pDir) throws JOceanusException {
+    public static void clearDirectory(final File pDir) throws OceanusException {
         /* Clear the directory */
         clearDirectory(pDir == null
                                    ? null
@@ -143,10 +143,10 @@ public final class Directory2 {
      * Clear a directory of all of its contents.
      * @param pDir the directory to clear
      * @param pKeep the name of the element to keep
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public static void clearDirectory(final File pDir,
-                                      final String pKeep) throws JOceanusException {
+                                      final String pKeep) throws OceanusException {
         /* Clear the directory */
         clearDirectory(pDir == null
                                    ? null
@@ -156,9 +156,9 @@ public final class Directory2 {
     /**
      * Clear a directory of all of its contents.
      * @param pDir the directory to clear
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static void clearDirectory(final Path pDir) throws JOceanusException {
+    public static void clearDirectory(final Path pDir) throws OceanusException {
         /* Clear the directory without keeping anything */
         clearDirectory(pDir, null);
     }
@@ -167,10 +167,10 @@ public final class Directory2 {
      * Clear a directory of all of its contents.
      * @param pDir the directory to clear
      * @param pKeep the name of the element to keep
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public static void clearDirectory(final Path pDir,
-                                      final String pKeep) throws JOceanusException {
+                                      final String pKeep) throws OceanusException {
         /* If the directory does not exist just return */
         if ((pDir == null)
             || (!Files.exists(pDir))) {

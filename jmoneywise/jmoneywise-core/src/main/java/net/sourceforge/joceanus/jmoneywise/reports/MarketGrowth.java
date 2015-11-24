@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,7 +120,7 @@ public class MarketGrowth
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
-        JDateDayRange myRange = pAnalysis.getDateRange();
+        TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -253,12 +253,12 @@ public class MarketGrowth
     private void checkPortfolioGrowth(final PortfolioBucket pBucket) {
         /* Check market profit */
         SecurityValues myValues = pBucket.getValues();
-        JMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
-        JMoney myCalcGrowth = pBucket.getNonCashValue(false);
+        TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
+        TethysMoney myCalcGrowth = pBucket.getNonCashValue(false);
         myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
         myCalcGrowth.addAmount(myAdjust);
-        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getName(), myCalcGrowth);
         }
@@ -266,7 +266,7 @@ public class MarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
         }
@@ -280,12 +280,12 @@ public class MarketGrowth
         /* Check market profit */
         SecurityValues myValues = pBucket.getValues();
         SecurityValues myBaseValues = pBucket.getBaseValues();
-        JMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
-        JMoney myCalcGrowth = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
+        TethysMoney myCalcGrowth = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
         myCalcGrowth.addAmount(myAdjust);
-        JMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
         }
@@ -293,7 +293,7 @@ public class MarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        JMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
         }

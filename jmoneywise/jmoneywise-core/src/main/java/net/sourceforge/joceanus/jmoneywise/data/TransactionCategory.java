@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Transaction Category class.
@@ -86,10 +86,10 @@ public final class TransactionCategory
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TransactionCategory(final TransactionCategoryList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -221,9 +221,9 @@ public final class TransactionCategory
     /**
      * Set defaults.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final TransactionCategory pParent) throws JOceanusException {
+    public void setDefaults(final TransactionCategory pParent) throws OceanusException {
         /* Set values */
         TransactionCategoryTypeList myTypes = getDataSet().getTransCategoryTypes();
         TransactionCategoryClass myParentClass = pParent.getCategoryTypeClass();
@@ -265,7 +265,7 @@ public final class TransactionCategory
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Underlying details */
         super.resolveDataSetLinks();
 
@@ -275,7 +275,7 @@ public final class TransactionCategory
     }
 
     @Override
-    protected void resolveUpdateSetLinks() throws JOceanusException {
+    protected void resolveUpdateSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(FIELD_PARENT, getList());
     }
@@ -554,7 +554,7 @@ public final class TransactionCategory
         }
 
         @Override
-        public TransactionCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TransactionCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
             TransactionCategory myCategory = new TransactionCategory(this, pValues);
 

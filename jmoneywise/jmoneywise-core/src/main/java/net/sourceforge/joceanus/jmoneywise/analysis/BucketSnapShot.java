@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * History snapShot for a bucket.
@@ -85,7 +85,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     /**
      * The date.
      */
-    private final JDateDay theDate;
+    private final TethysDate theDate;
 
     /**
      * SnapShot Values.
@@ -186,7 +186,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      * Obtain date.
      * @return the date
      */
-    protected JDateDay getDate() {
+    protected TethysDate getDate() {
         return theDate;
     }
 
@@ -219,7 +219,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected JDecimal getDeltaValue(final E pAttr) {
+    protected TethysDecimal getDeltaValue(final E pAttr) {
         /* return the delta value */
         return theSnapShot.getDeltaValue(thePrevious, pAttr);
     }
@@ -229,7 +229,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected JMoney getDeltaMoneyValue(final E pAttr) {
+    protected TethysMoney getDeltaMoneyValue(final E pAttr) {
         /* return the delta value */
         return theSnapShot.getDeltaMoneyValue(thePrevious, pAttr);
     }
@@ -239,7 +239,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected JUnits getDeltaUnitsValue(final E pAttr) {
+    protected TethysUnits getDeltaUnitsValue(final E pAttr) {
         /* return the delta value */
         return theSnapShot.getDeltaUnitsValue(thePrevious, pAttr);
     }

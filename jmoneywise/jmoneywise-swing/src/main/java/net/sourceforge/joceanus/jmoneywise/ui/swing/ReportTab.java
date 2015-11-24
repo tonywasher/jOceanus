@@ -55,26 +55,26 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
 
 /**
  * Report panel.
  */
 public class ReportTab
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -93,7 +93,7 @@ public class ReportTab
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The Data View.
@@ -103,7 +103,7 @@ public class ReportTab
     /**
      * The Scroll Pane.
      */
-    private final JEnableScroll theScroll;
+    private final TethysSwingEnableScroll theScroll;
 
     /**
      * The display version of the report.
@@ -138,14 +138,14 @@ public class ReportTab
     /**
      * Constructor for Report Window.
      * @param pView the data view
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public ReportTab(final SwingView pView) throws JOceanusException {
+    public ReportTab(final SwingView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the top level debug entry for this view */
         ViewerManager myDataMgr = theView.getViewerManager();
@@ -167,7 +167,7 @@ public class ReportTab
         theBuilder = new ReportBuilder(theManager);
 
         /* Create a scroll-pane for the editor */
-        theScroll = new JEnableScroll();
+        theScroll = new TethysSwingEnableScroll();
         theScroll.setViewportView(theEditor);
 
         /* Create the Report Selection panel */
@@ -187,7 +187,7 @@ public class ReportTab
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -218,7 +218,7 @@ public class ReportTab
 
             /* Create SavePoint */
             theSelect.createSavePoint();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Show the error */
             theView.addError(e);
 
@@ -248,12 +248,12 @@ public class ReportTab
 
     /**
      * Build the report.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void buildReport() throws JOceanusException {
+    private void buildReport() throws OceanusException {
         /* Access the values from the selection */
         ReportType myReportType = theSelect.getReportType();
-        JDateDayRange myRange = theSelect.getDateRange();
+        TethysDateRange myRange = theSelect.getDateRange();
         AnalysisManager myManager = theView.getAnalysisManager();
         Document myDoc;
         Analysis myAnalysis;
@@ -309,31 +309,31 @@ public class ReportTab
      */
     private final class ReportListener
             extends MouseAdapter
-            implements JOceanusChangeEventListener, JOceanusActionEventListener {
+            implements TethysChangeEventListener, TethysActionEventListener {
         /**
          * View Registration.
          */
-        private final JOceanusChangeRegistration theViewReg;
+        private final TethysChangeRegistration theViewReg;
 
         /**
          * Manager Registration.
          */
-        private final JOceanusActionRegistration theManagerReg;
+        private final TethysActionRegistration theManagerReg;
 
         /**
          * Error Registration.
          */
-        private final JOceanusChangeRegistration theErrorReg;
+        private final TethysChangeRegistration theErrorReg;
 
         /**
          * Select Registration.
          */
-        private final JOceanusChangeRegistration theSelectReg;
+        private final TethysChangeRegistration theSelectReg;
 
         /**
          * Print Registration.
          */
-        private final JOceanusActionRegistration thePrintReg;
+        private final TethysActionRegistration thePrintReg;
 
         /**
          * Constructor.
@@ -346,7 +346,7 @@ public class ReportTab
             theViewReg = theView.getEventRegistrar().addChangeListener(this);
             theManagerReg = theManager.getEventRegistrar().addActionListener(this);
             theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            JOceanusEventRegistrar myRegistrar = theSelect.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theSelect.getEventRegistrar();
             theSelectReg = myRegistrar.addChangeListener(this);
             thePrintReg = myRegistrar.addActionListener(this);
         }
@@ -402,7 +402,7 @@ public class ReportTab
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the data view */
             if (theViewReg.isRelevant(pEvent)) {
                 /* Refresh Data */
@@ -430,9 +430,9 @@ public class ReportTab
                     theSelect.createSavePoint();
 
                     /* Catch Exceptions */
-                } catch (JOceanusException e) {
+                } catch (OceanusException e) {
                     /* Build the error */
-                    JOceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
+                    OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
 
                     /* Show the error */
                     theError.addError(myError);
@@ -444,11 +444,11 @@ public class ReportTab
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* If this is the report manager */
             if (theManagerReg.isRelevant(pEvent)) {
                 /* Create the details of the report */
-                JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
+                TethysSwingDateRangeSelect mySelect = theSelect.getDateRangeSelect();
                 AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
                 StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 

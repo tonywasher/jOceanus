@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
@@ -46,18 +46,18 @@ public class GordianSwingHashManager
 
     /**
      * Constructor for default values.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianSwingHashManager() throws JOceanusException {
+    public GordianSwingHashManager() throws OceanusException {
         super();
     }
 
     /**
      * Constructor.
      * @param pParameters the Security parameters
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianSwingHashManager(final GordianParameters pParameters) throws JOceanusException {
+    public GordianSwingHashManager(final GordianParameters pParameters) throws OceanusException {
         super(pParameters);
     }
 

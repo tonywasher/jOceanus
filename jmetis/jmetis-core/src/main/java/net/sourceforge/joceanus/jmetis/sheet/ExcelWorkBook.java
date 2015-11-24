@@ -52,7 +52,7 @@ import org.apache.poi.ss.util.CellReference;
 import net.sourceforge.joceanus.jmetis.JMetisIOException;
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * The Excel WorkBook.
@@ -111,9 +111,9 @@ public class ExcelWorkBook {
     /**
      * Constructor.
      * @param pInput the input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public ExcelWorkBook(final InputStream pInput) throws JOceanusException {
+    public ExcelWorkBook(final InputStream pInput) throws OceanusException {
         try {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
@@ -197,9 +197,9 @@ public class ExcelWorkBook {
     /**
      * Save the workBook to output stream.
      * @param pOutput the output stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void saveToStream(final OutputStream pOutput) throws JOceanusException {
+    public void saveToStream(final OutputStream pOutput) throws OceanusException {
         try {
             theBook.write(pOutput);
         } catch (IOException e) {
@@ -252,9 +252,9 @@ public class ExcelWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range or null if range does not exist
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected DataView getRangeView(final String pName) throws JOceanusException {
+    protected DataView getRangeView(final String pName) throws OceanusException {
         /* Find the range of cells */
         Name myName = theBook.getName(pName);
         if (myName == null) {
@@ -281,10 +281,10 @@ public class ExcelWorkBook {
      * Declare the named range.
      * @param pName the name of the range
      * @param pRange the range to declare
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void declareRange(final String pName,
-                                final AreaReference pRange) throws JOceanusException {
+                                final AreaReference pRange) throws OceanusException {
         /* Check for existing range */
         Name myName = theBook.getName(pName);
         if (myName != null) {
@@ -307,11 +307,11 @@ public class ExcelWorkBook {
      * @param pSheet the workSheet containing the cells
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
-                                       final String pValidRange) throws JOceanusException {
+                                       final String pValidRange) throws OceanusException {
         /* Access the constraint */
         DVConstraint myConstraint = theConstraintMap.get(pValidRange);
         if (myConstraint == null) {
@@ -333,11 +333,11 @@ public class ExcelWorkBook {
      * @param pSheet the workSheet containing the cells
      * @param pCells the Cells to apply validation to
      * @param pValueList the list of valid values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
-                                       final String[] pValueList) throws JOceanusException {
+                                       final String[] pValueList) throws OceanusException {
         /* Access the constraint */
         DVConstraint myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
@@ -358,10 +358,10 @@ public class ExcelWorkBook {
      * Apply Data Filter.
      * @param pSheet the sheet to filter
      * @param pRange the range to apply the filter to
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void applyDataFilter(final Sheet pSheet,
-                                   final CellRangeAddressList pRange) throws JOceanusException {
+                                   final CellRangeAddressList pRange) throws OceanusException {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }

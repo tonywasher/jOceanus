@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaFactory;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
@@ -70,9 +70,9 @@ public abstract class GordianHashManager {
 
     /**
      * Constructor for default values.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianHashManager() throws JOceanusException {
+    protected GordianHashManager() throws OceanusException {
         /* Access with defaults */
         this(new GordianParameters());
     }
@@ -80,9 +80,9 @@ public abstract class GordianHashManager {
     /**
      * Constructor.
      * @param pParameters the Security parameters
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianHashManager(final GordianParameters pParameters) throws JOceanusException {
+    protected GordianHashManager(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */
         theFactory = (pParameters.getFactoryType() == GordianFactoryType.BC)
                                                                              ? new BouncyFactory(pParameters)
@@ -105,10 +105,10 @@ public abstract class GordianHashManager {
      * @param pHashBytes the hash bytes to resolve
      * @param pSource the description of the secured resource
      * @return the password Hash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public GordianKeySetHash resolveKeySetHash(final byte[] pHashBytes,
-                                               final String pSource) throws JOceanusException {
+                                               final String pSource) throws OceanusException {
         GordianKeySetHash myHash = null;
 
         /* If the hash bytes exist try existing hashes for either absolute or password match */
@@ -216,9 +216,9 @@ public abstract class GordianHashManager {
      * obtain similar (same password) hash.
      * @param pHash the keySetHash to clone
      * @return the similar keySetHash
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GordianKeySetHash similarKeySetHash(final GordianKeySetHash pHash) throws JOceanusException {
+    public GordianKeySetHash similarKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
         /* clone the hash */
         GordianKeySetHash myHash = pHash.similarHash();
 

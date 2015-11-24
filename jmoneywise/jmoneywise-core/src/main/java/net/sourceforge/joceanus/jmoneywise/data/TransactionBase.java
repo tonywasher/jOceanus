@@ -39,9 +39,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Transaction data type.
@@ -142,10 +142,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected TransactionBase(final TransactionBaseList<T> pList,
-                              final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                              final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -196,14 +196,14 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
             /* Store the Amount */
             myValue = pValues.getValue(FIELD_AMOUNT);
-            if (myValue instanceof JMoney) {
-                setValueAmount((JMoney) myValue);
+            if (myValue instanceof TethysMoney) {
+                setValueAmount((TethysMoney) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueAmount((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueAmount(myString);
-                setValueAmount(myFormatter.parseValue(myString, JMoney.class));
+                setValueAmount(myFormatter.parseValue(myString, TethysMoney.class));
             }
 
             /* Store the reconciled flag */
@@ -216,7 +216,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
             /* Catch Exceptions */
         } catch (IllegalArgumentException
-                | JOceanusException e) {
+                | OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -359,7 +359,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain Amount.
      * @return the amount
      */
-    public JMoney getAmount() {
+    public TethysMoney getAmount() {
         return getAmount(getValueSet());
     }
 
@@ -459,8 +459,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Amount
      */
-    public static JMoney getAmount(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_AMOUNT, JMoney.class);
+    public static TethysMoney getAmount(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_AMOUNT, TethysMoney.class);
     }
 
     /**
@@ -561,19 +561,19 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueAmount(final JMoney pValue) throws JOceanusException {
+    private void setValueAmount(final TethysMoney pValue) throws OceanusException {
         setEncryptedValue(FIELD_AMOUNT, pValue);
     }
 
     /**
      * Set amount value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueAmount(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_AMOUNT, pBytes, JMoney.class);
+    private void setValueAmount(final byte[] pBytes) throws OceanusException {
+        setEncryptedValue(FIELD_AMOUNT, pBytes, TethysMoney.class);
     }
 
     /**
@@ -707,7 +707,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -887,9 +887,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Set a new amount.
      * @param pAmount the amount
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAmount(final JMoney pAmount) throws JOceanusException {
+    public void setAmount(final TethysMoney pAmount) throws OceanusException {
         setValueAmount(pAmount);
     }
 
@@ -919,7 +919,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         AssetDirection myDir = getDirection();
-        JMoney myAmount = getAmount();
+        TethysMoney myAmount = getAmount();
         TransactionCategory myCategory = getCategory();
         boolean doCheckCombo = true;
 
@@ -1061,7 +1061,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /**
          * DataSet range.
          */
-        private JDateDayRange theRange = null;
+        private TethysDateRange theRange = null;
 
         /**
          * AssetPair Manager.
@@ -1113,7 +1113,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          * Obtain valid date range.
          * @return the valid range
          */
-        public JDateDayRange getValidDateRange() {
+        public TethysDateRange getValidDateRange() {
             return theRange;
         }
 
@@ -1129,7 +1129,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          * Set the range.
          * @param pRange the range
          */
-        protected void setRange(final JDateDayRange pRange) {
+        protected void setRange(final TethysDateRange pRange) {
             theRange = pRange;
         }
     }

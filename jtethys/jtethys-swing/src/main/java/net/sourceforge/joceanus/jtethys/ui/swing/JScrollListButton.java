@@ -41,9 +41,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.event.PopupMenuListener;
 
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
@@ -67,7 +67,7 @@ public class JScrollListButton<T>
      */
     public JScrollListButton() {
         /* Set standard setup */
-        super(ArrowIcon.DOWN);
+        super(TethysSwingArrowIcon.DOWN);
         setVerticalTextPosition(AbstractButton.CENTER);
         setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -88,11 +88,11 @@ public class JScrollListButton<T>
      * @param <X> the object type
      */
     public static final class JScrollListMenuBuilder<X>
-            implements ActionListener, JOceanusEventProvider {
+            implements ActionListener, TethysEventProvider {
         /**
          * The Event Manager.
          */
-        private final JOceanusEventManager theEventManager;
+        private final TethysEventManager theEventManager;
 
         /**
          * The Button.
@@ -115,11 +115,11 @@ public class JScrollListButton<T>
             theButton.addActionListener(this);
 
             /* Create event manager */
-            theEventManager = new JOceanusEventManager();
+            theEventManager = new TethysEventManager();
         }
 
         @Override
-        public JOceanusEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 

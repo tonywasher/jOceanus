@@ -43,11 +43,11 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Portfolio Bucket.
@@ -190,7 +190,7 @@ public final class PortfolioBucket
      */
     private PortfolioBucket(final Analysis pAnalysis,
                             final PortfolioBucket pBase,
-                            final JDateDay pDate) {
+                            final TethysDate pDate) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
         theCurrency = pBase.getCurrency();
@@ -219,7 +219,7 @@ public final class PortfolioBucket
      */
     private PortfolioBucket(final Analysis pAnalysis,
                             final PortfolioBucket pBase,
-                            final JDateDayRange pRange) {
+                            final TethysDateRange pRange) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
         theCurrency = pBase.getCurrency();
@@ -264,8 +264,8 @@ public final class PortfolioBucket
         AccountAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
                                                        : JDataFieldValue.SKIP;
             }
@@ -370,7 +370,7 @@ public final class PortfolioBucket
      * @param pValue the value of the attribute
      */
     protected void setValue(final SecurityAttribute pAttr,
-                            final JMoney pValue) {
+                            final TethysMoney pValue) {
         /* Set the value into the list */
         theValues.put(pAttr, pValue);
     }
@@ -420,16 +420,16 @@ public final class PortfolioBucket
                                                  : theCurrency.getCurrency();
 
         /* Create valuation fields for the portfolio */
-        theValues.setValue(SecurityAttribute.VALUATION, new JMoney(myCurrency));
-        theBaseValues.setValue(SecurityAttribute.VALUATION, new JMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.VALUATION, new TethysMoney(myCurrency));
+        theBaseValues.setValue(SecurityAttribute.VALUATION, new TethysMoney(myCurrency));
 
         /* Create profit fields for the portfolio */
-        theValues.setValue(SecurityAttribute.PROFIT, new JMoney(myCurrency));
-        theBaseValues.setValue(SecurityAttribute.PROFIT, new JMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.PROFIT, new TethysMoney(myCurrency));
+        theBaseValues.setValue(SecurityAttribute.PROFIT, new TethysMoney(myCurrency));
 
         /* Create market fields for the portfolio */
-        theValues.setValue(SecurityAttribute.MARKET, new JMoney(myCurrency));
-        theValues.setValue(SecurityAttribute.MARKETPROFIT, new JMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.MARKET, new TethysMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.MARKETPROFIT, new TethysMoney(myCurrency));
     }
 
     /**
@@ -504,11 +504,11 @@ public final class PortfolioBucket
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
-        myValue = new JMoney(myValue);
+        TethysMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
+        myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
+        TethysMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -547,8 +547,8 @@ public final class PortfolioBucket
     private static void addValues(final SecurityValues pTotals,
                                   final AccountValues pSource) {
         /* Add valuation values */
-        JMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
-        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        TethysMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
+        TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -560,8 +560,8 @@ public final class PortfolioBucket
     private static void addValues(final SecurityValues pTotals,
                                   final SecurityValues pSource) {
         /* Add valuation values */
-        JMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
-        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
+        TethysMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
+        TethysMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
 
         /* Add invested values */
@@ -666,12 +666,12 @@ public final class PortfolioBucket
      * @param pBase get base valuation - true/false
      * @return the valuation minus the cash value
      */
-    public JMoney getCashValue(final boolean pBase) {
+    public TethysMoney getCashValue(final boolean pBase) {
         /* Obtain the cash valuation */
         AccountValues myCashValues = pBase
                                           ? theCash.getBaseValues()
                                           : theCash.getValues();
-        return new JMoney(myCashValues.getMoneyValue(AccountAttribute.VALUATION));
+        return new TethysMoney(myCashValues.getMoneyValue(AccountAttribute.VALUATION));
     }
 
     /**
@@ -679,12 +679,12 @@ public final class PortfolioBucket
      * @param pBase get base valuation - true/false
      * @return the valuation minus the cash value
      */
-    public JMoney getNonCashValue(final boolean pBase) {
+    public TethysMoney getNonCashValue(final boolean pBase) {
         /* Handle valuation by subtracting the cash valuation */
         SecurityValues myValues = pBase
                                        ? theBaseValues
                                        : theValues;
-        JMoney myValue = new JMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        TethysMoney myValue = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myValue.subtractAmount(getCashValue(pBase));
         return myValue;
     }
@@ -782,7 +782,7 @@ public final class PortfolioBucket
          */
         protected PortfolioBucketList(final Analysis pAnalysis,
                                       final PortfolioBucketList pBase,
-                                      final JDateDay pDate) {
+                                      final TethysDate pDate) {
             /* Initialise class */
             super(PortfolioBucket.class);
             theAnalysis = pAnalysis;
@@ -812,7 +812,7 @@ public final class PortfolioBucket
          */
         protected PortfolioBucketList(final Analysis pAnalysis,
                                       final PortfolioBucketList pBase,
-                                      final JDateDayRange pRange) {
+                                      final TethysDateRange pRange) {
             /* Initialise class */
             super(PortfolioBucket.class);
             theAnalysis = pAnalysis;
@@ -956,7 +956,7 @@ public final class PortfolioBucket
         protected void analyseSecurities() {
             /* Market Analysis */
             MarketAnalysis myMarket = new MarketAnalysis();
-            JDateDayRange myRange = theAnalysis.getDateRange();
+            TethysDateRange myRange = theAnalysis.getDateRange();
             PortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
             /* Loop through the portfolio buckets */
@@ -1009,9 +1009,9 @@ public final class PortfolioBucket
 
         /**
          * Mark active securities.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected void markActiveSecurities() throws JOceanusException {
+        protected void markActiveSecurities() throws OceanusException {
             /* Loop through the portfolio buckets */
             Iterator<PortfolioBucket> myIterator = iterator();
             while (myIterator.hasNext()) {

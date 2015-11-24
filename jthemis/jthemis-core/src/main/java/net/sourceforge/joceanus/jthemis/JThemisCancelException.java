@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Themis Cancel Exception.
  */
 public class JThemisCancelException
-        extends JOceanusException {
+        extends OceanusException {
     /**
      * SerialId.
      */

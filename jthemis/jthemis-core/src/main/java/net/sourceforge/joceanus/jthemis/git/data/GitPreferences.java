@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.io.File;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for Git.
@@ -80,9 +80,9 @@ public class GitPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GitPreferences() throws JOceanusException {
+    public GitPreferences() throws OceanusException {
         super();
     }
 

@@ -39,10 +39,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Provides top-level control of data.
@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEve
  * @param <E> the data type enum class
  */
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Debug View Name.
      */
@@ -94,7 +94,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The DataSet.
@@ -135,10 +135,10 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Constructor for default control.
      * @param pUtilitySet the utility set
      * @param pProfile the startup profile
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected DataControl(final JOceanusUtilitySet pUtilitySet,
-                          final JDataProfile pProfile) throws JOceanusException {
+                          final JDataProfile pProfile) throws OceanusException {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
         theProfile = pProfile;
@@ -147,7 +147,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theMap = new HashMap<String, ViewerEntry>();
 
         /* Create event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* initialise the data manager */
         initDataMgr();
@@ -161,7 +161,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -209,9 +209,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Derive update list.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void deriveUpdates() throws JOceanusException {
+    public void deriveUpdates() throws OceanusException {
         /* Store the updates */
         theUpdates = theData.deriveUpdateSet();
 
@@ -232,7 +232,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Add new Error.
      * @param pError the new Error
      */
-    public void addError(final JOceanusException pError) {
+    public void addError(final OceanusException pError) {
         theErrors.add(new JMetisExceptionWrapper(pError));
     }
 
@@ -364,9 +364,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Obtain Database object.
      * @return database object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public abstract Database<T> getDatabase() throws JOceanusException;
+    public abstract Database<T> getDatabase() throws OceanusException;
 
     /**
      * Obtain DataSet object.

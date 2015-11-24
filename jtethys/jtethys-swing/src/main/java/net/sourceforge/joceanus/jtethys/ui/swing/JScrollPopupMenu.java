@@ -150,8 +150,8 @@ public class JScrollPopupMenu
         theScrollDelay = pScrollDelay;
 
         /* Create the scroll items */
-        theUpItem = new ScrollItem(ArrowIcon.UP, -1);
-        theDownItem = new ScrollItem(ArrowIcon.DOWN, 1);
+        theUpItem = new ScrollItem(TethysSwingArrowIcon.UP, -1);
+        theDownItem = new ScrollItem(TethysSwingArrowIcon.DOWN, 1);
 
         /* Allocate the list */
         theMenuItems = new ArrayList<JMenuItem>();

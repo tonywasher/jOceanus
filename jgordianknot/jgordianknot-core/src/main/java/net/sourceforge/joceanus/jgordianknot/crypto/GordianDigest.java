@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot interface for Message Digests.
@@ -78,10 +78,10 @@ public interface GordianDigest {
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     int finish(final byte[] pBuffer,
-               final int pOffset) throws JOceanusException;
+               final int pOffset) throws OceanusException;
 
     /**
      * Update the digest, calculate and reset it.

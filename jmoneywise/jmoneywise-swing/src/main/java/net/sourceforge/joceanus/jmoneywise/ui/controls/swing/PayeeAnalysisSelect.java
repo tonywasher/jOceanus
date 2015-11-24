@@ -42,12 +42,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class PayeeAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, JOceanusEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -70,7 +70,7 @@ public class PayeeAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The active payee bucket list.
@@ -100,7 +100,7 @@ public class PayeeAnalysisSelect
         theButton = new JScrollButton<PayeeBucket>();
 
         /* Create Event Manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_PAYEE + JFieldElement.STR_COLON);
@@ -122,7 +122,7 @@ public class PayeeAnalysisSelect
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -235,7 +235,7 @@ public class PayeeAnalysisSelect
      * Listener class.
      */
     private final class PayeeListener
-            implements PropertyChangeListener, JOceanusChangeEventListener {
+            implements PropertyChangeListener, TethysChangeEventListener {
         /**
          * Payee menu builder.
          */
@@ -244,7 +244,7 @@ public class PayeeAnalysisSelect
         /**
          * PayeeMenu Registration.
          */
-        private final JOceanusChangeRegistration thePayeeMenuReg;
+        private final TethysChangeRegistration thePayeeMenuReg;
 
         /**
          * Constructor.
@@ -259,7 +259,7 @@ public class PayeeAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the PayeeMenu */
             if (thePayeeMenuReg.isRelevant(pEvent)) {
                 buildPayeeMenu();

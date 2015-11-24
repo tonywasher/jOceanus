@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.http.JiraClient;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
@@ -109,10 +109,10 @@ public class JiraProject
      * Constructor.
      * @param pServer the server
      * @param pProject the underlying project
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JiraProject(final JiraServer pServer,
-                          final JSONObject pProject) throws JOceanusException {
+                          final JSONObject pProject) throws OceanusException {
         /* Store parameters */
         super(pProject);
         theServer = pServer;
@@ -208,9 +208,9 @@ public class JiraProject
      * Obtain Component.
      * @param pName the name of the Component
      * @return the Component
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JiraComponent getComponent(final String pName) throws JOceanusException {
+    protected JiraComponent getComponent(final String pName) throws OceanusException {
         /* Look up component in the cache */
         JiraComponent myComp = theComponents.get(pName);
 
@@ -228,9 +228,9 @@ public class JiraProject
      * Obtain Version.
      * @param pName the name of the Version
      * @return the Version
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected JiraVersion getVersion(final String pName) throws JOceanusException {
+    protected JiraVersion getVersion(final String pName) throws OceanusException {
         /* Look up version in the cache */
         JiraVersion myVers = theVersions.get(pName);
 
@@ -248,9 +248,9 @@ public class JiraProject
      * Obtain Issue for key.
      * @param pKey the issue key
      * @return the issue
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraIssue getIssue(final String pKey) throws JOceanusException {
+    public JiraIssue getIssue(final String pKey) throws OceanusException {
         /* Look up issue in the cache */
         JiraIssue myIssue = theIssues.get(pKey);
 
@@ -275,9 +275,9 @@ public class JiraProject
     /**
      * Load IssueTypes.
      * @param pProject the project details
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadIssueTypes(final JSONObject pProject) throws JOceanusException {
+    private void loadIssueTypes(final JSONObject pProject) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the issue types */
@@ -298,9 +298,9 @@ public class JiraProject
 
     /**
      * Load Components.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadComponents() throws JOceanusException {
+    private void loadComponents() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the components */
@@ -320,9 +320,9 @@ public class JiraProject
 
     /**
      * Load Versions.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadVersions() throws JOceanusException {
+    private void loadVersions() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the versions */
@@ -343,9 +343,9 @@ public class JiraProject
     /**
      * Load Roles.
      * @param pProject the project details
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadRoles(final JSONObject pProject) throws JOceanusException {
+    private void loadRoles(final JSONObject pProject) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the roles */
@@ -378,9 +378,9 @@ public class JiraProject
         /**
          * Constructor.
          * @param pComponent the underlying component
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraComponent(final JSONObject pComponent) throws JOceanusException {
+        private JiraComponent(final JSONObject pComponent) throws OceanusException {
             /* Access the details */
             super(pComponent);
 
@@ -427,9 +427,9 @@ public class JiraProject
         /**
          * Constructor.
          * @param pVersion the underlying version
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraVersion(final JSONObject pVersion) throws JOceanusException {
+        private JiraVersion(final JSONObject pVersion) throws OceanusException {
             /* Access the details */
             super(pVersion);
 
@@ -484,9 +484,9 @@ public class JiraProject
         /**
          * Constructor.
          * @param pRole the underlying role
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraProjectRole(final JSONObject pRole) throws JOceanusException {
+        private JiraProjectRole(final JSONObject pRole) throws OceanusException {
             /* Access the details */
             super(pRole);
 
@@ -540,9 +540,9 @@ public class JiraProject
         /**
          * Constructor.
          * @param pActor the underlying role
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraRoleActor(final JSONObject pActor) throws JOceanusException {
+        private JiraRoleActor(final JSONObject pActor) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Access the details */

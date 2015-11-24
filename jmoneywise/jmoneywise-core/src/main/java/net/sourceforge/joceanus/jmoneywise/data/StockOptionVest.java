@@ -45,10 +45,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * StockOptionVest class.
@@ -101,10 +101,10 @@ public class StockOptionVest
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private StockOptionVest(final StockOptionVestList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -123,27 +123,27 @@ public class StockOptionVest
 
             /* Store GrantDate */
             myValue = pValues.getValue(FIELD_DATE);
-            if (myValue instanceof JDateDay) {
-                setValueDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store the Units */
             myValue = pValues.getValue(FIELD_UNITS);
-            if (myValue instanceof JUnits) {
-                setValueUnits((JUnits) myValue);
+            if (myValue instanceof TethysUnits) {
+                setValueUnits((TethysUnits) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueUnits((byte[]) myValue);
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueUnits(myString);
-                setValueUnits(myFormatter.parseValue(myString, JUnits.class));
+                setValueUnits(myFormatter.parseValue(myString, TethysUnits.class));
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -242,7 +242,7 @@ public class StockOptionVest
      * Obtain Date.
      * @return the Date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return getDate(getValueSet());
     }
 
@@ -250,7 +250,7 @@ public class StockOptionVest
      * Obtain Units.
      * @return the units
      */
-    public JUnits getUnits() {
+    public TethysUnits getUnits() {
         return getUnits(getValueSet());
     }
 
@@ -284,8 +284,8 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static JDateDay getDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATE, JDateDay.class);
+    public static TethysDate getDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
     /**
@@ -293,8 +293,8 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the symbol
      */
-    public static JUnits getUnits(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_UNITS, JUnits.class);
+    public static TethysUnits getUnits(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_UNITS, TethysUnits.class);
     }
 
     /**
@@ -343,25 +343,25 @@ public class StockOptionVest
      * Set Date value.
      * @param pValue the value
      */
-    private void setValueDate(final JDateDay pValue) {
+    private void setValueDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
     }
 
     /**
      * Set units value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueUnits(final JUnits pValue) throws JOceanusException {
+    private void setValueUnits(final TethysUnits pValue) throws OceanusException {
         setEncryptedValue(FIELD_UNITS, pValue);
     }
 
     /**
      * Set units value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueUnits(final String pValue) throws JOceanusException {
+    private void setValueUnits(final String pValue) throws OceanusException {
         getValueSet().setValue(FIELD_UNITS, pValue);
     }
 
@@ -376,10 +376,10 @@ public class StockOptionVest
     /**
      * Set units value.
      * @param pBytes the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void setValueUnits(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_UNITS, pBytes, JUnits.class);
+    private void setValueUnits(final byte[] pBytes) throws OceanusException {
+        setEncryptedValue(FIELD_UNITS, pBytes, TethysUnits.class);
     }
 
     @Override
@@ -432,7 +432,7 @@ public class StockOptionVest
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -444,9 +444,9 @@ public class StockOptionVest
     /**
      * Resolve links in an updateSet.
      * @param pUpdateSet the update Set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         StockOptionList myOptions = pUpdateSet.getDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
         resolveDataLink(FIELD_OPTION, myOptions);
@@ -455,27 +455,27 @@ public class StockOptionVest
     /**
      * Set a new option.
      * @param pOption the option
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setStockOption(final StockOption pOption) throws JOceanusException {
+    public void setStockOption(final StockOption pOption) throws OceanusException {
         setValueStockOption(pOption);
     }
 
     /**
      * Set a new Date.
      * @param pDate the date
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDate(final JDateDay pDate) throws JOceanusException {
+    public void setDate(final TethysDate pDate) throws OceanusException {
         setValueDate(pDate);
     }
 
     /**
      * Set a new units.
      * @param pUnits the units
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setUnits(final JUnits pUnits) throws JOceanusException {
+    public void setUnits(final TethysUnits pUnits) throws OceanusException {
         setValueUnits(pUnits);
     }
 
@@ -497,8 +497,8 @@ public class StockOptionVest
     @Override
     public void validate() {
         StockOption myOption = getStockOption();
-        JDateDay myDate = getDate();
-        JUnits myUnits = getUnits();
+        TethysDate myDate = getDate();
+        TethysUnits myUnits = getUnits();
         StockOptionVestList myList = getList();
         MoneyWiseData mySet = getDataSet();
 
@@ -644,9 +644,9 @@ public class StockOptionVest
          * Derive Edit list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public StockOptionVestList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public StockOptionVestList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             StockOptionVestList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -703,7 +703,7 @@ public class StockOptionVest
         }
 
         @Override
-        public StockOptionVest addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public StockOptionVest addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the vest */
             StockOptionVest myVest = new StockOptionVest(this, pValues);
 
@@ -750,14 +750,14 @@ public class StockOptionVest
         /**
          * Map of Maps.
          */
-        private final Map<StockOption, Map<JDateDay, Integer>> theMapOfMaps;
+        private final Map<StockOption, Map<TethysDate, Integer>> theMapOfMaps;
 
         /**
          * Constructor.
          */
         public StockOptionVestDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<StockOption, Map<JDateDay, Integer>>();
+            theMapOfMaps = new HashMap<StockOption, Map<TethysDate, Integer>>();
         }
 
         @Override
@@ -795,14 +795,14 @@ public class StockOptionVest
             }
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myOption);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myOption);
             if (myMap == null) {
-                myMap = new HashMap<JDateDay, Integer>();
+                myMap = new HashMap<TethysDate, Integer>();
                 theMapOfMaps.put(myOption, myMap);
             }
 
             /* Adjust vest count */
-            JDateDay myDate = pItem.getDate();
+            TethysDate myDate = pItem.getDate();
             Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
@@ -819,10 +819,10 @@ public class StockOptionVest
         public boolean validVestCount(final StockOptionVest pItem) {
             /* Access the Details */
             StockOption myOption = pItem.getStockOption();
-            JDateDay myDate = pItem.getDate();
+            TethysDate myDate = pItem.getDate();
 
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(myOption);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myOption);
             if (myMap != null) {
                 Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
@@ -837,9 +837,9 @@ public class StockOptionVest
          * @return true/false
          */
         public boolean availableDate(final StockOption pOption,
-                                     final JDateDay pDate) {
+                                     final TethysDate pDate) {
             /* Access the map */
-            Map<JDateDay, Integer> myMap = theMapOfMaps.get(pOption);
+            Map<TethysDate, Integer> myMap = theMapOfMaps.get(pOption);
             return myMap != null
                                 ? myMap.get(pDate) == null
                                 : true;

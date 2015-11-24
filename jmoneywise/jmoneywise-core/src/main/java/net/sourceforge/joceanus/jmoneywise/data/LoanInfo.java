@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Representation of an information extension of a loan.
@@ -89,10 +89,10 @@ public class LoanInfo
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private LoanInfo(final LoanInfoList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -110,7 +110,7 @@ public class LoanInfo
             LoanInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -199,7 +199,7 @@ public class LoanInfo
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -335,7 +335,7 @@ public class LoanInfo
         public void addInfoItem(final Integer pId,
                                 final Loan pLoan,
                                 final AccountInfoClass pInfoClass,
-                                final Object pValue) throws JOceanusException {
+                                final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
                 return;
@@ -371,7 +371,7 @@ public class LoanInfo
         }
 
         @Override
-        public LoanInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public LoanInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
             LoanInfo myInfo = new LoanInfo(this, pValues);
 
@@ -389,7 +389,7 @@ public class LoanInfo
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Validate the LoanInfo */
             validateOnLoad();
 

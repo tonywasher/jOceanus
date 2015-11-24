@@ -47,14 +47,14 @@ import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedRatio;
 import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedShort;
 import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedUnits;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Encrypted field generator.
@@ -101,10 +101,10 @@ public class EncryptionGenerator {
      * @param pCurrent the current encrypted value
      * @param pValue the new value to encrypt
      * @return the encrypted field
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public EncryptedField<?> encryptValue(final EncryptedField<?> pCurrent,
-                                          final Object pValue) throws JOceanusException {
+                                          final Object pValue) throws OceanusException {
         /* If we are passed a null value just return null */
         if (pValue == null) {
             return null;
@@ -163,26 +163,26 @@ public class EncryptionGenerator {
         }
 
         /* Handle decimal instances */
-        if (JDateDay.class.isInstance(pValue)) {
-            return new EncryptedDateDay(theKeySet, theFormatter, (JDateDay) pValue);
+        if (TethysDate.class.isInstance(pValue)) {
+            return new EncryptedDateDay(theKeySet, theFormatter, (TethysDate) pValue);
         }
-        if (JUnits.class.isInstance(pValue)) {
-            return new EncryptedUnits(theKeySet, theFormatter, (JUnits) pValue);
+        if (TethysUnits.class.isInstance(pValue)) {
+            return new EncryptedUnits(theKeySet, theFormatter, (TethysUnits) pValue);
         }
-        if (JRate.class.isInstance(pValue)) {
-            return new EncryptedRate(theKeySet, theFormatter, (JRate) pValue);
+        if (TethysRate.class.isInstance(pValue)) {
+            return new EncryptedRate(theKeySet, theFormatter, (TethysRate) pValue);
         }
-        if (JPrice.class.isInstance(pValue)) {
-            return new EncryptedPrice(theKeySet, theFormatter, (JPrice) pValue);
+        if (TethysPrice.class.isInstance(pValue)) {
+            return new EncryptedPrice(theKeySet, theFormatter, (TethysPrice) pValue);
         }
-        if (JMoney.class.isInstance(pValue)) {
-            return new EncryptedMoney(theKeySet, theFormatter, (JMoney) pValue);
+        if (TethysMoney.class.isInstance(pValue)) {
+            return new EncryptedMoney(theKeySet, theFormatter, (TethysMoney) pValue);
         }
-        if (JDilution.class.isInstance(pValue)) {
-            return new EncryptedDilution(theKeySet, theFormatter, (JDilution) pValue);
+        if (TethysDilution.class.isInstance(pValue)) {
+            return new EncryptedDilution(theKeySet, theFormatter, (TethysDilution) pValue);
         }
-        if (JRatio.class.isInstance(pValue)) {
-            return new EncryptedRatio(theKeySet, theFormatter, (JRatio) pValue);
+        if (TethysRatio.class.isInstance(pValue)) {
+            return new EncryptedRatio(theKeySet, theFormatter, (TethysRatio) pValue);
         }
 
         /* Unsupported so reject */
@@ -195,10 +195,10 @@ public class EncryptionGenerator {
      * @param pEncrypted the encrypted value
      * @param pClass the class of the encrypted value
      * @return the encrypted field
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public EncryptedField<?> decryptValue(final byte[] pEncrypted,
-                                          final Class<?> pClass) throws JOceanusException {
+                                          final Class<?> pClass) throws OceanusException {
         /* If we are passed a null value just return null */
         if (pEncrypted == null) {
             return null;
@@ -242,25 +242,25 @@ public class EncryptionGenerator {
         }
 
         /* Handle decimal instances */
-        if (JDateDay.class.equals(pClass)) {
+        if (TethysDate.class.equals(pClass)) {
             return new EncryptedDateDay(theKeySet, theFormatter, pEncrypted);
         }
-        if (JMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClass)) {
             return new EncryptedMoney(theKeySet, theFormatter, pEncrypted);
         }
-        if (JUnits.class.equals(pClass)) {
+        if (TethysUnits.class.equals(pClass)) {
             return new EncryptedUnits(theKeySet, theFormatter, pEncrypted);
         }
-        if (JRate.class.equals(pClass)) {
+        if (TethysRate.class.equals(pClass)) {
             return new EncryptedRate(theKeySet, theFormatter, pEncrypted);
         }
-        if (JPrice.class.equals(pClass)) {
+        if (TethysPrice.class.equals(pClass)) {
             return new EncryptedPrice(theKeySet, theFormatter, pEncrypted);
         }
-        if (JDilution.class.equals(pClass)) {
+        if (TethysDilution.class.equals(pClass)) {
             return new EncryptedDilution(theKeySet, theFormatter, pEncrypted);
         }
-        if (JRatio.class.equals(pClass)) {
+        if (TethysRatio.class.equals(pClass)) {
             return new EncryptedRatio(theKeySet, theFormatter, pEncrypted);
         }
 
@@ -273,10 +273,10 @@ public class EncryptionGenerator {
      * Adopt Encryption.
      * @param pTarget the target field
      * @param pSource the source field
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void adoptEncryption(final EncryptedField<?> pTarget,
-                                final EncryptedField<?> pSource) throws JOceanusException {
+                                final EncryptedField<?> pSource) throws OceanusException {
         /* Adopt the encryption */
         pTarget.adoptEncryption(theKeySet, theFormatter, pSource);
     }

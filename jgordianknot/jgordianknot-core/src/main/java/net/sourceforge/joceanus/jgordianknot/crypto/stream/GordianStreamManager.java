@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Stream Manager.
@@ -60,9 +60,9 @@ public final class GordianStreamManager {
      * Analyse output stream.
      * @param pStream the output stream
      * @return the Stream definition list
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public List<GordianStreamDefinition> analyseStreams(final OutputStream pStream) throws JOceanusException {
+    public List<GordianStreamDefinition> analyseStreams(final OutputStream pStream) throws OceanusException {
         /* Allocate the list */
         List<GordianStreamDefinition> myStreams = new ArrayList<GordianStreamDefinition>();
 
@@ -112,10 +112,10 @@ public final class GordianStreamManager {
      * @param pStreamDefs the list of stream definitions
      * @param pBaseStream the base input stream
      * @return the new input stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public InputStream buildInputStream(final List<GordianStreamDefinition> pStreamDefs,
-                                        final InputStream pBaseStream) throws JOceanusException {
+                                        final InputStream pBaseStream) throws OceanusException {
         /* Loop through the stream definitions */
         InputStream myCurrent = pBaseStream;
         Iterator<GordianStreamDefinition> myIterator = pStreamDefs.iterator();
@@ -134,9 +134,9 @@ public final class GordianStreamManager {
      * Build output stream.
      * @param pBaseStream the base output stream
      * @return the new output stream
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public OutputStream buildOutputStream(final OutputStream pBaseStream) throws JOceanusException {
+    public OutputStream buildOutputStream(final OutputStream pBaseStream) throws OceanusException {
         /* Loop through the stream definitions */
         OutputStream myCurrent = pBaseStream;
 

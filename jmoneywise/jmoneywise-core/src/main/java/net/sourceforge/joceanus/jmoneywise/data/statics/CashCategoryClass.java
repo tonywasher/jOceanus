@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of CashCategory Type Classes.
@@ -105,9 +105,9 @@ public enum CashCategoryClass implements CategoryInterface {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static CashCategoryClass fromId(final int id) throws JOceanusException {
+    public static CashCategoryClass fromId(final int id) throws OceanusException {
         for (CashCategoryClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;

@@ -46,11 +46,11 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysFiscalYear;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * TaxYear DataItem utilising TaxYearInfo.
@@ -140,10 +140,10 @@ public class TaxYear
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxYear(final TaxYearList pList,
-                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                    final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -186,9 +186,9 @@ public class TaxYear
      * Obtain Allowance.
      * @return the allowance
      */
-    public JMoney getAllowance() {
+    public TethysMoney getAllowance() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.ALLOWANCE, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.ALLOWANCE, TethysMoney.class)
                           : null;
     }
 
@@ -196,9 +196,9 @@ public class TaxYear
      * Obtain Rental Allowance.
      * @return the rental allowance
      */
-    public JMoney getRentalAllowance() {
+    public TethysMoney getRentalAllowance() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.RENTALALLOWANCE, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.RENTALALLOWANCE, TethysMoney.class)
                           : null;
     }
 
@@ -206,9 +206,9 @@ public class TaxYear
      * Obtain LoTaxBand.
      * @return the tax band
      */
-    public JMoney getLoBand() {
+    public TethysMoney getLoBand() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.LOTAXBAND, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.LOTAXBAND, TethysMoney.class)
                           : null;
     }
 
@@ -216,9 +216,9 @@ public class TaxYear
      * Obtain Basic Tax band.
      * @return the tax band
      */
-    public JMoney getBasicBand() {
+    public TethysMoney getBasicBand() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXBAND, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXBAND, TethysMoney.class)
                           : null;
     }
 
@@ -226,9 +226,9 @@ public class TaxYear
      * Obtain Capital Allowance.
      * @return the allowance
      */
-    public JMoney getCapitalAllow() {
+    public TethysMoney getCapitalAllow() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.CAPITALALLOWANCE, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.CAPITALALLOWANCE, TethysMoney.class)
                           : null;
     }
 
@@ -236,9 +236,9 @@ public class TaxYear
      * Obtain LoAge Allowance.
      * @return the allowance
      */
-    public JMoney getLoAgeAllow() {
+    public TethysMoney getLoAgeAllow() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.LOAGEALLOWANCE, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.LOAGEALLOWANCE, TethysMoney.class)
                           : null;
     }
 
@@ -246,9 +246,9 @@ public class TaxYear
      * Obtain HiAge Allowance.
      * @return the allowance
      */
-    public JMoney getHiAgeAllow() {
+    public TethysMoney getHiAgeAllow() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.HIAGEALLOWANCE, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.HIAGEALLOWANCE, TethysMoney.class)
                           : null;
     }
 
@@ -256,9 +256,9 @@ public class TaxYear
      * Obtain Age Allowance Limit.
      * @return the limit
      */
-    public JMoney getAgeAllowLimit() {
+    public TethysMoney getAgeAllowLimit() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.AGEALLOWANCELIMIT, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.AGEALLOWANCELIMIT, TethysMoney.class)
                           : null;
     }
 
@@ -266,9 +266,9 @@ public class TaxYear
      * Obtain Additional Allowance Limit.
      * @return the limit
      */
-    public JMoney getAddAllowLimit() {
+    public TethysMoney getAddAllowLimit() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, TethysMoney.class)
                           : null;
     }
 
@@ -276,9 +276,9 @@ public class TaxYear
      * Obtain Additional Income Boundary.
      * @return the boundary
      */
-    public JMoney getAddIncBound() {
+    public TethysMoney getAddIncBound() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, JMoney.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, TethysMoney.class)
                           : null;
     }
 
@@ -286,9 +286,9 @@ public class TaxYear
      * Obtain LoTaxRate.
      * @return the rate
      */
-    public JRate getLoTaxRate() {
+    public TethysRate getLoTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.LOTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.LOTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -296,9 +296,9 @@ public class TaxYear
      * Obtain BasicTaxRate.
      * @return the rate
      */
-    public JRate getBasicTaxRate() {
+    public TethysRate getBasicTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -306,9 +306,9 @@ public class TaxYear
      * Obtain HiTaxRate.
      * @return the rate
      */
-    public JRate getHiTaxRate() {
+    public TethysRate getHiTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.HITAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.HITAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -316,9 +316,9 @@ public class TaxYear
      * Obtain InterestTaxRate.
      * @return the rate
      */
-    public JRate getIntTaxRate() {
+    public TethysRate getIntTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.INTERESTTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.INTERESTTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -326,9 +326,9 @@ public class TaxYear
      * Obtain DividendTaxRate.
      * @return the rate
      */
-    public JRate getDivTaxRate() {
+    public TethysRate getDivTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.DIVIDENDTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.DIVIDENDTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -336,9 +336,9 @@ public class TaxYear
      * Obtain HiDividendTaxRate.
      * @return the rate
      */
-    public JRate getHiDivTaxRate() {
+    public TethysRate getHiDivTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -346,9 +346,9 @@ public class TaxYear
      * Obtain AdditionalTaxRate.
      * @return the rate
      */
-    public JRate getAddTaxRate() {
+    public TethysRate getAddTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -356,9 +356,9 @@ public class TaxYear
      * Obtain AdditionalDividendTaxRate.
      * @return the rate
      */
-    public JRate getAddDivTaxRate() {
+    public TethysRate getAddDivTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -366,9 +366,9 @@ public class TaxYear
      * Obtain CapitalTaxRate.
      * @return the rate
      */
-    public JRate getCapTaxRate() {
+    public TethysRate getCapTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.CAPITALTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.CAPITALTAXRATE, TethysRate.class)
                           : null;
     }
 
@@ -376,189 +376,189 @@ public class TaxYear
      * Obtain HiCapitalTaxRate.
      * @return the rate
      */
-    public JRate getHiCapTaxRate() {
+    public TethysRate getHiCapTaxRate() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TaxYearInfoClass.HICAPITALTAXRATE, JRate.class)
+                          ? theInfoSet.getValue(TaxYearInfoClass.HICAPITALTAXRATE, TethysRate.class)
                           : null;
     }
 
     /**
      * Set a new allowance.
      * @param pAllowance the allowance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAllowance(final JMoney pAllowance) throws JOceanusException {
+    public void setAllowance(final TethysMoney pAllowance) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.ALLOWANCE, pAllowance);
     }
 
     /**
      * Set a new rental allowance.
      * @param pAllowance the allowance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setRentalAllowance(final JMoney pAllowance) throws JOceanusException {
+    public void setRentalAllowance(final TethysMoney pAllowance) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.RENTALALLOWANCE, pAllowance);
     }
 
     /**
      * Set a new capital allowance.
      * @param pAllowance the allowance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setCapitalAllow(final JMoney pAllowance) throws JOceanusException {
+    public void setCapitalAllow(final TethysMoney pAllowance) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.CAPITALALLOWANCE, pAllowance);
     }
 
     /**
      * Set a new Low Tax Band.
      * @param pLoBand the Low Tax Band
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setLoBand(final JMoney pLoBand) throws JOceanusException {
+    public void setLoBand(final TethysMoney pLoBand) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.LOTAXBAND, pLoBand);
     }
 
     /**
      * Set a new Basic Tax Band.
      * @param pBasicBand the Basic Tax Band
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setBasicBand(final JMoney pBasicBand) throws JOceanusException {
+    public void setBasicBand(final TethysMoney pBasicBand) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.BASICTAXBAND, pBasicBand);
     }
 
     /**
      * Set a new Low Age Allowance.
      * @param pLoAgeAllow the Low Age Allowance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setLoAgeAllow(final JMoney pLoAgeAllow) throws JOceanusException {
+    public void setLoAgeAllow(final TethysMoney pLoAgeAllow) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.LOAGEALLOWANCE, pLoAgeAllow);
     }
 
     /**
      * Set a new High Age Allowance.
      * @param pHiAgeAllow the High Age Allowance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setHiAgeAllow(final JMoney pHiAgeAllow) throws JOceanusException {
+    public void setHiAgeAllow(final TethysMoney pHiAgeAllow) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.HIAGEALLOWANCE, pHiAgeAllow);
     }
 
     /**
      * Set a new Age Allowance Limit.
      * @param pAgeAllowLimit the Age Allowance Limit
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAgeAllowLimit(final JMoney pAgeAllowLimit) throws JOceanusException {
+    public void setAgeAllowLimit(final TethysMoney pAgeAllowLimit) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.AGEALLOWANCELIMIT, pAgeAllowLimit);
     }
 
     /**
      * Set a new Additional Allowance Limit.
      * @param pAddAllowLimit the Additional Allowance Limit
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAddAllowLimit(final JMoney pAddAllowLimit) throws JOceanusException {
+    public void setAddAllowLimit(final TethysMoney pAddAllowLimit) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, pAddAllowLimit);
     }
 
     /**
      * Set a new Additional Income Boundary.
      * @param pAddIncBound the Additional Income Boundary
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAddIncBound(final JMoney pAddIncBound) throws JOceanusException {
+    public void setAddIncBound(final TethysMoney pAddIncBound) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, pAddIncBound);
     }
 
     /**
      * Set a new Low Tax Rate.
      * @param pRate the Low Tax Rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setLoTaxRate(final JRate pRate) throws JOceanusException {
+    public void setLoTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.LOTAXRATE, pRate);
     }
 
     /**
      * Set a new Basic tax rate.
      * @param pRate the Basic tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setBasicTaxRate(final JRate pRate) throws JOceanusException {
+    public void setBasicTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.BASICTAXRATE, pRate);
     }
 
     /**
      * Set a new high tax rate.
      * @param pRate the high tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setHiTaxRate(final JRate pRate) throws JOceanusException {
+    public void setHiTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.HITAXRATE, pRate);
     }
 
     /**
      * Set a new Interest Tax Rate.
      * @param pRate the Interest Tax Rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setIntTaxRate(final JRate pRate) throws JOceanusException {
+    public void setIntTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.INTERESTTAXRATE, pRate);
     }
 
     /**
      * Set a new Dividend tax rate.
      * @param pRate the Dividend tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDivTaxRate(final JRate pRate) throws JOceanusException {
+    public void setDivTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.DIVIDENDTAXRATE, pRate);
     }
 
     /**
      * Set a new high dividend tax rate.
      * @param pRate the high dividend tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setHiDivTaxRate(final JRate pRate) throws JOceanusException {
+    public void setHiDivTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, pRate);
     }
 
     /**
      * Set a new additional tax rate.
      * @param pRate the additional tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAddTaxRate(final JRate pRate) throws JOceanusException {
+    public void setAddTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALTAXRATE, pRate);
     }
 
     /**
      * Set a new additional dividend tax rate.
      * @param pRate the additional dividend tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAddDivTaxRate(final JRate pRate) throws JOceanusException {
+    public void setAddDivTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, pRate);
     }
 
     /**
      * Set a new capital tax rate.
      * @param pRate the capital tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setCapTaxRate(final JRate pRate) throws JOceanusException {
+    public void setCapTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.CAPITALTAXRATE, pRate);
     }
 
     /**
      * Set a high capital tax rate.
      * @param pRate the high capital tax rate
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setHiCapTaxRate(final JRate pRate) throws JOceanusException {
+    public void setHiCapTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.HICAPITALTAXRATE, pRate);
     }
 
@@ -566,10 +566,10 @@ public class TaxYear
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final TaxYearInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -701,9 +701,9 @@ public class TaxYear
     /**
      * adjust values after taxRegime change.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* autoCorrect the infoSet */
         theInfoSet.autoCorrect(pUpdateSet);
     }
@@ -717,7 +717,7 @@ public class TaxYear
         super.validate();
 
         /* Access TaxYear details */
-        JDateDay myDate = getTaxYear();
+        TethysDate myDate = getTaxYear();
         TaxRegime myTaxRegime = getTaxRegime();
         TaxYearList myList = getList();
 
@@ -948,7 +948,7 @@ public class TaxYear
             myYear.setNewVersion();
 
             /* Adjust the year and add to list */
-            myYear.setTaxYear(new JDateDay(myBase.getTaxYear()));
+            myYear.setTaxYear(new TethysDate(myBase.getTaxYear()));
             myYear.getTaxYear().adjustYear(1);
             myList.add(myYear);
 
@@ -981,7 +981,7 @@ public class TaxYear
         }
 
         @Override
-        public TaxYear addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TaxYear addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the taxYear */
             TaxYear myYear = new TaxYear(this, pValues);
 
@@ -1017,7 +1017,7 @@ public class TaxYear
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Calculate the date range */
             getDataSet().calculateDateRange();
 
@@ -1034,7 +1034,7 @@ public class TaxYear
      * The dataMap class.
      */
     protected static class TaxYearDataMap
-            extends DataInstanceMap<TaxYear, MoneyWiseDataType, JDateDay>
+            extends DataInstanceMap<TaxYear, MoneyWiseDataType, TethysDate>
             implements JDataContents {
         @Override
         public void adjustForItem(final TaxYear pItem) {
@@ -1047,8 +1047,8 @@ public class TaxYear
          * @param pDate the date to look up
          * @return the matching item
          */
-        public TaxYear findItemByDate(final JDateDay pDate) {
-            JDateDay myDate = JFiscalYear.UK.normaliseDate(pDate);
+        public TaxYear findItemByDate(final TethysDate pDate) {
+            TethysDate myDate = TethysFiscalYear.UK.normaliseDate(pDate);
             return findItemByKey(myDate);
         }
 
@@ -1057,7 +1057,7 @@ public class TaxYear
          * @param pDate the date to look up
          * @return true/false
          */
-        public boolean validDateCount(final JDateDay pDate) {
+        public boolean validDateCount(final TethysDate pDate) {
             return validKeyCount(pDate);
         }
 
@@ -1066,7 +1066,7 @@ public class TaxYear
          * @param pDate the key to look up
          * @return true/false
          */
-        public boolean availableDate(final JDateDay pDate) {
+        public boolean availableDate(final TethysDate pDate) {
             return availableKey(pDate);
         }
     }

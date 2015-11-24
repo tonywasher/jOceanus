@@ -59,9 +59,9 @@ import net.sourceforge.joceanus.jprometheus.threads.swing.UpdatePassword;
 import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.help.HelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.SwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,7 +327,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Started Help window.
      */
-    private SwingHelpWindow theHelpWdw = null;
+    private TethysSwingHelpWindow theHelpWdw = null;
 
     /**
      * The Viewer Manager.
@@ -346,9 +346,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected MainWindow() throws JOceanusException {
+    protected MainWindow() throws OceanusException {
         /* Create the Executor service */
         theExecutor = Executors.newSingleThreadExecutor();
 
@@ -391,9 +391,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Build the main panel.
      * @return the main panel
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract JComponent buildMainPanel() throws JOceanusException;
+    protected abstract JComponent buildMainPanel() throws OceanusException;
 
     /**
      * Obtain the frame name.
@@ -404,18 +404,18 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Obtain the Help Module.
      * @return the help module
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract HelpModule getHelpModule() throws JOceanusException;
+    protected abstract TethysHelpModule getHelpModule() throws OceanusException;
 
     /**
      * Build the main window.
      * @param pView the Data view
      * @param pUtilitySet the utility set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void buildMainWindow(final DataControl<T, E> pView,
-                                final JOceanusSwingUtilitySet pUtilitySet) throws JOceanusException {
+                                final JOceanusSwingUtilitySet pUtilitySet) throws OceanusException {
         /* Store the view */
         theView = pView;
         theViewerMgr = pUtilitySet.getViewerManager();
@@ -585,9 +585,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Make the frame.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void makeFrame() throws JOceanusException {
+    public void makeFrame() throws OceanusException {
         /* Show the frame */
         theFrame.pack();
         theFrame.setLocationRelativeTo(null);
@@ -892,7 +892,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private void displayHelp() {
         try {
             /* Create the help window */
-            theHelpWdw = new SwingHelpWindow(theFrame, getHelpModule());
+            theHelpWdw = new TethysSwingHelpWindow(theFrame, getHelpModule());
 
             /* Listen for its closure */
             theHelpWdw.addWindowListener(theListener);
@@ -902,7 +902,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Display it */
             theHelpWdw.showDialog();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error("Failed to start Help Window", e);
             theHelpWdw = null;
         }

@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
 
 /**
  * The TransactionTag Bucket class.
@@ -103,7 +103,7 @@ public final class TransactionTagBucket
      */
     private TransactionTagBucket(final Analysis pAnalysis,
                                  final TransactionTagBucket pBase,
-                                 final JDateDay pDate) {
+                                 final TethysDate pDate) {
         /* Copy details from base */
         this(pAnalysis, pBase.getTransTag());
 
@@ -130,7 +130,7 @@ public final class TransactionTagBucket
      */
     private TransactionTagBucket(final Analysis pAnalysis,
                                  final TransactionTagBucket pBase,
-                                 final JDateDayRange pRange) {
+                                 final TethysDateRange pRange) {
         /* Copy details from base */
         this(pAnalysis, pBase.getTransTag());
 
@@ -212,7 +212,7 @@ public final class TransactionTagBucket
      * Obtain date range.
      * @return the range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -336,7 +336,7 @@ public final class TransactionTagBucket
          */
         protected TransactionTagBucketList(final Analysis pAnalysis,
                                            final TransactionTagBucketList pBase,
-                                           final JDateDay pDate) {
+                                           final TethysDate pDate) {
             /* Initialise class */
             super(TransactionTagBucket.class);
             theAnalysis = pAnalysis;
@@ -365,7 +365,7 @@ public final class TransactionTagBucket
          */
         protected TransactionTagBucketList(final Analysis pAnalysis,
                                            final TransactionTagBucketList pBase,
-                                           final JDateDayRange pRange) {
+                                           final TethysDateRange pRange) {
             /* Initialise class */
             super(TransactionTagBucket.class);
             theAnalysis = pAnalysis;

@@ -42,11 +42,11 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.Tran
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * TransactionInfoSet class.
@@ -477,7 +477,7 @@ public class TransactionInfoSet
             switch (myClass) {
                 case CREDITDATE:
                     /* Check value */
-                    JDateDay myDate = myInfo.getValue(JDateDay.class);
+                    TethysDate myDate = myInfo.getValue(TethysDate.class);
                     if (myDate.compareTo(myTransaction.getDate()) <= 0) {
                         myTransaction.addError(ERROR_BADDATE, getFieldForClass(myClass));
                     }
@@ -493,7 +493,7 @@ public class TransactionInfoSet
                     break;
                 case TAXCREDIT:
                     /* Check value */
-                    JMoney myAmount = myInfo.getValue(JMoney.class);
+                    TethysMoney myAmount = myInfo.getValue(TethysMoney.class);
                     if (!myAmount.isPositive()) {
                         myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     } else if (!myAmount.getCurrency().equals(myCurrency)) {
@@ -504,7 +504,7 @@ public class TransactionInfoSet
                 case DEEMEDBENEFIT:
                 case CHARITYDONATION:
                     /* Check value */
-                    myAmount = myInfo.getValue(JMoney.class);
+                    myAmount = myInfo.getValue(TethysMoney.class);
                     if (myAmount.isZero()) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (!myAmount.isPositive()) {
@@ -515,7 +515,7 @@ public class TransactionInfoSet
                     break;
                 case PARTNERAMOUNT:
                     /* Check value */
-                    myAmount = myInfo.getValue(JMoney.class);
+                    myAmount = myInfo.getValue(TethysMoney.class);
                     if (myAmount.isZero()) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (!myAmount.isPositive()) {
@@ -533,7 +533,7 @@ public class TransactionInfoSet
                 case CREDITUNITS:
                 case DEBITUNITS:
                     /* Check value */
-                    JUnits myUnits = myInfo.getValue(JUnits.class);
+                    TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
                     if (myUnits.isZero()) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (!myUnits.isPositive()) {
@@ -542,7 +542,7 @@ public class TransactionInfoSet
                     break;
                 case DILUTION:
                     /* Check range */
-                    JDilution myDilution = myInfo.getValue(JDilution.class);
+                    TethysDilution myDilution = myInfo.getValue(TethysDilution.class);
                     if (myDilution.outOfRange()) {
                         myTransaction.addError(DataItem.ERROR_RANGE, getFieldForClass(myClass));
                     }
@@ -566,21 +566,21 @@ public class TransactionInfoSet
 
     @Override
     protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
-                                   final TransactionInfoClass pClass) throws JOceanusException {
+                                   final TransactionInfoClass pClass) throws OceanusException {
         /* Switch on the class */
         switch (pClass) {
             case CREDITUNITS:
             case DEBITUNITS:
-                setValue(pClass, JUnits.getWholeUnits(1));
+                setValue(pClass, TethysUnits.getWholeUnits(1));
                 break;
             case DILUTION:
-                setValue(pClass, JDilution.MAX_DILUTION);
+                setValue(pClass, TethysDilution.MAX_DILUTION);
                 break;
             case QUALIFYYEARS:
                 setValue(pClass, Integer.valueOf(1));
                 break;
             case TAXCREDIT:
-                setValue(pClass, JMoney.getWholeUnits(0));
+                setValue(pClass, TethysMoney.getWholeUnits(0));
                 break;
             case THIRDPARTY:
                 setValue(pClass, getOwner().getDefaultThirdParty());

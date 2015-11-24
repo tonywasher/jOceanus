@@ -45,8 +45,8 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * Extension of SecurityPrice to cater for spot prices.
@@ -82,12 +82,12 @@ public final class SpotSecurityPrice
     /**
      * the previous date.
      */
-    private JDateDay thePrevDate;
+    private TethysDate thePrevDate;
 
     /**
      * the previous price.
      */
-    private JPrice thePrevPrice;
+    private TethysPrice thePrevPrice;
 
     /**
      * Constructor for a new SpotPrice where no price data exists.
@@ -123,7 +123,7 @@ public final class SpotSecurityPrice
      * Obtain previous price.
      * @return the price.
      */
-    public JPrice getPrevPrice() {
+    public TethysPrice getPrevPrice() {
         return thePrevPrice;
     }
 
@@ -131,7 +131,7 @@ public final class SpotSecurityPrice
      * Obtain previous date.
      * @return the date.
      */
-    public JDateDay getPrevDate() {
+    public TethysDate getPrevDate() {
         return thePrevDate;
     }
 
@@ -165,7 +165,7 @@ public final class SpotSecurityPrice
     }
 
     @Override
-    public JPrice getPrice() {
+    public TethysPrice getPrice() {
         /* Switch on state */
         switch (getState()) {
             case NEW:
@@ -235,7 +235,7 @@ public final class SpotSecurityPrice
         /**
          * The date.
          */
-        private final JDateDay theDate;
+        private final TethysDate theDate;
 
         /**
          * The view.
@@ -250,12 +250,12 @@ public final class SpotSecurityPrice
         /**
          * The next date.
          */
-        private JDateDay theNext = null;
+        private TethysDate theNext = null;
 
         /**
          * The previous date.
          */
-        private JDateDay thePrev = null;
+        private TethysDate thePrev = null;
 
         /**
          * Constructor.
@@ -265,7 +265,7 @@ public final class SpotSecurityPrice
          */
         public SpotSecurityList(final View pView,
                                 final Portfolio pPortfolio,
-                                final JDateDay pDate) {
+                                final TethysDate pDate) {
             /* Build initial list */
             super(pView.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
@@ -284,7 +284,7 @@ public final class SpotSecurityPrice
             SecurityBucketList mySecurities = myBucket.getSecurities();
 
             /* Loop through the Securities */
-            JDateDay myDate = new JDateDay(theDate);
+            TethysDate myDate = new TethysDate(theDate);
             Iterator<SecurityBucket> mySecIterator = mySecurities.iterator();
             while (mySecIterator.hasNext()) {
                 SecurityBucket mySecBucket = mySecIterator.next();
@@ -395,7 +395,7 @@ public final class SpotSecurityPrice
          * Obtain the next date.
          * @return the date
          */
-        public JDateDay getNext() {
+        public TethysDate getNext() {
             return theNext;
         }
 
@@ -403,7 +403,7 @@ public final class SpotSecurityPrice
          * Obtain the previous date.
          * @return the date
          */
-        public JDateDay getPrev() {
+        public TethysDate getPrev() {
             return thePrev;
         }
 

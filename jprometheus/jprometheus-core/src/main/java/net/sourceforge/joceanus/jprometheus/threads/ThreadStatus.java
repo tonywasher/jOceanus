@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread Status.
@@ -290,9 +290,9 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
 
         /**
          * Constructor.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public ThreadStatusPreferences() throws JOceanusException {
+        public ThreadStatusPreferences() throws OceanusException {
             super();
         }
 

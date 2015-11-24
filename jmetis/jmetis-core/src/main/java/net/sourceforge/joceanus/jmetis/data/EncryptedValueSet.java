@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.data;
 import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Encrypted ValueSet class.
@@ -111,9 +111,9 @@ public class EncryptedValueSet
     /**
      * Update security for the values.
      * @param pGenerator the generator
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void updateSecurity(final EncryptionGenerator pGenerator) throws JOceanusException {
+    public void updateSecurity(final EncryptionGenerator pGenerator) throws OceanusException {
         /* Access the values */
         Object[] myValues = getValues();
         int iLen = myValues.length;
@@ -137,10 +137,10 @@ public class EncryptedValueSet
      * Adopt security for the values.
      * @param pGenerator the generator
      * @param pBaseValues the base values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void adoptSecurity(final EncryptionGenerator pGenerator,
-                              final EncryptedValueSet pBaseValues) throws JOceanusException {
+                              final EncryptedValueSet pBaseValues) throws OceanusException {
         /* Access the values */
         Object[] myValues = getValues();
         int iLen = myValues.length;

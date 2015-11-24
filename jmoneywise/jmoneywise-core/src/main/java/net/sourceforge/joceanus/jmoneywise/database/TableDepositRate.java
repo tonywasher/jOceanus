@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for DepositRate.
@@ -74,7 +74,7 @@ public class TableDepositRate
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -91,7 +91,7 @@ public class TableDepositRate
 
     @Override
     protected void setFieldValue(final DepositRate pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (DepositRate.FIELD_DEPOSIT.equals(iField)) {

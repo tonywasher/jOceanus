@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * SheetDataItem extension for Transaction.
@@ -116,7 +116,7 @@ public class SheetTransaction
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
         myValues.addValue(Transaction.FIELD_DATE, loadDate(COL_DATE));
@@ -132,7 +132,7 @@ public class SheetTransaction
     }
 
     @Override
-    protected void insertSecureItem(final Transaction pItem) throws JOceanusException {
+    protected void insertSecureItem(final Transaction pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeDate(COL_DATE, pItem.getDate());
@@ -157,12 +157,12 @@ public class SheetTransaction
      * @param pData the data set to load into
      * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of transactions */
         TransactionList myList = pData.getTransactions();
         TransactionInfoList myInfoList = pData.getTransactionInfo();
@@ -232,7 +232,7 @@ public class SheetTransaction
             myList.validateOnLoad();
 
             /* Handle Exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
 
@@ -247,19 +247,19 @@ public class SheetTransaction
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @return continue true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static boolean processTransaction(final ArchiveLoader pLoader,
                                               final MoneyWiseData pData,
                                               final DataView pView,
-                                              final DataRow pRow) throws JOceanusException {
+                                              final DataRow pRow) throws OceanusException {
         /* Access parent cache */
         ParentCache myCache = pLoader.getParentCache();
         int iAdjust = 0;
 
         /* Access date */
         DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-        JDateDay myDate = (myCell != null)
+        TethysDate myDate = (myCell != null)
                                           ? myCell.getDateValue()
                                           : null;
 

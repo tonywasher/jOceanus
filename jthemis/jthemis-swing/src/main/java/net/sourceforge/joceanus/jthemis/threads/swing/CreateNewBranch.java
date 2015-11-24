@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
@@ -75,7 +75,7 @@ public class CreateNewBranch
     /**
      * The Error.
      */
-    private JOceanusException theError = null;
+    private OceanusException theError = null;
 
     /**
      * Constructor.
@@ -105,7 +105,7 @@ public class CreateNewBranch
 
             /* Store the tags */
             myTags = new HashSet<SvnTag>(Arrays.asList(pTags));
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
             cancel(true);
@@ -124,7 +124,7 @@ public class CreateNewBranch
     }
 
     @Override
-    public JOceanusException getError() {
+    public OceanusException getError() {
         return theError;
     }
 
@@ -138,7 +138,7 @@ public class CreateNewBranch
 
             /* Discover workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

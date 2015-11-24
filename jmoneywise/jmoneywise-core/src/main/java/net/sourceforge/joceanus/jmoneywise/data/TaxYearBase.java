@@ -36,11 +36,11 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.JFiscalYear;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.TethysFiscalYear;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -94,10 +94,10 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected TaxYearBase(final TaxYearBaseList<T> pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -105,11 +105,11 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
         try {
             /* Store the Year */
             Object myValue = pValues.getValue(FIELD_TAXYEAR);
-            if (myValue instanceof JDateDay) {
-                setValueTaxYear((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueTaxYear((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 JDataFormatter myFormatter = getDataSet().getDataFormatter();
-                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueTaxYear(myParser.parseDateDay((String) myValue));
             }
 
@@ -164,7 +164,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * Obtain TaxYear.
      * @return the taxYear date
      */
-    public JDateDay getTaxYear() {
+    public TethysDate getTaxYear() {
         return getTaxYear(getValueSet());
     }
 
@@ -172,7 +172,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * Obtain Date range.
      * @return the taxYear range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return getDateRange(getValueSet());
     }
 
@@ -211,8 +211,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static JDateDay getTaxYear(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TAXYEAR, JDateDay.class);
+    public static TethysDate getTaxYear(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TAXYEAR, TethysDate.class);
     }
 
     /**
@@ -220,8 +220,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pValueSet the valueSet
      * @return the date range
      */
-    public static JDateDayRange getDateRange(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATERANGE, JDateDayRange.class);
+    public static TethysDateRange getDateRange(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATERANGE, TethysDateRange.class);
     }
 
     /**
@@ -261,9 +261,9 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * Set Tax Year value.
      * @param pValue the value
      */
-    private void setValueTaxYear(final JDateDay pValue) {
+    private void setValueTaxYear(final TethysDate pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
-        JDateDayRange myRange = (pValue != null)
+        TethysDateRange myRange = (pValue != null)
                                                  ? deriveRange(pValue)
                                                  : null;
         getValueSet().setValue(FIELD_DATERANGE, myRange);
@@ -308,16 +308,16 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pLastDate the last date of the tax year
      * @return the range for the tax year
      */
-    private static JDateDayRange deriveRange(final JDateDay pLastDate) {
+    private static TethysDateRange deriveRange(final TethysDate pLastDate) {
         /* Access start date */
-        JDateDay myStart = new JDateDay(pLastDate);
+        TethysDate myStart = new TethysDate(pLastDate);
 
         /* Move back to start of year */
         myStart.adjustYear(-1);
         myStart.adjustDay(1);
 
         /* Create the range */
-        return new JDateDayRange(myStart, pLastDate);
+        return new TethysDateRange(myStart, pLastDate);
     }
 
     @Override
@@ -341,7 +341,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_REGIME, myData.getTaxRegimes());
@@ -353,7 +353,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     @Override
     public void validate() {
         /* Access details */
-        JDateDay myDate = getTaxYear();
+        TethysDate myDate = getTaxYear();
         TaxRegime myTaxRegime = getTaxRegime();
         TaxYearBaseList<?> myList = getList();
 
@@ -369,7 +369,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             }
 
             /* The day and month must be end of taxYear */
-            if (!myDate.equals(JFiscalYear.UK.normaliseDate(myDate))) {
+            if (!myDate.equals(TethysFiscalYear.UK.normaliseDate(myDate))) {
                 addError(ERROR_BADDATE, FIELD_TAXYEAR);
             }
         }
@@ -386,7 +386,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * Set a new tax regime.
      * @param pTaxYear the TaxYear
      */
-    protected void setTaxYear(final JDateDay pTaxYear) {
+    protected void setTaxYear(final TethysDate pTaxYear) {
         setValueTaxYear(pTaxYear);
     }
 
@@ -472,14 +472,14 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          * @param pDate Date of item
          * @return The TaxYear if present (or null)
          */
-        public T findTaxYearForDate(final JDateDay pDate) {
+        public T findTaxYearForDate(final TethysDate pDate) {
             /* Loop through the items to find the entry */
             Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
 
                 /* Access the range for this tax year */
-                JDateDayRange myRange = myCurr.getDateRange();
+                TethysDateRange myRange = myCurr.getDateRange();
 
                 /* Determine whether the date is owned by the tax year */
                 int iDiff = myRange.compareTo(pDate);
@@ -497,7 +497,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          * @param pRange the date range
          * @return the matching TaxYear or null
          */
-        public T matchRange(final JDateDayRange pRange) {
+        public T matchRange(final TethysDateRange pRange) {
             /* Loop through the items to find the entry */
             Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
@@ -509,7 +509,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
                 }
 
                 /* Access the range for this tax year */
-                JDateDayRange myRange = myCurr.getDateRange();
+                TethysDateRange myRange = myCurr.getDateRange();
 
                 /* Determine whether the range matches the tax year */
                 int iDiff = myRange.compareTo(pRange);
@@ -527,7 +527,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          * @param pDate the date
          * @return The Item if present (or null)
          */
-        protected int countInstances(final JDateDay pDate) {
+        protected int countInstances(final TethysDate pDate) {
             /* Access the iterator */
             Iterator<T> myIterator = iterator();
             int iCount = 0;
@@ -556,11 +556,11 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          * Extract the date range represented by the tax years.
          * @return the range of tax years
          */
-        public JDateDayRange getRange() {
+        public TethysDateRange getRange() {
             /* Access the iterator */
             OrderedListIterator<T> myIterator = listIterator();
-            JDateDay myStart = null;
-            JDateDay myEnd = null;
+            TethysDate myStart = null;
+            TethysDate myEnd = null;
 
             /* Extract the first item */
             T myCurr = myIterator.peekFirst();
@@ -574,7 +574,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             }
 
             /* Create the range */
-            return new JDateDayRange(myStart, myEnd);
+            return new TethysDateRange(myStart, myEnd);
         }
     }
 }

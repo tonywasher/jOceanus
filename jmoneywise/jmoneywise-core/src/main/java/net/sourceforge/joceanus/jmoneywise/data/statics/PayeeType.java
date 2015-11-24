@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * PayeeType data type.
@@ -67,10 +67,10 @@ public class PayeeType
      * Basic constructor.
      * @param pList The list to associate the PayeeType with
      * @param pName Name of PayeeType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private PayeeType(final PayeeTypeList pList,
-                      final String pName) throws JOceanusException {
+                      final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -78,10 +78,10 @@ public class PayeeType
      * Basic constructor.
      * @param pList The list to associate the PayeeType with
      * @param pClass Class of PayeeType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private PayeeType(final PayeeTypeList pList,
-                      final PayeeTypeClass pClass) throws JOceanusException {
+                      final PayeeTypeClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -89,10 +89,10 @@ public class PayeeType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private PayeeType(final PayeeTypeList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -200,9 +200,9 @@ public class PayeeType
         /**
          * Add a PayeeType to the list.
          * @param pPayeeType the Name of the account category type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pPayeeType) throws JOceanusException {
+        public void addBasicItem(final String pPayeeType) throws OceanusException {
             /* Create a new Payee Type */
             PayeeType myPayeeType = new PayeeType(this, pPayeeType);
 
@@ -217,7 +217,7 @@ public class PayeeType
         }
 
         @Override
-        public PayeeType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public PayeeType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             PayeeType myType = new PayeeType(this, pValues);
 
@@ -235,7 +235,7 @@ public class PayeeType
         }
 
         @Override
-        protected PayeeType newItem(final PayeeTypeClass pClass) throws JOceanusException {
+        protected PayeeType newItem(final PayeeTypeClass pClass) throws OceanusException {
             /* Create the type */
             PayeeType myType = new PayeeType(this, pClass);
 

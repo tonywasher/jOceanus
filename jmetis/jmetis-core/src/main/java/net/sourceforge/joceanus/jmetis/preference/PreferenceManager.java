@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author Tony Washer
  */
 public class PreferenceManager
-        implements JDataContents, JOceanusEventProvider {
+        implements JDataContents, TethysEventProvider {
     /**
      * Report fields.
      */
@@ -61,7 +61,7 @@ public class PreferenceManager
     /**
      * The Event Manager.
      */
-    private final JOceanusEventManager theEventManager = new JOceanusEventManager();
+    private final TethysEventManager theEventManager = new TethysEventManager();
 
     /**
      * Map of preferenceSets.
@@ -90,7 +90,7 @@ public class PreferenceManager
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

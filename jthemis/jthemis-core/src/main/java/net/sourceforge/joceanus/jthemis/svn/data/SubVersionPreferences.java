@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.io.File;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for SubVersion.
@@ -159,9 +159,9 @@ public class SubVersionPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public SubVersionPreferences() throws JOceanusException {
+    public SubVersionPreferences() throws OceanusException {
         super();
     }
 

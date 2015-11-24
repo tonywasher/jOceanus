@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * MoneyWise Logic Exception.
  */
 public class JMoneyWiseLogicException
-        extends JOceanusException {
+        extends OceanusException {
     /**
      * SerialId.
      */

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamDefinition;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class represents an encrypted file in the Zip file.
@@ -135,9 +135,9 @@ public class GordianZipFileEntry {
     /**
      * Standard constructor from properties.
      * @param pProperties the properties
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianZipFileEntry(final GordianZipFileProperties pProperties) throws JOceanusException {
+    protected GordianZipFileEntry(final GordianZipFileProperties pProperties) throws OceanusException {
         /* Store the properties */
         theProperties = pProperties;
 
@@ -220,9 +220,9 @@ public class GordianZipFileEntry {
     /**
      * Set the properties of the file.
      * @return the properties
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianZipFileProperties allocateProperties() throws JOceanusException {
+    protected GordianZipFileProperties allocateProperties() throws OceanusException {
         /* Set the top-level details */
         theProperties.setProperty(PROP_NAME, theFileName);
         theProperties.setProperty(PROP_NAME, theFileSize);
@@ -246,10 +246,10 @@ public class GordianZipFileEntry {
      * Set User String property.
      * @param pPropertyName the property name
      * @param pPropertyValue the property value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setUserStringProperty(final String pPropertyName,
-                                      final String pPropertyValue) throws JOceanusException {
+                                      final String pPropertyValue) throws OceanusException {
         /* Set the property */
         theProperties.setProperty(PROP_USERPFIX
                                   + pPropertyName, pPropertyValue);
@@ -259,10 +259,10 @@ public class GordianZipFileEntry {
      * Set User Long property.
      * @param pPropertyName the property name
      * @param pPropertyValue the property value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void setUserLongProperty(final String pPropertyName,
-                                    final Long pPropertyValue) throws JOceanusException {
+                                    final Long pPropertyValue) throws OceanusException {
         /* Set the property */
         theProperties.setProperty(PROP_USERPFIX
                                   + pPropertyName, pPropertyValue);
@@ -272,9 +272,9 @@ public class GordianZipFileEntry {
      * Get User String property.
      * @param pPropertyName the property name
      * @return the property value (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public String getUserStringProperty(final String pPropertyName) throws JOceanusException {
+    public String getUserStringProperty(final String pPropertyName) throws OceanusException {
         /* Set the property */
         return theProperties.getStringProperty(PROP_USERPFIX
                                                + pPropertyName);
@@ -284,9 +284,9 @@ public class GordianZipFileEntry {
      * Get User String property.
      * @param pPropertyName the property name
      * @return the property value (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public Long getUserLongProperty(final String pPropertyName) throws JOceanusException {
+    public Long getUserLongProperty(final String pPropertyName) throws OceanusException {
         /* Set the property */
         return theProperties.getLongProperty(PROP_USERPFIX
                                              + pPropertyName);
@@ -331,9 +331,9 @@ public class GordianZipFileEntry {
     /**
      * Build the properties.
      * @param pStreams the stream definitions
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void buildProperties(final List<GordianStreamDefinition> pStreams) throws JOceanusException {
+    public void buildProperties(final List<GordianStreamDefinition> pStreams) throws OceanusException {
         /* Loop through the streams */
         int iIndex = 0;
         Iterator<GordianStreamDefinition> myIterator = pStreams.iterator();
@@ -372,9 +372,9 @@ public class GordianZipFileEntry {
     /**
      * Build input list.
      * @return the new input list
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public List<GordianStreamDefinition> buildInputList() throws JOceanusException {
+    public List<GordianStreamDefinition> buildInputList() throws OceanusException {
         /* Create list */
         List<GordianStreamDefinition> myList = new ArrayList<GordianStreamDefinition>();
 

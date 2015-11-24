@@ -27,7 +27,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.w3c.dom.Document;
 
@@ -69,9 +69,9 @@ public class ReportBuilder {
     /**
      * Constructor.
      * @param pManager the report manager
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public ReportBuilder(final ReportManager pManager) throws JOceanusException {
+    public ReportBuilder(final ReportManager pManager) throws OceanusException {
         /* Record the details */
         theManager = pManager;
 

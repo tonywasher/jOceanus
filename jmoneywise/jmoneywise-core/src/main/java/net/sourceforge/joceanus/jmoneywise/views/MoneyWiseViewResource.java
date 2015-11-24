@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise View Fields.
  */
-public enum MoneyWiseViewResource implements ResourceId {
+public enum MoneyWiseViewResource implements TethysResourceId {
     /**
      * View Name.
      */
@@ -113,7 +113,7 @@ public enum MoneyWiseViewResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
 
     /**
      * The Id.

@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutionException;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
@@ -99,9 +99,9 @@ public class DiscoverData
 
     /**
      * Derive the extract plan for component.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void deriveExtractPlans() throws JOceanusException {
+    private void deriveExtractPlans() throws OceanusException {
         /* Loop through the components */
         Iterator<SvnComponent> myIterator = theRepository.getComponents().iterator();
         while (myIterator.hasNext()) {
@@ -132,7 +132,7 @@ public class DiscoverData
     }
 
     @Override
-    protected Void doInBackground() throws JOceanusException {
+    protected Void doInBackground() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Discover repository details */

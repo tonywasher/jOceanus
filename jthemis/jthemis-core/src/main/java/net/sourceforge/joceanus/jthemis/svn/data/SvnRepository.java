@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
@@ -96,10 +96,10 @@ public class SvnRepository
      * Constructor.
      * @param pPreferenceMgr the preference manager
      * @param pReport the report object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public SvnRepository(final PreferenceManager pPreferenceMgr,
-                         final ReportStatus pReport) throws JOceanusException {
+                         final ReportStatus pReport) throws OceanusException {
         /* Call super constructor */
         super(pPreferenceMgr);
 
@@ -236,9 +236,9 @@ public class SvnRepository
      * Build URL.
      * @param pPath the path
      * @return the Repository path
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public SVNURL getURL(final String pPath) throws JOceanusException {
+    public SVNURL getURL(final String pPath) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Build the underlying string */

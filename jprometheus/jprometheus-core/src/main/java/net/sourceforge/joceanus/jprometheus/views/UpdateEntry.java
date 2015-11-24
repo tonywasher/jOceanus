@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Update entry items.
@@ -89,9 +89,9 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * Prepare changes in an edit view back into the core data.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void prepareChanges() throws JOceanusException {
+    public void prepareChanges() throws OceanusException {
         /* Ignore if we have no list */
         if (theDataList == null) {
             return;

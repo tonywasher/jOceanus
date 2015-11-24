@@ -28,7 +28,7 @@ import java.io.IOException;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -69,10 +69,10 @@ public class GitRepository
      * Constructor.
      * @param pPreferenceMgr the preference manager
      * @param pReport the report object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public GitRepository(final PreferenceManager pPreferenceMgr,
-                         final ReportStatus pReport) throws JOceanusException {
+                         final ReportStatus pReport) throws OceanusException {
         /* Call super constructor */
         super(pPreferenceMgr);
 
@@ -226,9 +226,9 @@ public class GitRepository
      * Create repository.
      * @param pName the name of the component
      * @return the new component
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public GitComponent createComponent(final String pName) throws JOceanusException {
+    public GitComponent createComponent(final String pName) throws OceanusException {
         try {
             /* StringBuilder */
             StringBuilder myPathBuilder = new StringBuilder();

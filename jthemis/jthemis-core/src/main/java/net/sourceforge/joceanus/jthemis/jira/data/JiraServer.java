@@ -32,7 +32,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.http.JiraClient;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
@@ -105,9 +105,9 @@ public class JiraServer {
     /**
      * Constructor.
      * @param pManager the preference manager
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraServer(final PreferenceManager pManager) throws JOceanusException {
+    public JiraServer(final PreferenceManager pManager) throws OceanusException {
         /* Allocate the maps */
         theProjects = new HashMap<String, JiraProject>();
         theIssueLinkTypes = new HashMap<String, JiraIssueLinkType>();
@@ -232,9 +232,9 @@ public class JiraServer {
      * Obtain Project.
      * @param pProjectKey the project key
      * @return the Project
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraProject getProject(final String pProjectKey) throws JOceanusException {
+    public JiraProject getProject(final String pProjectKey) throws OceanusException {
         /* Look up project in the cache */
         JiraProject myProject = theProjects.get(pProjectKey);
 
@@ -252,9 +252,9 @@ public class JiraServer {
      * Obtain Issue for key.
      * @param pKey the issue key
      * @return the issue
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraIssue getIssue(final String pKey) throws JOceanusException {
+    public JiraIssue getIssue(final String pKey) throws OceanusException {
         /* Determine the project key for issue */
         int iPos = pKey.indexOf('-');
         if (iPos != -1) {
@@ -274,9 +274,9 @@ public class JiraServer {
      * Obtain User.
      * @param pName the name of the user
      * @return the User
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraUser getUser(final String pName) throws JOceanusException {
+    public JiraUser getUser(final String pName) throws OceanusException {
         /* Pass the call to the security service */
         return theSecurity.getUser(pName);
     }
@@ -285,9 +285,9 @@ public class JiraServer {
      * Obtain Group.
      * @param pName the name of the group
      * @return the Group
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraGroup getGroup(final String pName) throws JOceanusException {
+    public JiraGroup getGroup(final String pName) throws OceanusException {
         /* Pass the call to the security service */
         return theSecurity.getGroup(pName);
     }
@@ -296,9 +296,9 @@ public class JiraServer {
      * Obtain IssueLinkType.
      * @param pName the name of the IssueLinkType
      * @return the IssueLinkType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraIssueLinkType getIssueLinkType(final String pName) throws JOceanusException {
+    public JiraIssueLinkType getIssueLinkType(final String pName) throws OceanusException {
         /* Look up issueType in the cache */
         JiraIssueLinkType myType = theIssueLinkTypes.get(pName);
 
@@ -316,9 +316,9 @@ public class JiraServer {
      * Obtain IssueType.
      * @param pName the name of the IssueType
      * @return the IssueType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraIssueType getIssueType(final String pName) throws JOceanusException {
+    public JiraIssueType getIssueType(final String pName) throws OceanusException {
         /* Look up issueType in the cache */
         JiraIssueType myType = theIssueTypes.get(pName);
 
@@ -336,9 +336,9 @@ public class JiraServer {
      * Obtain Status.
      * @param pName the name of the Status
      * @return the Status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraStatusCategory getStatusCategory(final String pName) throws JOceanusException {
+    public JiraStatusCategory getStatusCategory(final String pName) throws OceanusException {
         /* Look up status in the cache */
         JiraStatusCategory myCategory = theStatusCategories.get(pName);
 
@@ -356,9 +356,9 @@ public class JiraServer {
      * Obtain Status.
      * @param pName the name of the Status
      * @return the Status
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraStatus getStatus(final String pName) throws JOceanusException {
+    public JiraStatus getStatus(final String pName) throws OceanusException {
         /* Look up status in the cache */
         JiraStatus myStatus = theStatuses.get(pName);
 
@@ -376,9 +376,9 @@ public class JiraServer {
      * Obtain Resolution.
      * @param pName the name of the Resolution
      * @return the Resolution
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraResolution getResolution(final String pName) throws JOceanusException {
+    public JiraResolution getResolution(final String pName) throws OceanusException {
         /* Look up resolution in the cache */
         JiraResolution myResolution = theResolutions.get(pName);
 
@@ -396,9 +396,9 @@ public class JiraServer {
      * Obtain Priority.
      * @param pName the name of the Priority
      * @return the Priority
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JiraPriority getPriority(final String pName) throws JOceanusException {
+    public JiraPriority getPriority(final String pName) throws OceanusException {
         /* Look up priority in the cache */
         JiraPriority myPriority = thePriorities.get(pName);
 
@@ -414,9 +414,9 @@ public class JiraServer {
 
     /**
      * Load Projects.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadProjects() throws JOceanusException {
+    private void loadProjects() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the project keys */
@@ -438,9 +438,9 @@ public class JiraServer {
 
     /**
      * Load IssueLinkTypes.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadIssueLinkTypes() throws JOceanusException {
+    private void loadIssueLinkTypes() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the issue link types */
@@ -461,9 +461,9 @@ public class JiraServer {
 
     /**
      * Load IssueTypes.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadIssueTypes() throws JOceanusException {
+    private void loadIssueTypes() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the issue types */
@@ -483,9 +483,9 @@ public class JiraServer {
 
     /**
      * Load StatusCategories.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadStatusCategories() throws JOceanusException {
+    private void loadStatusCategories() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the categories */
@@ -505,9 +505,9 @@ public class JiraServer {
 
     /**
      * Load Statuses.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadStatuses() throws JOceanusException {
+    private void loadStatuses() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the statuses */
@@ -527,9 +527,9 @@ public class JiraServer {
 
     /**
      * Load Resolutions.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadResolutions() throws JOceanusException {
+    private void loadResolutions() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the resolutions */
@@ -549,9 +549,9 @@ public class JiraServer {
 
     /**
      * Load Priorities.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void loadPriorities() throws JOceanusException {
+    private void loadPriorities() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the priorities */
@@ -586,9 +586,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraObject(final JSONObject pBase) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Access the details */
@@ -641,9 +641,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraIdObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraIdObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -685,9 +685,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraNamedObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraNamedObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -729,9 +729,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraKeyedObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraKeyedObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -773,9 +773,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraNamedIdObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraNamedIdObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -817,9 +817,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraNamedDescObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraNamedDescObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -861,9 +861,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraNamedDescIdObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraNamedDescIdObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -905,9 +905,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraKeyedIdObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraKeyedIdObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -949,9 +949,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraNamedKeyedObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraNamedKeyedObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -993,9 +993,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pBase the base object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected JiraNamedKeyedIdObject(final JSONObject pBase) throws JOceanusException {
+        protected JiraNamedKeyedIdObject(final JSONObject pBase) throws OceanusException {
             /* Parse base details */
             super(pBase);
 
@@ -1032,9 +1032,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pType the base issueType
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraIssueType(final JSONObject pType) throws JOceanusException {
+        private JiraIssueType(final JSONObject pType) throws OceanusException {
             /* Parse base details */
             super(pType);
 
@@ -1066,9 +1066,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pCategory the underlying status category
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraStatusCategory(final JSONObject pCategory) throws JOceanusException {
+        private JiraStatusCategory(final JSONObject pCategory) throws OceanusException {
             /* Parse base details */
             super(pCategory);
         }
@@ -1087,9 +1087,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pStatus the underlying status
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraStatus(final JSONObject pStatus) throws JOceanusException {
+        private JiraStatus(final JSONObject pStatus) throws OceanusException {
             /* Parse base details */
             super(pStatus);
 
@@ -1121,9 +1121,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pResolution the underlying resolution
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraResolution(final JSONObject pResolution) throws JOceanusException {
+        private JiraResolution(final JSONObject pResolution) throws OceanusException {
             /* Parse base details */
             super(pResolution);
         }
@@ -1142,9 +1142,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pPriority the underlying priority
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraPriority(final JSONObject pPriority) throws JOceanusException {
+        private JiraPriority(final JSONObject pPriority) throws OceanusException {
             /* Parse base details */
             super(pPriority);
 
@@ -1185,9 +1185,9 @@ public class JiraServer {
         /**
          * Constructor.
          * @param pLinkType the underlying link
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private JiraIssueLinkType(final JSONObject pLinkType) throws JOceanusException {
+        private JiraIssueLinkType(final JSONObject pLinkType) throws OceanusException {
             /* Parse base details */
             super(pLinkType);
 

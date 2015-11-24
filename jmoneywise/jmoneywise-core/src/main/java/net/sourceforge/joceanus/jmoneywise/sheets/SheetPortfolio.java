@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for Portfolio.
@@ -101,7 +101,7 @@ public class SheetPortfolio
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_PARENT, loadInteger(COL_PARENT));
@@ -116,7 +116,7 @@ public class SheetPortfolio
     }
 
     @Override
-    protected void insertSecureItem(final Portfolio pItem) throws JOceanusException {
+    protected void insertSecureItem(final Portfolio pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_PARENT, pItem.getParentId());
@@ -139,12 +139,12 @@ public class SheetPortfolio
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static void processPortfolio(final ArchiveLoader pLoader,
                                            final MoneyWiseData pData,
                                            final DataView pView,
-                                           final DataRow pRow) throws JOceanusException {
+                                           final DataRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();

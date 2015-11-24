@@ -51,19 +51,19 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Preference maintenance panel.
@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class PreferencesPanel
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * The serial Id.
      */
@@ -120,7 +120,7 @@ public class PreferencesPanel
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The field manager.
@@ -150,7 +150,7 @@ public class PreferencesPanel
     /**
      * The properties panel.
      */
-    private final JEnablePanel theProperties;
+    private final TethysSwingEnablePanel theProperties;
 
     /**
      * The buttons panel.
@@ -192,7 +192,7 @@ public class PreferencesPanel
         theFieldMgr = pFieldMgr;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
@@ -226,7 +226,7 @@ public class PreferencesPanel
         mySelection.add(Box.createHorizontalGlue());
 
         /* Create the properties panel */
-        theProperties = new JEnablePanel();
+        theProperties = new TethysSwingEnablePanel();
         theLayout = new CardLayout();
         theProperties.setLayout(theLayout);
 
@@ -271,7 +271,7 @@ public class PreferencesPanel
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -332,7 +332,7 @@ public class PreferencesPanel
     public void saveUpdates() {
         try {
             theActive.storeChanges();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             LOGGER.error(ERROR_STORE, e);
         }
 
@@ -382,7 +382,7 @@ public class PreferencesPanel
      * PropertyListener class.
      */
     private final class PropertyListener
-            implements ActionListener, PropertyChangeListener, JOceanusChangeEventListener {
+            implements ActionListener, PropertyChangeListener, TethysChangeEventListener {
         /**
          * Preference menu builder.
          */
@@ -391,7 +391,7 @@ public class PreferencesPanel
         /**
          * PrefMenu Registration.
          */
-        private final JOceanusChangeRegistration thePrefMenuReg;
+        private final TethysChangeRegistration thePrefMenuReg;
 
         /**
          * Constructor.
@@ -403,7 +403,7 @@ public class PreferencesPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (thePrefMenuReg.isRelevant(pEvent)) {
                 /* Build the preference menu */
@@ -488,11 +488,11 @@ public class PreferencesPanel
      * PreferenceSetListener class.
      */
     private final class PrefSetListener
-            implements JOceanusActionEventListener {
+            implements TethysActionEventListener {
         /**
          * UpdateSet Registration.
          */
-        private final JOceanusActionRegistration thePrefSetReg;
+        private final TethysActionRegistration thePrefSetReg;
 
         /**
          * Constructor.
@@ -503,7 +503,7 @@ public class PreferencesPanel
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* If this is a new preference set */
             if (thePrefSetReg.isRelevant(pEvent)) {
                 /* Details is the property set that has been added */

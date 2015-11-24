@@ -47,16 +47,16 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.help.HelpException;
-import net.sourceforge.joceanus.jtethys.help.HelpModule;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
 
 /**
  * Main Window for jMoneyWise.
@@ -142,7 +142,7 @@ public class MainTab
     /**
      * The tabs.
      */
-    private JEnableTabbed theTabs = null;
+    private TethysSwingEnableTabbed theTabs = null;
 
     /**
      * The register panel.
@@ -187,9 +187,9 @@ public class MainTab
     /**
      * Constructor.
      * @param pProfile the startup profile
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public MainTab(final JDataProfile pProfile) throws JOceanusException {
+    public MainTab(final JDataProfile pProfile) throws OceanusException {
         /* Create the view */
         theView = new SwingView(pProfile);
 
@@ -212,22 +212,22 @@ public class MainTab
     }
 
     @Override
-    protected HelpModule getHelpModule() throws JOceanusException {
+    protected TethysHelpModule getHelpModule() throws OceanusException {
         try {
             return new MoneyWiseHelp();
-        } catch (HelpException e) {
+        } catch (TethysHelpException e) {
             throw new JMoneyWiseIOException("Unable to load help", e);
         }
     }
 
     @Override
-    protected JComponent buildMainPanel() throws JOceanusException {
+    protected JComponent buildMainPanel() throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        theTabs = new JEnableTabbed();
+        theTabs = new TethysSwingEnableTabbed();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
@@ -365,7 +365,7 @@ public class MainTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    private void selectMaintenance(final JOceanusActionEvent pEvent) {
+    private void selectMaintenance(final TethysActionEvent pEvent) {
         /* Pass through to the Maintenance view */
         theMaint.selectMaintenance(pEvent);
 
@@ -523,7 +523,7 @@ public class MainTab
      * The listener class.
      */
     private final class MainListener
-            implements ActionListener, ChangeListener, JOceanusActionEventListener, JOceanusChangeEventListener {
+            implements ActionListener, ChangeListener, TethysActionEventListener, TethysChangeEventListener {
         /**
          * Constructor.
          */
@@ -533,7 +533,7 @@ public class MainTab
             theReports.getEventRegistrar().addActionListener(this);
             theSpotPrices.getEventRegistrar().addChangeListener(this);
             theSpotRates.getEventRegistrar().addChangeListener(this);
-            JOceanusEventRegistrar myRegistrar = theRegister.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theRegister.getEventRegistrar();
             myRegistrar.addChangeListener(this);
             myRegistrar.addActionListener(this);
             myRegistrar = theMaint.getEventRegistrar();
@@ -545,7 +545,7 @@ public class MainTab
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Set Visibility */
             setVisibility();
         }
@@ -579,7 +579,7 @@ public class MainTab
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* Pass out the request */
             switch (pEvent.getActionId()) {
                 /* View the requested statement */
@@ -614,7 +614,7 @@ public class MainTab
         /**
          * The selected range.
          */
-        private final JDateDayRangeSelect theRange;
+        private final TethysSwingDateRangeSelect theRange;
 
         /**
          * The base Event.
@@ -635,7 +635,7 @@ public class MainTab
          * Constructor.
          * @param pRange the requested range
          */
-        protected ActionRequest(final JDateDayRangeSelect pRange) {
+        protected ActionRequest(final TethysSwingDateRangeSelect pRange) {
             theAccount = null;
             theRange = pRange;
             theTransaction = null;
@@ -647,7 +647,7 @@ public class MainTab
          * @param pRange the requested range
          */
         protected ActionRequest(final AssetBase<?> pAccount,
-                                final JDateDayRangeSelect pRange) {
+                                final TethysSwingDateRangeSelect pRange) {
             theAccount = pAccount;
             theRange = pRange;
             theTransaction = null;
@@ -677,7 +677,7 @@ public class MainTab
          * Obtain the selected range.
          * @return the range
          */
-        protected JDateDayRangeSelect getRange() {
+        protected TethysSwingDateRangeSelect getRange() {
             return theRange;
         }
 

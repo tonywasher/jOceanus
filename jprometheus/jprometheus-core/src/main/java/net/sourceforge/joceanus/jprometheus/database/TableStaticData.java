@@ -27,7 +27,7 @@ import javax.swing.SortOrder;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should extend this class.
@@ -58,7 +58,7 @@ public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends E
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (StaticData.FIELD_ENABLED.equals(iField)) {
@@ -75,7 +75,7 @@ public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends E
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         DataValues<E> myValues = super.getRowValues(pName);
         TableDefinition myTableDef = getTableDef();

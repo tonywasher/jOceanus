@@ -27,7 +27,7 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * BC GordianKnot Key implementation.
@@ -72,9 +72,9 @@ public final class BouncyKey<T>
      * @param <X> the key type
      * @param pKey the key to convert
      * @return the converted key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected static <X> BouncyKey<X> accessKey(final GordianKey<X> pKey) throws JOceanusException {
+    protected static <X> BouncyKey<X> accessKey(final GordianKey<X> pKey) throws OceanusException {
         /* Check that it is a BouncyKey */
         if (pKey instanceof BouncyKey) {
             return (BouncyKey<X>) pKey;

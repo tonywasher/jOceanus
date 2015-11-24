@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Payee Type Classes.
@@ -139,9 +139,9 @@ public enum PayeeTypeClass implements StaticInterface {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static PayeeTypeClass fromId(final int id) throws JOceanusException {
+    public static PayeeTypeClass fromId(final int id) throws OceanusException {
         for (PayeeTypeClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;

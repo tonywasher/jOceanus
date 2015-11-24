@@ -52,26 +52,26 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Top-level panel for Accounts.
  */
 public class AccountPanel
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -100,7 +100,7 @@ public class AccountPanel
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The Data View.
@@ -125,7 +125,7 @@ public class AccountPanel
     /**
      * The filter card panel.
      */
-    private final JEnablePanel theFilterCardPanel;
+    private final TethysSwingEnablePanel theFilterCardPanel;
 
     /**
      * The card layout for the filter button.
@@ -206,7 +206,7 @@ public class AccountPanel
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Build the Update set */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
@@ -239,7 +239,7 @@ public class AccountPanel
         buildSelectMenu();
 
         /* Create the card panel */
-        theCardPanel = new JEnablePanel();
+        theCardPanel = new TethysSwingEnablePanel();
         theLayout = new CardLayout();
         theCardPanel.setLayout(theLayout);
 
@@ -255,7 +255,7 @@ public class AccountPanel
         theSelectButton.setText(theActive.toString());
 
         /* Create the new card panel */
-        theFilterCardPanel = new JEnablePanel();
+        theFilterCardPanel = new TethysSwingEnablePanel();
         theFilterLayout = new CardLayout();
         theFilterCardPanel.setLayout(theFilterLayout);
 
@@ -306,7 +306,7 @@ public class AccountPanel
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -355,9 +355,9 @@ public class AccountPanel
 
     /**
      * Refresh data.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void refreshData() throws JOceanusException {
+    protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Accounts");
@@ -611,16 +611,16 @@ public class AccountPanel
      * Listener.
      */
     private final class AccountListener
-            implements JOceanusActionEventListener, JOceanusChangeEventListener, PropertyChangeListener {
+            implements TethysActionEventListener, TethysChangeEventListener, PropertyChangeListener {
         /**
          * Error Registration.
          */
-        private final JOceanusChangeRegistration theErrorReg;
+        private final TethysChangeRegistration theErrorReg;
 
         /**
          * Action Registration.
          */
-        private final JOceanusActionRegistration theActionReg;
+        private final TethysActionRegistration theActionReg;
 
         /**
          * Constructor.
@@ -632,7 +632,7 @@ public class AccountPanel
             theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
 
             /* Handle sub-panels */
-            JOceanusEventRegistrar myRegistrar = theDepositTable.getEventRegistrar();
+            TethysEventRegistrar myRegistrar = theDepositTable.getEventRegistrar();
             myRegistrar.addChangeListener(this);
             myRegistrar.addActionListener(this);
             myRegistrar = theCashTable.getEventRegistrar();
@@ -656,7 +656,7 @@ public class AccountPanel
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* if this is the action buttons reporting */
             if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
@@ -689,7 +689,7 @@ public class AccountPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* If this is the error panel reporting */
             if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */

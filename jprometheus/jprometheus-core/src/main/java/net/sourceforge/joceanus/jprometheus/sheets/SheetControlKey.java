@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.ControlKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for ControlKey.
@@ -81,7 +81,7 @@ public class SheetControlKey
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<CryptographyDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
@@ -93,7 +93,7 @@ public class SheetControlKey
     }
 
     @Override
-    protected void insertSecureItem(final ControlKey pItem) throws JOceanusException {
+    protected void insertSecureItem(final ControlKey pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeBoolean(COL_HASHPRIME, pItem.isHashPrime());

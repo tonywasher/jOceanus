@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * SheetDataItem extension for TaxYear.
@@ -89,7 +89,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
         myValues.addValue(TaxYear.FIELD_TAXYEAR, loadDate(COL_TAXYEAR));
@@ -100,7 +100,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void insertSecureItem(final TaxYear pItem) throws JOceanusException {
+    protected void insertSecureItem(final TaxYear pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
@@ -120,12 +120,12 @@ public class SheetTaxYear
      * @param pData the data set to load into
      * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws OceanusException {
         /* Access the lists */
         TaxYearList myList = pData.getTaxYears();
         TaxInfoList myInfoList = pData.getTaxInfo();
@@ -163,7 +163,7 @@ public class SheetTaxYear
 
                 /* Access Year */
                 ArchiveYear myYear = myIterator.next();
-                JDateDay myDate = myYear.getDate();
+                TethysDate myDate = myYear.getDate();
 
                 /* Access the values */
                 String myTaxRegime = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
@@ -272,7 +272,7 @@ public class SheetTaxYear
             myInfoList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 

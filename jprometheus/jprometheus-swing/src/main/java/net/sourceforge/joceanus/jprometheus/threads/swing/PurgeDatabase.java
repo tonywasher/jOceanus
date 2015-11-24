@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be marked as new so that it will be written to the database via the
@@ -68,7 +68,7 @@ public class PurgeDatabase<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JOceanusException {
+    public Void performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Purging Database");
 

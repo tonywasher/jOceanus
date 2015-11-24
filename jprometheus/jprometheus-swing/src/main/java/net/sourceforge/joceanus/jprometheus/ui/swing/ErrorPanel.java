@@ -41,10 +41,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Error panel.
@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEve
  */
 public class ErrorPanel
         extends JPanel
-        implements ErrorDisplay, JOceanusEventProvider {
+        implements ErrorDisplay, TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -76,7 +76,7 @@ public class ErrorPanel
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The error field.
@@ -111,7 +111,7 @@ public class ErrorPanel
         theDataError.hideEntry();
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Create the error list */
         theErrors = new DataErrorList<JMetisExceptionWrapper>();
@@ -142,7 +142,7 @@ public class ErrorPanel
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -158,7 +158,7 @@ public class ErrorPanel
      * Set error indication for window.
      * @param pException the exception
      */
-    public void addError(final JOceanusException pException) {
+    public void addError(final OceanusException pException) {
         /* If we do not currently have an error */
         if (!hasError()) {
             /* Show the debug */

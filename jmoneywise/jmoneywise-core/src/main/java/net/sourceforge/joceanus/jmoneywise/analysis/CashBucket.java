@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
 
 /**
  * The Cash Bucket class.
@@ -86,7 +86,7 @@ public final class CashBucket
      */
     private CashBucket(final Analysis pAnalysis,
                        final CashBucket pBase,
-                       final JDateDay pDate) {
+                       final TethysDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
@@ -102,7 +102,7 @@ public final class CashBucket
      */
     private CashBucket(final Analysis pAnalysis,
                        final CashBucket pBase,
-                       final JDateDayRange pRange) {
+                       final TethysDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -172,7 +172,7 @@ public final class CashBucket
          */
         protected CashBucketList(final Analysis pAnalysis,
                                  final CashBucketList pBase,
-                                 final JDateDay pDate) {
+                                 final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -188,7 +188,7 @@ public final class CashBucket
          */
         protected CashBucketList(final Analysis pAnalysis,
                                  final CashBucketList pBase,
-                                 final JDateDayRange pRange) {
+                                 final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -223,13 +223,13 @@ public final class CashBucket
 
         @Override
         protected CashBucket newBucket(final CashBucket pBase,
-                                       final JDateDay pDate) {
+                                       final TethysDate pDate) {
             return new CashBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
         protected CashBucket newBucket(final CashBucket pBase,
-                                       final JDateDayRange pRange) {
+                                       final TethysDateRange pRange) {
             return new CashBucket(getAnalysis(), pBase, pRange);
         }
     }

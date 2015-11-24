@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to renew security in the data set. A new ControlKey will be created using the same password as the existing security, together with a new set of
@@ -69,7 +69,7 @@ public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public T performTask() throws JOceanusException {
+    public T performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Renewing Security");
 

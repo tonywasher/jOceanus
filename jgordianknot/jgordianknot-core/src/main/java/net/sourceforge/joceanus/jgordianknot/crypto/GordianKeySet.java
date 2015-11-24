@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * A full set of symmetric keys, subject to the relevant predicate.
@@ -150,9 +150,9 @@ public final class GordianKeySet {
      * Encrypt bytes.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] encryptBytes(final byte[] pBytes) throws JOceanusException {
+    public byte[] encryptBytes(final byte[] pBytes) throws OceanusException {
         /* Generate set of keys and initialisation vector */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, true);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
@@ -170,9 +170,9 @@ public final class GordianKeySet {
      * Decrypt bytes.
      * @param pBytes the bytes to decrypt
      * @return the decrypted bytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] decryptBytes(final byte[] pBytes) throws JOceanusException {
+    public byte[] decryptBytes(final byte[] pBytes) throws OceanusException {
         /* Parse the bytes into the separate parts */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pBytes);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
@@ -188,9 +188,9 @@ public final class GordianKeySet {
      * secure Key.
      * @param pKey the key to wrap
      * @return the wrapped key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public byte[] secureKey(final GordianKey<?> pKey) throws JOceanusException {
+    public byte[] secureKey(final GordianKey<?> pKey) throws OceanusException {
         /* Generate set of keys */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
@@ -208,10 +208,10 @@ public final class GordianKeySet {
      * @param pKeySpec the wrapped key
      * @param pKeyType the key type
      * @return the key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public <T> GordianKey<T> deriveKey(final byte[] pKeySpec,
-                                       final T pKeyType) throws JOceanusException {
+                                       final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
@@ -226,9 +226,9 @@ public final class GordianKeySet {
      * @param <T> the Type class
      * @param pType the type
      * @return the externalId
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public <T> int deriveExternalIdForType(final T pType) throws JOceanusException {
+    public <T> int deriveExternalIdForType(final T pType) throws OceanusException {
         GordianIdManager myManager = theFactory.getIdManager();
         return myManager.deriveExternalIdFromType(pType);
     }
@@ -239,10 +239,10 @@ public final class GordianKeySet {
      * @param pId the externalId
      * @param pTypeClass the class
      * @return the type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public <T> T deriveTypeFromExternalId(final int pId,
-                                          final Class<T> pTypeClass) throws JOceanusException {
+                                          final Class<T> pTypeClass) throws OceanusException {
         GordianIdManager myManager = theFactory.getIdManager();
         return myManager.deriveTypeFromExternalId(pId, pTypeClass);
     }
@@ -250,9 +250,9 @@ public final class GordianKeySet {
     /**
      * Declare Key.
      * @param pKey the key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void declareKey(final GordianKey<GordianSymKeyType> pKey) throws JOceanusException {
+    public void declareKey(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Access keyType */
         GordianSymKeyType myKeyType = pKey.getKeyType();
 
@@ -281,10 +281,10 @@ public final class GordianKeySet {
      * Build key set from secret.
      * @param pSecret the secret.
      * @param pInitVector the initialisation vector.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void buildFromSecret(final byte[] pSecret,
-                                   final byte[] pInitVector) throws JOceanusException {
+                                   final byte[] pInitVector) throws OceanusException {
         /* Loop through the Cipher values */
         Predicate<GordianSymKeyType> myPredicate = theFactory.standardSymKeys();
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
@@ -301,11 +301,11 @@ public final class GordianKeySet {
      * @param pKeyType the Key type
      * @param pSecret the derived Secret
      * @param pInitVector the initialisation vector.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void buildCipher(final GordianSymKeyType pKeyType,
                              final byte[] pSecret,
-                             final byte[] pInitVector) throws JOceanusException {
+                             final byte[] pInitVector) throws OceanusException {
         /* Generate a new Secret Key from the secret */
         GordianKeyGenerator<GordianSymKeyType> myGenerator = theFactory.getKeyGenerator(pKeyType);
         GordianKey<GordianSymKeyType> myKey = myGenerator.generateKeyFromSecret(pSecret, pInitVector);

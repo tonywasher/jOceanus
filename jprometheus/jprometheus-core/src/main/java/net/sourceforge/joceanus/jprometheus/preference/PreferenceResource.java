@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jprometheus.preference;
 
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
  */
-public enum PreferenceResource implements ResourceId {
+public enum PreferenceResource implements TethysResourceId {
     /**
      * DBDriver SQLServer.
      */
@@ -48,7 +48,7 @@ public enum PreferenceResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JPrometheusDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JPrometheusDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -95,7 +95,7 @@ public enum PreferenceResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForDriver(final JDBCDriver pValue) {
+    protected static TethysResourceId getKeyForDriver(final JDBCDriver pValue) {
         switch (pValue) {
             case SQLSERVER:
                 return DRIVER_SQLSERVER;
@@ -104,7 +104,7 @@ public enum PreferenceResource implements ResourceId {
             case MYSQL:
                 return DRIVER_MYSQL;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Loan Category.
@@ -73,7 +73,7 @@ public class TableLoanCategory
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
 
@@ -90,7 +90,7 @@ public class TableLoanCategory
 
     @Override
     protected void setFieldValue(final LoanCategory pItem,
-                                 final JDataField iField) throws JOceanusException {
+                                 final JDataField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (LoanCategory.FIELD_CATTYPE.equals(iField)) {

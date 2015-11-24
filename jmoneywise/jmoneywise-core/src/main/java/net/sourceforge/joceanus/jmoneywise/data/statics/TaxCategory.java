@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TaxCategory data type.
@@ -66,10 +66,10 @@ public class TaxCategory
      * Basic Constructor.
      * @param pList The list to associate the Tax Category with
      * @param pName Name of Tax Category
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final String pName) throws JOceanusException {
+                        final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class TaxCategory
      * Basic constructor.
      * @param pList The list to associate the Tax Category with
      * @param pClass Class of Tax Category
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final TaxCategoryClass pClass) throws JOceanusException {
+                        final TaxCategoryClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class TaxCategory
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -213,9 +213,9 @@ public class TaxCategory
         /**
          * Add a TaxCategory.
          * @param pTaxCategory the Name of the tax bucket
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pTaxCategory) throws JOceanusException {
+        public void addBasicItem(final String pTaxCategory) throws OceanusException {
             /* Create a new Tax Category */
             TaxCategory myCategory = new TaxCategory(this, pTaxCategory);
 
@@ -230,7 +230,7 @@ public class TaxCategory
         }
 
         @Override
-        public TaxCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TaxCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
             TaxCategory myCategory = new TaxCategory(this, pValues);
 
@@ -248,7 +248,7 @@ public class TaxCategory
         }
 
         @Override
-        protected TaxCategory newItem(final TaxCategoryClass pClass) throws JOceanusException {
+        protected TaxCategory newItem(final TaxCategoryClass pClass) throws OceanusException {
             /* Create the category */
             TaxCategory myTax = new TaxCategory(this, pClass);
 

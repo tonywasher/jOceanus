@@ -32,10 +32,10 @@ import javax.swing.text.html.StyleSheet;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 
 /**
  * Build a report document.
@@ -111,10 +111,10 @@ public class SwingHTMLBuilder
      * Constructor.
      * @param pView the view
      * @param pEditor the editor pane
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public SwingHTMLBuilder(final SwingView pView,
-                            final JEditorPane pEditor) throws JOceanusException {
+                            final JEditorPane pEditor) throws OceanusException {
         /* Call super constructor */
         super(pView, pView.getUtilitySet());
 
@@ -139,7 +139,7 @@ public class SwingHTMLBuilder
         /* Create builder and access zebra colour */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Color myZebra = theFieldManager.getZebraColor();
-        String myZebraText = DataConverter.colorToHexString(myZebra);
+        String myZebraText = TethysDataConverter.colorToHexString(myZebra);
 
         /* Define standard font for body and table contents */
         myBuilder.append(ELEMENT_BODY);
@@ -212,7 +212,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CLASS_ALTSUMMROW);
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_BACKCOLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.white));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.white));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -234,7 +234,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CLASS_ALTDTLSUMMROW);
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_BACKCOLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.white));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.white));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -256,7 +256,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CLASS_ALTDTLROW);
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_BACKCOLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.white));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.white));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -277,7 +277,7 @@ public class SwingHTMLBuilder
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_ALIGNRIGHT);
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.blue));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.blue));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -289,7 +289,7 @@ public class SwingHTMLBuilder
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_ALIGNRIGHT);
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.red));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.red));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -301,7 +301,7 @@ public class SwingHTMLBuilder
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_ALIGNCENTRE);
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.black));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.black));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -313,7 +313,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CSS_FONTBOLD);
         myBuilder.append(" text-decoration: none;");
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(DataConverter.colorToHexString(Color.blue));
+        myBuilder.append(TethysDataConverter.colorToHexString(Color.blue));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -347,7 +347,7 @@ public class SwingHTMLBuilder
      * Listener class.
      */
     private final class ReportListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * Constructor.
          */
@@ -356,7 +356,7 @@ public class SwingHTMLBuilder
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             processFieldConfig();
         }
     }

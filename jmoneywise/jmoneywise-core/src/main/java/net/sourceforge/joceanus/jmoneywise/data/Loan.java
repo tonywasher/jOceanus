@@ -51,8 +51,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Loan class.
@@ -151,10 +151,10 @@ public class Loan
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Loan(final LoanList pList,
-                 final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                 final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -293,9 +293,9 @@ public class Loan
      * Obtain Opening Balance.
      * @return the Opening balance
      */
-    public JMoney getOpeningBalance() {
+    public TethysMoney getOpeningBalance() {
         return hasInfoSet
-                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                          ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, TethysMoney.class)
                           : null;
     }
 
@@ -603,9 +603,9 @@ public class Loan
     /**
      * Set defaults.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setLoanCategory(getDefaultCategory());
@@ -617,9 +617,9 @@ public class Loan
     /**
      * adjust values after change.
      * @param pUpdateSet the update set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Access category class and parent */
         LoanCategoryClass myClass = getCategoryClass();
         Payee myParent = getParent();
@@ -715,7 +715,7 @@ public class Loan
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -727,7 +727,7 @@ public class Loan
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -752,54 +752,54 @@ public class Loan
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws JOceanusException {
+    public void setParent(final Payee pParent) throws OceanusException {
         setValueParent(pParent);
     }
 
     /**
      * Set a new SortCode.
      * @param pSortCode the new sort code
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setSortCode(final char[] pSortCode) throws JOceanusException {
+    public void setSortCode(final char[] pSortCode) throws OceanusException {
         setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
     }
 
     /**
      * Set a new Account.
      * @param pAccount the new account
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setAccount(final char[] pAccount) throws JOceanusException {
+    public void setAccount(final char[] pAccount) throws OceanusException {
         setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setReference(final char[] pReference) throws JOceanusException {
+    public void setReference(final char[] pReference) throws OceanusException {
         setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JOceanusException {
+    public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
     /**
      * Set a new opening balance.
      * @param pBalance the new opening balance
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void setOpeningBalance(final JMoney pBalance) throws JOceanusException {
+    public void setOpeningBalance(final TethysMoney pBalance) throws OceanusException {
         setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
@@ -807,10 +807,10 @@ public class Loan
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JOceanusException {
+                                 final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
@@ -1028,9 +1028,9 @@ public class Loan
          * Derive Edit list.
          * @param pUpdateSet the updateSet
          * @return the edit list
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             LoanList myList = getEmptyList(ListStyle.EDIT);
             DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
@@ -1104,7 +1104,7 @@ public class Loan
         }
 
         @Override
-        public Loan addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Loan addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the loan */
             Loan myLoan = new Loan(this, pValues);
 

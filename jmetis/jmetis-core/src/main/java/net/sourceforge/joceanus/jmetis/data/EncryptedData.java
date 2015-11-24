@@ -32,19 +32,19 @@ import net.sourceforge.joceanus.jmetis.JMetisDataException;
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataDiffers;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Encrypted data types.
@@ -160,11 +160,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private EncryptedField(final GordianKeySet pKeySet,
                                final JDataFormatter pFormatter,
-                               final byte[] pEncrypted) throws JOceanusException {
+                               final byte[] pEncrypted) throws OceanusException {
             /* Store the keySet and formatter */
             theKeySet = pKeySet;
             theFormatter = pFormatter;
@@ -189,11 +189,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private EncryptedField(final GordianKeySet pKeySet,
                                final JDataFormatter pFormatter,
-                               final T pUnencrypted) throws JOceanusException {
+                               final T pUnencrypted) throws OceanusException {
             /* Store the keySet and formatter */
             theKeySet = pKeySet;
             theFormatter = pFormatter;
@@ -220,9 +220,9 @@ public final class EncryptedData {
 
         /**
          * Encrypt the value.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void encryptValue() throws JOceanusException {
+        private void encryptValue() throws OceanusException {
             /* Reject if encryption is not initialised */
             if (theKeySet == null) {
                 throw new JMetisLogicException(ERROR_INIT);
@@ -276,23 +276,23 @@ public final class EncryptedData {
          * Parse the decrypted bytes.
          * @param pBytes the decrypted bytes
          * @return the decrypted value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected abstract T parseBytes(byte[] pBytes) throws JOceanusException;
+        protected abstract T parseBytes(byte[] pBytes) throws OceanusException;
 
         /**
          * Obtain the bytes format to encrypt.
          * @return the bytes to encrypt
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected abstract byte[] getBytesForEncryption() throws JOceanusException;
+        protected abstract byte[] getBytesForEncryption() throws OceanusException;
 
         /**
          * Apply fresh encryption to value.
          * @param pKeySet the keySet
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected void applyEncryption(final GordianKeySet pKeySet) throws JOceanusException {
+        protected void applyEncryption(final GordianKeySet pKeySet) throws OceanusException {
             /* Store the keySet */
             theKeySet = pKeySet;
 
@@ -305,11 +305,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the formatter
          * @param pField field to adopt encryption from
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected void adoptEncryption(final GordianKeySet pKeySet,
                                        final JDataFormatter pFormatter,
-                                       final EncryptedField<?> pField) throws JOceanusException {
+                                       final EncryptedField<?> pField) throws OceanusException {
             /* Store the keySet and formatter */
             theKeySet = pKeySet;
             theFormatter = pFormatter;
@@ -406,11 +406,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedString(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
-                                  final byte[] pEncrypted) throws JOceanusException {
+                                  final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -419,36 +419,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedString(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
-                                  final String pUnencrypted) throws JOceanusException {
+                                  final String pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected String parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected String parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string */
-                return DataConverter.byteArrayToString(pBytes);
+                return TethysDataConverter.byteArrayToString(pBytes);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the string to a byte array */
-                return DataConverter.stringToByteArray(getValue());
+                return TethysDataConverter.stringToByteArray(getValue());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -464,11 +464,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedShort(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -477,36 +477,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedShort(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final Short pUnencrypted) throws JOceanusException {
+                                 final Short pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Short parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Short parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a short */
-                return Short.parseShort(DataConverter.byteArrayToString(pBytes));
+                return Short.parseShort(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | NumberFormatException e) {
+            } catch (OceanusException | NumberFormatException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the short to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return TethysDataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -522,11 +522,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedInteger(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
-                                   final byte[] pEncrypted) throws JOceanusException {
+                                   final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -535,36 +535,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedInteger(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
-                                   final Integer pUnencrypted) throws JOceanusException {
+                                   final Integer pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Integer parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Integer parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                return Integer.parseInt(DataConverter.byteArrayToString(pBytes));
+                return Integer.parseInt(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | NumberFormatException e) {
+            } catch (OceanusException | NumberFormatException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the integer to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return TethysDataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -580,11 +580,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedLong(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
-                                final byte[] pEncrypted) throws JOceanusException {
+                                final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -593,36 +593,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedLong(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
-                                final Long pUnencrypted) throws JOceanusException {
+                                final Long pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Long parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Long parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a long */
-                return Long.parseLong(DataConverter.byteArrayToString(pBytes));
+                return Long.parseLong(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | NumberFormatException e) {
+            } catch (OceanusException | NumberFormatException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the long to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return TethysDataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -638,11 +638,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedFloat(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -651,36 +651,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedFloat(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final Float pUnencrypted) throws JOceanusException {
+                                 final Float pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Float parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Float parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a float */
-                return Float.parseFloat(DataConverter.byteArrayToString(pBytes));
+                return Float.parseFloat(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | NumberFormatException e) {
+            } catch (OceanusException | NumberFormatException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the float to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return TethysDataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -696,11 +696,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDouble(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
-                                  final byte[] pEncrypted) throws JOceanusException {
+                                  final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -709,36 +709,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDouble(final GordianKeySet pKeySet,
                                   final JDataFormatter pFormatter,
-                                  final Double pUnencrypted) throws JOceanusException {
+                                  final Double pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Double parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Double parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a Double */
-                return Double.parseDouble(DataConverter.byteArrayToString(pBytes));
+                return Double.parseDouble(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | NumberFormatException e) {
+            } catch (OceanusException | NumberFormatException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the double to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return TethysDataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -754,11 +754,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedBoolean(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
-                                   final byte[] pEncrypted) throws JOceanusException {
+                                   final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -767,36 +767,36 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedBoolean(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
-                                   final Boolean pUnencrypted) throws JOceanusException {
+                                   final Boolean pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Boolean parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Boolean parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                return Boolean.parseBoolean(DataConverter.byteArrayToString(pBytes));
+                return Boolean.parseBoolean(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the boolean to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return TethysDataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -810,18 +810,18 @@ public final class EncryptedData {
         /**
          * Date Formatter.
          */
-        private JDateDayFormatter theDateFormatter = null;
+        private TethysDateFormatter theDateFormatter = null;
 
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
-                                final byte[] pEncrypted) throws JOceanusException {
+                                final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -830,11 +830,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
-                                final Date pUnencrypted) throws JOceanusException {
+                                final Date pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -842,7 +842,7 @@ public final class EncryptedData {
          * Obtain the formatter.
          * @return the formatter
          */
-        private JDateDayFormatter getDateFormatter() {
+        private TethysDateFormatter getDateFormatter() {
             if (theDateFormatter == null) {
                 theDateFormatter = getFormatter().getDateFormatter();
             }
@@ -850,29 +850,29 @@ public final class EncryptedData {
         }
 
         @Override
-        protected Date parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected Date parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a date */
-                String myInput = DataConverter.byteArrayToString(pBytes);
+                String myInput = TethysDataConverter.byteArrayToString(pBytes);
                 return getDateFormatter().parseDate(myInput);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | IllegalArgumentException e) {
+            } catch (OceanusException | IllegalArgumentException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
                 String myInput = getDateFormatter().formatDate(getValue());
-                return DataConverter.stringToByteArray(myInput);
+                return TethysDataConverter.stringToByteArray(myInput);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -882,22 +882,22 @@ public final class EncryptedData {
      * The encrypted DateDay class.
      */
     public static final class EncryptedDateDay
-            extends EncryptedField<JDateDay> {
+            extends EncryptedField<TethysDate> {
         /**
          * Date Formatter.
          */
-        private JDateDayFormatter theDateFormatter = null;
+        private TethysDateFormatter theDateFormatter = null;
 
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDateDay(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
-                                   final byte[] pEncrypted) throws JOceanusException {
+                                   final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -906,11 +906,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDateDay(final GordianKeySet pKeySet,
                                    final JDataFormatter pFormatter,
-                                   final JDateDay pUnencrypted) throws JOceanusException {
+                                   final TethysDate pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -918,7 +918,7 @@ public final class EncryptedData {
          * Obtain the formatter.
          * @return the formatter
          */
-        private JDateDayFormatter getDateFormatter() {
+        private TethysDateFormatter getDateFormatter() {
             if (theDateFormatter == null) {
                 theDateFormatter = getFormatter().getDateFormatter();
             }
@@ -926,29 +926,29 @@ public final class EncryptedData {
         }
 
         @Override
-        protected JDateDay parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected TethysDate parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                String myInput = DataConverter.byteArrayToString(pBytes);
+                String myInput = TethysDataConverter.byteArrayToString(pBytes);
                 return getDateFormatter().parseDateDay(myInput);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException | IllegalArgumentException e) {
+            } catch (OceanusException | IllegalArgumentException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
                 String myInput = getDateFormatter().formatDateDay(getValue());
-                return DataConverter.stringToByteArray(myInput);
+                return TethysDataConverter.stringToByteArray(myInput);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -964,11 +964,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedCharArray(final GordianKeySet pKeySet,
                                      final JDataFormatter pFormatter,
-                                     final byte[] pEncrypted) throws JOceanusException {
+                                     final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -977,22 +977,22 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedCharArray(final GordianKeySet pKeySet,
                                      final JDataFormatter pFormatter,
-                                     final char[] pUnencrypted) throws JOceanusException {
+                                     final char[] pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected char[] parseBytes(final byte[] pBytes) throws JOceanusException {
-            return DataConverter.bytesToCharArray(pBytes);
+        protected char[] parseBytes(final byte[] pBytes) throws OceanusException {
+            return TethysDataConverter.bytesToCharArray(pBytes);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
-            return DataConverter.charsToByteArray(getValue());
+        protected byte[] getBytesForEncryption() throws OceanusException {
+            return TethysDataConverter.charsToByteArray(getValue());
         }
     }
 
@@ -1006,11 +1006,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedBigInteger(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws JOceanusException {
+                                      final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1019,16 +1019,16 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedBigInteger(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
-                                      final BigInteger pUnencrypted) throws JOceanusException {
+                                      final BigInteger pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected BigInteger parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected BigInteger parseBytes(final byte[] pBytes) throws OceanusException {
             try {
                 return new BigInteger(pBytes);
                 /* Catch Exceptions */
@@ -1038,7 +1038,7 @@ public final class EncryptedData {
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             return getValue().toByteArray();
         }
     }
@@ -1053,11 +1053,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedBigDecimal(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws JOceanusException {
+                                      final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1066,27 +1066,27 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedBigDecimal(final GordianKeySet pKeySet,
                                       final JDataFormatter pFormatter,
-                                      final BigDecimal pUnencrypted) throws JOceanusException {
+                                      final BigDecimal pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected BigDecimal parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected BigDecimal parseBytes(final byte[] pBytes) throws OceanusException {
             try {
-                return new BigDecimal(DataConverter.byteArrayToString(pBytes));
+                return new BigDecimal(TethysDataConverter.byteArrayToString(pBytes));
                 /* Catch Exceptions */
-            } catch (JOceanusException | NumberFormatException e) {
+            } catch (OceanusException | NumberFormatException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
-            return DataConverter.stringToByteArray(getValue().toString());
+        protected byte[] getBytesForEncryption() throws OceanusException {
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -1094,28 +1094,28 @@ public final class EncryptedData {
      * The encrypted Decimal class.
      * @param <X> the decimal type
      */
-    public abstract static class EncryptedDecimal<X extends JDecimal>
+    public abstract static class EncryptedDecimal<X extends TethysDecimal>
             extends EncryptedField<X> {
         /**
          * Decimal Formatter.
          */
-        private JDecimalFormatter theDecimalFormatter = null;
+        private TethysDecimalFormatter theDecimalFormatter = null;
 
         /**
          * Decimal Parser.
          */
-        private JDecimalParser theDecimalParser = null;
+        private TethysDecimalParser theDecimalParser = null;
 
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private EncryptedDecimal(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1124,11 +1124,11 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private EncryptedDecimal(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final X pUnencrypted) throws JOceanusException {
+                                 final X pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1136,7 +1136,7 @@ public final class EncryptedData {
          * Obtain the formatter.
          * @return the formatter
          */
-        protected JDecimalFormatter getDecimalFormatter() {
+        protected TethysDecimalFormatter getDecimalFormatter() {
             if (theDecimalFormatter == null) {
                 theDecimalFormatter = getFormatter().getDecimalFormatter();
             }
@@ -1147,7 +1147,7 @@ public final class EncryptedData {
          * Obtain the parser.
          * @return the parser
          */
-        protected JDecimalParser getDecimalParser() {
+        protected TethysDecimalParser getDecimalParser() {
             if (theDecimalParser == null) {
                 theDecimalParser = getFormatter().getDecimalParser();
             }
@@ -1155,15 +1155,15 @@ public final class EncryptedData {
         }
 
         @Override
-        protected X parseBytes(final byte[] pBytes) throws JOceanusException {
+        protected X parseBytes(final byte[] pBytes) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and parse it */
-                String myInput = DataConverter.byteArrayToString(pBytes);
+                String myInput = TethysDataConverter.byteArrayToString(pBytes);
                 return parseValue(myInput);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
@@ -1172,22 +1172,22 @@ public final class EncryptedData {
          * Parse a string value to get a value.
          * @param pValue the string value
          * @return the value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected abstract X parseValue(final String pValue) throws JOceanusException;
+        protected abstract X parseValue(final String pValue) throws OceanusException;
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
                 String myValue = getValue().toString();
 
                 /* Convert the string to a byte array */
-                return DataConverter.stringToByteArray(myValue);
+                return TethysDataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
@@ -1197,17 +1197,17 @@ public final class EncryptedData {
      * The encrypted Money class.
      */
     public static final class EncryptedMoney
-            extends EncryptedDecimal<JMoney> {
+            extends EncryptedDecimal<TethysMoney> {
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedMoney(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1216,32 +1216,32 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedMoney(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final JMoney pUnencrypted) throws JOceanusException {
+                                 final TethysMoney pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
                 String myValue = getDecimalFormatter().toCurrencyString(getValue());
 
                 /* Convert the string to a byte array */
-                return DataConverter.stringToByteArray(myValue);
+                return TethysDataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
 
         @Override
-        protected JMoney parseValue(final String pValue) throws JOceanusException {
+        protected TethysMoney parseValue(final String pValue) throws OceanusException {
             try {
                 return getDecimalParser().parseMoneyValue(pValue);
             } catch (IllegalArgumentException e) {
@@ -1254,17 +1254,17 @@ public final class EncryptedData {
      * The encrypted Units class.
      */
     public static final class EncryptedUnits
-            extends EncryptedDecimal<JUnits> {
+            extends EncryptedDecimal<TethysUnits> {
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedUnits(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1273,18 +1273,18 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedUnits(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final JUnits pUnencrypted) throws JOceanusException {
+                                 final TethysUnits pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JUnits parseValue(final String pValue) throws JOceanusException {
+        protected TethysUnits parseValue(final String pValue) throws OceanusException {
             try {
-                return new JUnits(pValue);
+                return new TethysUnits(pValue);
             } catch (IllegalArgumentException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
@@ -1295,17 +1295,17 @@ public final class EncryptedData {
      * The encrypted Rate class.
      */
     public static final class EncryptedRate
-            extends EncryptedDecimal<JRate> {
+            extends EncryptedDecimal<TethysRate> {
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedRate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
-                                final byte[] pEncrypted) throws JOceanusException {
+                                final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1314,18 +1314,18 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedRate(final GordianKeySet pKeySet,
                                 final JDataFormatter pFormatter,
-                                final JRate pUnencrypted) throws JOceanusException {
+                                final TethysRate pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JRate parseValue(final String pValue) throws JOceanusException {
+        protected TethysRate parseValue(final String pValue) throws OceanusException {
             try {
-                return new JRate(pValue);
+                return new TethysRate(pValue);
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
@@ -1337,17 +1337,17 @@ public final class EncryptedData {
      * The encrypted Price class.
      */
     public static final class EncryptedPrice
-            extends EncryptedDecimal<JPrice> {
+            extends EncryptedDecimal<TethysPrice> {
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedPrice(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1356,32 +1356,32 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedPrice(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final JPrice pUnencrypted) throws JOceanusException {
+                                 final TethysPrice pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JOceanusException {
+        protected byte[] getBytesForEncryption() throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
                 String myValue = getDecimalFormatter().toCurrencyString(getValue());
 
                 /* Convert the string to a byte array */
-                return DataConverter.stringToByteArray(myValue);
+                return TethysDataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (JOceanusException e) {
+            } catch (OceanusException e) {
                 throw new JMetisDataException(ERROR_VALUE_CONVERT, e);
             }
         }
 
         @Override
-        protected JPrice parseValue(final String pValue) throws JOceanusException {
+        protected TethysPrice parseValue(final String pValue) throws OceanusException {
             try {
                 return getDecimalParser().parsePriceValue(pValue);
             } catch (IllegalArgumentException e) {
@@ -1394,17 +1394,17 @@ public final class EncryptedData {
      * The encrypted Dilution class.
      */
     public static final class EncryptedDilution
-            extends EncryptedDecimal<JDilution> {
+            extends EncryptedDecimal<TethysDilution> {
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDilution(final GordianKeySet pKeySet,
                                     final JDataFormatter pFormatter,
-                                    final byte[] pEncrypted) throws JOceanusException {
+                                    final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1413,18 +1413,18 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedDilution(final GordianKeySet pKeySet,
                                     final JDataFormatter pFormatter,
-                                    final JDilution pUnencrypted) throws JOceanusException {
+                                    final TethysDilution pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JDilution parseValue(final String pValue) throws JOceanusException {
+        protected TethysDilution parseValue(final String pValue) throws OceanusException {
             try {
-                return new JDilution(pValue);
+                return new TethysDilution(pValue);
             } catch (IllegalArgumentException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }
@@ -1435,17 +1435,17 @@ public final class EncryptedData {
      * The encrypted Ratio class.
      */
     public static final class EncryptedRatio
-            extends EncryptedDecimal<JRatio> {
+            extends EncryptedDecimal<TethysRatio> {
         /**
          * Constructor.
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedRatio(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JOceanusException {
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1454,18 +1454,18 @@ public final class EncryptedData {
          * @param pKeySet the keySet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected EncryptedRatio(final GordianKeySet pKeySet,
                                  final JDataFormatter pFormatter,
-                                 final JRatio pUnencrypted) throws JOceanusException {
+                                 final TethysRatio pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JRatio parseValue(final String pValue) throws JOceanusException {
+        protected TethysRatio parseValue(final String pValue) throws OceanusException {
             try {
-                return new JRatio(pValue);
+                return new TethysRatio(pValue);
             } catch (IllegalArgumentException e) {
                 throw new JMetisDataException(ERROR_BYTES_CONVERT, e);
             }

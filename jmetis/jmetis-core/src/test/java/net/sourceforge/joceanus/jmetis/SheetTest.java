@@ -39,14 +39,14 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 public class SheetTest {
     /**
@@ -98,23 +98,23 @@ public class SheetTest {
             DataCell myCell = myRow.getMutableCellByIndex(1);
             myCell.setStringValue("Barclays");
             myCell = myRow.getMutableCellByIndex(2);
-            myCell.setDateValue(new JDateDay());
+            myCell.setDateValue(new TethysDate());
             myCell = myRow.getMutableCellByIndex(10);
             myCell.setBooleanValue(Boolean.TRUE);
             myCell = myRow.getMutableCellByIndex(4);
-            myCell.setDecimalValue(new JRate("0.2"));
+            myCell.setDecimalValue(new TethysRate("0.2"));
             myCell = myRow.getMutableCellByIndex(5);
-            myCell.setDecimalValue(new JUnits("0.10"));
+            myCell.setDecimalValue(new TethysUnits("0.10"));
             myCell = myRow.getMutableCellByIndex(7);
             myCell.setIntegerValue(4);
             myCell = myRow.getMutableCellByIndex(3);
-            myCell.setDecimalValue(new JMoney("13.45"));
+            myCell.setDecimalValue(new TethysMoney("13.45"));
             myCell = myRow.getMutableCellByIndex(11);
-            myCell.setMonetaryValue(new JPrice(Currency.getInstance("USD")));
+            myCell.setMonetaryValue(new TethysPrice(Currency.getInstance("USD")));
             myCell = myRow.getMutableCellByIndex(12);
-            myCell.setDecimalValue(new JDilution("0.1345"));
+            myCell.setDecimalValue(new TethysDilution("0.1345"));
             myCell = myRow.getMutableCellByIndex(13);
-            myCell.setDecimalValue(new JRatio("0.66"));
+            myCell.setDecimalValue(new TethysRatio("0.66"));
 
             /* Write the spreadsheet out */
             File myXFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
@@ -157,7 +157,7 @@ public class SheetTest {
             myCell = null;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             e.printStackTrace();
         }
     }
@@ -214,7 +214,7 @@ public class SheetTest {
             }
         } catch (FileNotFoundException e) {
             e = null;
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             e = null;
         }
     }

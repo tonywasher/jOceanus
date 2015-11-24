@@ -27,8 +27,8 @@ import java.awt.Font;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceType;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper class for java preferences.
@@ -43,9 +43,9 @@ public abstract class SwingPreferenceSet
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public SwingPreferenceSet() throws JOceanusException {
+    public SwingPreferenceSet() throws OceanusException {
     }
 
     /**
@@ -197,7 +197,7 @@ public abstract class SwingPreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) {
             /* Store the value */
-            storeTheValue(DataConverter.colorToHexString((Color) pNewValue));
+            storeTheValue(TethysDataConverter.colorToHexString((Color) pNewValue));
         }
     }
 

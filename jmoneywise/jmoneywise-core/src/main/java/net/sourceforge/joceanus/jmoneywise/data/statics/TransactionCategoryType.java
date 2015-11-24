@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TransactionCategoryType data type.
@@ -66,10 +66,10 @@ public class TransactionCategoryType
      * Basic Constructor.
      * @param pList The list to associate the Category Type with
      * @param pName Name of Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TransactionCategoryType(final TransactionCategoryTypeList pList,
-                                    final String pName) throws JOceanusException {
+                                    final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class TransactionCategoryType
      * Basic constructor.
      * @param pList The list to associate the Category Type with
      * @param pClass Class of Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TransactionCategoryType(final TransactionCategoryTypeList pList,
-                                    final TransactionCategoryClass pClass) throws JOceanusException {
+                                    final TransactionCategoryClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class TransactionCategoryType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TransactionCategoryType(final TransactionCategoryTypeList pList,
-                                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                                    final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -213,9 +213,9 @@ public class TransactionCategoryType
         /**
          * Add a TransactionCategoryType.
          * @param pCategoryType the Name of the category type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pCategoryType) throws JOceanusException {
+        public void addBasicItem(final String pCategoryType) throws OceanusException {
             /* Create a new Category Type */
             TransactionCategoryType myCatType = new TransactionCategoryType(this, pCategoryType);
 
@@ -230,7 +230,7 @@ public class TransactionCategoryType
         }
 
         @Override
-        public TransactionCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TransactionCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             TransactionCategoryType myType = new TransactionCategoryType(this, pValues);
 
@@ -248,7 +248,7 @@ public class TransactionCategoryType
         }
 
         @Override
-        protected TransactionCategoryType newItem(final TransactionCategoryClass pClass) throws JOceanusException {
+        protected TransactionCategoryType newItem(final TransactionCategoryClass pClass) throws OceanusException {
             /* Create the type */
             TransactionCategoryType myType = new TransactionCategoryType(this, pClass);
 

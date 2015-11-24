@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
@@ -104,9 +104,9 @@ public class SvnExtract
     /**
      * Constructor.
      * @param pComponent the component.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public SvnExtract(final SvnComponent pComponent) throws JOceanusException {
+    public SvnExtract(final SvnComponent pComponent) throws OceanusException {
         /* Store parameters */
         theComponent = pComponent;
 
@@ -231,9 +231,9 @@ public class SvnExtract
     /**
      * Build tags.
      * @param pBranch the branch
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void buildTags(final SvnBranch pBranch) throws JOceanusException {
+    private void buildTags(final SvnBranch pBranch) throws OceanusException {
         /* Loop through the tags */
         Iterator<SvnTag> myIterator = pBranch.tagIterator();
         while (myIterator.hasNext()) {
@@ -406,9 +406,9 @@ public class SvnExtract
 
         /**
          * Build view.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void buildView() throws JOceanusException {
+        public void buildView() throws OceanusException {
             /* Access the revision path */
             buildView(getOwner().getRevisionPath());
         }
@@ -480,9 +480,9 @@ public class SvnExtract
 
         /**
          * Build view.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void buildView() throws JOceanusException {
+        public void buildView() throws OceanusException {
             /* Access the revision path */
             buildView(getOwner().getRevisionPath());
         }
@@ -660,9 +660,9 @@ public class SvnExtract
         /**
          * Build view.
          * @param pPath the revision path
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected void buildView(final SvnRevisionPath pPath) throws JOceanusException {
+        protected void buildView(final SvnRevisionPath pPath) throws OceanusException {
             /* Create a sourceDirs list */
             List<SvnRevisionHistory> mySourceDirs = new ArrayList<SvnRevisionHistory>();
 
@@ -706,9 +706,9 @@ public class SvnExtract
         /**
          * Process source directories.
          * @param pSourceList the source directories.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void processSourceDirs(final List<SvnRevisionHistory> pSourceList) throws JOceanusException {
+        private void processSourceDirs(final List<SvnRevisionHistory> pSourceList) throws OceanusException {
             /* Loop through the copy directories */
             Iterator<SvnRevisionHistory> myHistIterator = pSourceList.iterator();
             while (myHistIterator.hasNext()) {
@@ -733,11 +733,11 @@ public class SvnExtract
          * @param pStartRev the starting revision
          * @param pDir the sourceDirectory.
          * @param pEntry the history details
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void processSourceDir(final SVNRevision pStartRev,
                                       final SvnSourceDir pDir,
-                                      final SvnRevisionHistory pEntry) throws JOceanusException {
+                                      final SvnRevisionHistory pEntry) throws OceanusException {
             /* Access the required view */
             SvnRevisionKey mySource = pDir.getSource();
             String myComp = pDir.getComponent();
@@ -808,12 +808,12 @@ public class SvnExtract
          * @param pComp the component.
          * @param pKey the revisionKey
          * @param pEntry the history details
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void adjustView(final SVNRevision pStartRev,
                                 final String pComp,
                                 final SvnRevisionKey pKey,
-                                final SvnRevisionHistory pEntry) throws JOceanusException {
+                                final SvnRevisionHistory pEntry) throws OceanusException {
             /* Determine the required revision */
             long myStart = pStartRev.getNumber();
             SVNRevision myRevision = pKey.getRevision();
@@ -862,10 +862,10 @@ public class SvnExtract
          * Migrate the view.
          * @param pView the view to migrate
          * @param pTarget the target plan to migrate to
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected void migrateView(final SvnExtractView pView,
-                                   final SvnExtractPlan<T> pTarget) throws JOceanusException {
+                                   final SvnExtractPlan<T> pTarget) throws OceanusException {
             /* Remove from view list */
             theViews.remove(pView);
 
@@ -942,10 +942,10 @@ public class SvnExtract
          * Constructor.
          * @param pOwner the owner
          * @param pSource the original view
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private SvnExtractMigratedView(final Object pOwner,
-                                       final SvnExtractView pSource) throws JOceanusException {
+                                       final SvnExtractView pSource) throws OceanusException {
             /* Call the super-constructor */
             super(pSource);
 
@@ -1056,11 +1056,11 @@ public class SvnExtract
          * @param pView the view to copy from
          * @param pRevision the revision
          * @param pEntry the history details
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private SvnExtractView(final SvnExtractView pView,
                                final SVNRevision pRevision,
-                               final SvnRevisionHistory pEntry) throws JOceanusException {
+                               final SvnRevisionHistory pEntry) throws OceanusException {
             /* Initialise item */
             this(pView.theRepo, pRevision, pEntry);
 
@@ -1077,9 +1077,9 @@ public class SvnExtract
         /**
          * Constructor.
          * @param pView the view to copy from
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected SvnExtractView(final SvnExtractView pView) throws JOceanusException {
+        protected SvnExtractView(final SvnExtractView pView) throws OceanusException {
             /* Store parameters */
             theRepo = pView.theRepo;
             theRevision = pView.getRevision();
@@ -1188,9 +1188,9 @@ public class SvnExtract
         /**
          * Set base directory.
          * @param pBaseDir the base directory
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void setBaseDir(final SVNURL pBaseDir) throws JOceanusException {
+        private void setBaseDir(final SVNURL pBaseDir) throws OceanusException {
             SvnExtractItem myItem = new SvnExtractItem(pBaseDir);
             theItems.addItem(myItem);
         }
@@ -1199,10 +1199,10 @@ public class SvnExtract
          * Add directory.
          * @param pTarget the target
          * @param pBaseDir the base directory
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         private void addDirectory(final String pTarget,
-                                  final SVNURL pBaseDir) throws JOceanusException {
+                                  final SVNURL pBaseDir) throws OceanusException {
             SvnExtractItem myItem = new SvnExtractItem(pTarget, pBaseDir);
             theItems.addItem(myItem);
         }
@@ -1211,10 +1211,10 @@ public class SvnExtract
          * Extract item.
          * @param pTarget the target location
          * @param pKeep the name of a file/directory to preserve
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public void extractItem(final File pTarget,
-                                final String pKeep) throws JOceanusException {
+                                final String pKeep) throws OceanusException {
             /* Clear the target directory */
             Directory2.clearDirectory(pTarget, pKeep);
 
@@ -1416,9 +1416,9 @@ public class SvnExtract
         /**
          * Add item to list (discarding duplicates).
          * @param pItem the item to add.
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void addItem(final SvnExtractItem pItem) throws JOceanusException {
+        private void addItem(final SvnExtractItem pItem) throws OceanusException {
             /* Loop through the existing items */
             Iterator<SvnExtractItem> myIterator = iterator();
             while (myIterator.hasNext()) {

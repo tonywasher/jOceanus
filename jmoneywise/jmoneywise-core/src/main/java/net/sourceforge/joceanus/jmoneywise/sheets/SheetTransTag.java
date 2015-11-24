@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagLis
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for TransactionTag.
@@ -84,7 +84,7 @@ public class SheetTransTag
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
         myValues.addValue(TransactionTag.FIELD_NAME, loadBytes(COL_NAME));
@@ -95,7 +95,7 @@ public class SheetTransTag
     }
 
     @Override
-    protected void insertSecureItem(final TransactionTag pItem) throws JOceanusException {
+    protected void insertSecureItem(final TransactionTag pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -114,11 +114,11 @@ public class SheetTransTag
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData) throws OceanusException {
         /* Access the list of tags */
         TransactionTagList myList = pData.getTransactionTags();
 
@@ -172,7 +172,7 @@ public class SheetTransTag
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 

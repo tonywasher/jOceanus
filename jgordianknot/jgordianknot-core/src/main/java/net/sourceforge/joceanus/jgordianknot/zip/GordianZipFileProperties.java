@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Class represents the properties of an encrypted file in the Zip file.
@@ -76,9 +76,9 @@ public class GordianZipFileProperties {
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected GordianZipFileProperties(final String pCodedString) throws JOceanusException {
+    protected GordianZipFileProperties(final String pCodedString) throws OceanusException {
         /* Initialise normally */
         this();
 
@@ -107,12 +107,12 @@ public class GordianZipFileProperties {
      * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void setProperty(final String pName,
-                               final String pValue) throws JOceanusException {
+                               final String pValue) throws OceanusException {
         /* Set the new value */
-        setProperty(pName, DataConverter.stringToByteArray(pValue));
+        setProperty(pName, TethysDataConverter.stringToByteArray(pValue));
     }
 
     /**
@@ -193,16 +193,16 @@ public class GordianZipFileProperties {
      * Obtain the string value of the named property.
      * @param pName the name of the property
      * @return the value of the property or <code>null</code> if the property does not exist
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected String getStringProperty(final String pName) throws JOceanusException {
+    protected String getStringProperty(final String pName) throws OceanusException {
         /* Access the property */
         byte[] myValue = getByteProperty(pName);
 
         /* Return the value */
         return (myValue == null)
                                  ? null
-                                 : DataConverter.byteArrayToString(myValue);
+                                 : TethysDataConverter.byteArrayToString(myValue);
     }
 
     /**
@@ -287,7 +287,7 @@ public class GordianZipFileProperties {
             /* If we have a byte value */
             if (myProperty.getByteValue() != null) {
                 /* Add the byte value as a Hex String */
-                myValue.append(DataConverter.bytesToHexString(myProperty.getByteValue()));
+                myValue.append(TethysDataConverter.bytesToHexString(myProperty.getByteValue()));
             }
 
             /* Add the value separator */
@@ -296,7 +296,7 @@ public class GordianZipFileProperties {
             /* If we have a long value */
             if (myProperty.getLongValue() != null) {
                 /* Add the long value as a Hex String */
-                myValue.append(DataConverter.longToHexString(myProperty.getLongValue()));
+                myValue.append(TethysDataConverter.longToHexString(myProperty.getLongValue()));
             }
 
             /* Add the value to the string */
@@ -313,9 +313,9 @@ public class GordianZipFileProperties {
     /**
      * Parse the encoded string representation to obtain the property.
      * @param pValue the encoded property
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void parseEncodedProperty(final String pValue) throws JOceanusException {
+    private void parseEncodedProperty(final String pValue) throws OceanusException {
         /* Locate the Value separator in the string */
         int myLoc = pValue.indexOf(SEP_VALUE);
 
@@ -366,13 +366,13 @@ public class GordianZipFileProperties {
         /* If we have a bytes array */
         if (myBytes != null) {
             /* Set the bytes value */
-            myProperty.setByteValue(DataConverter.hexStringToBytes(myBytes));
+            myProperty.setByteValue(TethysDataConverter.hexStringToBytes(myBytes));
         }
 
         /* If we have a long value */
         if (myLong != null) {
             /* Access the bytes value */
-            myProperty.setLongValue(DataConverter.hexStringToLong(myLong));
+            myProperty.setLongValue(TethysDataConverter.hexStringToLong(myLong));
         }
     }
 

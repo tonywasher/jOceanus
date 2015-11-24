@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 import java.io.InputStream;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Input stream Cipher implementation.
@@ -88,7 +88,7 @@ public class GordianCipherInputStream<T>
 
         @Override
         public int processBytes(final byte[] pBuffer,
-                                final int pLength) throws JOceanusException {
+                                final int pLength) throws OceanusException {
             /* Initialise variables */
             int iNumBytes = 0;
             int iLength = pLength;

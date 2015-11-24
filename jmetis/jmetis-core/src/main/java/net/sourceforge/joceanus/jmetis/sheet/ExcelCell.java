@@ -23,15 +23,15 @@
 package net.sourceforge.joceanus.jmetis.sheet;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -81,10 +81,10 @@ public class ExcelCell
      * @param pSource the string to parse.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private <T> T parseValue(final String pSource,
-                             final Class<T> pClass) throws JOceanusException {
+                             final Class<T> pClass) throws OceanusException {
         try {
             return theExcelRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
@@ -114,10 +114,10 @@ public class ExcelCell
     }
 
     @Override
-    public JDateDay getDateValue() {
+    public TethysDate getDateValue() {
         switch (theExcelCell.getCellType()) {
             case HSSFCell.CELL_TYPE_NUMERIC:
-                return new JDateDay(theExcelCell.getDateCellValue());
+                return new TethysDate(theExcelCell.getDateCellValue());
             default:
                 return null;
         }
@@ -172,44 +172,44 @@ public class ExcelCell
     }
 
     @Override
-    public JMoney getMoneyValue() throws JOceanusException {
-        return parseValue(getStringValue(), JMoney.class);
+    public TethysMoney getMoneyValue() throws OceanusException {
+        return parseValue(getStringValue(), TethysMoney.class);
     }
 
     @Override
-    public JPrice getPriceValue() throws JOceanusException {
-        return parseValue(getStringValue(), JPrice.class);
+    public TethysPrice getPriceValue() throws OceanusException {
+        return parseValue(getStringValue(), TethysPrice.class);
     }
 
     @Override
-    public JRate getRateValue() throws JOceanusException {
-        return parseValue(getStringValue(), JRate.class);
+    public TethysRate getRateValue() throws OceanusException {
+        return parseValue(getStringValue(), TethysRate.class);
     }
 
     @Override
-    public JUnits getUnitsValue() throws JOceanusException {
-        return parseValue(getStringValue(), JUnits.class);
+    public TethysUnits getUnitsValue() throws OceanusException {
+        return parseValue(getStringValue(), TethysUnits.class);
     }
 
     @Override
-    public JDilution getDilutionValue() throws JOceanusException {
-        return parseValue(getStringValue(), JDilution.class);
+    public TethysDilution getDilutionValue() throws OceanusException {
+        return parseValue(getStringValue(), TethysDilution.class);
     }
 
     @Override
-    public JRatio getRatioValue() throws JOceanusException {
-        return parseValue(getStringValue(), JRatio.class);
+    public TethysRatio getRatioValue() throws OceanusException {
+        return parseValue(getStringValue(), TethysRatio.class);
     }
 
     @Override
-    public void setNullValue() throws JOceanusException {
+    public void setNullValue() throws OceanusException {
         if (!isReadOnly) {
             theExcelCell.setCellValue((String) null);
         }
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) throws JOceanusException {
+    protected void setBoolean(final Boolean pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue);
@@ -220,7 +220,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setDate(final JDateDay pValue) throws JOceanusException {
+    protected void setDate(final TethysDate pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.toDate());
@@ -231,7 +231,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setInteger(final Integer pValue) throws JOceanusException {
+    protected void setInteger(final Integer pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -242,7 +242,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setString(final String pValue) throws JOceanusException {
+    protected void setString(final String pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue);
@@ -253,7 +253,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setHeader(final String pValue) throws JOceanusException {
+    protected void setHeader(final String pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set as string value */
             theExcelCell.setCellValue(pValue);
@@ -264,7 +264,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setDecimal(final JDecimal pValue) throws JOceanusException {
+    protected void setDecimal(final TethysDecimal pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -275,7 +275,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setMonetary(final JMoney pValue) throws JOceanusException {
+    protected void setMonetary(final TethysMoney pValue) throws OceanusException {
         /* Pass through as decimal */
         setDecimal(pValue);
     }

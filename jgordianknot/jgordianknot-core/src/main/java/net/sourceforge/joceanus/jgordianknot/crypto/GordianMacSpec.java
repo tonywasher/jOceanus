@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Mac Specification.
@@ -165,7 +165,7 @@ public final class GordianMacSpec {
 
     @Override
     public int hashCode() {
-        int hashCode = theMacType.ordinal() << DataConverter.BYTE_SHIFT;
+        int hashCode = theMacType.ordinal() << TethysDataConverter.BYTE_SHIFT;
         if (theDigestType != null) {
             hashCode += theDigestType.ordinal();
         }

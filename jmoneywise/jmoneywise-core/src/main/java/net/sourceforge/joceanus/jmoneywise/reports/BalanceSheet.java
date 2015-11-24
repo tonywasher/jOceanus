@@ -63,8 +63,8 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -117,12 +117,12 @@ public class BalanceSheet
         CashCategoryBucketList myCash = theAnalysis.getCashCategories();
         LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        JDateDayRange myDateRange = theAnalysis.getDateRange();
+        TethysDateRange myDateRange = theAnalysis.getDateRange();
 
         /* Create the totals */
-        JMoney myTotal = new JMoney();
-        JMoney myBase = new JMoney();
-        JMoney myDelta = new JMoney();
+        TethysMoney myTotal = new TethysMoney();
+        TethysMoney myBase = new TethysMoney();
+        TethysMoney myDelta = new TethysMoney();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -220,9 +220,9 @@ public class BalanceSheet
             SecurityValues myBaseValues = myTotals.getBaseValues();
 
             /* Access interesting values */
-            JMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
-            JMoney myBaseValuation = myBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
-            JMoney myDeltaValuation = myValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
+            TethysMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
+            TethysMoney myBaseValuation = myBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
+            TethysMoney myDeltaValuation = myValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);

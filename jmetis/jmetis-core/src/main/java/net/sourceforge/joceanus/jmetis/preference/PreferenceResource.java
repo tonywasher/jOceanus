@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmetis.preference;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for JMetis preferences.
  */
-public enum PreferenceResource implements ResourceId {
+public enum PreferenceResource implements TethysResourceId {
     /**
      * valueClass STRING.
      */
@@ -173,7 +173,7 @@ public enum PreferenceResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JMetisDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -220,7 +220,7 @@ public enum PreferenceResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForValueClass(final ValueClass pValue) {
+    protected static TethysResourceId getKeyForValueClass(final ValueClass pValue) {
         switch (pValue) {
             case STRING:
                 return VALUE_STRING;
@@ -239,7 +239,7 @@ public enum PreferenceResource implements ResourceId {
             case CHARARRAY:
                 return VALUE_CHARARRAY;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -248,7 +248,7 @@ public enum PreferenceResource implements ResourceId {
      * @param pType the type
      * @return the resource key
      */
-    protected static ResourceId getKeyForPrefType(final PreferenceType pType) {
+    protected static TethysResourceId getKeyForPrefType(final PreferenceType pType) {
         switch (pType) {
             case STRING:
                 return TYPE_STRING;
@@ -269,7 +269,7 @@ public enum PreferenceResource implements ResourceId {
             case FONT:
                 return TYPE_FONT;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pType));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pType));
         }
     }
 }

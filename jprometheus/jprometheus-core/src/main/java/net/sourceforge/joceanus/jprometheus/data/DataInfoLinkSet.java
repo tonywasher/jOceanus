@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Representation of an set of DataInfo links for a DataItem.
@@ -175,9 +175,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     /**
      * Add link to Item.
      * @param pItem the item to link to
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void linkItem(final T pItem) throws JOceanusException {
+    public void linkItem(final T pItem) throws OceanusException {
         /* If the item is not already linked */
         if (!isItemLinked(pItem)) {
             /* Perform any necessary splits on the item */
@@ -198,9 +198,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     /**
      * Split multi-name item.
      * @param pItem the item to split
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private void splitItem(final T pItem) throws JOceanusException {
+    private void splitItem(final T pItem) throws OceanusException {
         /* Ignore if this is not a load of a string */
         Object myValue = pItem.getLink();
         if (!(myValue instanceof String)) {

@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Analysis manager.
  */
 public class AnalysisManager
-        extends NestedHashMap<JDateDayRange, Analysis>
+        extends NestedHashMap<TethysDateRange, Analysis>
         implements JDataFormat {
     /**
      * Serial Id.
@@ -66,7 +66,7 @@ public class AnalysisManager
     /**
      * The first date.
      */
-    private final transient JDateDay theFirstDate;
+    private final transient TethysDate theFirstDate;
 
     /**
      * Do we have active securities?
@@ -88,7 +88,7 @@ public class AnalysisManager
 
         /* Store the first date */
         MoneyWiseData myData = theAnalysis.getData();
-        JDateDayRange myRange = myData.getDateRange();
+        TethysDateRange myRange = myData.getDateRange();
         theFirstDate = myRange.getStart();
     }
 
@@ -134,9 +134,9 @@ public class AnalysisManager
      * @param pDate the date for the analysis.
      * @return the analysis
      */
-    public Analysis getAnalysis(final JDateDay pDate) {
+    public Analysis getAnalysis(final TethysDate pDate) {
         /* Create the new Range */
-        JDateDayRange myRange = new JDateDayRange(null, pDate);
+        TethysDateRange myRange = new TethysDateRange(null, pDate);
 
         /* Look for the existing analysis */
         Analysis myAnalysis = get(myRange);
@@ -161,7 +161,7 @@ public class AnalysisManager
      * @param pRange the date range for the analysis.
      * @return the analysis
      */
-    public Analysis getAnalysis(final JDateDayRange pRange) {
+    public Analysis getAnalysis(final TethysDateRange pRange) {
         /* Look for the existing analysis */
         Analysis myAnalysis = get(pRange);
         if (myAnalysis == null) {
@@ -253,16 +253,16 @@ public class AnalysisManager
         }
 
         /* Access totals */
-        JMoney myDepTotal = myDepCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
-        JMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
-        JMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
-        JMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.VALUEDELTA);
-        JMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.PROFIT);
-        JMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.PROFIT);
-        JMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
+        TethysMoney myDepTotal = myDepCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        TethysMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        TethysMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        TethysMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.VALUEDELTA);
+        TethysMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.PROFIT);
+        TethysMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.PROFIT);
+        TethysMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
 
         /* Create a copy */
-        myDepTotal = new JMoney(myDepTotal);
+        myDepTotal = new TethysMoney(myDepTotal);
 
         /* Add sub-accounts */
         myDepTotal.addAmount(myCashTotal);

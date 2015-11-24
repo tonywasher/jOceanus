@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
@@ -248,18 +248,18 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
     /**
      * Load an individual item from the result set.
      * @return the values for the row
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected abstract DataValues<E> loadValues() throws JOceanusException;
+    protected abstract DataValues<E> loadValues() throws OceanusException;
 
     /**
      * Set a field value for an item.
      * @param pItem the item to insert
      * @param pField the field id
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void setFieldValue(final T pItem,
-                                 final JDataField pField) throws JOceanusException {
+                                 final JDataField pField) throws OceanusException {
         /* Switch on field id */
         if (pField.equals(DataItem.FIELD_ID)) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
@@ -268,9 +268,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Post-Process on a load operation.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void postProcessOnLoad() throws JOceanusException {
+    protected void postProcessOnLoad() throws OceanusException {
         /* PostProcess the list */
         theList.postProcessOnLoad();
     }
@@ -280,10 +280,10 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @param pTask the task control
      * @param pData the data
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected boolean loadItems(final TaskControl<?> pTask,
-                                final DataSet<?, ?> pData) throws JOceanusException {
+                                final DataSet<?, ?> pData) throws OceanusException {
         boolean bContinue = true;
         String myQuery;
         int mySteps;
@@ -374,11 +374,11 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @param pData the data
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected boolean insertItems(final TaskControl<?> pTask,
                                   final DataSet<?, ?> pData,
-                                  final BatchControl pBatch) throws JOceanusException {
+                                  final BatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Inserting " + getTableName())) {
             return false;
@@ -467,10 +467,10 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @param pTask the task control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected boolean updateItems(final TaskControl<?> pTask,
-                                  final BatchControl pBatch) throws JOceanusException {
+                                  final BatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Updating " + getTableName())) {
             return false;
@@ -549,9 +549,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * Update the item.
      * @param pItem the item
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean updateItem(final T pItem) throws JOceanusException {
+    private boolean updateItem(final T pItem) throws OceanusException {
 
         /* Access the object and base */
         ValueSet myCurr = pItem.getValueSet();
@@ -590,10 +590,10 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @param pTask the task control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected boolean deleteItems(final TaskControl<?> pTask,
-                                  final BatchControl pBatch) throws JOceanusException {
+                                  final BatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Deleting " + getTableName())) {
             return false;
@@ -672,9 +672,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Create the table.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void createTable() throws JOceanusException {
+    protected void createTable() throws OceanusException {
         String myCreate;
 
         /* Protect the create */
@@ -696,9 +696,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Drop the table.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void dropTable() throws JOceanusException {
+    protected void dropTable() throws OceanusException {
         /* Protect the drop */
         try {
             /* If we should drop the index */
@@ -718,9 +718,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Truncate the table.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void purgeTable() throws JOceanusException {
+    protected void purgeTable() throws OceanusException {
         /* Protect the truncate */
         try {
             /* Execute the purge statement */
@@ -735,9 +735,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * Obtain row values.
      * @param pName the name of the item
      * @return the row values.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
         DataValues<E> myValues = new DataValues<E>(pName);
 

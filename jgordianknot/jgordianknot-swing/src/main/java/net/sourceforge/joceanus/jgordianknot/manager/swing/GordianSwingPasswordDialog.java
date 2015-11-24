@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jgordianknot.manager.MgrResource;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -230,7 +230,7 @@ public class GordianSwingPasswordDialog
             myForm.add(theConfirmField);
             myForm.add(theCancelButton);
         }
-        SpringUtilities.makeCompactGrid(myForm, mySpring, myNumRows, NUM_COLS, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myForm, mySpring, myNumRows, NUM_COLS, PADDING_SIZE);
 
         /* Layout the panel */
         JPanel myPanel = new JPanel();

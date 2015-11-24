@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmetis.sheet;
 
 import net.sourceforge.joceanus.jmetis.JMetisLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * WorkBook types.
@@ -70,9 +70,9 @@ public enum WorkBookType {
      * Determine workBookType of file.
      * @param pFileName the filename
      * @return the workBookType
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static WorkBookType determineType(final String pFileName) throws JOceanusException {
+    public static WorkBookType determineType(final String pFileName) throws OceanusException {
         /* Loop through all values */
         for (WorkBookType myType : WorkBookType.values()) {
             /* If we have matched the type */

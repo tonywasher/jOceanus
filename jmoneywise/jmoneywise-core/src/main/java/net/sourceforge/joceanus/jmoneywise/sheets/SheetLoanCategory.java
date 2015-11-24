@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for LoanCategory.
@@ -87,7 +87,7 @@ public class SheetLoanCategory
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(LoanCategory.OBJECT_NAME);
         myValues.addValue(LoanCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
@@ -100,7 +100,7 @@ public class SheetLoanCategory
     }
 
     @Override
-    protected void insertSecureItem(final LoanCategory pItem) throws JOceanusException {
+    protected void insertSecureItem(final LoanCategory pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());

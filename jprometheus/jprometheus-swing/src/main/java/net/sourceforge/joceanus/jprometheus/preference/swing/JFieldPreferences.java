@@ -26,7 +26,7 @@ import java.awt.Color;
 
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldConfig;
 import net.sourceforge.joceanus.jmetis.preference.swing.SwingPreferenceSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for JFieldSet.
@@ -125,9 +125,9 @@ public class JFieldPreferences
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JFieldPreferences() throws JOceanusException {
+    public JFieldPreferences() throws OceanusException {
         super();
     }
 

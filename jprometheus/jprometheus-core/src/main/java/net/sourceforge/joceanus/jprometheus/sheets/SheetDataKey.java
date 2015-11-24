@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SheetDataItem extension for DataKey.
@@ -81,7 +81,7 @@ public class SheetDataKey
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<CryptographyDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_KEYSET, loadInteger(COL_KEYSETID));
@@ -93,7 +93,7 @@ public class SheetDataKey
     }
 
     @Override
-    protected void insertSecureItem(final DataKey pItem) throws JOceanusException {
+    protected void insertSecureItem(final DataKey pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_KEYSETID, pItem.getDataKeySetId());

@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldConfig;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerResource;
-import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Data object formatting in HTML.
@@ -247,7 +247,7 @@ public final class ViewerHTML {
 
         /* Define standard font for body and table contents */
         myBuilder.append("body { font-family: Verdana, sans-serif; font-size: 1em; color: ");
-        myBuilder.append(DataConverter.colorToHexString(theColorStandard));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorStandard));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -281,7 +281,7 @@ public final class ViewerHTML {
         myBuilder.append(".");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(CSS_ITALIC);
-        myBuilder.append(DataConverter.colorToHexString(theColorChanged));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -290,21 +290,21 @@ public final class ViewerHTML {
         myBuilder.append(".");
         myBuilder.append(CLASS_SECCHANGED);
         myBuilder.append(" { color: ");
-        myBuilder.append(DataConverter.colorToHexString(theColorChanged));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set standard link definition */
         myBuilder.append("a { text-decoration: none; color: ");
-        myBuilder.append(DataConverter.colorToHexString(theColorLink));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set hover colour for standard link */
         myBuilder.append("a:hover { color: ");
-        myBuilder.append(DataConverter.colorToHexString(theColorLink.brighter()));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorLink.brighter()));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -313,7 +313,7 @@ public final class ViewerHTML {
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(CSS_ITALIC);
-        myBuilder.append(DataConverter.colorToHexString(theColorChgLink));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorChgLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -322,7 +322,7 @@ public final class ViewerHTML {
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(":hover { font-style: italic; color: ");
-        myBuilder.append(DataConverter.colorToHexString(theColorChgLink.brighter()));
+        myBuilder.append(TethysDataConverter.colorToHexString(theColorChgLink.brighter()));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);

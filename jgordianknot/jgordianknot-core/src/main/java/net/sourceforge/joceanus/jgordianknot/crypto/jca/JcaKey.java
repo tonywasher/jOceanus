@@ -29,7 +29,7 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper for JCA key.
@@ -74,9 +74,9 @@ public final class JcaKey<T>
      * @param <X> the key type
      * @param pKey the key to convert
      * @return the converted key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected static <X> JcaKey<X> accessKey(final GordianKey<X> pKey) throws JOceanusException {
+    protected static <X> JcaKey<X> accessKey(final GordianKey<X> pKey) throws OceanusException {
         /* Check that it is a JcaKey */
         if (pKey instanceof JcaKey) {
             return (JcaKey<X>) pKey;

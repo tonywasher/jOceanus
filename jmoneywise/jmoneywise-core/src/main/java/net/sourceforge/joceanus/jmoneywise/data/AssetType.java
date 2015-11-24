@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Asset Types.
@@ -111,9 +111,9 @@ public enum AssetType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public static AssetType fromId(final int id) throws JOceanusException {
+    public static AssetType fromId(final int id) throws OceanusException {
         for (AssetType myClass : values()) {
             if (myClass.getId() == id) {
                 return myClass;

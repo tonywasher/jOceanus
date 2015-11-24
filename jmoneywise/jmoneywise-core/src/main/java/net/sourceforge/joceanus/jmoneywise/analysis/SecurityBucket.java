@@ -46,13 +46,13 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * The Security Bucket class.
@@ -227,7 +227,7 @@ public final class SecurityBucket
      */
     private SecurityBucket(final Analysis pAnalysis,
                            final SecurityBucket pBase,
-                           final JDateDay pDate) {
+                           final TethysDate pDate) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
         theCurrency = pBase.getCurrency();
@@ -254,7 +254,7 @@ public final class SecurityBucket
      */
     private SecurityBucket(final Analysis pAnalysis,
                            final SecurityBucket pBase,
-                           final JDateDayRange pRange) {
+                           final TethysDateRange pRange) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
         theCurrency = pBase.getCurrency();
@@ -303,8 +303,8 @@ public final class SecurityBucket
         SecurityAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof JDecimal) {
-                return ((JDecimal) myValue).isNonZero()
+            if (myValue instanceof TethysDecimal) {
+                return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
                                                        : JDataFieldValue.SKIP;
             }
@@ -421,7 +421,7 @@ public final class SecurityBucket
      * Obtain date range.
      * @return the range
      */
-    public JDateDayRange getDateRange() {
+    public TethysDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -457,7 +457,7 @@ public final class SecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+    public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
                                            final SecurityAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
@@ -469,7 +469,7 @@ public final class SecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JMoney getMoneyDeltaForTransaction(final Transaction pTrans,
+    public TethysMoney getMoneyDeltaForTransaction(final Transaction pTrans,
                                               final SecurityAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaMoneyValue(pTrans, pAttr);
@@ -481,7 +481,7 @@ public final class SecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JUnits getUnitsDeltaForTransaction(final Transaction pTrans,
+    public TethysUnits getUnitsDeltaForTransaction(final Transaction pTrans,
                                               final SecurityAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaUnitsValue(pTrans, pAttr);
@@ -600,9 +600,9 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustCounter(final SecurityAttribute pAttr,
-                                 final JMoney pDelta) {
-        JMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new JMoney(myValue);
+                                 final TethysMoney pDelta) {
+        TethysMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -613,9 +613,9 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustCounter(final SecurityAttribute pAttr,
-                                 final JUnits pDelta) {
-        JUnits myValue = theValues.getUnitsValue(pAttr);
-        myValue = new JUnits(myValue);
+                                 final TethysUnits pDelta) {
+        TethysUnits myValue = theValues.getUnitsValue(pAttr);
+        myValue = new TethysUnits(myValue);
         myValue.addUnits(pDelta);
         setValue(pAttr, myValue);
     }
@@ -634,15 +634,15 @@ public final class SecurityBucket
      * value the asset for a particular range.
      * @param pRange the range of valuation
      */
-    private void valueAsset(final JDateDayRange pRange) {
+    private void valueAsset(final TethysDateRange pRange) {
         /* Obtain the appropriate price */
         MoneyWiseData myData = theAnalysis.getData();
         SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
-        JPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
+        TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
 
         /* Access base units */
-        JUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.UNITS);
-        JPrice myPrice = myPrices[0];
+        TethysUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.UNITS);
+        TethysPrice myPrice = myPrices[0];
 
         /* Calculate the value */
         theBaseValues.setValue(SecurityAttribute.PRICE, myPrice);
@@ -662,8 +662,8 @@ public final class SecurityBucket
      */
     protected void calculateProfit() {
         /* Calculate the profit */
-        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
-        JMoney myProfit = new JMoney(myValuation);
+        TethysMoney myValuation = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
+        TethysMoney myProfit = new TethysMoney(myValuation);
         myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
         myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
@@ -672,7 +672,7 @@ public final class SecurityBucket
         setValue(SecurityAttribute.PROFIT, myProfit);
 
         /* Calculate the profit minus the dividend */
-        JMoney myMarketProfit = new JMoney(myProfit);
+        TethysMoney myMarketProfit = new TethysMoney(myProfit);
         myMarketProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         setValue(SecurityAttribute.MARKETPROFIT, myMarketProfit);
     }
@@ -681,13 +681,13 @@ public final class SecurityBucket
      * Analyse the bucket.
      * @param pRange the range of valuation
      */
-    protected void analyseBucket(final JDateDayRange pRange) {
+    protected void analyseBucket(final TethysDateRange pRange) {
         /* Value the asset over the range */
         valueAsset(pRange);
 
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
-        myValue = new JMoney(myValue);
+        TethysMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
+        myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
         myValue.subtractAmount(theBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
@@ -716,8 +716,8 @@ public final class SecurityBucket
      */
     private void calculateMarket() {
         /* Obtain the delta value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
-        myValue = new JMoney(myValue);
+        TethysMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
+        myValue = new TethysMoney(myValue);
 
         /* Subtract the investment */
         myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
@@ -753,12 +753,12 @@ public final class SecurityBucket
             super(SecurityAttribute.class);
 
             /* Initialise units etc. to zero */
-            put(SecurityAttribute.UNITS, new JUnits());
-            put(SecurityAttribute.COST, new JMoney(pCurrency));
-            put(SecurityAttribute.INVESTED, new JMoney(pCurrency));
-            put(SecurityAttribute.GAINS, new JMoney(pCurrency));
-            put(SecurityAttribute.GROWTHADJUST, new JMoney(pCurrency));
-            put(SecurityAttribute.DIVIDEND, new JMoney(pCurrency));
+            put(SecurityAttribute.UNITS, new TethysUnits());
+            put(SecurityAttribute.COST, new TethysMoney(pCurrency));
+            put(SecurityAttribute.INVESTED, new TethysMoney(pCurrency));
+            put(SecurityAttribute.GAINS, new TethysMoney(pCurrency));
+            put(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
+            put(SecurityAttribute.DIVIDEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -772,15 +772,15 @@ public final class SecurityBucket
             super(SecurityAttribute.class);
 
             /* Initialise units etc. to zero */
-            put(SecurityAttribute.UNITS, new JUnits());
-            put(SecurityAttribute.COST, new JMoney(pCurrency));
-            put(SecurityAttribute.FOREIGNINVESTED, new JMoney(pCurrency));
-            put(SecurityAttribute.LOCALINVESTED, new JMoney(pReportingCurrency));
-            put(SecurityAttribute.FOREIGNGAINS, new JMoney(pCurrency));
-            put(SecurityAttribute.LOCALGAINS, new JMoney(pReportingCurrency));
-            put(SecurityAttribute.GROWTHADJUST, new JMoney(pCurrency));
-            put(SecurityAttribute.FOREIGNDIVIDEND, new JMoney(pCurrency));
-            put(SecurityAttribute.LOCALDIVIDEND, new JMoney(pReportingCurrency));
+            put(SecurityAttribute.UNITS, new TethysUnits());
+            put(SecurityAttribute.COST, new TethysMoney(pCurrency));
+            put(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
+            put(SecurityAttribute.LOCALINVESTED, new TethysMoney(pReportingCurrency));
+            put(SecurityAttribute.FOREIGNGAINS, new TethysMoney(pCurrency));
+            put(SecurityAttribute.LOCALGAINS, new TethysMoney(pReportingCurrency));
+            put(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
+            put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(pCurrency));
+            put(SecurityAttribute.LOCALDIVIDEND, new TethysMoney(pReportingCurrency));
         }
 
         /**
@@ -822,23 +822,23 @@ public final class SecurityBucket
         @Override
         protected void resetBaseValues() {
             /* Create a zero value in the correct currency */
-            JMoney myValue = getMoneyValue(SecurityAttribute.COST);
-            myValue = new JMoney(myValue);
+            TethysMoney myValue = getMoneyValue(SecurityAttribute.COST);
+            myValue = new TethysMoney(myValue);
             myValue.setZero();
 
             /* Reset Growth Adjust values */
-            put(SecurityAttribute.GROWTHADJUST, new JMoney(myValue));
+            put(SecurityAttribute.GROWTHADJUST, new TethysMoney(myValue));
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
                 /* Reset Invested, Gains and Dividend values */
                 put(SecurityAttribute.FOREIGNINVESTED, myValue);
-                put(SecurityAttribute.FOREIGNGAINS, new JMoney(myValue));
-                put(SecurityAttribute.FOREIGNDIVIDEND, new JMoney(myValue));
+                put(SecurityAttribute.FOREIGNGAINS, new TethysMoney(myValue));
+                put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(myValue));
 
                 /* Create a zero value in the reporting currency */
                 myValue = getMoneyValue(SecurityAttribute.LOCALINVESTED);
-                myValue = new JMoney(myValue);
+                myValue = new TethysMoney(myValue);
                 myValue.setZero();
                 put(SecurityAttribute.LOCALDIVIDEND, myValue);
                 put(SecurityAttribute.LOCALGAINS, myValue);
@@ -846,8 +846,8 @@ public final class SecurityBucket
             } else {
                 /* Reset Invested, Gains and Dividend values */
                 put(SecurityAttribute.INVESTED, myValue);
-                put(SecurityAttribute.GAINS, new JMoney(myValue));
-                put(SecurityAttribute.DIVIDEND, new JMoney(myValue));
+                put(SecurityAttribute.GAINS, new TethysMoney(myValue));
+                put(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
             }
         }
 
@@ -856,7 +856,7 @@ public final class SecurityBucket
          * @return true/false
          */
         public boolean isActive() {
-            JUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
+            TethysUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
             return (myUnits != null) && (myUnits.isNonZero());
         }
     }
@@ -935,7 +935,7 @@ public final class SecurityBucket
          */
         protected SecurityBucketList(final Analysis pAnalysis,
                                      final SecurityBucketList pBase,
-                                     final JDateDay pDate) {
+                                     final TethysDate pDate) {
             /* Initialise class */
             super(SecurityBucket.class);
             theAnalysis = pAnalysis;
@@ -967,7 +967,7 @@ public final class SecurityBucket
          */
         protected SecurityBucketList(final Analysis pAnalysis,
                                      final SecurityBucketList pBase,
-                                     final JDateDayRange pRange) {
+                                     final TethysDateRange pRange) {
             /* Initialise class */
             super(SecurityBucket.class);
             theAnalysis = pAnalysis;
@@ -1046,9 +1046,9 @@ public final class SecurityBucket
         /**
          * Mark active securities.
          * @return true/false are there active securities?
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        protected boolean markActiveSecurities() throws JOceanusException {
+        protected boolean markActiveSecurities() throws OceanusException {
             /* Loop through the buckets */
             boolean areActive = false;
             Iterator<SecurityBucket> myIterator = iterator();

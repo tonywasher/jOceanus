@@ -37,10 +37,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearI
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * TaxInfoSet class.
@@ -66,12 +66,12 @@ public class TaxYearInfoSet
     /**
      * Default Additional Income Threshold.
      */
-    private static final JMoney DEFAULT_ADDTHRESHOLD = JMoney.getWholeUnits(150000);
+    private static final TethysMoney DEFAULT_ADDTHRESHOLD = TethysMoney.getWholeUnits(150000);
 
     /**
      * Default Additional Income Limit.
      */
-    private static final JMoney DEFAULT_ADDLIMIT = JMoney.getWholeUnits(100000);
+    private static final TethysMoney DEFAULT_ADDLIMIT = TethysMoney.getWholeUnits(100000);
 
     /**
      * Allowance Limit Error Text.
@@ -242,7 +242,7 @@ public class TaxYearInfoSet
             }
 
             /* All values are decimal so just obtain as decimal */
-            JDecimal myValue = myInfo.getValue(JDecimal.class);
+            TethysDecimal myValue = myInfo.getValue(TethysDecimal.class);
 
             /* Values must be positive */
             if (!myValue.isPositive()) {
@@ -253,8 +253,8 @@ public class TaxYearInfoSet
             if (myClass == TaxYearInfoClass.LOAGEALLOWANCE) {
                 /* Obtain Allowance value */
                 TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.ALLOWANCE);
-                JDecimal myAllowance = (myAllowInfo != null)
-                                                            ? myInfo.getValue(JDecimal.class)
+                TethysDecimal myAllowance = (myAllowInfo != null)
+                                                            ? myInfo.getValue(TethysDecimal.class)
                                                             : null;
                 if ((myAllowance != null) && (myValue.compareTo(myAllowance) < 0)) {
                     myTaxYear.addError(ERROR_ALLOW, getFieldForClass(myClass));
@@ -265,8 +265,8 @@ public class TaxYearInfoSet
             if (myClass == TaxYearInfoClass.HIAGEALLOWANCE) {
                 /* Obtain LoAgeAllowance value */
                 TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.LOAGEALLOWANCE);
-                JDecimal myAllowance = (myAllowInfo != null)
-                                                            ? myInfo.getValue(JDecimal.class)
+                TethysDecimal myAllowance = (myAllowInfo != null)
+                                                            ? myInfo.getValue(TethysDecimal.class)
                                                             : null;
                 if ((myAllowance != null) && (myValue.compareTo(myAllowance) < 0)) {
                     myTaxYear.addError(ERROR_LOALLOW, getFieldForClass(myClass));
@@ -277,19 +277,19 @@ public class TaxYearInfoSet
 
     @Override
     protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
-                                   final TaxYearInfoClass pClass) throws JOceanusException {
+                                   final TaxYearInfoClass pClass) throws OceanusException {
         /* Switch on the class */
         switch (pClass) {
             case CAPITALTAXRATE:
-                JRate myRate = getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class);
+                TethysRate myRate = getValue(TaxYearInfoClass.BASICTAXRATE, TethysRate.class);
                 setValue(pClass, myRate);
                 break;
             case ADDITIONALTAXRATE:
-                myRate = getValue(TaxYearInfoClass.HITAXRATE, JRate.class);
+                myRate = getValue(TaxYearInfoClass.HITAXRATE, TethysRate.class);
                 setValue(pClass, myRate);
                 break;
             case ADDITIONALDIVIDENDTAXRATE:
-                myRate = getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class);
+                myRate = getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, TethysRate.class);
                 setValue(pClass, myRate);
                 break;
             case ADDITIONALALLOWANCELIMIT:

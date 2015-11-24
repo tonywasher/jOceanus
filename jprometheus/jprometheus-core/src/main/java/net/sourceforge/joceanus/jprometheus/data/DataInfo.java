@@ -32,16 +32,16 @@ import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -127,13 +127,13 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param uKeySetId the keySet id
      * @param uInfoTypeId the info id
      * @param uOwnerId the owner id
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
                        final Integer uId,
                        final Integer uKeySetId,
                        final Integer uInfoTypeId,
-                       final Integer uOwnerId) throws JOceanusException {
+                       final Integer uOwnerId) throws OceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -168,11 +168,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Basic constructor.
      * @param pList the list
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     @SuppressWarnings("unchecked")
     protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final DataValues<E> pValues) throws JOceanusException {
+                       final DataValues<E> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -489,9 +489,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * Set Value.
      * @param pValue the value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void setValueValue(final Object pValue) throws JOceanusException {
+    protected void setValueValue(final Object pValue) throws OceanusException {
         getValueSet().setDeletion(false);
         setEncryptedValue(FIELD_VALUE, pValue);
     }
@@ -511,10 +511,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param <X> the object type
      * @param pBytes the value
      * @param pClass the object class
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected <X> void setValueBytes(final byte[] pBytes,
-                                     final Class<X> pClass) throws JOceanusException {
+                                     final Class<X> pClass) throws OceanusException {
         setEncryptedValue(FIELD_VALUE, pBytes, pClass);
     }
 
@@ -566,9 +566,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * Set Value.
      * @param pValue the Value
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void setValue(final Object pValue) throws JOceanusException {
+    protected void setValue(final Object pValue) throws OceanusException {
         /* Access the info Type */
         I myType = getInfoType();
         S myClass = myType.getStaticClass();
@@ -576,7 +576,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         /* Access the DataSet and parser */
         DataSet<?, ?> myDataSet = getDataSet();
         JDataFormatter myFormatter = myDataSet.getDataFormatter();
-        JDecimalParser myParser = myFormatter.getDecimalParser();
+        TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
         boolean bValueOK = false;
@@ -630,20 +630,20 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pFormatter the date formatter
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setDateValue(final JDateDayFormatter pFormatter,
-                                 final Object pValue) throws JOceanusException {
+    private boolean setDateValue(final TethysDateFormatter pFormatter,
+                                 final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
             if (pValue instanceof Date) {
-                setValueValue(new JDateDay((Date) pValue));
+                setValueValue(new TethysDate((Date) pValue));
                 return true;
-            } else if (pValue instanceof JDateDay) {
+            } else if (pValue instanceof TethysDate) {
                 setValueValue(pValue);
                 return true;
             } else if (pValue instanceof byte[]) {
-                setValueBytes((byte[]) pValue, JDateDay.class);
+                setValueBytes((byte[]) pValue, TethysDate.class);
                 return true;
             } else if (pValue instanceof String) {
                 setValueValue(pFormatter.parseDateDay((String) pValue));
@@ -660,10 +660,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pFormatter the data formatter
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private boolean setIntegerValue(final JDataFormatter pFormatter,
-                                    final Object pValue) throws JOceanusException {
+                                    final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
             if (pValue instanceof Integer) {
@@ -686,9 +686,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set Link Value.
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setLinkValue(final Object pValue) throws JOceanusException {
+    private boolean setLinkValue(final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
             if (pValue instanceof Integer) {
@@ -718,9 +718,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set String Value.
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setStringValue(final Object pValue) throws JOceanusException {
+    private boolean setStringValue(final Object pValue) throws OceanusException {
         /* Handle various forms */
         if (pValue instanceof String) {
             setValueValue(pValue);
@@ -736,9 +736,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set CharArray Value.
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setCharArrayValue(final Object pValue) throws JOceanusException {
+    private boolean setCharArrayValue(final Object pValue) throws OceanusException {
         /* Handle various forms */
         if (pValue instanceof char[]) {
             setValueValue(pValue);
@@ -758,16 +758,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setMoneyValue(final JDecimalParser pParser,
-                                  final Object pValue) throws JOceanusException {
+    private boolean setMoneyValue(final TethysDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof JMoney) {
+        if (pValue instanceof TethysMoney) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, JMoney.class);
+            setValueBytes((byte[]) pValue, TethysMoney.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseMoneyValue((String) pValue));
@@ -781,16 +781,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setRateValue(final JDecimalParser pParser,
-                                 final Object pValue) throws JOceanusException {
+    private boolean setRateValue(final TethysDecimalParser pParser,
+                                 final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof JRate) {
+        if (pValue instanceof TethysRate) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, JRate.class);
+            setValueBytes((byte[]) pValue, TethysRate.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseRateValue((String) pValue));
@@ -804,16 +804,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setRatioValue(final JDecimalParser pParser,
-                                  final Object pValue) throws JOceanusException {
+    private boolean setRatioValue(final TethysDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof JRatio) {
+        if (pValue instanceof TethysRatio) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, JRatio.class);
+            setValueBytes((byte[]) pValue, TethysRatio.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseRatioValue((String) pValue));
@@ -827,16 +827,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setUnitsValue(final JDecimalParser pParser,
-                                  final Object pValue) throws JOceanusException {
+    private boolean setUnitsValue(final TethysDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof JUnits) {
+        if (pValue instanceof TethysUnits) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, JUnits.class);
+            setValueBytes((byte[]) pValue, TethysUnits.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseUnitsValue((String) pValue));
@@ -850,16 +850,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setPriceValue(final JDecimalParser pParser,
-                                  final Object pValue) throws JOceanusException {
+    private boolean setPriceValue(final TethysDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof JPrice) {
+        if (pValue instanceof TethysPrice) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, JPrice.class);
+            setValueBytes((byte[]) pValue, TethysPrice.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parsePriceValue((String) pValue));
@@ -873,16 +873,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pParser the parser
      * @param pValue the Value
      * @return is value valid true/false
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private boolean setDilutionValue(final JDecimalParser pParser,
-                                     final Object pValue) throws JOceanusException {
+    private boolean setDilutionValue(final TethysDecimalParser pParser,
+                                     final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof JDilution) {
+        if (pValue instanceof TethysDilution) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, JDilution.class);
+            setValueBytes((byte[]) pValue, TethysDilution.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseDilutionValue((String) pValue));
@@ -983,12 +983,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
          * @param pOwner the owner
          * @param pInfoClass the infoClass
          * @param pValue the value
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public abstract void addInfoItem(final Integer pId,
                                          final O pOwner,
                                          final S pInfoClass,
-                                         final Object pValue) throws JOceanusException;
+                                         final Object pValue) throws OceanusException;
 
         @Override
         public void prepareForAnalysis() {

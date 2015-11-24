@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldState;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the
@@ -970,19 +970,19 @@ public abstract class DataItem<E extends Enum<E>>
 
     /**
      * Resolve all references to current dataSet.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
     }
 
     /**
      * Resolve a data link into a list.
      * @param pField the field to resolve
      * @param pList the list to resolve against
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected void resolveDataLink(final JDataField pField,
-                                   final DataList<?, ?> pList) throws JOceanusException {
+                                   final DataList<?, ?> pList) throws OceanusException {
         /* Access the values */
         ValueSet myValues = getValueSet();
 

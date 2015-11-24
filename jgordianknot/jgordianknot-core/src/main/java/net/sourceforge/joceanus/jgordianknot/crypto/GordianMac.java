@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot interface for Message Authentication Codes.
@@ -122,9 +122,9 @@ public abstract class GordianMac {
     /**
      * Check that the key matches the keyType.
      * @param pKey the passed key.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    protected void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws JOceanusException {
+    protected void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         if (!theMacSpec.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on macSpec");
         }
@@ -133,9 +133,9 @@ public abstract class GordianMac {
     /**
      * Initialise the MAC with KeyBytes and random IV (if needed).
      * @param pKeyBytes the keyBytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void initMac(final byte[] pKeyBytes) throws JOceanusException {
+    public void initMac(final byte[] pKeyBytes) throws OceanusException {
         /* Create generator if needed */
         if (theGenerator == null) {
             theGenerator = theFactory.getKeyGenerator(theMacSpec);
@@ -149,9 +149,9 @@ public abstract class GordianMac {
     /**
      * Initialise the MAC with Key and random IV (if needed).
      * @param pKey the key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void initMac(final GordianKey<GordianMacSpec> pKey) throws JOceanusException {
+    public void initMac(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
         int myLen = getMacSpec().getMacType().getIVLen();
         byte[] myIV = null;
@@ -171,10 +171,10 @@ public abstract class GordianMac {
      * Initialise with key.
      * @param pKey the key to initialise with
      * @param pIV the initialisation vector (or null)
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract void initMac(final GordianKey<GordianMacSpec> pKey,
-                                 final byte[] pIV) throws JOceanusException;
+                                 final byte[] pIV) throws OceanusException;
 
     /**
      * Update the MAC with a portion of a byte array.
@@ -214,10 +214,10 @@ public abstract class GordianMac {
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract int finish(final byte[] pBuffer,
-                               final int pOffset) throws JOceanusException;
+                               final int pOffset) throws OceanusException;
 
     /**
      * Update the MAC, calculate and reset it.

@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise DataType Fields.
  */
-public enum MoneyWiseDataTypeResource implements ResourceId {
+public enum MoneyWiseDataTypeResource implements TethysResourceId {
     /**
      * DepositType Name.
      */
@@ -452,7 +452,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
 
     /**
      * The Id.
@@ -499,7 +499,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForDataType(final MoneyWiseDataType pValue) {
+    protected static TethysResourceId getKeyForDataType(final MoneyWiseDataType pValue) {
         switch (pValue) {
             case DEPOSITTYPE:
                 return DEPOSITTYPE_NAME;
@@ -586,7 +586,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
             case SCHEDULE:
                 return SCHEDULE_NAME;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 
@@ -595,7 +595,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ResourceId getKeyForDataList(final MoneyWiseDataType pValue) {
+    protected static TethysResourceId getKeyForDataList(final MoneyWiseDataType pValue) {
         switch (pValue) {
             case DEPOSITTYPE:
                 return DEPOSITTYPE_LIST;
@@ -682,7 +682,7 @@ public enum MoneyWiseDataTypeResource implements ResourceId {
             case SCHEDULE:
                 return SCHEDULE_LIST;
             default:
-                throw new IllegalArgumentException(ResourceBuilder.getErrorNoResource(pValue));
+                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
         }
     }
 }

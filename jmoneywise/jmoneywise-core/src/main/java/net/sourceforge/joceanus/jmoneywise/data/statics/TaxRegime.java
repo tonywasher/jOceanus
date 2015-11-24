@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TaxRegime data type.
@@ -66,10 +66,10 @@ public class TaxRegime
      * Basic Constructor.
      * @param pList The list to associate the TaxRegime with
      * @param pName Name of TaxRegime
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final String pName) throws JOceanusException {
+                      final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class TaxRegime
      * Basic constructor.
      * @param pList The list to associate the Tax Regime with
      * @param pClass Class of Tax Regime
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final TaxRegimeClass pClass) throws JOceanusException {
+                      final TaxRegimeClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class TaxRegime
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -232,9 +232,9 @@ public class TaxRegime
         /**
          * Add a TaxRegime.
          * @param pTaxRegime the Name of the tax regime
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pTaxRegime) throws JOceanusException {
+        public void addBasicItem(final String pTaxRegime) throws OceanusException {
             /* Create a new tax regime */
             TaxRegime myTaxRegime = new TaxRegime(this, pTaxRegime);
 
@@ -249,7 +249,7 @@ public class TaxRegime
         }
 
         @Override
-        public TaxRegime addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TaxRegime addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the regime */
             TaxRegime myRegime = new TaxRegime(this, pValues);
 
@@ -267,7 +267,7 @@ public class TaxRegime
         }
 
         @Override
-        protected TaxRegime newItem(final TaxRegimeClass pClass) throws JOceanusException {
+        protected TaxRegime newItem(final TaxRegimeClass pClass) throws OceanusException {
             /* Create the type */
             TaxRegime myRegime = new TaxRegime(this, pClass);
 

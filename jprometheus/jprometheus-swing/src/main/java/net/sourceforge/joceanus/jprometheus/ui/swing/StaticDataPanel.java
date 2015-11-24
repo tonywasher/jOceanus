@@ -55,19 +55,19 @@ import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistrar.JOceanusEventProvider;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Top level panel for static data.
@@ -76,7 +76,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         extends JPanel
-        implements JOceanusEventProvider {
+        implements TethysEventProvider {
     /**
      * Serial Id.
      */
@@ -110,7 +110,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The Event Manager.
      */
-    private final transient JOceanusEventManager theEventManager;
+    private final transient TethysEventManager theEventManager;
 
     /**
      * The UtilitySet.
@@ -125,7 +125,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The table card panel.
      */
-    private final JEnablePanel theTableCard;
+    private final TethysSwingEnablePanel theTableCard;
 
     /**
      * The card layout for the table.
@@ -135,7 +135,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The new card panel.
      */
-    private final JEnablePanel theNewCard;
+    private final TethysSwingEnablePanel theNewCard;
 
     /**
      * The card layout for the new button.
@@ -201,7 +201,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theUtilitySet = pUtilitySet;
 
         /* Create the event manager */
-        theEventManager = new JOceanusEventManager();
+        theEventManager = new TethysEventManager();
 
         /* Build the Update set */
         theUpdateSet = new UpdateSet<E>(pControl, pClass);
@@ -237,7 +237,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         Dimension myStrutSize = new Dimension(STRUT_WIDTH, 0);
 
         /* Create the new card panel */
-        theNewCard = new JEnablePanel();
+        theNewCard = new TethysSwingEnablePanel();
         theNewLayout = new CardLayout();
         theNewCard.setLayout(theNewLayout);
 
@@ -262,7 +262,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         myHeader.add(theActionButtons);
 
         /* Create the table card panel */
-        theTableCard = new JEnablePanel();
+        theTableCard = new TethysSwingEnablePanel();
         theTableLayout = new CardLayout();
         theTableCard.setLayout(theTableLayout);
 
@@ -283,7 +283,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     }
 
     @Override
-    public JOceanusEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -401,9 +401,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public void refreshData() throws JOceanusException {
+    public void refreshData() throws OceanusException {
         /* Obtain the active profile */
         JDataProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("StaticData");
@@ -479,7 +479,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Listener class.
      */
     private final class StaticListener
-            implements PropertyChangeListener, ChangeListener, ItemListener, JOceanusChangeEventListener, JOceanusActionEventListener {
+            implements PropertyChangeListener, ChangeListener, ItemListener, TethysChangeEventListener, TethysActionEventListener {
         /**
          * Data menu builder.
          */
@@ -488,17 +488,17 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /**
          * DataMenu Registration.
          */
-        private final JOceanusChangeRegistration theDataMenuReg;
+        private final TethysChangeRegistration theDataMenuReg;
 
         /**
          * ErrorPanel Registration.
          */
-        private final JOceanusChangeRegistration theErrorReg;
+        private final TethysChangeRegistration theErrorReg;
 
         /**
          * ActionPanel Registration.
          */
-        private final JOceanusActionRegistration theActionReg;
+        private final TethysActionRegistration theActionReg;
 
         /**
          * Constructor.
@@ -516,7 +516,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theDataMenuReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
@@ -584,7 +584,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         }
 
         @Override
-        public void processActionEvent(final JOceanusActionEvent pEvent) {
+        public void processActionEvent(final TethysActionEvent pEvent) {
             /* if this is the action buttons reporting */
             if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */

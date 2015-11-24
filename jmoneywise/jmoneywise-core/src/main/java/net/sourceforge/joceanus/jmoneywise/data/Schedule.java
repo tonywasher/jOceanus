@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
 
 /**
  * Scheduled event.
@@ -123,16 +123,16 @@ public class Schedule
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private Schedule(final ScheduleList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
         /* Access parsers */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();
-        JDateDayFormatter myParser = myFormatter.getDateFormatter();
+        TethysDateFormatter myParser = myFormatter.getDateFormatter();
 
         /* Protect against exceptions */
         try {
@@ -166,24 +166,24 @@ public class Schedule
 
             /* Store the Date */
             myValue = pValues.getValue(FIELD_STARTDATE);
-            if (myValue instanceof JDateDay) {
-                setValueStartDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueStartDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 setValueStartDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store the EndDate */
             myValue = pValues.getValue(FIELD_ENDDATE);
-            if (myValue instanceof JDateDay) {
-                setValueEndDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueEndDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 setValueEndDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store the NextDate */
             myValue = pValues.getValue(FIELD_NEXTDATE);
-            if (myValue instanceof JDateDay) {
-                setValueNextDate((JDateDay) myValue);
+            if (myValue instanceof TethysDate) {
+                setValueNextDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 setValueNextDate(myParser.parseDateDay((String) myValue));
             }
@@ -235,7 +235,7 @@ public class Schedule
      * Obtain StartDate.
      * @return the date
      */
-    public JDateDay getStartDate() {
+    public TethysDate getStartDate() {
         return getStartDate(getValueSet());
     }
 
@@ -243,7 +243,7 @@ public class Schedule
      * Obtain EndDate.
      * @return the date
      */
-    public JDateDay getEndDate() {
+    public TethysDate getEndDate() {
         return getEndDate(getValueSet());
     }
 
@@ -353,7 +353,7 @@ public class Schedule
      * Obtain NextDate.
      * @return the date
      */
-    public JDateDay getNextDate() {
+    public TethysDate getNextDate() {
         return getNextDate(getValueSet());
     }
 
@@ -362,8 +362,8 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static JDateDay getStartDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_STARTDATE, JDateDay.class);
+    public static TethysDate getStartDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_STARTDATE, TethysDate.class);
     }
 
     /**
@@ -371,8 +371,8 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static JDateDay getEndDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ENDDATE, JDateDay.class);
+    public static TethysDate getEndDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ENDDATE, TethysDate.class);
     }
 
     /**
@@ -416,15 +416,15 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static JDateDay getNextDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NEXTDATE, JDateDay.class);
+    public static TethysDate getNextDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NEXTDATE, TethysDate.class);
     }
 
     /**
      * Set start date value.
      * @param pValue the start date
      */
-    private void setValueStartDate(final JDateDay pValue) {
+    private void setValueStartDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_STARTDATE, pValue);
     }
 
@@ -432,7 +432,7 @@ public class Schedule
      * Set end date value.
      * @param pValue the end date
      */
-    private void setValueEndDate(final JDateDay pValue) {
+    private void setValueEndDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_ENDDATE, pValue);
     }
 
@@ -520,7 +520,7 @@ public class Schedule
      * Set start date value.
      * @param pValue the start date
      */
-    private void setValueNextDate(final JDateDay pValue) {
+    private void setValueNextDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_NEXTDATE, pValue);
     }
 
@@ -567,7 +567,7 @@ public class Schedule
     }
 
     @Override
-    public void resolveDataSetLinks() throws JOceanusException {
+    public void resolveDataSetLinks() throws OceanusException {
         /* Update the Event details */
         super.resolveDataSetLinks();
 
@@ -607,9 +607,9 @@ public class Schedule
     @Override
     public void validate() {
         /* Access data */
-        JDateDay myStart = getStartDate();
-        JDateDay myEnd = getEndDate();
-        JDateDay myNext = getNextDate();
+        TethysDate myStart = getStartDate();
+        TethysDate myEnd = getEndDate();
+        TethysDate myNext = getNextDate();
         Frequency myFrequency = getFrequency();
 
         /* Check that startDate is non-null */
@@ -695,7 +695,7 @@ public class Schedule
      * Set a new start date.
      * @param pDate the date
      */
-    public void setStartDate(final JDateDay pDate) {
+    public void setStartDate(final TethysDate pDate) {
         setValueStartDate(pDate);
     }
 
@@ -703,7 +703,7 @@ public class Schedule
      * Set a new end date.
      * @param pDate the date
      */
-    public void setEndDate(final JDateDay pDate) {
+    public void setEndDate(final TethysDate pDate) {
         setValueEndDate(pDate);
     }
 
@@ -743,7 +743,7 @@ public class Schedule
      * Set a new next date.
      * @param pDate the date
      */
-    protected void setNextDate(final JDateDay pDate) {
+    protected void setNextDate(final TethysDate pDate) {
         setValueNextDate(pDate);
     }
 
@@ -899,7 +899,7 @@ public class Schedule
         }
 
         @Override
-        public Schedule addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public Schedule addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the schedule */
             Schedule mySchedule = new Schedule(this, pValues);
 
@@ -923,7 +923,7 @@ public class Schedule
         }
 
         @Override
-        public void postProcessOnLoad() throws JOceanusException {
+        public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
             resolveDataSetLinks();
             reSort();

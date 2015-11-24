@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jtethys.resource.ResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.ResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise Report Fields.
  */
-public enum ReportResource implements ResourceId {
+public enum ReportResource implements TethysResourceId {
     /**
      * NetWorth ReportType.
      */
@@ -123,7 +123,7 @@ public enum ReportResource implements ResourceId {
     /**
      * The Resource Builder.
      */
-    private static final ResourceBuilder BUILDER = ResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
 
     /**
      * The Id.

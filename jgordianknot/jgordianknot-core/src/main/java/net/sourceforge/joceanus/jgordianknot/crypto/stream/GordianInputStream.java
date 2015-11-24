@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Input stream base implementation.
@@ -46,7 +46,7 @@ public abstract class GordianInputStream
     /**
      * Byte mask.
      */
-    protected static final int BYTE_MASK = DataConverter.BYTE_MASK;
+    protected static final int BYTE_MASK = TethysDataConverter.BYTE_MASK;
 
     /**
      * The underlying input stream.
@@ -235,7 +235,7 @@ public abstract class GordianInputStream
             return iNumRead;
 
             /* Catch exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new IOException(e);
         }
     }
@@ -372,9 +372,9 @@ public abstract class GordianInputStream
          * @param pBuffer the buffer from which to store bytes
          * @param pLength the number of bytes read into the buffer (must not be zero)
          * @return the number of bytes now available in the buffer
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         protected abstract int processBytes(final byte[] pBuffer,
-                                            final int pLength) throws JOceanusException;
+                                            final int pLength) throws OceanusException;
     }
 }

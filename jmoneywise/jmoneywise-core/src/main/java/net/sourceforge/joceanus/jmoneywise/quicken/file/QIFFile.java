@@ -43,8 +43,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * QIF File representation.
@@ -68,12 +68,12 @@ public class QIFFile {
     /**
      * Start event Date.
      */
-    private JDateDay theStartDate;
+    private TethysDate theStartDate;
 
     /**
      * Last event Date.
      */
-    private JDateDay theLastDate;
+    private TethysDate theLastDate;
 
     /**
      * Map of Accounts with Events.
@@ -299,7 +299,7 @@ public class QIFFile {
                                        final QIFPreference pPreferences) {
         /* Access preference details */
         QIFType myType = pPreferences.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
-        JDateDay myLastDate = pPreferences.getDateValue(QIFPreference.NAME_LASTEVENT);
+        TethysDate myLastDate = pPreferences.getDateValue(QIFPreference.NAME_LASTEVENT);
 
         /* Create new QIF File */
         QIFFile myFile = new QIFFile(myType);
@@ -679,7 +679,7 @@ public class QIFFile {
      * @param pLastDate the last date
      */
     public void buildData(final View pView,
-                          final JDateDay pLastDate) {
+                          final TethysDate pLastDate) {
         /* Create a builder */
         QIFBuilder myBuilder = new QIFBuilder(this, pView);
 
@@ -698,7 +698,7 @@ public class QIFFile {
             Transaction myEvent = myIterator.next();
 
             /* Break loop if the event is too late */
-            JDateDay myDate = myEvent.getDate();
+            TethysDate myDate = myEvent.getDate();
             if (myDate.compareTo(pLastDate) > 0) {
                 break;
             }
@@ -724,7 +724,7 @@ public class QIFFile {
             Deposit myDeposit = myIterator.next();
 
             /* Ignore if no opening balance */
-            JMoney myBalance = myDeposit.getOpeningBalance();
+            TethysMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance == null) {
                 continue;
             }
@@ -745,7 +745,7 @@ public class QIFFile {
             SecurityPrice myPrice = myIterator.next();
 
             /* Break loop if the price is too late */
-            JDateDay myDate = myPrice.getDate();
+            TethysDate myDate = myPrice.getDate();
             if (myDate.compareTo(theLastDate) > 0) {
                 break;
             }

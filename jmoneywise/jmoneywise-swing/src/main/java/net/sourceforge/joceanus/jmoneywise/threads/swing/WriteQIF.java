@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +98,7 @@ public class WriteQIF
     }
 
     @Override
-    public Void performTask() throws JOceanusException {
+    public Void performTask() throws OceanusException {
         /* Initialise the status window */
         theStatus.initTask("Analysing Data");
 

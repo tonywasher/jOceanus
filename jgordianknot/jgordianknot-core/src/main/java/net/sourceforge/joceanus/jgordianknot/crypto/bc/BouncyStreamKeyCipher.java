@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for BouncyCastle Stream Ciphers.
@@ -63,7 +63,7 @@ public final class BouncyStreamKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianStreamKeyType> pKey) throws JOceanusException {
+    public void initCipher(final GordianKey<GordianStreamKeyType> pKey) throws OceanusException {
         /* Determine the required length of IV */
         int myLen = getKeyType().getIVLength();
         byte[] myIV = null;
@@ -82,7 +82,7 @@ public final class BouncyStreamKeyCipher
     @Override
     public void initCipher(final GordianKey<GordianStreamKeyType> pKey,
                            final byte[] pIV,
-                           final boolean pEncrypt) throws JOceanusException {
+                           final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
         BouncyKey<GordianStreamKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
@@ -114,7 +114,7 @@ public final class BouncyStreamKeyCipher
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -128,7 +128,7 @@ public final class BouncyStreamKeyCipher
 
     @Override
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws JOceanusException {
+                      final int pOutOffset) throws OceanusException {
         /* Null operation */
         return 0;
     }

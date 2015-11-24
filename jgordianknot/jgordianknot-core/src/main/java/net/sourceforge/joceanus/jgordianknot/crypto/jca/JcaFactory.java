@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.sp800.SP800Factory;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Factory for JCA BouncyCastle Classes.
@@ -110,18 +110,18 @@ public final class JcaFactory
 
     /**
      * Constructor.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JcaFactory() throws JOceanusException {
+    public JcaFactory() throws OceanusException {
         this(new GordianParameters());
     }
 
     /**
      * Constructor.
      * @param pParameters the parameters
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JcaFactory(final GordianParameters pParameters) throws JOceanusException {
+    public JcaFactory(final GordianParameters pParameters) throws OceanusException {
         /* Initialise underlying class */
         super(pParameters);
 
@@ -138,13 +138,13 @@ public final class JcaFactory
     }
 
     @Override
-    public SecureRandom createRandom(final GordianSP800Type pRandomType) throws JOceanusException {
+    public SecureRandom createRandom(final GordianSP800Type pRandomType) throws OceanusException {
         /* Create random instance */
         return getSP800SecureRandom(pRandomType);
     }
 
     @Override
-    public JcaDigest createDigest(final GordianDigestType pDigestType) throws JOceanusException {
+    public JcaDigest createDigest(final GordianDigestType pDigestType) throws OceanusException {
         /* Check validity of Digests */
         if (!supportedDigests().test(pDigestType)) {
             throw new GordianDataException(getInvalidText(pDigestType));
@@ -161,7 +161,7 @@ public final class JcaFactory
     }
 
     @Override
-    public JcaMac createMac(final GordianMacSpec pMacSpec) throws JOceanusException {
+    public JcaMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         Mac myJavaMac = getJavaMac(pMacSpec);
         return new JcaMac(this, pMacSpec, myJavaMac);
     }
@@ -172,7 +172,7 @@ public final class JcaFactory
     }
 
     @Override
-    public <T> JcaKeyGenerator<T> getKeyGenerator(final T pKeyType) throws JOceanusException {
+    public <T> JcaKeyGenerator<T> getKeyGenerator(final T pKeyType) throws OceanusException {
         /* Look up in the cache */
         JcaKeyGenerator<T> myGenerator = theGeneratorCache.getCachedKeyGenerator(pKeyType);
         if (myGenerator == null) {
@@ -200,7 +200,7 @@ public final class JcaFactory
     @Override
     public JcaCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                            final GordianCipherMode pMode,
-                                                           final boolean pPadding) throws JOceanusException {
+                                                           final boolean pPadding) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -212,7 +212,7 @@ public final class JcaFactory
     }
 
     @Override
-    public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws JOceanusException {
+    public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
         /* Check validity of StreamKey */
         if (!supportedStreamKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -229,7 +229,7 @@ public final class JcaFactory
     }
 
     @Override
-    public JcaWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws JOceanusException {
+    public JcaWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -244,9 +244,9 @@ public final class JcaFactory
      * Create the SP800 SecureRandom instance.
      * @param pRandomType the SP800 type
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private SecureRandom getSP800SecureRandom(final GordianSP800Type pRandomType) throws JOceanusException {
+    private SecureRandom getSP800SecureRandom(final GordianSP800Type pRandomType) throws OceanusException {
         switch (pRandomType) {
             case HASH:
                 return theSP800Factory.buildHash(createDigest(getDefaultDigest()), null, false);
@@ -262,9 +262,9 @@ public final class JcaFactory
      * Create the BouncyCastle digest via JCA.
      * @param pDigestType the digest type
      * @return the digest
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static MessageDigest getJavaDigest(final GordianDigestType pDigestType) throws JOceanusException {
+    private static MessageDigest getJavaDigest(final GordianDigestType pDigestType) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
@@ -281,9 +281,9 @@ public final class JcaFactory
      * Create the BouncyCastle MAC via JCA.
      * @param pMacSpec the MacSpec
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Mac getJavaMac(final GordianMacSpec pMacSpec) throws JOceanusException {
+    private Mac getJavaMac(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getJavaMac(getHMacAlgorithm(pMacSpec.getDigestType()));
@@ -303,9 +303,9 @@ public final class JcaFactory
      * Create the BouncyCastle MAC via JCA.
      * @param pAlgorithm the Algorithm
      * @return the MAC
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static Mac getJavaMac(final String pAlgorithm) throws JOceanusException {
+    private static Mac getJavaMac(final String pAlgorithm) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a MAC for the algorithm */
@@ -319,7 +319,7 @@ public final class JcaFactory
     }
 
     @Override
-    public <T> String getKeyAlgorithm(final T pKeyType) throws JOceanusException {
+    public <T> String getKeyAlgorithm(final T pKeyType) throws OceanusException {
         if (pKeyType instanceof GordianMacSpec) {
             return getMacSpecAlgorithm((GordianMacSpec) pKeyType);
         }
@@ -338,11 +338,11 @@ public final class JcaFactory
      * @param pMode the cipher mode
      * @param pPadding use padding true/false
      * @return the Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private static Cipher getJavaCipher(final GordianSymKeyType pKeyType,
                                         final GordianCipherMode pMode,
-                                        final boolean pPadding) throws JOceanusException {
+                                        final boolean pPadding) throws OceanusException {
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(getSymKeyAlgorithm(pKeyType));
         myBuilder.append(ALGO_SEP);
@@ -356,9 +356,9 @@ public final class JcaFactory
      * Create the BouncyCastle StreamKey Cipher via JCA.
      * @param pKeyType the StreamKeyType
      * @return the Cipher
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private Cipher getJavaCipher(final GordianStreamKeyType pKeyType) throws JOceanusException {
+    private Cipher getJavaCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
         return getJavaCipher(getStreamKeyAlgorithm(pKeyType));
     }
 
@@ -366,9 +366,9 @@ public final class JcaFactory
      * Obtain the MacSpec Key algorithm.
      * @param pMacSpec the MacSpec
      * @return the Algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws JOceanusException {
+    private String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getHMacAlgorithm(pMacSpec.getDigestType());
@@ -389,9 +389,9 @@ public final class JcaFactory
      * Create the BouncyCastle KeyGenerator via JCA.
      * @param pAlgorithm the Algorithm
      * @return the KeyGenerator
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws JOceanusException {
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a KeyGenerator for the algorithm */
@@ -408,9 +408,9 @@ public final class JcaFactory
      * Create the StreamKey Cipher via JCA.
      * @param pAlgorithm the Algorithm
      * @return the KeyGenerator
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static Cipher getJavaCipher(final String pAlgorithm) throws JOceanusException {
+    private static Cipher getJavaCipher(final String pAlgorithm) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a Cipher for the algorithm */
@@ -428,9 +428,9 @@ public final class JcaFactory
      * Return the associated HMac algorithm.
      * @param pDigestType the digest type
      * @return the algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static String getHMacAlgorithm(final GordianDigestType pDigestType) throws JOceanusException {
+    private static String getHMacAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
         switch (pDigestType) {
             case KECCAK:
                 return "HMacKECCAK512";
@@ -444,9 +444,9 @@ public final class JcaFactory
      * Obtain the GMAC algorithm.
      * @param pKeyType the symmetric key type
      * @return the algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private String getGMacAlgorithm(final GordianSymKeyType pKeyType) throws JOceanusException {
+    private String getGMacAlgorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!standardSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -460,9 +460,9 @@ public final class JcaFactory
      * Obtain the Poly1305 algorithm.
      * @param pKeyType the symmetric key type
      * @return the algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private String getPoly1305Algorithm(final GordianSymKeyType pKeyType) throws JOceanusException {
+    private String getPoly1305Algorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!standardSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -492,9 +492,9 @@ public final class JcaFactory
      * Obtain the SymKey algorithm.
      * @param pKeyType the keyType
      * @return the Algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static String getSymKeyAlgorithm(final GordianSymKeyType pKeyType) throws JOceanusException {
+    private static String getSymKeyAlgorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         switch (pKeyType) {
             case TWOFISH:
                 return "TwoFish";
@@ -519,9 +519,9 @@ public final class JcaFactory
      * Obtain the CipherMode algorithm.
      * @param pMode the cipherMode
      * @return the Algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private static String getCipherModeAlgorithm(final GordianCipherMode pMode) throws JOceanusException {
+    private static String getCipherModeAlgorithm(final GordianCipherMode pMode) throws OceanusException {
         switch (pMode) {
             case OFB:
             case SIC:
@@ -548,9 +548,9 @@ public final class JcaFactory
      * Obtain the StreamKey algorithm.
      * @param pKeyType the keyType
      * @return the Algorithm
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private String getStreamKeyAlgorithm(final GordianStreamKeyType pKeyType) throws JOceanusException {
+    private String getStreamKeyAlgorithm(final GordianStreamKeyType pKeyType) throws OceanusException {
         switch (pKeyType) {
             case HC:
                 return isRestricted()

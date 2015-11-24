@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.jmetis.data.Difference;
 import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jmetis.preference.ValueClass;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.
@@ -506,18 +506,18 @@ public class ValueField
         private String theEditString = "";
 
         @Override
-        protected JMoney getValue() {
-            return (JMoney) super.getValue();
+        protected TethysMoney getValue() {
+            return (TethysMoney) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            JMoney myNew = (JMoney) pValue;
+            TethysMoney myNew = (TethysMoney) pValue;
 
             /* Store the new value */
             super.setValue(pValue == null
                                           ? null
-                                          : new JMoney(myNew));
+                                          : new TethysMoney(myNew));
 
             /* Set new edit and display values */
             theDisplayString = myNew == null
@@ -540,7 +540,7 @@ public class ValueField
         protected Object parseValue(final String pValue) {
             /* Parse the value */
             try {
-                return new JMoney(pValue);
+                return new TethysMoney(pValue);
             } catch (IllegalArgumentException e) {
                 return null;
             }
@@ -549,7 +549,7 @@ public class ValueField
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-money */
-            if (!(pValue instanceof JMoney)) {
+            if (!(pValue instanceof TethysMoney)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -577,18 +577,18 @@ public class ValueField
         private String theEditString = "";
 
         @Override
-        protected JRate getValue() {
-            return (JRate) super.getValue();
+        protected TethysRate getValue() {
+            return (TethysRate) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            JRate myNew = (JRate) pValue;
+            TethysRate myNew = (TethysRate) pValue;
 
             /* Store the new value */
             super.setValue(pValue == null
                                           ? null
-                                          : new JRate(myNew));
+                                          : new TethysRate(myNew));
 
             /* Set new edit and display values */
             theDisplayString = myNew == null
@@ -611,7 +611,7 @@ public class ValueField
         protected Object parseValue(final String pValue) {
             /* Parse the value */
             try {
-                return new JRate(pValue);
+                return new TethysRate(pValue);
             } catch (IllegalArgumentException e) {
                 return null;
             }
@@ -620,7 +620,7 @@ public class ValueField
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof JRate)) {
+            if (!(pValue instanceof TethysRate)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -648,18 +648,18 @@ public class ValueField
         private String theEditString = "";
 
         @Override
-        protected JUnits getValue() {
-            return (JUnits) super.getValue();
+        protected TethysUnits getValue() {
+            return (TethysUnits) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            JUnits myNew = (JUnits) pValue;
+            TethysUnits myNew = (TethysUnits) pValue;
 
             /* Store the new value */
             super.setValue(pValue == null
                                           ? null
-                                          : new JUnits(myNew));
+                                          : new TethysUnits(myNew));
 
             /* Set new edit and display values */
             theDisplayString = myNew == null
@@ -682,7 +682,7 @@ public class ValueField
         protected Object parseValue(final String pValue) {
             /* Parse the value */
             try {
-                return new JUnits(pValue);
+                return new TethysUnits(pValue);
             } catch (IllegalArgumentException e) {
                 return null;
             }
@@ -691,7 +691,7 @@ public class ValueField
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof JUnits)) {
+            if (!(pValue instanceof TethysUnits)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -719,18 +719,18 @@ public class ValueField
         private String theEditString = "";
 
         @Override
-        protected JPrice getValue() {
-            return (JPrice) super.getValue();
+        protected TethysPrice getValue() {
+            return (TethysPrice) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            JPrice myNew = (JPrice) pValue;
+            TethysPrice myNew = (TethysPrice) pValue;
 
             /* Store the new value */
             super.setValue(pValue == null
                                           ? null
-                                          : new JPrice(myNew));
+                                          : new TethysPrice(myNew));
 
             /* Set new edit and display values */
             theDisplayString = myNew == null
@@ -753,7 +753,7 @@ public class ValueField
         protected Object parseValue(final String pValue) {
             /* Parse the value */
             try {
-                return new JPrice(pValue);
+                return new TethysPrice(pValue);
             } catch (IllegalArgumentException e) {
                 return null;
             }
@@ -762,7 +762,7 @@ public class ValueField
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof JPrice)) {
+            if (!(pValue instanceof TethysPrice)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -790,18 +790,18 @@ public class ValueField
         private String theEditString = "";
 
         @Override
-        protected JDilution getValue() {
-            return (JDilution) super.getValue();
+        protected TethysDilution getValue() {
+            return (TethysDilution) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            JDilution myNew = (JDilution) pValue;
+            TethysDilution myNew = (TethysDilution) pValue;
 
             /* Store the new value */
             super.setValue(pValue == null
                                           ? null
-                                          : new JDilution(myNew));
+                                          : new TethysDilution(myNew));
 
             /* Set new edit and display values */
             theDisplayString = myNew == null
@@ -824,7 +824,7 @@ public class ValueField
         protected Object parseValue(final String pValue) {
             /* Parse the value */
             try {
-                return new JDilution(pValue);
+                return new TethysDilution(pValue);
             } catch (IllegalArgumentException e) {
                 return null;
             }
@@ -833,7 +833,7 @@ public class ValueField
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof JDilution)) {
+            if (!(pValue instanceof TethysDilution)) {
                 throw new IllegalArgumentException();
             }
         }

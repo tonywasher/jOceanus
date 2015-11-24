@@ -50,8 +50,8 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.ByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
-import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Implementation of HMacSP800DRBG based on the BouncyCastle Code.
@@ -131,7 +131,7 @@ public final class SP800HMacDRBG
         updateState(mySeed);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new ByteArrayInteger(DataConverter.BYTES_LONG);
+        theReseedCounter = new ByteArrayInteger(TethysDataConverter.BYTES_LONG);
         theReseedCounter.iterate();
     }
 
@@ -145,7 +145,7 @@ public final class SP800HMacDRBG
             if (pSeed != null) {
                 updateState(pSeed, SEED_ID);
             }
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -154,10 +154,10 @@ public final class SP800HMacDRBG
      * Update the state.
      * @param pSeed optional seed material
      * @param pCycle the cycle id
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private void updateState(final byte[] pSeed,
-                             final byte[] pCycle) throws JOceanusException {
+                             final byte[] pCycle) throws OceanusException {
 
         /* Initialise the hMac */
         theHMac.initMac(theKey);
@@ -253,7 +253,7 @@ public final class SP800HMacDRBG
                 System.arraycopy(theHash, 0, myResult, myBuilt, myNeeded);
                 myBuilt += myNeeded;
             }
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new IllegalStateException(e);
         }
 

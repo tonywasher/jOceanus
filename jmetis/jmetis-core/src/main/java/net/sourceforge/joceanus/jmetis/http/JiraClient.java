@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.http;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -80,10 +80,10 @@ public class JiraClient
      * Constructor.
      * @param pWebLoc the web location
      * @param pAuth the authorisation string
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public JiraClient(final String pWebLoc,
-                      final String pAuth) throws JOceanusException {
+                      final String pAuth) throws OceanusException {
         /* Initialise underlying class */
         super(pWebLoc + JIRA_WEBLOC, pAuth);
     }
@@ -91,9 +91,9 @@ public class JiraClient
     /**
      * Obtain project list.
      * @return the project list.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getProjects() throws JOceanusException {
+    public JSONArray getProjects() throws OceanusException {
         return getJSONArray(JIRANAME_PROJECT);
     }
 
@@ -101,63 +101,63 @@ public class JiraClient
      * Obtain project detail.
      * @param pProjectKey the project key
      * @return the project detail.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getProject(final String pProjectKey) throws JOceanusException {
+    public JSONObject getProject(final String pProjectKey) throws OceanusException {
         return getJSONObject(JIRAPFX_PROJECT + pProjectKey);
     }
 
     /**
      * Obtain statuses.
      * @return the statuses.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getStatuses() throws JOceanusException {
+    public JSONArray getStatuses() throws OceanusException {
         return getJSONArray(JIRANAME_STATUS);
     }
 
     /**
      * Obtain statusCategories.
      * @return the statusCategories.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getStatusCategories() throws JOceanusException {
+    public JSONArray getStatusCategories() throws OceanusException {
         return getJSONArray("statuscategory");
     }
 
     /**
      * Obtain resolutions.
      * @return the resolutions.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getResolutions() throws JOceanusException {
+    public JSONArray getResolutions() throws OceanusException {
         return getJSONArray(JIRANAME_RESOLUTION);
     }
 
     /**
      * Obtain priorities.
      * @return the priorities.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getPriorities() throws JOceanusException {
+    public JSONArray getPriorities() throws OceanusException {
         return getJSONArray(JIRANAME_PRIORITY);
     }
 
     /**
      * Obtain issueTypes.
      * @return the issueTypes.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getIssueTypes() throws JOceanusException {
+    public JSONArray getIssueTypes() throws OceanusException {
         return getJSONArray(JIRANAME_ISSUETYPE);
     }
 
     /**
      * Obtain issueLinkTypes.
      * @return the issueLinkTypes.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getIssueLinkTypes() throws JOceanusException {
+    public JSONObject getIssueLinkTypes() throws OceanusException {
         return getJSONObject("issueLinkType");
     }
 
@@ -165,9 +165,9 @@ public class JiraClient
      * Obtain roles for project.
      * @param pURL the explicit URL
      * @return the roles.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getProjectRoleFromURL(final String pURL) throws JOceanusException {
+    public JSONObject getProjectRoleFromURL(final String pURL) throws OceanusException {
         return getAbsoluteJSONObject(pURL);
     }
 
@@ -175,9 +175,9 @@ public class JiraClient
      * Obtain statuses for project.
      * @param pProjectKey the project key
      * @return the statuses.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getStatusesForProject(final String pProjectKey) throws JOceanusException {
+    public JSONArray getStatusesForProject(final String pProjectKey) throws OceanusException {
         return getJSONArray(JIRAPFX_PROJECT + pProjectKey + "/statuses");
     }
 
@@ -185,9 +185,9 @@ public class JiraClient
      * Obtain components for project.
      * @param pProjectKey the project key
      * @return the components.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getComponentsForProject(final String pProjectKey) throws JOceanusException {
+    public JSONArray getComponentsForProject(final String pProjectKey) throws OceanusException {
         return getJSONArray(JIRAPFX_PROJECT + pProjectKey + "/components");
     }
 
@@ -195,9 +195,9 @@ public class JiraClient
      * Obtain versions for project.
      * @param pProjectKey the project key
      * @return the versions.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONArray getVersionsForProject(final String pProjectKey) throws JOceanusException {
+    public JSONArray getVersionsForProject(final String pProjectKey) throws OceanusException {
         return getJSONArray(JIRAPFX_PROJECT + pProjectKey + "/versions");
     }
 
@@ -206,10 +206,10 @@ public class JiraClient
      * @param pProjectKey the project key
      * @param pRoleId the roleId
      * @return the role.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public JSONObject getRoleForProject(final String pProjectKey,
-                                        final String pRoleId) throws JOceanusException {
+                                        final String pRoleId) throws OceanusException {
         return getJSONObject(JIRAPFX_PROJECT + pProjectKey + "/role/" + pRoleId);
     }
 
@@ -217,9 +217,9 @@ public class JiraClient
      * Obtain group.
      * @param pName the group name
      * @return the group.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getGroup(final String pName) throws JOceanusException {
+    public JSONObject getGroup(final String pName) throws OceanusException {
         return getJSONObject("group?groupname=" + pName);
     }
 
@@ -227,9 +227,9 @@ public class JiraClient
      * Obtain group users.
      * @param pName the group name
      * @return the group.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getGroupUsers(final String pName) throws JOceanusException {
+    public JSONObject getGroupUsers(final String pName) throws OceanusException {
         return getJSONObject("group?groupname=" + pName + "&expand=users");
     }
 
@@ -237,9 +237,9 @@ public class JiraClient
      * Obtain user.
      * @param pName the user name
      * @return the user.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getUser(final String pName) throws JOceanusException {
+    public JSONObject getUser(final String pName) throws OceanusException {
         return getJSONObject("user?username=" + pName);
     }
 
@@ -247,9 +247,9 @@ public class JiraClient
      * Obtain user groups.
      * @param pName the user name
      * @return the user.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getUserGroups(final String pName) throws JOceanusException {
+    public JSONObject getUserGroups(final String pName) throws OceanusException {
         return getJSONObject("user?username=" + pName + "&expand=groups");
     }
 
@@ -257,9 +257,9 @@ public class JiraClient
      * Obtain list of issues in project.
      * @param pProjectKey the project Key
      * @return the list of issues in the project.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public List<String> getIssueKeysForProject(final String pProjectKey) throws JOceanusException {
+    public List<String> getIssueKeysForProject(final String pProjectKey) throws OceanusException {
         /* Create the list to return */
         List<String> myList = new ArrayList<String>();
 
@@ -297,9 +297,9 @@ public class JiraClient
      * Obtain issue detail.
      * @param pIssueKey the issue Key
      * @return the user.
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    public JSONObject getIssue(final String pIssueKey) throws JOceanusException {
+    public JSONObject getIssue(final String pIssueKey) throws OceanusException {
         return getJSONObject("issue/" + pIssueKey);
     }
 }

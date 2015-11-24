@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * LoanCategoryType data type.
@@ -66,10 +66,10 @@ public class LoanCategoryType
      * Basic constructor.
      * @param pList The list to associate the Loan Category Type with
      * @param pName Name of Loan Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private LoanCategoryType(final LoanCategoryTypeList pList,
-                             final String pName) throws JOceanusException {
+                             final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class LoanCategoryType
      * Basic constructor.
      * @param pList The list to associate the Loan Category Type with
      * @param pClass Class of Loan Category Type
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private LoanCategoryType(final LoanCategoryTypeList pList,
-                             final LoanCategoryClass pClass) throws JOceanusException {
+                             final LoanCategoryClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class LoanCategoryType
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private LoanCategoryType(final LoanCategoryTypeList pList,
-                             final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                             final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -208,9 +208,9 @@ public class LoanCategoryType
         /**
          * Add a LoanCategoryType to the list.
          * @param pLoanCatType the Name of the loan category type
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pLoanCatType) throws JOceanusException {
+        public void addBasicItem(final String pLoanCatType) throws OceanusException {
             /* Create a new Loan Category Type */
             LoanCategoryType myLoanType = new LoanCategoryType(this, pLoanCatType);
 
@@ -225,7 +225,7 @@ public class LoanCategoryType
         }
 
         @Override
-        public LoanCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public LoanCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
             LoanCategoryType myType = new LoanCategoryType(this, pValues);
 
@@ -243,7 +243,7 @@ public class LoanCategoryType
         }
 
         @Override
-        protected LoanCategoryType newItem(final LoanCategoryClass pClass) throws JOceanusException {
+        protected LoanCategoryType newItem(final LoanCategoryClass pClass) throws OceanusException {
             /* Create the type */
             LoanCategoryType myType = new LoanCategoryType(this, pClass);
 

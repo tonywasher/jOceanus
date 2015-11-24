@@ -28,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper for JCA BouncyCastle KeyGenerator.
@@ -46,11 +46,11 @@ public final class JcaKeyGenerator<T>
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      * @param pGenerator the key generator
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected JcaKeyGenerator(final JcaFactory pFactory,
                               final T pKeyType,
-                              final KeyGenerator pGenerator) throws JOceanusException {
+                              final KeyGenerator pGenerator) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pKeyType);
 
@@ -71,7 +71,7 @@ public final class JcaKeyGenerator<T>
     }
 
     @Override
-    protected JcaKey<T> translateKey(final GordianKey<?> pSource) throws JOceanusException {
+    protected JcaKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException {
         /* Access key correctly */
         JcaKey<?> mySource = JcaKey.accessKey(pSource);
 
@@ -88,7 +88,7 @@ public final class JcaKeyGenerator<T>
 
     @Override
     public JcaKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                           final byte[] pInitVector) throws JOceanusException {
+                                           final byte[] pInitVector) throws OceanusException {
         return (JcaKey<T>) super.generateKeyFromSecret(pSecret, pInitVector);
     }
 }

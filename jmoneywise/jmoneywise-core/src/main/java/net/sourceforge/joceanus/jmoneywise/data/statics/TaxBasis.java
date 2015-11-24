@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TaxBasis data type.
@@ -66,10 +66,10 @@ public class TaxBasis
      * Basic Constructor.
      * @param pList The list to associate the Tax Basis with
      * @param pName Name of Tax Basis
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final String pName) throws JOceanusException {
+                     final String pName) throws OceanusException {
         super(pList, pName);
     }
 
@@ -77,10 +77,10 @@ public class TaxBasis
      * Basic constructor.
      * @param pList The list to associate the Tax Basis with
      * @param pClass Class of Tax Basis
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final TaxBasisClass pClass) throws JOceanusException {
+                     final TaxBasisClass pClass) throws OceanusException {
         super(pList, pClass);
     }
 
@@ -88,10 +88,10 @@ public class TaxBasis
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -243,9 +243,9 @@ public class TaxBasis
         /**
          * Add a TaxBasis.
          * @param pTaxBasis the Name of the tax basis
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void addBasicItem(final String pTaxBasis) throws JOceanusException {
+        public void addBasicItem(final String pTaxBasis) throws OceanusException {
             /* Create a new Tax Basis */
             TaxBasis myBasis = new TaxBasis(this, pTaxBasis);
 
@@ -260,7 +260,7 @@ public class TaxBasis
         }
 
         @Override
-        public TaxBasis addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TaxBasis addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the basis */
             TaxBasis myBasis = new TaxBasis(this, pValues);
 
@@ -278,7 +278,7 @@ public class TaxBasis
         }
 
         @Override
-        protected TaxBasis newItem(final TaxBasisClass pClass) throws JOceanusException {
+        protected TaxBasis newItem(final TaxBasisClass pClass) throws OceanusException {
             /* Create the basis */
             TaxBasis myBasis = new TaxBasis(this, pClass);
 

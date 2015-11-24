@@ -33,10 +33,10 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayCellRenderer;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateCellRenderer;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.IconButtonState;
 
@@ -344,7 +344,7 @@ public final class JFieldCellRenderer {
      * Calendar Cell Renderer.
      */
     public static class CalendarCellRenderer
-            extends JDateDayCellRenderer {
+            extends TethysSwingDateCellRenderer {
         /**
          * Serial Id.
          */
@@ -361,7 +361,7 @@ public final class JFieldCellRenderer {
          * @param pFormatter the formatter
          */
         protected CalendarCellRenderer(final JFieldManager pManager,
-                                       final JDateDayFormatter pFormatter) {
+                                       final TethysDateFormatter pFormatter) {
             super(pFormatter);
             theData = pManager.allocateRenderData(true);
             setHorizontalAlignment(SwingConstants.LEFT);
@@ -401,7 +401,7 @@ public final class JFieldCellRenderer {
         /**
          * Decimal Parser.
          */
-        private final transient JDecimalFormatter theFormatter;
+        private final transient TethysDecimalFormatter theFormatter;
 
         /**
          * Constructor.
@@ -409,7 +409,7 @@ public final class JFieldCellRenderer {
          * @param pFormatter the formatter
          */
         protected DecimalCellRenderer(final JFieldManager pManager,
-                                      final JDecimalFormatter pFormatter) {
+                                      final TethysDecimalFormatter pFormatter) {
             super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
             theFormatter = pFormatter;
         }
@@ -419,9 +419,9 @@ public final class JFieldCellRenderer {
             Object o = pValue;
 
             /* If the value is a Decimal */
-            if (o instanceof JDecimal) {
+            if (o instanceof TethysDecimal) {
                 /* Format it */
-                o = theFormatter.formatDecimal((JDecimal) o);
+                o = theFormatter.formatDecimal((TethysDecimal) o);
             }
 
             /* Pass value down */

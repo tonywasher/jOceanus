@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Chargeable event for LifeBonds.
@@ -71,17 +71,17 @@ public final class ChargeableEvent
     /**
      * The Gains.
      */
-    private final JMoney theGains;
+    private final TethysMoney theGains;
 
     /**
      * The Slice.
      */
-    private final JMoney theSlice;
+    private final TethysMoney theSlice;
 
     /**
      * The Taxation.
      */
-    private JMoney theTaxation = null;
+    private TethysMoney theTaxation = null;
 
     /**
      * The Transaction.
@@ -94,9 +94,9 @@ public final class ChargeableEvent
      * @param pGains the Gains
      */
     protected ChargeableEvent(final Transaction pTrans,
-                              final JMoney pGains) {
+                              final TethysMoney pGains) {
         /* Calculate slice */
-        theSlice = new JMoney(pGains);
+        theSlice = new TethysMoney(pGains);
         theSlice.divide(pTrans.getYears());
 
         /* Store the values */
@@ -137,7 +137,7 @@ public final class ChargeableEvent
      * Obtain the amount.
      * @return the amount
      */
-    public JMoney getAmount() {
+    public TethysMoney getAmount() {
         return theGains;
     }
 
@@ -145,7 +145,7 @@ public final class ChargeableEvent
      * Obtain the slice.
      * @return the slice
      */
-    public JMoney getSlice() {
+    public TethysMoney getSlice() {
         return theSlice;
     }
 
@@ -153,7 +153,7 @@ public final class ChargeableEvent
      * Obtain the taxation.
      * @return the taxation
      */
-    public JMoney getTaxation() {
+    public TethysMoney getTaxation() {
         return theTaxation;
     }
 
@@ -174,7 +174,7 @@ public final class ChargeableEvent
      * Obtain the date.
      * @return the date
      */
-    public JDateDay getDate() {
+    public TethysDate getDate() {
         return getTransaction().getDate();
     }
 
@@ -190,7 +190,7 @@ public final class ChargeableEvent
      * Obtain the tax credit.
      * @return the tax credit
      */
-    public JMoney getTaxCredit() {
+    public TethysMoney getTaxCredit() {
         return getTransaction().getTaxCredit();
     }
 
@@ -249,13 +249,13 @@ public final class ChargeableEvent
      * @param pTax the calculated taxation for the slice
      * @param pTotal the slice total of the event list
      */
-    protected void applyTax(final JMoney pTax,
-                            final JMoney pTotal) {
+    protected void applyTax(final TethysMoney pTax,
+                            final TethysMoney pTotal) {
         /* Calculate the portion of tax that applies to this slice */
-        JMoney myPortion = pTax.valueAtWeight(getSlice(), pTotal);
+        TethysMoney myPortion = pTax.valueAtWeight(getSlice(), pTotal);
 
         /* Multiply by the number of years */
-        theTaxation = new JMoney(myPortion);
+        theTaxation = new TethysMoney(myPortion);
         theTaxation.multiply(getYears());
     }
 
@@ -288,7 +288,7 @@ public final class ChargeableEvent
          * @param pRange the range of events to copy
          */
         protected ChargeableEventList(final ChargeableEventList pSource,
-                                      final JDateDayRange pRange) {
+                                      final TethysDateRange pRange) {
             /* Call super class */
             super(ChargeableEvent.class);
 
@@ -339,7 +339,7 @@ public final class ChargeableEvent
          * @param pGains the gains
          */
         public void addTransaction(final Transaction pTrans,
-                                   final JMoney pGains) {
+                                   final TethysMoney pGains) {
             /* Create the chargeable event */
             ChargeableEvent myEvent = new ChargeableEvent(pTrans, pGains);
 
@@ -352,9 +352,9 @@ public final class ChargeableEvent
          * divided by the number of years that the charge is to be sliced over
          * @return the slice total of the chargeable event list
          */
-        public JMoney getSliceTotal() {
+        public TethysMoney getSliceTotal() {
             /* Initialise the total */
-            JMoney myTotal = new JMoney();
+            TethysMoney myTotal = new TethysMoney();
 
             /* Loop through the list */
             Iterator<ChargeableEvent> myIterator = iterator();
@@ -374,9 +374,9 @@ public final class ChargeableEvent
          * apportioned to each slice
          * @return the tax total of the chargeable event list
          */
-        public JMoney getTaxTotal() {
+        public TethysMoney getTaxTotal() {
             /* Initialise the total */
-            JMoney myTotal = new JMoney();
+            TethysMoney myTotal = new TethysMoney();
 
             /* Loop through the list */
             Iterator<ChargeableEvent> myIterator = iterator();
@@ -396,9 +396,9 @@ public final class ChargeableEvent
          * divided by the number of years that the charge is to be sliced over
          * @return the slice total of the chargeable event list
          */
-        public JMoney getGainsTotal() {
+        public TethysMoney getGainsTotal() {
             /* Initialise the total */
-            JMoney myTotal = new JMoney();
+            TethysMoney myTotal = new TethysMoney();
 
             /* Loop through the list */
             Iterator<ChargeableEvent> myIterator = iterator();
@@ -419,8 +419,8 @@ public final class ChargeableEvent
          * @param pTax the calculated taxation for the slice
          * @param pTotal the slice total of the event list
          */
-        public void applyTax(final JMoney pTax,
-                             final JMoney pTotal) {
+        public void applyTax(final TethysMoney pTax,
+                             final TethysMoney pTotal) {
             /* Loop through the list */
             Iterator<ChargeableEvent> myIterator = iterator();
             while (myIterator.hasNext()) {

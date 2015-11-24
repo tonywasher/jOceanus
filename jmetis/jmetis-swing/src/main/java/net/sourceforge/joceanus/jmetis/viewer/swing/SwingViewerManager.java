@@ -27,8 +27,8 @@ import javax.swing.tree.DefaultTreeModel;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 
 /**
  * Data Manager.
@@ -153,7 +153,7 @@ public class SwingViewerManager
      * Listener class.
      */
     private final class ViewerListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * Constructor.
          */
@@ -162,7 +162,7 @@ public class SwingViewerManager
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             processFieldConfig();
         }
     }

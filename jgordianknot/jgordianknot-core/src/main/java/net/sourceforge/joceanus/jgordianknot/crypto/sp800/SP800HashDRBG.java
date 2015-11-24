@@ -50,7 +50,7 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.ByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
-import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Implementation of HashSP800DRBG based on the BouncyCastle Code.
@@ -143,7 +143,7 @@ public final class SP800HashDRBG
         theC = hashDerive(myTempH, SEED_LENGTH);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new ByteArrayInteger(DataConverter.BYTES_LONG);
+        theReseedCounter = new ByteArrayInteger(TethysDataConverter.BYTES_LONG);
         theReseedCounter.iterate();
     }
 
@@ -272,11 +272,11 @@ public final class SP800HashDRBG
         byte[] myOutput = new byte[myLen];
 
         /* Create seed array */
-        byte[] mySeed = new byte[DataConverter.BYTES_INTEGER];
+        byte[] mySeed = new byte[TethysDataConverter.BYTES_INTEGER];
         int mySeedLength = pSeedLength;
         for (int i = mySeed.length - 1; i >= 0; i--) {
             mySeed[i] = (byte) mySeedLength;
-            mySeedLength >>= DataConverter.BYTE_SHIFT;
+            mySeedLength >>= TethysDataConverter.BYTE_SHIFT;
         }
 
         /* while we need to generate more bytes */

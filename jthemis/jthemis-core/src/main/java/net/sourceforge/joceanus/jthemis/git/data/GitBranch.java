@@ -27,7 +27,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.JDataFields;
 import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitTag.GitTagList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
@@ -211,9 +211,9 @@ public final class GitBranch
         /**
          * Discover branch list from repository.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JOceanusException {
+        public void discover(final ReportStatus pReport) throws OceanusException {
             /* Reset the list */
             clear();
 
@@ -237,9 +237,9 @@ public final class GitBranch
         /**
          * Discover branch list from repository.
          * @param pGit git instance
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void discoverBranches(final Git pGit) throws JOceanusException {
+        private void discoverBranches(final Git pGit) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Access list of branches */
@@ -299,9 +299,9 @@ public final class GitBranch
         /**
          * Discover virtual branch list from repository.
          * @param pGit git instance
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void discoverVirtualBranches(final Git pGit) throws JOceanusException {
+        private void discoverVirtualBranches(final Git pGit) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Access list of tags */
@@ -356,9 +356,9 @@ public final class GitBranch
         /**
          * Discover tag lists from repository.
          * @param pReport the report object
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
-        private void discoverTags(final ReportStatus pReport) throws JOceanusException {
+        private void discoverTags(final ReportStatus pReport) throws OceanusException {
             /* Access repository */
             GitRepository myRepo = theComponent.getRepository();
 

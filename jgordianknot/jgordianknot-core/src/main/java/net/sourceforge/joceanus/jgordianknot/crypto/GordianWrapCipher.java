@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for WrapCipher.
@@ -92,10 +92,10 @@ public abstract class GordianWrapCipher {
      * @param pKey the key to use to wrap the key
      * @param pKeyToWrap the key to wrap
      * @return the wrapped bytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                   final GordianKey<?> pKeyToWrap) throws JOceanusException;
+                                   final GordianKey<?> pKeyToWrap) throws OceanusException;
 
     /**
      * unWrap key.
@@ -104,21 +104,21 @@ public abstract class GordianWrapCipher {
      * @param pBytes the bytes to unwrap
      * @param pKeyType the type of key to be unwrapped
      * @return the unwrapped key
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public abstract <T> GordianKey<T> unwrapKey(final GordianKey<GordianSymKeyType> pKey,
                                                 final byte[] pBytes,
-                                                final T pKeyType) throws JOceanusException;
+                                                final T pKeyType) throws OceanusException;
 
     /**
      * Wrap bytes (based on AESKW).
      * @param pKey the key to use to wrap the bytes
      * @param pBytes the bytes to wrap
      * @return the wrapped bytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] wrapBytes(final GordianKey<GordianSymKeyType> pKey,
-                            final byte[] pBytes) throws JOceanusException {
+                            final byte[] pBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
 
@@ -186,10 +186,10 @@ public abstract class GordianWrapCipher {
      * @param pKey the key to use to unwrap the bytes
      * @param pBytes the bytes to unwrap
      * @return the unwrapped bytes
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public byte[] unwrapBytes(final GordianKey<GordianSymKeyType> pKey,
-                              final byte[] pBytes) throws JOceanusException {
+                              final byte[] pBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
 
@@ -269,9 +269,9 @@ public abstract class GordianWrapCipher {
      * Determine the IV for a key.
      * @param pKey the key
      * @return the IV
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
-    private byte[] getWrapIV(final GordianKey<GordianSymKeyType> pKey) throws JOceanusException {
+    private byte[] getWrapIV(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create the MAC and standard data */
         GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, theFactory.getDefaultDigest());
         GordianMac myMac = theFactory.createMac(myMacSpec);

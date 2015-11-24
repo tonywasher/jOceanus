@@ -77,15 +77,14 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.TransactionFilters;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.dateday.swing.JDateDayConfig;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEvent.JOceanusItemEvent;
-import net.sourceforge.joceanus.jtethys.event.JOceanusEventRegistration.JOceanusChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -93,7 +92,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Panel to display/edit/create a Transaction.
@@ -128,7 +128,7 @@ public class TransactionPanel
     /**
      * Date Button.
      */
-    private final JDateDayButton theDateButton;
+    private final TethysSwingDateButton theDateButton;
 
     /**
      * Account Button Field.
@@ -199,7 +199,7 @@ public class TransactionPanel
         theBuilder = pBuilder;
 
         /* Create the text fields */
-        theDateButton = new JDateDayButton();
+        theDateButton = new TethysSwingDateButton();
 
         /* Create the buttons */
         theAccountButton = new JScrollButton<TransactionAsset>();
@@ -284,7 +284,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
         /* Create the main panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -296,7 +296,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(Transaction.FIELD_PARTNER, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_AMOUNT, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_RECONCILED, myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -328,7 +328,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
 
         /* Create the Tax panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the tax panel */
         SpringLayout mySpring = new SpringLayout();
@@ -336,7 +336,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -370,7 +370,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), DataType.INTEGER, myYears);
 
         /* Create the Tax panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the Tax panel */
         SpringLayout mySpring = new SpringLayout();
@@ -380,7 +380,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -410,7 +410,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), Deposit.class, theThirdPartyButton);
 
         /* Create the Tax panel */
-        JEnablePanel myPanel = new JEnablePanel();
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the tax panel */
         SpringLayout mySpring = new SpringLayout();
@@ -419,7 +419,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), myPanel);
-        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -442,7 +442,7 @@ public class TransactionPanel
      * Update editors.
      * @param pRange the date range.
      */
-    public void updateEditors(final JDateDayRange pRange) {
+    public void updateEditors(final TethysDateRange pRange) {
         /* Update Date button */
         theDateButton.setEarliestDateDay(pRange != null
                                                         ? pRange.getStart()
@@ -601,8 +601,8 @@ public class TransactionPanel
         theFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
 
         /* Set the range for the dateButton */
-        JDateDayRange myRange = theBuilder.getRange();
-        JDateDayConfig myConfig = theDateButton.getDateConfig();
+        TethysDateRange myRange = theBuilder.getRange();
+        TethysSwingDateConfig myConfig = theDateButton.getDateConfig();
         myConfig.setEarliestDateDay(myRange.getStart());
         myConfig.setLatestDateDay(myRange.getEnd());
     }
@@ -630,7 +630,7 @@ public class TransactionPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws JOceanusException {
+    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         JDataField myField = pUpdate.getField();
         Transaction myTrans = getItem();
@@ -1131,10 +1131,10 @@ public class TransactionPanel
      * Update the Tag list for an item.
      * @param pTrans the transaction to build for
      * @param pEvent the item event
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     public void updateTag(final Transaction pTrans,
-                          final JOceanusItemEvent pEvent) throws JOceanusException {
+                          final TethysItemEvent pEvent) throws OceanusException {
         /* Determine whether this is a select or not */
         boolean bSelected = pEvent.isSelected();
 
@@ -1156,7 +1156,7 @@ public class TransactionPanel
      * Transaction Listener.
      */
     private final class TransactionListener
-            implements JOceanusChangeEventListener {
+            implements TethysChangeEventListener {
         /**
          * The Account Menu Builder.
          */
@@ -1180,27 +1180,27 @@ public class TransactionPanel
         /**
          * AccountMenu Registration.
          */
-        private final JOceanusChangeRegistration theAccountMenuReg;
+        private final TethysChangeRegistration theAccountMenuReg;
 
         /**
          * PartnerMenu Registration.
          */
-        private final JOceanusChangeRegistration thePartnerMenuReg;
+        private final TethysChangeRegistration thePartnerMenuReg;
 
         /**
          * CategoryMenu Registration.
          */
-        private final JOceanusChangeRegistration theCategoryMenuReg;
+        private final TethysChangeRegistration theCategoryMenuReg;
 
         /**
          * ThirdPartyMenu Registration.
          */
-        private final JOceanusChangeRegistration theThirdPartyMenuReg;
+        private final TethysChangeRegistration theThirdPartyMenuReg;
 
         /**
          * TagMenu Registration.
          */
-        private final JOceanusChangeRegistration theTagMenuReg;
+        private final TethysChangeRegistration theTagMenuReg;
 
         /**
          * Constructor.
@@ -1219,7 +1219,7 @@ public class TransactionPanel
         }
 
         @Override
-        public void processChangeEvent(final JOceanusChangeEvent pEvent) {
+        public void processChangeEvent(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theAccountMenuReg.isRelevant(pEvent)) {
                 buildAccountMenu(theAccountMenuBuilder, getItem());

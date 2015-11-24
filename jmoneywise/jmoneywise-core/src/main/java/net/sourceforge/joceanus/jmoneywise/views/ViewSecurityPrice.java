@@ -39,11 +39,11 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * Extension of SecurityPrice to cater for diluted prices.
@@ -109,7 +109,7 @@ public class ViewSecurityPrice
      * Obtain dilution.
      * @return the dilution
      */
-    public JDilution getDilution() {
+    public TethysDilution getDilution() {
         if (theDilutionState.equals(DilutionState.UNKNOWN)) {
             calculateDiluted();
         }
@@ -120,7 +120,7 @@ public class ViewSecurityPrice
      * Obtain diluted price.
      * @return the diluted price
      */
-    public JDilutedPrice getDilutedPrice() {
+    public TethysDilutedPrice getDilutedPrice() {
         if (theDilutionState.equals(DilutionState.UNKNOWN)) {
             calculateDiluted();
         }
@@ -132,8 +132,8 @@ public class ViewSecurityPrice
      * @param pValueSet the valueSet
      * @return the dilution
      */
-    public static JDilution getDilution(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DILUTION, JDilution.class);
+    public static TethysDilution getDilution(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DILUTION, TethysDilution.class);
     }
 
     /**
@@ -141,15 +141,15 @@ public class ViewSecurityPrice
      * @param pValueSet the valueSet
      * @return the diluted price
      */
-    public static JDilutedPrice getDilutedPrice(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DILUTEDPRICE, JDilutedPrice.class);
+    public static TethysDilutedPrice getDilutedPrice(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DILUTEDPRICE, TethysDilutedPrice.class);
     }
 
     /**
      * Set dilution.
      * @param pValue the dilution
      */
-    private void setValueDilution(final JDilution pValue) {
+    private void setValueDilution(final TethysDilution pValue) {
         getValueSet().setValue(FIELD_DILUTION, pValue);
     }
 
@@ -157,7 +157,7 @@ public class ViewSecurityPrice
      * Set diluted price.
      * @param pValue the diluted price
      */
-    private void setValueDilutedPrice(final JDilutedPrice pValue) {
+    private void setValueDilutedPrice(final TethysDilutedPrice pValue) {
         getValueSet().setValue(FIELD_DILUTEDPRICE, pValue);
     }
 
@@ -178,8 +178,8 @@ public class ViewSecurityPrice
         setValueDilutedPrice(null);
 
         /* Access Price details */
-        JDateDay myDate = getDate();
-        JPrice myPrice = getPrice();
+        TethysDate myDate = getDate();
+        TethysPrice myPrice = getPrice();
         Security mySecurity = getSecurity();
 
         /* Ignore if we have no details */
@@ -198,7 +198,7 @@ public class ViewSecurityPrice
         }
 
         /* Determine the dilution factor for the date */
-        JDilution myDilution = myDilutions.getDilutionFactor(mySecurity, myDate);
+        TethysDilution myDilution = myDilutions.getDilutionFactor(mySecurity, myDate);
 
         /* If we have a dilution factor */
         if (myDilution != null) {
@@ -212,13 +212,13 @@ public class ViewSecurityPrice
     }
 
     @Override
-    public void setPrice(final JPrice pPrice) throws JOceanusException {
+    public void setPrice(final TethysPrice pPrice) throws OceanusException {
         super.setPrice(pPrice);
         calculateDiluted();
     }
 
     @Override
-    public void setDate(final JDateDay pDate) {
+    public void setDate(final TethysDate pDate) {
         /* Store date */
         super.setDate(pDate);
         calculateDiluted();
@@ -248,10 +248,10 @@ public class ViewSecurityPrice
          * Construct an edit extract of a Price list.
          * @param pView The master view
          * @param pUpdateSet the updateSet
-         * @throws JOceanusException on error
+         * @throws OceanusException on error
          */
         public ViewSecurityPriceList(final View pView,
-                                     final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+                                     final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Declare the data and set the style */
             super(pView.getData(), ViewSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);

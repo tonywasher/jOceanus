@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
 
 /**
  * SheetDataItem extension for AccountRate.
@@ -95,7 +95,7 @@ public class SheetDepositRate
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
         myValues.addValue(DepositRate.FIELD_DEPOSIT, loadInteger(COL_DEPOSIT));
@@ -108,7 +108,7 @@ public class SheetDepositRate
     }
 
     @Override
-    protected void insertSecureItem(final DepositRate pItem) throws JOceanusException {
+    protected void insertSecureItem(final DepositRate pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_DEPOSIT, pItem.getDepositId());
@@ -129,11 +129,11 @@ public class SheetDepositRate
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JOceanusException on error
+     * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData) throws OceanusException {
         /* Access the list of rates */
         DepositRateList myList = pData.getDepositRates();
 
@@ -182,7 +182,7 @@ public class SheetDepositRate
 
                 /* Handle expiration which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                JDateDay myExpiry = null;
+                TethysDate myExpiry = null;
                 if (myCell != null) {
                     myExpiry = myCell.getDateValue();
                 }
@@ -208,7 +208,7 @@ public class SheetDepositRate
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JOceanusException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
