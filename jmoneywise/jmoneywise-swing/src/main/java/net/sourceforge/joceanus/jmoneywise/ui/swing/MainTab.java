@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.Stat
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;

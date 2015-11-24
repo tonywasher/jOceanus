@@ -20,4 +20,4 @@
  * It works on top of (and extends) JDateButton, and also provides a DateDayRange facility to
  * specify and manipulate a contiguous range of dates.
  */
-package net.sourceforge.joceanus.jtethys.dateday.javafx;
+package net.sourceforge.joceanus.jtethys.date.javafx;

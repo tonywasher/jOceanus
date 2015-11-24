@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-30 06:24:29 +0100 (Mon, 30 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.javafx;
+package net.sourceforge.joceanus.jtethys.date.javafx;
 
 import java.time.LocalDate;
 
@@ -29,8 +29,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import net.sourceforge.jdatebutton.javafx.JDateConfig;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 

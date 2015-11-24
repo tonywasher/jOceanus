@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.javafx.demo;
+package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -64,13 +64,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import net.sourceforge.jdatebutton.javafx.JDateConfig;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.dateday.javafx.TethysFXDateButton;
-import net.sourceforge.joceanus.jtethys.dateday.javafx.TethysFXDateCell;
-import net.sourceforge.joceanus.jtethys.dateday.javafx.TethysFXDateConfig;
-import net.sourceforge.joceanus.jtethys.dateday.javafx.TethysFXDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateButton;
+import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateCell;
+import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateConfig;
+import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateRangeSelect;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 
 /**

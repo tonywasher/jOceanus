@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.javafx;
+package net.sourceforge.joceanus.jtethys.date.javafx;
 
 import java.util.Locale;
 
@@ -42,12 +42,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import net.sourceforge.jdatebutton.javafx.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDatePeriod;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateRangeState;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateResource;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRangeState;
+import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 
 /**

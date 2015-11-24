@@ -50,12 +50,12 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.jdatebutton.swing.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldValue;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateCellEditor;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellEditor;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;

@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.swing;
+package net.sourceforge.joceanus.jtethys.date.swing;
 
 import java.time.LocalDate;
 
 import net.sourceforge.jdatebutton.swing.JDateButton;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 
 /**
  * Extension class for a {@link JDateButton} to handle {@link TethysDate} objects.

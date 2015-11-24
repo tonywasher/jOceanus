@@ -50,9 +50,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

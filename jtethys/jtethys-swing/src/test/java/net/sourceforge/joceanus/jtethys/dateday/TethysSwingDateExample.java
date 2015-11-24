@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.swing.demo;
+package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -54,14 +54,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.jdatebutton.swing.JDateConfig;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateCellEditor;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateCellRenderer;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateConfig;
-import net.sourceforge.joceanus.jtethys.dateday.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellEditor;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellRenderer;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
 
 /**
  * <p>

@@ -474,7 +474,7 @@ public class TethysSwingScrollContextMenu<T>
     }
 
     /**
-     * Focus listener
+     * ScrollListener.
      */
     private class ScrollListener
             implements FocusListener, KeyListener, MouseWheelListener {

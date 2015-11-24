@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.javafx;
+package net.sourceforge.joceanus.jtethys.date.javafx;
 
 import java.util.Locale;
 
@@ -28,7 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
 import net.sourceforge.jdatebutton.javafx.JDateCellEditor;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Cell editor for a {@link TethysDate} object extending {@link JDateCellEditor}.

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Quicken Preferences.

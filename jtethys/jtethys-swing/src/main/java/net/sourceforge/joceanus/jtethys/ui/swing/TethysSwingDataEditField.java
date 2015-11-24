@@ -209,7 +209,9 @@ public abstract class TethysSwingDataEditField {
             });
         }
 
-        /* Key Listener class */
+        /**
+         * Key Listener class.
+         */
         private class DataKeyListener
                 implements KeyListener {
             @Override

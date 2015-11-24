@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday.swing;
+package net.sourceforge.joceanus.jtethys.date.swing;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
 import net.sourceforge.jdatebutton.swing.JDateCellEditor;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 
 /**
  * Cell editor for a {@link TethysDate} object extending {@link JDateCellEditor}.

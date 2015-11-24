@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday;
+package net.sourceforge.joceanus.jtethys.date;
 
 import java.time.Month;
 import java.util.Locale;

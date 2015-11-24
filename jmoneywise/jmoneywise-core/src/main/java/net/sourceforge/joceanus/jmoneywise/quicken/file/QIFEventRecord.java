@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
-import net.sourceforge.joceanus.jtethys.dateday.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Class representing a QIF Event record.
