@@ -336,7 +336,7 @@ public class LoanAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle buttons */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu();

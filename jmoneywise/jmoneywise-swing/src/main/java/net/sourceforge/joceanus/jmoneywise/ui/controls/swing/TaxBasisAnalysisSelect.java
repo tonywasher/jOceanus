@@ -313,7 +313,7 @@ public class TaxBasisAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the TaxBasisMenu */
             if (theBasisMenuReg.isRelevant(pEvent)) {
                 buildBasisMenu();

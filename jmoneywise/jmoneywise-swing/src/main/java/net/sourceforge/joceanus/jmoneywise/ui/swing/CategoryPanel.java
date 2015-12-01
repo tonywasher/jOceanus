@@ -590,7 +590,7 @@ public class CategoryPanel
         }
 
         @Override
-        public void processActionEvent(final TethysActionEvent pEvent) {
+        public void processAction(final TethysActionEvent pEvent) {
             /* if this is the action buttons reporting */
             if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
@@ -625,7 +625,7 @@ public class CategoryPanel
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the error panel reporting */
             if (theErrorReg.isRelevant(pEvent)) {
                 /* Determine whether we have an error */

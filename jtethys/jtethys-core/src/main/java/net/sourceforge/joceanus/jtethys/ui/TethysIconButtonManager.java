@@ -53,7 +53,7 @@ public abstract class TethysIconButtonManager<T, I>
     /**
      * Icon updated.
      */
-    public static final int ACTION_NEW_VALUE = 100;
+    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
 
     /**
      * The Event Manager.
@@ -295,6 +295,14 @@ public abstract class TethysIconButtonManager<T, I>
             /* Register the initial state */
             theMachineState = pState;
             theStateMap.put(theMachineState, getMapSet());
+        }
+
+        /**
+         * Obtain state.
+         * @return the state
+         */
+        public S getMachineState() {
+            return theMachineState;
         }
 
         /**

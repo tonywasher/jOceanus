@@ -67,8 +67,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonSt
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a Cash.
@@ -646,7 +646,7 @@ public class CashPanel
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu(theCategoryMenuBuilder, getItem());

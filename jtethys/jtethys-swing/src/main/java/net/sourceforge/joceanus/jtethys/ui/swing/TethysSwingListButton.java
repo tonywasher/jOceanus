@@ -100,7 +100,7 @@ public final class TethysSwingListButton
             /* Set context menu listener */
             getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_TOGGLED, new TethysActionEventListener() {
                 @Override
-                public void processActionEvent(final TethysActionEvent e) {
+                public void processAction(final TethysActionEvent e) {
                     /* Handle the toggle of the item */
                     handleToggleItem();
                 }

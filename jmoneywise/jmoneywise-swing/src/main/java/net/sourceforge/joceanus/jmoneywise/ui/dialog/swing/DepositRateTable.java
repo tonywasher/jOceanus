@@ -653,7 +653,7 @@ public class DepositRateTable
             }
 
             @Override
-            public void processChangeEvent(final TethysChangeEvent pEvent) {
+            public void processChange(final TethysChangeEvent pEvent) {
                 /* Access details */
                 Point myCell = theDateEditor.getPoint();
 

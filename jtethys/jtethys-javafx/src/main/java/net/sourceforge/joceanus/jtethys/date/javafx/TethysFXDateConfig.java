@@ -70,7 +70,7 @@ public class TethysFXDateConfig
      */
     public TethysFXDateConfig() {
         theSelectedDateDay = new SimpleObjectProperty<TethysDate>(this, TethysFXDateButton.PROPERTY_DATEDAY);
-        addListener();
+        addDateListener();
     }
 
     /**
@@ -81,13 +81,13 @@ public class TethysFXDateConfig
         super(pFormatter);
         theSelectedDateDay = new SimpleObjectProperty<TethysDate>(this, TethysFXDateButton.PROPERTY_DATEDAY);
         pFormatter.getEventRegistrar().addChangeListener(new LocaleListener(pFormatter));
-        addListener();
+        addDateListener();
     }
 
     /**
      * Add listener.
      */
-    private void addListener() {
+    private void addDateListener() {
         /* Access selected date */
         ObjectProperty<LocalDate> myProperty = selectedDateProperty();
         myProperty.addListener(new ChangeListener<LocalDate>() {
@@ -219,7 +219,7 @@ public class TethysFXDateConfig
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent e) {
+        public void processChange(final TethysChangeEvent e) {
             setTheLocale(theFormatter.getLocale());
             refreshText();
         }

@@ -27,9 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.JOceanusItemEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysItemRegistration;
@@ -162,7 +162,7 @@ public class TethysEventRegistrar {
      * @param pListener the listener to add
      * @return the registration
      */
-    public TethysItemRegistration addItemListener(final JOceanusItemEventListener pListener) {
+    public TethysItemRegistration addItemListener(final TethysItemEventListener pListener) {
         /* Create the registration */
         TethysItemRegistration myReg = new TethysItemRegistration(theMgrId, pListener);
 

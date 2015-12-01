@@ -283,7 +283,7 @@ public class TransCategoryAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the CategoryMenu */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu();

@@ -143,7 +143,7 @@ public class JOceanusSwingUtilitySet
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (thePrefReg.isRelevant(pEvent)) {
                 /* Update new configuration */

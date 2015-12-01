@@ -27,7 +27,6 @@ import java.util.List;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 
 /**
@@ -105,20 +104,20 @@ public class TethysScrollUITestHelper<I> {
 
     /**
      * Build the available items.
-     * @param pMenu the menu to build
+     * @param pManager the list manager
      * @param pSelected the list of selected items
      */
-    public void buildAvailableItems(final TethysScrollMenu<String, I> pMenu,
+    public void buildAvailableItems(final TethysListButtonManager<String, I> pManager,
                                     final List<String> pSelected) {
         /* Set the display count */
-        pMenu.setMaxDisplayItems(MAX_ITEMS);
-        pMenu.removeAllItems();
+        pManager.getMenu().setMaxDisplayItems(MAX_ITEMS);
+        pManager.clearAvailableItems();
 
         /* Loop through the items */
         for (String myValue : AVAILABLE_ITEMS) {
-            TethysScrollMenuToggleItem<String> myItem = pMenu.addToggleItem(myValue);
+            pManager.setAvailableItem(myValue);
             if (pSelected.contains(myValue)) {
-                myItem.setSelected(true);
+                pManager.setSelectedItem(myValue);
             }
         }
     }

@@ -336,7 +336,7 @@ public class CashAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the CategoryMenu */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 /* Build the category menu */

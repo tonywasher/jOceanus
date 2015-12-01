@@ -40,12 +40,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import net.sourceforge.jdatebutton.javafx.JDateButton;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXStateIconButtonManager;
@@ -127,6 +130,11 @@ public class TethysFXScrollUIExample
     private final TethysFXListButtonManager<String> theListButtonMgr;
 
     /**
+     * The date button manager.
+     */
+    private final TethysFXDateButtonManager theDateButtonMgr;
+
+    /**
      * The selected context value.
      */
     private final Label theContextValue;
@@ -135,6 +143,11 @@ public class TethysFXScrollUIExample
      * The selected scroll value.
      */
     private final Label theScrollValue;
+
+    /**
+     * The selected date value.
+     */
+    private final Label theDateValue;
 
     /**
      * The selected simple icon value.
@@ -170,8 +183,10 @@ public class TethysFXScrollUIExample
         theStateIconButtonMgr = new TethysFXStateIconButtonManager<Boolean, IconState>();
         theStateButtonMgr = new TethysFXScrollButtonManager<IconState>();
         theListButtonMgr = new TethysFXListButtonManager<String>();
+        theDateButtonMgr = new TethysFXDateButtonManager();
         theContextValue = new Label();
         theScrollValue = new Label();
+        theDateValue = new Label();
         theSimpleIconValue = new Label();
         theStateIconValue = new Label();
         theListValues = new Label();
@@ -243,7 +258,7 @@ public class TethysFXScrollUIExample
         /* Add listener */
         theScrollButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysScrollButtonManager.ACTION_NEW_VALUE:
                         setScrollValue(pEvent.getDetails(String.class));
@@ -274,16 +289,41 @@ public class TethysFXScrollUIExample
         /* Add listener */
         theListButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
-                    case TethysListButtonManager.ACTION_TOGGLED:
+                    case TethysListButtonManager.ACTION_ITEM_TOGGLED:
                         setListValue(pEvent.getDetails(TethysScrollMenuToggleItem.class));
                         pStage.sizeToScene();
                         break;
-                    case TethysScrollButtonManager.ACTION_MENU_BUILD:
-                        theHelper.buildAvailableItems(theListButtonMgr.getMenu(), theSelectedValues);
+                    case TethysListButtonManager.ACTION_MENU_BUILD:
+                        theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues);
                         break;
-                    case TethysScrollButtonManager.ACTION_MENU_CANCELLED:
+                    case TethysListButtonManager.ACTION_MENU_CANCELLED:
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create date button line */
+        JDateButton myDateButton = theDateButtonMgr.getButton();
+        myControl = TethysFXGuiUtils.getTitledPane("DateButton", myDateButton);
+        myControl.setAlignment(Pos.CENTER);
+        myControl.setMaxWidth(Double.MAX_VALUE);
+        myResult = TethysFXGuiUtils.getTitledPane("DateValue", theDateValue);
+        theDateValue.setAlignment(Pos.CENTER);
+        myPane.addRow(myRowNo++, myControl, myResult);
+
+        /* Add listener */
+        theDateButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case TethysDateButtonManager.ACTION_NEW_VALUE:
+                        setDateValue(pEvent.getDetails(TethysDate.class));
+                        pStage.sizeToScene();
+                        break;
+                    case TethysDateButtonManager.ACTION_DIALOG_PREPARE:
                     default:
                         break;
                 }
@@ -305,7 +345,7 @@ public class TethysFXScrollUIExample
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysIconButtonManager.ACTION_NEW_VALUE:
                         setSimpleIconValue(pEvent.getDetails(Boolean.class));
@@ -336,7 +376,7 @@ public class TethysFXScrollUIExample
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysIconButtonManager.ACTION_NEW_VALUE:
                         setStateIconValue(pEvent.getDetails(Boolean.class));
@@ -351,7 +391,7 @@ public class TethysFXScrollUIExample
         /* Add listener */
         theStateButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysIconButtonManager.ACTION_NEW_VALUE:
                         theStateIconButtonMgr.setMachineState(pEvent.getDetails(IconState.class));
@@ -389,6 +429,17 @@ public class TethysFXScrollUIExample
     private void setScrollValue(final String pValue) {
         /* Record the value */
         theScrollValue.setText(pValue);
+    }
+
+    /**
+     * Set the date value.
+     * @param pValue the value to set
+     */
+    private void setDateValue(final TethysDate pValue) {
+        /* Record the value */
+        theDateValue.setText(pValue == null
+                                            ? null
+                                            : pValue.toString());
     }
 
     /**

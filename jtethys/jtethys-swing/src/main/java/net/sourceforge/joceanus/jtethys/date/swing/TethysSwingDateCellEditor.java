@@ -43,7 +43,7 @@ public class TethysSwingDateCellEditor
     /**
      * The Date Button.
      */
-    private final TethysSwingDateButton theButton;
+    private final transient TethysSwingDateConfig theConfig;
 
     /**
      * Constructor.
@@ -59,13 +59,13 @@ public class TethysSwingDateCellEditor
      */
     public TethysSwingDateCellEditor(final TethysDateFormatter pFormatter) {
         /* Create a new configuration */
-        super(new TethysSwingDateButton(pFormatter));
-        theButton = (TethysSwingDateButton) super.getDateButton();
+        super(new TethysSwingDateConfig(pFormatter));
+        theConfig = getDateConfig();
     }
 
     @Override
     public TethysSwingDateConfig getDateConfig() {
-        return theButton.getDateConfig();
+        return (TethysSwingDateConfig) super.getDateConfig();
     }
 
     /**
@@ -73,7 +73,7 @@ public class TethysSwingDateCellEditor
      * @return the selected DateDay
      */
     public TethysDate getSelectedDateDay() {
-        return theButton.getSelectedDateDay();
+        return theConfig.getSelectedDateDay();
     }
 
     /**
@@ -81,7 +81,7 @@ public class TethysSwingDateCellEditor
      * @param pDate the selected date
      */
     public void setSelectedDateDay(final TethysDate pDate) {
-        theButton.setSelectedDateDay(pDate);
+        theConfig.setSelectedDateDay(pDate);
     }
 
     /**
@@ -89,7 +89,7 @@ public class TethysSwingDateCellEditor
      * @param pDate the earliest date
      */
     public void setEarliestDateDay(final TethysDate pDate) {
-        theButton.setEarliestDateDay(pDate);
+        theConfig.setEarliestDateDay(pDate);
     }
 
     /**
@@ -97,12 +97,12 @@ public class TethysSwingDateCellEditor
      * @param pDate the latest date
      */
     public void setLatestDateDay(final TethysDate pDate) {
-        theButton.setLatestDateDay(pDate);
+        theConfig.setLatestDateDay(pDate);
     }
 
     @Override
     public Object getCellEditorValue() {
-        return theButton.getSelectedDateDay();
+        return theConfig.getSelectedDateDay();
     }
 
     @Override
@@ -111,18 +111,14 @@ public class TethysSwingDateCellEditor
                                                   final boolean isSelected,
                                                   final int row,
                                                   final int column) {
-        /* If the value is the date */
-        if (value instanceof TethysDate) {
-            TethysDate myDate = (TethysDate) value;
-            /* Set the selected date */
-            theButton.setSelectedDateDay(myDate);
-
-            /* else set the selected date to null */
-        } else {
-            theButton.setSelectedDate(null);
+        /* Convert value */
+        Object myValue = value;
+        if (myValue instanceof TethysDate) {
+            TethysDate myDate = (TethysDate) myValue;
+            myValue = myDate.getDate();
         }
 
         /* Return the button as the component */
-        return theButton;
+        return super.getTableCellEditorComponent(table, myValue, isSelected, row, column);
     }
 }

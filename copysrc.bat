@@ -15,10 +15,10 @@ set source=c:\Users\Tony\%projectName%
 set target=c:\Users\Tony\sourceforge\%projectName%\trunk
 set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing jtethys\jtethys-javafx
 set dirNames=%dirNames% jgordianknot jgordianknot\jgordianknot-core jgordianknot\jgordianknot-swing jgordianknot\jgordianknot-javafx
-set dirNames=%dirNames% jmetis jmetis\jmetis-core jmetis\jmetis-swing
-set dirNames=%dirNames% jprometheus jprometheus\jprometheus-core jprometheus\jprometheus-swing
-set dirNames=%dirNames% jthemis jthemis\jthemis-core jthemis\jthemis-swing
-set dirNames=%dirNames% jmoneywise jmoneywise\jmoneywise-core jmoneywise\jmoneywise-swing
+set dirNames=%dirNames% jmetis jmetis\jmetis-core jmetis\jmetis-swing jmetis\jmetis-javafx
+set dirNames=%dirNames% jprometheus jprometheus\jprometheus-core jprometheus\jprometheus-swing jprometheus\jprometheus-javafx
+set dirNames=%dirNames% jthemis jthemis\jthemis-core jthemis\jthemis-swing jthemis\jthemis-javafx
+set dirNames=%dirNames% jmoneywise jmoneywise\jmoneywise-core jmoneywise\jmoneywise-swing jmoneywise\jmoneywise-javafx
 set dirNames=%dirNames% .
 
 :docopy

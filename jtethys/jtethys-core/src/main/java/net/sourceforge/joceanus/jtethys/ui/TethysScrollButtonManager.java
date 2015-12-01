@@ -67,12 +67,12 @@ public abstract class TethysScrollButtonManager<T, I>
     /**
      * Menu build.
      */
-    public static final int ACTION_MENU_BUILD = 101;
+    public static final int ACTION_MENU_BUILD = ACTION_NEW_VALUE + 100;
 
     /**
      * Menu cancelled.
      */
-    public static final int ACTION_MENU_CANCELLED = 102;
+    public static final int ACTION_MENU_CANCELLED = ACTION_MENU_BUILD + 1;
 
     /**
      * The Event Manager.

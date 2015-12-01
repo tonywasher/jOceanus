@@ -320,7 +320,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Refresh the model */

@@ -56,8 +56,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListe
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a TaxYear.
@@ -630,7 +630,7 @@ public class TaxYearPanel
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theRegimeMenuReg.isRelevant(pEvent)) {
                 buildRegimeMenu(theMenuBuilder, getItem());

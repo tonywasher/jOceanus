@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -66,17 +68,17 @@ public abstract class TethysListButtonManager<T, I>
     /**
      * Value updated.
      */
-    public static final int ACTION_TOGGLED = 100;
+    public static final int ACTION_ITEM_TOGGLED = TethysScrollButtonManager.ACTION_NEW_VALUE + 1;
 
     /**
      * Menu build.
      */
-    public static final int ACTION_MENU_BUILD = 101;
+    public static final int ACTION_MENU_BUILD = TethysScrollButtonManager.ACTION_MENU_BUILD;
 
     /**
      * Menu cancelled.
      */
-    public static final int ACTION_MENU_CANCELLED = 102;
+    public static final int ACTION_MENU_CANCELLED = TethysScrollButtonManager.ACTION_MENU_CANCELLED;
 
     /**
      * The Event Manager.
@@ -153,6 +155,7 @@ public abstract class TethysListButtonManager<T, I>
         /* reset the list of available items */
         theMenu.removeAllItems();
         theItemMap.clear();
+        theButton.setButtonText(null);
     }
 
     /**
@@ -177,6 +180,7 @@ public abstract class TethysListButtonManager<T, I>
             /* Clear the item */
             myItem.setSelected(false);
         }
+        theButton.setButtonText(null);
     }
 
     /**
@@ -188,6 +192,7 @@ public abstract class TethysListButtonManager<T, I>
         TethysScrollMenuToggleItem<T> myItem = theItemMap.get(pItem);
         if (myItem != null) {
             myItem.setSelected(true);
+            updateText();
         }
     }
 
@@ -200,6 +205,7 @@ public abstract class TethysListButtonManager<T, I>
         TethysScrollMenuToggleItem<T> myItem = theItemMap.get(pItem);
         if (myItem != null) {
             myItem.setSelected(false);
+            updateText();
         }
     }
 
@@ -247,7 +253,8 @@ public abstract class TethysListButtonManager<T, I>
         if ((mySelected != null)
             && (mySelected instanceof TethysScrollMenuToggleItem)) {
             /* Set the new value */
-            theEventManager.fireActionEvent(ACTION_TOGGLED, mySelected);
+            theEventManager.fireActionEvent(ACTION_ITEM_TOGGLED, mySelected);
+            updateText();
         }
     }
 
@@ -265,5 +272,45 @@ public abstract class TethysListButtonManager<T, I>
     private void notifyCancelled() {
         /* fire menu cancelled event */
         theEventManager.fireActionEvent(ACTION_MENU_CANCELLED);
+    }
+
+    /**
+     * Update the button text.
+     */
+    private void updateText() {
+        theButton.setButtonText(getText());
+    }
+
+    /**
+     * Obtain the list of selected values.
+     * @return the selected values
+     */
+    public List<T> getSelected() {
+        /* Build list */
+        List<T> myList = new ArrayList<T>();
+        for (TethysScrollMenuToggleItem<T> myItem : theItemMap.values()) {
+            if (myItem.isSelected()) {
+                myList.add(myItem.getValue());
+            }
+        }
+        return myList;
+    }
+
+    /**
+     * Obtain the text value.
+     * @return the formatted values
+     */
+    public String getText() {
+        /* Build text */
+        StringBuilder myBuilder = new StringBuilder();
+        for (TethysScrollMenuToggleItem<T> myItem : theItemMap.values()) {
+            if (myItem.isSelected()) {
+                if (myBuilder.length() > 0) {
+                    myBuilder.append(',');
+                }
+                myBuilder.append(myItem.getText());
+            }
+        }
+        return myBuilder.toString();
     }
 }

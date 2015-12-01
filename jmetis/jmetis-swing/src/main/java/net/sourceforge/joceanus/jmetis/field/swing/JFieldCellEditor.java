@@ -48,20 +48,17 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.jdatebutton.swing.JDateDialog.JDateEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellEditor;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.JOceanusItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -692,7 +689,7 @@ public final class JFieldCellEditor {
             }
 
             @Override
-            public void processChangeEvent(final TethysChangeEvent pEvent) {
+            public void processChange(final TethysChangeEvent pEvent) {
                 if (theMenuBuilder.buildingMenu()) {
                     theEventManager.fireStateChanged();
                 } else {
@@ -886,14 +883,14 @@ public final class JFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements JOceanusItemEventListener, TethysChangeEventListener {
+                implements TethysItemEventListener, TethysChangeEventListener {
             @Override
-            public void processChangeEvent(final TethysChangeEvent pEvent) {
+            public void processChange(final TethysChangeEvent pEvent) {
                 theEventManager.fireStateChanged();
             }
 
             @Override
-            public void processItemEvent(final TethysItemEvent pEvent) {
+            public void processItem(final TethysItemEvent pEvent) {
                 /* Access the table model */
                 TableModel myModel = theTable.getModel();
 
@@ -1167,11 +1164,11 @@ public final class JFieldCellEditor {
                                                       final int pColIndex) {
             /* Access the range */
             TethysDate myStart = (theRange == null)
-                                                  ? null
-                                                  : theRange.getStart();
+                                                    ? null
+                                                    : theRange.getStart();
             TethysDate myEnd = (theRange == null)
-                                                ? null
-                                                : theRange.getEnd();
+                                                  ? null
+                                                  : theRange.getEnd();
             TethysDate myCurr;
 
             /* If the value is null */
@@ -1211,17 +1208,12 @@ public final class JFieldCellEditor {
      * DateDay Cell Editor.
      */
     public static class DateDayCellEditor
-            extends AbstractCellEditor
-            implements TableCellEditor, JDateEditor, TethysEventProvider {
+            extends TethysSwingDateCellEditor
+            implements TethysEventProvider {
         /**
          * Serial Id.
          */
         private static final long serialVersionUID = 2421257860258168379L;
-
-        /**
-         * The Button.
-         */
-        private transient TethysSwingDateButton theButton;
 
         /**
          * The Event Manager.
@@ -1239,8 +1231,7 @@ public final class JFieldCellEditor {
          */
         protected DateDayCellEditor(final TethysDateFormatter pFormatter) {
             /* Create a new button */
-            theButton = new TethysSwingDateButton(pFormatter);
-            theButton.setEditor(this);
+            super(pFormatter);
 
             /* Create event manager */
             theEventManager = new TethysEventManager();
@@ -1249,14 +1240,6 @@ public final class JFieldCellEditor {
         @Override
         public TethysEventRegistrar getEventRegistrar() {
             return theEventManager.getEventRegistrar();
-        }
-
-        /**
-         * Obtain the DateConfig.
-         * @return the configuration
-         */
-        public TethysSwingDateConfig getDateConfig() {
-            return theButton.getDateConfig();
         }
 
         /**
@@ -1281,34 +1264,8 @@ public final class JFieldCellEditor {
             /* Enable updates to cellEditor */
             theEventManager.fireStateChanged();
 
-            /* If the value is the date */
-            if (pValue instanceof TethysDate) {
-                TethysDate myDate = (TethysDate) pValue;
-                /* Set the selected date */
-                theButton.setSelectedDateDay(myDate);
-
-                /* else set the selected date to null */
-            } else {
-                theButton.setSelectedDate(null);
-            }
-
-            /* Return the button as the component */
-            return theButton;
-        }
-
-        @Override
-        public void fireEditingCanceledEvent() {
-            fireEditingCanceled();
-        }
-
-        @Override
-        public void fireEditingStoppedEvent() {
-            fireEditingStopped();
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return theButton.getSelectedDateDay();
+            /* Pass call on */
+            return super.getTableCellEditorComponent(pTable, pValue, isSelected, pRowIndex, pColIndex);
         }
     }
 

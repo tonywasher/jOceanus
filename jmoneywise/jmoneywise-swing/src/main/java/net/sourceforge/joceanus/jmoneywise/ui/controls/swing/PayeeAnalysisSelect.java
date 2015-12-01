@@ -259,7 +259,7 @@ public class PayeeAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the PayeeMenu */
             if (thePayeeMenuReg.isRelevant(pEvent)) {
                 buildPayeeMenu();

@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -34,6 +36,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -42,23 +45,34 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXDilutedPriceTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXDilutionTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXIntegerTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXLongTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXMoneyTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXPriceTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXRateTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXRatioTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXShortTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataEditField.TethysFXUnitsTextField;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutedPriceTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutionTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXIntegerTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXLongTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXMoneyTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXPriceTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRateTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRatioTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 
@@ -70,12 +84,32 @@ public class TethysFXEditUIExample
     /**
      * The padding.
      */
-    private static final int PADDING = 5;
+    private static final int PADDING = 3;
 
     /**
      * The value width.
      */
     private static final int VALUE_WIDTH = 200;
+
+    /**
+     * Default icon width.
+     */
+    private static final int DEFAULT_ICONWIDTH = 24;
+
+    /**
+     * Open True icon.
+     */
+    private static final Image OPEN_TRUE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("GreenJellyOpenTrue.png"));
+
+    /**
+     * Open False icon.
+     */
+    private static final Image OPEN_FALSE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("GreenJellyOpenFalse.png"));
+
+    /**
+     * The Test helper.
+     */
+    private final TethysScrollUITestHelper<Node> theHelper;
 
     /**
      * The string edit field.
@@ -133,6 +167,46 @@ public class TethysFXEditUIExample
     private final TethysFXRatioTextField theRatioField;
 
     /**
+     * The icon button manager.
+     */
+    private final TethysFXSimpleIconButtonManager<Boolean> theIconButtonMgr;
+
+    /**
+     * The icon button field.
+     */
+    private final TethysFXIconButtonField<Boolean> theIconField;
+
+    /**
+     * The scroll button manager.
+     */
+    private final TethysFXScrollButtonManager<String> theScrollButtonMgr;
+
+    /**
+     * The scroll button field.
+     */
+    private final TethysFXScrollButtonField<String> theScrollField;
+
+    /**
+     * The date button manager.
+     */
+    private final TethysFXDateButtonManager theDateButtonMgr;
+
+    /**
+     * The date button field.
+     */
+    private final TethysFXDateButtonField theDateField;
+
+    /**
+     * The list button manager.
+     */
+    private final TethysFXListButtonManager<String> theListButtonMgr;
+
+    /**
+     * The list button field.
+     */
+    private final TethysFXListButtonField<String> theListField;
+
+    /**
      * The source.
      */
     private final Label theSource;
@@ -153,16 +227,24 @@ public class TethysFXEditUIExample
     private final TethysDecimalFormatter theFormatter;
 
     /**
+     * The selected list values.
+     */
+    private final List<String> theSelectedValues;
+
+    /**
      * Constructor.
      */
     public TethysFXEditUIExample() {
+        /* Create helper */
+        theHelper = new TethysScrollUITestHelper<Node>();
+
         /* Create formatters/parsers */
         theFormatter = new TethysDecimalFormatter();
         TethysDecimalParser myParser = new TethysDecimalParser();
 
         /* Create resources */
         theStringField = new TethysFXStringTextField();
-        theStringField.showCommandButton(true);
+        theStringField.showCmdButton(true);
         theShortField = new TethysFXShortTextField(theFormatter, myParser);
         theIntegerField = new TethysFXIntegerTextField(theFormatter, myParser);
         theLongField = new TethysFXLongTextField(theFormatter, myParser);
@@ -176,6 +258,17 @@ public class TethysFXEditUIExample
         theSource = new Label();
         theClass = new Label();
         theValue = new Label();
+        theSelectedValues = new ArrayList<String>();
+
+        /* Create button fields */
+        theScrollButtonMgr = new TethysFXScrollButtonManager<String>();
+        theScrollField = new TethysFXScrollButtonField<String>(theScrollButtonMgr);
+        theDateButtonMgr = new TethysFXDateButtonManager();
+        theDateField = new TethysFXDateButtonField(theDateButtonMgr);
+        theIconButtonMgr = new TethysFXSimpleIconButtonManager<Boolean>();
+        theIconField = new TethysFXIconButtonField<Boolean>(theIconButtonMgr);
+        theListButtonMgr = new TethysFXListButtonManager<String>();
+        theListField = new TethysFXListButtonField<String>(theListButtonMgr);
     }
 
     /**
@@ -194,7 +287,7 @@ public class TethysFXEditUIExample
         /* Create scene */
         Scene myScene = new Scene(new Group());
         ((Group) myScene.getRoot()).getChildren().addAll(myMain);
-        pStage.setTitle("DateFXTextField Demo");
+        pStage.setTitle("JavaFXEdit Demo");
         TethysFXGuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);
         pStage.show();
@@ -247,8 +340,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theStringField.getNode());
         theStringField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theStringField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theStringField, pEvent);
             }
         });
 
@@ -258,8 +351,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theShortField.getNode());
         theShortField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theShortField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theShortField, pEvent);
             }
         });
 
@@ -269,8 +362,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theIntegerField.getNode());
         theIntegerField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theIntegerField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theIntegerField, pEvent);
             }
         });
 
@@ -280,8 +373,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theLongField.getNode());
         theLongField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theLongField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theLongField, pEvent);
             }
         });
 
@@ -291,8 +384,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theMoneyField.getNode());
         theMoneyField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theMoneyField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theMoneyField, pEvent);
             }
         });
 
@@ -302,8 +395,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, thePriceField.getNode());
         thePriceField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(thePriceField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(thePriceField, pEvent);
             }
         });
 
@@ -313,8 +406,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theUnitsField.getNode());
         theUnitsField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theUnitsField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theUnitsField, pEvent);
             }
         });
 
@@ -324,8 +417,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theRateField.getNode());
         theRateField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theRateField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theRateField, pEvent);
             }
         });
 
@@ -335,8 +428,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theRatioField.getNode());
         theRatioField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theRatioField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theRatioField, pEvent);
             }
         });
 
@@ -346,8 +439,8 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theDilutionField.getNode());
         theDilutionField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theDilutionField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theDilutionField, pEvent);
             }
         });
 
@@ -357,8 +450,91 @@ public class TethysFXEditUIExample
         myPane.addRow(myRowNo++, myLabel, theDilutedPriceField.getNode());
         theDilutedPriceField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
-                processAction(theDilutedPriceField, pEvent);
+            public void processAction(final TethysActionEvent pEvent) {
+                processActionEvent(theDilutedPriceField, pEvent);
+            }
+        });
+
+        /* Create ScrollButton field line */
+        myLabel = new Label("ScrollButton:");
+        GridPane.setHalignment(myLabel, HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel, theScrollField.getNode());
+        theScrollField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case TethysDataEditField.ACTION_NEW_VALUE:
+                        processActionEvent(theScrollField, pEvent);
+                        break;
+                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
+                        theHelper.buildContextMenu(theScrollButtonMgr.getMenu());
+                        break;
+                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create DateButton field line */
+        myLabel = new Label("DateButton:");
+        GridPane.setHalignment(myLabel, HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel, theDateField.getNode());
+        theDateField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case TethysDataEditField.ACTION_NEW_VALUE:
+                        processActionEvent(theDateField, pEvent);
+                        break;
+                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
+                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create IconButton field line */
+        myLabel = new Label("IconButton:");
+        GridPane.setHalignment(myLabel, HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel, theIconField.getNode());
+        theHelper.buildSimpleIconState(theIconButtonMgr,
+                TethysFXGuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
+                TethysFXGuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH));
+        theIconField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case TethysDataEditField.ACTION_NEW_VALUE:
+                        processActionEvent(theIconField, pEvent);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create ListButton field line */
+        myLabel = new Label("ListButton:");
+        GridPane.setHalignment(myLabel, HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel, theListField.getNode());
+        theListButtonMgr.getMenu().setCloseOnToggle(false);
+        theListField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case TethysDataEditField.ACTION_ITEM_TOGGLED:
+                        setListValue(pEvent.getDetails(TethysScrollMenuToggleItem.class));
+                        processActionEvent(theListField, pEvent);
+                        break;
+                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
+                        theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues);
+                        break;
+                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
+                    default:
+                        break;
+                }
             }
         });
 
@@ -427,7 +603,7 @@ public class TethysFXEditUIExample
         setCurrency(myDefault);
         myCurrencyMgr.getEventRegistrar().addFilteredActionListener(TethysFXScrollButtonManager.ACTION_NEW_VALUE, new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 setCurrency(pEvent.getDetails(Currency.class));
             }
         });
@@ -462,6 +638,10 @@ public class TethysFXEditUIExample
         theRatioField.setEditable(pDoEdit);
         theDilutionField.setEditable(pDoEdit);
         theDilutedPriceField.setEditable(pDoEdit);
+        theScrollField.setEditable(pDoEdit);
+        theDateField.setEditable(pDoEdit);
+        theIconField.setEditable(pDoEdit);
+        theListField.setEditable(pDoEdit);
     }
 
     /**
@@ -477,28 +657,41 @@ public class TethysFXEditUIExample
 
     /**
      * Process action.
-     * @param pSource the source of the action
-     * @param pResults the results
+     * @param pField the source of the action
+     * @param pEvent the event
      */
-    private void processAction(final TethysDataEditField<?, Node, Node> pField,
-                               final TethysActionEvent pEvent) {
+    private void processActionEvent(final TethysFXDataTextField<?> pField,
+                                    final TethysActionEvent pEvent) {
         /* Determine source */
         String mySource = pField.getClass().getSimpleName();
 
         /* Switch on action */
         switch (pEvent.getActionId()) {
             case TethysDataEditField.ACTION_NEW_VALUE:
+            case TethysDataEditField.ACTION_ITEM_TOGGLED:
                 setResults(mySource, pEvent.getDetails());
                 break;
             case TethysDataEditField.ACTION_NEW_COMMAND:
                 setResults(mySource + "-Cmd", pEvent.getDetails());
                 break;
-            case TethysDataEditField.ACTION_CMDMENU_BUILD:
-                pField.getMenu().removeAllItems();
-                pField.getMenu().addItem("TestCmd");
+            case TethysDataEditField.ACTION_COMMAND_PREPARE:
+                pField.getCmdMenu().removeAllItems();
+                pField.getCmdMenu().addItem("TestCmd");
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Set the list value.
+     * @param pValue the value to set
+     */
+    private void setListValue(final TethysScrollMenuToggleItem<?> pValue) {
+        /* Record the value */
+        if (pValue != null) {
+            String myValue = (String) pValue.getValue();
+            theHelper.adjustSelected(myValue, theSelectedValues);
         }
     }
 
@@ -528,6 +721,14 @@ public class TethysFXEditUIExample
             theValue.setText(theFormatter.formatLong((Long) pResults));
         } else if (pResults instanceof TethysDecimal) {
             theValue.setText(theFormatter.formatDecimal((TethysDecimal) pResults));
+        } else if (pResults instanceof Boolean) {
+            theValue.setText(pResults.toString());
+        } else if (pResults instanceof Boolean) {
+            theValue.setText(pResults.toString());
+        } else if (pResults instanceof TethysScrollMenuItem) {
+            theValue.setText(((TethysScrollMenuItem<?>) pResults).getText());
+        } else if (pResults instanceof TethysDate) {
+            theValue.setText(((TethysDate) pResults).toString());
         } else {
             theValue.setText(null);
         }

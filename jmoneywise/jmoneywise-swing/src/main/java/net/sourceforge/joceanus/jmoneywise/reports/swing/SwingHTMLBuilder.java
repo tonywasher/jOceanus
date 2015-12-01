@@ -32,8 +32,8 @@ import javax.swing.text.html.StyleSheet;
 import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 
@@ -356,7 +356,7 @@ public class SwingHTMLBuilder
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             processFieldConfig();
         }
     }

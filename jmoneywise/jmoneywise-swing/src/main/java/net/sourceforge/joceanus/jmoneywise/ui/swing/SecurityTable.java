@@ -558,7 +558,7 @@ public class SecurityTable
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If we are performing a rewind */
             if (theUpdateSetReg.isRelevant(pEvent)) {
                 /* Only action if we are not editing */
@@ -596,7 +596,7 @@ public class SecurityTable
         }
 
         @Override
-        public void processActionEvent(final TethysActionEvent pEvent) {
+        public void processAction(final TethysActionEvent pEvent) {
             cascadeActionEvent(pEvent);
         }
 
@@ -955,7 +955,7 @@ public class SecurityTable
             }
 
             @Override
-            public void processChangeEvent(final TethysChangeEvent pEvent) {
+            public void processChange(final TethysChangeEvent pEvent) {
                 if (theTypeReg.isRelevant(pEvent)) {
                     buildSecurityTypeMenu();
                 } else if (theParentReg.isRelevant(pEvent)) {

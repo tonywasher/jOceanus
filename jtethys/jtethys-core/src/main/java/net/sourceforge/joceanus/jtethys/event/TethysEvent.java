@@ -37,7 +37,7 @@ public abstract class TethysEvent {
          * Process a TethysEvent.
          * @param pEvent the event to process
          */
-        void processChangeEvent(final TethysChangeEvent pEvent);
+        void processChange(final TethysChangeEvent pEvent);
     }
 
     /**
@@ -48,18 +48,18 @@ public abstract class TethysEvent {
          * Process a TethysActionEvent.
          * @param pEvent the event to process
          */
-        void processActionEvent(final TethysActionEvent pEvent);
+        void processAction(final TethysActionEvent pEvent);
     }
 
     /**
      * Interface for item event consumers.
      */
-    public interface JOceanusItemEventListener {
+    public interface TethysItemEventListener {
         /**
          * Process a TethysItemEvent.
          * @param pEvent the event to process
          */
-        void processItemEvent(final TethysItemEvent pEvent);
+        void processItem(final TethysItemEvent pEvent);
     }
 
     /**

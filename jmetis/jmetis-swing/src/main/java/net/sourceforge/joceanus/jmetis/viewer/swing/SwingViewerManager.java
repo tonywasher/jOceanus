@@ -162,7 +162,7 @@ public class SwingViewerManager
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             processFieldConfig();
         }
     }

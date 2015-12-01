@@ -1039,7 +1039,7 @@ public class AnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Ignore if we are refreshing */
             if (isRefreshing) {
                 return;

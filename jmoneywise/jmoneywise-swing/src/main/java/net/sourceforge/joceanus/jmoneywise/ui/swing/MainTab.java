@@ -545,7 +545,7 @@ public class MainTab
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Set Visibility */
             setVisibility();
         }
@@ -579,7 +579,7 @@ public class MainTab
         }
 
         @Override
-        public void processActionEvent(final TethysActionEvent pEvent) {
+        public void processAction(final TethysActionEvent pEvent) {
             /* Pass out the request */
             switch (pEvent.getActionId()) {
                 /* View the requested statement */

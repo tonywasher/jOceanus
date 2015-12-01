@@ -478,7 +478,7 @@ public class SpotPricesSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the PortfolioMenu */
             if (thePortMenuReg.isRelevant(pEvent)) {
                 buildPortfolioMenu();

@@ -331,7 +331,7 @@ public class DepositCategoryPanel
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle menu builders */
             if (theTypeMenuReg.isRelevant(pEvent)) {
                 buildCategoryTypeMenu(theTypeMenuBuilder, getItem());

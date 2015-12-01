@@ -336,7 +336,7 @@ public class DepositAnalysisSelect
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle builders */
             if (theCategoryMenuReg.isRelevant(pEvent)) {
                 buildCategoryMenu();

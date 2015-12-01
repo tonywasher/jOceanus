@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday;
+package net.sourceforge.joceanus.jtethys.date;
 
 import java.time.Month;
 import java.util.ArrayList;

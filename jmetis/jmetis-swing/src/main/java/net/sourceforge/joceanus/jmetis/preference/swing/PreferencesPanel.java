@@ -403,7 +403,7 @@ public class PreferencesPanel
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (thePrefMenuReg.isRelevant(pEvent)) {
                 /* Build the preference menu */
@@ -503,7 +503,7 @@ public class PreferencesPanel
         }
 
         @Override
-        public void processActionEvent(final TethysActionEvent pEvent) {
+        public void processAction(final TethysActionEvent pEvent) {
             /* If this is a new preference set */
             if (thePrefSetReg.isRelevant(pEvent)) {
                 /* Details is the property set that has been added */

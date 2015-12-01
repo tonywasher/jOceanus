@@ -203,7 +203,7 @@ public class TethysSwingDateConfig
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent e) {
+        public void processChange(final TethysChangeEvent e) {
             setTheLocale(theFormatter.getLocale());
             refreshText();
         }

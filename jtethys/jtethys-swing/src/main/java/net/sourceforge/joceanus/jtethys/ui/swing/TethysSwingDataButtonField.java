@@ -20,12 +20,13 @@
  * $Author: Tony $
  * $Date: 2015-03-03 17:54:12 +0000 (Tue, 03 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.text.Font;
-import net.sourceforge.jdatebutton.javafx.JDateButton;
+import java.awt.Font;
+
+import javax.swing.Icon;
+
+import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
@@ -33,54 +34,46 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Generic class for displaying and editing a button data field.
  */
-public final class TethysFXDataButtonField {
+public class TethysSwingDataButtonField {
     /**
      * Private constructor.
      */
-    private TethysFXDataButtonField() {
+    private TethysSwingDataButtonField() {
     }
 
     /**
      * IconButtonField class.
      * @param <T> the data type
      */
-    public static class TethysFXIconButtonField<T>
-            extends TethysFXDataTextField<T> {
+    public static class TethysSwingIconButtonField<T>
+            extends TethysSwingDataTextField<T> {
         /**
          * The icon manager.
          */
-        private final TethysIconButtonManager<T, Node> theManager;
+        private final TethysIconButtonManager<T, Icon> theManager;
 
         /**
          * The button.
          */
-        private final TethysFXIconButton theButton;
-
-        /**
-         * The icon.
-         */
-        private Node theIcon;
+        private final TethysSwingIconButton theButton;
 
         /**
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXIconButtonField(final TethysIconButtonManager<T, Node> pManager) {
+        public TethysSwingIconButtonField(final TethysIconButtonManager<T, Icon> pManager) {
             /* Initialise underlying class */
-            super((TethysFXIconButton) pManager.getButton());
+            super((TethysSwingIconButton) pManager.getButton());
 
             /* Store the manager and button */
             theManager = pManager;
             theButton = getEditControl();
-
-            /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
@@ -96,13 +89,13 @@ public final class TethysFXDataButtonField {
          * Obtain the manager.
          * @return the manager
          */
-        public TethysIconButtonManager<T, Node> getIconManager() {
+        public TethysIconButtonManager<T, Icon> getIconManager() {
             return theManager;
         }
 
         @Override
-        protected TethysFXIconButton getEditControl() {
-            return (TethysFXIconButton) super.getEditControl();
+        protected TethysSwingIconButton getEditControl() {
+            return (TethysSwingIconButton) super.getEditControl();
         }
 
         @Override
@@ -119,37 +112,7 @@ public final class TethysFXDataButtonField {
 
             /* Declare value to the manager */
             theManager.setValue(pValue);
-            theIcon = theButton.getGraphic();
-
-            /* If we are not currently editable */
-            if (!isEditable()) {
-                /* Switch the icon into the label */
-                theButton.setGraphic(null);
-                getLabel().setGraphic(theIcon);
-            }
-        }
-
-        @Override
-        public void setEditable(final boolean pEditable) {
-            /* Obtain current setting */
-            boolean isEditable = isEditable();
-
-            /* If we are changing */
-            if (pEditable != isEditable) {
-                /* If we are setting editable */
-                if (pEditable) {
-                    /* Switch the icon into the button */
-                    getLabel().setGraphic(null);
-                    theButton.setGraphic(theIcon);
-                } else {
-                    /* Switch the icon into the label */
-                    theButton.setGraphic(null);
-                    getLabel().setGraphic(theIcon);
-                }
-
-                /* Pass call on */
-                super.setEditable(pEditable);
-            }
+            getLabel().setIcon(theButton.getIcon());
         }
     }
 
@@ -157,32 +120,29 @@ public final class TethysFXDataButtonField {
      * ScrollButtonField class.
      * @param <T> the data type
      */
-    public static class TethysFXScrollButtonField<T>
-            extends TethysFXDataTextField<T> {
+    public static class TethysSwingScrollButtonField<T>
+            extends TethysSwingDataTextField<T> {
         /**
          * The scroll manager.
          */
-        private final TethysFXScrollButtonManager<T> theManager;
+        private final TethysSwingScrollButtonManager<T> theManager;
 
         /**
          * The button.
          */
-        private final TethysFXScrollButton theButton;
+        private final TethysSwingScrollButton theButton;
 
         /**
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXScrollButtonField(final TethysFXScrollButtonManager<T> pManager) {
+        public TethysSwingScrollButtonField(final TethysSwingScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super((TethysFXScrollButton) pManager.getButton());
+            super((TethysSwingScrollButton) pManager.getButton());
 
             /* Store the manager and button */
             theManager = pManager;
             theButton = getEditControl();
-
-            /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
@@ -208,13 +168,13 @@ public final class TethysFXDataButtonField {
          * Obtain the manager.
          * @return the manager
          */
-        public TethysFXScrollButtonManager<T> getScrollManager() {
+        public TethysSwingScrollButtonManager<T> getScrollManager() {
             return theManager;
         }
 
         @Override
-        protected TethysFXScrollButton getEditControl() {
-            return (TethysFXScrollButton) super.getEditControl();
+        protected TethysSwingScrollButton getEditControl() {
+            return (TethysSwingScrollButton) super.getEditControl();
         }
 
         @Override
@@ -238,12 +198,12 @@ public final class TethysFXDataButtonField {
     /**
      * DateButtonField class.
      */
-    public static class TethysFXDateButtonField
-            extends TethysFXDataTextField<TethysDate> {
+    public static class TethysSwingDateButtonField
+            extends TethysSwingDataTextField<TethysDate> {
         /**
          * The date manager.
          */
-        private final TethysFXDateButtonManager theManager;
+        private final TethysSwingDateButtonManager theManager;
 
         /**
          * The button.
@@ -254,16 +214,13 @@ public final class TethysFXDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXDateButtonField(final TethysFXDateButtonManager pManager) {
+        public TethysSwingDateButtonField(final TethysSwingDateButtonManager pManager) {
             /* Initialise underlying class */
             super((JDateButton) pManager.getButton());
 
             /* Store the manager and button */
             theManager = pManager;
             theButton = getEditControl();
-
-            /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
@@ -288,7 +245,7 @@ public final class TethysFXDataButtonField {
          * Obtain the manager.
          * @return the manager
          */
-        public TethysFXDateButtonManager getDateManager() {
+        public TethysSwingDateButtonManager getDateManager() {
             return theManager;
         }
 
@@ -319,32 +276,29 @@ public final class TethysFXDataButtonField {
      * ListButtonField class.
      * @param <T> the data type
      */
-    public static class TethysFXListButtonField<T>
-            extends TethysFXDataTextField<T> {
+    public static class TethysSwingListButtonField<T>
+            extends TethysSwingDataTextField<T> {
         /**
-         * The list manager.
+         * The icon manager.
          */
-        private final TethysFXListButtonManager<T> theManager;
+        private final TethysSwingListButtonManager<T> theManager;
 
         /**
          * The button.
          */
-        private final TethysFXListButton theButton;
+        private final TethysSwingListButton theButton;
 
         /**
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXListButtonField(final TethysFXListButtonManager<T> pManager) {
+        public TethysSwingListButtonField(final TethysSwingListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super((TethysFXListButton) pManager.getButton());
+            super((TethysSwingListButton) pManager.getButton());
 
             /* Store the manager and button */
             theManager = pManager;
             theButton = getEditControl();
-
-            /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
@@ -370,13 +324,13 @@ public final class TethysFXDataButtonField {
          * Obtain the manager.
          * @return the manager
          */
-        public TethysFXListButtonManager<T> getListManager() {
+        public TethysSwingListButtonManager<T> getListManager() {
             return theManager;
         }
 
         @Override
-        protected TethysFXListButton getEditControl() {
-            return (TethysFXListButton) super.getEditControl();
+        protected TethysSwingListButton getEditControl() {
+            return (TethysSwingListButton) super.getEditControl();
         }
 
         @Override

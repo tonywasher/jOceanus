@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.event;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.JOceanusItemEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
 
 /**
  * Registration structure for event listeners.
@@ -163,7 +163,7 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
 
         @Override
         protected void processEvent(final TethysActionEvent pEvent) {
-            theListener.processActionEvent(pEvent);
+            theListener.processAction(pEvent);
         }
 
         /**
@@ -200,7 +200,7 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
 
         @Override
         protected void processEvent(final TethysChangeEvent pEvent) {
-            theListener.processChangeEvent(pEvent);
+            theListener.processChange(pEvent);
         }
     }
 
@@ -212,7 +212,7 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
         /**
          * Item listener.
          */
-        private final JOceanusItemEventListener theListener;
+        private final TethysItemEventListener theListener;
 
         /**
          * Constructor.
@@ -220,14 +220,14 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
          * @param pListener the listener
          */
         protected TethysItemRegistration(final Integer pMgrId,
-                                         final JOceanusItemEventListener pListener) {
+                                         final TethysItemEventListener pListener) {
             super(pMgrId, RegistrationType.ITEM);
             theListener = pListener;
         }
 
         @Override
         protected void processEvent(final TethysItemEvent pEvent) {
-            theListener.processItemEvent(pEvent);
+            theListener.processItem(pEvent);
         }
     }
 

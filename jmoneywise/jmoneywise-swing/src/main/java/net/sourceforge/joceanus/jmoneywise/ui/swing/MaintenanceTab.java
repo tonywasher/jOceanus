@@ -536,7 +536,7 @@ public class MaintenanceTab
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the data view */
             if (theViewReg.isRelevant(pEvent)) {
                 /* Refresh the data locking visibility setting for the duration */
@@ -566,7 +566,7 @@ public class MaintenanceTab
         }
 
         @Override
-        public void processActionEvent(final TethysActionEvent pEvent) {
+        public void processAction(final TethysActionEvent pEvent) {
             /* else handle or cascade */
             switch (pEvent.getActionId()) {
                 /* Pass through the event */

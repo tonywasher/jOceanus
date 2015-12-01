@@ -43,10 +43,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * Generic class for displaying and editing a data field.
  * @param <T> the data type
- * @param <N> the node type
+ * @param <N> the Node type
+ * @param <C> the Colour type
+ * @param <F> the Font type
  * @param <I> the Icon type
  */
-public abstract class TethysDataEditField<T, N, I>
+public abstract class TethysDataEditField<T, N, C, F, I>
         implements TethysEventProvider {
     /**
      * DataEditConverter interface.
@@ -85,17 +87,32 @@ public abstract class TethysDataEditField<T, N, I>
     /**
      * Value updated.
      */
-    public static final int ACTION_NEW_VALUE = 100;
+    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
+
+    /**
+     * Value updated.
+     */
+    public static final int ACTION_ITEM_TOGGLED = TethysListButtonManager.ACTION_ITEM_TOGGLED;
+
+    /**
+     * Dialog prepare.
+     */
+    public static final int ACTION_DIALOG_PREPARE = TethysScrollButtonManager.ACTION_MENU_BUILD;
+
+    /**
+     * Dialog cancelled.
+     */
+    public static final int ACTION_DIALOG_CANCELLED = TethysScrollButtonManager.ACTION_MENU_CANCELLED;
 
     /**
      * Command issued.
      */
-    public static final int ACTION_NEW_COMMAND = 101;
+    public static final int ACTION_NEW_COMMAND = ACTION_NEW_VALUE + 200;
 
     /**
      * Command Menu build.
      */
-    public static final int ACTION_CMDMENU_BUILD = 102;
+    public static final int ACTION_COMMAND_PREPARE = ACTION_NEW_COMMAND + 1;
 
     /**
      * Invalid value text.
@@ -118,9 +135,9 @@ public abstract class TethysDataEditField<T, N, I>
     private T theValue;
 
     /**
-     * The ScrollMenu.
+     * The CommandMenu.
      */
-    private TethysScrollMenu<String, I> theMenu;
+    private TethysScrollMenu<String, I> theCmdMenu;
 
     /**
      * Constructor.
@@ -163,11 +180,11 @@ public abstract class TethysDataEditField<T, N, I>
     }
 
     /**
-     * Obtain the menu.
-     * @return the menu.
+     * Obtain the command menu.
+     * @return the command menu.
      */
-    public TethysScrollMenu<String, I> getMenu() {
-        return theMenu;
+    public TethysScrollMenu<String, I> getCmdMenu() {
+        return theCmdMenu;
     }
 
     @Override
@@ -185,25 +202,25 @@ public abstract class TethysDataEditField<T, N, I>
     }
 
     /**
-     * handleMenuRequest.
+     * handleCmdMenuRequest.
      */
-    public void handleMenuRequest() {
+    public void handleCmdMenuRequest() {
         /* fire menuBuild actionEvent */
-        fireEvent(ACTION_CMDMENU_BUILD, theMenu);
+        fireEvent(ACTION_COMMAND_PREPARE, theCmdMenu);
 
         /* If a menu is provided */
-        if (!theMenu.isEmpty()) {
+        if (!theCmdMenu.isEmpty()) {
             /* Show the menu */
-            showMenu();
+            showCmdMenu();
         }
     }
 
     /**
-     * handleMenuClosed.
+     * handleCmdMenuClosed.
      */
-    protected void handleMenuClosed() {
+    protected void handleCmdMenuClosed() {
         /* If we selected a value */
-        TethysScrollMenuItem<String> mySelected = theMenu.getSelectedItem();
+        TethysScrollMenuItem<String> mySelected = theCmdMenu.getSelectedItem();
         if (mySelected != null) {
             /* fire new command actionEvent */
             theEventManager.fireActionEvent(ACTION_NEW_COMMAND, mySelected.getValue());
@@ -217,27 +234,45 @@ public abstract class TethysDataEditField<T, N, I>
     public abstract N getNode();
 
     /**
-     * Show the menu.
+     * Show the command menu.
      */
-    protected abstract void showMenu();
+    protected abstract void showCmdMenu();
 
     /**
-     * Declare menu.
+     * Declare command menu.
      * @param pMenu the menu
      */
-    protected void declareMenu(final TethysScrollMenu<String, I> pMenu) {
+    protected void declareCmdMenu(final TethysScrollMenu<String, I> pMenu) {
         /* Store the menu */
-        theMenu = pMenu;
+        theCmdMenu = pMenu;
     }
+
+    /**
+     * Set the font.
+     * @param pFont the font for the field
+     */
+    public abstract void setFont(final F pFont);
+
+    /**
+     * Set the textFill colour.
+     * @param pColor the colour
+     */
+    public abstract void setTextFill(final C pColor);
 
     /**
      * DataEditTextField base class.
      * @param <T> the data type
-     * @param <N> the node type
+     * @param <N> the Node type
+     * @param <C> the Colour type
+     * @param <F> the Font type
      * @param <I> the Icon type
      */
-    public abstract static class TethysDataEditTextFieldBase<T, N, I>
-            extends TethysDataEditField<T, N, I> {
+    protected static class TethysDataEditTextFieldControl<T> {
+        /**
+         * The Field.
+         */
+        private final TethysDataEditField<T, ?, ?, ?, ?> theField;
+
         /**
          * The DataConverter.
          */
@@ -255,10 +290,12 @@ public abstract class TethysDataEditField<T, N, I>
 
         /**
          * Constructor.
+         * @param pField the owing field
          * @param pConverter the data converter
          */
-        protected TethysDataEditTextFieldBase(final TethysDataEditConverter<T> pConverter) {
-            /* Store parameter */
+        public TethysDataEditTextFieldControl(final TethysDataEditField<T, ?, ?, ?, ?> pField,
+                                              final TethysDataEditConverter<T> pConverter) {
+            theField = pField;
             theConverter = pConverter;
         }
 
@@ -266,7 +303,7 @@ public abstract class TethysDataEditField<T, N, I>
          * Obtain the display text.
          * @return the display text.
          */
-        protected String getDisplayText() {
+        public String getDisplayText() {
             return theDisplay;
         }
 
@@ -274,7 +311,7 @@ public abstract class TethysDataEditField<T, N, I>
          * Obtain the edit text.
          * @return the edit text.
          */
-        protected String getEditText() {
+        public String getEditText() {
             return theEdit;
         }
 
@@ -282,7 +319,7 @@ public abstract class TethysDataEditField<T, N, I>
          * Obtain the converter.
          * @return the converter.
          */
-        protected TethysDataEditConverter<T> getConverter() {
+        public TethysDataEditConverter<T> getConverter() {
             return theConverter;
         }
 
@@ -291,7 +328,7 @@ public abstract class TethysDataEditField<T, N, I>
          * @param pNewValue the new value
          * @return is value valid?
          */
-        protected boolean processValue(final String pNewValue) {
+        public boolean processValue(final String pNewValue) {
             /* NullOp if there are no changes */
             if (!Objects.equals(pNewValue, theEdit)) {
                 /* Protect to catch parsing errors */
@@ -303,7 +340,7 @@ public abstract class TethysDataEditField<T, N, I>
 
                     /* set the value and fire Event */
                     setValue(myValue);
-                    fireEvent(ACTION_NEW_VALUE, myValue);
+                    theField.fireEvent(ACTION_NEW_VALUE, myValue);
 
                     /* Catch parsing error */
                 } catch (IllegalArgumentException e) {
@@ -315,11 +352,11 @@ public abstract class TethysDataEditField<T, N, I>
             return true;
         }
 
-        @Override
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
         public void setValue(final T pValue) {
-            /* Store the value */
-            super.setValue(pValue);
-
             /* Obtain display text */
             theDisplay = pValue == null
                                         ? null
@@ -329,6 +366,9 @@ public abstract class TethysDataEditField<T, N, I>
             theEdit = pValue == null
                                      ? null
                                      : theConverter.formatEditValue(pValue);
+
+            /* Store the value */
+            theField.setValue(pValue);
         }
     }
 

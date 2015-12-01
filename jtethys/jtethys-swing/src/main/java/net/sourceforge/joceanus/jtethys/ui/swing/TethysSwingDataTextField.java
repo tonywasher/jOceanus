@@ -37,6 +37,7 @@ import java.util.Currency;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -54,73 +55,195 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDataEditTextFieldBase;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 
 /**
  * Generic class for displaying and editing a data field.
+ * @param <T> the data type
  */
-public abstract class TethysSwingDataEditField {
+public abstract class TethysSwingDataTextField<T>
+        extends TethysDataEditField<T, JPanel, Color, Font, Icon> {
     /**
-     * Private constructor.
+     * The label name.
      */
-    private TethysSwingDataEditField() {
+    private static final String NAME_LABEL = "Label";
+
+    /**
+     * The edit name.
+     */
+    private static final String NAME_EDIT = "Edit";
+
+    /**
+     * The error colour.
+     */
+    private static final Color COLOR_ERROR = Color.decode("#DC381F");
+
+    /**
+     * The panel.
+     */
+    private final JPanel theNode;
+
+    /**
+     * The edit node.
+     */
+    private final JPanel theEditNode;
+
+    /**
+     * The edit control.
+     */
+    private final JComponent theEditControl;
+
+    /**
+     * The label.
+     */
+    private final JLabel theLabel;
+
+    /**
+     * The card layout.
+     */
+    private final CardLayout theLayout;
+
+    /**
+     * The command button.
+     */
+    private final JButton theCmdButton;
+
+    /**
+     * Do we show the command button?
+     */
+    private boolean doShowCmdButton;
+
+    /**
+     * Constructor.
+     * @param pEditControl the edit Control
+     */
+    protected TethysSwingDataTextField(final JComponent pEditControl) {
+        /* Create resources */
+        theNode = new JPanel();
+        theLabel = new JLabel();
+        theEditNode = new JPanel();
+        theEditControl = pEditControl;
+
+        /* Create the command button */
+        theCmdButton = new JButton();
+        theCmdButton.setIcon(TethysSwingArrowIcon.DOWN);
+        theCmdButton.setMargin(new Insets(0, 0, 0, 0));
+        theCmdButton.setFocusable(false);
+
+        /* declare the command menu */
+        declareCmdMenu(new TethysSwingScrollContextMenu<String>());
+
+        /* Build the edit node */
+        theEditNode.setLayout(new BorderLayout());
+        theEditNode.add(theEditControl, BorderLayout.CENTER);
+
+        /* Default to readOnly */
+        theLayout = new CardLayout();
+        theNode.setLayout(theLayout);
+        theNode.add(theLabel, NAME_LABEL);
+        theNode.add(theEditNode, NAME_EDIT);
+
+        /* Set command button action handler */
+        theCmdButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                handleCmdMenuRequest();
+            }
+        });
+
+        /* Set command menu listener */
+        getCmdMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED, new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent e) {
+                handleCmdMenuClosed();
+            }
+        });
+    }
+
+    @Override
+    public JPanel getNode() {
+        return theNode;
     }
 
     /**
-     * DataEditTextField class.
+     * Obtain the label.
+     * @return the label
+     */
+    protected JLabel getLabel() {
+        return theLabel;
+    }
+
+    /**
+     * Obtain the editControl.
+     * @return the editControl
+     */
+    protected JComponent getEditControl() {
+        return theEditControl;
+    }
+
+    @Override
+    public void setTextFill(final Color pColor) {
+        /* Apply colour to the two nodes */
+        theLabel.setForeground(pColor);
+        theEditNode.setForeground(pColor);
+    }
+
+    @Override
+    public TethysSwingScrollContextMenu<String> getCmdMenu() {
+        return (TethysSwingScrollContextMenu<String>) super.getCmdMenu();
+    }
+
+    @Override
+    protected void showCmdMenu() {
+        getCmdMenu().showMenuAtPosition(theCmdButton, SwingConstants.RIGHT);
+    }
+
+    /**
+     * Show the button.
+     * @param pShow true/false
+     */
+    public void showButton(final boolean pShow) {
+        /* Remove any button that is displaying */
+        theEditNode.remove(theCmdButton);
+        doShowCmdButton = pShow;
+
+        /* If we have a button to display */
+        if (doShowCmdButton) {
+            theEditNode.add(theCmdButton, BorderLayout.LINE_END);
+        }
+    }
+
+    @Override
+    public void setEditable(final boolean pEditable) {
+        /* Obtain current setting */
+        boolean isEditable = isEditable();
+
+        /* If we are changing */
+        if (pEditable != isEditable) {
+            /* Set correct component */
+            theLayout.show(theNode, pEditable
+                                              ? NAME_EDIT
+                                              : NAME_LABEL);
+
+            /* Pass call on */
+            super.setEditable(pEditable);
+        }
+    }
+
+    /**
+     * TextField class.
      * @param <T> the data type
      */
-    public abstract static class TethysSwingDataEditTextField<T>
-            extends TethysDataEditTextFieldBase<T, JPanel, Icon> {
+    public abstract static class TethysSwingTextEditField<T>
+            extends TethysSwingDataTextField<T> {
         /**
-         * The label name.
+         * The converterControl.
          */
-        private static final String NAME_LABEL = "Label";
-
+        private final TethysDataEditTextFieldControl<T> theControl;
         /**
-         * The edit name.
-         */
-        private static final String NAME_EDIT = "Edit";
-
-        /**
-         * The error colour.
-         */
-        private static final Color COLOR_ERROR = Color.decode("#DC381F");
-
-        /**
-         * The panel.
-         */
-        private final JPanel theNode;
-
-        /**
-         * The edit node.
-         */
-        private final JPanel theEditNode;
-
-        /**
-         * The text field.
+         * The textField.
          */
         private final JTextField theTextField;
-
-        /**
-         * The label.
-         */
-        private final JLabel theLabel;
-
-        /**
-         * The card layout.
-         */
-        private final CardLayout theLayout;
-
-        /**
-         * The command button.
-         */
-        private final JButton theCmdButton;
-
-        /**
-         * Do we show the command button?
-         */
-        private boolean doShowCmdButton;
 
         /**
          * The error text.
@@ -134,43 +257,25 @@ public abstract class TethysSwingDataEditField {
 
         /**
          * Constructor.
-         * @param pConverter the data converter
+         * @param pConverter the text converter
          */
-        protected TethysSwingDataEditTextField(final TethysDataEditConverter<T> pConverter) {
-            /* Call super-constructor */
-            super(pConverter);
+        public TethysSwingTextEditField(final TethysDataEditConverter<T> pConverter) {
+            /* Initialise underlying class */
+            super(new JTextField());
 
-            /* Create resources */
-            theNode = new JPanel();
-            theLabel = new JLabel();
-            theEditNode = new JPanel();
-            theTextField = new JTextField();
+            /* Create the converter control */
+            theControl = new TethysDataEditTextFieldControl<T>(this, pConverter);
 
-            /* Create the comman dbutton */
-            theCmdButton = new JButton();
-            theCmdButton.setIcon(TethysSwingArrowIcon.DOWN);
-            theCmdButton.setMargin(new Insets(0, 0, 0, 0));
-            theCmdButton.setFocusable(false);
-
-            /* declare the menu */
-            declareMenu(new TethysSwingScrollContextMenu<String>());
+            /* Access the fields */
+            JLabel myLabel = getLabel();
+            theTextField = getEditControl();
 
             /* Set alignment */
             int myAlignment = pConverter.rightAlignFields()
                                                             ? SwingConstants.RIGHT
                                                             : SwingConstants.LEFT;
-            theLabel.setHorizontalAlignment(myAlignment);
+            myLabel.setHorizontalAlignment(myAlignment);
             theTextField.setHorizontalAlignment(myAlignment);
-
-            /* Build the edit node */
-            theEditNode.setLayout(new BorderLayout());
-            theEditNode.add(theTextField, BorderLayout.CENTER);
-
-            /* Default to readOnly */
-            theLayout = new CardLayout();
-            theNode.setLayout(theLayout);
-            theNode.add(theLabel, NAME_LABEL);
-            theNode.add(theEditNode, NAME_EDIT);
 
             /* Add listener to handle change of focus */
             theTextField.addFocusListener(new FocusListener() {
@@ -190,64 +295,26 @@ public abstract class TethysSwingDataEditField {
 
             /* handle enter/escape keys */
             theTextField.addKeyListener(new DataKeyListener());
+        }
 
-            /* Set command button action handler */
-            theCmdButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    handleMenuRequest();
-                }
-            });
-
-            /* Set context menu listener */
-            getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED, new TethysActionEventListener() {
-                @Override
-                public void processActionEvent(final TethysActionEvent e) {
-                    /* Handle the close of the menu */
-                    handleMenuClosed();
-                }
-            });
+        @Override
+        protected JTextField getEditControl() {
+            return (JTextField) super.getEditControl();
         }
 
         /**
-         * Key Listener class.
+         * Obtain the converter.
+         * @return the converter.
          */
-        private class DataKeyListener
-                implements KeyListener {
-            @Override
-            public void keyTyped(final KeyEvent e) {
-                /* NoOp */
-            }
-
-            @Override
-            public void keyPressed(final KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_ENTER:
-                        processValue();
-                        break;
-                    case KeyEvent.VK_ESCAPE:
-                        theTextField.setText(getEditText());
-                        clearError();
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public void keyReleased(final KeyEvent e) {
-                /* NoOp */
-            }
+        protected TethysDataEditConverter<T> getConverter() {
+            return theControl.getConverter();
         }
 
         @Override
-        public TethysSwingScrollContextMenu<String> getMenu() {
-            return (TethysSwingScrollContextMenu<String>) super.getMenu();
-        }
-
-        @Override
-        protected void showMenu() {
-            getMenu().showMenuAtPosition(theCmdButton, SwingConstants.RIGHT);
+        public void setFont(final Font pFont) {
+            /* Apply font to the two nodes */
+            getLabel().setFont(pFont);
+            theTextField.setFont(pFont);
         }
 
         /**
@@ -261,7 +328,7 @@ public abstract class TethysSwingDataEditField {
             }
 
             /* If we failed to process the value */
-            if (!processValue(myText)) {
+            if (!theControl.processValue(myText)) {
                 /* Set error border */
                 theTextField.setToolTipText(TOOLTIP_BAD_VALUE);
                 theErrorText = myText;
@@ -302,52 +369,12 @@ public abstract class TethysSwingDataEditField {
             theCacheColor = null;
         }
 
-        @Override
-        public JPanel getNode() {
-            return theNode;
-        }
-
-        /**
-         * Set the font.
-         * @param pFont the font for the field
-         */
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            theLabel.setFont(pFont);
-            theEditNode.setFont(pFont);
-        }
-
-        /**
-         * Set the foreground colour.
-         * @param pColor the colour
-         */
-        public void setForeground(final Color pColor) {
-            /* Apply colour to the two nodes */
-            theLabel.setForeground(pColor);
-            theEditNode.setForeground(pColor);
-        }
-
-        /**
-         * Show the button.
-         * @param pShow true/false
-         */
-        public void showButton(final boolean pShow) {
-            /* Remove any button that is displaying */
-            theEditNode.remove(theCmdButton);
-            doShowCmdButton = pShow;
-
-            /* If we have a button to display */
-            if (doShowCmdButton) {
-                theEditNode.add(theCmdButton, BorderLayout.LINE_END);
-            }
-        }
-
         /**
          * Handle focusGained.
          */
-        private void handleFocusGained() {
+        protected void handleFocusGained() {
             theTextField.setText(theErrorText == null
-                                                      ? getEditText()
+                                                      ? theControl.getEditText()
                                                       : theErrorText);
             theTextField.selectAll();
         }
@@ -356,7 +383,7 @@ public abstract class TethysSwingDataEditField {
          * Handle focusLost.
          */
         private void handleFocusLost() {
-            theTextField.setText(getDisplayText());
+            theTextField.setText(theControl.getDisplayText());
         }
 
         @Override
@@ -365,35 +392,49 @@ public abstract class TethysSwingDataEditField {
             super.setValue(pValue);
 
             /* Update nodes */
-            theLabel.setText(getDisplayText());
-            theTextField.setText(theEditNode.hasFocus()
-                                                        ? getEditText()
-                                                        : getDisplayText());
+            getLabel().setText(theControl.getDisplayText());
+            theTextField.setText(theTextField.hasFocus()
+                                                         ? theControl.getEditText()
+                                                         : theControl.getDisplayText());
         }
 
-        @Override
-        public void setEditable(final boolean pEditable) {
-            /* Obtain current setting */
-            boolean isEditable = isEditable();
+        /**
+         * Key Listener class.
+         */
+        private class DataKeyListener
+                implements KeyListener {
+            @Override
+            public void keyTyped(final KeyEvent e) {
+                /* NoOp */
+            }
 
-            /* If we are changing */
-            if (pEditable != isEditable) {
-                /* Set correct component */
-                theLayout.show(theNode, pEditable
-                                                  ? NAME_EDIT
-                                                  : NAME_LABEL);
+            @Override
+            public void keyPressed(final KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_ENTER:
+                        processValue();
+                        break;
+                    case KeyEvent.VK_ESCAPE:
+                        theTextField.setText(theControl.getEditText());
+                        clearError();
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-                /* Pass call on */
-                super.setEditable(pEditable);
+            @Override
+            public void keyReleased(final KeyEvent e) {
+                /* NoOp */
             }
         }
     }
 
     /**
-     * StringSwingTextField class.
+     * SwingStringTextField class.
      */
     public static class TethysSwingStringTextField
-            extends TethysSwingDataEditTextField<String> {
+            extends TethysSwingTextEditField<String> {
         /**
          * Constructor.
          */
@@ -406,7 +447,7 @@ public abstract class TethysSwingDataEditField {
      * ShortSwingTextField class.
      */
     public static class TethysSwingShortTextField
-            extends TethysSwingDataEditTextField<Short> {
+            extends TethysSwingTextEditField<Short> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -419,10 +460,10 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * IntegerSwingTextField class.
+     * SwingIntegerTextField class.
      */
     public static class TethysSwingIntegerTextField
-            extends TethysSwingDataEditTextField<Integer> {
+            extends TethysSwingTextEditField<Integer> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -435,10 +476,10 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * LongSwingTextField class.
+     * SwingLongTextField class.
      */
     public static class TethysSwingLongTextField
-            extends TethysSwingDataEditTextField<Long> {
+            extends TethysSwingTextEditField<Long> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -451,11 +492,11 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * MoneySwingTextField base class.
+     * SwingMoneyTextField base class.
      * @param <T> the data type
      */
     protected abstract static class TethysSwingMoneyTextFieldBase<T extends TethysMoney>
-            extends TethysSwingDataEditTextField<T> {
+            extends TethysSwingTextEditField<T> {
         /**
          * Constructor.
          * @param pConverter the converter
@@ -479,7 +520,7 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * MoneySwingTextField class.
+     * SwingMoneyTextField class.
      */
     public static class TethysSwingMoneyTextField
             extends TethysSwingMoneyTextFieldBase<TethysMoney> {
@@ -495,7 +536,7 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * PriceSwingTextField class.
+     * SwingPriceTextField class.
      */
     public static class TethysSwingPriceTextField
             extends TethysSwingMoneyTextFieldBase<TethysPrice> {
@@ -511,7 +552,7 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * DilutedPriceSwingTextField class.
+     * SwingDilutedPriceTextField class.
      */
     public static class TethysSwingDilutedPriceTextField
             extends TethysSwingMoneyTextFieldBase<TethysDilutedPrice> {
@@ -527,10 +568,10 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * RateSwingTextField class.
+     * SwingRateTextField class.
      */
     public static class TethysSwingRateTextField
-            extends TethysSwingDataEditTextField<TethysRate> {
+            extends TethysSwingTextEditField<TethysRate> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -543,10 +584,10 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * UnitsSwingTextField class.
+     * SwingUnitsTextField class.
      */
     public static class TethysSwingUnitsTextField
-            extends TethysSwingDataEditTextField<TethysUnits> {
+            extends TethysSwingTextEditField<TethysUnits> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -559,10 +600,10 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * DilutionSwingTextField class.
+     * SwingDilutionTextField class.
      */
     public static class TethysSwingDilutionTextField
-            extends TethysSwingDataEditTextField<TethysDilution> {
+            extends TethysSwingTextEditField<TethysDilution> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -575,10 +616,10 @@ public abstract class TethysSwingDataEditField {
     }
 
     /**
-     * RatioSwingTextField class.
+     * SwingRatioTextField class.
      */
     public static class TethysSwingRatioTextField
-            extends TethysSwingDataEditTextField<TethysRatio> {
+            extends TethysSwingTextEditField<TethysRatio> {
         /**
          * Constructor.
          * @param pFormatter the formatter

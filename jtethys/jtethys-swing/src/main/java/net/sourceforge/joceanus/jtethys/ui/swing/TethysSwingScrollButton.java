@@ -100,7 +100,7 @@ public final class TethysSwingScrollButton
             /* Set context menu listener */
             getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED, new TethysActionEventListener() {
                 @Override
-                public void processActionEvent(final TethysActionEvent e) {
+                public void processAction(final TethysActionEvent e) {
                     /* Handle the close of the menu */
                     handleMenuClosed();
                 }

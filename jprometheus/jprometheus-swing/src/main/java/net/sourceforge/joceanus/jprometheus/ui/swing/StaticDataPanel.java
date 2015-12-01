@@ -516,7 +516,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* Handle menu type */
             if (theDataMenuReg.isRelevant(pEvent)) {
                 /* Cancel Editing */
@@ -584,7 +584,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         }
 
         @Override
-        public void processActionEvent(final TethysActionEvent pEvent) {
+        public void processAction(final TethysActionEvent pEvent) {
             /* if this is the action buttons reporting */
             if (theActionReg.isRelevant(pEvent)) {
                 /* Cancel Editing */

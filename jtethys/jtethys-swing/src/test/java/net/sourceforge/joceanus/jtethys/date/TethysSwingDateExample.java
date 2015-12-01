@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.dateday;
+package net.sourceforge.joceanus.jtethys.date;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

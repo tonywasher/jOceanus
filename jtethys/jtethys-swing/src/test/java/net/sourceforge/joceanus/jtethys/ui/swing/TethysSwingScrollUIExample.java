@@ -46,9 +46,12 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.jdatebutton.swing.JDateButton;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
@@ -98,7 +101,7 @@ public class TethysSwingScrollUIExample
     /**
      * The default height.
      */
-    private static final int DEFAULT_HEIGHT = 300;
+    private static final int DEFAULT_HEIGHT = 350;
 
     /**
      * The default width.
@@ -146,6 +149,11 @@ public class TethysSwingScrollUIExample
     private final TethysSwingListButtonManager<String> theListButtonMgr;
 
     /**
+     * The date button manager.
+     */
+    private final TethysSwingDateButtonManager theDateButtonMgr;
+
+    /**
      * The selected context value.
      */
     private final JLabel theContextValue;
@@ -154,6 +162,11 @@ public class TethysSwingScrollUIExample
      * The selected scroll value.
      */
     private final JLabel theScrollValue;
+
+    /**
+     * The selected date value.
+     */
+    private final JLabel theDateValue;
 
     /**
      * The selected simple icon value.
@@ -189,8 +202,10 @@ public class TethysSwingScrollUIExample
         theStateIconButtonMgr = new TethysSwingStateIconButtonManager<Boolean, IconState>();
         theStateButtonMgr = new TethysSwingScrollButtonManager<IconState>();
         theListButtonMgr = new TethysSwingListButtonManager<String>();
+        theDateButtonMgr = new TethysSwingDateButtonManager();
         theContextValue = new JLabel();
         theScrollValue = new JLabel();
+        theDateValue = new JLabel();
         theSimpleIconValue = new JLabel();
         theStateIconValue = new JLabel();
         theListValues = new JLabel();
@@ -296,7 +311,7 @@ public class TethysSwingScrollUIExample
         /* Add listener */
         theScrollMenu.getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED, new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent e) {
+            public void processAction(final TethysActionEvent e) {
                 /* If we selected a value */
                 TethysScrollMenuItem<String> mySelected = theScrollMenu.getSelectedItem();
                 if (mySelected != null) {
@@ -318,7 +333,7 @@ public class TethysSwingScrollUIExample
         /* Add listener */
         theScrollButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysScrollButtonManager.ACTION_NEW_VALUE:
                         setScrollValue(pEvent.getDetails(String.class));
@@ -348,15 +363,40 @@ public class TethysSwingScrollUIExample
         /* Add listener */
         theListButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
-                    case TethysListButtonManager.ACTION_TOGGLED:
+                    case TethysListButtonManager.ACTION_ITEM_TOGGLED:
                         setListValue(pEvent.getDetails(TethysScrollMenuToggleItem.class));
                         break;
                     case TethysScrollButtonManager.ACTION_MENU_BUILD:
-                        theHelper.buildAvailableItems(theListButtonMgr.getMenu(), theSelectedValues);
+                        theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues);
                         break;
                     case TethysScrollButtonManager.ACTION_MENU_CANCELLED:
+                    default:
+                        break;
+                }
+            }
+        });
+
+        /* Create date button line */
+        JDateButton myDateButton = theDateButtonMgr.getButton();
+        JPanel myDateArea = new JPanel();
+        myDateArea.setLayout(new BorderLayout());
+        myDateArea.setBorder(BorderFactory.createTitledBorder("DateButton"));
+        myDateArea.add(myDateButton, BorderLayout.CENTER);
+        myDateButton.setMinimumSize(new Dimension(20, 20));
+        buildResultLabel(theDateValue, "DateValue");
+        myHelper.addFullLabeledRow(myDateArea, theDateValue);
+
+        /* Add listener */
+        theDateButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+            @Override
+            public void processAction(final TethysActionEvent pEvent) {
+                switch (pEvent.getActionId()) {
+                    case TethysDateButtonManager.ACTION_NEW_VALUE:
+                        setDateValue(pEvent.getDetails(TethysDate.class));
+                        break;
+                    case TethysDateButtonManager.ACTION_DIALOG_PREPARE:
                     default:
                         break;
                 }
@@ -378,7 +418,7 @@ public class TethysSwingScrollUIExample
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysIconButtonManager.ACTION_NEW_VALUE:
                         setSimpleIconValue(pEvent.getDetails(Boolean.class));
@@ -405,7 +445,7 @@ public class TethysSwingScrollUIExample
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysIconButtonManager.ACTION_NEW_VALUE:
                         setStateIconValue(pEvent.getDetails(Boolean.class));
@@ -419,7 +459,7 @@ public class TethysSwingScrollUIExample
         /* Add listener */
         theStateButtonMgr.getEventRegistrar().addActionListener(new TethysActionEventListener() {
             @Override
-            public void processActionEvent(final TethysActionEvent pEvent) {
+            public void processAction(final TethysActionEvent pEvent) {
                 switch (pEvent.getActionId()) {
                     case TethysIconButtonManager.ACTION_NEW_VALUE:
                         theStateIconButtonMgr.setMachineState(pEvent.getDetails(IconState.class));
@@ -466,6 +506,17 @@ public class TethysSwingScrollUIExample
     private void setScrollValue(final String pValue) {
         /* Record the value */
         theScrollValue.setText(pValue);
+    }
+
+    /**
+     * Set the date value.
+     * @param pValue the value to set
+     */
+    private void setDateValue(final TethysDate pValue) {
+        /* Record the value */
+        theDateValue.setText(pValue == null
+                                            ? null
+                                            : pValue.toString());
     }
 
     /**

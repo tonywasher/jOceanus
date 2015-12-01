@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldState;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.JOceanusItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
@@ -927,9 +927,9 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
          * ButtonListener class.
          */
         private final class ButtonListener
-                implements JOceanusItemEventListener {
+                implements TethysItemEventListener {
             @Override
-            public void processItemEvent(final TethysItemEvent pEvent) {
+            public void processItem(final TethysItemEvent pEvent) {
                 /* Record the value */
                 theModel.processValue(pEvent);
             }

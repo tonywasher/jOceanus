@@ -25,9 +25,12 @@ package net.sourceforge.joceanus.jtethys.date.javafx;
 import java.util.Locale;
 
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
-import net.sourceforge.jdatebutton.javafx.JDateCellEditor;
+import javafx.stage.WindowEvent;
+import net.sourceforge.jdatebutton.javafx.JDateDialog;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -36,12 +39,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @param <T> the table data type
  */
 public class TethysFXDateCell<T>
-        extends TableCell<T, TethysDate>
-        implements JDateCellEditor {
+        extends TableCell<T, TethysDate> {
     /**
-     * the button used to edit the date.
+     * the dialog used to edit the date.
      */
-    private final TethysFXDateButton theButton;
+    private final JDateDialog theDialog;
 
     /**
      * The Underlying Date Configuration.
@@ -52,8 +54,8 @@ public class TethysFXDateCell<T>
      * Constructor.
      */
     public TethysFXDateCell() {
-        /* Create the button */
-        this(new TethysFXDateButton());
+        /* Create the configuration */
+        this(new TethysFXDateConfig());
     }
 
     /**
@@ -61,19 +63,14 @@ public class TethysFXDateCell<T>
      * @param pConfig the configuration
      */
     public TethysFXDateCell(final TethysFXDateConfig pConfig) {
-        /* Create the button */
-        this(new TethysFXDateButton(pConfig));
-    }
+        /* Store the configuration */
+        theConfig = pConfig;
 
-    /**
-     * Constructor.
-     * @param pButton the underlying button
-     */
-    protected TethysFXDateCell(final TethysFXDateButton pButton) {
-        /* Store the button and access the Dialog */
-        theButton = pButton;
-        theConfig = theButton.getDateConfig();
-        theButton.setEditor(this);
+        /* Create the dialog */
+        theDialog = new JDateDialog(pConfig);
+
+        /* Add listener to the dialog */
+        theDialog.setOnHidden(new DialogListener());
     }
 
     /**
@@ -85,19 +82,11 @@ public class TethysFXDateCell<T>
     }
 
     /**
-     * Obtain Date Button.
-     * @return the date button
-     */
-    public TethysFXDateButton getDateDayButton() {
-        return theButton;
-    }
-
-    /**
      * Obtain SelectedDate.
      * @return the selected date
      */
     public TethysDate getSelectedDateDay() {
-        return theButton.getSelectedDateDay();
+        return theConfig.getSelectedDateDay();
     }
 
     /**
@@ -105,7 +94,7 @@ public class TethysFXDateCell<T>
      * @param pDate the selected date
      */
     public void setSelectedDateDay(final TethysDate pDate) {
-        theButton.setSelectedDateDay(pDate);
+        theConfig.setSelectedDateDay(pDate);
     }
 
     /**
@@ -113,7 +102,7 @@ public class TethysFXDateCell<T>
      * @param pDate the earliest date
      */
     public void setEarliestDateDay(final TethysDate pDate) {
-        theButton.setEarliestDateDay(pDate);
+        theConfig.setEarliestDateDay(pDate);
     }
 
     /**
@@ -121,7 +110,7 @@ public class TethysFXDateCell<T>
      * @param pDate the latest date
      */
     public void setLatestDateDay(final TethysDate pDate) {
-        theButton.setLatestDateDay(pDate);
+        theConfig.setLatestDateDay(pDate);
     }
 
     /**
@@ -129,7 +118,7 @@ public class TethysFXDateCell<T>
      * @param pLocale the Locale
      */
     public void setLocale(final Locale pLocale) {
-        theButton.setLocale(pLocale);
+        theConfig.setLocale(pLocale);
     }
 
     /**
@@ -137,7 +126,7 @@ public class TethysFXDateCell<T>
      * @param pFormat the format string
      */
     public void setFormat(final String pFormat) {
-        theButton.setFormat(pFormat);
+        theConfig.setFormat(pFormat);
     }
 
     @Override
@@ -147,11 +136,18 @@ public class TethysFXDateCell<T>
             /* Start the edit */
             super.startEdit();
 
-            /* Prime the button with the correct value */
-            theButton.setSelectedDateDay(getItem());
+            /* Set the correct date */
+            theConfig.setSelectedDateDay(getItem());
 
-            /* Fire the button */
-            theButton.fire();
+            /* Determine the relevant bounds */
+            Bounds myBounds = localToScreen(getLayoutBounds());
+
+            /* Position the dialog just below the cell */
+            theDialog.setX(myBounds.getMinX());
+            theDialog.setY(myBounds.getMaxY());
+
+            /* Show the dialog */
+            theDialog.showDialog();
         }
     }
 
@@ -176,17 +172,6 @@ public class TethysFXDateCell<T>
         return (myIndex < 0) || (myIndex >= mySize)
                                                     ? null
                                                     : myItems.get(myIndex);
-    }
-
-    @Override
-    public void fireEditingCanceledEvent() {
-        cancelEdit();
-    }
-
-    @Override
-    public void fireEditingStoppedEvent() {
-        commitEdit(theButton.getSelectedDateDay());
-        postCommitHook(getCurrentRow());
     }
 
     @Override
@@ -227,5 +212,23 @@ public class TethysFXDateCell<T>
      */
     protected void postCommitHook(final T pRow) {
         /* No action unless overridden */
+    }
+
+    /**
+     * Dialog listener.
+     */
+    private class DialogListener
+            implements EventHandler<WindowEvent> {
+        @Override
+        public void handle(final WindowEvent e) {
+            /* If a selection was made */
+            if (theDialog.haveSelected()) {
+                /* Commit the edit and call post commit hook */
+                commitEdit(theConfig.getSelectedDateDay());
+                postCommitHook(getCurrentRow());
+            } else {
+                cancelEdit();
+            }
+        }
     }
 }

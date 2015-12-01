@@ -34,6 +34,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -52,59 +53,184 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDataEditTextFieldBase;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
 /**
  * Generic class for displaying and editing a data field.
+ * @param <T> the data type
  */
-public abstract class TethysFXDataEditField {
+public abstract class TethysFXDataTextField<T>
+        extends TethysDataEditField<T, Node, Color, Font, Node> {
     /**
-     * Private constructor.
+     * The padding size to expand a label to match a TextField/Button.
      */
-    private TethysFXDataEditField() {
+    protected static final int PADDING = 4;
+
+    /**
+     * The error style class.
+     */
+    private static final String STYLE_ERROR = "-jtethys-datafield-error";
+
+    /**
+     * The node.
+     */
+    private final BorderPane theNode;
+
+    /**
+     * The edit Control.
+     */
+    private final Control theEditControl;
+
+    /**
+     * The label.
+     */
+    private final Label theLabel;
+
+    /**
+     * The command button.
+     */
+    private final Button theCmdButton;
+
+    /**
+     * Do we show the command button?
+     */
+    private boolean doShowCmdButton;
+
+    /**
+     * Constructor.
+     * @param pEditControl the edit Control
+     */
+    protected TethysFXDataTextField(final Control pEditControl) {
+        /* Create resources */
+        theNode = new BorderPane();
+        theLabel = new Label();
+        theEditControl = pEditControl;
+
+        /* Set maximum widths for fields */
+        theLabel.setMaxWidth(Integer.MAX_VALUE);
+        theEditControl.setMaxWidth(Integer.MAX_VALUE);
+
+        /* Create the command button */
+        theCmdButton = new Button();
+        theCmdButton.setGraphic(ArrowIcon.DOWN.getArrow());
+        theCmdButton.setFocusTraversable(false);
+
+        /* declare the menu */
+        declareCmdMenu(new TethysFXScrollContextMenu<String>());
+
+        /* Default to readOnly */
+        theNode.setCenter(theLabel);
+
+        /* handle command button action */
+        theCmdButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(final ActionEvent t) {
+                handleCmdMenuRequest();
+            }
+        });
+
+        /* Set context menu listener */
+        getCmdMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, new EventHandler<TethysFXContextEvent<?>>() {
+            @Override
+            public void handle(final TethysFXContextEvent<?> e) {
+                /* Handle the close of the menu */
+                handleCmdMenuClosed();
+            }
+        });
     }
 
     /**
-     * DataEditTextField class.
+     * Obtain the label.
+     * @return the label
+     */
+    protected Label getLabel() {
+        return theLabel;
+    }
+
+    /**
+     * Obtain the editControl.
+     * @return the editControl
+     */
+    protected Control getEditControl() {
+        return theEditControl;
+    }
+
+    @Override
+    public TethysFXScrollContextMenu<String> getCmdMenu() {
+        return (TethysFXScrollContextMenu<String>) super.getCmdMenu();
+    }
+
+    @Override
+    protected void showCmdMenu() {
+        getCmdMenu().showMenuAtPosition(theCmdButton, Side.RIGHT);
+    }
+
+    @Override
+    public Node getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setTextFill(final Color pColor) {
+        /* Apply font to the two nodes */
+        theLabel.setTextFill(pColor);
+        theEditControl.setStyle("-fx-text-inner-color: " + TethysFXGuiUtils.colorToHexString(pColor));
+    }
+
+    /**
+     * Show the command button.
+     * @param pShow true/false
+     */
+    public void showCmdButton(final boolean pShow) {
+        /* Remove any button that is displaying */
+        theNode.setRight(null);
+        doShowCmdButton = pShow;
+
+        /* If we have a button to display */
+        if (isEditable() && doShowCmdButton) {
+            theNode.setRight(theCmdButton);
+        }
+    }
+
+    @Override
+    public void setEditable(final boolean pEditable) {
+        /* Obtain current setting */
+        boolean isEditable = isEditable();
+
+        /* If we are changing */
+        if (pEditable != isEditable) {
+            /* If we are setting editable */
+            if (pEditable) {
+                theNode.setCenter(theEditControl);
+                if (doShowCmdButton) {
+                    theNode.setRight(theCmdButton);
+                }
+            } else {
+                theNode.setCenter(theLabel);
+                theNode.setRight(null);
+            }
+
+            /* Pass call on */
+            super.setEditable(pEditable);
+        }
+    }
+
+    /**
+     * TextField class.
      * @param <T> the data type
      */
-    public abstract static class TethysFXDataEditTextField<T>
-            extends TethysDataEditTextFieldBase<T, Node, Node> {
+    public abstract static class TethysFXTextEditField<T>
+            extends TethysFXDataTextField<T> {
         /**
-         * The error style class.
+         * The converterControl.
          */
-        private static final String STYLE_ERROR = "-jtethys-datafield-error";
+        private final TethysDataEditTextFieldControl<T> theControl;
 
         /**
-         * The padding size to expand a label to match a TextField.
+         * The textField.
          */
-        private static final int PADDING = 4;
-
-        /**
-         * The node.
-         */
-        private final BorderPane theNode;
-
-        /**
-         * The text field.
-         */
-        private final TextField theEditNode;
-
-        /**
-         * The label.
-         */
-        private final Label theLabel;
-
-        /**
-         * The command button.
-         */
-        private final Button theCmdButton;
-
-        /**
-         * Do we show the command button?
-         */
-        private boolean doShowCmdButton;
+        private final TextField theTextField;
 
         /**
          * The error text.
@@ -113,42 +239,31 @@ public abstract class TethysFXDataEditField {
 
         /**
          * Constructor.
-         * @param pConverter the data converter
+         * @param pConverter the text converter
          */
-        protected TethysFXDataEditTextField(final TethysDataEditConverter<T> pConverter) {
-            /* Call super-constructor and store parameters */
-            super(pConverter);
+        public TethysFXTextEditField(final TethysDataEditConverter<T> pConverter) {
+            /* Initialise underlying class */
+            super(new TextField());
 
-            /* Create resources */
-            theNode = new BorderPane();
-            theLabel = new Label();
-            theEditNode = new TextField();
+            /* Create the converter control */
+            theControl = new TethysDataEditTextFieldControl<T>(this, pConverter);
 
-            /* Create the command button */
-            theCmdButton = new Button();
-            theCmdButton.setGraphic(ArrowIcon.DOWN.getArrow());
-            theCmdButton.setFocusTraversable(false);
+            /* Access the fields */
+            Label myLabel = getLabel();
+            theTextField = getEditControl();
 
-            /* declare the menu */
-            declareMenu(new TethysFXScrollContextMenu<String>());
-
-            /* Set maximum widths for fields */
-            theLabel.setMaxWidth(Integer.MAX_VALUE);
-            theLabel.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
-            theEditNode.setMaxWidth(Integer.MAX_VALUE);
+            /* Set Padding */
+            myLabel.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
 
             /* Set alignment */
             Pos myAlignment = pConverter.rightAlignFields()
                                                             ? Pos.CENTER_RIGHT
                                                             : Pos.CENTER_LEFT;
-            theLabel.setAlignment(myAlignment);
-            theEditNode.setAlignment(myAlignment);
-
-            /* Default to readOnly */
-            theNode.setCenter(theLabel);
+            myLabel.setAlignment(myAlignment);
+            theTextField.setAlignment(myAlignment);
 
             /* Add listener to handle change of focus */
-            theEditNode.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            theTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(final ObservableValue<? extends Boolean> observable,
                                     final Boolean oldValue,
@@ -165,7 +280,7 @@ public abstract class TethysFXDataEditField {
             });
 
             /* handle enter/escape keys */
-            theEditNode.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            theTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(final KeyEvent t) {
                     switch (t.getCode()) {
@@ -173,7 +288,7 @@ public abstract class TethysFXDataEditField {
                             processValue();
                             break;
                         case ESCAPE:
-                            theEditNode.setText(getEditText());
+                            theTextField.setText(theControl.getEditText());
                             clearError();
                             break;
                         default:
@@ -181,33 +296,26 @@ public abstract class TethysFXDataEditField {
                     }
                 }
             });
-
-            /* handle command button action */
-            theCmdButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(final ActionEvent t) {
-                    handleMenuRequest();
-                }
-            });
-
-            /* Set context menu listener */
-            getMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, new EventHandler<TethysFXContextEvent<?>>() {
-                @Override
-                public void handle(final TethysFXContextEvent<?> e) {
-                    /* Handle the close of the menu */
-                    handleMenuClosed();
-                }
-            });
         }
 
         @Override
-        public TethysFXScrollContextMenu<String> getMenu() {
-            return (TethysFXScrollContextMenu<String>) super.getMenu();
+        protected TextField getEditControl() {
+            return (TextField) super.getEditControl();
+        }
+
+        /**
+         * Obtain the converter.
+         * @return the converter.
+         */
+        protected TethysDataEditConverter<T> getConverter() {
+            return theControl.getConverter();
         }
 
         @Override
-        protected void showMenu() {
-            getMenu().showMenuAtPosition(theCmdButton, Side.RIGHT);
+        public void setFont(final Font pFont) {
+            /* Apply font to the two nodes */
+            getLabel().setFont(pFont);
+            theTextField.setFont(pFont);
         }
 
         /**
@@ -215,15 +323,15 @@ public abstract class TethysFXDataEditField {
          */
         private void processValue() {
             /* If we failed to process the value */
-            String myText = theEditNode.getText();
-            if (!processValue(myText)) {
+            String myText = theTextField.getText();
+            if (!theControl.processValue(myText)) {
                 /* Set toolTip, save error text and retain the focus */
-                theEditNode.setTooltip(new Tooltip(TOOLTIP_BAD_VALUE));
+                theTextField.setTooltip(new Tooltip(TOOLTIP_BAD_VALUE));
                 theErrorText = myText;
-                theEditNode.requestFocus();
+                theTextField.requestFocus();
 
                 /* add an error style */
-                ObservableList<String> myStyles = theEditNode.getStyleClass();
+                ObservableList<String> myStyles = theTextField.getStyleClass();
                 if (!myStyles.contains(STYLE_ERROR)) {
                     myStyles.add(STYLE_ERROR);
                 }
@@ -239,67 +347,27 @@ public abstract class TethysFXDataEditField {
          * Clear error indication.
          */
         private void clearError() {
-            theEditNode.setTooltip(null);
+            theTextField.setTooltip(null);
             theErrorText = null;
-            ObservableList<String> myStyles = theEditNode.getStyleClass();
+            ObservableList<String> myStyles = theTextField.getStyleClass();
             myStyles.remove(STYLE_ERROR);
-        }
-
-        @Override
-        public Node getNode() {
-            return theNode;
-        }
-
-        /**
-         * Set the font.
-         * @param pFont the font for the field
-         */
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            theLabel.setFont(pFont);
-            theEditNode.setFont(pFont);
-        }
-
-        /**
-         * Set the textFill colour.
-         * @param pColor the colour
-         */
-        public void setTextFill(final Color pColor) {
-            /* Apply font to the two nodes */
-            theLabel.setTextFill(pColor);
-            theEditNode.setStyle("-fx-text-inner-color: " + TethysFXGuiUtils.colorToHexString(pColor));
-        }
-
-        /**
-         * Show the command button.
-         * @param pShow true/false
-         */
-        public void showCommandButton(final boolean pShow) {
-            /* Remove any button that is displaying */
-            theNode.setRight(null);
-            doShowCmdButton = pShow;
-
-            /* If we have a button to display */
-            if (isEditable() && doShowCmdButton) {
-                theNode.setRight(theCmdButton);
-            }
         }
 
         /**
          * Handle focusGained.
          */
-        private void handleFocusGained() {
-            theEditNode.setText(theErrorText == null
-                                                     ? getEditText()
-                                                     : theErrorText);
-            theEditNode.selectAll();
+        protected void handleFocusGained() {
+            theTextField.setText(theErrorText == null
+                                                      ? theControl.getEditText()
+                                                      : theErrorText);
+            theTextField.selectAll();
         }
 
         /**
          * Handle focusLost.
          */
         private void handleFocusLost() {
-            theEditNode.setText(getDisplayText());
+            theTextField.setText(theControl.getDisplayText());
         }
 
         @Override
@@ -308,41 +376,18 @@ public abstract class TethysFXDataEditField {
             super.setValue(pValue);
 
             /* Update nodes */
-            theLabel.setText(getDisplayText());
-            theEditNode.setText(theEditNode.isFocused()
-                                                        ? getEditText()
-                                                        : getDisplayText());
-        }
-
-        @Override
-        public void setEditable(final boolean pEditable) {
-            /* Obtain current setting */
-            boolean isEditable = isEditable();
-
-            /* If we are changing */
-            if (pEditable != isEditable) {
-                /* If we are setting editable */
-                if (pEditable) {
-                    theNode.setCenter(theEditNode);
-                    if (doShowCmdButton) {
-                        theNode.setRight(theCmdButton);
-                    }
-                } else {
-                    theNode.setCenter(theLabel);
-                    theNode.setRight(null);
-                }
-
-                /* Pass call on */
-                super.setEditable(pEditable);
-            }
+            getLabel().setText(theControl.getDisplayText());
+            theTextField.setText(theTextField.isFocused()
+                                                          ? theControl.getEditText()
+                                                          : theControl.getDisplayText());
         }
     }
 
     /**
-     * StringFXTextField class.
+     * FXStringTextField class.
      */
     public static class TethysFXStringTextField
-            extends TethysFXDataEditTextField<String> {
+            extends TethysFXTextEditField<String> {
         /**
          * Constructor.
          */
@@ -352,10 +397,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * ShortFXTextField class.
+     * FXShortTextField class.
      */
     public static class TethysFXShortTextField
-            extends TethysFXDataEditTextField<Short> {
+            extends TethysFXTextEditField<Short> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -368,10 +413,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * IntegerFXTextField class.
+     * FXIntegerTextField class.
      */
     public static class TethysFXIntegerTextField
-            extends TethysFXDataEditTextField<Integer> {
+            extends TethysFXTextEditField<Integer> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -384,10 +429,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * LongFXTextField class.
+     * FXLongTextField class.
      */
     public static class TethysFXLongTextField
-            extends TethysFXDataEditTextField<Long> {
+            extends TethysFXTextEditField<Long> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -404,7 +449,7 @@ public abstract class TethysFXDataEditField {
      * @param <T> the data type
      */
     protected abstract static class TethysFXMoneyTextFieldBase<T extends TethysMoney>
-            extends TethysFXDataEditTextField<T> {
+            extends TethysFXTextEditField<T> {
         /**
          * Constructor.
          * @param pConverter the converter
@@ -428,7 +473,7 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * MoneyFXTextField class.
+     * FXMoneyTextField class.
      */
     public static class TethysFXMoneyTextField
             extends TethysFXMoneyTextFieldBase<TethysMoney> {
@@ -444,7 +489,7 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * PriceFXTextField class.
+     * FXPriceTextField class.
      */
     public static class TethysFXPriceTextField
             extends TethysFXMoneyTextFieldBase<TethysPrice> {
@@ -460,7 +505,7 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * DilutedPriceFXTextField class.
+     * FXDilutedPriceTextField class.
      */
     public static class TethysFXDilutedPriceTextField
             extends TethysFXMoneyTextFieldBase<TethysDilutedPrice> {
@@ -476,10 +521,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * RateFXTextField class.
+     * FXRateTextField class.
      */
     public static class TethysFXRateTextField
-            extends TethysFXDataEditTextField<TethysRate> {
+            extends TethysFXTextEditField<TethysRate> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -492,10 +537,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * UnitsFXTextField class.
+     * FXUnitsTextField class.
      */
     public static class TethysFXUnitsTextField
-            extends TethysFXDataEditTextField<TethysUnits> {
+            extends TethysFXTextEditField<TethysUnits> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -508,10 +553,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * DilutionFXTextField class.
+     * FXDilutionTextField class.
      */
     public static class TethysFXDilutionTextField
-            extends TethysFXDataEditTextField<TethysDilution> {
+            extends TethysFXTextEditField<TethysDilution> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -524,10 +569,10 @@ public abstract class TethysFXDataEditField {
     }
 
     /**
-     * RatioFXTextField class.
+     * FXRatioTextField class.
      */
     public static class TethysFXRatioTextField
-            extends TethysFXDataEditTextField<TethysRatio> {
+            extends TethysFXTextEditField<TethysRatio> {
         /**
          * Constructor.
          * @param pFormatter the formatter

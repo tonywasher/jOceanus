@@ -195,7 +195,7 @@ public class ItemActions<E extends Enum<E>>
         }
 
         @Override
-        public void processChangeEvent(final TethysChangeEvent pEvent) {
+        public void processChange(final TethysChangeEvent pEvent) {
             /* If this is the Builder Menu */
             if (theBuilderReg.isRelevant(pEvent)) {
                 theMenuBuilder.clearMenu();
